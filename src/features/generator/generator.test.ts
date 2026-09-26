@@ -254,6 +254,38 @@ describe('main work and dosage', () => {
     expect(doseFor('grow', 'adult', ex('push_up'), 3).loadHint).toBe('bodyweight');
   });
 
+  it('minors: bodyweight and bands first; light dumbbells only when clearly best', () => {
+    const teen = {
+      mode: 'teen' as const,
+      band: 'teen' as const,
+      location: 'home' as const,
+      equipment: HOME_EQUIPMENT_OPTIONS,
+    };
+    const firstFor = (muscleKey: string) => {
+      const s = gen({ ...teen, muscleGoals: [{ muscleKey, goal: 'grow' }] });
+      return ex(s.items.find((i) => i.role === 'main')!.exerciseId);
+    };
+    // Close calls go to the unloaded option…
+    expect(firstFor('biceps').slug).toBe('band_curl');
+    expect(firstFor('shoulders').slug).toBe('band_front_raise');
+    expect(firstFor('upperChest').loaded).toBe(false);
+    // …dumbbells only where nothing unloaded fits, and always light.
+    const traps = gen({ ...teen, muscleGoals: [{ muscleKey: 'traps', goal: 'strengthen' }] });
+    const shrug = traps.items.find((i) => i.role === 'main')!;
+    expect(ex(shrug.exerciseId).slug).toBe('dumbbell_shrug');
+    expect(shrug.loadHint).toBe('light');
+    // Adults still get the loaded lift.
+    expect(
+      ex(
+        gen({
+          muscleGoals: [{ muscleKey: 'biceps', goal: 'grow' }],
+          location: 'home',
+          equipment: HOME_EQUIPMENT_OPTIONS,
+        }).items.find((i) => i.role === 'main')!.exerciseId,
+      ).slug,
+    ).toBe('dumbbell_curl');
+  });
+
   it('only main work counts for the body map', () => {
     const s = gen();
     const muscles = mainWorkMuscles(s, LIBRARY);
@@ -275,12 +307,12 @@ describe('ramp-up sets (SPEC §8 warm-up)', () => {
   });
 
   it('teens ramp with light load only; kids never', () => {
-    // Teens are steered to bodyweight first; the shoulder press is the top
-    // shoulder exercise, so the first lift is loaded here.
+    // Teens are steered to bodyweight and bands; the shrug is the only traps
+    // exercise, so the first lift is loaded here.
     const teen = gen({
       mode: 'teen',
       band: 'teen',
-      muscleGoals: [{ muscleKey: 'shoulders', goal: 'grow' }],
+      muscleGoals: [{ muscleKey: 'traps', goal: 'grow' }],
     }).items.find((i) => i.part === 'ramp_up');
     expect(teen?.loadHint).toBe('light');
     expect(teen?.sets).toBe(1);

@@ -62,9 +62,18 @@ function goalFit(e: Exercise, goal: MuscleGoal, mode: AppMode): number {
 
 const MOBILITY_PARTS: SessionPart[] = ['finisher_mobility', 'cooldown_stretch', 'warmup_mobility'];
 
+/**
+ * Under 18, bodyweight and bands come first; light dumbbells only when they
+ * are clearly the best fit (Daniel, Sep 28 2026). An unloaded option gets this
+ * bonus (in tenths of emphasis), so a loaded one wins only when it is at least
+ * 0.3 more specific to the muscle.
+ */
+const MINOR_UNLOADED_BONUS = 2;
+
 /** Main-work candidates for a target muscle, best first. Deterministic. */
 export function rankForTarget(pool: Exercise[], target: Target, mode: AppMode): Exercise[] {
   const level = userLevel(mode);
+  const minor = mode === 'child' || mode === 'teen';
   return pool
     .filter((e) => emphasisOn(e, target.family, 'primary') > 0)
     .filter((e) =>
@@ -74,7 +83,9 @@ export function rankForTarget(pool: Exercise[], target: Target, mode: AppMode): 
     )
     .map((e) => ({
       e,
-      emphasis: Math.round(emphasisOn(e, target.family, 'primary') * 10),
+      emphasis:
+        Math.round(emphasisOn(e, target.family, 'primary') * 10) +
+        (minor && !e.loaded ? MINOR_UNLOADED_BONUS : 0),
       fit: goalFit(e, target.goal, mode),
       distance: Math.abs(e.level - level),
     }))

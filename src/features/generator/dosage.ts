@@ -29,7 +29,9 @@ export function doseFor(
   const perSide = exercise.unilateral;
   const timed = exercise.dose === 'time';
   const bodyweight = exercise.equipment.length === 0;
-  const weighted = (hint: LoadHint): LoadHint => (bodyweight ? 'bodyweight' : hint);
+  // Minors always use a light load, with the focus on technique (SPEC §2.3).
+  const weighted = (hint: LoadHint): LoadHint =>
+    bodyweight ? 'bodyweight' : minor ? 'light' : hint;
 
   switch (goal) {
     case 'grow':
