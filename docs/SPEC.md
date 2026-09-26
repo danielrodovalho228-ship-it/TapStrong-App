@@ -153,7 +153,9 @@ Verify every point on every one of the 28 images; bodies differ.
 - **`checkins`**: `profile_id`, `week`, `strength_json`, `waist_cm`, `weight_kg`, `whtr`, `bmi`, `note`
 - **`repair_tests`**: `profile_id`, `test_key`, `left_value`, `right_value`, `unit`, `result`, `tested_at`
 - **`family_members`**: `owner_id`, `member_profile_id`, `role` (child / parent / partner), `consent_record_id?`
-- **`referrals`**, **`badges`**, **`events`** (analytics mirror, optional)
+- **`referral_codes`** (`user_id`, `code`) and **`referrals`** (`code`, `invited_user_id`): written only by the `my_referral_code()` / `redeem_referral()` functions; saved accounts only, never child profiles (Phase 5). Rewards come with payments (Phase 6).
+- **`badges`**: `profile_id`, `key` (first_workout / streak_7 / streak_30 / first_pr / full_body_week), `earned_at`
+- **`events`** (analytics mirror, optional)
 
 RLS: a user sees only their own rows plus family members they manage. `exercises` and `exercise_muscles` are readable when `status = 'released'`.
 

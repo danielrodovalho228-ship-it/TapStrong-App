@@ -6,6 +6,7 @@ import { StyleSheet, View } from 'react-native';
 import { AppText, Button, Card, Icon, Screen } from '@/components/ui';
 import type { BodySex } from '@/features/bodymap/images';
 import { displayBand } from '@/features/bodymap/selection';
+import { useAccountStore } from '@/features/account/store';
 import { generateSession } from '@/features/generator';
 import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
@@ -33,6 +34,7 @@ export default function DoneScreen() {
   const { workout, library, input } = useWorkout(id);
   const profile = useOnboardingStore();
   const { workouts, streak, create, setNextFocus } = useWorkoutStore();
+  const account = useAccountStore();
   const [focusSaved, setFocusSaved] = useState(false);
   const derived = derive(profile);
   if (!workout || !derived) return <Redirect href="/home" />;
@@ -84,7 +86,51 @@ export default function DoneScreen() {
   };
 
   return (
-    <Screen footer={<Button label={t('workout.done.home')} onPress={goHome} />}>
+    <Screen
+      footer={
+        <>
+          <View style={styles.row}>
+            {derived.mode !== 'child' ? (
+              <View style={styles.flex}>
+                <Button
+                  variant="secondary"
+                  label={t('workout.done.share')}
+                  onPress={() => router.push('/share')}
+                />
+              </View>
+            ) : null}
+            {!account.saved && derived.mode !== 'child' ? (
+              <View style={styles.flex}>
+                <Button
+                  label={t('workout.done.save')}
+                  onPress={() => router.push({ pathname: '/account', params: { from: 'done' } })}
+                />
+              </View>
+            ) : null}
+          </View>
+          <Button
+            variant={account.saved || derived.mode === 'child' ? 'primary' : 'ghost'}
+            label={t('workout.done.home')}
+            onPress={goHome}
+          />
+        </>
+      }
+    >
+      {account.milestone?.workoutId === workout.id ? (
+        <Card tone="dark" style={styles.finish}>
+          <AppText variant="caption" color={colors.dark.accentSoft} style={styles.caps}>
+            {t('milestone.eyebrow')}
+          </AppText>
+          <AppText variant="h2" color={colors.dark.text}>
+            {t('milestone.title', { count: account.milestone.streak })}
+          </AppText>
+          <Button
+            variant="accent"
+            label={t('workout.done.seeMilestone')}
+            onPress={() => router.push('/milestone')}
+          />
+        </Card>
+      ) : null}
       <View style={styles.head}>
         <View style={styles.flex}>
           <AppText variant="caption" color={colors.accent} style={styles.caps}>

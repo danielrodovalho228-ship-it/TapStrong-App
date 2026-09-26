@@ -4,6 +4,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import { clock } from '@/lib/clock';
 import { deviceWeekStart, localDate } from '@/lib/dates';
 import { kvStorage } from '@/lib/storage';
+import { isUuid, uuid } from '@/lib/uuid';
 
 import type { GeneratedSession, SwapRecord } from '../generator/types';
 
@@ -51,6 +52,7 @@ type Actions = {
   ) => { milestone: boolean };
   discard: (id: string) => void;
   setNextFocus: (focus: NextFocus) => void;
+  markSynced: (ids: string[], at: string) => void;
   reset: () => void;
 };
 
@@ -73,7 +75,7 @@ export const useWorkoutStore = create<Data & Actions>()(
 
         create: (session, kind = 'regular') => {
           const now = clock.now();
-          const id = `w${now.getTime().toString(36)}${get().workouts.length.toString(36)}`;
+          const id = uuid();
           const record: WorkoutRecord = {
             id,
             kind,
@@ -165,12 +167,25 @@ export const useWorkoutStore = create<Data & Actions>()(
 
         setNextFocus: (nextFocus) => set({ nextFocus }),
 
+        markSynced: (ids, at) =>
+          set({
+            workouts: get().workouts.map((w) => (ids.includes(w.id) ? { ...w, syncedAt: at } : w)),
+          }),
+
         reset: () => set(initial()),
       };
     },
     {
       name: 'workouts',
-      version: 1,
+      version: 2,
+      // v1 ids were short strings; sync needs uuids (Phase 5).
+      migrate: (persisted, version) => {
+        const state = persisted as Data;
+        if (version < 2) {
+          state.workouts = state.workouts.map((w) => (isUuid(w.id) ? w : { ...w, id: uuid() }));
+        }
+        return state;
+      },
       storage: createJSONStorage(() => kvStorage),
       partialize: (s) => ({
         workouts: s.workouts,

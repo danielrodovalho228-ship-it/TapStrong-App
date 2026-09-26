@@ -877,7 +877,10 @@
       "streak_other": "Day {{count}} streak",
       "time": "Time",
       "sets": "Sets",
-      "home": "Back to home"
+      "home": "Back to home",
+      "share": "Share my map",
+      "save": "Save my progress",
+      "seeMilestone": "See my milestone"
     },
     "legend": {
       "main": "Main target today",
@@ -906,5 +909,84 @@
     },
     "restFor": "rest {{seconds}} s",
     "demoPrototype": "Prototype demo · dev build only"
+  },
+  "account": {
+    "eyebrow": "Your account",
+    "eyebrowDone": "First workout · done",
+    "title": "Save your muscle map",
+    "body": "Create a free account so your streak, body map and restrictions are never lost. No card needed.",
+    "savedTitle": "Progress saved",
+    "savedBody": "Saved to {{email}}. Your workouts copy to your account after each session.",
+    "email": "Email",
+    "sendCode": "Email me a code",
+    "code": "6-digit code",
+    "confirm": "Save my progress",
+    "codeSent": "We sent a code to {{email}}. It can take a minute.",
+    "changeEmail": "Use a different email",
+    "notNow": "Not now",
+    "syncNow": "Sync now",
+    "synced": "Everything is saved.",
+    "signOut": "Sign out",
+    "reminders": "Workout reminders",
+    "remindersDetail": "{{days}} at {{time}}",
+    "streakSaver": "Streak saver",
+    "streakSaverDetail": "One nudge at {{time}} if you haven't moved",
+    "permissionDenied": "Notifications are off for TapStrong. Turn them on in your phone's settings.",
+    "under13": "Under 13? A parent or guardian creates your profile from their Family plan.",
+    "terms": "By continuing you agree to the Terms and Privacy Policy. TapStrong is not medical advice.",
+    "errors": {
+      "invalid": "That email doesn't look right.",
+      "offline": "Can't reach TapStrong right now. Check your connection and try again.",
+      "rate_limited": "Too many codes in a short time. Wait a minute and try again.",
+      "error": "Something went wrong. Try again.",
+      "wrongCode": "That code didn't work. Check it, or ask for a new one."
+    }
+  },
+  "share": {
+    "title": "Share today",
+    "eyebrow": "Workout {{n}} · {{date}}",
+    "cardTitle": "My muscle map",
+    "workouts_one": "{{count}} workout",
+    "workouts_other": "{{count}} workouts",
+    "sets_one": "{{count}} set",
+    "sets_other": "{{count}} sets",
+    "tagline": "Tap. Talk. Train. · tapstrong.app",
+    "shareImage": "Share my map",
+    "shareLink": "Send my invite link",
+    "inviteMessage": "I'm training with TapStrong. Join me: {{link}}",
+    "saveForLink": "Save your account to get your own invite link.",
+    "failed": "Couldn't share the image on this device."
+  },
+  "milestone": {
+    "eyebrow": "New milestone",
+    "title_one": "{{count}}-day streak",
+    "title_other": "{{count}}-day streak",
+    "body": "A full week of showing up. You earned 1 streak freeze for a busy day.",
+    "bodyMax": "A full week of showing up. Your streak freezes are full (2).",
+    "bodyNoFreeze": "A full week of showing up. Every active day counts.",
+    "dayActive": "{{day}}: active",
+    "dayRest": "{{day}}: rest",
+    "badges": "Your badges",
+    "progress": "{{done}} of {{total}}",
+    "badge": {
+      "first_workout": "First workout",
+      "streak_7": "7-day streak",
+      "first_pr": "First PR",
+      "full_body_week": "Full-body week",
+      "streak_30": "30-day streak"
+    },
+    "share": "Share my streak",
+    "keepGoing": "Keep going"
+  },
+  "notifications": {
+    "reminder": {
+      "title": "Time to train",
+      "body": "Your workout is ready: warm-up, main work, cool-down."
+    },
+    "streakSaver": {
+      "title_one": "Keep your {{count}}-day streak",
+      "title_other": "Keep your {{count}}-day streak",
+      "body": "A short session or a mobility break counts. You've got this."
+    }
   }
 }

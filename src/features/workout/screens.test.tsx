@@ -11,6 +11,7 @@ import PlayerScreen from '@/app/workout/[id]/play';
 import RestScreen from '@/app/workout/[id]/rest';
 import { generateSession } from '@/features/generator';
 import { inputFromProfile } from '@/features/generator/fromProfile';
+import { useAccountStore } from '@/features/account/store';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { useRestrictionsStore } from '@/features/restrictions/store';
 import { setAnalyticsSink } from '@/lib/analytics';
@@ -403,6 +404,30 @@ describe('Exit (mockup 13) and Done (mockup 14)', () => {
     await fireEvent.press(later!);
     expect(workouts().nextFocus).toBe('legs');
     expect(screen.getByText(/go first next time/)).toBeTruthy();
+  });
+
+  it('offers share and save progress, and links a new milestone', async () => {
+    await setUp('gym', 1);
+    const w = current();
+    await act(() => {
+      const m = w.session.items.find((i) => i.role === 'main')!;
+      workouts().logSet(w.id, { itemId: m.id, exerciseId: m.exerciseId, setNo: 1, reps: 10 });
+      workouts().finish(w.id, 'partial');
+      useAccountStore.getState().reset();
+      useAccountStore.getState().update({
+        milestone: { streak: 7, workoutId: w.id, at: '2026-09-26T12:00:00Z' },
+      });
+    });
+    await render(<DoneScreen />);
+    await fireEvent.press(screen.getByRole('button', { name: 'Save my progress' }));
+    expect(mockRouter.push).toHaveBeenCalledWith({
+      pathname: '/account',
+      params: { from: 'done' },
+    });
+    await fireEvent.press(screen.getByRole('button', { name: 'Share my map' }));
+    expect(mockRouter.push).toHaveBeenCalledWith('/share');
+    await fireEvent.press(screen.getByRole('button', { name: 'See my milestone' }));
+    expect(mockRouter.push).toHaveBeenCalledWith('/milestone');
   });
 
   it('"Add 10 min" creates a short finisher with warm-up and cool-down', async () => {

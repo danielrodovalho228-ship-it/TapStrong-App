@@ -877,7 +877,10 @@
       "streak_other": "{{count}} dias seguidos",
       "time": "Tempo",
       "sets": "Séries",
-      "home": "Voltar ao início"
+      "home": "Voltar ao início",
+      "share": "Compartilhar meu mapa",
+      "save": "Salvar meu progresso",
+      "seeMilestone": "Ver minha conquista"
     },
     "legend": {
       "main": "Alvo principal hoje",
@@ -906,5 +909,84 @@
     },
     "restFor": "descanso {{seconds}} s",
     "demoPrototype": "Demo de protótipo · só no desenvolvimento"
+  },
+  "account": {
+    "eyebrow": "Sua conta",
+    "eyebrowDone": "Primeiro treino · feito",
+    "title": "Salve seu mapa muscular",
+    "body": "Crie uma conta grátis para nunca perder sua sequência, seu mapa do corpo e suas restrições. Sem cartão.",
+    "savedTitle": "Progresso salvo",
+    "savedBody": "Salvo em {{email}}. Seus treinos são copiados para a conta depois de cada sessão.",
+    "email": "E-mail",
+    "sendCode": "Me mande um código",
+    "code": "Código de 6 dígitos",
+    "confirm": "Salvar meu progresso",
+    "codeSent": "Enviamos um código para {{email}}. Pode levar um minuto.",
+    "changeEmail": "Usar outro e-mail",
+    "notNow": "Agora não",
+    "syncNow": "Sincronizar agora",
+    "synced": "Está tudo salvo.",
+    "signOut": "Sair",
+    "reminders": "Lembretes de treino",
+    "remindersDetail": "{{days}} às {{time}}",
+    "streakSaver": "Salva-sequência",
+    "streakSaverDetail": "Um aviso às {{time}} se você ainda não se mexeu",
+    "permissionDenied": "As notificações do TapStrong estão desligadas. Ligue nos ajustes do celular.",
+    "under13": "Menos de 13 anos? Um pai, mãe ou responsável cria seu perfil pelo plano Família.",
+    "terms": "Ao continuar, você aceita os Termos e a Política de Privacidade. O TapStrong não é orientação médica.",
+    "errors": {
+      "invalid": "Esse e-mail não parece certo.",
+      "offline": "Não foi possível falar com o TapStrong agora. Confira sua conexão e tente de novo.",
+      "rate_limited": "Muitos códigos em pouco tempo. Espere um minuto e tente de novo.",
+      "error": "Algo deu errado. Tente de novo.",
+      "wrongCode": "Esse código não funcionou. Confira ou peça um novo."
+    }
+  },
+  "share": {
+    "title": "Compartilhar hoje",
+    "eyebrow": "Treino {{n}} · {{date}}",
+    "cardTitle": "Meu mapa muscular",
+    "workouts_one": "{{count}} treino",
+    "workouts_other": "{{count}} treinos",
+    "sets_one": "{{count}} série",
+    "sets_other": "{{count}} séries",
+    "tagline": "Tap. Talk. Train. · tapstrong.app",
+    "shareImage": "Compartilhar meu mapa",
+    "shareLink": "Enviar meu link de convite",
+    "inviteMessage": "Estou treinando com o TapStrong. Vem comigo: {{link}}",
+    "saveForLink": "Salve sua conta para ter seu próprio link de convite.",
+    "failed": "Não foi possível compartilhar a imagem neste aparelho."
+  },
+  "milestone": {
+    "eyebrow": "Nova conquista",
+    "title_one": "{{count}} dia seguido",
+    "title_other": "{{count}} dias seguidos",
+    "body": "Uma semana inteira de presença. Você ganhou 1 proteção de sequência para um dia corrido.",
+    "bodyMax": "Uma semana inteira de presença. Suas proteções de sequência estão cheias (2).",
+    "bodyNoFreeze": "Uma semana inteira de presença. Todo dia ativo conta.",
+    "dayActive": "{{day}}: ativo",
+    "dayRest": "{{day}}: descanso",
+    "badges": "Suas medalhas",
+    "progress": "{{done}} de {{total}}",
+    "badge": {
+      "first_workout": "Primeiro treino",
+      "streak_7": "7 dias seguidos",
+      "first_pr": "Primeiro recorde",
+      "full_body_week": "Semana de corpo inteiro",
+      "streak_30": "30 dias seguidos"
+    },
+    "share": "Compartilhar minha sequência",
+    "keepGoing": "Continuar"
+  },
+  "notifications": {
+    "reminder": {
+      "title": "Hora de treinar",
+      "body": "Seu treino está pronto: aquecimento, parte principal e desaquecimento."
+    },
+    "streakSaver": {
+      "title_one": "Mantenha seu {{count}} dia seguido",
+      "title_other": "Mantenha seus {{count}} dias seguidos",
+      "body": "Uma sessão curta ou um momento de mobilidade já conta. Você consegue."
+    }
   }
 }

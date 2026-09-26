@@ -3,6 +3,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { clock } from '@/lib/clock';
 import { kvStorage } from '@/lib/storage';
+import { isUuid, uuid } from '@/lib/uuid';
 
 import type { PainArea } from '../onboarding/options';
 import type { Side } from '../workout/types';
@@ -39,7 +40,7 @@ export const useRestrictionsStore = create<State>()(
           items: [
             ...get().items,
             {
-              id: `r${now.getTime().toString(36)}${get().items.length}`,
+              id: uuid(),
               area,
               side,
               source,
@@ -53,7 +54,14 @@ export const useRestrictionsStore = create<State>()(
     }),
     {
       name: 'restrictions',
-      version: 1,
+      version: 2,
+      migrate: (persisted, version) => {
+        const state = persisted as { items: Restriction[] };
+        if (version < 2) {
+          state.items = state.items.map((r) => (isUuid(r.id) ? r : { ...r, id: uuid() }));
+        }
+        return state as State;
+      },
       storage: createJSONStorage(() => kvStorage),
       partialize: (s) => ({ items: s.items }),
     },

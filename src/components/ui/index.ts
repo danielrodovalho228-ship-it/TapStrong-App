@@ -17,3 +17,4 @@ export * from './TextField';
 export * from './TextLink';
 export * from './Stepper';
 export * from './Checkbox';
+export * from './ToggleRow';

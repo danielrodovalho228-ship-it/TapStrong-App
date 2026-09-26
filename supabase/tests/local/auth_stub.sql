@@ -6,7 +6,7 @@ do $$ begin
 end $$;
 
 create schema if not exists auth;
-create table if not exists auth.users (id uuid primary key);
+create table if not exists auth.users (id uuid primary key, is_anonymous boolean not null default false);
 
 create or replace function auth.uid() returns uuid
 language sql stable

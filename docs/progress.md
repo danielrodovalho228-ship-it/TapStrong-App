@@ -344,3 +344,80 @@ Telas conferidas com os mockups 01 a 05, na ordem do fluxo. Tudo local, sem cont
   - só no build de desenvolvimento, com a mesma proteção dos rascunhos (`expo-video` instalado; loop sem som);
   - como usar: copie os `ex-*.mp4` para `assets/prototype/`, diga em `map.json` qual exercício cada vídeo mostra e rode `npm run prototype:videos`;
   - `npm run bundle:check` agora também falha se o mapa de vídeos ou qualquer `.mp4` aparecer num bundle de produção. Testei com um vídeo falso nos dois sentidos: com a proteção, o bundle sai limpo; sem ela, a checagem falha.
+
+## Fase 5 — Conta e crescimento
+
+### Feito
+
+- **Salvar progresso (mockup 16):**
+  - conta por **código no e-mail** (6 dígitos, sem senha e sem link);
+  - o usuário anônimo que o coach já usa ganha o e-mail: **é a mesma conta**, e nada se perde;
+  - se o e-mail já tem conta, o app entra nela e copia os dados do celular para lá;
+  - "Agora não" fica lembrado;
+  - aparece como "Salvar meu progresso" na tela de concluído;
+  - modo criança não vê o formulário, só o aviso de que o responsável cria o perfil pelo plano Família.
+- **Sincronização:** depois de salvar, e após cada treino, o celular copia para a conta:
+  - perfil, checagem de saúde, preferências, metas por músculo, restrições, dias seguidos, atividade muscular e medalhas;
+  - os treinos concluídos, com itens, séries, trocas e relatos de dor.
+
+  Cada treino é copiado uma vez, e repetir não duplica. Perfis de criança nunca sincronizam a partir do celular da criança (isso fica para a Fase 6, com o responsável). Treinos feitos com exercícios de rascunho não sobem, porque o banco só aceita exercícios liberados; por isso, hoje no desenvolvimento os treinos ficam no celular.
+- **Cartão de compartilhamento (mockup 15):**
+  - mapa muscular de hoje, dias seguidos, treinos, minutos e séries;
+  - o botão gera a imagem e abre o compartilhamento do celular;
+  - "Enviar meu link de convite" aparece quando a conta está salva;
+  - escondido no modo criança;
+  - o cartão mostra só o mapa, nunca fotos, medidas ou dados de saúde.
+- **Convites:**
+  - cada conta salva tem um código de 7 letras, e o link é `tapstrong://r/CÓDIGO` (ou `https://tapstrong.app/r/CÓDIGO` quando o domínio existir; é só preencher `EXPO_PUBLIC_SHARE_BASE_URL`);
+  - quem abre o link guarda o código, que é registrado quando a pessoa salva a conta;
+  - uma vez por pessoa, nunca com o próprio código;
+  - contas anônimas e perfis de criança não geram código.
+- **Marcos (mockup 24):**
+  - a cada 7 dias seguidos, a tela de concluído mostra "Ver minha conquista";
+  - a tela tem a semana, as medalhas (primeiro treino, 7 dias, primeiro recorde, semana de corpo inteiro, 30 dias) e "Compartilhar minha sequência" (fora do modo criança).
+- **Notificações (locais, sem servidor):**
+  - lembretes nos dias de treino (3 dias → seg, qua e sex) no horário escolhido;
+  - "Salva-sequência": um aviso às 20h se a sequência está viva e nada foi registrado no dia;
+  - a permissão só é pedida quando a pessoa liga a opção;
+  - tudo é reagendado quando o treino, a sequência ou o idioma mudam.
+- **Banco:**
+  - migration `account_growth` com referral_codes, referrals e badges, com RLS; códigos e convites só são gravados pelas funções do banco;
+  - aplicada no Supabase;
+  - SPEC §7 atualizada.
+- **Pacotes novos (gratuitos, do Expo):** expo-notifications, expo-sharing, react-native-view-shot.
+
+### Testes
+
+- `npm run check`: **306 testes** (eram 276), lint, typecheck e Deno limpos.
+  - Sincronização: mapeamento completo; ids do banco; rascunhos pulados; nunca duplica; criança bloqueada; ordem de gravação; parada no primeiro erro; reaproveita o perfil ao entrar numa conta existente.
+  - Conta por e-mail: upgrade do anônimo; conta já existente; código errado; limite de envio; sem conexão.
+  - Notificações, medalhas e formato do código de convite.
+  - Telas: salvar progresso, código errado, "Agora não", permissão negada, modo criança; cartão (com e sem conta, escondido para criança); marco; link de convite; botões da tela de concluído.
+- `npm run db:test`: passa, incluindo `account_growth.sql`:
+  - o código é o mesmo sempre;
+  - o próprio código não vale;
+  - só uma vez por pessoa;
+  - anônimo não gera código;
+  - ninguém grava código direto;
+  - medalhas com RLS.
+- `npm run bundle:check`: limpo.
+
+### Como testar
+
+1. `git pull`, depois `npm install`, depois `npx expo start`.
+2. Termine um treino e toque em "Salvar meu progresso". Digite seu e-mail e o código que chegar (veja o passo 1 das perguntas abaixo antes).
+3. Toque em "Compartilhar meu mapa".
+4. Na tela de conta, ligue "Lembretes de treino".
+5. Link de convite: abra `tapstrong://r/ABCDEFG` no celular com o app instalado.
+
+### Perguntas em aberto
+
+1. **Código no e-mail — ajuste no painel do Supabase** (sem isso, o e-mail chega com link em vez de código). Em Authentication → Emails → Templates, coloque `{{ .Token }}` no corpo de:
+   - **Change Email Address** (é o de quem salva o progresso pela primeira vez);
+   - **Magic Link** (é o de quem entra numa conta que já existe).
+
+   O e-mail padrão do Supabase tem limite baixo de envio; para lançar, vale configurar um SMTP próprio (Resend e SendGrid têm plano grátis). Isso é um serviço externo, então só com o seu OK.
+2. **Apple e Google:** os botões do mockup ficam para quando existirem as contas de desenvolvedor (Apple: "Sign in with Apple"; Google: um client ID OAuth). Quando tiver, me passe (sem segredos no chat) e eu ligo. Detalhe: na App Store, se houver login com Google, a Apple exige o login com Apple também.
+3. **Recompensa do convite:** o mockup diz "Friends who join with your link get 1 free week, and so do you". Isso mexe com pagamento, então deixei só o registro do convite, sem prometer a semana grátis na tela. Confirma a recompensa para a Fase 6?
+4. **Excluir conta:** a Apple exige que quem cria conta no app possa excluí-la pelo próprio app. Como apagar dados precisa do seu OK: posso fazer na Fase 6 ou 8 (apaga a conta e todos os dados dela, com confirmação)?
+5. **Coach:** a rede deste ambiente ainda bloqueia `vycdrotqkjwvkzgjovpb.supabase.co`; testei agora e continua bloqueado. A liberação pode valer só para sessões novas. Se preferir, teste no Expo Go.

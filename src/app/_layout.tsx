@@ -13,6 +13,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { useNotificationSync } from '@/features/notifications/useNotificationSync';
 import { useSyncProfileSettings } from '@/features/onboarding/sync';
 import { colors } from '@/theme';
 
@@ -29,6 +30,7 @@ export default function RootLayout() {
   });
   const ready = fontsLoaded || !!fontError;
   useSyncProfileSettings();
+  useNotificationSync();
 
   useEffect(() => {
     if (ready) void SplashScreen.hideAsync();
@@ -53,6 +55,17 @@ export default function RootLayout() {
               presentation: 'formSheet',
               sheetGrabberVisible: true,
               sheetAllowedDetents: [0.92],
+            }}
+          />
+          <Stack.Screen
+            name="share"
+            options={{ contentStyle: { backgroundColor: colors.dark.background } }}
+          />
+          <Stack.Screen
+            name="milestone"
+            options={{
+              animation: 'fade',
+              contentStyle: { backgroundColor: colors.dark.background },
             }}
           />
         </Stack>

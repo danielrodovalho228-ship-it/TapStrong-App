@@ -877,7 +877,10 @@
       "streak_other": "Racha de {{count}} días",
       "time": "Tiempo",
       "sets": "Series",
-      "home": "Volver al inicio"
+      "home": "Volver al inicio",
+      "share": "Compartir mi mapa",
+      "save": "Guardar mi progreso",
+      "seeMilestone": "Ver mi logro"
     },
     "legend": {
       "main": "Objetivo principal hoy",
@@ -906,5 +909,84 @@
     },
     "restFor": "descanso {{seconds}} s",
     "demoPrototype": "Demo de prototipo · solo desarrollo"
+  },
+  "account": {
+    "eyebrow": "Tu cuenta",
+    "eyebrowDone": "Primer entrenamiento · hecho",
+    "title": "Guarda tu mapa muscular",
+    "body": "Crea una cuenta gratis para no perder nunca tu racha, tu mapa del cuerpo ni tus restricciones. Sin tarjeta.",
+    "savedTitle": "Progreso guardado",
+    "savedBody": "Guardado en {{email}}. Tus entrenamientos se copian a tu cuenta después de cada sesión.",
+    "email": "Correo",
+    "sendCode": "Envíame un código",
+    "code": "Código de 6 dígitos",
+    "confirm": "Guardar mi progreso",
+    "codeSent": "Enviamos un código a {{email}}. Puede tardar un minuto.",
+    "changeEmail": "Usar otro correo",
+    "notNow": "Ahora no",
+    "syncNow": "Sincronizar ahora",
+    "synced": "Todo está guardado.",
+    "signOut": "Cerrar sesión",
+    "reminders": "Recordatorios de entrenamiento",
+    "remindersDetail": "{{days}} a las {{time}}",
+    "streakSaver": "Salvavidas de racha",
+    "streakSaverDetail": "Un aviso a las {{time}} si no te has movido",
+    "permissionDenied": "Las notificaciones de TapStrong están desactivadas. Actívalas en los ajustes del teléfono.",
+    "under13": "¿Menor de 13? Un padre, madre o tutor crea tu perfil desde su plan familiar.",
+    "terms": "Al continuar aceptas los Términos y la Política de privacidad. TapStrong no es consejo médico.",
+    "errors": {
+      "invalid": "Ese correo no parece correcto.",
+      "offline": "No podemos conectar con TapStrong ahora. Revisa tu conexión e inténtalo de nuevo.",
+      "rate_limited": "Demasiados códigos en poco tiempo. Espera un minuto e inténtalo de nuevo.",
+      "error": "Algo salió mal. Inténtalo de nuevo.",
+      "wrongCode": "Ese código no funcionó. Revísalo o pide uno nuevo."
+    }
+  },
+  "share": {
+    "title": "Compartir hoy",
+    "eyebrow": "Entrenamiento {{n}} · {{date}}",
+    "cardTitle": "Mi mapa muscular",
+    "workouts_one": "{{count}} entrenamiento",
+    "workouts_other": "{{count}} entrenamientos",
+    "sets_one": "{{count}} serie",
+    "sets_other": "{{count}} series",
+    "tagline": "Tap. Talk. Train. · tapstrong.app",
+    "shareImage": "Compartir mi mapa",
+    "shareLink": "Enviar mi enlace de invitación",
+    "inviteMessage": "Estoy entrenando con TapStrong. Únete: {{link}}",
+    "saveForLink": "Guarda tu cuenta para tener tu propio enlace de invitación.",
+    "failed": "No se pudo compartir la imagen en este dispositivo."
+  },
+  "milestone": {
+    "eyebrow": "Nuevo logro",
+    "title_one": "Racha de {{count}} día",
+    "title_other": "Racha de {{count}} días",
+    "body": "Una semana entera cumpliendo. Ganaste 1 protección de racha para un día ocupado.",
+    "bodyMax": "Una semana entera cumpliendo. Tus protecciones de racha están completas (2).",
+    "bodyNoFreeze": "Una semana entera cumpliendo. Cada día activo cuenta.",
+    "dayActive": "{{day}}: activo",
+    "dayRest": "{{day}}: descanso",
+    "badges": "Tus insignias",
+    "progress": "{{done}} de {{total}}",
+    "badge": {
+      "first_workout": "Primer entrenamiento",
+      "streak_7": "Racha de 7 días",
+      "first_pr": "Primer récord",
+      "full_body_week": "Semana de cuerpo completo",
+      "streak_30": "Racha de 30 días"
+    },
+    "share": "Compartir mi racha",
+    "keepGoing": "Seguir"
+  },
+  "notifications": {
+    "reminder": {
+      "title": "Hora de entrenar",
+      "body": "Tu entrenamiento está listo: calentamiento, parte principal y vuelta a la calma."
+    },
+    "streakSaver": {
+      "title_one": "Mantén tu racha de {{count}} día",
+      "title_other": "Mantén tu racha de {{count}} días",
+      "body": "Una sesión corta o un rato de movilidad cuenta. Tú puedes."
+    }
   }
 }

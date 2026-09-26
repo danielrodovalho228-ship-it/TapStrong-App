@@ -4,6 +4,8 @@ import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
 import { localDate } from '@/lib/dates';
 
+import { syncNow } from '../account/cloud';
+import { useAccountStore } from '../account/store';
 import { devLibrary } from '../exercises/library';
 import type { Exercise } from '../exercises/types';
 import { generateSession } from '../generator';
@@ -73,5 +75,16 @@ export function useBodyStates() {
 export function endWorkout(id: string, status: 'done' | 'partial') {
   const { milestone } = useWorkoutStore.getState().finish(id, status);
   track(status === 'done' ? 'workout_completed' : 'workout_ended_early');
-  if (milestone) track('streak_milestone');
+  if (milestone) {
+    track('streak_milestone');
+    useAccountStore.getState().update({
+      milestone: {
+        streak: useWorkoutStore.getState().streak.current,
+        workoutId: id,
+        at: clock.now().toISOString(),
+      },
+    });
+  }
+  // Copies the workout to the account when progress is saved (no-op otherwise).
+  void syncNow();
 }

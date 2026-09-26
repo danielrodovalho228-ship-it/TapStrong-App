@@ -54,6 +54,8 @@ export type WorkoutRecord = {
   skipped: string[];
   swaps: StoredSwap[];
   pains: PainReport[];
+  /** Set once the finished workout is copied to the account (Phase 5). */
+  syncedAt?: string;
 };
 
 export type NextFocus = MovementGroup | null;
