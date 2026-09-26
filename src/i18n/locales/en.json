@@ -11,7 +11,8 @@
     "notNow": "Not now",
     "add": "Add",
     "remove": "Remove",
-    "edit": "Edit"
+    "edit": "Edit",
+    "separator": " · "
   },
   "language": {
     "en": "English",
@@ -313,9 +314,95 @@
     "cta": "Looks right"
   },
   "next": {
-    "title": "Body map is next",
-    "body": "Your answers are saved on this phone. The body map and goals arrive in the next build phase.",
+    "title": "Your goals are set",
+    "body": "Your body map and goals are saved on this phone. The workout generator arrives in the next build phase.",
     "review": "Review my plan",
-    "restart": "Start over"
+    "restart": "Start over",
+    "bodyMap": "Edit body map"
+  },
+  "bodyMap": {
+    "title": "Tap a muscle",
+    "subtitle": "Matched to your age · change body or age anytime",
+    "male": "Male",
+    "female": "Female",
+    "bodyModel": "Body model",
+    "ageModel": "Age model",
+    "ageOption": "Age {{range}}",
+    "bands": {
+      "kid": "9–12",
+      "teen": "13–17",
+      "young": "18–29",
+      "adult": "30–44",
+      "mid": "45–59",
+      "senior": "60–74",
+      "elder": "75+"
+    },
+    "view": "Body view",
+    "front": "Front",
+    "back": "Back",
+    "hint": "Tap a dot to select. Front and back for every body.",
+    "selectedCount_one": "{{count}} area selected",
+    "selectedCount_other": "{{count}} areas selected",
+    "none": "No areas yet. Tap a dot on the body.",
+    "chipHint": "Tap a chip to change its goal",
+    "changeGoal": "{{muscle}}, {{goal}}. Change goal",
+    "removeArea": "Remove {{muscle}}",
+    "setGoals": "Set goals"
+  },
+  "goalsSheet": {
+    "goalFor": "Goal for this area",
+    "goals": {
+      "grow": {
+        "title": "Grow",
+        "desc": "More size and fullness"
+      },
+      "firm": {
+        "title": "Firm & tone",
+        "descAdult": "Tighter look + fat-loss finisher",
+        "descMinor": "Tighter look + short cardio finisher"
+      },
+      "strengthen": {
+        "title": "Strengthen (Repair)"
+      },
+      "balance": {
+        "title": "Balance left & right"
+      },
+      "mobility": {
+        "title": "Mobility or pain relief"
+      }
+    },
+    "exercises": "Exercises",
+    "sets": "Sets each",
+    "days": "Days a week",
+    "decrease": "Decrease {{what}}",
+    "increase": "Increase {{what}}",
+    "generate": "Generate my workout"
+  },
+  "muscleAnatomy": {
+    "chest": "Pectoralis major",
+    "abs": "Rectus abdominis",
+    "traps": "Trapezius",
+    "shoulders": "Deltoid · front head",
+    "upperChest": "Pectoralis major · clavicular head",
+    "midChest": "Pectoralis major · sternal head",
+    "lowerChest": "Pectoralis major · lower fibers",
+    "biceps": "Biceps brachii",
+    "forearms": "Wrist flexors and extensors",
+    "upperAbs": "Rectus abdominis · upper",
+    "lowerAbs": "Rectus abdominis · lower",
+    "obliques": "External and internal obliques",
+    "hips": "Hip flexors",
+    "adductors": "Hip adductors",
+    "quads": "Quadriceps",
+    "knees": "Muscles around the knee",
+    "shins": "Tibialis anterior",
+    "rearDelts": "Deltoid · rear head",
+    "upperBack": "Rhomboids and middle trapezius",
+    "lats": "Latissimus dorsi",
+    "triceps": "Triceps brachii",
+    "lowerBack": "Erector spinae",
+    "glutes": "Gluteus maximus and medius",
+    "hamstrings": "Hamstrings",
+    "calves": "Gastrocnemius and soleus"
   }
 }

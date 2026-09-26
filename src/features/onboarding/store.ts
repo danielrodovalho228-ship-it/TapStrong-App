@@ -4,7 +4,8 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import type { SupportedLocale } from '@/i18n';
 import { kvStorage } from '@/lib/storage';
 
-import { NEUTRAL_BODY_AVAILABLE } from '../bodymap/images';
+import { NEUTRAL_BODY_AVAILABLE, type BodySex, type BodyView } from '../bodymap/images';
+import type { BodyBand } from '../profile/age';
 import { deviceUnits, type Units } from '../profile/units';
 
 import {
@@ -50,6 +51,11 @@ export type OnboardingData = {
   completedSteps: InterviewStep[];
   safetyDone: boolean;
   onboardingComplete: boolean;
+  /** Body shown on the map; defaults to the profile's band and sex (SPEC §5). */
+  bodyModel: { band?: BodyBand; sex?: BodySex };
+  bodyView: BodyView;
+  exercisesPerSession: number;
+  setsPerExercise: number;
 };
 
 type Actions = {
@@ -77,6 +83,10 @@ export const initialOnboarding = (): OnboardingData => ({
   completedSteps: [],
   safetyDone: false,
   onboardingComplete: false,
+  bodyModel: {},
+  bodyView: 'front',
+  exercisesPerSession: 5,
+  setsPerExercise: 3,
 });
 
 export const useOnboardingStore = create<OnboardingData & Actions>()(

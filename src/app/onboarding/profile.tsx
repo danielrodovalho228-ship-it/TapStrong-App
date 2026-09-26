@@ -74,7 +74,7 @@ export default function ProfileScreen() {
 
   const finish = () => {
     s.update({ onboardingComplete: true });
-    router.replace('/next');
+    router.replace('/body');
   };
 
   return (

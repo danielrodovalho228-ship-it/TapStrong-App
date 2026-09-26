@@ -198,6 +198,6 @@ describe('Profile summary (mockup 05)', () => {
     });
     await fireEvent.press(screen.getByRole('button', { name: 'Looks right' }));
     expect(store().onboardingComplete).toBe(true);
-    expect(mockRouter.replace).toHaveBeenCalledWith('/next');
+    expect(mockRouter.replace).toHaveBeenCalledWith('/body');
   });
 });

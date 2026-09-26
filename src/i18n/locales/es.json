@@ -11,7 +11,8 @@
     "notNow": "Ahora no",
     "add": "Agregar",
     "remove": "Quitar",
-    "edit": "Editar"
+    "edit": "Editar",
+    "separator": " · "
   },
   "language": {
     "en": "English",
@@ -313,9 +314,95 @@
     "cta": "Todo bien"
   },
   "next": {
-    "title": "Sigue el mapa del cuerpo",
-    "body": "Tus respuestas quedaron guardadas en este teléfono. El mapa del cuerpo y los objetivos llegan en la próxima fase.",
+    "title": "Tus objetivos están listos",
+    "body": "Tu mapa del cuerpo y tus objetivos quedaron guardados en este teléfono. El generador de entrenamientos llega en la próxima fase.",
     "review": "Revisar mi plan",
-    "restart": "Empezar de nuevo"
+    "restart": "Empezar de nuevo",
+    "bodyMap": "Editar mapa del cuerpo"
+  },
+  "bodyMap": {
+    "title": "Toca un músculo",
+    "subtitle": "Según tu edad · cambia cuerpo o edad cuando quieras",
+    "male": "Hombre",
+    "female": "Mujer",
+    "bodyModel": "Modelo de cuerpo",
+    "ageModel": "Edad del modelo",
+    "ageOption": "Edad {{range}}",
+    "bands": {
+      "kid": "9–12",
+      "teen": "13–17",
+      "young": "18–29",
+      "adult": "30–44",
+      "mid": "45–59",
+      "senior": "60–74",
+      "elder": "75+"
+    },
+    "view": "Vista del cuerpo",
+    "front": "Frente",
+    "back": "Espalda",
+    "hint": "Toca un punto para elegir. Frente y espalda para cada cuerpo.",
+    "selectedCount_one": "{{count}} zona elegida",
+    "selectedCount_other": "{{count}} zonas elegidas",
+    "none": "Aún no hay zonas. Toca un punto del cuerpo.",
+    "chipHint": "Toca una etiqueta para cambiar su objetivo",
+    "changeGoal": "{{muscle}}, {{goal}}. Cambiar objetivo",
+    "removeArea": "Quitar {{muscle}}",
+    "setGoals": "Definir objetivos"
+  },
+  "goalsSheet": {
+    "goalFor": "Objetivo para esta zona",
+    "goals": {
+      "grow": {
+        "title": "Crecer",
+        "desc": "Más tamaño y volumen"
+      },
+      "firm": {
+        "title": "Tonificar",
+        "descAdult": "Aspecto más firme + final para quemar grasa",
+        "descMinor": "Aspecto más firme + final corto de cardio"
+      },
+      "strengthen": {
+        "title": "Fortalecer (Reparar)"
+      },
+      "balance": {
+        "title": "Equilibrar izquierda y derecha"
+      },
+      "mobility": {
+        "title": "Movilidad o alivio del dolor"
+      }
+    },
+    "exercises": "Ejercicios",
+    "sets": "Series cada uno",
+    "days": "Días por semana",
+    "decrease": "Reducir {{what}}",
+    "increase": "Aumentar {{what}}",
+    "generate": "Generar mi entrenamiento"
+  },
+  "muscleAnatomy": {
+    "chest": "Pectoral mayor",
+    "abs": "Recto abdominal",
+    "traps": "Trapecio",
+    "shoulders": "Deltoides · porción anterior",
+    "upperChest": "Pectoral mayor · porción clavicular",
+    "midChest": "Pectoral mayor · porción esternal",
+    "lowerChest": "Pectoral mayor · fibras inferiores",
+    "biceps": "Bíceps braquial",
+    "forearms": "Flexores y extensores de la muñeca",
+    "upperAbs": "Recto abdominal · parte superior",
+    "lowerAbs": "Recto abdominal · parte inferior",
+    "obliques": "Oblicuos externo e interno",
+    "hips": "Flexores de la cadera",
+    "adductors": "Aductores de la cadera",
+    "quads": "Cuádriceps",
+    "knees": "Músculos alrededor de la rodilla",
+    "shins": "Tibial anterior",
+    "rearDelts": "Deltoides · porción posterior",
+    "upperBack": "Romboides y trapecio medio",
+    "lats": "Dorsal ancho",
+    "triceps": "Tríceps braquial",
+    "lowerBack": "Erectores de la columna",
+    "glutes": "Glúteo mayor y medio",
+    "hamstrings": "Isquiotibiales",
+    "calves": "Gastrocnemio y sóleo"
   }
 }

@@ -1,0 +1,76 @@
+{
+ "landmarks": {
+  "elder-m-front": {
+   "crotch": 298
+  },
+  "elder-f-front": {
+   "crotch": 272
+  },
+  "elder-m-back": {
+   "crotch": 296
+  },
+  "elder-f-back": {
+   "crotch": 280
+  }
+ },
+ "deltas": {
+  "senior-f-front": {
+   "traps": [
+    0,
+    14
+   ],
+   "shoulders": [
+    0,
+    12
+   ],
+   "upperChest": [
+    0,
+    12
+   ],
+   "midChest": [
+    0,
+    14
+   ],
+   "lowerChest": [
+    0,
+    16
+   ],
+   "biceps": [
+    0,
+    14
+   ],
+   "upperAbs": [
+    0,
+    18
+   ],
+   "obliques": [
+    0,
+    20
+   ],
+   "lowerAbs": [
+    0,
+    22
+   ],
+   "forearms": [
+    0,
+    16
+   ]
+  },
+  "kid-f-back": {
+   "glutes": [
+    0,
+    8
+   ]
+  },
+  "teen-f-back": {
+   "glutes": [
+    0,
+    8
+   ],
+   "hamstrings": [
+    0,
+    10
+   ]
+  }
+ }
+}

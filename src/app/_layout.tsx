@@ -45,7 +45,17 @@ export default function RootLayout() {
             headerShown: false,
             contentStyle: { backgroundColor: colors.background },
           }}
-        />
+        >
+          {/* Goals opens as a sheet over the body map (mockup 09). */}
+          <Stack.Screen
+            name="goals"
+            options={{
+              presentation: 'formSheet',
+              sheetGrabberVisible: true,
+              sheetAllowedDetents: [0.92],
+            }}
+          />
+        </Stack>
       </SafeAreaProvider>
     </QueryClientProvider>
   );

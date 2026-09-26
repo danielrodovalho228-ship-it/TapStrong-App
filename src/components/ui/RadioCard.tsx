@@ -6,15 +6,17 @@ import { AppText } from './AppText';
 
 export type RadioCardProps = Omit<PressableProps, 'children' | 'style'> & {
   label: string;
+  /** Optional second line (mockup 09 goal descriptions). */
+  description?: string;
   selected: boolean;
 };
 
 /** Single-choice row (mockup 02 "Who's training?"). */
-export function RadioCard({ label, selected, ...rest }: RadioCardProps) {
+export function RadioCard({ label, description, selected, ...rest }: RadioCardProps) {
   return (
     <Pressable
       accessibilityRole="radio"
-      accessibilityLabel={label}
+      accessibilityLabel={description ? `${label}, ${description}` : label}
       accessibilityState={{ checked: selected }}
       style={({ pressed }) => [
         styles.card,
@@ -26,7 +28,14 @@ export function RadioCard({ label, selected, ...rest }: RadioCardProps) {
       <View style={[styles.dot, selected && styles.dotSelected]}>
         {selected ? <View style={styles.dotInner} /> : null}
       </View>
-      <AppText variant="bodyStrong">{label}</AppText>
+      <View style={styles.text}>
+        <AppText variant="bodyStrong">{label}</AppText>
+        {description ? (
+          <AppText variant="caption" color={colors.muted}>
+            {description}
+          </AppText>
+        ) : null}
+      </View>
     </Pressable>
   );
 }
@@ -41,6 +50,7 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
     paddingHorizontal: spacing.lg,
   },
+  text: { flex: 1, paddingVertical: spacing.sm },
   idle: { borderWidth: 1, borderColor: colors.line },
   selected: { borderWidth: 2, borderColor: colors.ink },
   pressed: { borderColor: colors.ink },

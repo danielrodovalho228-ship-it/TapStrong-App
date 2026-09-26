@@ -57,3 +57,14 @@ describe('database i18n keys', () => {
     }
   });
 });
+
+describe('muscle anatomy names', () => {
+  it('exist in every locale for every muscle (anatomy_i18n_key = muscleAnatomy.<key>)', () => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { MUSCLE_KEYS } = require('@/features/muscles') as typeof import('@/features/muscles');
+    for (const locale of SUPPORTED_LOCALES) {
+      const anatomy = resources[locale].translation.muscleAnatomy as Record<string, string>;
+      for (const key of MUSCLE_KEYS) expect(anatomy[key]).toBeTruthy();
+    }
+  });
+});

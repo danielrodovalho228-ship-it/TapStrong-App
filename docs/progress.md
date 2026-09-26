@@ -106,3 +106,68 @@ Telas conferidas com os mockups 01 a 05, na ordem do fluxo. Tudo local, sem cont
 6. **Corpo neutro:** não existem imagens de corpo neutro no banco. Por enquanto a prévia fica vazia. Quer gerar essas imagens, ou mostramos outro modelo?
 7. **Microfone** do mockup 03: não entrou (a SPEC deixa voz para depois).
 8. **Alerta médico:** exijo tocar em "Entendi" para continuar. Pode ser assim?
+
+## Decisões da Fase 1 aplicadas (27/09/2026)
+
+- **Coach:** Claude Haiku 4.5 como modelo principal e Sonnet 5 como reserva. A reserva entra quando o Haiku dá erro, está sobrecarregado ou recusa.
+- **Proteção de custo:**
+  - Antes de chamar o coach, o app cria uma sessão anônima no Supabase (o login anônimo já está ligado no `config.toml`).
+  - A função recusa chamadas sem sessão e limita a **30 chamadas por usuário por dia** (tabela `coach_usage` + função `consume_coach_call`, com testes).
+  - Na Fase 5, a conta de verdade vai "adotar" essa sessão anônima.
+- **Menores de 18:** "Perder peso" foi trocado por **"Mais condicionamento / energia"** (novo valor `fitness`). A IA também transforma "quero emagrecer" de um adolescente em `fitness`.
+- **Corpo neutro:** opção escondida até as 14 imagens existirem. Quando existirem, basta ligar `NEUTRAL_BODY_AVAILABLE`.
+- **Menores de 13:** continuam bloqueados até a Fase 6.
+
+## Fase 2 — Mapa do corpo e objetivos (27/09/2026)
+
+### Feito
+
+- **Pontos do mapa conferidos nos 28 corpos** (SPEC §5):
+  - Desenhei os pontos da SPEC sobre cada imagem e conferi um por um.
+  - No homem adulto (referência), três pontos da SPEC estavam fora do lugar e foram corrigidos: **quadríceps** (y 340 → 330, estava quase no joelho), **joelhos** (y 383 → 362, estavam abaixo da patela) e **glúteos** nas costas (y 248 → 262, estavam no cós do short).
+  - Nos outros 27 corpos, os pontos são adaptados pela silhueta (cabeça, virilha, pés, largura dos ombros).
+  - Correções manuais onde isso não bastou: 75+ homem e mulher (short e coxas escondem a virilha), mulher 60–74 (tronco mais longo), glúteos da menina e da adolescente.
+  - Resultado em `src/features/bodymap/hotspots.json`. O script em `scripts/hotspots/` refaz tudo e gera as folhas de conferência quando entrarem imagens novas.
+- **Mapa do corpo (08, rota `/body`):**
+  - Homem/Mulher e faixa de idade do modelo, trocáveis a qualquer momento sem mudar o perfil. Frente/Costas.
+  - Pontos que viram laranja com halo ao tocar. Etiquetas escuras "PEITO SUPERIOR · CRESCER" com ×, e tocar numa etiqueta abre o objetivo daquela área.
+  - O "Peito" escolhido na entrevista vira os 3 pontos do peito, e o "Abdômen" vira os 2.
+- **Objetivos (09, rota `/goals`, abre como folha sobre o mapa):**
+  - Miniatura do músculo com o destaque desenhado pelo app, nome anatômico, os 5 objetivos com descrição.
+  - Exercícios, séries e dias por semana com botões − e +.
+  - "Firmar e tonificar" diz "queima de gordura" só para adultos; adolescentes veem "final curto de cardio".
+  - "Gerar meu treino" leva a uma tela provisória até o gerador existir (Fase 3).
+- **Toque:** os pontos do peito ficam a ~18 px um do outro. Cada ponto tem sua área de toque, e um toque entre pontos vai para o mais próximo. O halo é só visual, para nunca roubar o toque do vizinho (achei esse problema no teste no navegador e corrigi).
+- **Leitor de tela:** cada músculo aparece uma vez só, mesmo com dois pontos (esquerdo e direito), nas três plataformas.
+- **Banco:**
+  - Nome anatômico por músculo (`muscles.anatomy_i18n_key`).
+  - Exercícios por treino e séries por exercício em `preferences`.
+- **Fluxo:** o resumo do plano ("Está certo") agora leva ao mapa do corpo.
+
+### Testes
+
+- `npm run check`: lint, typecheck, Deno e **162 testes** (eram 139). Os novos cobrem:
+  - os 28 modelos completos, só com músculos do banco, na vista certa, dentro do quadro e com esquerda/direita na ordem;
+  - toque no ponto mais próximo;
+  - expansão de "peito" e "abdômen";
+  - ordem de prioridade e limites das quantidades;
+  - texto sem "gordura" para adolescentes;
+  - as telas (tocar, remover, frente/costas, trocar modelo sem mudar o perfil, folha de objetivos);
+  - nomes anatômicos nos 3 idiomas.
+- `npm run db:test`: passa, incluindo o limite de chamadas do coach.
+- Fluxo completo no navegador (390×844), das boas-vindas até os objetivos, sem erros.
+
+### Como testar
+
+1. `git pull`, depois `npm install`, depois `npx expo start`.
+2. Faça o onboarding. Em "Está certo" você cai no mapa.
+3. Toque nos pontos, troque Frente/Costas, Homem/Mulher e a idade do modelo.
+4. Toque numa etiqueta para mudar o objetivo, ajuste exercícios, séries e dias, e toque em "Gerar meu treino".
+
+### Perguntas em aberto
+
+1. **Quantidades:** exercícios, séries e dias aparecem na folha de cada músculo (como no mockup), mas valem para o treino inteiro, não por músculo. Pode ser assim?
+2. **Alvos de toque:** os pontos do peito não cabem 44 px cada, por causa da anatomia. Resolvi com "toque vai para o ponto mais próximo". Se quiser, na Fase 8 dá para adicionar zoom com pinça.
+3. **Nomes anatômicos** (ex.: "Peitoral maior · porção clavicular"): convém o revisor certificado conferir junto com os exercícios.
+4. **Modelo de idade:** qualquer pessoa pode escolher qualquer faixa, inclusive a de criança (a SPEC diz "trocar a qualquer momento"). Quer limitar?
+5. **Supabase:** aguardando a URL e a anon key do projeto.

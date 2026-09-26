@@ -5,7 +5,7 @@ import { AppText, Button, Screen } from '@/components/ui';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { colors } from '@/theme';
 
-/** Placeholder after onboarding until the body map lands (Phase 2). */
+/** Placeholder after Goals until the workout generator lands (Phase 3). */
 export default function NextScreen() {
   const { t } = useTranslation();
   const reset = useOnboardingStore((s) => s.reset);
@@ -13,7 +13,12 @@ export default function NextScreen() {
     <Screen
       footer={
         <>
-          <Button label={t('next.review')} onPress={() => router.push('/onboarding/profile')} />
+          <Button label={t('next.bodyMap')} onPress={() => router.replace('/body')} />
+          <Button
+            variant="secondary"
+            label={t('next.review')}
+            onPress={() => router.push('/onboarding/profile')}
+          />
           <Button
             variant="ghost"
             label={t('next.restart')}

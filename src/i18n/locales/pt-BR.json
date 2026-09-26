@@ -11,7 +11,8 @@
     "notNow": "Agora não",
     "add": "Adicionar",
     "remove": "Remover",
-    "edit": "Editar"
+    "edit": "Editar",
+    "separator": " · "
   },
   "language": {
     "en": "English",
@@ -313,9 +314,95 @@
     "cta": "Está certo"
   },
   "next": {
-    "title": "Agora vem o mapa do corpo",
-    "body": "Suas respostas estão salvas neste celular. O mapa do corpo e os objetivos chegam na próxima fase.",
+    "title": "Seus objetivos estão definidos",
+    "body": "Seu mapa do corpo e seus objetivos estão salvos neste celular. O gerador de treinos chega na próxima fase.",
     "review": "Revisar meu plano",
-    "restart": "Recomeçar"
+    "restart": "Recomeçar",
+    "bodyMap": "Editar mapa do corpo"
+  },
+  "bodyMap": {
+    "title": "Toque num músculo",
+    "subtitle": "Conforme sua idade · troque corpo ou idade quando quiser",
+    "male": "Homem",
+    "female": "Mulher",
+    "bodyModel": "Modelo de corpo",
+    "ageModel": "Idade do modelo",
+    "ageOption": "Idade {{range}}",
+    "bands": {
+      "kid": "9–12",
+      "teen": "13–17",
+      "young": "18–29",
+      "adult": "30–44",
+      "mid": "45–59",
+      "senior": "60–74",
+      "elder": "75+"
+    },
+    "view": "Vista do corpo",
+    "front": "Frente",
+    "back": "Costas",
+    "hint": "Toque num ponto para escolher. Frente e costas para cada corpo.",
+    "selectedCount_one": "{{count}} área escolhida",
+    "selectedCount_other": "{{count}} áreas escolhidas",
+    "none": "Nenhuma área ainda. Toque num ponto do corpo.",
+    "chipHint": "Toque numa etiqueta para mudar o objetivo",
+    "changeGoal": "{{muscle}}, {{goal}}. Mudar objetivo",
+    "removeArea": "Remover {{muscle}}",
+    "setGoals": "Definir objetivos"
+  },
+  "goalsSheet": {
+    "goalFor": "Objetivo para esta área",
+    "goals": {
+      "grow": {
+        "title": "Crescer",
+        "desc": "Mais tamanho e volume"
+      },
+      "firm": {
+        "title": "Definir e tonificar",
+        "descAdult": "Visual mais firme + final para queimar gordura",
+        "descMinor": "Visual mais firme + final curto de cardio"
+      },
+      "strengthen": {
+        "title": "Fortalecer (Reparar)"
+      },
+      "balance": {
+        "title": "Equilibrar esquerda e direita"
+      },
+      "mobility": {
+        "title": "Mobilidade ou alívio de dor"
+      }
+    },
+    "exercises": "Exercícios",
+    "sets": "Séries cada",
+    "days": "Dias por semana",
+    "decrease": "Diminuir {{what}}",
+    "increase": "Aumentar {{what}}",
+    "generate": "Gerar meu treino"
+  },
+  "muscleAnatomy": {
+    "chest": "Peitoral maior",
+    "abs": "Reto abdominal",
+    "traps": "Trapézio",
+    "shoulders": "Deltoide · porção anterior",
+    "upperChest": "Peitoral maior · porção clavicular",
+    "midChest": "Peitoral maior · porção esternal",
+    "lowerChest": "Peitoral maior · fibras inferiores",
+    "biceps": "Bíceps braquial",
+    "forearms": "Flexores e extensores do punho",
+    "upperAbs": "Reto abdominal · parte superior",
+    "lowerAbs": "Reto abdominal · parte inferior",
+    "obliques": "Oblíquos externo e interno",
+    "hips": "Flexores do quadril",
+    "adductors": "Adutores do quadril",
+    "quads": "Quadríceps",
+    "knees": "Músculos ao redor do joelho",
+    "shins": "Tibial anterior",
+    "rearDelts": "Deltoide · porção posterior",
+    "upperBack": "Romboides e trapézio médio",
+    "lats": "Grande dorsal",
+    "triceps": "Tríceps braquial",
+    "lowerBack": "Eretores da espinha",
+    "glutes": "Glúteo máximo e médio",
+    "hamstrings": "Isquiotibiais",
+    "calves": "Gastrocnêmio e sóleo"
   }
 }
