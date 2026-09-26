@@ -25,6 +25,8 @@ export type Restriction = {
 type State = {
   items: Restriction[];
   add: (r: Pick<Restriction, 'area' | 'side' | 'source'>) => void;
+  /** "Mark healed" turns a restriction off; it stays in the history. */
+  setActive: (id: string, active: boolean) => void;
   reset: () => void;
 };
 
@@ -50,6 +52,8 @@ export const useRestrictionsStore = create<State>()(
           ],
         });
       },
+      setActive: (id, active) =>
+        set({ items: get().items.map((r) => (r.id === id ? { ...r, active } : r)) }),
       reset: () => set({ items: [] }),
     }),
     {

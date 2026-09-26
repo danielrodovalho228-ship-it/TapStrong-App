@@ -4,6 +4,8 @@ import { useBillingStore } from '../billing/store';
 import { useFamilyStore } from '../family/store';
 import { clearSnapshots } from '../family/switch';
 import { useOnboardingStore } from '../onboarding/store';
+import { deleteAllPhotos } from '../progress/photos';
+import { useProgressStore } from '../progress/store';
 import { useRestrictionsStore } from '../restrictions/store';
 import { useWorkoutStore } from '../workout/store';
 
@@ -19,6 +21,8 @@ export function wipeLocalData() {
   useWorkoutStore.getState().reset();
   useRestrictionsStore.getState().reset();
   useBillingStore.getState().reset();
+  useProgressStore.getState().reset();
+  deleteAllPhotos();
   useAccountStore.getState().reset();
 }
 

@@ -1,6 +1,7 @@
 """Builds docs/review/exercise-review.xlsx for the certified reviewer (SPEC §2.1).
 
-Source: supabase/seed/exercises.json (the draft library) and the English
+Source: supabase/seed/exercises.json (the draft library),
+supabase/seed/repair_tests.json (the draft Repair check tests) and the English
 strings in src/i18n/locales/en.json. Re-run after any library change:
 
     python3 scripts/build-review-sheet.py
@@ -16,6 +17,7 @@ from openpyxl.worksheet.datavalidation import DataValidation
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 seed = json.load(open(os.path.join(ROOT, 'supabase/seed/exercises.json')))['exercises']
+repair = json.load(open(os.path.join(ROOT, 'supabase/seed/repair_tests.json')))['tests']
 en = json.load(open(os.path.join(ROOT, 'src/i18n/locales/en.json')))
 
 FONT = 'Arial'
@@ -132,6 +134,8 @@ lines = [
      'sensible emphasis (0–1, primary ≥ 0.5)?', False),
     ('2. Safety: are the minimum age, positions and contraindications right? Anything missing?', False),
     ('3. Cues: is the one-line cue correct and safe?', False),
+    ('4. Repair tests (tab "Repair tests"): are the protocol, the "good" target per age mode, the '
+     'contraindications and the muscles each weak result sends to the 6-week plan right?', False),
     ('', False),
     ('How to fill it in', True),
     ('Only the two yellow columns on the "Exercises" tab: "Approve / Fix" (pick from the list) and '
@@ -169,6 +173,7 @@ summary = [
     ('Approved', f'=COUNTIF({count_range},"Approve")'),
     ('To fix', f'=COUNTIF({count_range},"Fix")'),
     ('Not reviewed yet', f'=B{summary_row + 1}-B{summary_row + 2}-B{summary_row + 3}'),
+    ('Repair tests approved', f"=COUNTIF('Repair tests'!$I$2:$I${len(repair) + 1},\"Approve\")"),
 ]
 for i, (label, formula) in enumerate(summary, start=1):
     guide.cell(row=summary_row + i, column=1, value=label).font = Font(name=FONT)
@@ -203,10 +208,76 @@ guide_decision = DataValidation(type='list', formula1='"Approve,Fix"', allow_bla
 guide.add_data_validation(guide_decision)
 guide_decision.add(f'K{example_header + 1}')
 
+# --- Repair tests ----------------------------------------------------------------
+REPAIR_COLUMNS = [
+    ('ID', 20),
+    ('Test', 26),
+    ('How (shown to the user)', 52),
+    ('Result recorded', 24),
+    ('Positions', 22),
+    ('Contraindications', 30),
+    ('"Good" target by mode (kids / teens / adults / 60+)', 30),
+    ('Weak result → plan focus', 40),
+    ('Approve / Fix (Aprovado/Corrigir)', 18),
+    ('Comment (Comentário)', 44),
+]
+KINDS = {
+    'reps': 'Reps in {s} s',
+    'hold': 'Hold time, seconds (max {s})',
+    'sides_hold': 'Hold time per side, seconds (max {s})',
+    'sides_pass': 'Reached / limited, per side',
+}
+GOALS = en['muscleGoals']
+
+
+def repair_row(t):
+    good = t.get('good')
+    unit = 'reps' if t['kind'] == 'reps' else 's'
+    target = (
+        ' / '.join(f"{good[m]} {unit}" for m in ('child', 'teen', 'adult', 'senior'))
+        if good else 'Both sides reached'
+    )
+    focus = f"{GOALS[t['focus']['goal']]}: " + ', '.join(MUSCLE[m] for m in t['focus']['muscles'])
+    return [
+        t['key'],
+        en['repair']['tests'][t['key']]['name'],
+        en['repair']['tests'][t['key']]['how'],
+        KINDS[t['kind']].format(s=t.get('seconds', '')),
+        ', '.join(POSITIONS[p] for p in t['positions']),
+        ', '.join(RISK[c] for c in t['contraindications']) or 'None',
+        target,
+        focus,
+        None,
+        None,
+    ]
+
+
+rt = wb.create_sheet('Repair tests')
+for col, (title, width) in enumerate(REPAIR_COLUMNS, start=1):
+    cell = rt.cell(row=1, column=col, value=title)
+    cell.font = Font(name=FONT, bold=True, color='FFFFFF')
+    cell.fill = HEADER_FILL
+    cell.alignment = Alignment(wrap_text=True, vertical='center')
+    cell.border = BORDER
+    rt.column_dimensions[get_column_letter(col)].width = width
+for r, t in enumerate(repair, start=2):
+    for col, value in enumerate(repair_row(t), start=1):
+        cell = rt.cell(row=r, column=col, value=value)
+        cell.font = Font(name=FONT)
+        cell.alignment = Alignment(wrap_text=True, vertical='top')
+        cell.border = BORDER
+        if col >= len(REPAIR_COLUMNS) - 1:
+            cell.fill = INPUT_FILL
+rt.freeze_panes = 'C2'
+rt.row_dimensions[1].height = 32
+repair_decision = DataValidation(type='list', formula1='"Approve,Fix"', allow_blank=True)
+rt.add_data_validation(repair_decision)
+repair_decision.add(f'I2:I{len(repair) + 1}')
+
 # The progress counters are recalculated by Excel / Google Sheets on open.
 wb.calculation.fullCalcOnLoad = True
 
 out = os.path.join(ROOT, 'docs/review/exercise-review.xlsx')
 os.makedirs(os.path.dirname(out), exist_ok=True)
 wb.save(out)
-print(f'wrote {len(seed)} exercises to {os.path.relpath(out, ROOT)}')
+print(f'wrote {len(seed)} exercises and {len(repair)} Repair tests to {os.path.relpath(out, ROOT)}')

@@ -81,3 +81,19 @@ export function isReviewed(session: GeneratedSession, library: Exercise[]): bool
   const byId = new Map(library.map((e) => [e.id, e]));
   return session.items.every((i) => byId.get(i.exerciseId)?.status === 'released');
 }
+
+/** A Repair session (Phase 7): 15 minutes on the plan's focus muscles. */
+export function repairInput(
+  input: GeneratorInput,
+  focus: { muscleKey: string; goal: 'strengthen' | 'balance' | 'mobility' }[],
+  minutes = 15,
+): GeneratorInput {
+  return {
+    ...input,
+    minutes,
+    exercisesPerSession: 3,
+    muscleGoals: focus.map(({ muscleKey, goal }) => ({ muscleKey, goal })),
+    // Corrective work: no cardio finisher.
+    mainGoals: input.mainGoals.filter((g) => g !== 'lose_weight' && g !== 'fitness'),
+  };
+}

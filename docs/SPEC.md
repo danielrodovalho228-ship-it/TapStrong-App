@@ -150,8 +150,10 @@ Verify every point on every one of the 28 images; bodies differ.
 - **`muscle_activity`**: `profile_id`, `muscle_key`, `last_trained_at`, `volume_7d` (derived, feeds the body colors)
 - **`streaks`**: `profile_id`, `current`, `best`, `freezes_available`, `last_active_date`
 - **`pain_reports`**: `profile_id`, `session_id`, `area`, `side`, `type` (sharp / dull / tired), `action_taken`
-- **`checkins`**: `profile_id`, `week`, `strength_json`, `waist_cm`, `weight_kg`, `whtr`, `bmi`, `note`
-- **`repair_tests`**: `profile_id`, `test_key`, `left_value`, `right_value`, `unit`, `result`, `tested_at`
+- **`checkins`** (Phase 7): `profile_id`, `taken_at`, `strength` (json), `waist_cm`, `weight_kg`, `whtr`, `bmi`. Body fields are refused by a trigger unless the profile is adult or 60+.
+- **`repair_results`** (Phase 7): `profile_id`, `test_key`, `value` or `left_value` + `right_value` (seconds / reps) or `pass_left` + `pass_right`, `tested_at`. The test catalog (`supabase/seed/repair_tests.json`) is a draft until the certified reviewer signs it off, like exercises: development builds only.
+- **`repair_plans`** (Phase 7): `profile_id`, `weeks`, `sessions_per_week`, `focus` (json: muscle + goal), `retest_at`, `ended_at`. Repair sessions use `session_kind = 'repair'`.
+- Before/after photos are never stored on the server: files stay on the phone.
 - **`family_members`**: `owner_id`, `member_profile_id`, `role` (child / parent / partner), `consent_record_id?`
 - **`subscriptions`** (Phase 6): `user_id`, `plan` (free / premium / family), `status` (trial / active / grace / expired), `product_id`, `store`, `trial_ends_at`, `expires_at`, `will_renew`, `first_charged_at`, `last_transaction_id`. Written only by the RevenueCat webhook Edge Function.
 - **`consent_records`** (Phase 6): `owner_id`, `child_profile_id`, `method` (store_transaction), `transaction_ref`, `notice_version`, `accepted_at`, `revoked_at?`
@@ -373,6 +375,7 @@ Never send health details or photos to analytics.
   - RevenueCat, Plans, Paywall, Billing, trial reminder, Family plan + child consent flow + senior profiles.
 - **Phase 7 — Progress & Repair**
   - Progress, Check-in, Before/After (on-device), Repair tests + plan, Restrictions.
+  - Family dashboard for the Family plan owner: each member's workouts, minutes, last workout and streak this week. Never health answers, pain reports or photos.
 - **Phase 8 — Polish & launch prep**
   - Senior mode pass, accessibility, ES/PT-BR, Maestro E2E, Sentry/PostHog, app icons/splash.
   - Store listings, privacy labels, TestFlight / internal testing.

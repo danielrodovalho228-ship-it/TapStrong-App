@@ -713,7 +713,8 @@
   "tabs": {
     "home": "Inicio",
     "body": "Cuerpo",
-    "family": "Familia"
+    "family": "Familia",
+    "progress": "Progreso"
   },
   "home": {
     "title": "Hoy",
@@ -735,7 +736,9 @@
     "recoveryEmpty": "Tu primer entrenamiento colorea los músculos que trabajes.",
     "recoveryNote": "Los colores se apagan a medida que te recuperas. Gris azulado significa que toca entrenarlo.",
     "openBody": "Abrir mapa del cuerpo",
-    "trainingAs": "Entrenando como {{name}}"
+    "trainingAs": "Entrenando como {{name}}",
+    "checkinReady": "Tu revisión de 4 semanas está lista",
+    "checkinBody": "Mira cuánto cambió tu fuerza desde la semana 1."
   },
   "workout": {
     "title": "Tu entrenamiento",
@@ -1130,6 +1133,14 @@
         "offline": "No podemos conectar con TapStrong ahora. Revisa tu conexión e inténtalo de nuevo.",
         "error": "Algo salió mal. Inténtalo de nuevo."
       }
+    },
+    "dashboard": {
+      "title": "Tu familia esta semana",
+      "week_one": "{{count}} entrenamiento esta semana · {{minutes}} min",
+      "week_other": "{{count}} entrenamientos esta semana · {{minutes}} min",
+      "last": "Último entrenamiento: {{date}} · racha {{streak}}",
+      "none": "Aún no hay entrenamientos.",
+      "privacy": "Ves solo entrenamientos y rachas. Las respuestas de salud y los reportes de dolor son privados de cada perfil."
     }
   },
   "deleteAccount": {
@@ -1147,5 +1158,202 @@
       "offline": "No podemos conectar con TapStrong ahora. No se eliminó nada. Inténtalo cuando tengas conexión.",
       "error": "Algo salió mal. No se eliminó nada. Inténtalo de nuevo."
     }
+  },
+  "progress": {
+    "title": "Progreso",
+    "streak": "Racha",
+    "workouts": "Entrenamientos",
+    "sets": "Series",
+    "days_one": "{{count}} día",
+    "days_other": "{{count}} días",
+    "chart": {
+      "title": "Series por semana y músculo",
+      "empty": "Termina un entrenamiento para ver tus series de la semana.",
+      "week_one": "S{{n}} · {{count}}",
+      "week_other": "S{{n}} · {{count}}",
+      "barLabel_one": "Semana {{n}}: {{count}} serie",
+      "barLabel_other": "Semana {{n}}: {{count}} series"
+    },
+    "measurements": "Medidas",
+    "checkinTitle": "Revisión de 4 semanas",
+    "openCheckin": "Revisión de 4 semanas",
+    "checkinReady": "Tu revisión está lista.",
+    "noMeasurements": "Añade tu cintura y tu peso en la próxima revisión. Es opcional.",
+    "strengthOnly": "Tu revisión compara tu fuerza cada 4 semanas.",
+    "waist": "Cintura",
+    "weight": "Peso",
+    "links": {
+      "repair": "Reparación: encuentra puntos débiles",
+      "restrictions": "Mis restricciones",
+      "photos": "Fotos de antes y después"
+    }
+  },
+  "checkin": {
+    "eyebrow": "Semana 1 → semana 4",
+    "title": "Tu revisión de 4 semanas",
+    "strength": "Fuerza",
+    "week1": "Sem 1",
+    "week4": "Sem 4",
+    "change": "Cambio",
+    "noStrength": "Registra el mismo ejercicio en la semana 1 y en la semana 4 para verlo aquí.",
+    "body": "Cuerpo (opcional)",
+    "waist": "Cintura ({{unit}})",
+    "weight": "Peso ({{unit}})",
+    "height": "Estatura ({{unit}})",
+    "lastTime": "Última revisión: cintura {{waist}}, peso {{weight}}",
+    "optional": "Puedes saltarte cualquiera. Se queda en tu perfil y nunca se comparte.",
+    "minorNote": "Tu revisión trata de ponerte más fuerte. Sin medidas corporales para menores de 18.",
+    "whtr": "Cintura/estatura",
+    "was": "era {{value}}",
+    "bands": {
+      "healthy": "Rango saludable",
+      "increased": "Por encima del rango saludable",
+      "high": "Muy por encima del rango saludable"
+    },
+    "healthyUnder": "Saludable por debajo de 0,50",
+    "highOver": "0,60+",
+    "bmi": "IMC {{value}}. Puede engañar en cuerpos musculosos, por eso cintura/estatura va primero. Los índices se muestran solo a adultos.",
+    "notes": {
+      "waistAndStrength": "Coach: cintura {{waist}} menos mientras tu fuerza creció. Tu plan funciona. Sigue así.",
+      "strength": "Coach: te pusiste más fuerte en 4 semanas. Mantén los mismos días y deja que las cargas suban.",
+      "waist": "Coach: cintura {{waist}} menos. Sigue viniendo y la fuerza llegará.",
+      "steady": "Coach: las semanas estables también cuentan. Mantén tus días y volvemos a mirar en 4 semanas.",
+      "firstCheckin": "Coach: este es tu punto de partida. Comparamos en 4 semanas."
+    },
+    "save": "Guardar mi revisión",
+    "saved": "Guardado. Tu próxima revisión es en 4 semanas.",
+    "photos": "Fotos",
+    "share": "Compartir mis 4 semanas"
+  },
+  "photos": {
+    "eyebrow": "Opcional · solo adultos",
+    "title": "Antes y después",
+    "pose": "Posición",
+    "poses": {
+      "front": "Frente",
+      "side": "Lado",
+      "back": "Espalda"
+    },
+    "before": "Primera",
+    "after": "Más reciente",
+    "firstEmpty": "Toma tu primera foto. Misma posición y misma luz cada vez.",
+    "latestEmpty": "Toma una nueva en unas semanas para comparar.",
+    "take": "Tomar la foto de hoy",
+    "delete": "Eliminar la foto {{label}}",
+    "shareMap": "Compartir progreso (mapa muscular)",
+    "shareNote": "Al compartir se usa tu mapa muscular. Las fotos nunca se comparten.",
+    "points": {
+      "private": "Las fotos se quedan solo en este teléfono. Nunca se suben.",
+      "pose": "Colócate igual cada vez para comparar de forma justa.",
+      "reminder": "Toma una nueva en cada revisión de 4 semanas."
+    },
+    "errors": {
+      "denied": "El acceso a la cámara está desactivado. Actívalo en los ajustes del teléfono.",
+      "unavailable": "Las fotos no están disponibles en este dispositivo."
+    },
+    "slotLabel": "{{label}} · {{date}}"
+  },
+  "repair": {
+    "eyebrow": "Reparación",
+    "title": "Encuentra tus puntos débiles",
+    "intro": "Cinco pruebas cortas muestran qué áreas necesitan trabajo. Cada una dura cerca de un minuto.",
+    "underReview": "Un entrenador certificado está revisando las pruebas de Reparación. Aparecerán aquí pronto.",
+    "devOnly": "Versión de desarrollo: pruebas en borrador, aún sin revisar. Nunca llegan a los usuarios.",
+    "grades": {
+      "good": "Bien",
+      "uneven": "Desigual",
+      "low": "Bajo",
+      "limited": "Limitado",
+      "todo": "Empezar"
+    },
+    "skipped_one": "{{count}} prueba queda fuera por tus respuestas de seguridad o restricciones.",
+    "skipped_other": "{{count}} pruebas quedan fuera por tus respuestas de seguridad o restricciones.",
+    "foundTitle": "Lo que encontramos hasta ahora",
+    "findings": {
+      "squat": "La fuerza de piernas tiene margen para crecer.",
+      "single_leg_balance": "La estabilidad de cadera parece más débil del lado {{side}}.",
+      "glute_bridge_hold": "La resistencia de glúteos tiene margen para crecer.",
+      "front_plank": "La resistencia del core tiene margen para crecer.",
+      "shoulder_reach": "La movilidad del hombro está limitada{{side}}."
+    },
+    "sides": {
+      "left": "izquierdo",
+      "right": "derecho"
+    },
+    "notDiagnosis": "No es un diagnóstico. ¿Con dolor? Consulta a un fisioterapeuta.",
+    "allGood": "Todas las pruebas están bien. Repite en 6 semanas para mantenerlo.",
+    "buildPlan": "Crear mi plan de reparación de 6 semanas",
+    "openPlan": "Abrir mi plan de reparación",
+    "tests": {
+      "squat": {
+        "name": "Sentarse y levantarse (30 s)",
+        "how": "Siéntate en una silla con los brazos cruzados. Levántate del todo y vuelve a sentarte tantas veces como puedas en 30 segundos. Cuenta cada vez que quedes de pie."
+      },
+      "single_leg_balance": {
+        "name": "Equilibrio en una pierna",
+        "how": "Párate en una pierna, manos en la cintura, ojos abiertos. Cronometra hasta que el otro pie toque el suelo. Luego la otra pierna."
+      },
+      "glute_bridge_hold": {
+        "name": "Puente de glúteo sostenido",
+        "how": "Túmbate boca arriba, rodillas dobladas, pies en el suelo. Sube la cadera en línea recta de rodillas a hombros y aguanta."
+      },
+      "front_plank": {
+        "name": "Plancha frontal",
+        "how": "Antebrazos y puntas de los pies en el suelo, cuerpo recto de la cabeza a los talones. Aguanta sin dejar caer la cadera."
+      },
+      "shoulder_reach": {
+        "name": "Alcance por encima de la cabeza",
+        "how": "De espaldas a la pared, sube un brazo estirado por encima de la cabeza. ¿El dorso de la mano toca la pared sin arquear la espalda? Luego el otro brazo."
+      }
+    },
+    "safety": "Para si algo duele. En las pruebas de equilibrio, ponte junto a una pared o una silla firme.",
+    "timer": "Temporizador de {{seconds}} segundos",
+    "hold": "Tiempo aguantando",
+    "reps": "Veces de pie",
+    "seconds": "Segundos",
+    "start": "Iniciar temporizador",
+    "stop": "Parar",
+    "time": "{{time}}",
+    "reached": "Llegó",
+    "limited": "Limitado",
+    "saveResult": "Guardar resultado",
+    "planTitle": "Tu plan de reparación de 6 semanas",
+    "planIntro": "{{weeks}} semanas, {{times}} sesiones cortas por semana ({{minutes}} min), en las áreas que encontró la prueba.",
+    "focus": "Enfoque",
+    "startSession": "Empezar sesión de reparación de {{minutes}} min",
+    "endPlan": "Terminar este plan",
+    "sessionsDone": "{{done}} de {{total}} sesiones hechas",
+    "retestOn": "Repetir la prueba el {{date}}.",
+    "retestTitle": "Hora de repetir la prueba",
+    "retestBody": "Pasaron las seis semanas. Repite la Reparación para ver qué cambió."
+  },
+  "restrictions": {
+    "title": "Mis restricciones",
+    "subtitle": "Se aplican a cada entrenamiento hasta que las cambies",
+    "withSide": "{{area}} ({{side}})",
+    "sides": {
+      "left": "izquierdo",
+      "right": "derecho",
+      "both": "ambos lados"
+    },
+    "sources": {
+      "pain_report": "De un reporte de dolor · {{date}}",
+      "manual": "Añadida por ti · {{date}}",
+      "repair": "De la Reparación · {{date}}",
+      "health": "De tu revisión de seguridad"
+    },
+    "impact": "{{excluded}} de {{total}} ejercicios de tu biblioteca quedan fuera.",
+    "swaps_one": "{{count}} ejercicio cambiado hasta ahora por esto.",
+    "swaps_other": "{{count}} ejercicios cambiados hasta ahora por esto.",
+    "healed": "Marcar como curada",
+    "editHealth": "Cambiar en la revisión de seguridad",
+    "none": "Sin restricciones. Reporta dolor durante un entrenamiento o añade una aquí.",
+    "add": "Añadir una restricción",
+    "addTitle": "¿Dónde deben ir suaves los entrenamientos?",
+    "save": "Guardar restricción",
+    "healedTitle": "Curadas",
+    "reactivate": "Volver a activar",
+    "disclaimer": "TapStrong adapta el entrenamiento, no diagnostica. ¿Dolor agudo o que no se va? Consulta a un médico o fisioterapeuta.",
+    "done": "Listo"
   }
 }

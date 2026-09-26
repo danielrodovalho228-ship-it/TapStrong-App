@@ -713,7 +713,8 @@
   "tabs": {
     "home": "Home",
     "body": "Body",
-    "family": "Family"
+    "family": "Family",
+    "progress": "Progress"
   },
   "home": {
     "title": "Today",
@@ -735,7 +736,9 @@
     "recoveryEmpty": "Your first workout colors the muscles you train.",
     "recoveryNote": "Colors fade as you recover. Grey-blue means it's time to train it.",
     "openBody": "Open full body map",
-    "trainingAs": "Training as {{name}}"
+    "trainingAs": "Training as {{name}}",
+    "checkinReady": "Your 4-week check-in is ready",
+    "checkinBody": "See how your strength changed since week 1."
   },
   "workout": {
     "title": "Your workout",
@@ -1130,6 +1133,14 @@
         "offline": "Can't reach TapStrong right now. Check your connection and try again.",
         "error": "Something went wrong. Try again."
       }
+    },
+    "dashboard": {
+      "title": "Your family this week",
+      "week_one": "{{count}} workout this week · {{minutes}} min",
+      "week_other": "{{count}} workouts this week · {{minutes}} min",
+      "last": "Last workout: {{date}} · streak {{streak}}",
+      "none": "No workouts yet.",
+      "privacy": "You see workouts and streaks only. Health answers and pain reports stay private to each profile."
     }
   },
   "deleteAccount": {
@@ -1147,5 +1158,202 @@
       "offline": "Can't reach TapStrong right now. Nothing was deleted. Try again when you're online.",
       "error": "Something went wrong. Nothing was deleted. Try again."
     }
+  },
+  "progress": {
+    "title": "Progress",
+    "streak": "Streak",
+    "workouts": "Workouts",
+    "sets": "Sets",
+    "days_one": "{{count}} day",
+    "days_other": "{{count}} days",
+    "chart": {
+      "title": "Weekly sets by muscle",
+      "empty": "Finish a workout to see your weekly sets.",
+      "week_one": "W{{n}} · {{count}}",
+      "week_other": "W{{n}} · {{count}}",
+      "barLabel_one": "Week {{n}}: {{count}} set",
+      "barLabel_other": "Week {{n}}: {{count}} sets"
+    },
+    "measurements": "Measurements",
+    "checkinTitle": "4-week check-in",
+    "openCheckin": "4-week check-in",
+    "checkinReady": "Your check-in is ready.",
+    "noMeasurements": "Add your waist and weight at your next check-in. Optional.",
+    "strengthOnly": "Your check-in compares your strength every 4 weeks.",
+    "waist": "Waist",
+    "weight": "Weight",
+    "links": {
+      "repair": "Repair check: find weak spots",
+      "restrictions": "My restrictions",
+      "photos": "Before & after photos"
+    }
+  },
+  "checkin": {
+    "eyebrow": "Week 1 → week 4",
+    "title": "Your 4-week check-in",
+    "strength": "Strength",
+    "week1": "Wk 1",
+    "week4": "Wk 4",
+    "change": "Change",
+    "noStrength": "Log the same exercise in week 1 and week 4 to see it here.",
+    "body": "Body (optional)",
+    "waist": "Waist ({{unit}})",
+    "weight": "Weight ({{unit}})",
+    "height": "Height ({{unit}})",
+    "lastTime": "Last check-in: waist {{waist}}, weight {{weight}}",
+    "optional": "Skip any of these. They stay in your profile and are never shared.",
+    "minorNote": "Your check-in is about getting stronger. No body measurements for under-18s.",
+    "whtr": "Waist-to-height",
+    "was": "was {{value}}",
+    "bands": {
+      "healthy": "Healthy range",
+      "increased": "Higher than the healthy range",
+      "high": "Well above the healthy range"
+    },
+    "healthyUnder": "Healthy under 0.50",
+    "highOver": "0.60+",
+    "bmi": "BMI {{value}}. It can mislead for muscular bodies, so waist-to-height comes first. Indexes are shown for adults only.",
+    "notes": {
+      "waistAndStrength": "Coach: waist down {{waist}} while your strength grew. Your plan is working. Keep going.",
+      "strength": "Coach: you got stronger in 4 weeks. Keep the same days and let the loads climb.",
+      "waist": "Coach: waist down {{waist}}. Keep showing up and your strength will follow.",
+      "steady": "Coach: steady weeks count too. Keep your days and we'll look again in 4 weeks.",
+      "firstCheckin": "Coach: this is your starting point. We'll compare in 4 weeks."
+    },
+    "save": "Save my check-in",
+    "saved": "Saved. Your next check-in is in 4 weeks.",
+    "photos": "Photos",
+    "share": "Share my 4 weeks"
+  },
+  "photos": {
+    "eyebrow": "Optional · adults only",
+    "title": "Before & after",
+    "pose": "Pose",
+    "poses": {
+      "front": "Front",
+      "side": "Side",
+      "back": "Back"
+    },
+    "before": "First",
+    "after": "Latest",
+    "firstEmpty": "Take your first photo. Same pose, same light each time.",
+    "latestEmpty": "Take a new photo in a few weeks to compare.",
+    "take": "Take today's photo",
+    "delete": "Delete the {{label}} photo",
+    "shareMap": "Share progress (muscle map)",
+    "shareNote": "Sharing uses your muscle map. Photos are never shared.",
+    "points": {
+      "private": "Photos stay only on this phone. Never uploaded.",
+      "pose": "Stand the same way each time so the photos compare fairly.",
+      "reminder": "Take a new one at each 4-week check-in."
+    },
+    "errors": {
+      "denied": "Camera access is off. Turn it on in your phone's settings.",
+      "unavailable": "Photos aren't available on this device."
+    },
+    "slotLabel": "{{label}} · {{date}}"
+  },
+  "repair": {
+    "eyebrow": "Repair check",
+    "title": "Find your weak spots",
+    "intro": "Five short tests show which areas need work. Each takes about a minute.",
+    "underReview": "The Repair tests are being reviewed by a certified coach. They will appear here soon.",
+    "devOnly": "Development build: draft tests, not reviewed yet. They never reach users.",
+    "grades": {
+      "good": "Good",
+      "uneven": "Uneven",
+      "low": "Low",
+      "limited": "Limited",
+      "todo": "Start"
+    },
+    "skipped_one": "{{count}} test is left out because of your safety answers or restrictions.",
+    "skipped_other": "{{count}} tests are left out because of your safety answers or restrictions.",
+    "foundTitle": "What we found so far",
+    "findings": {
+      "squat": "Leg strength has room to grow.",
+      "single_leg_balance": "Hip stability looks weaker on the {{side}} side.",
+      "glute_bridge_hold": "Glute endurance has room to grow.",
+      "front_plank": "Core endurance has room to grow.",
+      "shoulder_reach": "Shoulder mobility is limited{{side}}."
+    },
+    "sides": {
+      "left": "left",
+      "right": "right"
+    },
+    "notDiagnosis": "Not a diagnosis. In pain? See a physical therapist.",
+    "allGood": "All tests look good. Retest in 6 weeks to keep it that way.",
+    "buildPlan": "Build my 6-week repair plan",
+    "openPlan": "Open my repair plan",
+    "tests": {
+      "squat": {
+        "name": "Sit-to-stand (30 s)",
+        "how": "Sit on a chair, arms crossed. Stand up fully and sit back down as many times as you can in 30 seconds. Count each full stand."
+      },
+      "single_leg_balance": {
+        "name": "Single-leg balance",
+        "how": "Stand on one leg, hands on hips, eyes open. Time how long you hold before the other foot touches down. Then the other leg."
+      },
+      "glute_bridge_hold": {
+        "name": "Glute bridge hold",
+        "how": "Lie on your back, knees bent, feet flat. Lift your hips into a straight line from knees to shoulders and hold."
+      },
+      "front_plank": {
+        "name": "Front plank",
+        "how": "Forearms and toes on the floor, body straight from head to heels. Hold without letting the hips sag."
+      },
+      "shoulder_reach": {
+        "name": "Overhead shoulder reach",
+        "how": "Stand with your back against a wall. Raise one straight arm overhead. Can the back of your hand touch the wall without arching your back? Then the other arm."
+      }
+    },
+    "safety": "Stop if anything hurts. For balance tests, stand next to a wall or a sturdy chair.",
+    "timer": "{{seconds}}-second timer",
+    "hold": "Hold time",
+    "reps": "Stands counted",
+    "seconds": "Seconds",
+    "start": "Start timer",
+    "stop": "Stop",
+    "time": "{{time}}",
+    "reached": "Reached",
+    "limited": "Limited",
+    "saveResult": "Save result",
+    "planTitle": "Your 6-week repair plan",
+    "planIntro": "{{weeks}} weeks, {{times}} short sessions a week ({{minutes}} min), on the areas the check found.",
+    "focus": "Focus",
+    "startSession": "Start a {{minutes}}-min repair session",
+    "endPlan": "End this plan",
+    "sessionsDone": "{{done}} of {{total}} sessions done",
+    "retestOn": "Retest on {{date}}.",
+    "retestTitle": "Time to retest",
+    "retestBody": "Six weeks are up. Redo the Repair check to see what changed."
+  },
+  "restrictions": {
+    "title": "My restrictions",
+    "subtitle": "Applied to every workout until you change them",
+    "withSide": "{{side}} {{area}}",
+    "sides": {
+      "left": "Left",
+      "right": "Right",
+      "both": "Both sides"
+    },
+    "sources": {
+      "pain_report": "From a pain report · {{date}}",
+      "manual": "Added by you · {{date}}",
+      "repair": "From Repair check · {{date}}",
+      "health": "From your safety check"
+    },
+    "impact": "{{excluded}} of {{total}} exercises in your library are left out.",
+    "swaps_one": "{{count}} exercise swapped so far because of it.",
+    "swaps_other": "{{count}} exercises swapped so far because of it.",
+    "healed": "Mark healed",
+    "editHealth": "Change in safety check",
+    "none": "No restrictions. Report pain during a workout or add one here.",
+    "add": "Add a restriction",
+    "addTitle": "Where should workouts go easy?",
+    "save": "Save restriction",
+    "healedTitle": "Healed",
+    "reactivate": "Turn back on",
+    "disclaimer": "TapStrong adapts training, it doesn't diagnose. Sharp or lasting pain? See a doctor or physical therapist.",
+    "done": "Done"
   }
 }

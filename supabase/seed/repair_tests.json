@@ -1,0 +1,48 @@
+{
+  "_note": "Repair check tests (SPEC §9 /repair). DRAFT: protocols, thresholds and muscle focus follow common screening references (e.g. 30-second chair stand, single-leg stance) but have NOT been signed off by the certified reviewer. Development builds only, like the exercise drafts.",
+  "tests": [
+    {
+      "key": "squat",
+      "kind": "reps",
+      "seconds": 30,
+      "positions": ["standing", "with_support"],
+      "contraindications": ["knee", "recent_surgery"],
+      "good": { "child": 15, "teen": 15, "adult": 15, "senior": 12 },
+      "focus": { "goal": "strengthen", "muscles": ["quads", "glutes"] }
+    },
+    {
+      "key": "single_leg_balance",
+      "kind": "sides_hold",
+      "seconds": 60,
+      "positions": ["standing", "with_support"],
+      "contraindications": ["ankle_foot", "recent_surgery"],
+      "good": { "child": 20, "teen": 30, "adult": 30, "senior": 10 },
+      "focus": { "goal": "balance", "muscles": ["hips", "glutes"] }
+    },
+    {
+      "key": "glute_bridge_hold",
+      "kind": "hold",
+      "seconds": 60,
+      "positions": ["standing"],
+      "contraindications": ["lower_back", "recent_surgery"],
+      "good": { "child": 20, "teen": 30, "adult": 30, "senior": 20 },
+      "focus": { "goal": "strengthen", "muscles": ["glutes", "hamstrings"] }
+    },
+    {
+      "key": "front_plank",
+      "kind": "hold",
+      "seconds": 120,
+      "positions": ["standing"],
+      "contraindications": ["shoulder", "lower_back", "pregnant_postpartum", "recent_surgery"],
+      "good": { "child": 20, "teen": 30, "adult": 45, "senior": 30 },
+      "focus": { "goal": "strengthen", "muscles": ["upperAbs", "lowerAbs", "obliques"] }
+    },
+    {
+      "key": "shoulder_reach",
+      "kind": "sides_pass",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": ["shoulder", "recent_surgery"],
+      "focus": { "goal": "mobility", "muscles": ["shoulders", "upperBack"] }
+    }
+  ]
+}

@@ -339,6 +339,7 @@ Telas conferidas com os mockups 01 a 05, na ordem do fluxo. Tudo local, sem cont
   - flexão inclinada com amplitude curta.
 
   Nenhum deles tem o ombro como contraindicação; o revisor confirma ou corrige. Com dor no ombro num exercício de peito do meio, o app já oferece um deles no build de desenvolvimento. Para o peito superior ainda não há opção, então fica "Pular este exercício".
+
 - **Semana:** começa no dia que o calendário do celular indicar; sem essa informação, domingo.
 - **Vídeos de protótipo:**
   - só no build de desenvolvimento, com a mesma proteção dos rascunhos (`expo-video` instalado; loop sem som);
@@ -361,6 +362,7 @@ Telas conferidas com os mockups 01 a 05, na ordem do fluxo. Tudo local, sem cont
   - os treinos concluídos, com itens, séries, trocas e relatos de dor.
 
   Cada treino é copiado uma vez, e repetir não duplica. Perfis de criança nunca sincronizam a partir do celular da criança (isso fica para a Fase 6, com o responsável). Treinos feitos com exercícios de rascunho não sobem, porque o banco só aceita exercícios liberados; por isso, hoje no desenvolvimento os treinos ficam no celular.
+
 - **Cartão de compartilhamento (mockup 15):**
   - mapa muscular de hoje, dias seguidos, treinos, minutos e séries;
   - o botão gera a imagem e abre o compartilhamento do celular;
@@ -417,6 +419,7 @@ Telas conferidas com os mockups 01 a 05, na ordem do fluxo. Tudo local, sem cont
    - **Magic Link** (é o de quem entra numa conta que já existe).
 
    O e-mail padrão do Supabase tem limite baixo de envio; para lançar, vale configurar um SMTP próprio (Resend e SendGrid têm plano grátis). Isso é um serviço externo, então só com o seu OK.
+
 2. **Apple e Google:** os botões do mockup ficam para quando existirem as contas de desenvolvedor (Apple: "Sign in with Apple"; Google: um client ID OAuth). Quando tiver, me passe (sem segredos no chat) e eu ligo. Detalhe: na App Store, se houver login com Google, a Apple exige o login com Apple também.
 3. **Recompensa do convite:** o mockup diz "Friends who join with your link get 1 free week, and so do you". Isso mexe com pagamento, então deixei só o registro do convite, sem prometer a semana grátis na tela. Confirma a recompensa para a Fase 6?
 4. **Excluir conta:** a Apple exige que quem cria conta no app possa excluí-la pelo próprio app. Como apagar dados precisa do seu OK: posso fazer na Fase 6 ou 8 (apaga a conta e todos os dados dela, com confirmação)?
@@ -437,6 +440,7 @@ Decisões suas aplicadas: anual US$ 59,99 (Premium) e US$ 89,99 (Família); Fam�
   - "Cancele quando quiser em 2 toques".
 
   Para assinar é preciso ter conta salva, assim a assinatura sempre fica ligada a uma conta e dá para restaurar depois.
+
 - **Planos (mockup 19):** perfis da família, Grátis / Premium / Família, mensal ou anual. Mostra o preço da loja quando existe; se não, os preços de tabela.
 - **Cobrança (mockup 22):**
   - plano, fim do teste, primeira cobrança e valor seguinte;
@@ -511,3 +515,73 @@ Decisões suas aplicadas: anual US$ 59,99 (Premium) e US$ 89,99 (Família); Fam�
 3. **Convite, quem convidou:** entendi "uma vez por pessoa" como: cada pessoa ganha a semana uma vez só, então quem convida ganha só no primeiro amigo que treinar. Se preferir uma semana por amigo (com um teto, por exemplo 12 por ano), é uma linha.
 4. **"Pais podem ver o progresso" (60+) e painel dos pais:** a troca de perfil já permite acompanhar no mesmo celular. Um painel à parte fica para a Fase 7 (Progresso)?
 5. **Rede:** `vycdrotqkjwvkzgjovpb.supabase.co` ainda está bloqueado nesta sessão (testei de novo). A liberação deve valer numa sessão nova.
+
+## Fase 7 — Progresso e Repair
+
+Decisões suas aplicadas: painel da família visível só para o dono do plano Família; lembrete do teste 3 dias antes (já no commit anterior); convite com 1 semana por amigo, teto de 4 por ano para quem convida.
+
+### O que foi feito
+
+- **Aba Progresso (mockup 18):**
+  - dias seguidos, treinos e séries;
+  - gráfico de séries por semana (4 semanas) por músculo; os objetivos aparecem primeiro, depois os mais treinados;
+  - medidas para adultos; para menores, só "seu check-in compara sua força";
+  - links para Repair, Minhas restrições e fotos (fotos só no modo adulto).
+- **Check-in de 4 semanas (mockup 25):**
+  - fica pronto 4 semanas depois do primeiro treino e depois a cada 4 semanas (aviso na Home e no Progresso);
+  - tabela de força: melhor série da semana 1 contra a semana 4 (carga × reps, reps ou segundos);
+  - cintura, peso e altura (opcionais), cintura/altura como índice principal e IMC com o aviso de que pode enganar; **só adultos e 60+**;
+  - nota do coach determinística e encorajadora, sem conselho médico.
+- **Antes e depois (mockup 26):**
+  - só no modo adulto (menores e 60+ são redirecionados);
+  - câmera do sistema, três poses; os arquivos ficam **só no celular**, nunca sobem;
+  - excluir conta apaga as fotos;
+  - compartilhar usa o mapa muscular, nunca a foto.
+- **Repair (mockup 17):**
+  - 5 testes em **rascunho** (sentar e levantar 30 s, equilíbrio em uma perna, ponte de glúteo, prancha, alcance do ombro);
+  - filtrados por posição, áreas de dor, condições e restrições;
+  - cada teste tem timer, contador e esquerda/direita;
+  - resultado bom / desigual / baixo / limitado;
+  - plano de 6 semanas (2 sessões de 15 min por semana, com aquecimento e desaquecimento) e data do reteste;
+  - o plano é Premium; o check é grátis;
+  - como os exercícios, os testes só existem no build de desenvolvimento até o revisor aprovar (`bundle:check` confere).
+- **Minhas restrições (mockup 20):**
+  - restrições ativas com origem e data, quantos exercícios ficam de fora e quantas trocas já aconteceram;
+  - áreas do check de segurança;
+  - marcar como curado, reativar, adicionar manual com área e lado ("os dois lados" = a área toda).
+- **Painel da família:** só na visão do dono do plano. Mostra, por membro: treinos e minutos da semana, último treino e dias seguidos. Nunca mostra respostas de saúde, relatos de dor ou fotos.
+- **Banco (aplicado no Supabase):**
+  - tabelas `checkins`, `repair_results` e `repair_plans`, com RLS;
+  - um gatilho recusa cintura, peso, cintura/altura e IMC em perfis de criança ou adolescente;
+  - tipo de sessão `repair`;
+  - corrigi também um alerta de segurança do Supabase: a função de gatilho `guard_managed_profiles` não fica mais exposta na API.
+- **Planilha do revisor:** nova aba "Repair tests" (protocolo, meta "bom" por modo, contraindicações e músculos do plano), com Aprovar/Corrigir.
+
+### Verificações
+
+- `npm run check`: lint, typecheck, funções e **365 testes** passando. Os testes novos cobrem:
+  - estatísticas;
+  - check-in (4 semanas, força, cintura/altura, IMC, nota);
+  - Repair (músculos só do banco, filtros de segurança, notas, plano, sessão com aquecimento e desaquecimento);
+  - impacto das restrições e resumo da família;
+  - telas: menor sem campos de corpo, fotos só para adulto, plano Repair Premium, restrições e painel só para o dono.
+- `npm run db:test`: passa, incluindo `progress_repair.sql` (adolescente não grava medidas, nem por update; estranho não vê nada).
+- `npm run bundle:check`: limpo.
+- Não consegui recalcular a planilha com o LibreOffice aqui (trava no ambiente). As fórmulas recalculam ao abrir no Excel ou no Google Planilhas.
+
+### Como testar (build de desenvolvimento)
+
+1. Faça alguns treinos. Para ver o check-in pronto, é preciso ter treinos com 4 semanas.
+2. Progresso → "Repair check": faça os testes e veja o resultado. "Montar meu plano" abre o paywall no plano grátis; com o Premium (simulador), abre o plano.
+3. Progresso → Minhas restrições: adicione "Joelho, os dois lados" e veja quantos exercícios saem.
+4. Com um perfil adolescente, o check-in não pede cintura nem peso, e não há fotos.
+5. No plano Família, a aba Família do dono mostra a semana de cada membro.
+
+### Perguntas em aberto
+
+1. **Revisor:** os 5 testes Repair (protocolo, metas por idade e músculos) precisam da aprovação do profissional certificado, como os exercícios. Até lá, só aparecem no desenvolvimento.
+2. **Antes e depois no 60+:** o mockup 23 não tem câmera, então no modo 60+ as fotos ficam escondidas. Quer liberar para 60+?
+3. **Guia de pose:** a SPEC fala em "mesma pose" com um contorno na câmera. Usei a câmera do sistema (sem contorno) para não adicionar outra biblioteca nativa. O contorno exige câmera própria (`expo-camera`); faço na Fase 8?
+4. **Sincronizar check-ins e Repair:** as tabelas já existem no banco, mas por enquanto os dados ficam no celular, como os treinos com exercícios de rascunho. Ligo a sincronização na Fase 8, junto com os exercícios liberados?
+5. **Home 60+:** o redesenho da Home no modo 60+ (mockup 23) fica para o passe de modo sênior da Fase 8.
+6. **Texto da permissão da câmera:** está em inglês (é o texto do sistema). A tradução para ES e PT-BR entra na Fase 8, com os idiomas.

@@ -39,7 +39,7 @@ export type PainReport = {
 
 export type StoredSwap = SwapRecord & { at: string };
 
-export type WorkoutKind = 'regular' | 'finisher';
+export type WorkoutKind = 'regular' | 'finisher' | 'repair';
 
 export type WorkoutRecord = {
   id: string;

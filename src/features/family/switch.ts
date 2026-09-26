@@ -2,6 +2,7 @@ import { kvStorage } from '@/lib/storage';
 
 import { useAccountStore } from '../account/store';
 import { initialOnboarding, useOnboardingStore, type OnboardingData } from '../onboarding/store';
+import { initialProgress, useProgressStore, type ProgressData } from '../progress/store';
 import { useRestrictionsStore, type Restriction } from '../restrictions/store';
 import { initialStreak, type StreakState } from '../workout/streak';
 import { useWorkoutStore } from '../workout/store';
@@ -15,6 +16,7 @@ type Snapshot = {
   streak: StreakState;
   nextFocus: NextFocus;
   restrictions: Restriction[];
+  progress?: ProgressData;
 };
 
 const key = (id: string) => `profile-snapshot:${id}`;
@@ -29,6 +31,12 @@ function capture(): Snapshot {
     streak: w.streak,
     nextFocus: w.nextFocus,
     restrictions: useRestrictionsStore.getState().items,
+    progress: (({ checkins, photos, repairResults, repairPlan }) => ({
+      checkins,
+      photos,
+      repairResults,
+      repairPlan,
+    }))(useProgressStore.getState()),
   };
 }
 
@@ -43,6 +51,7 @@ function load(snapshot: Snapshot | null, seed: Partial<OnboardingData>) {
     undo: null,
   });
   useRestrictionsStore.setState({ items: snapshot?.restrictions ?? [] });
+  useProgressStore.setState(snapshot?.progress ?? initialProgress());
 }
 
 /** The owner's own profile, registered the first time the family is used. */

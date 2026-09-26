@@ -5,7 +5,7 @@ import { Icon } from '@/components/ui';
 import { colors, fonts } from '@/theme';
 
 /**
- * Main tabs (mockups 06/07). Coach and Progress join in their own phases.
+ * Main tabs (mockups 06/07). The Coach tab joins with the ongoing coach chat.
  */
 export default function TabsLayout() {
   const { t } = useTranslation();
@@ -37,6 +37,13 @@ export default function TabsLayout() {
         options={{
           title: t('tabs.body'),
           tabBarIcon: ({ color }) => <Icon name="body" color={color as string} />,
+        }}
+      />
+      <Tabs.Screen
+        name="progress"
+        options={{
+          title: t('tabs.progress'),
+          tabBarIcon: ({ color }) => <Icon name="progress" color={color as string} />,
         }}
       />
       <Tabs.Screen

@@ -6,22 +6,31 @@ import { AppText, Button, Card, Screen } from '@/components/ui';
 import { currentPlan } from '@/features/billing/rules';
 import { useBillingStore } from '@/features/billing/store';
 import { FamilyStrip } from '@/features/family/components/FamilyStrip';
-import { summarize } from '@/features/family/profiles';
+import { activitySummary, summarize } from '@/features/family/profiles';
 import { useFamilyStore } from '@/features/family/store';
 import { ensureSelfProfile, switchProfile } from '@/features/family/switch';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { clock } from '@/lib/clock';
+import { deviceWeekStart } from '@/lib/dates';
 import { kvStorage } from '@/lib/storage';
 import { colors, fonts, spacing } from '@/theme';
 
 /** Family tab (SPEC §9 /(tabs)/family, mockup 19): who trains on this phone. */
 export default function FamilyScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const live = useOnboardingStore();
   const { profiles, activeId } = useFamilyStore();
   const entitlement = useBillingStore((s) => s.entitlement);
   const plan = currentPlan(entitlement, clock.now());
   const list = profiles.length ? profiles : [ensureSelfProfile()];
+  // The owner's view: only from the account holder's own profile.
+  const ownerView = (activeId ?? list[0].id) === list.find((p) => p.kind === 'self')?.id;
+  const members = list
+    .filter((p) => p.kind !== 'self')
+    .map((p) => ({
+      profile: p,
+      summary: activitySummary(p, kvStorage.getItem, clock.now(), deviceWeekStart()),
+    }));
 
   const open = (id: string) => {
     switchProfile(id);
@@ -65,6 +74,41 @@ export default function FamilyScreen() {
           );
         })}
       </Card>
+      {ownerView && members.length ? (
+        <View style={styles.dashboard}>
+          <AppText variant="h3">{t('family.dashboard.title')}</AppText>
+          {members.map(({ profile: p, summary }) => (
+            <Card key={p.id} style={styles.memberCard}>
+              <AppText variant="bodyStrong">{p.name ?? t('family.member')}</AppText>
+              {summary && summary.lastWorkoutAt ? (
+                <>
+                  <AppText color={colors.mutedStrong}>
+                    {t('family.dashboard.week', {
+                      count: summary.workoutsThisWeek,
+                      minutes: summary.minutesThisWeek,
+                    })}
+                  </AppText>
+                  <AppText variant="caption" color={colors.muted}>
+                    {t('family.dashboard.last', {
+                      date: new Date(summary.lastWorkoutAt).toLocaleDateString(i18n.language, {
+                        weekday: 'long',
+                        month: 'short',
+                        day: 'numeric',
+                      }),
+                      streak: summary.streak,
+                    })}
+                  </AppText>
+                </>
+              ) : (
+                <AppText color={colors.mutedStrong}>{t('family.dashboard.none')}</AppText>
+              )}
+            </Card>
+          ))}
+          <AppText variant="caption" color={colors.muted}>
+            {t('family.dashboard.privacy')}
+          </AppText>
+        </View>
+      ) : null}
       <AppText color={colors.mutedStrong}>
         {plan === 'family' ? t('family.planOn') : t('family.planOff')}
       </AppText>
@@ -83,4 +127,6 @@ const styles = StyleSheet.create({
   divider: { borderTopWidth: 1, borderTopColor: colors.line },
   flex: { flex: 1 },
   caps: { textTransform: 'uppercase', letterSpacing: 0.8, fontFamily: fonts.headingSemi },
+  dashboard: { gap: spacing.sm },
+  memberCard: { gap: spacing.xs },
 });

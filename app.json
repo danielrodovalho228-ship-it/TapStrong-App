@@ -37,7 +37,15 @@
       ],
       "expo-localization",
       "expo-video",
-      "expo-sharing"
+      "expo-sharing",
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "TapStrong uses the camera for your before and after photos. They stay on this phone.",
+          "photosPermission": false,
+          "microphonePermission": false
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

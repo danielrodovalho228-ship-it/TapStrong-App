@@ -1,14 +1,16 @@
 import { Redirect, router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
-import { AppText, Button, Card, Screen, TextLink } from '@/components/ui';
+import { AppText, Button, Card, Icon, Screen, TextLink } from '@/components/ui';
 import type { BodySex } from '@/features/bodymap/images';
 import { displayBand } from '@/features/bodymap/selection';
 import { MUSCLES } from '@/features/muscles';
 import { activeProfile, useFamilyStore } from '@/features/family/store';
 import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
+import { checkinDue } from '@/features/progress/checkin';
+import { useProgressStore } from '@/features/progress/store';
 import { muscleLabel } from '@/features/onboarding/summaries';
 import { LegendRow, RecoveryBody, STATE_COLOR } from '@/features/workout/components/RecoveryBody';
 import {
@@ -37,6 +39,7 @@ export default function HomeScreen() {
   const { workouts, streak } = useWorkoutStore();
   const { states } = useBodyStates();
   const member = useFamilyStore(activeProfile);
+  const checkins = useProgressStore((st) => st.checkins);
   if (!profile.onboardingComplete || !derived) return <Redirect href="/welcome" />;
 
   const now = clock.now();
@@ -106,6 +109,25 @@ export default function HomeScreen() {
         <Button variant="onDark" label={t('home.pickElse')} onPress={() => router.push('/body')} />
       </Card>
 
+      {checkinDue(workouts, checkins, now) ? (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t('home.checkinReady')}
+          onPress={() => router.push('/checkin')}
+          style={styles.checkin}
+        >
+          <View style={styles.flex}>
+            <AppText variant="bodyStrong" color={colors.teal}>
+              {t('home.checkinReady')}
+            </AppText>
+            <AppText variant="caption" color={colors.mutedStrong}>
+              {t('home.checkinBody')}
+            </AppText>
+          </View>
+          <Icon name="chevron-right" color={colors.teal} />
+        </Pressable>
+      ) : null}
+
       <Card style={styles.recovery}>
         <View style={styles.bodyCol}>
           <RecoveryBody band={band} sex={sex} states={states} maxHeight={260} />
@@ -142,4 +164,12 @@ const styles = StyleSheet.create({
   recovery: { flexDirection: 'row', gap: spacing.lg },
   bodyCol: { flex: 0.8 },
   legend: { flex: 1, gap: spacing.sm },
+  checkin: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    padding: spacing.lg,
+    borderRadius: 12,
+    backgroundColor: colors.tealTint,
+  },
 });
