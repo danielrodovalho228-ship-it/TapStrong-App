@@ -6,6 +6,7 @@ import { getBilling } from '../billing/provider';
 import { devLibrary } from '../exercises/library';
 import { activeProfile, useFamilyStore } from '../family/store';
 import { useOnboardingStore } from '../onboarding/store';
+import { useProgressStore } from '../progress/store';
 import { useRestrictionsStore } from '../restrictions/store';
 import { badgeStatus } from '../workout/badges';
 import { muscleActivity } from '../workout/recovery';
@@ -58,6 +59,7 @@ export function syncNow(): Promise<SyncResult> {
           .map((b) => b.key),
         exerciseIds,
         library,
+        progress: useProgressStore.getState(),
       });
     },
     slugs,

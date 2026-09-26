@@ -11,6 +11,7 @@ import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { checkinDue } from '@/features/progress/checkin';
 import { useProgressStore } from '@/features/progress/store';
+import { SeniorHome } from '@/features/senior/SeniorHome';
 import { muscleLabel } from '@/features/onboarding/summaries';
 import { LegendRow, RecoveryBody, STATE_COLOR } from '@/features/workout/components/RecoveryBody';
 import {
@@ -66,6 +67,8 @@ export default function HomeScreen() {
       .map((m) => muscleLabel(t, m.key))
       .join(', ');
   const legend = LEGEND.map((s) => ({ state: s, muscles: byState(s) })).filter((l) => l.muscles);
+
+  if (derived.mode === 'senior') return <SeniorHome onStart={openWorkout} />;
 
   return (
     <Screen>

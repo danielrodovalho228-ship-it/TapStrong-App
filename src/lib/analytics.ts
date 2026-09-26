@@ -1,6 +1,6 @@
 /**
- * Product analytics events — SPEC §10. PostHog is wired in Phase 8; until then
- * events are only logged in development.
+ * Product analytics events — SPEC §10. PostHog is wired in monitoring.ts
+ * (when its key is set); otherwise events are only logged in development.
  *
  * Never send health details, pain areas, conditions, measurements or photos.
  * Properties are limited to the small, non-sensitive set typed below.
@@ -49,7 +49,7 @@ export function track(event: AnalyticsEvent, props?: Props) {
   sink(event, props);
 }
 
-/** For tests and for the PostHog adapter (Phase 8). */
+/** For tests and for the PostHog adapter (monitoring.ts). */
 export function setAnalyticsSink(next: Sink) {
   sink = next;
 }

@@ -56,6 +56,16 @@ describe('Body map (mockup 08)', () => {
     expect(events).toContain('bodymap_muscle_tapped');
   });
 
+  it('zooms with + and − for people who cannot pinch, and dots still work', async () => {
+    await renderMap();
+    const zoomOut = screen.getByRole('button', { name: 'Zoom out' });
+    expect(zoomOut).toBeDisabled();
+    await fireEvent.press(screen.getByRole('button', { name: 'Zoom in' }));
+    expect(screen.getByRole('button', { name: 'Zoom out' })).toBeEnabled();
+    await fireEvent.press(screen.getByRole('button', { name: 'Upper chest' }));
+    expect(store().muscleGoals).toEqual([{ muscleKey: 'upperChest', goal: 'grow' }]);
+  });
+
   it('removes an area from its chip', async () => {
     await act(() => store().update({ muscleGoals: [{ muscleKey: 'quads', goal: 'grow' }] }));
     await renderMap();

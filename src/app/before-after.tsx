@@ -16,22 +16,23 @@ import {
 } from '@/components/ui';
 import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
+import { photosAllowed } from '@/features/progress/checkin';
 import { deletePhotoFile, takePhoto } from '@/features/progress/photos';
 import { useProgressStore, type Pose, type ProgressPhoto } from '@/features/progress/store';
 import { colors, radius, spacing } from '@/theme';
 
 /**
- * Mockup 26 — before & after. Adults only (SPEC §2.3–2.4: never for minors),
- * not offered in 60+ mode (no camera there, mockup 23). Photos stay on this
+ * Mockup 26 — before & after. Adults only (SPEC §2.3–2.4: never for minors);
+ * in 60+ mode only once turned on in Progress (off by default). Photos stay on this
  * phone; sharing uses the muscle map, never a photo.
  */
 export default function BeforeAfterScreen() {
   const { t, i18n } = useTranslation();
   const mode = derive(useOnboardingStore())?.mode;
-  const { photos, addPhoto, removePhoto } = useProgressStore();
+  const { photos, addPhoto, removePhoto, seniorPhotos } = useProgressStore();
   const [pose, setPose] = useState<Pose>('front');
   const [message, setMessage] = useState<string | null>(null);
-  if (mode !== 'adult') return <Redirect href="/progress" />;
+  if (!photosAllowed(mode, seniorPhotos)) return <Redirect href="/progress" />;
 
   const ofPose = photos
     .filter((p) => p.pose === pose)

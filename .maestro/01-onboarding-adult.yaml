@@ -1,0 +1,6 @@
+appId: app.tapstrong
+name: Adult onboarding reaches home
+---
+- runFlow: _onboard_adult.yaml
+- assertVisible: 'Today'
+- assertVisible: 'About .* min, warm-up and cool-down included.'

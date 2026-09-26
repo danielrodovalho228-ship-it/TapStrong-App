@@ -1,0 +1,5 @@
+{
+  "ios": {
+    "NSCameraUsageDescription": "TapStrong uses the camera for your before and after photos. They stay on this phone."
+  }
+}

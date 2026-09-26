@@ -151,6 +151,53 @@ describe('sync plan', () => {
     );
   });
 
+  const progress = {
+    checkins: [
+      {
+        id: uuid(),
+        takenAt: '2026-09-25T10:00:00.000Z',
+        strength: [],
+        waistCm: 84,
+        weightKg: 70,
+        whtr: 0.5,
+        bmi: 24.2,
+      },
+    ],
+    repairResults: [
+      { testKey: 'single_leg_balance', left: 22, right: 9, testedAt: '2026-09-25T10:00:00.000Z' },
+    ],
+    repairPlan: {
+      createdAt: '2026-09-25T10:00:00.000Z',
+      weeks: 6,
+      sessionsPerWeek: 2,
+      focus: [{ muscleKey: 'glutes', goal: 'balance' as const }],
+      retestAt: '2026-11-06T10:00:00.000Z',
+    },
+  };
+
+  it('copies check-ins and Repair; body measurements only for adults', () => {
+    const adult = buildSyncPlan(input({ progress }));
+    if (typeof adult === 'string') throw new Error(adult);
+    expect(adult.checkins[0]).toMatchObject({ waist_cm: 84, weight_kg: 70, whtr: 0.5, bmi: 24.2 });
+    expect(adult.repairResults[0]).toMatchObject({ left_value: 22, right_value: 9 });
+    expect(adult.repairPlans[0]).toMatchObject({ weeks: 6, sessions_per_week: 2 });
+    expect(JSON.stringify(adult)).not.toMatch(/photo|uri/i);
+
+    const teen = buildSyncPlan(input({ progress, onboarding: profile({ birthYear: 2011 }) }));
+    if (typeof teen === 'string') throw new Error(teen);
+    expect(teen.checkins[0]).toMatchObject({
+      waist_cm: null,
+      weight_kg: null,
+      whtr: null,
+      bmi: null,
+    });
+    expect(teen.repairResults).toHaveLength(1);
+
+    const again = buildSyncPlan(input({ progress, profileId: adult.profile.id as string }));
+    if (typeof again === 'string') throw new Error(again);
+    expect(again.repairResults[0].id).toBe(adult.repairResults[0].id);
+  });
+
   it('keeps single-row ids stable per profile', () => {
     const id = uuid();
     expect(stableId(id, 'health')).toBe(stableId(id, 'health'));

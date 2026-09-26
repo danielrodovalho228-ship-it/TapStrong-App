@@ -31,11 +31,12 @@ function capture(): Snapshot {
     streak: w.streak,
     nextFocus: w.nextFocus,
     restrictions: useRestrictionsStore.getState().items,
-    progress: (({ checkins, photos, repairResults, repairPlan }) => ({
+    progress: (({ checkins, photos, repairResults, repairPlan, seniorPhotos }) => ({
       checkins,
       photos,
       repairResults,
       repairPlan,
+      seniorPhotos,
     }))(useProgressStore.getState()),
   };
 }
@@ -51,7 +52,7 @@ function load(snapshot: Snapshot | null, seed: Partial<OnboardingData>) {
     undo: null,
   });
   useRestrictionsStore.setState({ items: snapshot?.restrictions ?? [] });
-  useProgressStore.setState(snapshot?.progress ?? initialProgress());
+  useProgressStore.setState({ ...initialProgress(), ...snapshot?.progress });
 }
 
 /** The owner's own profile, registered the first time the family is used. */

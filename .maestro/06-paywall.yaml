@@ -1,0 +1,21 @@
+appId: app.tapstrong
+name: The 4th workout of the week opens the paywall (development build)
+---
+- runFlow: _onboard_adult.yaml
+- repeat:
+    times: 3
+    commands:
+      - tapOn: 'Start · .* min'
+      - tapOn: 'Start with warm-up'
+      - tapOn: 'Done'
+      - tapOn: 'End workout'
+      - tapOn: 'Save & end'
+      - runFlow:
+          when:
+            visible: 'Not now'
+          commands:
+            - tapOn: 'Not now'
+      - tapOn: 'Home'
+- tapOn: 'Start · .* min'
+- tapOn: 'Start with warm-up'
+- assertVisible: '.*[Cc]ancel.*'

@@ -117,6 +117,9 @@ export default function BodyMapScreen() {
         <AppText variant="caption" color={colors.mutedStrong} style={styles.hint}>
           {t('bodyMap.hint')}
         </AppText>
+        <AppText variant="caption" color={colors.mutedStrong} style={styles.hint}>
+          {t('bodyMap.zoomHint')}
+        </AppText>
       </View>
 
       <View style={styles.selectedHeader}>

@@ -1,0 +1,18 @@
+appId: app.tapstrong
+name: Pain report swaps the exercise and saves a restriction
+---
+- runFlow: _onboard_adult.yaml
+- tapOn: 'Start · .* min'
+- tapOn: 'Start with warm-up'
+- tapOn: 'Done'
+- tapOn: 'I feel pain'
+- tapOn: 'Shoulder'
+- tapOn: 'Right'
+- tapOn: 'Dull.*'
+- tapOn: 'Swap.*'
+- back
+- tapOn: 'End workout'
+- tapOn: 'Discard workout'
+- tapOn: 'Progress'
+- tapOn: 'My restrictions'
+- assertVisible: '.*Shoulder'

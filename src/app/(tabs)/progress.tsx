@@ -3,12 +3,21 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { AppText, Card, Chip, Icon, Screen, TextLink, type IconName } from '@/components/ui';
+import {
+  AppText,
+  Card,
+  Chip,
+  Icon,
+  Screen,
+  TextLink,
+  ToggleRow,
+  type IconName,
+} from '@/components/ui';
 import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { muscleLabel } from '@/features/onboarding/summaries';
 import { formatLength, formatWeight } from '@/features/progress/format';
-import { checkinDue, measurementsAllowed } from '@/features/progress/checkin';
+import { checkinDue, measurementsAllowed, photosAllowed } from '@/features/progress/checkin';
 import { WeekChart } from '@/features/progress/components/WeekChart';
 import { chartMuscles, totals, weeklySets } from '@/features/progress/stats';
 import { useProgressStore } from '@/features/progress/store';
@@ -25,7 +34,7 @@ export default function ProgressScreen() {
   const profile = useOnboardingStore();
   const mode = derive(profile)?.mode ?? 'adult';
   const { workouts, streak } = useWorkoutStore();
-  const { checkins } = useProgressStore();
+  const { checkins, seniorPhotos, setSeniorPhotos } = useProgressStore();
   const library = useExerciseLibrary();
   const now = clock.now();
   const muscles = chartMuscles(
@@ -121,7 +130,7 @@ export default function ProgressScreen() {
           label={t('progress.links.restrictions')}
           onPress={() => router.push('/restrictions')}
         />
-        {mode === 'adult' ? (
+        {photosAllowed(mode, seniorPhotos) ? (
           <LinkRow
             icon="body"
             label={t('progress.links.photos')}
@@ -129,6 +138,16 @@ export default function ProgressScreen() {
           />
         ) : null}
       </View>
+      {mode === 'senior' ? (
+        <Card>
+          <ToggleRow
+            label={t('progress.seniorPhotos')}
+            detail={t('progress.seniorPhotosDetail')}
+            value={seniorPhotos}
+            onChange={setSeniorPhotos}
+          />
+        </Card>
+      ) : null}
     </Screen>
   );
 }

@@ -340,7 +340,10 @@
     "chipHint": "Toque numa etiqueta para mudar o objetivo",
     "changeGoal": "{{muscle}}, {{goal}}. Mudar objetivo",
     "removeArea": "Remover {{muscle}}",
-    "setGoals": "Definir objetivos"
+    "setGoals": "Definir objetivos",
+    "zoomIn": "Aproximar",
+    "zoomOut": "Afastar",
+    "zoomHint": "Use dois dedos para dar zoom, ou + e −."
   },
   "goalsSheet": {
     "goalFor": "Objetivo para esta área",
@@ -738,7 +741,29 @@
     "openBody": "Abrir mapa do corpo",
     "trainingAs": "Treinando como {{name}}",
     "checkinReady": "Seu check-in de 4 semanas está pronto",
-    "checkinBody": "Veja quanto sua força mudou desde a semana 1."
+    "checkinBody": "Veja quanto sua força mudou desde a semana 1.",
+    "senior": {
+      "today": "Hoje",
+      "minutes_one": "{{count}} minuto",
+      "minutes_other": "{{count}} minutos",
+      "seated": "opções sentado",
+      "balance": "Equilíbrio e pernas",
+      "start": "Começar",
+      "progress": "Meu progresso",
+      "lastTitle": "Último treino: {{day}}",
+      "lastBody_one": "Você fez {{count}} exercício em {{minutes}} minutos. Está salvo.",
+      "lastBody_other": "Você fez {{count}} exercícios em {{minutes}} minutos. Está salvo.",
+      "familySees": "{{name}} também pode ver no plano Família.",
+      "familySeesPlan": "Sua família também pode ver no plano Família.",
+      "readIt": "Ler para mim",
+      "stopReading": "Parar de ler",
+      "note": "Modo 60+: letra maior, telas simples, resumos em áudio.",
+      "greeting": {
+        "morning": "Bom dia,",
+        "afternoon": "Boa tarde,",
+        "evening": "Boa noite,"
+      }
+    }
   },
   "workout": {
     "title": "Seu treino",
@@ -1186,7 +1211,9 @@
       "repair": "Reparo: encontre pontos fracos",
       "restrictions": "Minhas restrições",
       "photos": "Fotos de antes e depois"
-    }
+    },
+    "seniorPhotos": "Fotos de antes e depois",
+    "seniorPhotosDetail": "Desligadas por padrão. As fotos ficam neste celular e nunca são compartilhadas."
   },
   "checkin": {
     "eyebrow": "Semana 1 → semana 4",

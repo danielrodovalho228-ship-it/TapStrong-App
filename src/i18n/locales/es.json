@@ -340,7 +340,10 @@
     "chipHint": "Toca una etiqueta para cambiar su objetivo",
     "changeGoal": "{{muscle}}, {{goal}}. Cambiar objetivo",
     "removeArea": "Quitar {{muscle}}",
-    "setGoals": "Definir objetivos"
+    "setGoals": "Definir objetivos",
+    "zoomIn": "Acercar",
+    "zoomOut": "Alejar",
+    "zoomHint": "Pellizca para hacer zoom, o usa + y −."
   },
   "goalsSheet": {
     "goalFor": "Objetivo para esta zona",
@@ -738,7 +741,29 @@
     "openBody": "Abrir mapa del cuerpo",
     "trainingAs": "Entrenando como {{name}}",
     "checkinReady": "Tu revisión de 4 semanas está lista",
-    "checkinBody": "Mira cuánto cambió tu fuerza desde la semana 1."
+    "checkinBody": "Mira cuánto cambió tu fuerza desde la semana 1.",
+    "senior": {
+      "today": "Hoy",
+      "minutes_one": "{{count}} minuto",
+      "minutes_other": "{{count}} minutos",
+      "seated": "opciones sentado",
+      "balance": "Equilibrio y piernas",
+      "start": "Empezar",
+      "progress": "Mi progreso",
+      "lastTitle": "Último entrenamiento: {{day}}",
+      "lastBody_one": "Hiciste {{count}} ejercicio en {{minutes}} minutos. Está guardado.",
+      "lastBody_other": "Hiciste {{count}} ejercicios en {{minutes}} minutos. Está guardado.",
+      "familySees": "{{name}} también puede verlo con el plan Familia.",
+      "familySeesPlan": "Tu familia también puede verlo con el plan Familia.",
+      "readIt": "Léemelo",
+      "stopReading": "Dejar de leer",
+      "note": "Modo 60+: letra más grande, pantallas simples, resúmenes en audio.",
+      "greeting": {
+        "morning": "Buenos días,",
+        "afternoon": "Buenas tardes,",
+        "evening": "Buenas noches,"
+      }
+    }
   },
   "workout": {
     "title": "Tu entrenamiento",
@@ -1186,7 +1211,9 @@
       "repair": "Reparación: encuentra puntos débiles",
       "restrictions": "Mis restricciones",
       "photos": "Fotos de antes y después"
-    }
+    },
+    "seniorPhotos": "Fotos de antes y después",
+    "seniorPhotosDetail": "Apagadas por defecto. Las fotos se quedan en este teléfono y nunca se comparten."
   },
   "checkin": {
     "eyebrow": "Semana 1 → semana 4",

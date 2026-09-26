@@ -2,6 +2,8 @@ import { Tabs } from 'expo-router/js-tabs';
 import { useTranslation } from 'react-i18next';
 
 import { Icon } from '@/components/ui';
+import { derive } from '@/features/onboarding/derived';
+import { useOnboardingStore } from '@/features/onboarding/store';
 import { colors, fonts } from '@/theme';
 
 /**
@@ -9,6 +11,8 @@ import { colors, fonts } from '@/theme';
  */
 export default function TabsLayout() {
   const { t } = useTranslation();
+  // 60+ mode keeps to the simple screens (SPEC §11.10): no body-map tab.
+  const senior = derive(useOnboardingStore())?.mode === 'senior';
   return (
     <Tabs
       screenOptions={{
@@ -18,7 +22,7 @@ export default function TabsLayout() {
         tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.line },
         tabBarLabelStyle: {
           fontFamily: fonts.headingSemi,
-          fontSize: 13,
+          fontSize: senior ? 15 : 13,
           letterSpacing: 1,
           textTransform: 'uppercase',
         },
@@ -35,6 +39,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="body"
         options={{
+          href: senior ? null : undefined,
           title: t('tabs.body'),
           tabBarIcon: ({ color }) => <Icon name="body" color={color as string} />,
         }}

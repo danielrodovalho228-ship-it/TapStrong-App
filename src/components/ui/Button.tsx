@@ -19,7 +19,9 @@ export type ButtonVariant =
   /** Accent text only: "Discard workout" (mockup 13). */
   | 'dangerText'
   /** Light outline on dark screens: "+30 s" (mockup 12). */
-  | 'onDark';
+  | 'onDark'
+  /** Teal fill: the 60+ home "Start" (mockup 23). */
+  | 'teal';
 
 export type ButtonProps = Omit<PressableProps, 'children' | 'style'> & {
   label: string;
@@ -37,7 +39,7 @@ export function Button({
   ...rest
 }: ButtonProps) {
   const isDisabled = disabled || loading;
-  const filled = variant === 'primary' || variant === 'accent';
+  const filled = variant === 'primary' || variant === 'accent' || variant === 'teal';
   const textColor = filled
     ? colors.onAccent
     : variant === 'danger' || variant === 'dangerText'
@@ -60,6 +62,7 @@ export function Button({
         variant === 'accent' && {
           backgroundColor: pressed ? colors.accentPressed : colors.accent,
         },
+        variant === 'teal' && { backgroundColor: pressed ? colors.ink : colors.teal },
         variant === 'secondary' && [styles.secondary, pressed && styles.secondaryPressed],
         variant === 'ghost' && [styles.ghost, pressed && styles.ghostPressed],
         variant === 'danger' && [styles.danger, pressed && styles.ghostPressed],

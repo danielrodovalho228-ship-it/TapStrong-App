@@ -11,14 +11,18 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
+import { StyleSheet } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { refreshBilling } from '@/features/billing/actions';
 import { useNotificationSync } from '@/features/notifications/useNotificationSync';
 import { useSyncProfileSettings } from '@/features/onboarding/sync';
+import { startMonitoring } from '@/lib/monitoring';
 import { colors } from '@/theme';
 
 void SplashScreen.preventAutoHideAsync();
+startMonitoring();
 
 export default function RootLayout() {
   const [queryClient] = useState(() => new QueryClient());
@@ -45,37 +49,41 @@ export default function RootLayout() {
   if (!ready) return null;
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <SafeAreaProvider>
-        <StatusBar style="dark" />
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            contentStyle: { backgroundColor: colors.background },
-          }}
-        >
-          {/* Goals opens as a sheet over the body map (mockup 09). */}
-          <Stack.Screen
-            name="goals"
-            options={{
-              presentation: 'formSheet',
-              sheetGrabberVisible: true,
-              sheetAllowedDetents: [0.92],
+    <GestureHandlerRootView style={styles.root}>
+      <QueryClientProvider client={queryClient}>
+        <SafeAreaProvider>
+          <StatusBar style="dark" />
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              contentStyle: { backgroundColor: colors.background },
             }}
-          />
-          <Stack.Screen
-            name="share"
-            options={{ contentStyle: { backgroundColor: colors.dark.background } }}
-          />
-          <Stack.Screen
-            name="milestone"
-            options={{
-              animation: 'fade',
-              contentStyle: { backgroundColor: colors.dark.background },
-            }}
-          />
-        </Stack>
-      </SafeAreaProvider>
-    </QueryClientProvider>
+          >
+            {/* Goals opens as a sheet over the body map (mockup 09). */}
+            <Stack.Screen
+              name="goals"
+              options={{
+                presentation: 'formSheet',
+                sheetGrabberVisible: true,
+                sheetAllowedDetents: [0.92],
+              }}
+            />
+            <Stack.Screen
+              name="share"
+              options={{ contentStyle: { backgroundColor: colors.dark.background } }}
+            />
+            <Stack.Screen
+              name="milestone"
+              options={{
+                animation: 'fade',
+                contentStyle: { backgroundColor: colors.dark.background },
+              }}
+            />
+          </Stack>
+        </SafeAreaProvider>
+      </QueryClientProvider>
+    </GestureHandlerRootView>
   );
 }
+
+const styles = StyleSheet.create({ root: { flex: 1 } });

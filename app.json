@@ -9,7 +9,10 @@
     "userInterfaceStyle": "light",
     "ios": {
       "bundleIdentifier": "app.tapstrong",
-      "supportsTablet": false
+      "supportsTablet": false,
+      "infoPlist": {
+        "CFBundleAllowMixedLocalizations": true
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -32,7 +35,7 @@
         {
           "backgroundColor": "#F3F1ED",
           "image": "./assets/images/splash-icon.png",
-          "imageWidth": 76
+          "imageWidth": 220
         }
       ],
       "expo-localization",
@@ -45,11 +48,17 @@
           "photosPermission": false,
           "microphonePermission": false
         }
-      ]
+      ],
+      "@sentry/react-native"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "locales": {
+      "en": "./assets/locales/en.json",
+      "es": "./assets/locales/es.json",
+      "pt-BR": "./assets/locales/pt-BR.json"
     }
   }
 }

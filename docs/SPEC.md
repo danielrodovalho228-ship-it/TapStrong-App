@@ -24,7 +24,7 @@ TapStrong is a fitness app for ages 9 to 75+, men and women, launching in the US
 3. **Kids & teens.**
    - Under 13: the profile must be created by a parent or guardian (COPPA — verifiable parental consent). No open-ended AI chat, no social sharing, no photos, no body measurements. The child uses guided choices only.
    - 13–17: no body-fat language, no BMI or waist index, no before/after photos.
-4. **Privacy.** Before/after photos are adults only and stored **on device only** (never uploaded). Height and weight are optional.
+4. **Privacy.** Before/after photos are adults only and stored **on device only** (never uploaded). In 60+ mode they are off by default and turned on from Progress (Daniel, Sep 2026). Height and weight are optional.
 5. **Honest billing.**
    - Clear trial end date and a reminder before charging.
    - Cancel instructions for the App Store / Google Play are always one tap away.
@@ -174,6 +174,7 @@ RLS: a user sees only their own rows plus family members they manage. `exercises
   - Balance and fall-prevention focus.
   - Seated and supported options first.
   - The family owner can see progress.
+  - Home (mockup 23): one big Start, My progress, last workout with "Read it to me" (speech). No body-map tab and no camera entry points; before/after photos only if turned on in Progress.
 - Otherwise: **adult** mode.
 
 ### Workout generator (deterministic, testable)
@@ -379,6 +380,7 @@ Never send health details or photos to analytics.
 - **Phase 8 — Polish & launch prep**
   - Senior mode pass, accessibility, ES/PT-BR, Maestro E2E, Sentry/PostHog, app icons/splash.
   - Store listings, privacy labels, TestFlight / internal testing.
+  - Also: body-map pinch zoom (with +/− buttons), sync of check-ins and Repair (measurements adults only, photos never), custom SMTP guide (Resend). Analytics sends nothing from a child profile; crash reports carry no personal data. Store texts: `docs/store/`; launch checklist: `docs/launch-readiness.md`.
 
 ## 13. Before public launch (owner tasks, not code)
 

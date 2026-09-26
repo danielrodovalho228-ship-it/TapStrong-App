@@ -340,7 +340,10 @@
     "chipHint": "Tap a chip to change its goal",
     "changeGoal": "{{muscle}}, {{goal}}. Change goal",
     "removeArea": "Remove {{muscle}}",
-    "setGoals": "Set goals"
+    "setGoals": "Set goals",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "zoomHint": "Pinch to zoom, or use + and −."
   },
   "goalsSheet": {
     "goalFor": "Goal for this area",
@@ -738,7 +741,29 @@
     "openBody": "Open full body map",
     "trainingAs": "Training as {{name}}",
     "checkinReady": "Your 4-week check-in is ready",
-    "checkinBody": "See how your strength changed since week 1."
+    "checkinBody": "See how your strength changed since week 1.",
+    "senior": {
+      "today": "Today",
+      "minutes_one": "{{count}} minute",
+      "minutes_other": "{{count}} minutes",
+      "seated": "seated options",
+      "balance": "Balance & legs",
+      "start": "Start",
+      "progress": "My progress",
+      "lastTitle": "Last workout: {{day}}",
+      "lastBody_one": "You did {{count}} exercise in {{minutes}} minutes. It's saved.",
+      "lastBody_other": "You did {{count}} exercises in {{minutes}} minutes. It's saved.",
+      "familySees": "{{name}} can see it too on the Family plan.",
+      "familySeesPlan": "Your family can see it too on the Family plan.",
+      "readIt": "Read it to me",
+      "stopReading": "Stop reading",
+      "note": "60+ mode: bigger text, simple screens, audio summaries.",
+      "greeting": {
+        "morning": "Good morning,",
+        "afternoon": "Good afternoon,",
+        "evening": "Good evening,"
+      }
+    }
   },
   "workout": {
     "title": "Your workout",
@@ -1186,7 +1211,9 @@
       "repair": "Repair check: find weak spots",
       "restrictions": "My restrictions",
       "photos": "Before & after photos"
-    }
+    },
+    "seniorPhotos": "Before & after photos",
+    "seniorPhotosDetail": "Off by default. Photos stay on this phone and are never shared."
   },
   "checkin": {
     "eyebrow": "Week 1 → week 4",

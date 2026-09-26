@@ -585,3 +585,66 @@ Decisões suas aplicadas: painel da família visível só para o dono do plano F
 4. **Sincronizar check-ins e Repair:** as tabelas já existem no banco, mas por enquanto os dados ficam no celular, como os treinos com exercícios de rascunho. Ligo a sincronização na Fase 8, junto com os exercícios liberados?
 5. **Home 60+:** o redesenho da Home no modo 60+ (mockup 23) fica para o passe de modo sênior da Fase 8.
 6. **Texto da permissão da câmera:** está em inglês (é o texto do sistema). A tradução para ES e PT-BR entra na Fase 8, com os idiomas.
+
+## Fase 8 — Acabamento e preparação para o lançamento
+
+Suas decisões aplicadas:
+
+- os 5 testes Repair entram na revisão do revisor certificado;
+- fotos no 60+ desligadas por padrão e ligadas pela aba Progresso;
+- contorno de pose só depois do lançamento;
+- check-ins e Repair sincronizam (medidas só de adultos, fotos nunca);
+- tela inicial 60+;
+- aviso da câmera em ES e PT-BR.
+
+### O que foi feito
+
+- **Tela inicial 60+ (mockup 23):**
+  - saudação e um "Começar" grande (verde-azulado), com opções sentado quando for o caso;
+  - "Meu progresso" e o card do último treino com "Ler para mim" (voz do celular, `expo-speech`);
+  - no 60+ não aparece a aba do mapa do corpo nem atalhos para a câmera;
+  - as abas ficam com letra maior.
+- **Fotos no 60+:** interruptor na aba Progresso, desligado por padrão. Com ele desligado, a tela de fotos redireciona.
+- **Aviso da câmera:** texto do iOS em EN, ES e PT-BR (`assets/locales/`). Só a câmera é pedida; galeria e microfone ficam bloqueados.
+- **Sincronização:** check-ins, resultados e plano Repair sobem para o Supabase. Medidas corporais só de adultos e 60+; fotos nunca.
+- **Mapa do corpo:** zoom com pinça, arraste com dois dedos e botões + e − para quem não consegue fazer o gesto. Os pontos continuam alinhados.
+- **Acessibilidade:** novos testes automáticos cobrem:
+  - fonte mínima de 13 px;
+  - todo botão tocável com papel para o leitor de tela;
+  - todo botão de ícone com rótulo;
+  - novos pares de contraste.
+- **Sentry e PostHog:**
+  - só ligam com as chaves públicas no `.env`;
+  - sem captura automática, sem gravação de sessão, sem perfil de pessoa e sem localização;
+  - nada é enviado de um perfil de criança;
+  - o Sentry não envia dados pessoais.
+- **Ícone e splash:** T branco com o ponto laranja do mapa, sem gradiente. O splash mostra "TAPSTRONG" com o ponto. O script é `scripts/build-icons.py`.
+- **EAS:** `eas.json` com os perfis development, preview (teste interno) e production.
+- **Maestro:** 6 fluxos E2E em `.maestro/`:
+  - onboarding;
+  - primeiro treino;
+  - dor com troca;
+  - criança bloqueada;
+  - tela 60+;
+  - paywall.
+- **Lojas:** textos em 3 idiomas, rótulos de privacidade da Apple e do Google e guia do SMTP com Resend, tudo em `docs/store/`.
+- **Relatório de lançamento:** `docs/launch-readiness.md`, com tudo o que ainda depende de você.
+
+### Verificações
+
+- `npm run check`: lint, typecheck, funções e **379 testes** passando.
+- `npm run db:test` e `npm run bundle:check`: limpos.
+- `expo-doctor`: 19 de 21 verificações passam. As 2 que falham precisam de rede, que está bloqueada aqui.
+- **Maestro:** os fluxos não rodaram aqui, porque precisam de simulador e de um build. Rode com `maestro test .maestro/` no build de preview; podem precisar de ajustes finos no primeiro uso.
+
+### Como testar
+
+1. Crie um perfil nascido em 1955. A tela inicial é a do 60+, sem a aba Corpo. Faça um treino e toque "Ler para mim".
+2. Na aba Progresso do 60+, ligue "Fotos de antes e depois" e veja o atalho aparecer.
+3. No mapa do corpo (adulto), use a pinça ou o botão +, e toque um músculo com o zoom ligado.
+
+### Perguntas em aberto
+
+1. **Aba Coach:** o chat contínuo (SPEC §9 e §11.4) não entrou em nenhuma fase e não foi construído. Faço antes do lançamento?
+2. **Ícone:** aprova o novo ou prefere um designer?
+3. Os demais itens estão em `docs/launch-readiness.md`.

@@ -12,6 +12,13 @@ const KG_PER_LB = 0.45359237;
 /** Body measurements and indexes: adults only (SPEC §2.3). */
 export const measurementsAllowed = (mode: AppMode) => mode === 'adult' || mode === 'senior';
 
+/**
+ * Before/after photos: adults, and 60+ once turned on (off by default).
+ * Never for children or teens (SPEC §2.3–2.4).
+ */
+export const photosAllowed = (mode: AppMode | undefined, seniorPhotos: boolean) =>
+  mode === 'adult' || (mode === 'senior' && seniorPhotos);
+
 /** Due once the first workout is 4 weeks old, then every 4 weeks. */
 export function checkinDue(workouts: WorkoutRecord[], checkins: Checkin[], now: Date): boolean {
   const first = workouts

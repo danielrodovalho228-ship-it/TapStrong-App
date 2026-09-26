@@ -10,6 +10,7 @@ import {
   bmi,
   coachNote,
   measurementsAllowed,
+  photosAllowed,
   strengthChanges,
   whtr,
   whtrBand,
@@ -32,7 +33,7 @@ export default function CheckinScreen() {
   const mode = derive(profile)?.mode ?? 'adult';
   const adult = measurementsAllowed(mode);
   const workouts = useWorkoutStore((s) => s.workouts);
-  const { checkins, addCheckin } = useProgressStore();
+  const { checkins, addCheckin, seniorPhotos } = useProgressStore();
   const library = useExerciseLibrary();
   const imperial = profile.units === 'imperial';
   const now = clock.now();
@@ -98,7 +99,7 @@ export default function CheckinScreen() {
       footer={
         saved ? (
           <View style={styles.row}>
-            {mode === 'adult' ? (
+            {photosAllowed(mode, seniorPhotos) ? (
               <View style={styles.flex}>
                 <Button
                   variant="secondary"

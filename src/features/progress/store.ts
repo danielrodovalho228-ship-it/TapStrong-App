@@ -55,6 +55,8 @@ export type ProgressData = {
   photos: ProgressPhoto[];
   repairResults: RepairResult[];
   repairPlan: RepairPlan | null;
+  /** 60+ mode only: before/after photos are off until turned on (Daniel, Sep 2026). */
+  seniorPhotos: boolean;
 };
 
 type State = ProgressData & {
@@ -63,6 +65,7 @@ type State = ProgressData & {
   removePhoto: (id: string) => void;
   saveRepairResult: (r: RepairResult) => void;
   setRepairPlan: (p: RepairPlan | null) => void;
+  setSeniorPhotos: (on: boolean) => void;
   reset: () => void;
 };
 
@@ -71,6 +74,7 @@ export const initialProgress = (): ProgressData => ({
   photos: [],
   repairResults: [],
   repairPlan: null,
+  seniorPhotos: false,
 });
 
 export const useProgressStore = create<State>()(
@@ -85,6 +89,7 @@ export const useProgressStore = create<State>()(
           repairResults: [...get().repairResults.filter((x) => x.testKey !== r.testKey), r],
         }),
       setRepairPlan: (repairPlan) => set({ repairPlan }),
+      setSeniorPhotos: (seniorPhotos) => set({ seniorPhotos }),
       reset: () => set(initialProgress()),
     }),
     {
@@ -96,6 +101,7 @@ export const useProgressStore = create<State>()(
         photos: s.photos,
         repairResults: s.repairResults,
         repairPlan: s.repairPlan,
+        seniorPhotos: s.seniorPhotos,
       }),
     },
   ),

@@ -39,6 +39,9 @@ describe('brand text pairs meet 4.5:1 (SPEC §2.6)', () => {
     ['dark soft accent on dark screen', colors.dark.accentSoft, colors.dark.background],
     ['dark text on dark screen', colors.dark.text, colors.dark.background],
     ['ink on body map canvas', colors.ink, colors.bodyCanvas],
+    ['white on teal (60+ Start button)', colors.onAccent, colors.teal],
+    ['muted strong on surface', colors.mutedStrong, colors.surface],
+    ['muted strong on body map canvas', colors.mutedStrong, colors.bodyCanvas],
   ];
 
   it.each(pairs)('%s', (_name, fg, bg) => {

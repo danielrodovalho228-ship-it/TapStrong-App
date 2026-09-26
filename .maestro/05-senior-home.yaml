@@ -1,0 +1,41 @@
+appId: app.tapstrong
+name: 60+ home keeps to the simple screens
+---
+- launchApp:
+    clearState: true
+- tapOn: 'Get started'
+- tapOn: 'Me'
+- tapOn:
+    text: 'Birth month.*'
+- tapOn: 'March'
+- tapOn:
+    text: 'Birth year.*'
+- scrollUntilVisible:
+    element: '1955'
+- tapOn: '1955'
+- assertVisible: "60\\+ mode · .*"
+- tapOn: 'Continue'
+- tapOn: 'Balance'
+- tapOn: 'Continue'
+- tapOn: 'Home'
+- tapOn: '15 min'
+- tapOn: '3 days'
+- tapOn: 'Continue'
+- tapOn: "I'll tap the body map"
+- tapOn: 'Man'
+- tapOn: 'Skip'
+- tapOn: 'Next: quick safety check'
+- tapOn:
+    text: 'None'
+    index: 0
+- tapOn:
+    text: 'None'
+    index: 1
+- tapOn: 'With support'
+- tapOn: 'Continue'
+- tapOn: 'Looks right'
+- assertVisible: 'Start'
+- assertVisible: 'My progress'
+- assertNotVisible: 'Body'
+- tapOn: 'My progress'
+- assertNotVisible: 'Before & after photos'

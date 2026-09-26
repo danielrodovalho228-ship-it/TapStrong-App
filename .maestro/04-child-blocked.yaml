@@ -1,0 +1,17 @@
+appId: app.tapstrong
+name: A child under 13 cannot sign up alone (COPPA)
+---
+- launchApp:
+    clearState: true
+- tapOn: 'Get started'
+- tapOn: 'Me'
+- tapOn:
+    text: 'Birth month.*'
+- tapOn: 'March'
+- tapOn:
+    text: 'Birth year.*'
+- scrollUntilVisible:
+    element: '2016'
+- tapOn: '2016'
+- assertVisible: '.*need a parent or guardian.*'
+- assertNotVisible: 'Coach interview'

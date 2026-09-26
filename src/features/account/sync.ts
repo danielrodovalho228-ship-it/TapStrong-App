@@ -8,6 +8,8 @@ import type { Exercise } from '../exercises/types';
 import { derive } from '../onboarding/derived';
 import { hasRedFlag } from '../onboarding/safety';
 import type { OnboardingData } from '../onboarding/store';
+import { measurementsAllowed } from '../progress/checkin';
+import type { ProgressData } from '../progress/store';
 import type { Restriction } from '../restrictions/store';
 import type { BadgeKey } from '../workout/badges';
 import type { MuscleActivity } from '../workout/recovery';
@@ -28,6 +30,8 @@ export type SyncInput = {
   /** Released exercises in the database: slug → uuid. */
   exerciseIds: Map<string, string>;
   library: Exercise[];
+  /** Check-ins and Repair (Phase 8). Photos never leave the phone. */
+  progress?: Pick<ProgressData, 'checkins' | 'repairResults' | 'repairPlan'>;
   /**
    * A family member the account holder manages on this phone (Phase 6):
    * the row has no login of its own and the account is its guardian.
@@ -56,6 +60,9 @@ export type SyncPlan = {
   muscleActivity: Row[];
   badges: Row[];
   sessions: SessionRows[];
+  checkins: Row[];
+  repairResults: Row[];
+  repairPlans: Row[];
   /** Finished workouts that use exercises the database does not release. */
   skipped: string[];
 };
@@ -235,6 +242,48 @@ export function buildSyncPlan(input: SyncInput): SyncPlan | PlanError {
     });
   }
 
+  // Body measurements only for adult and 60+ profiles (SPEC §2.3; a database
+  // trigger refuses them otherwise). Out-of-range values are left out.
+  const body = measurementsAllowed(derived.mode);
+  const within = (v: number | undefined, min: number, max: number) =>
+    body && v != null && v >= min && v <= max ? v : null;
+  const progress = input.progress ?? { checkins: [], repairResults: [], repairPlan: null };
+  const checkins = progress.checkins.map((c) => ({
+    id: c.id,
+    profile_id: profileId,
+    taken_at: c.takenAt,
+    strength: c.strength,
+    waist_cm: within(c.waistCm, 30, 250),
+    weight_kg: within(c.weightKg, 20, 350),
+    whtr: within(c.whtr, 0.2, 1.5),
+    bmi: within(c.bmi, 8, 90),
+  }));
+  const repairResults = progress.repairResults.map((r) => ({
+    id: stableId(profileId, `repair:${r.testKey}:${r.testedAt}`),
+    profile_id: profileId,
+    test_key: r.testKey,
+    value: r.value ?? null,
+    left_value: r.left ?? null,
+    right_value: r.right ?? null,
+    pass_left: r.passLeft ?? null,
+    pass_right: r.passRight ?? null,
+    tested_at: r.testedAt,
+  }));
+  const plan = progress.repairPlan;
+  const repairPlans = plan
+    ? [
+        {
+          id: stableId(profileId, `repair-plan:${plan.createdAt}`),
+          profile_id: profileId,
+          weeks: plan.weeks,
+          sessions_per_week: plan.sessionsPerWeek,
+          focus: plan.focus,
+          retest_at: plan.retestAt,
+          created_at: plan.createdAt,
+        },
+      ]
+    : [];
+
   return {
     profile,
     profileWrite: !input.managed ? 'upsert' : child ? 'child' : 'managed',
@@ -246,6 +295,9 @@ export function buildSyncPlan(input: SyncInput): SyncPlan | PlanError {
     muscleActivity,
     badges,
     sessions,
+    checkins,
+    repairResults,
+    repairPlans,
     skipped,
   };
 }
@@ -356,6 +408,13 @@ export async function runSync(
   }
   if (plan.badges.length) {
     steps.push(['badges', () => supabase.from('badges').upsert(plan.badges)]);
+  }
+  for (const [table, rows2] of [
+    ['checkins', plan.checkins],
+    ['repair_results', plan.repairResults],
+    ['repair_plans', plan.repairPlans],
+  ] as const) {
+    if (rows2.length) steps.push([table, () => supabase.from(table).upsert(rows2)]);
   }
   for (const [step, run] of steps) {
     const { error } = await run();

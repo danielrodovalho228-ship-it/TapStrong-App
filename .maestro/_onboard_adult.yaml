@@ -1,0 +1,40 @@
+# Shared steps: adult (born March 1983) onboarding to the home screen.
+appId: app.tapstrong
+---
+- launchApp:
+    clearState: true
+- tapOn: 'Get started'
+- tapOn: 'Me'
+- tapOn:
+    text: 'Birth month.*'
+- tapOn: 'March'
+- tapOn:
+    text: 'Birth year.*'
+- scrollUntilVisible:
+    element: '1983'
+- tapOn: '1983'
+- assertVisible: 'Adult mode · .*'
+- tapOn: 'Continue'
+# Coach interview: goal, schedule, focus, body model.
+- tapOn: 'Look better'
+- tapOn: 'Continue'
+- tapOn: 'Home'
+- tapOn: '30 min'
+- tapOn: '3 days'
+- tapOn: 'Continue'
+- tapOn: "I'll tap the body map"
+- tapOn: 'Woman'
+- tapOn: 'Skip'
+- tapOn: 'Next: quick safety check'
+# Safety check: nothing to report.
+- tapOn:
+    text: 'None'
+    index: 0
+- tapOn:
+    text: 'None'
+    index: 1
+- tapOn: 'Standing'
+- tapOn: 'Continue'
+# Profile summary.
+- assertVisible: 'Your plan, at a glance'
+- tapOn: 'Looks right'
