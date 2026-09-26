@@ -2,9 +2,11 @@ import { interpretAnswer } from './coach';
 
 const mockInvoke = jest.fn();
 let mockConfigured = false;
+let mockSessionOk = true;
 
 jest.mock('@/lib/supabase', () => ({
   getSupabase: () => (mockConfigured ? { functions: { invoke: mockInvoke } } : null),
+  ensureSession: () => Promise.resolve(mockSessionOk),
 }));
 
 const ctx = { locale: 'en' as const, mode: 'adult' as const };
@@ -12,6 +14,7 @@ const ctx = { locale: 'en' as const, mode: 'adult' as const };
 beforeEach(() => {
   mockInvoke.mockReset();
   mockConfigured = false;
+  mockSessionOk = true;
 });
 
 describe('interpretAnswer', () => {
@@ -54,6 +57,13 @@ describe('interpretAnswer', () => {
       reply: 'Noted.',
       source: 'coach',
     });
+  });
+
+  it('stays offline when no session can be created', async () => {
+    mockConfigured = true;
+    mockSessionOk = false;
+    expect((await interpretAnswer('schedule', 'home 30 min 2x', ctx)).source).toBe('local');
+    expect(mockInvoke).not.toHaveBeenCalled();
   });
 
   it('falls back offline when the function fails', async () => {

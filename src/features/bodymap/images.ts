@@ -4,6 +4,9 @@ import type { ImageSourcePropType } from 'react-native';
 import type { BodyBand } from '../profile/age';
 
 export type BodySex = 'm' | 'f';
+
+/** The neutral body option (SPEC §11.8) stays hidden until its 14 images exist. */
+export const NEUTRAL_BODY_AVAILABLE = false;
 export type BodyView = 'front' | 'back';
 
 const images: Record<BodyBand, Record<BodySex, Record<BodyView, ImageSourcePropType>>> = {

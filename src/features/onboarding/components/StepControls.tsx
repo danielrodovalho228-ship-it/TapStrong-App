@@ -5,6 +5,7 @@ import { StyleSheet, View } from 'react-native';
 import { AppText, Chip, TextField } from '@/components/ui';
 import { colors, fonts, spacing } from '@/theme';
 
+import { NEUTRAL_BODY_AVAILABLE } from '../../bodymap/images';
 import { FOCUS_CHIP_KEYS, muscleByKey } from '../../muscles';
 import type { AppMode } from '../../profile/age';
 import {
@@ -170,6 +171,8 @@ function FocusControls() {
   );
 }
 
+const BODY_OPTIONS: ('m' | 'f' | null)[] = NEUTRAL_BODY_AVAILABLE ? ['m', 'f', null] : ['m', 'f'];
+
 function numberOrUndefined(text: string): number | undefined {
   const n = Number(text.replace(',', '.'));
   return text.trim() && Number.isFinite(n) ? n : undefined;
@@ -210,7 +213,7 @@ function BodyControls({ mode }: { mode: AppMode }) {
   return (
     <View style={styles.stack}>
       <Group>
-        {(['m', 'f', null] as const).map((sex) => (
+        {BODY_OPTIONS.map((sex) => (
           <Chip
             key={sex ?? 'neutral'}
             label={t(`sex.${sex ?? 'neutral'}`)}

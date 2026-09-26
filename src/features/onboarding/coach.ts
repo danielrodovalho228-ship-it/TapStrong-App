@@ -5,7 +5,7 @@ import {
 } from '../../../supabase/functions/_shared/interview';
 
 import type { SupportedLocale } from '@/i18n';
-import { getSupabase } from '@/lib/supabase';
+import { ensureSession, getSupabase } from '@/lib/supabase';
 
 import { MUSCLE_KEYS } from '../muscles';
 
@@ -29,6 +29,7 @@ export async function interpretAnswer(
   const supabase = getSupabase();
   if (supabase) {
     try {
+      if (!(await ensureSession(supabase))) return offline(step, text);
       const { data, error } = await supabase.functions.invoke('coach-interview', {
         body: { step, text, locale: ctx.locale, mode: ctx.mode },
       });

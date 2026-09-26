@@ -22,7 +22,12 @@ const sql = fs
 function pgEnum(name: string): string[] {
   const match = new RegExp(`create type public\\.${name} as enum \\(([^)]*)\\)`).exec(sql);
   if (!match) throw new Error(`enum ${name} not found`);
-  return [...match[1].matchAll(/'([a-z_]+)'/g)].map((m) => m[1]);
+  const added = [
+    ...sql.matchAll(
+      new RegExp(`alter type public\\.${name} add value (?:if not exists )?'([a-z_]+)'`, 'g'),
+    ),
+  ].map((m) => m[1]);
+  return [...[...match[1].matchAll(/'([a-z_]+)'/g)].map((m) => m[1]), ...added];
 }
 
 describe('interview contract matches the database', () => {

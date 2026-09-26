@@ -104,6 +104,7 @@ const GOAL_FOR_MAIN: Record<MainGoal, MuscleGoal> = {
   sport: 'strengthen',
   mobility: 'mobility',
   balance: 'balance',
+  fitness: 'strengthen',
 };
 
 export function defaultMuscleGoal(mainGoals: readonly MainGoal[]): MuscleGoal {

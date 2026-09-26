@@ -41,8 +41,9 @@ const { store, persistent } = createStore();
 /** True when data survives an app restart (MMKV available). */
 export const isPersistentStorage = persistent;
 
-export const kvStorage: StateStorage = {
-  getItem: (name) => store.getString(name) ?? null,
-  setItem: (name, value) => store.set(name, value),
-  removeItem: (name) => void store.remove(name),
-};
+/** Synchronous string storage, shaped for zustand persist and Supabase auth. */
+export const kvStorage = {
+  getItem: (name: string): string | null => store.getString(name) ?? null,
+  setItem: (name: string, value: string): void => store.set(name, value),
+  removeItem: (name: string): void => void store.remove(name),
+} satisfies StateStorage;

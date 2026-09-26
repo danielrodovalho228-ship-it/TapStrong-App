@@ -4,6 +4,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import type { SupportedLocale } from '@/i18n';
 import { kvStorage } from '@/lib/storage';
 
+import { NEUTRAL_BODY_AVAILABLE } from '../bodymap/images';
 import { deviceUnits, type Units } from '../profile/units';
 
 import {
@@ -112,7 +113,10 @@ export const useOnboardingStore = create<OnboardingData & Actions>()(
             break;
           case 'body':
             set({
-              ...(a.sex !== undefined ? { sex: a.sex } : {}),
+              // Neutral body stays hidden until its images exist.
+              ...(a.sex !== undefined && (a.sex !== null || NEUTRAL_BODY_AVAILABLE)
+                ? { sex: a.sex }
+                : {}),
               heightCm: a.heightCm ?? s.heightCm,
               weightKg: a.weightKg ?? s.weightKg,
             });

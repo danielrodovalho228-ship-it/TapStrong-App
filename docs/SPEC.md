@@ -130,7 +130,7 @@ Verify every point on every one of the 28 images; bodies differ.
   - The signed-in user owns the account. Managed profiles (a child, a parent or grandparent) may have no login: `user_id` is null and they are linked through `guardian_id` / `family_members`. Every profile has a `user_id` or a `guardian_id`.
 - **`health_screen`**: `profile_id`, `pain_areas[]`, `conditions[]`, `position` (standing / with_support / seated_only), `red_flag` bool, `answered_at`
 - **`restrictions`**: `id`, `profile_id`, `area`, `side?`, `source` (pain_report / repair / manual), `note`, `active`, `created_at`
-- **`preferences`**: `profile_id`, `location` (gym / home / outdoors), `minutes`, `days_per_week`, `equipment[]`, `main_goals[]` (look / lose_weight / strength / bone_health / sport / mobility / balance)
+- **`preferences`**: `profile_id`, `location` (gym / home / outdoors), `minutes`, `days_per_week`, `equipment[]`, `main_goals[]` (look / lose_weight / strength / bone_health / sport / mobility / balance / fitness; under 18, `fitness` — "More fitness / energy" — replaces `lose_weight`)
 - **`muscle_goals`**: `profile_id`, `muscle_key`, `goal` (grow / firm / strengthen / balance / mobility), `priority`
 - **`muscles`**: `key`, `region`, `view`, `label_i18n_key`, `parent_key?` (upper chest → chest)
 - **`exercises`**

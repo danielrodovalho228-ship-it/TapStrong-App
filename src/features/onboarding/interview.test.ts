@@ -30,10 +30,19 @@ describe('interview steps', () => {
     expect(allowsMeasurements('adult')).toBe(true);
   });
 
-  it('minors are not offered a weight-loss goal', () => {
-    expect(visibleMainGoals('teen')).not.toContain('lose_weight');
+  it('minors get "fitness" in place of "lose weight"', () => {
+    expect(visibleMainGoals('teen')).toEqual([
+      'look',
+      'fitness',
+      'strength',
+      'bone_health',
+      'sport',
+      'mobility',
+      'balance',
+    ]);
     expect(visibleMainGoals('child')).not.toContain('lose_weight');
     expect(visibleMainGoals('adult')).toContain('lose_weight');
+    expect(visibleMainGoals('adult')).not.toContain('fitness');
   });
 
   it('maps the first main goal to a default muscle goal', () => {

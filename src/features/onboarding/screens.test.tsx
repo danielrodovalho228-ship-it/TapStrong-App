@@ -96,11 +96,11 @@ describe('Chat screen (mockup 03)', () => {
     expect(screen.getByText('Tap an option to answer.')).toBeTruthy();
   });
 
-  it('teens are not offered a weight-loss goal', async () => {
+  it('teens get "More fitness / energy" instead of "Lose weight"', async () => {
     await act(() => store().update({ birthMonth: 5, birthYear: 2011 }));
     await render(<ChatScreen />);
     expect(screen.queryByRole('button', { name: 'Lose weight' })).toBeNull();
-    expect(screen.getByRole('button', { name: 'Get stronger' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'More fitness / energy' })).toBeTruthy();
   });
 
   it('finishing the body step goes to the safety check', async () => {
@@ -114,9 +114,11 @@ describe('Chat screen (mockup 03)', () => {
     await render(<ChatScreen />);
     const next = screen.getByRole('button', { name: 'Next: quick safety check' });
     expect(next).toBeDisabled();
-    await fireEvent.press(screen.getByRole('button', { name: 'Neutral body' }));
+    // The neutral body stays hidden until its images exist.
+    expect(screen.queryByRole('button', { name: 'Neutral body' })).toBeNull();
+    await fireEvent.press(screen.getByRole('button', { name: 'Woman' }));
     await fireEvent.press(next);
-    expect(store().sex).toBeNull();
+    expect(store().sex).toBe('f');
     expect(mockRouter.push).toHaveBeenCalledWith('/onboarding/safety');
     expect(events.map((e) => e.event)).toContain('chat_completed');
   });

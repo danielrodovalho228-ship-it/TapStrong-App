@@ -9,9 +9,15 @@ import {
   SYSTEM_PROMPT,
   userPrompt,
   validateOutput,
+  type InterviewRequest,
+  type InterviewResult,
 } from '../_shared/interview.ts';
 
-const MODEL = 'claude-opus-5';
+// Mapping a short answer onto a fixed list is a simple task: Haiku first,
+// Sonnet as the reserve when Haiku fails or declines (Daniel, Sep 27 2026).
+const PRIMARY_MODEL = 'claude-haiku-4-5';
+const RESERVE_MODEL = 'claude-sonnet-5';
+const DAILY_CALL_LIMIT = 30;
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -27,22 +33,69 @@ function json(body: unknown, status = 200): Response {
 }
 
 const anthropic = new Anthropic({ apiKey: Deno.env.get('ANTHROPIC_API_KEY') });
-const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_ANON_KEY')!);
+const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
+const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
 
 let muscleKeysCache: string[] | null = null;
 
 /** Muscle keys come only from the database (SPEC §2.1). */
 async function muscleKeys(): Promise<string[]> {
   if (muscleKeysCache) return muscleKeysCache;
-  const { data, error } = await supabase.from('muscles').select('key').order('key');
+  const client = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const { data, error } = await client.from('muscles').select('key').order('key');
   if (error) throw error;
-  muscleKeysCache = (data ?? []).map((row: { key: string }) => row.key);
-  return muscleKeysCache;
+  const keys = (data ?? []).map((row: { key: string }) => row.key);
+  muscleKeysCache = keys;
+  return keys;
+}
+
+type Attempt = { result: InterviewResult } | { retry: true };
+
+async function ask(model: string, req: InterviewRequest, keys: string[]): Promise<Attempt> {
+  const reserve = model === RESERVE_MODEL;
+  const params = {
+    model,
+    max_tokens: 1024,
+    output_config: {
+      // Haiku 4.5 does not take an effort setting.
+      ...(reserve ? { effort: 'low' } : {}),
+      format: { type: 'json_schema', schema: outputSchema(req.step, keys) },
+    },
+    system: SYSTEM_PROMPT,
+    messages: [{ role: 'user', content: userPrompt(req, keys) }],
+  };
+  // deno-lint-ignore no-explicit-any
+  const response = await anthropic.messages.create(params as any);
+  if (response.stop_reason === 'refusal') return { retry: true };
+
+  const text = response.content.find((block) => block.type === 'text');
+  if (!text || text.type !== 'text') return { retry: true };
+  try {
+    return { result: validateOutput(req.step, JSON.parse(text.text), keys) };
+  } catch {
+    return { retry: true };
+  }
+}
+
+function retryable(error: unknown): boolean {
+  if (error instanceof Anthropic.APIConnectionError) return true;
+  if (error instanceof Anthropic.APIError) {
+    return error.status === 429 || (error.status ?? 0) >= 500;
+  }
+  return false;
 }
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
   if (req.method !== 'POST') return json({ error: 'method_not_allowed' }, 405);
+
+  // Every caller needs a session (anonymous is fine) so calls can be limited per user.
+  const authorization = req.headers.get('Authorization') ?? '';
+  const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    global: { headers: { Authorization: authorization } },
+  });
+  const { data: auth } = await userClient.auth.getUser();
+  if (!auth.user) return json({ error: 'unauthorized' }, 401);
 
   let body: unknown;
   try {
@@ -50,44 +103,29 @@ Deno.serve(async (req) => {
   } catch {
     return json({ error: 'invalid_body' }, 400);
   }
-
   const parsed = parseRequest(body);
-  if ('error' in parsed)
+  if ('error' in parsed) {
     return json({ error: parsed.error }, parsed.error === 'child_mode' ? 403 : 400);
+  }
+
+  const { data: allowed, error: limitError } = await userClient.rpc('consume_coach_call', {
+    daily_limit: DAILY_CALL_LIMIT,
+  });
+  if (limitError) return json({ error: 'coach_unavailable' }, 500);
+  if (!allowed) return json({ error: 'daily_limit' }, 429);
 
   try {
     const keys = await muscleKeys();
-    // `fallbacks: "default"` re-runs a refused request on Anthropic's recommended
-    // fallback model, server side. Not yet in the SDK's request types.
-    const params = {
-      model: MODEL,
-      max_tokens: 1024,
-      betas: ['server-side-fallback-2026-07-01'],
-      fallbacks: 'default',
-      output_config: {
-        effort: 'low',
-        format: { type: 'json_schema', schema: outputSchema(parsed.step, keys) },
-      },
-      system: SYSTEM_PROMPT,
-      messages: [{ role: 'user', content: userPrompt(parsed, keys) }],
-    };
-    // deno-lint-ignore no-explicit-any
-    const response = await anthropic.beta.messages.create(params as any);
-
-    if (response.stop_reason === 'refusal') return json({ answer: {}, reply: null });
-
-    const text = response.content.find((block) => block.type === 'text');
-    if (!text || text.type !== 'text') return json({ answer: {}, reply: null });
-
-    let raw: unknown;
+    let attempt: Attempt;
     try {
-      raw = JSON.parse(text.text);
-    } catch {
-      return json({ answer: {}, reply: null });
+      attempt = await ask(PRIMARY_MODEL, parsed, keys);
+    } catch (error) {
+      if (!retryable(error)) throw error;
+      attempt = { retry: true };
     }
-    return json(validateOutput(parsed.step, raw, keys));
+    if ('retry' in attempt) attempt = await ask(RESERVE_MODEL, parsed, keys);
+    return json('result' in attempt ? attempt.result : { answer: {}, reply: null });
   } catch (error) {
-    if (error instanceof Anthropic.RateLimitError) return json({ error: 'busy' }, 503);
     if (error instanceof Anthropic.APIError) {
       console.error('anthropic_error', error.status);
       return json({ error: 'coach_unavailable' }, 502);
