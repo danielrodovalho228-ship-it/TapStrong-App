@@ -1,0 +1,75 @@
+{
+  "app": {
+    "name": "TapStrong",
+    "tagline": "Toque. Fale. Treine."
+  },
+  "common": {
+    "back": "Voltar",
+    "close": "Fechar",
+    "continue": "Continuar",
+    "skip": "Pular",
+    "notNow": "Agora não",
+    "add": "Adicionar",
+    "remove": "Remover"
+  },
+  "language": {
+    "en": "English",
+    "es": "Español",
+    "pt-BR": "Português"
+  },
+  "dev": {
+    "gallery": {
+      "title": "Componentes",
+      "subtitle": "Peças da fase 0. Esta tela será trocada pela Boas-vindas na fase 1.",
+      "buttons": "Botões",
+      "primary": "Começar",
+      "secondary": "Já tenho conta",
+      "ghost": "Pular por agora",
+      "disabled": "Desativado",
+      "chips": "Chips",
+      "cards": "Cartões",
+      "cardTitle": "Próximo treino",
+      "cardBody": "Parte superior · 35 min · 6 exercícios",
+      "safetyTitle": "Segurança primeiro",
+      "safetyBody": "Conte se tem dor ou alguma condição de saúde antes do primeiro treino.",
+      "iconButtons": "Botões de ícone",
+      "language": "Idioma",
+      "type": "Escala de texto",
+      "seniorPreview": "Texto no modo 60+ (+2 passos)"
+    },
+    "goals": {
+      "grow": "Crescer",
+      "firm": "Definir",
+      "strengthen": "Fortalecer",
+      "balance": "Equilíbrio",
+      "mobility": "Mobilidade"
+    }
+  },
+  "muscles": {
+    "chest": "Peito",
+    "abs": "Abdômen",
+    "traps": "Trapézio",
+    "shoulders": "Ombros (frente)",
+    "upperChest": "Peito superior",
+    "midChest": "Peito médio",
+    "lowerChest": "Peito inferior",
+    "biceps": "Bíceps",
+    "forearms": "Antebraços",
+    "upperAbs": "Abdômen superior",
+    "lowerAbs": "Abdômen inferior",
+    "obliques": "Oblíquos",
+    "hips": "Quadril",
+    "adductors": "Parte interna da coxa",
+    "quads": "Quadríceps",
+    "knees": "Joelhos",
+    "shins": "Canelas",
+    "rearDelts": "Ombros (trás)",
+    "upperBack": "Costas (alto)",
+    "lats": "Dorsais",
+    "triceps": "Tríceps",
+    "lowerBack": "Lombar",
+    "glutes": "Glúteos",
+    "hamstrings": "Posteriores da coxa",
+    "calves": "Panturrilhas"
+  }
+}

@@ -1,0 +1,9 @@
+node_modules
+.expo
+dist
+coverage
+package-lock.json
+supabase/.temp
+docs/SPEC.md
+CLAUDE.md
+AGENTS.md

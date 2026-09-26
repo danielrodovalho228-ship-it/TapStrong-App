@@ -1,0 +1,75 @@
+{
+  "app": {
+    "name": "TapStrong",
+    "tagline": "Tap. Talk. Train."
+  },
+  "common": {
+    "back": "Back",
+    "close": "Close",
+    "continue": "Continue",
+    "skip": "Skip",
+    "notNow": "Not now",
+    "add": "Add",
+    "remove": "Remove"
+  },
+  "language": {
+    "en": "English",
+    "es": "Español",
+    "pt-BR": "Português"
+  },
+  "dev": {
+    "gallery": {
+      "title": "Components",
+      "subtitle": "Phase 0 building blocks. This screen is replaced by Welcome in Phase 1.",
+      "buttons": "Buttons",
+      "primary": "Get started",
+      "secondary": "I have an account",
+      "ghost": "Skip for now",
+      "disabled": "Disabled",
+      "chips": "Chips",
+      "cards": "Cards",
+      "cardTitle": "Next session",
+      "cardBody": "Upper body · 35 min · 6 exercises",
+      "safetyTitle": "Safety first",
+      "safetyBody": "Tell us about pain or health conditions before your first workout.",
+      "iconButtons": "Icon buttons",
+      "language": "Language",
+      "type": "Type scale",
+      "seniorPreview": "Senior mode text (+2 steps)"
+    },
+    "goals": {
+      "grow": "Grow",
+      "firm": "Firm",
+      "strengthen": "Strengthen",
+      "balance": "Balance",
+      "mobility": "Mobility"
+    }
+  },
+  "muscles": {
+    "chest": "Chest",
+    "abs": "Abs",
+    "traps": "Traps",
+    "shoulders": "Front shoulders",
+    "upperChest": "Upper chest",
+    "midChest": "Mid chest",
+    "lowerChest": "Lower chest",
+    "biceps": "Biceps",
+    "forearms": "Forearms",
+    "upperAbs": "Upper abs",
+    "lowerAbs": "Lower abs",
+    "obliques": "Obliques",
+    "hips": "Hips",
+    "adductors": "Inner thighs",
+    "quads": "Quads",
+    "knees": "Knees",
+    "shins": "Shins",
+    "rearDelts": "Rear shoulders",
+    "upperBack": "Upper back",
+    "lats": "Lats",
+    "triceps": "Triceps",
+    "lowerBack": "Lower back",
+    "glutes": "Glutes",
+    "hamstrings": "Hamstrings",
+    "calves": "Calves"
+  }
+}

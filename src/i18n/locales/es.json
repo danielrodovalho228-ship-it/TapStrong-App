@@ -1,0 +1,75 @@
+{
+  "app": {
+    "name": "TapStrong",
+    "tagline": "Toca. Habla. Entrena."
+  },
+  "common": {
+    "back": "Atrás",
+    "close": "Cerrar",
+    "continue": "Continuar",
+    "skip": "Omitir",
+    "notNow": "Ahora no",
+    "add": "Agregar",
+    "remove": "Quitar"
+  },
+  "language": {
+    "en": "English",
+    "es": "Español",
+    "pt-BR": "Português"
+  },
+  "dev": {
+    "gallery": {
+      "title": "Componentes",
+      "subtitle": "Bloques de la fase 0. Esta pantalla se reemplaza por Bienvenida en la fase 1.",
+      "buttons": "Botones",
+      "primary": "Comenzar",
+      "secondary": "Ya tengo una cuenta",
+      "ghost": "Omitir por ahora",
+      "disabled": "Desactivado",
+      "chips": "Chips",
+      "cards": "Tarjetas",
+      "cardTitle": "Próxima sesión",
+      "cardBody": "Tren superior · 35 min · 6 ejercicios",
+      "safetyTitle": "La seguridad primero",
+      "safetyBody": "Cuéntanos si tienes dolor o alguna condición de salud antes de tu primer entrenamiento.",
+      "iconButtons": "Botones de icono",
+      "language": "Idioma",
+      "type": "Escala tipográfica",
+      "seniorPreview": "Texto en modo 60+ (+2 pasos)"
+    },
+    "goals": {
+      "grow": "Crecer",
+      "firm": "Tonificar",
+      "strengthen": "Fortalecer",
+      "balance": "Equilibrio",
+      "mobility": "Movilidad"
+    }
+  },
+  "muscles": {
+    "chest": "Pecho",
+    "abs": "Abdomen",
+    "traps": "Trapecios",
+    "shoulders": "Hombros frontales",
+    "upperChest": "Pecho superior",
+    "midChest": "Pecho medio",
+    "lowerChest": "Pecho inferior",
+    "biceps": "Bíceps",
+    "forearms": "Antebrazos",
+    "upperAbs": "Abdomen superior",
+    "lowerAbs": "Abdomen inferior",
+    "obliques": "Oblicuos",
+    "hips": "Caderas",
+    "adductors": "Aductores",
+    "quads": "Cuádriceps",
+    "knees": "Rodillas",
+    "shins": "Espinillas",
+    "rearDelts": "Hombros posteriores",
+    "upperBack": "Espalda alta",
+    "lats": "Dorsales",
+    "triceps": "Tríceps",
+    "lowerBack": "Espalda baja",
+    "glutes": "Glúteos",
+    "hamstrings": "Isquiotibiales",
+    "calves": "Pantorrillas"
+  }
+}
