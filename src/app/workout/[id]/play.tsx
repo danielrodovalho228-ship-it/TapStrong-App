@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText, Button, Card, IconButton, Screen } from '@/components/ui';
+import { prototypeVideo } from '@/features/exercises/library';
 import type { Exercise } from '@/features/exercises/types';
 import { isMachine } from '@/features/generator/filters';
 import type { SessionItem } from '@/features/generator/types';
@@ -101,6 +102,7 @@ export default function PlayerScreen() {
       footer={<UndoBar message={undoMessage} onDone={clearUndo} />}
     >
       <DemoLoop
+        video={exercise ? prototypeVideo(exercise.slug) : null}
         chips={[
           { label: targetText(t, step.item, exercise), strong: true },
           ...(exercise?.muscles ?? [])

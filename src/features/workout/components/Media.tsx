@@ -17,8 +17,46 @@ export function ExerciseThumb({ size = 56 }: { size?: number }) {
   );
 }
 
-export function DemoLoop({ chips }: { chips: { label: string; strong?: boolean }[] }) {
+export function DemoLoop({
+  chips,
+  video = null,
+}: {
+  chips: { label: string; strong?: boolean }[];
+  /** Prototype clip in development builds; null shows the neutral frame. */
+  video?: number | null;
+}) {
   const { t } = useTranslation();
+  if (video) {
+    // Loaded lazily: only development builds ever have a clip to show.
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { DemoVideo } = require('./DemoVideo') as typeof import('./DemoVideo');
+    return (
+      <View style={styles.demo}>
+        <DemoVideo source={video} />
+        <View style={styles.demoTop}>
+          <AppText variant="caption" color={colors.mutedStrong} style={styles.demoLabel}>
+            {t('workout.demoPrototype')}
+          </AppText>
+        </View>
+        <View style={styles.chips}>
+          {chips.map((c) => (
+            <View
+              key={c.label}
+              style={[styles.chip, c.strong ? styles.chipStrong : styles.chipSoft]}
+            >
+              <AppText
+                variant="caption"
+                color={c.strong ? colors.onAccent : colors.ink}
+                style={styles.chipText}
+              >
+                {c.label}
+              </AppText>
+            </View>
+          ))}
+        </View>
+      </View>
+    );
+  }
   return (
     <View style={styles.demo}>
       <View style={styles.demoTop}>

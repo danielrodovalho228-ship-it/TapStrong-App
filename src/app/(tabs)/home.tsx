@@ -21,7 +21,7 @@ import { useWorkoutStore } from '@/features/workout/store';
 import { streakToday } from '@/features/workout/streak';
 import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
-import { localDate } from '@/lib/dates';
+import { deviceWeekStart, localDate } from '@/lib/dates';
 import { colors, fonts, spacing } from '@/theme';
 
 const LEGEND: Exclude<RecoveryState, 'neutral'>[] = ['fresh', 'recovering', 'almost', 'neglected'];
@@ -74,7 +74,7 @@ export default function HomeScreen() {
           </AppText>
         </View>
         <View style={styles.streak}>
-          <AppText variant="h1">{streakToday(streak, localDate(now))}</AppText>
+          <AppText variant="h1">{streakToday(streak, localDate(now), deviceWeekStart())}</AppText>
           <AppText variant="caption" color={colors.muted} style={styles.caps}>
             {t('home.dayStreak')}
           </AppText>

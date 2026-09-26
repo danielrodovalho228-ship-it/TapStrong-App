@@ -683,6 +683,18 @@
     "box_breathing": {
       "name": "Respiración lenta",
       "cues": "Inhala 4, sostén 4, exhala 4, sostén 4."
+    },
+    "neutral_grip_floor_press": {
+      "name": "Press en el suelo con agarre neutro",
+      "cues": "Acostado en el suelo, palmas enfrentadas; baja hasta que los brazos toquen el suelo y empuja hacia arriba."
+    },
+    "neutral_grip_machine_chest_press": {
+      "name": "Press de pecho en máquina con agarre neutro",
+      "cues": "Palmas hacia dentro, agarres a media altura del pecho; empuja sin bloquear los codos y al volver para antes de que las manos pasen del pecho."
+    },
+    "short_range_incline_push_up": {
+      "name": "Flexión inclinada de recorrido corto",
+      "cues": "Manos en un banco, cuerpo recto; baja solo hasta la mitad y vuelve a subir."
     }
   },
   "generator": {
@@ -892,6 +904,7 @@
         "legs": "Piernas"
       }
     },
-    "restFor": "descanso {{seconds}} s"
+    "restFor": "descanso {{seconds}} s",
+    "demoPrototype": "Demo de prototipo · solo desarrollo"
   }
 }

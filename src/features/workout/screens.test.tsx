@@ -329,7 +329,7 @@ describe('Pain swap (mockup 21)', () => {
     await render(<PainScreen />);
     await fireEvent.press(screen.getByRole('button', { name: 'Right shoulder' }));
     await fireEvent.press(screen.getByRole('button', { name: 'Dull / pinch' }));
-    // Every chest press in the library loads the shoulder.
+    // No upper-chest option in the draft library spares the shoulder yet.
     expect(
       screen.getByText('No safe alternative for this muscle with your equipment.'),
     ).toBeTruthy();

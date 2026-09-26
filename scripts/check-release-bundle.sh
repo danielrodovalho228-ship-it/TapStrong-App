@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Proves the draft exercise library never ships (SPEC §2.1): exports release
-# bundles and fails if any contains supabase/seed/exercises.json.
+# Proves the draft exercise library and the prototype videos never ship
+# (SPEC §2.1, §6): exports release bundles and fails if any contains them.
 # Slower than unit tests (~1 min); run before any store build.
 set -euo pipefail
 
@@ -16,4 +16,13 @@ if grep -rl 'Prototype exercise library' "$OUT" >/dev/null; then
   grep -rl 'Prototype exercise library' "$OUT" >&2
   exit 1
 fi
-echo "OK: no draft exercises in release bundles"
+if grep -rl 'Prototype exercise videos' "$OUT" >/dev/null; then
+  echo "FAIL: a release bundle contains the prototype video map" >&2
+  exit 1
+fi
+if find "$OUT" -iname '*.mp4' | grep -q .; then
+  echo "FAIL: a release bundle contains video files" >&2
+  find "$OUT" -iname '*.mp4' >&2
+  exit 1
+fi
+echo "OK: no draft exercises or prototype videos in release bundles"

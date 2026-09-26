@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { clock } from '@/lib/clock';
-import { localDate } from '@/lib/dates';
+import { deviceWeekStart, localDate } from '@/lib/dates';
 import { kvStorage } from '@/lib/storage';
 
 import type { GeneratedSession, SwapRecord } from '../generator/types';
@@ -152,7 +152,11 @@ export const useWorkoutStore = create<Data & Actions>()(
           update(id, (x) => ({ ...x, status, endedAt: now.toISOString() }));
           // Any logged set or step makes it an active day (SPEC §8).
           if (!w.logs.length) return { milestone: false };
-          const { state, milestone } = recordActiveDay(get().streak, localDate(now));
+          const { state, milestone } = recordActiveDay(
+            get().streak,
+            localDate(now),
+            deviceWeekStart(),
+          );
           set({ streak: state });
           return { milestone };
         },

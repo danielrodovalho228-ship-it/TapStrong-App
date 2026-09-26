@@ -127,6 +127,21 @@ export function devLibrary(): Exercise[] {
   return [];
 }
 
+/**
+ * Prototype demo loop for an exercise (the AI `ex-*.mp4` placeholders).
+ * Development builds only, with the same `if (__DEV__)` guard as the drafts;
+ * `npm run bundle:check` proves no clip reaches a release bundle (SPEC §6).
+ */
+export function prototypeVideo(slug: string): number | null {
+  if (__DEV__) {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const videos = require('../../../assets/prototype/videos.js') as Record<string, unknown>;
+    const source = slug === '__label' ? undefined : videos[slug];
+    return typeof source === 'number' ? source : null;
+  }
+  return null;
+}
+
 /** Select used to load the released library from Supabase (RLS: released only). */
 export const RELEASED_LIBRARY_SELECT =
   'id, slug, name_i18n_key, cues_i18n_key, equipment, location, level, min_age_band, positions, ' +

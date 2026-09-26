@@ -23,7 +23,7 @@ import {
 import { useWorkoutStore } from '@/features/workout/store';
 import { streakToday } from '@/features/workout/streak';
 import { clock } from '@/lib/clock';
-import { localDate } from '@/lib/dates';
+import { deviceWeekStart, localDate } from '@/lib/dates';
 import { colors, fonts, radius, spacing } from '@/theme';
 
 /** Mockup 14 — done: the body turns red, stats, a finisher suggestion. */
@@ -99,7 +99,9 @@ export default function DoneScreen() {
             <Icon name="flame" size={18} color={colors.onAccent} />
           </View>
           <AppText variant="button" color={colors.onAccent}>
-            {t('workout.done.streak', { count: streakToday(streak, localDate(now)) })}
+            {t('workout.done.streak', {
+              count: streakToday(streak, localDate(now), deviceWeekStart()),
+            })}
           </AppText>
         </View>
       </View>

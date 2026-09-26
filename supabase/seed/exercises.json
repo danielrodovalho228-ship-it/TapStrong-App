@@ -109,7 +109,6 @@
         ["calves", "secondary", 0.3]
       ]
     },
-
     {
       "slug": "arm_circles",
       "equipment": [],
@@ -224,7 +223,6 @@
         ["lowerBack", "secondary", 0.3]
       ]
     },
-
     {
       "slug": "push_up",
       "equipment": [],
@@ -385,6 +383,67 @@
       ]
     },
     {
+      "slug": "neutral_grip_floor_press",
+      "equipment": ["dumbbells"],
+      "location": ["home", "gym"],
+      "level": 2,
+      "minAgeBand": "teen",
+      "positions": ["standing"],
+      "contraindications": ["elbow_wrist"],
+      "pattern": "horizontal_push",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": true,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["midChest", "primary", 0.9],
+        ["triceps", "secondary", 0.6],
+        ["shoulders", "secondary", 0.2]
+      ]
+    },
+    {
+      "slug": "neutral_grip_machine_chest_press",
+      "equipment": ["machines"],
+      "location": ["gym"],
+      "level": 1,
+      "minAgeBand": "teen",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": [],
+      "pattern": "horizontal_push",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": true,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["midChest", "primary", 1.0],
+        ["triceps", "secondary", 0.5],
+        ["shoulders", "secondary", 0.3]
+      ]
+    },
+    {
+      "slug": "short_range_incline_push_up",
+      "equipment": ["bench"],
+      "location": ["home", "gym"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support"],
+      "contraindications": ["elbow_wrist"],
+      "pattern": "horizontal_push",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["midChest", "primary", 0.8],
+        ["lowerChest", "secondary", 0.4],
+        ["triceps", "secondary", 0.4],
+        ["shoulders", "secondary", 0.2]
+      ]
+    },
+    {
       "slug": "dumbbell_shoulder_press",
       "equipment": ["dumbbells"],
       "location": ["home", "gym"],
@@ -420,7 +479,6 @@
       "impact": 0,
       "muscles": [["shoulders", "primary", 0.9]]
     },
-
     {
       "slug": "band_face_pull",
       "equipment": ["bands"],
@@ -580,7 +638,6 @@
         ["lowerAbs", "stabilizer", 0.4]
       ]
     },
-
     {
       "slug": "dumbbell_curl",
       "equipment": ["dumbbells"],
@@ -687,7 +744,6 @@
       "impact": 0,
       "muscles": [["forearms", "primary", 1.0]]
     },
-
     {
       "slug": "plank",
       "equipment": [],
@@ -805,7 +861,6 @@
         ["lowerAbs", "secondary", 0.4]
       ]
     },
-
     {
       "slug": "bodyweight_squat",
       "equipment": [],
@@ -1115,7 +1170,6 @@
         ["shoulders", "stabilizer", 0.4]
       ]
     },
-
     {
       "slug": "doorway_chest_stretch",
       "equipment": [],

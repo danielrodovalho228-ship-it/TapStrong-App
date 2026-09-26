@@ -683,6 +683,18 @@
     "box_breathing": {
       "name": "Slow breathing",
       "cues": "Breathe in for 4, hold 4, out for 4, hold 4."
+    },
+    "neutral_grip_floor_press": {
+      "name": "Neutral-grip floor press",
+      "cues": "Lie on the floor, palms facing each other; lower until your upper arms touch the floor, then press up."
+    },
+    "neutral_grip_machine_chest_press": {
+      "name": "Neutral-grip machine chest press",
+      "cues": "Palms facing in, handles at mid-chest; press out without locking your elbows, stop before your hands pass your chest on the way back."
+    },
+    "short_range_incline_push_up": {
+      "name": "Short-range incline push-up",
+      "cues": "Hands on a bench, body straight; lower only halfway, then push back up."
     }
   },
   "generator": {
@@ -892,6 +904,7 @@
         "legs": "Legs"
       }
     },
-    "restFor": "rest {{seconds}} s"
+    "restFor": "rest {{seconds}} s",
+    "demoPrototype": "Prototype demo · dev build only"
   }
 }

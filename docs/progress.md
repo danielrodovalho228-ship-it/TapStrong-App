@@ -330,3 +330,17 @@ Telas conferidas com os mockups 01 a 05, na ordem do fluxo. Tudo local, sem cont
 4. **Teste real do coach:** a função `coach-interview` (v2) está publicada, mas este ambiente bloqueia `vycdrotqkjwvkzgjovpb.supabase.co`. Duas saídas:
    - liberar esse domínio nas configurações de rede do ambiente; ou
    - testar no seu celular pelo Expo Go, com o `.env` no PC.
+
+### Ajustes pedidos depois da Fase 4
+
+- **Peito sem forçar o ombro:** 3 exercícios novos em rascunho para o revisor (a biblioteca passa de 71 para 74, e a planilha foi regerada):
+  - supino no chão com pegada neutra;
+  - supino na máquina com pegada neutra;
+  - flexão inclinada com amplitude curta.
+
+  Nenhum deles tem o ombro como contraindicação; o revisor confirma ou corrige. Com dor no ombro num exercício de peito do meio, o app já oferece um deles no build de desenvolvimento. Para o peito superior ainda não há opção, então fica "Pular este exercício".
+- **Semana:** começa no dia que o calendário do celular indicar; sem essa informação, domingo.
+- **Vídeos de protótipo:**
+  - só no build de desenvolvimento, com a mesma proteção dos rascunhos (`expo-video` instalado; loop sem som);
+  - como usar: copie os `ex-*.mp4` para `assets/prototype/`, diga em `map.json` qual exercício cada vídeo mostra e rode `npm run prototype:videos`;
+  - `npm run bundle:check` agora também falha se o mapa de vídeos ou qualquer `.mp4` aparecer num bundle de produção. Testei com um vídeo falso nos dois sentidos: com a proteção, o bundle sai limpo; sem ela, a checagem falha.

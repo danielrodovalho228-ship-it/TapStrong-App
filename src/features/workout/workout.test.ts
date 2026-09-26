@@ -16,6 +16,7 @@ import {
   neglectedGroup,
   stateForHours,
 } from './recovery';
+import { painSwap, planFor } from './pain';
 import { useWorkoutStore } from './store';
 import { initialStreak, recordActiveDay, streakToday, type StreakState } from './streak';
 import type { SetLog, WorkoutRecord } from './types';
@@ -93,10 +94,19 @@ describe('streak', () => {
     expect(s.best).toBe(2);
   });
 
-  it('gives each calendar week its own rest day (weeks start on Monday)', () => {
-    // Sat, (Sun rest, week 1), (Mon rest, week 2), Tue
-    const s = run(['2026-09-26', '2026-09-29']);
+  it('gives each calendar week its own rest day (Sunday start by default)', () => {
+    // Fri, (Sat rest, week 1), (Sun rest, week 2), Mon
+    const s = run(['2026-09-25', '2026-09-28']);
     expect(s.current).toBe(2);
+  });
+
+  it('follows a Monday week when the phone says so', () => {
+    const runMon = (days: string[]) =>
+      days.reduce((st, d) => recordActiveDay(st, d, 1).state, initialStreak());
+    // Sat, (Sun rest, week 1), (Mon rest, week 2), Tue
+    expect(runMon(['2026-09-26', '2026-09-29']).current).toBe(2);
+    // Same days with a Sunday week: Sun and Mon share a week → broken.
+    expect(run(['2026-09-26', '2026-09-29']).current).toBe(1);
   });
 
   it('earns a freeze every 7 active days, at most 2', () => {
@@ -370,5 +380,24 @@ describe('workout store', () => {
     st.create(session());
     st.create(session());
     expect(useWorkoutStore.getState().workouts).toHaveLength(1);
+  });
+});
+
+describe('pain swap', () => {
+  it('offers a shoulder-sparing chest option for dull shoulder pain', () => {
+    const s = session({ muscleGoals: [{ muscleKey: 'midChest', goal: 'grow' }] });
+    const item = s.items.find((i) => i.role === 'main' && i.targetMuscle === 'midChest')!;
+    const swap = painSwap(s, item.id, base, 'shoulder');
+    expect(swap).not.toBeNull();
+    expect(swap!.contraindications).not.toContain('shoulder');
+    expect(swap!.muscles).toContainEqual(
+      expect.objectContaining({ muscleKey: 'midChest', role: 'primary' }),
+    );
+  });
+
+  it('plans: sharp stops, dull swaps, tired rests', () => {
+    expect(planFor('sharp')).toBe('stop');
+    expect(planFor('dull')).toBe('swap');
+    expect(planFor('tired')).toBe('rest');
   });
 });

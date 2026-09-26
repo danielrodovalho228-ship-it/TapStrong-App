@@ -17,6 +17,7 @@
     "expo-splash-screen": "~57.0.9",
     "expo-status-bar": "~57.0.1",
     "expo-system-ui": "~57.0.4",
+    "expo-video": "~57.0.5",
     "i18next": "^26.4.2",
     "react": "19.2.3",
     "react-dom": "19.2.3",
@@ -63,7 +64,8 @@
     "db:test": "bash scripts/db-test.sh",
     "functions:check": "deno check --config supabase/functions/deno.json supabase/functions/*/index.ts && deno lint --config supabase/functions/deno.json supabase/functions",
     "seed:build": "node scripts/build-seed.mjs",
-    "bundle:check": "bash scripts/check-release-bundle.sh"
+    "bundle:check": "bash scripts/check-release-bundle.sh",
+    "prototype:videos": "node scripts/build-prototype-videos.mjs"
   },
   "private": true
 }

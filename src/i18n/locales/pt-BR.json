@@ -683,6 +683,18 @@
     "box_breathing": {
       "name": "Respiração lenta",
       "cues": "Inspire em 4, segure 4, expire em 4, segure 4."
+    },
+    "neutral_grip_floor_press": {
+      "name": "Supino no chão com pegada neutra",
+      "cues": "Deitado no chão, palmas uma de frente para a outra; desça até os braços tocarem o chão e empurre para cima."
+    },
+    "neutral_grip_machine_chest_press": {
+      "name": "Supino na máquina com pegada neutra",
+      "cues": "Palmas para dentro, pegadores na altura do meio do peito; empurre sem travar os cotovelos e, na volta, pare antes de as mãos passarem do peito."
+    },
+    "short_range_incline_push_up": {
+      "name": "Flexão inclinada com amplitude curta",
+      "cues": "Mãos num banco, corpo reto; desça só até a metade e volte."
     }
   },
   "generator": {
@@ -892,6 +904,7 @@
         "legs": "Pernas"
       }
     },
-    "restFor": "descanso {{seconds}} s"
+    "restFor": "descanso {{seconds}} s",
+    "demoPrototype": "Demo de protótipo · só no desenvolvimento"
   }
 }
