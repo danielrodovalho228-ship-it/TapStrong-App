@@ -153,6 +153,8 @@ Verify every point on every one of the 28 images; bodies differ.
 - **`checkins`**: `profile_id`, `week`, `strength_json`, `waist_cm`, `weight_kg`, `whtr`, `bmi`, `note`
 - **`repair_tests`**: `profile_id`, `test_key`, `left_value`, `right_value`, `unit`, `result`, `tested_at`
 - **`family_members`**: `owner_id`, `member_profile_id`, `role` (child / parent / partner), `consent_record_id?`
+- **`subscriptions`** (Phase 6): `user_id`, `plan` (free / premium / family), `status` (trial / active / grace / expired), `product_id`, `store`, `trial_ends_at`, `expires_at`, `will_renew`, `first_charged_at`, `last_transaction_id`. Written only by the RevenueCat webhook Edge Function.
+- **`consent_records`** (Phase 6): `owner_id`, `child_profile_id`, `method` (store_transaction), `transaction_ref`, `notice_version`, `accepted_at`, `revoked_at?`
 - **`referral_codes`** (`user_id`, `code`) and **`referrals`** (`code`, `invited_user_id`): written only by the `my_referral_code()` / `redeem_referral()` functions; saved accounts only, never child profiles (Phase 5). Rewards come with payments (Phase 6).
 - **`badges`**: `profile_id`, `key` (first_workout / streak_7 / streak_30 / first_pr / full_body_week), `earned_at`
 - **`events`** (analytics mirror, optional)
@@ -284,8 +286,12 @@ Rules:
 - The first workout is free with no account. Prompt to save progress after it (Apple / Google / email / "Not now").
 - **Free plan:** 3 workouts per week.
 - **Premium:** $9.99/mo. **Family:** $14.99/mo.
-  - 7-day trial on both, with a reminder 2 days before charging.
-  - Family profile limit [CONFIRM], annual prices [CONFIRM].
+  - 7-day trial on both, with a reminder 2 days before charging. (Mockups 19 and 22 say 3 days; this spec wins.)
+  - Family: up to 5 profiles, the owner included. Annual: Premium $59.99/yr, Family $89.99/yr (Daniel, Sep 2026).
+  - Accounts come before purchases, so a subscription always belongs to a saved account (RevenueCat app user id = Supabase user id).
+  - Children under 13 (COPPA): the verifiable-consent method is the charged Family subscription (a store transaction) plus the parent notice accepted in the app. A free trial does not count; child profiles open after the first charge. The database only creates child profiles through `create_child_profile()`. Lawyer review before launch (§13).
+  - Referral reward: 1 free week of Premium for both people, granted only after the invited person completes a first workout; each person gets it once (Daniel, Sep 2026).
+  - Delete account in the app (App Store rule): deletes the account and all its data; the screen explains the store subscription is cancelled separately, in the store.
 - When the free limit is reached, show the paywall screen (value first, price second, cancel info visible).
 
 ## 9. Screens (expo-router)

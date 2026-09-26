@@ -63,6 +63,19 @@ export async function applyPlan(plan: PlannedNotification[]): Promise<void> {
           minute: p.minute,
         },
       });
+    } else if (p.kind === 'trial') {
+      const day = new Date(p.chargeOn).toLocaleDateString(i18n.language, {
+        month: 'short',
+        day: 'numeric',
+      });
+      await N.scheduleNotificationAsync({
+        identifier: p.id,
+        content: {
+          title: i18n.t('notifications.trial.title'),
+          body: i18n.t('notifications.trial.body', { date: day }),
+        },
+        trigger: { type: N.SchedulableTriggerInputTypes.DATE, date: p.date },
+      });
     } else {
       await N.scheduleNotificationAsync({
         identifier: p.id,

@@ -31,6 +31,8 @@ type Data = {
   /** Code from a referral link, redeemed when the account is saved. */
   pendingReferral?: string;
   referralRedeemed: boolean;
+  /** The server answered the reward claim (granted, or nothing to grant). */
+  referralRewardDone: boolean;
   referralCode?: string;
   notifications: NotificationPrefs;
   /** Last streak milestone not yet celebrated. */
@@ -48,6 +50,7 @@ const initial = (): Data => ({
   saved: false,
   promptDismissed: false,
   referralRedeemed: false,
+  referralRewardDone: false,
   notifications: {
     reminders: false,
     reminderTime: '18:30',

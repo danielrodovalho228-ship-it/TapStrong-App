@@ -712,7 +712,8 @@
   },
   "tabs": {
     "home": "Início",
-    "body": "Corpo"
+    "body": "Corpo",
+    "family": "Família"
   },
   "home": {
     "title": "Hoje",
@@ -733,7 +734,8 @@
     },
     "recoveryEmpty": "Seu primeiro treino colore os músculos que você treinar.",
     "recoveryNote": "As cores somem conforme você se recupera. Cinza-azulado quer dizer que é hora de treinar.",
-    "openBody": "Abrir mapa do corpo"
+    "openBody": "Abrir mapa do corpo",
+    "trainingAs": "Treinando como {{name}}"
   },
   "workout": {
     "title": "Seu treino",
@@ -940,7 +942,9 @@
       "rate_limited": "Muitos códigos em pouco tempo. Espere um minuto e tente de novo.",
       "error": "Algo deu errado. Tente de novo.",
       "wrongCode": "Esse código não funcionou. Confira ou peça um novo."
-    }
+    },
+    "planBilling": "Plano e cobrança",
+    "deleteAccount": "Excluir conta"
   },
   "share": {
     "title": "Compartilhar hoje",
@@ -987,6 +991,161 @@
       "title_one": "Mantenha seu {{count}} dia seguido",
       "title_other": "Mantenha seus {{count}} dias seguidos",
       "body": "Uma sessão curta ou um momento de mobilidade já conta. Você consegue."
+    },
+    "trial": {
+      "title": "Seu teste grátis termina em 2 dias",
+      "body": "A cobrança será em {{date}} se você não cancelar. Cancele quando quiser nas assinaturas da loja."
+    }
+  },
+  "billing": {
+    "plansTitle": "Treine a família inteira",
+    "familyIntro": "Cada idade tem suas próprias regras seguras: cargas mais leves para crianças, opções sentadas e de equilíbrio para 60+. Um responsável cuida dos perfis das crianças.",
+    "choose": "Escolha um plano",
+    "period": "Período de cobrança",
+    "monthly": "Mensal",
+    "annual": "Anual",
+    "perMonth": "/ mês",
+    "perYear": "/ ano",
+    "bestValue": "Melhor valor",
+    "plans": {
+      "free": {
+        "name": "Grátis",
+        "detail": "Mapa do corpo · 3 treinos por semana"
+      },
+      "premium": {
+        "name": "Premium",
+        "detail": "Treinos ilimitados · planos de reparo"
+      },
+      "family": {
+        "name": "Família",
+        "detail": "Premium para 5 perfis · crianças cuidadas pelo responsável"
+      }
+    },
+    "freeNote": "O Grátis continua grátis: 3 treinos por semana, sem cartão.",
+    "startTrial": "Começar teste grátis de {{days}} dias",
+    "subscribe": "Assinar · {{price}} {{per}}",
+    "saveFirst": "Salve sua conta para assinar",
+    "manage": "Gerenciar minha assinatura",
+    "terms": "Renova automaticamente por {{price}} {{per}} depois do teste de {{days}} dias, até você cancelar. Avisamos 2 dias antes da cobrança.",
+    "termsNoTrial": "Renova por {{price}} {{per}} até você cancelar.",
+    "cancelAnytime": "Cancele quando quiser em 2 toques",
+    "errors": {
+      "unavailable": "As assinaturas ainda não estão disponíveis nesta versão.",
+      "error": "A loja não concluiu a compra. Você não foi cobrado. Tente de novo."
+    },
+    "title": "Sua assinatura",
+    "onFree": "Você está no plano Grátis: 3 treinos por semana.",
+    "seePlans": "Ver planos",
+    "familyProfiles_one": "Família · {{count}} perfil",
+    "familyProfiles_other": "Família · {{count}} perfis",
+    "rows": {
+      "plan": "Plano",
+      "trialEnds": "Fim do teste grátis",
+      "firstCharge": "Primeira cobrança",
+      "renews": "Renova em",
+      "ends": "Termina em",
+      "then": "Depois"
+    },
+    "onDate": "{{price}} em {{date}}",
+    "noCharge": "Nenhuma (renovação automática desligada)",
+    "promise": {
+      "title": "Nossa promessa de cobrança",
+      "price": "Um preço só, mostrado antes de começar. Sem preço “promocional” surpresa.",
+      "reminder": "Avisamos {{days}} dias antes de qualquer teste virar cobrança.",
+      "cancel": "Cancele daqui em 2 toques (abre sua assinatura na App Store / Google Play). Sem ligação, sem e-mail."
+    },
+    "cancel": "Cancelar assinatura",
+    "cancelNote": "Se cancelar, você mantém o {{plan}} até {{date}} e seu histórico de treinos para sempre.",
+    "restore": "Restaurar compras",
+    "restored": "Compras restauradas.",
+    "deleteAccount": "Excluir conta",
+    "dev": {
+      "note": "Build de desenvolvimento: as compras são simuladas.",
+      "charge": "Dev: fim do teste, primeira cobrança",
+      "expire": "Dev: voltar ao Grátis"
+    }
+  },
+  "paywall": {
+    "eyebrow_one": "Plano Grátis · {{count}} treino nesta semana",
+    "eyebrow_other": "Plano Grátis · {{count}} treinos nesta semana",
+    "title": "Mantenha sua sequência",
+    "value": {
+      "unlimited": "Treinos ilimitados, todo dia que você quiser",
+      "repair": "Planos de reparo para pontos fracos",
+      "family": "Família: até 5 perfis, com regras seguras para cada idade",
+      "progress": "Seu histórico e progresso completos"
+    },
+    "nextFree": "Ou espere: seu próximo treino grátis é {{day}}.",
+    "notNow": "Agora não"
+  },
+  "family": {
+    "title": "Família",
+    "you": "Você",
+    "member": "Familiar",
+    "setUp": "Falta configurar",
+    "add": "Adicionar",
+    "upTo_one": "Até {{count}}",
+    "upTo_other": "Até {{count}}",
+    "modes": {
+      "child": "Modo criança",
+      "teen": "Modo adolescente",
+      "adult": "Adulto",
+      "senior": "Modo 60+"
+    },
+    "active": "Ativo",
+    "switch": "Trocar",
+    "switchTo": "Trocar para {{name}}",
+    "planOn": "Plano Família: aqui cada um treina com suas próprias regras seguras.",
+    "planOff": "Adicione familiares com o plano Família.",
+    "seePlans": "Ver planos",
+    "manage": "Gerenciar plano",
+    "addTitle": "Adicionar familiar",
+    "kinds": {
+      "child": "Meu filho ou filha (menor de 18)",
+      "parent": "Meu pai, mãe, avô ou avó"
+    },
+    "name": "Primeiro nome",
+    "next": "Próximo: consentimento do responsável",
+    "create": "Criar perfil",
+    "errors": {
+      "full_one": "O plano Família tem até {{count}} perfil.",
+      "full_other": "O plano Família tem até {{count}} perfis.",
+      "needFamily": "Familiares precisam do plano Família.",
+      "needCharge": "Perfis de crianças com menos de 13 anos são liberados depois do primeiro pagamento do plano Família. O teste grátis não conta: o pagamento é como verificamos o consentimento do responsável."
+    },
+    "consent": {
+      "title": "Consentimento do responsável",
+      "intro": "Antes de {{name}} treinar, leia como o TapStrong cuida das informações de uma criança.",
+      "points": {
+        "collect": "Guardamos só o que os treinos precisam: mês e ano de nascimento, metas do mapa do corpo, respostas de segurança e registros de treino. Sem fotos, sem medidas do corpo.",
+        "use": "Usamos só para montar treinos seguros para a idade da criança. Sem anúncios, sem compartilhamento em redes, sem chat aberto com o coach.",
+        "never": "Nunca vendemos nem compartilhamos com ninguém.",
+        "rights": "Você pode ver, mudar ou excluir o perfil da criança a qualquer momento, por este celular."
+      },
+      "verification": "Sua assinatura paga do plano Família na App Store ou no Google Play confirma que você é um adulto com um meio de pagamento. É assim que verificamos o consentimento do responsável.",
+      "agree": "Sou o pai, a mãe ou o responsável legal e concordo",
+      "create": "Criar o perfil",
+      "errors": {
+        "not_charged": "Ainda não conseguimos confirmar um plano Família pago. Pode levar alguns minutos depois do primeiro pagamento.",
+        "offline": "Não foi possível falar com o TapStrong agora. Confira sua conexão e tente de novo.",
+        "error": "Algo deu errado. Tente de novo."
+      }
+    }
+  },
+  "deleteAccount": {
+    "title": "Excluir conta",
+    "word": "EXCLUIR",
+    "body": "Isto exclui sua conta e todos os dados dela nos nossos servidores: seu perfil, os perfis da família que você cuida, treinos, restrições e sequências. Também limpa este celular. Não dá para desfazer.",
+    "bodyLocal": "Você não tem conta salva, então seus dados estão só neste celular. Isto os exclui: perfis, treinos, restrições e sequências. Não dá para desfazer.",
+    "storeTitle": "Sua assinatura é separada",
+    "storeBody": "Excluir a conta não cancela a assinatura. A Apple e o Google só deixam cancelar nas assinaturas da loja; cancele lá primeiro para não ser cobrado.",
+    "openStore": "Abrir minhas assinaturas da loja",
+    "typeToConfirm": "Digite {{word}} para confirmar",
+    "confirm": "Excluir minha conta",
+    "confirmLocal": "Excluir meus dados",
+    "errors": {
+      "offline": "Não foi possível falar com o TapStrong agora. Nada foi excluído. Tente quando estiver online.",
+      "error": "Algo deu errado. Nada foi excluído. Tente de novo."
     }
   }
 }

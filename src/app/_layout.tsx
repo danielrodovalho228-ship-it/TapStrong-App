@@ -13,6 +13,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { refreshBilling } from '@/features/billing/actions';
 import { useNotificationSync } from '@/features/notifications/useNotificationSync';
 import { useSyncProfileSettings } from '@/features/onboarding/sync';
 import { colors } from '@/theme';
@@ -35,6 +36,11 @@ export default function RootLayout() {
   useEffect(() => {
     if (ready) void SplashScreen.hideAsync();
   }, [ready]);
+
+  // Latest subscription state from the store (best effort, offline is fine).
+  useEffect(() => {
+    void refreshBilling();
+  }, []);
 
   if (!ready) return null;
 

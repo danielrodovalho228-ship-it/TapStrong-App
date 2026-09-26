@@ -712,7 +712,8 @@
   },
   "tabs": {
     "home": "Inicio",
-    "body": "Cuerpo"
+    "body": "Cuerpo",
+    "family": "Familia"
   },
   "home": {
     "title": "Hoy",
@@ -733,7 +734,8 @@
     },
     "recoveryEmpty": "Tu primer entrenamiento colorea los músculos que trabajes.",
     "recoveryNote": "Los colores se apagan a medida que te recuperas. Gris azulado significa que toca entrenarlo.",
-    "openBody": "Abrir mapa del cuerpo"
+    "openBody": "Abrir mapa del cuerpo",
+    "trainingAs": "Entrenando como {{name}}"
   },
   "workout": {
     "title": "Tu entrenamiento",
@@ -940,7 +942,9 @@
       "rate_limited": "Demasiados códigos en poco tiempo. Espera un minuto e inténtalo de nuevo.",
       "error": "Algo salió mal. Inténtalo de nuevo.",
       "wrongCode": "Ese código no funcionó. Revísalo o pide uno nuevo."
-    }
+    },
+    "planBilling": "Plan y facturación",
+    "deleteAccount": "Eliminar cuenta"
   },
   "share": {
     "title": "Compartir hoy",
@@ -987,6 +991,161 @@
       "title_one": "Mantén tu racha de {{count}} día",
       "title_other": "Mantén tu racha de {{count}} días",
       "body": "Una sesión corta o un rato de movilidad cuenta. Tú puedes."
+    },
+    "trial": {
+      "title": "Tu prueba gratis termina en 2 días",
+      "body": "Se te cobrará el {{date}} si no cancelas. Cancela cuando quieras en las suscripciones de tu tienda."
+    }
+  },
+  "billing": {
+    "plansTitle": "Entrena a toda la familia",
+    "familyIntro": "Cada edad tiene sus propias reglas seguras: cargas más ligeras para niños, opciones sentadas y de equilibrio para 60+. Un padre o madre gestiona los perfiles de los niños.",
+    "choose": "Elige un plan",
+    "period": "Periodo de facturación",
+    "monthly": "Mensual",
+    "annual": "Anual",
+    "perMonth": "/ mes",
+    "perYear": "/ año",
+    "bestValue": "Mejor valor",
+    "plans": {
+      "free": {
+        "name": "Gratis",
+        "detail": "Mapa del cuerpo · 3 entrenamientos por semana"
+      },
+      "premium": {
+        "name": "Premium",
+        "detail": "Entrenamientos ilimitados · planes de reparación"
+      },
+      "family": {
+        "name": "Familia",
+        "detail": "Premium para 5 perfiles · niños gestionados por los padres"
+      }
+    },
+    "freeNote": "Gratis sigue siendo gratis: 3 entrenamientos por semana, sin tarjeta.",
+    "startTrial": "Empezar prueba gratis de {{days}} días",
+    "subscribe": "Suscribirme · {{price}} {{per}}",
+    "saveFirst": "Guarda tu cuenta para suscribirte",
+    "manage": "Gestionar mi suscripción",
+    "terms": "Se renueva a {{price}} {{per}} después de la prueba de {{days}} días hasta que canceles. Te avisamos 2 días antes del cobro.",
+    "termsNoTrial": "Se renueva a {{price}} {{per}} hasta que canceles.",
+    "cancelAnytime": "Cancela cuando quieras en 2 toques",
+    "errors": {
+      "unavailable": "Las suscripciones aún no están disponibles en esta versión.",
+      "error": "La tienda no completó la compra. No se te cobró. Inténtalo de nuevo."
+    },
+    "title": "Tu suscripción",
+    "onFree": "Estás en el plan Gratis: 3 entrenamientos por semana.",
+    "seePlans": "Ver planes",
+    "familyProfiles_one": "Familia · {{count}} perfil",
+    "familyProfiles_other": "Familia · {{count}} perfiles",
+    "rows": {
+      "plan": "Plan",
+      "trialEnds": "Fin de la prueba gratis",
+      "firstCharge": "Primer cobro",
+      "renews": "Se renueva",
+      "ends": "Termina",
+      "then": "Después"
+    },
+    "onDate": "{{price}} el {{date}}",
+    "noCharge": "Ninguno (renovación automática desactivada)",
+    "promise": {
+      "title": "Nuestra promesa de cobro",
+      "price": "Un solo precio, mostrado antes de empezar. Sin tarifas “de introducción” sorpresa.",
+      "reminder": "Te avisamos {{days}} días antes de que una prueba se convierta en cobro.",
+      "cancel": "Cancela desde aquí en 2 toques (abre tu suscripción en App Store / Google Play). Sin llamadas ni correos."
+    },
+    "cancel": "Cancelar suscripción",
+    "cancelNote": "Si cancelas, mantienes {{plan}} hasta el {{date}} y tu historial de entrenamientos para siempre.",
+    "restore": "Restaurar compras",
+    "restored": "Compras restauradas.",
+    "deleteAccount": "Eliminar cuenta",
+    "dev": {
+      "note": "Versión de desarrollo: las compras son simuladas.",
+      "charge": "Dev: fin de la prueba, primer cobro",
+      "expire": "Dev: volver a Gratis"
+    }
+  },
+  "paywall": {
+    "eyebrow_one": "Plan Gratis · {{count}} entrenamiento esta semana",
+    "eyebrow_other": "Plan Gratis · {{count}} entrenamientos esta semana",
+    "title": "Mantén tu racha",
+    "value": {
+      "unlimited": "Entrenamientos ilimitados, todos los días que quieras",
+      "repair": "Planes de reparación para puntos débiles",
+      "family": "Familia: hasta 5 perfiles con reglas seguras para cada edad",
+      "progress": "Tu historial y progreso completos"
+    },
+    "nextFree": "O espera: tu próximo entrenamiento gratis es el {{day}}.",
+    "notNow": "Ahora no"
+  },
+  "family": {
+    "title": "Familia",
+    "you": "Tú",
+    "member": "Familiar",
+    "setUp": "Falta configurar",
+    "add": "Añadir",
+    "upTo_one": "Hasta {{count}}",
+    "upTo_other": "Hasta {{count}}",
+    "modes": {
+      "child": "Modo niños",
+      "teen": "Modo adolescente",
+      "adult": "Adulto",
+      "senior": "Modo 60+"
+    },
+    "active": "Activo",
+    "switch": "Cambiar",
+    "switchTo": "Cambiar a {{name}}",
+    "planOn": "Plan Familia: aquí cada uno entrena con sus propias reglas seguras.",
+    "planOff": "Añade familiares con el plan Familia.",
+    "seePlans": "Ver planes",
+    "manage": "Gestionar plan",
+    "addTitle": "Añadir un familiar",
+    "kinds": {
+      "child": "Mi hijo o hija (menor de 18)",
+      "parent": "Mi padre, madre, abuelo o abuela"
+    },
+    "name": "Nombre",
+    "next": "Siguiente: consentimiento de los padres",
+    "create": "Crear perfil",
+    "errors": {
+      "full_one": "El plan Familia admite hasta {{count}} perfil.",
+      "full_other": "El plan Familia admite hasta {{count}} perfiles.",
+      "needFamily": "Los familiares necesitan el plan Familia.",
+      "needCharge": "Los perfiles de menores de 13 se abren después de tu primer pago del plan Familia. La prueba gratis no cuenta: el pago es cómo verificamos el consentimiento de un padre o madre."
+    },
+    "consent": {
+      "title": "Consentimiento de los padres",
+      "intro": "Antes de que {{name}} pueda entrenar, lee cómo TapStrong trata la información de un niño.",
+      "points": {
+        "collect": "Solo guardamos lo que necesitan los entrenamientos: mes y año de nacimiento, objetivos del mapa del cuerpo, respuestas de seguridad y registros de entrenamiento. Sin fotos ni medidas corporales.",
+        "use": "Lo usamos solo para crear entrenamientos seguros para la edad del niño. Sin anuncios, sin compartir en redes, sin chat abierto con el coach.",
+        "never": "Nunca lo vendemos ni lo compartimos con nadie.",
+        "rights": "Puedes ver, cambiar o eliminar el perfil de tu hijo en cualquier momento, desde este teléfono."
+      },
+      "verification": "Tu suscripción pagada al plan Familia en App Store o Google Play confirma que eres un adulto con un método de pago. Así verificamos el consentimiento de los padres.",
+      "agree": "Soy el padre, la madre o el tutor legal y acepto",
+      "create": "Crear el perfil",
+      "errors": {
+        "not_charged": "Aún no pudimos confirmar un plan Familia pagado. Puede tardar unos minutos después del primer pago.",
+        "offline": "No podemos conectar con TapStrong ahora. Revisa tu conexión e inténtalo de nuevo.",
+        "error": "Algo salió mal. Inténtalo de nuevo."
+      }
+    }
+  },
+  "deleteAccount": {
+    "title": "Eliminar cuenta",
+    "word": "ELIMINAR",
+    "body": "Esto elimina tu cuenta y todos sus datos en nuestros servidores: tu perfil, los perfiles familiares que gestionas, entrenamientos, restricciones y rachas. También limpia este teléfono. No se puede deshacer.",
+    "bodyLocal": "No tienes una cuenta guardada, así que tus datos están solo en este teléfono. Esto los elimina: perfiles, entrenamientos, restricciones y rachas. No se puede deshacer.",
+    "storeTitle": "Tu suscripción es aparte",
+    "storeBody": "Eliminar tu cuenta no cancela una suscripción. Apple y Google solo permiten cancelar en las suscripciones de la tienda, así que cancela allí primero para evitar cobros.",
+    "openStore": "Abrir mis suscripciones de la tienda",
+    "typeToConfirm": "Escribe {{word}} para confirmar",
+    "confirm": "Eliminar mi cuenta",
+    "confirmLocal": "Eliminar mis datos",
+    "errors": {
+      "offline": "No podemos conectar con TapStrong ahora. No se eliminó nada. Inténtalo cuando tengas conexión.",
+      "error": "Algo salió mal. No se eliminó nada. Inténtalo de nuevo."
     }
   }
 }

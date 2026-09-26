@@ -1,6 +1,7 @@
 import { localDate } from '@/lib/dates';
 
 import type { NotificationPrefs } from '../account/store';
+import { trialReminderAt } from '../billing/rules';
 
 /**
  * Local notifications (SPEC §3: expo-notifications): workout reminders on
@@ -16,7 +17,9 @@ export type PlannedNotification =
       hour: number;
       minute: number;
     }
-  | { id: string; kind: 'streak_saver'; date: Date; streak: number };
+  | { id: string; kind: 'streak_saver'; date: Date; streak: number }
+  /** Honest billing (SPEC §2.5): a reminder before a trial turns into a charge. */
+  | { id: string; kind: 'trial'; date: Date; chargeOn: string };
 
 /** Training days for "N days a week", as JS weekdays (0 = Sunday). */
 export const TRAINING_DAYS: Record<number, number[]> = {
@@ -44,6 +47,8 @@ export function planNotifications(input: {
   streak: number;
   lastActive: string | null;
   now: Date;
+  /** Trial end when it will renew into a charge; null otherwise. */
+  trialChargeAt?: string | null;
 }): PlannedNotification[] {
   const out: PlannedNotification[] = [];
   const { prefs, now } = input;
@@ -63,6 +68,17 @@ export function planNotifications(input: {
     // Today if nothing is logged yet and the time is still ahead; else tomorrow.
     const date = !activeToday && today > now ? today : new Date(today.getTime() + 86_400_000);
     out.push({ id: 'streak-saver', kind: 'streak_saver', date, streak: input.streak });
+  }
+
+  // Always scheduled while a trial will renew, whatever the other toggles say.
+  const reminder = trialReminderAt(input.trialChargeAt ?? null, now);
+  if (reminder && input.trialChargeAt) {
+    out.push({
+      id: 'trial-reminder',
+      kind: 'trial',
+      date: reminder,
+      chargeOn: input.trialChargeAt,
+    });
   }
   return out;
 }

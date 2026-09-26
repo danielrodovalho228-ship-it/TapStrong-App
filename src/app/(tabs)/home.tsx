@@ -6,6 +6,7 @@ import { AppText, Button, Card, Screen, TextLink } from '@/components/ui';
 import type { BodySex } from '@/features/bodymap/images';
 import { displayBand } from '@/features/bodymap/selection';
 import { MUSCLES } from '@/features/muscles';
+import { activeProfile, useFamilyStore } from '@/features/family/store';
 import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { muscleLabel } from '@/features/onboarding/summaries';
@@ -35,6 +36,7 @@ export default function HomeScreen() {
   const input = useGeneratorInput(library);
   const { workouts, streak } = useWorkoutStore();
   const { states } = useBodyStates();
+  const member = useFamilyStore(activeProfile);
   if (!profile.onboardingComplete || !derived) return <Redirect href="/welcome" />;
 
   const now = clock.now();
@@ -72,6 +74,11 @@ export default function HomeScreen() {
           <AppText variant="h1" accessibilityRole="header">
             {t('home.title')}
           </AppText>
+          {member && member.kind !== 'self' ? (
+            <AppText variant="caption" color={colors.teal} style={styles.caps}>
+              {t('home.trainingAs', { name: member.name ?? t('family.member') })}
+            </AppText>
+          ) : null}
         </View>
         <View style={styles.streak}>
           <AppText variant="h1">{streakToday(streak, localDate(now), deviceWeekStart())}</AppText>

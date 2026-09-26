@@ -28,6 +28,11 @@ export type SyncInput = {
   /** Released exercises in the database: slug → uuid. */
   exerciseIds: Map<string, string>;
   library: Exercise[];
+  /**
+   * A family member the account holder manages on this phone (Phase 6):
+   * the row has no login of its own and the account is its guardian.
+   */
+  managed?: boolean;
 };
 
 export type SessionRows = {
@@ -41,6 +46,8 @@ export type SessionRows = {
 
 export type SyncPlan = {
   profile: Row;
+  /** Managed rows are created once (children only through the consent function). */
+  profileWrite: 'upsert' | 'managed' | 'child';
   health: Row;
   preferences: Row | null;
   muscleGoals: Row[];
@@ -64,18 +71,22 @@ export function buildSyncPlan(input: SyncInput): SyncPlan | PlanError {
   const s = input.onboarding;
   const derived = derive(s);
   if (!derived) return 'no_profile';
-  if (derived.mode === 'child') return 'child';
+  // A child is only ever synced by the guardian's account, never by itself.
+  if (derived.mode === 'child' && !input.managed) return 'child';
   const profileId = input.profileId;
+  const child = derived.mode === 'child';
 
   const profile: Row = {
     id: profileId,
-    user_id: input.userId,
+    user_id: input.managed ? null : input.userId,
+    guardian_id: input.managed ? input.userId : null,
     birth_month: s.birthMonth,
     birth_year: s.birthYear,
     sex: s.sex ?? null,
     body_band: derived.band,
-    height_cm: s.heightCm ?? null,
-    weight_kg: s.weightKg ?? null,
+    // No body measurements for children (SPEC §2.3; the database checks it too).
+    height_cm: child ? null : (s.heightCm ?? null),
+    weight_kg: child ? null : (s.weightKg ?? null),
     units: s.units,
     locale: s.locale ?? 'en',
     mode: derived.mode,
@@ -226,6 +237,7 @@ export function buildSyncPlan(input: SyncInput): SyncPlan | PlanError {
 
   return {
     profile,
+    profileWrite: !input.managed ? 'upsert' : child ? 'child' : 'managed',
     health,
     preferences,
     muscleGoals,
@@ -236,6 +248,25 @@ export function buildSyncPlan(input: SyncInput): SyncPlan | PlanError {
     sessions,
     skipped,
   };
+}
+
+/**
+ * Owner rows are upserted. Managed rows are updated when they exist and
+ * inserted once otherwise (the database checks the Family plan on insert);
+ * a child's row is only ever created by create_child_profile().
+ */
+async function writeProfile(supabase: SupabaseClient, plan: SyncPlan): Promise<{ error: unknown }> {
+  if (plan.profileWrite === 'upsert') return supabase.from('profiles').upsert(plan.profile);
+  const { id, ...fields } = plan.profile;
+  const { data, error } = await supabase
+    .from('profiles')
+    .update(fields)
+    .eq('id', id as string)
+    .select('id');
+  if (error) return { error };
+  if ((data ?? []).length > 0) return { error: null };
+  if (plan.profileWrite === 'child') return { error: 'child_profile_missing' };
+  return supabase.from('profiles').insert(plan.profile);
 }
 
 /** A per-profile uuid for single-row tables that need an id (stable across syncs). */
@@ -296,7 +327,7 @@ export async function runSync(
 
   type Step = [string, () => PromiseLike<{ error: unknown }>];
   const steps: Step[] = [
-    ['profiles', () => supabase.from('profiles').upsert(plan.profile)],
+    ['profiles', () => writeProfile(supabase, plan)],
     ['health_screen', () => supabase.from('health_screen').upsert(plan.health)],
   ];
   const { preferences } = plan;

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText, Button, Header, Notice, RadioCard, Screen, Select } from '@/components/ui';
+import { activeProfile, useFamilyStore } from '@/features/family/store';
 import { evaluateAgeGate } from '@/features/onboarding/age-gate';
 import { STEP_NUMBER, TOTAL_STEPS, WHO_OPTIONS, type Who } from '@/features/onboarding/options';
 import { useOnboardingStore } from '@/features/onboarding/store';
@@ -26,7 +27,9 @@ export default function WhoScreen() {
   const [year, setYear] = useState<number | undefined>(stored.birthYear);
 
   const years = useMemo(() => birthYearOptions(), []);
-  const result = month && year ? evaluateAgeGate(who, { year, month }) : null;
+  const profile = useFamilyStore(activeProfile);
+  const consented = profile?.kind === 'child' && !!profile.consentAt;
+  const result = month && year ? evaluateAgeGate(who, { year, month }, undefined, consented) : null;
 
   const onContinue = () => {
     if (result?.status !== 'ok') return;

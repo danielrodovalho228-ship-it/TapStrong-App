@@ -27,11 +27,15 @@ export function evaluateAgeGate(
   who: Who,
   birth: YearMonth,
   today: YearMonth = currentYearMonth(),
+  /** The parent's verified consent is on file for this child profile (Phase 6). */
+  consented = false,
 ): AgeGateResult {
   const age = ageFrom(birth, today);
   if (age < MIN_AGE) return { status: 'too_young', age };
   if (who === 'child' && age >= 18) return { status: 'child_too_old', age };
   if (who === 'parent' && age < 18) return { status: 'parent_too_young', age };
-  if (age < 13) return { status: who === 'child' ? 'guardian_consent' : 'ask_parent', age };
+  if (age < 13 && !(who === 'child' && consented)) {
+    return { status: who === 'child' ? 'guardian_consent' : 'ask_parent', age };
+  }
   return { status: 'ok', age, mode: modeForAge(age), band: bandForAge(age)! };
 }

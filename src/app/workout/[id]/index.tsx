@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText, Button, Card, Icon, IconButton, Notice, Screen } from '@/components/ui';
+import { canStartWorkout, currentPlan } from '@/features/billing/rules';
+import { useBillingStore } from '@/features/billing/store';
 import type { Exercise } from '@/features/exercises/types';
 import { generateSession } from '@/features/generator';
 import type { GeneratorNote, SessionItem } from '@/features/generator/types';
@@ -20,6 +22,8 @@ import { useWorkout } from '@/features/workout/hooks';
 import { isReviewed } from '@/features/workout/plan';
 import { useWorkoutStore } from '@/features/workout/store';
 import { track } from '@/lib/analytics';
+import { clock } from '@/lib/clock';
+import { deviceWeekStart } from '@/lib/dates';
 import { colors, fonts, radius, spacing } from '@/theme';
 
 const SHORT_MINUTES = 15;
@@ -74,6 +78,20 @@ export default function WorkoutScreen() {
 
   const start = () => {
     if (planned) {
+      // Free plan: 3 workouts a week (SPEC §8); the finisher does not count.
+      const check =
+        workout.kind === 'regular'
+          ? canStartWorkout(
+              currentPlan(useBillingStore.getState().entitlement, clock.now()),
+              store.workouts,
+              clock.now(),
+              deviceWeekStart(),
+            )
+          : ({ allowed: true } as const);
+      if (!check.allowed) {
+        router.push({ pathname: '/paywall', params: { next: check.nextFreeDay } });
+        return;
+      }
       store.start(workout.id);
       track('workout_started');
     }

@@ -712,7 +712,8 @@
   },
   "tabs": {
     "home": "Home",
-    "body": "Body"
+    "body": "Body",
+    "family": "Family"
   },
   "home": {
     "title": "Today",
@@ -733,7 +734,8 @@
     },
     "recoveryEmpty": "Your first workout colors the muscles you train.",
     "recoveryNote": "Colors fade as you recover. Grey-blue means it's time to train it.",
-    "openBody": "Open full body map"
+    "openBody": "Open full body map",
+    "trainingAs": "Training as {{name}}"
   },
   "workout": {
     "title": "Your workout",
@@ -940,7 +942,9 @@
       "rate_limited": "Too many codes in a short time. Wait a minute and try again.",
       "error": "Something went wrong. Try again.",
       "wrongCode": "That code didn't work. Check it, or ask for a new one."
-    }
+    },
+    "planBilling": "Plan & billing",
+    "deleteAccount": "Delete account"
   },
   "share": {
     "title": "Share today",
@@ -987,6 +991,161 @@
       "title_one": "Keep your {{count}}-day streak",
       "title_other": "Keep your {{count}}-day streak",
       "body": "A short session or a mobility break counts. You've got this."
+    },
+    "trial": {
+      "title": "Your free trial ends in 2 days",
+      "body": "You'll be charged on {{date}} unless you cancel. Cancel anytime in your store subscriptions."
+    }
+  },
+  "billing": {
+    "plansTitle": "Train the whole family",
+    "familyIntro": "Each age gets its own safe rules: lighter loads for kids, seated and balance options for 60+. A parent manages kids' profiles.",
+    "choose": "Choose a plan",
+    "period": "Billing period",
+    "monthly": "Monthly",
+    "annual": "Yearly",
+    "perMonth": "/ month",
+    "perYear": "/ year",
+    "bestValue": "Best value",
+    "plans": {
+      "free": {
+        "name": "Free",
+        "detail": "Body map · 3 workouts a week"
+      },
+      "premium": {
+        "name": "Premium",
+        "detail": "Unlimited workouts · repair plans"
+      },
+      "family": {
+        "name": "Family",
+        "detail": "Premium for 5 profiles · parent-managed kids"
+      }
+    },
+    "freeNote": "Free stays free: 3 workouts a week, no card needed.",
+    "startTrial": "Start {{days}}-day free trial",
+    "subscribe": "Subscribe · {{price}} {{per}}",
+    "saveFirst": "Save your account to subscribe",
+    "manage": "Manage my subscription",
+    "terms": "Auto-renews at {{price}} {{per}} after the {{days}}-day trial until you cancel. We remind you 2 days before you're charged.",
+    "termsNoTrial": "Renews at {{price}} {{per}} until you cancel.",
+    "cancelAnytime": "Cancel anytime in 2 taps",
+    "errors": {
+      "unavailable": "Subscriptions aren't available in this build yet.",
+      "error": "The store didn't complete the purchase. You were not charged. Try again."
+    },
+    "title": "Your subscription",
+    "onFree": "You're on the Free plan: 3 workouts a week.",
+    "seePlans": "See plans",
+    "familyProfiles_one": "Family · {{count}} profile",
+    "familyProfiles_other": "Family · {{count}} profiles",
+    "rows": {
+      "plan": "Plan",
+      "trialEnds": "Free trial ends",
+      "firstCharge": "First charge",
+      "renews": "Renews",
+      "ends": "Ends",
+      "then": "Then"
+    },
+    "onDate": "{{price}} on {{date}}",
+    "noCharge": "None (auto-renew is off)",
+    "promise": {
+      "title": "Our billing promise",
+      "price": "One price, shown before you start. No surprise “intro” rates.",
+      "reminder": "We notify you {{days}} days before any trial turns into a charge.",
+      "cancel": "Cancel from here in 2 taps (opens your App Store / Google Play subscription). No calls, no emails."
+    },
+    "cancel": "Cancel subscription",
+    "cancelNote": "If you cancel, you keep {{plan}} until {{date}} and your workout history forever.",
+    "restore": "Restore purchases",
+    "restored": "Purchases restored.",
+    "deleteAccount": "Delete account",
+    "dev": {
+      "note": "Development build: purchases are simulated.",
+      "charge": "Dev: trial ends, first charge",
+      "expire": "Dev: back to Free"
+    }
+  },
+  "paywall": {
+    "eyebrow_one": "Free plan · {{count}} workout this week",
+    "eyebrow_other": "Free plan · {{count}} workouts this week",
+    "title": "Keep your streak going",
+    "value": {
+      "unlimited": "Unlimited workouts, every day you want",
+      "repair": "Repair plans for weak spots",
+      "family": "Family: up to 5 profiles with safe rules for each age",
+      "progress": "Your full history and progress"
+    },
+    "nextFree": "Or wait: your next free workout is on {{day}}.",
+    "notNow": "Not now"
+  },
+  "family": {
+    "title": "Family",
+    "you": "You",
+    "member": "Family member",
+    "setUp": "Needs setup",
+    "add": "Add",
+    "upTo_one": "Up to {{count}}",
+    "upTo_other": "Up to {{count}}",
+    "modes": {
+      "child": "Kids mode",
+      "teen": "Teen mode",
+      "adult": "Adult",
+      "senior": "60+ mode"
+    },
+    "active": "Active",
+    "switch": "Switch",
+    "switchTo": "Switch to {{name}}",
+    "planOn": "Family plan: everyone here trains with their own safe rules.",
+    "planOff": "Add family members with the Family plan.",
+    "seePlans": "See plans",
+    "manage": "Manage plan",
+    "addTitle": "Add a family member",
+    "kinds": {
+      "child": "My child (under 18)",
+      "parent": "My parent or grandparent"
+    },
+    "name": "First name",
+    "next": "Next: parent consent",
+    "create": "Create profile",
+    "errors": {
+      "full_one": "The Family plan holds up to {{count}} profile.",
+      "full_other": "The Family plan holds up to {{count}} profiles.",
+      "needFamily": "Family members need the Family plan.",
+      "needCharge": "Profiles for children under 13 open after your first Family payment. The free trial doesn't count: the payment is how we verify a parent's consent."
+    },
+    "consent": {
+      "title": "Parent consent",
+      "intro": "Before {{name}} can train, please read how TapStrong handles a child's information.",
+      "points": {
+        "collect": "We store only what the workouts need: birth month and year, body map goals, safety answers, and workout logs. No photos, no body measurements.",
+        "use": "We use it only to build safe workouts for a child's age. No ads, no social sharing, no open chat with the coach.",
+        "never": "We never sell it or share it with anyone.",
+        "rights": "You can see, change or delete your child's profile at any time, from this phone."
+      },
+      "verification": "Your paid Family subscription in the App Store or Google Play confirms you are an adult with a payment method. This is how we verify a parent's consent.",
+      "agree": "I am the parent or legal guardian and I agree",
+      "create": "Create the profile",
+      "errors": {
+        "not_charged": "We couldn't confirm a paid Family plan yet. It can take a few minutes after the first payment.",
+        "offline": "Can't reach TapStrong right now. Check your connection and try again.",
+        "error": "Something went wrong. Try again."
+      }
+    }
+  },
+  "deleteAccount": {
+    "title": "Delete account",
+    "word": "DELETE",
+    "body": "This deletes your account and all its data on our servers: your profile, family profiles you manage, workouts, restrictions and streaks. It also clears this phone. It can't be undone.",
+    "bodyLocal": "You don't have a saved account, so your data lives only on this phone. This deletes it: profiles, workouts, restrictions and streaks. It can't be undone.",
+    "storeTitle": "Your subscription is separate",
+    "storeBody": "Deleting your account does not cancel a subscription. Apple and Google only let you cancel in your store subscriptions, so cancel there first to avoid being charged.",
+    "openStore": "Open my store subscriptions",
+    "typeToConfirm": "Type {{word}} to confirm",
+    "confirm": "Delete my account",
+    "confirmLocal": "Delete my data",
+    "errors": {
+      "offline": "Can't reach TapStrong right now. Nothing was deleted. Try again when you're online.",
+      "error": "Something went wrong. Nothing was deleted. Try again."
     }
   }
 }

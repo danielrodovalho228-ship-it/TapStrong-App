@@ -421,3 +421,93 @@ Telas conferidas com os mockups 01 a 05, na ordem do fluxo. Tudo local, sem cont
 3. **Recompensa do convite:** o mockup diz "Friends who join with your link get 1 free week, and so do you". Isso mexe com pagamento, então deixei só o registro do convite, sem prometer a semana grátis na tela. Confirma a recompensa para a Fase 6?
 4. **Excluir conta:** a Apple exige que quem cria conta no app possa excluí-la pelo próprio app. Como apagar dados precisa do seu OK: posso fazer na Fase 6 ou 8 (apaga a conta e todos os dados dela, com confirmação)?
 5. **Coach:** a rede deste ambiente ainda bloqueia `vycdrotqkjwvkzgjovpb.supabase.co`; testei agora e continua bloqueado. A liberação pode valer só para sessões novas. Se preferir, teste no Expo Go.
+
+## Fase 6 — Pagamentos e família
+
+Decisões suas aplicadas: anual US$ 59,99 (Premium) e US$ 89,99 (Família); Família com até 5 perfis; consentimento COPPA pela compra do plano Família na loja (o teste grátis não conta); RevenueCat só em código por enquanto; recompensa de convite; excluir conta.
+
+### Feito
+
+- **Limite do plano Grátis:** 3 treinos por semana, pela semana do calendário do celular.
+  - O 4º treino abre o paywall, que diz quando vem o próximo treino grátis.
+  - O finalizador de 10 min não conta.
+- **Paywall:** primeiro o valor, depois o preço, com as condições logo abaixo do botão:
+  - quanto custa depois do teste;
+  - aviso 2 dias antes da cobrança;
+  - "Cancele quando quiser em 2 toques".
+
+  Para assinar é preciso ter conta salva, assim a assinatura sempre fica ligada a uma conta e dá para restaurar depois.
+- **Planos (mockup 19):** perfis da família, Grátis / Premium / Família, mensal ou anual. Mostra o preço da loja quando existe; se não, os preços de tabela.
+- **Cobrança (mockup 22):**
+  - plano, fim do teste, primeira cobrança e valor seguinte;
+  - a promessa de cobrança;
+  - "Cancelar assinatura" abre a página de assinaturas da App Store ou do Google Play;
+  - "Restaurar compras" e "Excluir conta".
+- **Lembrete do fim do teste:** notificação 2 dias antes da cobrança, agendada mesmo com os outros lembretes desligados. A permissão é pedida quando o teste começa.
+- **RevenueCat:**
+  - o SDK (`react-native-purchases`) está instalado e é usado quando as chaves públicas estão no `.env`;
+  - sem chaves, o build de desenvolvimento usa um **simulador** (teste de 7 dias, "Dev: primeira cobrança", "Dev: voltar ao Grátis"), e o de produção diz "assinaturas ainda não disponíveis";
+  - o `bundle:check` agora também prova que o simulador não vai para a loja.
+- **Família (aba nova):**
+  - até 5 perfis no celular, cada um com seus próprios dados;
+  - trocar de perfil guarda o atual e carrega o outro;
+  - a Início mostra "Treinando como Mia".
+- **Adicionar familiar:**
+  - **Filho ou filha menor de 18 / pai, mãe, avô ou avó:** precisa do plano Família (o teste grátis vale);
+  - **Criança com menos de 13:** só depois da **primeira cobrança** do plano Família. Antes de criar, o responsável lê o aviso aos pais e marca "Sou o pai, a mãe ou o responsável legal e concordo". O banco só cria o perfil pela função `create_child_profile()`, que exige o plano cobrado e o aviso aceito, e grava o registro de consentimento com a transação da loja.
+- **Sincronização da família:** o perfil ativo sincroniza. Os familiares ficam como perfis gerenciados pela sua conta (sem login próprio), e criança sincroniza sem medidas do corpo.
+- **Recompensa de convite:**
+  - 1 semana grátis de Premium para os dois, liberada só quando o convidado **concluir o primeiro treino**;
+  - o convidado recebe uma vez; quem convidou também recebe uma vez no total (veja a pergunta 3);
+  - quem concede é o servidor, com a chave secreta do RevenueCat.
+- **Excluir conta:** apaga a conta e todos os dados no Supabase (incluindo perfis da família, consentimentos e convites) e limpa o celular. A tela explica que a assinatura **não** é cancelada ao excluir e tem o botão para abrir as assinaturas da loja. Pede para digitar EXCLUIR. Sem conta salva, apaga só os dados do celular.
+- **Servidor:**
+  - migration `billing_family` com subscriptions, consent_records, limite de 5 perfis e a regra da criança;
+  - Edge Functions `revenuecat-webhook`, `referral-reward` e `delete-account`, todas publicadas.
+
+### Testes
+
+- `npm run check`: **338 testes** (eram 306), lint, typecheck e Deno limpos.
+  - Regras dos eventos do RevenueCat:
+    - teste não conta como cobrança;
+    - a primeira renovação paga registra a cobrança;
+    - cancelar mantém o acesso até o fim;
+    - eventos fora de ordem são ignorados;
+    - a semana grátis nunca mexe num plano pago;
+    - sandbox fica marcado como teste.
+  - Limite de 3 por semana; preços; links da loja; simulador; lembrete de 2 dias; troca de perfis sem misturar dados; máximo de 5; criança só com consentimento; sincronização da criança como perfil gerenciado.
+  - Telas: paywall no 4º treino; Premium libera; paywall honesto; teste do Família; cobrança com fim do teste e cancelar; família (sem plano, criança no teste bloqueada, criança depois da cobrança, aviso aos pais, avô no teste); excluir conta (só celular e com conta).
+- `npm run db:test`: passa, incluindo `billing_family.sql`:
+  - o app não consegue se dar um plano;
+  - sem plano Família não há perfis gerenciados;
+  - durante o teste grátis não se cria perfil de criança;
+  - também não por insert direto nem sem o aviso;
+  - com o plano cobrado, o consentimento é gravado;
+  - o 6º perfil é recusado;
+  - excluir a conta apaga tudo em cascata.
+- `npm run bundle:check`: limpo (sem rascunhos, vídeos de protótipo ou simulador).
+
+### Como testar (build de desenvolvimento, com o simulador)
+
+1. Faça 3 treinos; o 4º abre o paywall.
+2. Salve a conta e, em Planos, toque em "Começar teste grátis de 7 dias".
+3. Na aba Família, "Adicionar" um avô (funciona no teste). Uma criança de 10 anos fica bloqueada até "Dev: primeira cobrança"; depois disso vem o aviso aos pais.
+4. Em Cobrança, veja fim do teste, primeira cobrança e "Cancelar assinatura".
+
+### O que falta do seu lado (RevenueCat e lojas)
+
+1. Criar os produtos nas lojas com teste de 7 dias: `tapstrong_premium_monthly`, `tapstrong_premium_annual`, `tapstrong_family_monthly`, `tapstrong_family_annual`.
+2. No RevenueCat:
+   - criar os entitlements `premium` e `family` (o Família inclui os dois);
+   - pôr as chaves **públicas** no `.env` (`EXPO_PUBLIC_REVENUECAT_IOS_KEY` / `_ANDROID_KEY`);
+   - nos segredos do Supabase, pelo terminal: `REVENUECAT_SECRET_KEY` e `REVENUECAT_WEBHOOK_SECRET`;
+   - configurar o webhook para `https://vycdrotqkjwvkzgjovpb.supabase.co/functions/v1/revenuecat-webhook`, com o header Authorization `Bearer <o mesmo segredo>`.
+3. O RevenueCat precisa de um development build (`eas build --profile development`); no Expo Go ele não roda, e o app usa o simulador.
+
+### Perguntas em aberto
+
+1. **Advogado (COPPA):** o texto do aviso aos pais e o método (compra na loja + aviso aceito) precisam da revisão antes do lançamento. O aviso tem versão (`parent-notice-v1`), então dá para trocar o texto sem perder o histórico.
+2. **Lembrete:** a SPEC diz 2 dias antes da cobrança; os mockups 19 e 22 dizem 3. Segui a SPEC. Quer 3?
+3. **Convite, quem convidou:** entendi "uma vez por pessoa" como: cada pessoa ganha a semana uma vez só, então quem convida ganha só no primeiro amigo que treinar. Se preferir uma semana por amigo (com um teto, por exemplo 12 por ano), é uma linha.
+4. **"Pais podem ver o progresso" (60+) e painel dos pais:** a troca de perfil já permite acompanhar no mesmo celular. Um painel à parte fica para a Fase 7 (Progresso)?
+5. **Rede:** `vycdrotqkjwvkzgjovpb.supabase.co` ainda está bloqueado nesta sessão (testei de novo). A liberação deve valer numa sessão nova.

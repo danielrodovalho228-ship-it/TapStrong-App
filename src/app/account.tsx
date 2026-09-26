@@ -193,6 +193,14 @@ export default function AccountScreen() {
 
       {mode !== 'child' ? <Notice>{t('account.under13')}</Notice> : null}
 
+      <View style={styles.links}>
+        <TextLink label={t('account.planBilling')} onPress={() => router.push('/billing')} />
+        <TextLink
+          label={t('account.deleteAccount')}
+          onPress={() => router.push('/delete-account')}
+        />
+      </View>
+
       <AppText variant="caption" color={colors.muted} style={styles.center}>
         {t('account.terms')}
       </AppText>
@@ -207,4 +215,5 @@ const styles = StyleSheet.create({
   toggles: { gap: 0, paddingVertical: spacing.xs },
   divider: { height: 1, backgroundColor: colors.line },
   center: { textAlign: 'center' },
+  links: { alignItems: 'center', gap: spacing.sm },
 });

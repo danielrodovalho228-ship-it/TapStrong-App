@@ -5,8 +5,7 @@ import { Icon } from '@/components/ui';
 import { colors, fonts } from '@/theme';
 
 /**
- * Main tabs (mockups 06/07). Coach, Progress and Family join in their own
- * phases (SPEC §12: 5, 7 and 6).
+ * Main tabs (mockups 06/07). Coach and Progress join in their own phases.
  */
 export default function TabsLayout() {
   const { t } = useTranslation();
@@ -38,6 +37,13 @@ export default function TabsLayout() {
         options={{
           title: t('tabs.body'),
           tabBarIcon: ({ color }) => <Icon name="body" color={color as string} />,
+        }}
+      />
+      <Tabs.Screen
+        name="family"
+        options={{
+          title: t('tabs.family'),
+          tabBarIcon: ({ color }) => <Icon name="family" color={color as string} />,
         }}
       />
     </Tabs>

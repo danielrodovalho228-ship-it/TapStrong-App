@@ -12,17 +12,17 @@ begin
   execute 'set role authenticated';
 end $$;
 
--- Parent A creates own profile and a child profile.
+-- Parent A has a charged Family plan (written by the webhook in production).
+insert into public.subscriptions (user_id, plan, status, store, first_charged_at, last_transaction_id)
+values ('00000000-0000-0000-0000-00000000000a', 'family', 'active', 'test', now(), 'tx-a');
+
+-- Parent A creates own profile and a child profile (with consent, Phase 6).
 do $$ begin perform pg_temp.act_as('00000000-0000-0000-0000-00000000000a'); end $$;
 
 insert into public.profiles (id, user_id, birth_month, birth_year, sex, body_band, mode)
 values ('10000000-0000-0000-0000-00000000000a', '00000000-0000-0000-0000-00000000000a', 4, 1988, 'f', 'adult', 'adult');
 
-insert into public.profiles (id, guardian_id, birth_month, birth_year, sex, body_band, mode)
-values ('20000000-0000-0000-0000-00000000000c', '00000000-0000-0000-0000-00000000000a', 6, 2016, 'm', 'kid', 'child');
-
-insert into public.family_members (owner_id, member_profile_id, role)
-values ('00000000-0000-0000-0000-00000000000a', '20000000-0000-0000-0000-00000000000c', 'child');
+select public.create_child_profile('20000000-0000-0000-0000-00000000000c', 6::smallint, 2016::smallint, 'm', null, 'parent-notice-v1');
 
 insert into public.restrictions (profile_id, area, source)
 values ('20000000-0000-0000-0000-00000000000c', 'knees', 'manual');
@@ -86,8 +86,9 @@ do $$ begin
 end $$;
 reset role;
 
--- Child-data constraints (checked as table owner).
+-- Child-data constraints (checked as table owner, past the consent gate).
 do $$ begin
+  perform set_config('tapstrong.child_consent', 'granted', true);
   begin
     insert into public.profiles (user_id, birth_month, birth_year, body_band, mode)
     values ('00000000-0000-0000-0000-00000000000b', 1, 2016, 'kid', 'child');
