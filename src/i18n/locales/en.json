@@ -10,7 +10,8 @@
     "skip": "Skip",
     "notNow": "Not now",
     "add": "Add",
-    "remove": "Remove"
+    "remove": "Remove",
+    "edit": "Edit"
   },
   "language": {
     "en": "English",
@@ -37,13 +38,6 @@
       "language": "Language",
       "type": "Type scale",
       "seniorPreview": "Senior mode text (+2 steps)"
-    },
-    "goals": {
-      "grow": "Grow",
-      "firm": "Firm",
-      "strengthen": "Strengthen",
-      "balance": "Balance",
-      "mobility": "Mobility"
     }
   },
   "muscles": {
@@ -72,5 +66,255 @@
     "glutes": "Glutes",
     "hamstrings": "Hamstrings",
     "calves": "Calves"
+  },
+  "welcome": {
+    "kicker": "AI muscle coach",
+    "models": {
+      "men": "Men",
+      "women": "Women",
+      "kids": "Kids 9+",
+      "seniors": "60+"
+    },
+    "tap": "Tap.",
+    "talk": "Talk.",
+    "train": "Train.",
+    "body": "Point to the muscle you want to improve. Your coach builds the workout, with a 3D demo for every move.",
+    "language": "Language",
+    "languageShort": {
+      "en": "English",
+      "es": "Español",
+      "pt-BR": "Português (BR)"
+    },
+    "cta": "Get started",
+    "haveAccount": "I already have an account",
+    "accountSoonTitle": "Coming soon",
+    "accountSoon": "Signing in arrives in a later update. For now, your answers stay on this phone.",
+    "ok": "OK"
+  },
+  "onboarding": {
+    "step": "Step {{current}} of {{total}}",
+    "stepNamed": "Step {{current}} of {{total}} · {{name}}",
+    "progress": "Setup progress: step {{current}} of {{total}}"
+  },
+  "months": {
+    "1": "January",
+    "2": "February",
+    "3": "March",
+    "4": "April",
+    "5": "May",
+    "6": "June",
+    "7": "July",
+    "8": "August",
+    "9": "September",
+    "10": "October",
+    "11": "November",
+    "12": "December"
+  },
+  "monthsShort": {
+    "1": "Jan",
+    "2": "Feb",
+    "3": "Mar",
+    "4": "Apr",
+    "5": "May",
+    "6": "Jun",
+    "7": "Jul",
+    "8": "Aug",
+    "9": "Sep",
+    "10": "Oct",
+    "11": "Nov",
+    "12": "Dec"
+  },
+  "who": {
+    "title": "Who's training?",
+    "options": {
+      "me": "Me",
+      "child": "My child (under 18)",
+      "parent": "My parent or grandparent"
+    },
+    "birth": {
+      "me": "Your birth month and year",
+      "child": "Your child's birth month and year",
+      "parent": "Their birth month and year"
+    },
+    "month": "Birth month",
+    "year": "Birth year",
+    "monthPlaceholder": "Month",
+    "yearPlaceholder": "Year",
+    "modeTitle": "{{mode}} mode · {{age}}",
+    "modes": {
+      "child": "Kids",
+      "teen": "Teen",
+      "adult": "Adult",
+      "senior": "60+"
+    },
+    "modeBody": {
+      "teen": "Made for teens: no body-fat numbers and no photos. Next we ask a few quick safety questions.",
+      "adult": "Full app. Next we ask a few quick safety questions.",
+      "senior": "Bigger text, balance focus, and seated or supported options first. Next, a few quick safety questions."
+    },
+    "errors": {
+      "too_young": "TapStrong is for ages 9 and up.",
+      "ask_parent": "Kids under 13 need a parent or guardian to set up TapStrong. Ask a parent to help you.",
+      "guardian_consent": "Kids under 13 need a parent's consent first. Kids' profiles are set up from the Family plan, which arrives in a later update.",
+      "child_too_old": "This option is for kids under 18. Adults can set up their own profile.",
+      "parent_too_young": "Check the birth year. This option is for parents and grandparents."
+    },
+    "footnote": "We use your age only to keep training safe for you."
+  },
+  "mainGoals": {
+    "look": "Look better",
+    "lose_weight": "Lose weight",
+    "strength": "Get stronger",
+    "bone_health": "Bone health",
+    "sport": "Sport performance",
+    "mobility": "Move better",
+    "balance": "Balance"
+  },
+  "muscleGoals": {
+    "grow": "Grow",
+    "firm": "Firm",
+    "strengthen": "Strengthen",
+    "balance": "Balance",
+    "mobility": "Mobility"
+  },
+  "locations": {
+    "gym": "Gym",
+    "home": "Home",
+    "outdoors": "Outdoors"
+  },
+  "equipment": {
+    "dumbbells": "Dumbbells",
+    "barbell": "Barbell",
+    "kettlebell": "Kettlebell",
+    "bands": "Bands",
+    "machines": "Machines",
+    "cables": "Cables",
+    "bench": "Bench",
+    "pull_up_bar": "Pull-up bar",
+    "mat": "Mat"
+  },
+  "sex": {
+    "m": "Man",
+    "f": "Woman",
+    "neutral": "Neutral body"
+  },
+  "chat": {
+    "title": "Coach interview",
+    "questions": {
+      "goals": "What's your main goal? Pick one or more.",
+      "schedule": "Where do you train, how long, and how often?",
+      "focus": "What do you want to improve?",
+      "body": "Which body model fits you? Height and weight are optional; I use them to pick the model closest to you.",
+      "bodyChild": "Which body model should we show?"
+    },
+    "where": "Where",
+    "howLong": "How long",
+    "daysPerWeek": "Days a week",
+    "equipment": "Equipment",
+    "minutesOption": "{{count}} min",
+    "daysOption": "{{count}} days",
+    "focusLater": "I'll tap the body map",
+    "focusMarked": "I marked it on your body map: {{list}}.",
+    "focusDeferred": "No problem. You'll tap the muscles on the body map next.",
+    "musclePair": "{{muscle}} → {{goal}}",
+    "height": "Height",
+    "weight": "Weight",
+    "feet": "Height, feet",
+    "inches": "Height, inches",
+    "units": {
+      "ft": "ft",
+      "in": "in",
+      "cm": "cm",
+      "lb": "lb",
+      "kg": "kg"
+    },
+    "measurementsOptional": "Optional",
+    "skip": "Skip",
+    "done": "Continue",
+    "next": "Next: quick safety check",
+    "saveEdit": "Save",
+    "inputPlaceholder": "Type to your coach…",
+    "inputLabel": "Message to your coach",
+    "send": "Send",
+    "thinking": "Coach is thinking…",
+    "notUnderstood": "I didn't quite get that. Pick from the options, or try other words.",
+    "understood": "Got it. Check the options below and continue.",
+    "guidedOnly": "Tap an option to answer.",
+    "summary": {
+      "schedule": "{{place}}, {{minutes}} minutes, {{days}} days a week."
+    }
+  },
+  "safety": {
+    "name": "Safety check",
+    "title": "Anything we should work around?",
+    "pain": "Pain or old injuries",
+    "health": "Health",
+    "position": "How do you train best?",
+    "none": "None",
+    "painAreas": {
+      "neck": "Neck",
+      "shoulder": "Shoulder",
+      "elbow_wrist": "Elbow / wrist",
+      "lower_back": "Lower back",
+      "hip": "Hip",
+      "knee": "Knee",
+      "ankle_foot": "Ankle / foot",
+      "recent_surgery": "Recent surgery"
+    },
+    "conditions": {
+      "heart_condition": "Heart condition",
+      "high_blood_pressure": "High blood pressure",
+      "diabetes": "Diabetes / prediabetes",
+      "osteoporosis": "Osteoporosis",
+      "pregnant_postpartum": "Pregnant / postpartum",
+      "fell_last_year": "Fell in the last year"
+    },
+    "positions": {
+      "standing": "Standing",
+      "with_support": "With support",
+      "seated_only": "Seated only"
+    },
+    "noteOk": "Great. You can always add pain or injuries later, or tap “I feel pain” during a workout.",
+    "redFlagTitle": "Check with your doctor",
+    "redFlagBody": "Some of your answers mean you should check with your doctor before your first workout. You can still set up your plan now.",
+    "acknowledge": "I understand",
+    "footnote": "TapStrong adapts training; it doesn't give medical advice."
+  },
+  "profile": {
+    "eyebrow": "From your interview",
+    "title": "Your plan, at a glance",
+    "rows": {
+      "born": "Born · age group",
+      "bodyModel": "Body model · auto-matched",
+      "restrictions": "Restrictions",
+      "goals": "Goals",
+      "schedule": "Schedule",
+      "equipment": "Equipment"
+    },
+    "bornValue": "{{month}} {{year}} · {{group}} ({{age}})",
+    "groups": {
+      "teen": "Teen",
+      "adult": "Adult",
+      "senior": "60+",
+      "child": "Kid"
+    },
+    "restrictionsNone": "None yet · add any time",
+    "goalsNone": "You'll pick muscles on the body map next",
+    "goalPair": "{{muscle}}: {{goal}}",
+    "scheduleValue": "{{minutes}} min · {{days}} days a week",
+    "bodyweight": "Bodyweight",
+    "notes": {
+      "bodyFat": "A softer look is often partly body fat, so your plan adds a short cardio finisher and a 4-week check-in.",
+      "senior": "Balance work and seated or supported options come first, with more recovery between hard days.",
+      "redFlag": "Check with your doctor before your first workout."
+    },
+    "bodyPreview": "Body model preview",
+    "cta": "Looks right"
+  },
+  "next": {
+    "title": "Body map is next",
+    "body": "Your answers are saved on this phone. The body map and goals arrive in the next build phase.",
+    "review": "Review my plan",
+    "restart": "Start over"
   }
 }

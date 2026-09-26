@@ -23,6 +23,8 @@
     "react-i18next": "^17.0.15",
     "react-native": "0.86.3",
     "react-native-gesture-handler": "~2.32.0",
+    "react-native-mmkv": "^4.3.2",
+    "react-native-nitro-modules": "^0.37.1",
     "react-native-reanimated": "4.5.1",
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "~4.26.0",
@@ -36,6 +38,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^22.20.4",
     "@types/react": "~19.2.2",
+    "deno": "^2.9.6",
     "eslint": "^9.39.5",
     "eslint-config-expo": "^57.0.2",
     "eslint-config-prettier": "^10.1.8",
@@ -56,8 +59,9 @@
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
     "test": "jest",
-    "check": "npm run lint && npm run typecheck && npm test",
-    "db:test": "bash scripts/db-test.sh"
+    "check": "npm run lint && npm run typecheck && npm run functions:check && npm test",
+    "db:test": "bash scripts/db-test.sh",
+    "functions:check": "deno check --config supabase/functions/deno.json supabase/functions/*/index.ts && deno lint --config supabase/functions/deno.json supabase/functions"
   },
   "private": true
 }

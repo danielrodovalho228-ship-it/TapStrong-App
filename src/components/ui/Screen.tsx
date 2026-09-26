@@ -1,0 +1,44 @@
+import type { ReactNode } from 'react';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+import { colors, spacing } from '@/theme';
+
+export type ScreenProps = {
+  header?: ReactNode;
+  children: ReactNode;
+  /** Pinned under the scroll area (primary action, footnote). */
+  footer?: ReactNode;
+  scroll?: boolean;
+};
+
+/** Standard screen frame: safe area, optional header, scrolling body, pinned footer. */
+export function Screen({ header, children, footer, scroll = true }: ScreenProps) {
+  const body = scroll ? (
+    <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+      {children}
+    </ScrollView>
+  ) : (
+    <View style={[styles.content, styles.fill]}>{children}</View>
+  );
+
+  return (
+    <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
+      <KeyboardAvoidingView
+        style={styles.fill}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        {header}
+        {body}
+        {footer ? <View style={styles.footer}>{footer}</View> : null}
+      </KeyboardAvoidingView>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  safe: { flex: 1, backgroundColor: colors.background },
+  fill: { flex: 1 },
+  content: { paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, gap: spacing.lg },
+  footer: { paddingHorizontal: spacing.xl, paddingBottom: spacing.md, gap: spacing.sm },
+});

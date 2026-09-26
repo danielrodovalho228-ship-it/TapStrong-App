@@ -10,7 +10,8 @@
     "skip": "Pular",
     "notNow": "Agora não",
     "add": "Adicionar",
-    "remove": "Remover"
+    "remove": "Remover",
+    "edit": "Editar"
   },
   "language": {
     "en": "English",
@@ -37,13 +38,6 @@
       "language": "Idioma",
       "type": "Escala de texto",
       "seniorPreview": "Texto no modo 60+ (+2 passos)"
-    },
-    "goals": {
-      "grow": "Crescer",
-      "firm": "Definir",
-      "strengthen": "Fortalecer",
-      "balance": "Equilíbrio",
-      "mobility": "Mobilidade"
     }
   },
   "muscles": {
@@ -72,5 +66,255 @@
     "glutes": "Glúteos",
     "hamstrings": "Posteriores da coxa",
     "calves": "Panturrilhas"
+  },
+  "welcome": {
+    "kicker": "Coach muscular com IA",
+    "models": {
+      "men": "Homens",
+      "women": "Mulheres",
+      "kids": "Crianças 9+",
+      "seniors": "60+"
+    },
+    "tap": "Toque.",
+    "talk": "Fale.",
+    "train": "Treine.",
+    "body": "Aponte o músculo que você quer melhorar. Seu coach monta o treino, com uma demonstração 3D de cada movimento.",
+    "language": "Idioma",
+    "languageShort": {
+      "en": "English",
+      "es": "Español",
+      "pt-BR": "Português (BR)"
+    },
+    "cta": "Começar",
+    "haveAccount": "Já tenho uma conta",
+    "accountSoonTitle": "Em breve",
+    "accountSoon": "O login chega numa próxima atualização. Por enquanto, suas respostas ficam neste celular.",
+    "ok": "OK"
+  },
+  "onboarding": {
+    "step": "Passo {{current}} de {{total}}",
+    "stepNamed": "Passo {{current}} de {{total}} · {{name}}",
+    "progress": "Progresso: passo {{current}} de {{total}}"
+  },
+  "months": {
+    "1": "Janeiro",
+    "2": "Fevereiro",
+    "3": "Março",
+    "4": "Abril",
+    "5": "Maio",
+    "6": "Junho",
+    "7": "Julho",
+    "8": "Agosto",
+    "9": "Setembro",
+    "10": "Outubro",
+    "11": "Novembro",
+    "12": "Dezembro"
+  },
+  "monthsShort": {
+    "1": "Jan",
+    "2": "Fev",
+    "3": "Mar",
+    "4": "Abr",
+    "5": "Mai",
+    "6": "Jun",
+    "7": "Jul",
+    "8": "Ago",
+    "9": "Set",
+    "10": "Out",
+    "11": "Nov",
+    "12": "Dez"
+  },
+  "who": {
+    "title": "Quem vai treinar?",
+    "options": {
+      "me": "Eu",
+      "child": "Meu filho ou filha (menor de 18)",
+      "parent": "Meu pai, mãe ou avô"
+    },
+    "birth": {
+      "me": "Seu mês e ano de nascimento",
+      "child": "Mês e ano de nascimento do seu filho ou filha",
+      "parent": "Mês e ano de nascimento da pessoa"
+    },
+    "month": "Mês de nascimento",
+    "year": "Ano de nascimento",
+    "monthPlaceholder": "Mês",
+    "yearPlaceholder": "Ano",
+    "modeTitle": "Modo {{mode}} · {{age}}",
+    "modes": {
+      "child": "crianças",
+      "teen": "adolescente",
+      "adult": "adulto",
+      "senior": "60+"
+    },
+    "modeBody": {
+      "teen": "Feito para adolescentes: sem números de gordura corporal e sem fotos. Agora, algumas perguntas rápidas de segurança.",
+      "adult": "App completo. Agora, algumas perguntas rápidas de segurança.",
+      "senior": "Texto maior, foco em equilíbrio e opções sentado ou com apoio primeiro. Agora, algumas perguntas rápidas de segurança."
+    },
+    "errors": {
+      "too_young": "O TapStrong é para quem tem 9 anos ou mais.",
+      "ask_parent": "Menores de 13 precisam que um pai, mãe ou responsável configure o TapStrong. Peça ajuda a um adulto.",
+      "guardian_consent": "Menores de 13 precisam primeiro do consentimento dos pais. Perfis de crianças são criados pelo plano Família, que chega numa próxima atualização.",
+      "child_too_old": "Esta opção é para menores de 18. Adultos podem criar o próprio perfil.",
+      "parent_too_young": "Confira o ano de nascimento. Esta opção é para pais e avós."
+    },
+    "footnote": "Usamos sua idade só para manter o treino seguro para você."
+  },
+  "mainGoals": {
+    "look": "Ficar com um visual melhor",
+    "lose_weight": "Perder peso",
+    "strength": "Ficar mais forte",
+    "bone_health": "Saúde dos ossos",
+    "sport": "Desempenho no esporte",
+    "mobility": "Me mexer melhor",
+    "balance": "Equilíbrio"
+  },
+  "muscleGoals": {
+    "grow": "Crescer",
+    "firm": "Definir",
+    "strengthen": "Fortalecer",
+    "balance": "Equilíbrio",
+    "mobility": "Mobilidade"
+  },
+  "locations": {
+    "gym": "Academia",
+    "home": "Casa",
+    "outdoors": "Ao ar livre"
+  },
+  "equipment": {
+    "dumbbells": "Halteres",
+    "barbell": "Barra",
+    "kettlebell": "Kettlebell",
+    "bands": "Elásticos",
+    "machines": "Máquinas",
+    "cables": "Polias",
+    "bench": "Banco",
+    "pull_up_bar": "Barra fixa",
+    "mat": "Colchonete"
+  },
+  "sex": {
+    "m": "Homem",
+    "f": "Mulher",
+    "neutral": "Corpo neutro"
+  },
+  "chat": {
+    "title": "Entrevista com o coach",
+    "questions": {
+      "goals": "Qual é seu objetivo principal? Escolha um ou mais.",
+      "schedule": "Onde você treina, por quanto tempo e com que frequência?",
+      "focus": "O que você quer melhorar?",
+      "body": "Qual modelo de corpo combina com você? Altura e peso são opcionais; uso para escolher o modelo mais parecido com você.",
+      "bodyChild": "Qual modelo de corpo vamos mostrar?"
+    },
+    "where": "Onde",
+    "howLong": "Quanto tempo",
+    "daysPerWeek": "Dias por semana",
+    "equipment": "Equipamentos",
+    "minutesOption": "{{count}} min",
+    "daysOption": "{{count}} dias",
+    "focusLater": "Vou marcar no mapa do corpo",
+    "focusMarked": "Marquei no seu mapa do corpo: {{list}}.",
+    "focusDeferred": "Sem problema. Você vai marcar os músculos no mapa do corpo.",
+    "musclePair": "{{muscle}} → {{goal}}",
+    "height": "Altura",
+    "weight": "Peso",
+    "feet": "Altura, pés",
+    "inches": "Altura, polegadas",
+    "units": {
+      "ft": "pés",
+      "in": "pol",
+      "cm": "cm",
+      "lb": "lb",
+      "kg": "kg"
+    },
+    "measurementsOptional": "Opcional",
+    "skip": "Pular",
+    "done": "Continuar",
+    "next": "Próximo: checagem de segurança",
+    "saveEdit": "Salvar",
+    "inputPlaceholder": "Escreva para o seu coach…",
+    "inputLabel": "Mensagem para o seu coach",
+    "send": "Enviar",
+    "thinking": "O coach está pensando…",
+    "notUnderstood": "Não entendi bem. Escolha uma opção ou tente com outras palavras.",
+    "understood": "Entendi. Confira as opções abaixo e continue.",
+    "guidedOnly": "Toque numa opção para responder.",
+    "summary": {
+      "schedule": "{{place}}, {{minutes}} minutos, {{days}} dias por semana."
+    }
+  },
+  "safety": {
+    "name": "Segurança",
+    "title": "Tem algo que devemos evitar?",
+    "pain": "Dor ou lesões antigas",
+    "health": "Saúde",
+    "position": "Como você treina melhor?",
+    "none": "Nenhum",
+    "painAreas": {
+      "neck": "Pescoço",
+      "shoulder": "Ombro",
+      "elbow_wrist": "Cotovelo / punho",
+      "lower_back": "Lombar",
+      "hip": "Quadril",
+      "knee": "Joelho",
+      "ankle_foot": "Tornozelo / pé",
+      "recent_surgery": "Cirurgia recente"
+    },
+    "conditions": {
+      "heart_condition": "Problema cardíaco",
+      "high_blood_pressure": "Pressão alta",
+      "diabetes": "Diabetes / pré-diabetes",
+      "osteoporosis": "Osteoporose",
+      "pregnant_postpartum": "Gravidez / pós-parto",
+      "fell_last_year": "Caí no último ano"
+    },
+    "positions": {
+      "standing": "Em pé",
+      "with_support": "Com apoio",
+      "seated_only": "Só sentado"
+    },
+    "noteOk": "Ótimo. Você pode adicionar dores ou lesões depois, ou tocar em “Estou com dor” durante o treino.",
+    "redFlagTitle": "Fale com seu médico",
+    "redFlagBody": "Algumas respostas indicam que você deve falar com seu médico antes do primeiro treino. Você já pode montar seu plano agora.",
+    "acknowledge": "Entendi",
+    "footnote": "O TapStrong adapta o treino; não dá conselho médico."
+  },
+  "profile": {
+    "eyebrow": "Da sua entrevista",
+    "title": "Seu plano, num relance",
+    "rows": {
+      "born": "Nascimento · faixa etária",
+      "bodyModel": "Modelo de corpo · automático",
+      "restrictions": "Restrições",
+      "goals": "Objetivos",
+      "schedule": "Rotina",
+      "equipment": "Equipamentos"
+    },
+    "bornValue": "{{month}} {{year}} · {{group}} ({{age}})",
+    "groups": {
+      "teen": "Adolescente",
+      "adult": "Adulto",
+      "senior": "60+",
+      "child": "Criança"
+    },
+    "restrictionsNone": "Nenhuma por enquanto · adicione quando quiser",
+    "goalsNone": "Você vai escolher os músculos no mapa do corpo",
+    "goalPair": "{{muscle}}: {{goal}}",
+    "scheduleValue": "{{minutes}} min · {{days}} dias por semana",
+    "bodyweight": "Peso do corpo",
+    "notes": {
+      "bodyFat": "Um visual menos definido costuma ser em parte gordura corporal, então seu plano inclui um final curto de cardio e uma avaliação em 4 semanas.",
+      "senior": "Equilíbrio e opções sentado ou com apoio vêm primeiro, com mais recuperação entre dias puxados.",
+      "redFlag": "Fale com seu médico antes do primeiro treino."
+    },
+    "bodyPreview": "Prévia do modelo de corpo",
+    "cta": "Está certo"
+  },
+  "next": {
+    "title": "Agora vem o mapa do corpo",
+    "body": "Suas respostas estão salvas neste celular. O mapa do corpo e os objetivos chegam na próxima fase.",
+    "review": "Revisar meu plano",
+    "restart": "Recomeçar"
   }
 }

@@ -17,7 +17,7 @@ npx expo start
 ## Checks
 
 ```bash
-npm run check    # lint + typecheck + unit tests
+npm run check    # lint + typecheck + Edge Function check + unit tests
 npm run db:test  # migrations + RLS tests on a local Postgres
 ```
 
@@ -30,7 +30,8 @@ src/theme/          brand tokens and contrast helpers (SPEC §4)
 src/i18n/           i18next setup and en / es / pt-BR strings
 src/lib/            env and Supabase client
 src/stores/         Zustand stores
-supabase/           config, migrations, SQL tests
+src/features/        feature logic (onboarding, profile, muscles, bodymap)
+supabase/           config, migrations, SQL tests, Edge Functions
 ```
 
 Secrets never go in the repo or the app bundle. The Claude API key is a Supabase secret used only by Edge Functions.

@@ -13,6 +13,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { useSyncProfileSettings } from '@/features/onboarding/sync';
 import { colors } from '@/theme';
 
 void SplashScreen.preventAutoHideAsync();
@@ -27,6 +28,7 @@ export default function RootLayout() {
     BarlowCondensed_700Bold,
   });
   const ready = fontsLoaded || !!fontError;
+  useSyncProfileSettings();
 
   useEffect(() => {
     if (ready) void SplashScreen.hideAsync();

@@ -1,0 +1,177 @@
+[
+  {
+    "key": "chest",
+    "region": "upper",
+    "views": [],
+    "labelKey": "muscles.chest",
+    "parentKey": null
+  },
+  {
+    "key": "abs",
+    "region": "core",
+    "views": [],
+    "labelKey": "muscles.abs",
+    "parentKey": null
+  },
+  {
+    "key": "traps",
+    "region": "upper",
+    "views": ["front", "back"],
+    "labelKey": "muscles.traps",
+    "parentKey": null
+  },
+  {
+    "key": "shoulders",
+    "region": "upper",
+    "views": ["front"],
+    "labelKey": "muscles.shoulders",
+    "parentKey": null
+  },
+  {
+    "key": "upperChest",
+    "region": "upper",
+    "views": ["front"],
+    "labelKey": "muscles.upperChest",
+    "parentKey": "chest"
+  },
+  {
+    "key": "midChest",
+    "region": "upper",
+    "views": ["front"],
+    "labelKey": "muscles.midChest",
+    "parentKey": "chest"
+  },
+  {
+    "key": "lowerChest",
+    "region": "upper",
+    "views": ["front"],
+    "labelKey": "muscles.lowerChest",
+    "parentKey": "chest"
+  },
+  {
+    "key": "biceps",
+    "region": "upper",
+    "views": ["front"],
+    "labelKey": "muscles.biceps",
+    "parentKey": null
+  },
+  {
+    "key": "forearms",
+    "region": "upper",
+    "views": ["front"],
+    "labelKey": "muscles.forearms",
+    "parentKey": null
+  },
+  {
+    "key": "upperAbs",
+    "region": "core",
+    "views": ["front"],
+    "labelKey": "muscles.upperAbs",
+    "parentKey": "abs"
+  },
+  {
+    "key": "lowerAbs",
+    "region": "core",
+    "views": ["front"],
+    "labelKey": "muscles.lowerAbs",
+    "parentKey": "abs"
+  },
+  {
+    "key": "obliques",
+    "region": "core",
+    "views": ["front"],
+    "labelKey": "muscles.obliques",
+    "parentKey": null
+  },
+  {
+    "key": "hips",
+    "region": "lower",
+    "views": ["front"],
+    "labelKey": "muscles.hips",
+    "parentKey": null
+  },
+  {
+    "key": "adductors",
+    "region": "lower",
+    "views": ["front"],
+    "labelKey": "muscles.adductors",
+    "parentKey": null
+  },
+  {
+    "key": "quads",
+    "region": "lower",
+    "views": ["front"],
+    "labelKey": "muscles.quads",
+    "parentKey": null
+  },
+  {
+    "key": "knees",
+    "region": "lower",
+    "views": ["front"],
+    "labelKey": "muscles.knees",
+    "parentKey": null
+  },
+  {
+    "key": "shins",
+    "region": "lower",
+    "views": ["front"],
+    "labelKey": "muscles.shins",
+    "parentKey": null
+  },
+  {
+    "key": "rearDelts",
+    "region": "upper",
+    "views": ["back"],
+    "labelKey": "muscles.rearDelts",
+    "parentKey": null
+  },
+  {
+    "key": "upperBack",
+    "region": "upper",
+    "views": ["back"],
+    "labelKey": "muscles.upperBack",
+    "parentKey": null
+  },
+  {
+    "key": "lats",
+    "region": "upper",
+    "views": ["back"],
+    "labelKey": "muscles.lats",
+    "parentKey": null
+  },
+  {
+    "key": "triceps",
+    "region": "upper",
+    "views": ["back"],
+    "labelKey": "muscles.triceps",
+    "parentKey": null
+  },
+  {
+    "key": "lowerBack",
+    "region": "core",
+    "views": ["back"],
+    "labelKey": "muscles.lowerBack",
+    "parentKey": null
+  },
+  {
+    "key": "glutes",
+    "region": "lower",
+    "views": ["back"],
+    "labelKey": "muscles.glutes",
+    "parentKey": null
+  },
+  {
+    "key": "hamstrings",
+    "region": "lower",
+    "views": ["back"],
+    "labelKey": "muscles.hamstrings",
+    "parentKey": null
+  },
+  {
+    "key": "calves",
+    "region": "lower",
+    "views": ["back"],
+    "labelKey": "muscles.calves",
+    "parentKey": null
+  }
+]

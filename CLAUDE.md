@@ -29,7 +29,8 @@ The full spec is in `docs/SPEC.md`. Read it before any task, and follow it over 
 - test: `npm test`
 - typecheck: `npx tsc --noEmit` (or `npm run typecheck`)
 - lint: `npm run lint` (Prettier runs inside ESLint; `npm run format` to fix)
-- all three: `npm run check`
+- Edge Functions (Deno): `npm run functions:check`
+- everything above: `npm run check`
 - database: `npm run db:test` — applies `supabase/migrations` to a throwaway local Postgres and runs `supabase/tests/local/*.sql` (RLS + child-data constraints)
 - install packages with `npx expo install <pkg>`; if the Expo API is unreachable, prefix `EXPO_OFFLINE=1`
 
