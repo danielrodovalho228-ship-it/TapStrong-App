@@ -7,7 +7,12 @@ import { AppText, Button, Chip, Header, Screen, Select } from '@/components/ui';
 import { AreaChip } from '@/features/bodymap/components/AreaChip';
 import { BodyMapCanvas } from '@/features/bodymap/components/BodyMapCanvas';
 import type { BodySex, BodyView } from '@/features/bodymap/images';
-import { BAND_OPTIONS, expandToHotspots, toggleMuscle } from '@/features/bodymap/selection';
+import {
+  allowedBands,
+  displayBand,
+  expandToHotspots,
+  toggleMuscle,
+} from '@/features/bodymap/selection';
 import { derive } from '@/features/onboarding/derived';
 import { defaultMuscleGoal } from '@/features/onboarding/options';
 import { useOnboardingStore } from '@/features/onboarding/store';
@@ -30,7 +35,7 @@ export default function BodyMapScreen() {
 
   if (!derived) return <Redirect href="/onboarding/who" />;
 
-  const band = s.bodyModel.band ?? derived.band;
+  const band = displayBand(s.bodyModel.band, derived.band, derived.mode);
   const sex: BodySex = s.bodyModel.sex ?? (s.sex === 'f' ? 'f' : 'm');
   const selected = s.muscleGoals.map((m) => m.muscleKey);
 
@@ -80,7 +85,7 @@ export default function BodyMapScreen() {
           placeholder={t('bodyMap.ageModel')}
           value={band}
           onChange={(value) => s.update({ bodyModel: { ...s.bodyModel, band: value } })}
-          options={BAND_OPTIONS.map((b) => ({
+          options={allowedBands(derived.mode).map((b) => ({
             value: b,
             label: t('bodyMap.ageOption', { range: t(`bodyMap.bands.${b}`) }),
           }))}

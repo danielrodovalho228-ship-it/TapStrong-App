@@ -376,7 +376,8 @@
     "days": "Días por semana",
     "decrease": "Reducir {{what}}",
     "increase": "Aumentar {{what}}",
-    "generate": "Generar mi entrenamiento"
+    "generate": "Generar mi entrenamiento",
+    "wholeWorkout": "Para todo el entrenamiento"
   },
   "muscleAnatomy": {
     "chest": "Pectoral mayor",

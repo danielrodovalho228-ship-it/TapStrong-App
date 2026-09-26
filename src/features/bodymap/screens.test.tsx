@@ -81,6 +81,14 @@ describe('Body map (mockup 08)', () => {
     expect(screen.getByText('3 areas selected')).toBeTruthy();
   });
 
+  it('adult profiles are not offered kid or teen bodies', async () => {
+    await renderMap();
+    await fireEvent.press(screen.getByRole('button', { name: /Age model/ }));
+    expect(screen.queryByRole('button', { name: 'Age 9–12' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Age 13–17' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Age 45–59' })).toBeTruthy();
+  });
+
   it('switches body model without changing the profile', async () => {
     await renderMap();
     await fireEvent.press(screen.getByRole('button', { name: 'Female' }));
@@ -125,6 +133,11 @@ describe('Goals sheet (mockup 09)', () => {
     await render(<GoalsSheet />);
     expect(screen.queryByText(/fat-loss/)).toBeNull();
     expect(screen.getByText('Tighter look + short cardio finisher')).toBeTruthy();
+  });
+
+  it('says the quantities are for the whole workout', async () => {
+    await render(<GoalsSheet />);
+    expect(screen.getByText('For the whole workout')).toBeTruthy();
   });
 
   it('steppers change quantities within range', async () => {

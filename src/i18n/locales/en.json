@@ -376,7 +376,8 @@
     "days": "Days a week",
     "decrease": "Decrease {{what}}",
     "increase": "Increase {{what}}",
-    "generate": "Generate my workout"
+    "generate": "Generate my workout",
+    "wholeWorkout": "For the whole workout"
   },
   "muscleAnatomy": {
     "chest": "Pectoralis major",

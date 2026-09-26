@@ -44,6 +44,22 @@ export function priorityOf(entries: MuscleGoalEntry[], muscleKey: string): numbe
 }
 
 export const BAND_OPTIONS: BodyBand[] = ['kid', 'teen', 'young', 'adult', 'mid', 'senior', 'elder'];
+const ADULT_BANDS: BodyBand[] = ['young', 'adult', 'mid', 'senior', 'elder'];
+
+/**
+ * Age models a profile may show (Daniel, Sep 27 2026): adult profiles see 18+
+ * bodies only; kid and teen bodies appear only on kid or teen profiles
+ * (including a guardian managing one). Safety mode still comes from the
+ * birth date, never from the chosen image.
+ */
+export function allowedBands(mode: AppMode): BodyBand[] {
+  return mode === 'child' || mode === 'teen' ? BAND_OPTIONS : ADULT_BANDS;
+}
+
+/** The stored model band if still allowed for this profile, else its own band. */
+export function displayBand(stored: BodyBand | undefined, own: BodyBand, mode: AppMode): BodyBand {
+  return stored && allowedBands(mode).includes(stored) ? stored : own;
+}
 
 export const QUANTITY_RANGES = {
   exercises: [2, 10],

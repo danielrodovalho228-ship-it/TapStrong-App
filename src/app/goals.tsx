@@ -8,6 +8,7 @@ import { hotspotsFor, FRAME } from '@/features/bodymap/hotspots';
 import { bodyImage, type BodySex } from '@/features/bodymap/images';
 import {
   clampQuantity,
+  displayBand,
   firmDescriptionKey,
   QUANTITY_RANGES,
   setGoal,
@@ -32,7 +33,7 @@ export default function GoalsSheet() {
   const entry = s.muscleGoals.find((m) => m.muscleKey === muscle);
   if (!derived || !muscle || !entry || !muscleByKey(muscle)) return <Redirect href="/body" />;
 
-  const band = s.bodyModel.band ?? derived.band;
+  const band = displayBand(s.bodyModel.band, derived.band, derived.mode);
   const sex: BodySex = s.bodyModel.sex ?? (s.sex === 'f' ? 'f' : 'm');
   const view = hotspotsFor(band, sex, 'front').some((h) => h.key === muscle) ? 'front' : 'back';
   const spot = hotspotsFor(band, sex, view).find((h) => h.key === muscle)!;
@@ -115,6 +116,9 @@ export default function GoalsSheet() {
         ))}
       </View>
 
+      <AppText variant="label" style={styles.section}>
+        {t('goalsSheet.wholeWorkout')}
+      </AppText>
       <Card style={styles.quantities}>
         <Stepper
           label={t('goalsSheet.exercises')}

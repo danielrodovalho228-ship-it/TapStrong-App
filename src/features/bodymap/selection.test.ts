@@ -1,5 +1,7 @@
 import {
+  allowedBands,
   clampQuantity,
+  displayBand,
   expandToHotspots,
   firmDescriptionKey,
   priorityOf,
@@ -55,6 +57,19 @@ describe('body map selection', () => {
     expect(clampQuantity('exercises', 99)).toBe(10);
     expect(clampQuantity('sets', 0)).toBe(1);
     expect(clampQuantity('days', 8)).toBe(7);
+  });
+
+  it('adult profiles see 18+ bodies only; minors see all (Daniel, Sep 27)', () => {
+    expect(allowedBands('adult')).toEqual(['young', 'adult', 'mid', 'senior', 'elder']);
+    expect(allowedBands('senior')).not.toContain('kid');
+    expect(allowedBands('teen')).toContain('kid');
+    expect(allowedBands('child')).toContain('teen');
+  });
+
+  it('falls back to the own band when a stored one is not allowed', () => {
+    expect(displayBand('kid', 'adult', 'adult')).toBe('adult');
+    expect(displayBand('mid', 'adult', 'adult')).toBe('mid');
+    expect(displayBand(undefined, 'teen', 'teen')).toBe('teen');
   });
 
   it('uses "fat-loss" wording for adults only (SPEC §2.3)', () => {
