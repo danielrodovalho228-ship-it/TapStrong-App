@@ -313,13 +313,6 @@
     "bodyPreview": "Body model preview",
     "cta": "Looks right"
   },
-  "next": {
-    "title": "Your goals are set",
-    "body": "Your body map and goals are saved on this phone. The workout generator arrives in the next build phase.",
-    "review": "Review my plan",
-    "restart": "Start over",
-    "bodyMap": "Edit body map"
-  },
   "bodyMap": {
     "title": "Tap a muscle",
     "subtitle": "Matched to your age · change body or age anytime",
@@ -705,24 +698,200 @@
       }
     }
   },
-  "preview": {
-    "title": "Workout preview",
+  "tabs": {
+    "home": "Home",
+    "body": "Body"
+  },
+  "home": {
+    "title": "Today",
+    "dayStreak": "Day streak",
+    "inProgress": "In progress",
+    "picked": "Today · picked for your body",
+    "fullBody": "Full body",
+    "withWarmup": "About {{minutes}} min, warm-up and cool-down included.",
+    "continue": "Continue workout",
+    "start": "Start · {{minutes}} min",
+    "pickElse": "Pick something else",
+    "recoveryMap": "Recovery map",
+    "recovery": {
+      "fresh": "{{muscles}} · today",
+      "recovering": "{{muscles}} · 1 day ago",
+      "almost": "{{muscles}} · 2 days ago",
+      "neglected": "{{muscles}} · 5+ days"
+    },
+    "recoveryEmpty": "Your first workout colors the muscles you train.",
+    "recoveryNote": "Colors fade as you recover. Grey-blue means it's time to train it.",
+    "openBody": "Open full body map"
+  },
+  "workout": {
+    "title": "Your workout",
+    "summary_one": "{{minutes}} min · warm-up + {{count}} exercise + cool-down",
+    "summary_other": "{{minutes}} min · warm-up + {{count}} exercises + cool-down",
+    "underReview": "The exercise library is being reviewed by a certified coach. Your workouts will appear here soon.",
+    "backHome": "Back to home",
     "eachSide": "each side",
     "seconds": "{{value}} s",
     "minutes": "{{value}} min",
-    "underReview": "The exercise library is being reviewed by a certified coach. Your workouts will appear here soon.",
-    "devOnly": "Development build: this preview uses draft exercises that have not been reviewed yet. They never reach users.",
-    "summary": "{{minutes}} min · {{warmup}} min warm-up · {{cooldown}} min cool-down",
-    "parts": {
-      "warmup_general": "Warm-up · easy cardio",
-      "warmup_mobility": "Warm-up · mobility",
-      "ramp_up": "Warm-up · ramp-up set",
-      "main": "Main",
-      "finisher_cardio": "Finisher · cardio",
-      "finisher_mobility": "Finisher · mobility",
-      "cooldown_walk": "Cool-down · walk",
-      "cooldown_stretch": "Cool-down · stretch",
-      "cooldown_breathing": "Cool-down · breathing"
-    }
+    "rest": {
+      "title": "Rest",
+      "eyebrow": "Exercise {{n}} of {{total}} · set {{set}} done",
+      "of": "of {{total}}",
+      "more": "+30 s",
+      "skip": "Skip rest",
+      "logged": "Logged",
+      "reps_one": "{{count}} rep",
+      "reps_other": "{{count}} reps",
+      "lastSession": "Last session: {{value}}",
+      "upNext": "Up next",
+      "progressUp": "You hit the top of the range twice. Try +{{step}}."
+    },
+    "warmup": "Warm-up · {{minutes}} min",
+    "cooldown": "Cool-down · {{minutes}} min",
+    "rampUp": "{{sets}} light ramp-up sets",
+    "skipped": "Skipped today",
+    "startWarmup": "Start with warm-up",
+    "continue": "Continue",
+    "only15": "Only 15 min today",
+    "machineTaken": "Machine is taken",
+    "reviewed": "Every move is checked by a certified coach",
+    "draftBadge": "Development build: draft exercises, not reviewed yet. They never reach users.",
+    "demoLoop": "Demo · loop",
+    "demoPending": "The demo video arrives with the licensed exercise library.",
+    "bodyNow": "Your body now",
+    "finisher": {
+      "finisher_cardio": "Fat-loss finisher",
+      "finisher_mobility": "Mobility finisher"
+    },
+    "units": {
+      "lb": "lb",
+      "kg": "kg"
+    },
+    "load": {
+      "bodyweight": "bodyweight",
+      "light": "light load",
+      "moderate": "moderate load",
+      "heavy": "heavy load",
+      "ramp": "about half your working load"
+    },
+    "swap": {
+      "open": "Swap {{name}}",
+      "eyebrow": "Swap · same muscle",
+      "machineEyebrow": "Machine is taken",
+      "title": "Instead of {{name}}",
+      "whichMachine": "Which machine is taken?",
+      "empty": "No safe alternative for this muscle with your equipment.",
+      "replace": "Replace",
+      "replaceWith": "Replace with {{name}}",
+      "remainingOnly": "Sets you already logged stay as they are; the swap covers the remaining sets.",
+      "done": "Swapped to {{name}}",
+      "undo": "Undo"
+    },
+    "player": {
+      "progress": "{{n}} / {{total}}",
+      "phase": {
+        "warmup": "Warm-up",
+        "main": "Main work",
+        "finisher": "Finisher",
+        "cooldown": "Cool-down"
+      },
+      "alsoWorks": "Also {{muscle}}",
+      "timeLeft": "{{time}} left",
+      "startTimer": "Start timer",
+      "doneStep": "Done",
+      "warmupShorten": "Loaded work today: you can shorten the warm-up, not skip it.",
+      "skipCooldown": "Skip cool-down",
+      "skipCooldownConfirm": "Skip cool-down? It helps you recover and counts toward your streak.",
+      "keepCooldown": "Keep it",
+      "setOf": "Set {{n}} of {{total}}",
+      "targetReps": "Target {{range}} reps",
+      "targetHold": "Target {{range}} s",
+      "reps": "Reps",
+      "seconds": "Seconds",
+      "load": "Load ({{unit}})",
+      "decrease": "Decrease {{label}}",
+      "increase": "Increase {{label}}",
+      "progressUp": "Top of the range twice in a row: the load goes up a step.",
+      "progressHold": "Keep this load until the reps feel solid.",
+      "swap": "Swap",
+      "restButton": "Rest {{seconds}} s",
+      "pain": "I feel pain",
+      "doneSet": "Done with set"
+    },
+    "pain": {
+      "eyebrow": "Pain reported · set paused",
+      "title": "Where does it hurt?",
+      "spots": {
+        "shoulder_right": "Right shoulder",
+        "shoulder_left": "Left shoulder",
+        "neck": "Neck",
+        "elbow_wrist": "Elbow / wrist",
+        "lower_back": "Lower back",
+        "hip": "Hip",
+        "knee": "Knee",
+        "ankle_foot": "Ankle / foot",
+        "other": "Other"
+      },
+      "types": {
+        "sharp": "Sharp",
+        "dull": "Dull / pinch",
+        "tired": "Just tired"
+      },
+      "stopTitle": "Stop for today",
+      "stopBody": "Sharp pain means stop. We'll save what you did. If it doesn't settle, check with a doctor.",
+      "suggested": "Suggested swap · same muscle, spares your {{area}}",
+      "swapTo": "Swap to",
+      "tiredBody": "Tired is normal. Take a longer rest, then finish the set with good form.",
+      "save": "Save \"{{area}}\" to My restrictions",
+      "end": "End workout",
+      "accept": "Accept swap",
+      "skipExercise": "Skip this exercise",
+      "keepGoing": "Keep going",
+      "cancel": "Back to my set"
+    },
+    "exit": {
+      "open": "End workout",
+      "title": "End workout?",
+      "body": "You've done {{done}} of {{total}} sets. We'll save them and color the muscles you worked. Your streak still counts.",
+      "bodyEmpty": "Nothing is logged yet. Keep going, or discard this workout.",
+      "keepGoing": "Keep going",
+      "saveEnd": "Save & end",
+      "discard": "Discard workout"
+    },
+    "done": {
+      "eyebrow": "Workout {{n}} · complete",
+      "firstTitle": "First one done!",
+      "title": "Workout done!",
+      "streak_one": "Day {{count}} streak",
+      "streak_other": "Day {{count}} streak",
+      "time": "Time",
+      "sets": "Sets",
+      "home": "Back to home"
+    },
+    "legend": {
+      "main": "Main target today",
+      "also": "Also worked",
+      "notYet": "Not trained yet",
+      "fade": "Red fades as muscles recover: orange after 1 day, peach after 2, neutral after about 72 h.",
+      "fadeSenior": "Red fades as muscles recover: orange after 1 day, peach after 2, neutral after about 96 h."
+    },
+    "finish": {
+      "eyebrow": "Finish strong",
+      "never": "Your {{group}} haven't been trained yet. Add a 10-minute finisher now, or put them first next time?",
+      "stale": "Your {{group}} haven't been trained in 5+ days. Add a 10-minute finisher now, or put them first next time?",
+      "saved": "Done: your {{group}} go first next time.",
+      "addTen": "Add 10 min",
+      "nextTime": "{{group}} next time",
+      "groups": {
+        "push": "chest and shoulders",
+        "pull": "back muscles",
+        "legs": "legs"
+      },
+      "short": {
+        "push": "Push",
+        "pull": "Back",
+        "legs": "Legs"
+      }
+    },
+    "restFor": "rest {{seconds}} s"
   }
 }

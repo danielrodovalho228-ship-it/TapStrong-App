@@ -18,6 +18,8 @@ import { MUSCLE_GOALS, type MuscleGoal } from '@/features/onboarding/options';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { muscleLabel } from '@/features/onboarding/summaries';
 import { muscleByKey } from '@/features/muscles';
+import { createWorkoutFrom, useExerciseLibrary, useGeneratorInput } from '@/features/workout/hooks';
+import { track } from '@/lib/analytics';
 import { colors, fonts, radius, spacing } from '@/theme';
 
 const THUMB = 64;
@@ -31,6 +33,8 @@ export default function GoalsSheet() {
   const s = useOnboardingStore();
   const derived = derive(s);
   const entry = s.muscleGoals.find((m) => m.muscleKey === muscle);
+  const library = useExerciseLibrary();
+  const input = useGeneratorInput(library);
   if (!derived || !muscle || !entry || !muscleByKey(muscle)) return <Redirect href="/body" />;
 
   const band = displayBand(s.bodyModel.band, derived.band, derived.mode);
@@ -54,7 +58,11 @@ export default function GoalsSheet() {
         <Button
           variant="accent"
           label={t('goalsSheet.generate')}
-          onPress={() => router.push('/next')}
+          onPress={() => {
+            const id = createWorkoutFrom(input, library);
+            if (id) track('workout_generated', { mode: derived.mode });
+            router.replace({ pathname: '/workout/[id]', params: { id: id ?? 'unavailable' } });
+          }}
         />
       }
     >

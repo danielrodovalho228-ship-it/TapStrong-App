@@ -9,7 +9,17 @@ import { AppText } from './AppText';
  * accent: orange, only for the single most important action on a screen
  *   (e.g. Generate my workout, Start with warm-up).
  */
-export type ButtonVariant = 'primary' | 'accent' | 'secondary' | 'ghost';
+export type ButtonVariant =
+  | 'primary'
+  | 'accent'
+  | 'secondary'
+  | 'ghost'
+  /** Accent outline: "I feel pain", "End workout" (mockups 11, 21). */
+  | 'danger'
+  /** Accent text only: "Discard workout" (mockup 13). */
+  | 'dangerText'
+  /** Light outline on dark screens: "+30 s" (mockup 12). */
+  | 'onDark';
 
 export type ButtonProps = Omit<PressableProps, 'children' | 'style'> & {
   label: string;
@@ -28,7 +38,13 @@ export function Button({
 }: ButtonProps) {
   const isDisabled = disabled || loading;
   const filled = variant === 'primary' || variant === 'accent';
-  const textColor = filled ? colors.onAccent : colors.ink;
+  const textColor = filled
+    ? colors.onAccent
+    : variant === 'danger' || variant === 'dangerText'
+      ? colors.accent
+      : variant === 'onDark'
+        ? colors.dark.text
+        : colors.ink;
 
   return (
     <Pressable
@@ -46,6 +62,9 @@ export function Button({
         },
         variant === 'secondary' && [styles.secondary, pressed && styles.secondaryPressed],
         variant === 'ghost' && [styles.ghost, pressed && styles.ghostPressed],
+        variant === 'danger' && [styles.danger, pressed && styles.ghostPressed],
+        variant === 'dangerText' && [styles.ghost, pressed && styles.ghostPressed],
+        variant === 'onDark' && [styles.onDark, pressed && styles.onDarkPressed],
         isDisabled && styles.disabled,
       ]}
       {...rest}
@@ -81,5 +100,8 @@ const styles = StyleSheet.create({
   secondaryPressed: { backgroundColor: colors.line },
   ghost: { backgroundColor: 'transparent', minHeight: sizes.touchTarget },
   ghostPressed: { backgroundColor: colors.line },
+  danger: { backgroundColor: colors.surface, borderWidth: 1.5, borderColor: colors.accent },
+  onDark: { backgroundColor: 'transparent', borderWidth: 1.5, borderColor: colors.mutedStrong },
+  onDarkPressed: { borderColor: colors.dark.text },
   disabled: { opacity: 0.45 },
 });

@@ -77,3 +77,15 @@ describe('summaryNotes (SPEC §2.3: body-fat language adults only)', () => {
     expect(summaryNotes(s, 'senior')).toEqual(['redFlag', 'senior']);
   });
 });
+
+describe('reset', () => {
+  it('clears optional answers too', () => {
+    useOnboardingStore.getState().update({ birthYear: 1990, location: 'gym', minutes: 40 });
+    useOnboardingStore.getState().reset();
+    const s = useOnboardingStore.getState();
+    expect(s.birthYear).toBeUndefined();
+    expect(s.location).toBeUndefined();
+    expect(s.minutes).toBeUndefined();
+    expect(typeof s.reset).toBe('function');
+  });
+});

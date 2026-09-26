@@ -18,6 +18,7 @@ import { bodyImage, type BodySex, type BodyView } from '../images';
 
 const DOT = 18;
 const HALO = 30;
+const RECOVERY = 40;
 // Dot hit area; taps between dots go to the nearest one via the image press.
 const HIT = 22;
 
@@ -26,6 +27,8 @@ export type BodyMapCanvasProps = {
   sex: BodySex;
   view: BodyView;
   selected: string[];
+  /** Recovery colors shown behind the dots (SPEC §4); neutral muscles have none. */
+  recovery?: Record<string, string | undefined>;
   onToggle: (muscleKey: string) => void;
   maxHeight: number;
 };
@@ -36,6 +39,7 @@ export function BodyMapCanvas({
   sex,
   view,
   selected,
+  recovery = {},
   onToggle,
   maxHeight,
 }: BodyMapCanvasProps) {
@@ -74,6 +78,24 @@ export function BodyMapCanvas({
               alt=""
             />
           </Pressable>
+          {hotspots.flatMap((h) =>
+            recovery[h.key]
+              ? h.points.map(([x, y], i) => (
+                  <View
+                    key={`recovery-${h.key}-${i}`}
+                    pointerEvents="none"
+                    style={[
+                      styles.recovery,
+                      {
+                        left: x * scale - RECOVERY / 2,
+                        top: y * scale - RECOVERY / 2,
+                        backgroundColor: recovery[h.key],
+                      },
+                    ]}
+                  />
+                ))
+              : [],
+          )}
           {/* Halos are visual only, so they never steal a tap from a neighbour. */}
           {hotspots.flatMap((h) =>
             selected.includes(h.key)
@@ -133,6 +155,13 @@ const styles = StyleSheet.create({
     height: HALO,
     borderRadius: HALO / 2,
     backgroundColor: 'rgba(194, 62, 23, 0.25)',
+  },
+  recovery: {
+    position: 'absolute',
+    width: RECOVERY,
+    height: RECOVERY,
+    borderRadius: RECOVERY / 2,
+    opacity: 0.55,
   },
   dot: { width: DOT, height: DOT, borderRadius: DOT / 2, borderWidth: 2.5 },
   dotOn: { backgroundColor: colors.accent, borderColor: colors.surface },

@@ -160,7 +160,16 @@ export const useOnboardingStore = create<OnboardingData & Actions>()(
         set({ location, equipment });
       },
 
-      reset: () => set(initialOnboarding()),
+      // zustand merges state, so optional fields (birth year, place…) must be
+      // cleared explicitly or they would survive "Start over".
+      reset: () => {
+        const cleared = Object.fromEntries(
+          Object.entries(get())
+            .filter(([, value]) => typeof value !== 'function')
+            .map(([key]) => [key, undefined]),
+        );
+        set({ ...cleared, ...initialOnboarding() });
+      },
     }),
     {
       name: 'onboarding',

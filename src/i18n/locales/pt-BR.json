@@ -313,13 +313,6 @@
     "bodyPreview": "Prévia do modelo de corpo",
     "cta": "Está certo"
   },
-  "next": {
-    "title": "Seus objetivos estão definidos",
-    "body": "Seu mapa do corpo e seus objetivos estão salvos neste celular. O gerador de treinos chega na próxima fase.",
-    "review": "Revisar meu plano",
-    "restart": "Recomeçar",
-    "bodyMap": "Editar mapa do corpo"
-  },
   "bodyMap": {
     "title": "Toque num músculo",
     "subtitle": "Conforme sua idade · troque corpo ou idade quando quiser",
@@ -705,24 +698,200 @@
       }
     }
   },
-  "preview": {
-    "title": "Prévia do treino",
+  "tabs": {
+    "home": "Início",
+    "body": "Corpo"
+  },
+  "home": {
+    "title": "Hoje",
+    "dayStreak": "Dias seguidos",
+    "inProgress": "Em andamento",
+    "picked": "Hoje · escolhido para o seu corpo",
+    "fullBody": "Corpo inteiro",
+    "withWarmup": "Cerca de {{minutes}} min, com aquecimento e desaquecimento.",
+    "continue": "Continuar treino",
+    "start": "Começar · {{minutes}} min",
+    "pickElse": "Escolher outra coisa",
+    "recoveryMap": "Mapa de recuperação",
+    "recovery": {
+      "fresh": "{{muscles}} · hoje",
+      "recovering": "{{muscles}} · há 1 dia",
+      "almost": "{{muscles}} · há 2 dias",
+      "neglected": "{{muscles}} · 5+ dias"
+    },
+    "recoveryEmpty": "Seu primeiro treino colore os músculos que você treinar.",
+    "recoveryNote": "As cores somem conforme você se recupera. Cinza-azulado quer dizer que é hora de treinar.",
+    "openBody": "Abrir mapa do corpo"
+  },
+  "workout": {
+    "title": "Seu treino",
+    "summary_one": "{{minutes}} min · aquecimento + {{count}} exercício + desaquecimento",
+    "summary_other": "{{minutes}} min · aquecimento + {{count}} exercícios + desaquecimento",
+    "underReview": "A biblioteca de exercícios está sendo revisada por um treinador certificado. Seus treinos aparecem aqui em breve.",
+    "backHome": "Voltar ao início",
     "eachSide": "cada lado",
     "seconds": "{{value}} s",
     "minutes": "{{value}} min",
-    "underReview": "Um treinador certificado está revisando a biblioteca de exercícios. Seus treinos vão aparecer aqui em breve.",
-    "devOnly": "Versão de desenvolvimento: esta prévia usa exercícios em rascunho, ainda sem revisão. Eles nunca chegam aos usuários.",
-    "summary": "{{minutes}} min · {{warmup}} min de aquecimento · {{cooldown}} min de desaquecimento",
-    "parts": {
-      "warmup_general": "Aquecimento · cardio leve",
-      "warmup_mobility": "Aquecimento · mobilidade",
-      "ramp_up": "Aquecimento · série de aproximação",
-      "main": "Principal",
-      "finisher_cardio": "Final · cardio",
-      "finisher_mobility": "Final · mobilidade",
-      "cooldown_walk": "Desaquecimento · caminhada",
-      "cooldown_stretch": "Desaquecimento · alongamento",
-      "cooldown_breathing": "Desaquecimento · respiração"
-    }
+    "rest": {
+      "title": "Descanso",
+      "eyebrow": "Exercício {{n}} de {{total}} · série {{set}} feita",
+      "of": "de {{total}}",
+      "more": "+30 s",
+      "skip": "Pular descanso",
+      "logged": "Registrado",
+      "reps_one": "{{count}} repetição",
+      "reps_other": "{{count}} repetições",
+      "lastSession": "Última sessão: {{value}}",
+      "upNext": "A seguir",
+      "progressUp": "Você chegou ao topo da faixa duas vezes. Tente +{{step}}."
+    },
+    "warmup": "Aquecimento · {{minutes}} min",
+    "cooldown": "Desaquecimento · {{minutes}} min",
+    "rampUp": "{{sets}} séries leves de aproximação",
+    "skipped": "Pulado hoje",
+    "startWarmup": "Começar pelo aquecimento",
+    "continue": "Continuar",
+    "only15": "Só 15 min hoje",
+    "machineTaken": "Máquina ocupada",
+    "reviewed": "Cada movimento é conferido por um treinador certificado",
+    "draftBadge": "Build de desenvolvimento: exercícios em rascunho, ainda sem revisão. Nunca chegam aos usuários.",
+    "demoLoop": "Demo · loop",
+    "demoPending": "O vídeo de demonstração chega com a biblioteca de exercícios licenciada.",
+    "bodyNow": "Seu corpo agora",
+    "finisher": {
+      "finisher_cardio": "Finalizador queima-gordura",
+      "finisher_mobility": "Finalizador de mobilidade"
+    },
+    "units": {
+      "lb": "lb",
+      "kg": "kg"
+    },
+    "load": {
+      "bodyweight": "peso do corpo",
+      "light": "carga leve",
+      "moderate": "carga moderada",
+      "heavy": "carga pesada",
+      "ramp": "cerca de metade da carga de trabalho"
+    },
+    "swap": {
+      "open": "Trocar {{name}}",
+      "eyebrow": "Trocar · mesmo músculo",
+      "machineEyebrow": "Máquina ocupada",
+      "title": "No lugar de {{name}}",
+      "whichMachine": "Qual máquina está ocupada?",
+      "empty": "Nenhuma alternativa segura para este músculo com o seu equipamento.",
+      "replace": "Substituir",
+      "replaceWith": "Substituir por {{name}}",
+      "remainingOnly": "As séries já registradas ficam como estão; a troca vale para as séries restantes.",
+      "done": "Trocado por {{name}}",
+      "undo": "Desfazer"
+    },
+    "player": {
+      "progress": "{{n}} / {{total}}",
+      "phase": {
+        "warmup": "Aquecimento",
+        "main": "Parte principal",
+        "finisher": "Finalizador",
+        "cooldown": "Desaquecimento"
+      },
+      "alsoWorks": "Também {{muscle}}",
+      "timeLeft": "faltam {{time}}",
+      "startTimer": "Iniciar timer",
+      "doneStep": "Feito",
+      "warmupShorten": "Treino com carga hoje: dá para encurtar o aquecimento, não pular.",
+      "skipCooldown": "Pular desaquecimento",
+      "skipCooldownConfirm": "Pular o desaquecimento? Ele ajuda na recuperação e conta para a sequência.",
+      "keepCooldown": "Manter",
+      "setOf": "Série {{n}} de {{total}}",
+      "targetReps": "Meta {{range}} repetições",
+      "targetHold": "Meta {{range}} s",
+      "reps": "Repetições",
+      "seconds": "Segundos",
+      "load": "Carga ({{unit}})",
+      "decrease": "Diminuir {{label}}",
+      "increase": "Aumentar {{label}}",
+      "progressUp": "Topo da faixa duas vezes seguidas: a carga sobe um passo.",
+      "progressHold": "Mantenha esta carga até as repetições ficarem firmes.",
+      "swap": "Trocar",
+      "restButton": "Descanso {{seconds}} s",
+      "pain": "Sinto dor",
+      "doneSet": "Série feita"
+    },
+    "pain": {
+      "eyebrow": "Dor relatada · série pausada",
+      "title": "Onde dói?",
+      "spots": {
+        "shoulder_right": "Ombro direito",
+        "shoulder_left": "Ombro esquerdo",
+        "neck": "Pescoço",
+        "elbow_wrist": "Cotovelo / punho",
+        "lower_back": "Lombar",
+        "hip": "Quadril",
+        "knee": "Joelho",
+        "ankle_foot": "Tornozelo / pé",
+        "other": "Outro"
+      },
+      "types": {
+        "sharp": "Aguda",
+        "dull": "Incômodo / pinçada",
+        "tired": "Só cansaço"
+      },
+      "stopTitle": "Pare por hoje",
+      "stopBody": "Dor aguda quer dizer parar. Vamos salvar o que você fez. Se não passar, procure um médico.",
+      "suggested": "Troca sugerida · mesmo músculo, poupa {{area}}",
+      "swapTo": "Trocar por",
+      "tiredBody": "Cansaço é normal. Descanse um pouco mais e termine a série com boa técnica.",
+      "save": "Salvar \"{{area}}\" em Minhas restrições",
+      "end": "Encerrar treino",
+      "accept": "Aceitar troca",
+      "skipExercise": "Pular este exercício",
+      "keepGoing": "Continuar",
+      "cancel": "Voltar à série"
+    },
+    "exit": {
+      "open": "Encerrar treino",
+      "title": "Encerrar treino?",
+      "body": "Você fez {{done}} de {{total}} séries. Vamos salvá-las e colorir os músculos que você trabalhou. Sua sequência continua valendo.",
+      "bodyEmpty": "Nada registrado ainda. Continue, ou descarte este treino.",
+      "keepGoing": "Continuar",
+      "saveEnd": "Salvar e encerrar",
+      "discard": "Descartar treino"
+    },
+    "done": {
+      "eyebrow": "Treino {{n}} · concluído",
+      "firstTitle": "O primeiro já foi!",
+      "title": "Treino feito!",
+      "streak_one": "{{count}} dia seguido",
+      "streak_other": "{{count}} dias seguidos",
+      "time": "Tempo",
+      "sets": "Séries",
+      "home": "Voltar ao início"
+    },
+    "legend": {
+      "main": "Alvo principal hoje",
+      "also": "Também trabalhado",
+      "notYet": "Ainda não treinado",
+      "fade": "O vermelho some conforme o músculo se recupera: laranja após 1 dia, pêssego após 2, neutro após cerca de 72 h.",
+      "fadeSenior": "O vermelho some conforme o músculo se recupera: laranja após 1 dia, pêssego após 2, neutro após cerca de 96 h."
+    },
+    "finish": {
+      "eyebrow": "Termine forte",
+      "never": "Seus {{group}} ainda não foram treinados. Adicionar um finalizador de 10 minutos agora, ou colocá-los primeiro na próxima vez?",
+      "stale": "Seus {{group}} não são treinados há 5+ dias. Adicionar um finalizador de 10 minutos agora, ou colocá-los primeiro na próxima vez?",
+      "saved": "Pronto: seus {{group}} vêm primeiro na próxima vez.",
+      "addTen": "Mais 10 min",
+      "nextTime": "{{group}} na próxima",
+      "groups": {
+        "push": "músculos do peito e dos ombros",
+        "pull": "músculos das costas",
+        "legs": "músculos das pernas"
+      },
+      "short": {
+        "push": "Empurrar",
+        "pull": "Costas",
+        "legs": "Pernas"
+      }
+    },
+    "restFor": "descanso {{seconds}} s"
   }
 }

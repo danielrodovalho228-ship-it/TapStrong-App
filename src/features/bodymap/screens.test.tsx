@@ -5,12 +5,13 @@ import { act, fireEvent, render, screen } from '@testing-library/react-native';
 import BodyMapScreen from '@/app/(tabs)/body';
 import GoalsSheet from '@/app/goals';
 import { useOnboardingStore } from '@/features/onboarding/store';
+import { useWorkoutStore } from '@/features/workout/store';
 import { setAnalyticsSink } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
 
 let mockParams: Record<string, string> = {};
 jest.mock('expo-router', () => ({
-  router: { push: jest.fn(), back: jest.fn(), replace: jest.fn() },
+  router: { push: jest.fn(), back: jest.fn(), replace: jest.fn(), canGoBack: () => false },
   useLocalSearchParams: () => mockParams,
   Redirect: () => null,
 }));
@@ -32,7 +33,8 @@ beforeEach(async () => {
   await act(() =>
     store().update({ birthMonth: 3, birthYear: 1983, sex: 'm', mainGoals: ['look'] }),
   );
-  Object.values(mockRouter).forEach((fn) => fn.mockReset());
+  [mockRouter.push, mockRouter.back, mockRouter.replace].forEach((fn) => fn.mockReset());
+  useWorkoutStore.getState().reset();
   mockParams = {};
   events.length = 0;
 });
@@ -150,9 +152,26 @@ describe('Goals sheet (mockup 09)', () => {
     expect(store().daysPerWeek).toBe(2);
   });
 
-  it('"Generate my workout" moves on', async () => {
+  it('"Generate my workout" builds the workout and opens it', async () => {
+    await act(() => store().update({ minutes: 40 }));
+    await act(() => store().setLocation('gym'));
     await render(<GoalsSheet />);
     await fireEvent.press(screen.getByRole('button', { name: 'Generate my workout' }));
-    expect(mockRouter.push).toHaveBeenCalledWith('/next');
+    const [workout] = useWorkoutStore.getState().workouts;
+    expect(workout.status).toBe('planned');
+    expect(mockRouter.replace).toHaveBeenCalledWith({
+      pathname: '/workout/[id]',
+      params: { id: workout.id },
+    });
+    expect(events).toContain('workout_generated');
+  });
+
+  it('without a place or time, it opens the "not available" state', async () => {
+    await render(<GoalsSheet />);
+    await fireEvent.press(screen.getByRole('button', { name: 'Generate my workout' }));
+    expect(mockRouter.replace).toHaveBeenCalledWith({
+      pathname: '/workout/[id]',
+      params: { id: 'unavailable' },
+    });
   });
 });

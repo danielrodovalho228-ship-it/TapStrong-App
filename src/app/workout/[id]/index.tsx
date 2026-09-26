@@ -1,0 +1,269 @@
+import { router, useLocalSearchParams } from 'expo-router';
+import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { StyleSheet, View } from 'react-native';
+
+import { AppText, Button, Card, Icon, IconButton, Notice, Screen } from '@/components/ui';
+import type { Exercise } from '@/features/exercises/types';
+import { generateSession } from '@/features/generator';
+import type { GeneratorNote, SessionItem } from '@/features/generator/types';
+import { muscleLabel } from '@/features/onboarding/summaries';
+import { ExerciseThumb, Tag } from '@/features/workout/components/Media';
+import {
+  machineItems,
+  SwapSheet,
+  type SwapReasonUi,
+} from '@/features/workout/components/SwapSheet';
+import { UndoBar } from '@/features/workout/components/UndoBar';
+import { doseLine, durationText, exerciseName, targetText } from '@/features/workout/format';
+import { useWorkout } from '@/features/workout/hooks';
+import { isReviewed } from '@/features/workout/plan';
+import { useWorkoutStore } from '@/features/workout/store';
+import { track } from '@/lib/analytics';
+import { colors, fonts, radius, spacing } from '@/theme';
+
+const SHORT_MINUTES = 15;
+
+type SheetState = { itemId: string | null; reason: SwapReasonUi } | null;
+
+/** Mockup 10 — the generated workout (SPEC §9 /workout/[id]). */
+export default function WorkoutScreen() {
+  const { t } = useTranslation();
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const { workout, byId, input, library } = useWorkout(id);
+  const store = useWorkoutStore();
+  const [sheet, setSheet] = useState<SheetState>(null);
+  const [undoMessage, setUndoMessage] = useState<string | null>(null);
+  const clearUndo = useCallback(() => setUndoMessage(null), []);
+
+  if (!workout || !input) {
+    return (
+      <Screen
+        footer={<Button label={t('workout.backHome')} onPress={() => router.replace('/home')} />}
+      >
+        <AppText variant="h1" accessibilityRole="header">
+          {t('workout.title')}
+        </AppText>
+        <Notice icon>{t('workout.underReview')}</Notice>
+      </Screen>
+    );
+  }
+
+  const { session } = workout;
+  const warm = session.items.filter((i) => i.role === 'warmup');
+  const main = session.items.filter((i) => i.role === 'main' || i.role === 'finisher');
+  const cool = session.items.filter((i) => i.role === 'cooldown');
+  const planned = workout.status === 'planned';
+  const machines = machineItems(workout, byId);
+  const reviewed = isReviewed(session, library);
+
+  const note = (n: GeneratorNote) => {
+    if (n.key === 'generator.notes.balance') {
+      return t(n.key, { groups: n.groups.map((g) => t(`generator.notes.groups.${g}`)).join(', ') });
+    }
+    if (n.key === 'generator.notes.rested') {
+      return t(n.key, { muscles: n.muscles.map((m) => muscleLabel(t, m)).join(', ') });
+    }
+    return t(n.key);
+  };
+
+  const onlyFifteen = () => {
+    const short = generateSession({ ...input, minutes: SHORT_MINUTES });
+    if (!short.error) store.replaceSession(workout.id, short);
+  };
+
+  const start = () => {
+    if (planned) {
+      store.start(workout.id);
+      track('workout_started');
+    }
+    router.push({ pathname: '/workout/[id]/play', params: { id: workout.id } });
+  };
+
+  const swapButton = (item: SessionItem, e: Exercise | undefined) =>
+    item.part === 'ramp_up' || workout.skipped.includes(item.id) ? null : (
+      <IconButton
+        icon="swap"
+        variant="outlined"
+        accessibilityLabel={t('workout.swap.open', { name: exerciseName(t, e, item.exerciseId) })}
+        onPress={() => setSheet({ itemId: item.id, reason: 'user_choice' })}
+      />
+    );
+
+  const phaseCard = (
+    items: SessionItem[],
+    titleKey: 'workout.warmup' | 'workout.cooldown',
+    minutes: number,
+  ) => (
+    <Card tone="safety" style={styles.phase}>
+      <AppText variant="h3" color={colors.teal}>
+        {t(titleKey, { minutes })}
+      </AppText>
+      {items.map((item) => {
+        const e = byId.get(item.exerciseId);
+        return (
+          <View key={item.id} style={styles.phaseRow}>
+            <View style={styles.rowText}>
+              <AppText variant="bodyStrong">{exerciseName(t, e, item.exerciseId)}</AppText>
+              <AppText variant="caption" color={colors.mutedStrong}>
+                {item.part === 'ramp_up'
+                  ? t('workout.rampUp', { sets: item.sets })
+                  : item.durationSeconds
+                    ? durationText(t, item.durationSeconds)
+                    : doseLine(t, item)}
+              </AppText>
+            </View>
+            {swapButton(item, e)}
+          </View>
+        );
+      })}
+    </Card>
+  );
+
+  return (
+    <Screen
+      header={
+        <View style={styles.header}>
+          <View style={styles.rowText}>
+            <AppText variant="h1" accessibilityRole="header">
+              {t('workout.title')}
+            </AppText>
+            <AppText variant="caption" color={colors.muted} style={styles.caps}>
+              {t('workout.summary', {
+                minutes: session.estimatedMinutes,
+                count: session.items.filter((i) => i.role === 'main').length,
+              })}
+            </AppText>
+          </View>
+          <IconButton
+            icon="close"
+            variant="outlined"
+            accessibilityLabel={t('common.close')}
+            onPress={() => router.replace('/home')}
+          />
+        </View>
+      }
+      footer={
+        <>
+          <UndoBar message={undoMessage} onDone={clearUndo} />
+          <Button
+            variant="accent"
+            label={planned ? t('workout.startWarmup') : t('workout.continue')}
+            onPress={start}
+          />
+        </>
+      }
+    >
+      {session.notes.map((n) => (
+        <View key={n.key} style={styles.coachNote}>
+          <AppText color={colors.mutedStrong}>{note(n)}</AppText>
+        </View>
+      ))}
+
+      {phaseCard(warm, 'workout.warmup', session.warmupMinutes)}
+
+      {main.map((item) => {
+        const e = byId.get(item.exerciseId);
+        const skipped = workout.skipped.includes(item.id);
+        return (
+          <Card key={item.id} style={[styles.exercise, skipped && styles.skipped]}>
+            <ExerciseThumb />
+            <View style={styles.rowText}>
+              <AppText variant="bodyStrong">{exerciseName(t, e, item.exerciseId)}</AppText>
+              <AppText variant="caption" color={colors.mutedStrong}>
+                {skipped ? t('workout.skipped') : doseLine(t, item)}
+              </AppText>
+              <Tag
+                label={targetText(t, item, e)}
+                tone={item.role === 'finisher' ? 'teal' : 'accent'}
+              />
+            </View>
+            {swapButton(item, e)}
+          </Card>
+        );
+      })}
+
+      {phaseCard(cool, 'workout.cooldown', session.cooldownMinutes)}
+
+      <View style={styles.actions}>
+        {planned && session.minutes > SHORT_MINUTES ? (
+          <View style={styles.action}>
+            <Button variant="secondary" label={t('workout.only15')} onPress={onlyFifteen} />
+          </View>
+        ) : null}
+        {machines.length ? (
+          <View style={styles.action}>
+            <Button
+              variant="secondary"
+              label={t('workout.machineTaken')}
+              onPress={() =>
+                setSheet({
+                  itemId: machines.length === 1 ? machines[0].id : null,
+                  reason: 'machine_taken',
+                })
+              }
+            />
+          </View>
+        ) : null}
+      </View>
+
+      <View style={styles.badge}>
+        <Icon name="shield" size={20} color={reviewed ? colors.teal : colors.accent} />
+        <AppText
+          variant="caption"
+          color={reviewed ? colors.teal : colors.accent}
+          style={styles.rowText}
+        >
+          {reviewed ? t('workout.reviewed') : t('workout.draftBadge')}
+        </AppText>
+      </View>
+
+      {sheet ? (
+        <SwapSheet
+          visible
+          workout={workout}
+          itemId={sheet.itemId}
+          reason={sheet.reason}
+          input={input}
+          byId={byId}
+          onPickItem={(itemId) => setSheet({ ...sheet, itemId })}
+          onClose={() => setSheet(null)}
+          onSwapped={(e) => {
+            setSheet(null);
+            setUndoMessage(t('workout.swap.done', { name: exerciseName(t, e, e.id) }));
+          }}
+        />
+      ) : null}
+    </Screen>
+  );
+}
+
+const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing.md,
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.md,
+  },
+  caps: { textTransform: 'uppercase', letterSpacing: 1, fontFamily: fonts.headingSemi },
+  coachNote: {
+    borderLeftWidth: 3,
+    borderLeftColor: colors.accent,
+    paddingLeft: spacing.md,
+    paddingVertical: spacing.xs,
+  },
+  phase: { gap: spacing.sm },
+  phaseRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
+  rowText: { flex: 1, gap: spacing.xxs },
+  exercise: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
+  skipped: { opacity: 0.5 },
+  actions: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  action: { flexGrow: 1, flexBasis: 150 },
+  badge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    borderRadius: radius.card,
+  },
+});

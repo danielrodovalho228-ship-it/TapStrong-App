@@ -3,13 +3,21 @@ import { derive } from '../onboarding/derived';
 import { restrictionAreas } from '../onboarding/safety';
 import type { OnboardingData } from '../onboarding/store';
 
-import type { GeneratorInput } from './types';
+import type { GeneratorInput, RecentSession } from './types';
+
+export type ProfileExtras = {
+  /** Saved restrictions (pain reports, repair, manual), on top of the safety check. */
+  restrictions?: string[];
+  recentSessions?: RecentSession[];
+  today?: string;
+};
 
 /** Builds generator input from the local profile (onboarding + body map). */
 export function inputFromProfile(
   s: OnboardingData,
   library: Exercise[],
   includeDrafts: boolean,
+  extras: ProfileExtras = {},
 ): GeneratorInput | null {
   const derived = derive(s);
   if (!derived || !s.location || !s.minutes) return null;
@@ -29,6 +37,8 @@ export function inputFromProfile(
     setsPerExercise: s.setsPerExercise,
     painAreas: s.painAreas,
     conditions: s.conditions,
-    restrictions: restrictionAreas(s.painAreas),
+    restrictions: [...new Set([...restrictionAreas(s.painAreas), ...(extras.restrictions ?? [])])],
+    recentSessions: extras.recentSessions,
+    today: extras.today,
   };
 }

@@ -1,0 +1,78 @@
+import type { SessionItem } from '../generator/types';
+
+import type { WorkoutRecord } from './types';
+
+/** One thing the player asks the user to do: a set, or a timed step. */
+export type Step = { item: SessionItem; index: number; setNo: number };
+
+export type StepKind = 'timed' | 'hold' | 'reps';
+
+export function stepKind(item: SessionItem): StepKind {
+  if (item.durationSeconds) return 'timed';
+  if (item.holdSeconds) return 'hold';
+  return 'reps';
+}
+
+/** Every step in order: warm-up → main work → finisher → cool-down (SPEC §8). */
+export function allSteps(items: SessionItem[]): Step[] {
+  return items.flatMap((item, index) =>
+    Array.from({ length: stepKind(item) === 'timed' ? 1 : item.sets }, (_, n) => ({
+      item,
+      index,
+      setNo: n + 1,
+    })),
+  );
+}
+
+const isLogged = (w: WorkoutRecord, s: Step) =>
+  w.logs.some((l) => l.itemId === s.item.id && l.setNo === s.setNo);
+
+/** The next step to do: the first one not logged and not skipped. */
+export function currentStep(w: WorkoutRecord): Step | null {
+  return (
+    allSteps(w.session.items).find((s) => !w.skipped.includes(s.item.id) && !isLogged(w, s)) ?? null
+  );
+}
+
+/** The step after the given one that still needs doing. */
+export function stepAfter(w: WorkoutRecord, step: Step): Step | null {
+  const steps = allSteps(w.session.items);
+  const at = steps.findIndex((s) => s.item.id === step.item.id && s.setNo === step.setNo);
+  return steps.slice(at + 1).find((s) => !w.skipped.includes(s.item.id) && !isLogged(w, s)) ?? null;
+}
+
+export function setsLogged(w: WorkoutRecord, itemId: string): number {
+  return w.logs.filter((l) => l.itemId === itemId).length;
+}
+
+/** Main-work sets done and planned — "You've done 2 of 12 sets" (mockup 13). */
+export function mainSetCounts(w: WorkoutRecord): { done: number; total: number } {
+  const main = w.session.items.filter((i) => i.role === 'main');
+  return {
+    done: w.logs.filter((l) => main.some((i) => i.id === l.itemId)).length,
+    total: main.reduce((s, i) => s + i.sets, 0),
+  };
+}
+
+/** Main exercises in order, for the player's "1 / 5" progress. */
+export function mainItems(w: WorkoutRecord): SessionItem[] {
+  return w.session.items.filter((i) => i.role === 'main');
+}
+
+/**
+ * The warm-up can be shortened but not skipped on days with loaded work
+ * (SPEC §8): a timed warm-up step can end early once half of it is done.
+ */
+export function canEndTimedStep(
+  item: SessionItem,
+  elapsedSeconds: number,
+  dayHasLoad: boolean,
+): boolean {
+  if (item.role !== 'warmup' || !dayHasLoad) return true;
+  return elapsedSeconds >= (item.durationSeconds ?? 0) / 2;
+}
+
+export function hasCooldownLeft(w: WorkoutRecord): boolean {
+  const step = currentStep(w);
+  return step?.item.role === 'cooldown';
+}

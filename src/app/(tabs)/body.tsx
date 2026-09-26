@@ -17,6 +17,8 @@ import { derive } from '@/features/onboarding/derived';
 import { defaultMuscleGoal } from '@/features/onboarding/options';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { muscleLabel } from '@/features/onboarding/summaries';
+import { STATE_COLOR } from '@/features/workout/components/RecoveryBody';
+import { useBodyStates } from '@/features/workout/hooks';
 import { track } from '@/lib/analytics';
 import { colors, fonts, radius, sizes, spacing } from '@/theme';
 
@@ -26,6 +28,7 @@ export default function BodyMapScreen() {
   const { height: screenHeight } = useWindowDimensions();
   const s = useOnboardingStore();
   const derived = derive(s);
+  const { states } = useBodyStates();
 
   // Goals set on a parent (e.g. "chest") in the interview apply to its parts.
   useEffect(() => {
@@ -51,7 +54,10 @@ export default function BodyMapScreen() {
     <Screen
       header={
         <View style={styles.header}>
-          <Header onBack={() => router.back()} title={t('bodyMap.title')} />
+          <Header
+            onBack={router.canGoBack() ? () => router.back() : undefined}
+            title={t('bodyMap.title')}
+          />
           <AppText variant="caption" color={colors.teal} style={styles.subtitle}>
             {t('bodyMap.subtitle')}
           </AppText>
@@ -98,6 +104,12 @@ export default function BodyMapScreen() {
           sex={sex}
           view={s.bodyView}
           selected={selected}
+          recovery={Object.fromEntries(
+            Object.entries(states).map(([k, v]) => [
+              k,
+              v === 'neutral' ? undefined : STATE_COLOR[v],
+            ]),
+          )}
           onToggle={toggle}
           maxHeight={Math.max(360, Math.min(560, screenHeight * 0.58))}
         />

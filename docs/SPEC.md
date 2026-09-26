@@ -144,9 +144,9 @@ Verify every point on every one of the 28 images; bodies differ.
 - **`exercise_reviews`**: `exercise_id`, `check` (auto / second / certified), `reviewer_name`, `credential`, `result`, `notes`, `mapping_version`, `reviewed_at`
 - **`exercise_swaps`** (Phase 4): `profile_id`, `session_id`, `item_order`, `from_exercise_id`, `to_exercise_id`, `reason` (user_choice / machine_taken / pain), `sets_done_before`, `swapped_at` — swap history, later used to learn preferences.
 - **`plans`** (generated program): `id`, `profile_id`, `weeks`, `sessions_per_week`, `created_from` (json of goals)
-- **`sessions`**: `id`, `plan_id`, `index`, `scheduled_for`, `status` (planned / done / skipped / partial), `started_at`, `ended_at`
-- **`session_items`**: `session_id`, `order`, `exercise_id`, `sets`, `reps_min`, `reps_max`, `rest_s`, `load_hint`, `role` (warmup / main / finisher / mobility / cooldown)
-- **`set_logs`**: `session_item_id`, `set_no`, `reps`, `load`, `unit`, `rpe?`, `logged_at`
+- **`sessions`**: `id`, `profile_id`, `plan_id?`, `index`, `kind` (regular / finisher), `scheduled_for`, `status` (planned / active / done / skipped / partial), `started_at`, `ended_at` — `profile_id` on the row keeps RLS simple and allows one-off sessions (the 10-min finisher) without a plan (Phase 4).
+- **`session_items`**: `session_id`, `order`, `exercise_id`, `sets`, `reps_min`, `reps_max`, `rest_s`, `load_hint`, `role` (warmup / main / finisher / mobility / cooldown); also `part`, `target_muscle`, `goal`, hold seconds, `duration_s`, `per_side` (Phase 4)
+- **`set_logs`**: `session_item_id`, `exercise_id` (the exercise actually done, after swaps), `set_no`, `reps`, `seconds?`, `load`, `unit`, `rpe?`, `logged_at`
 - **`muscle_activity`**: `profile_id`, `muscle_key`, `last_trained_at`, `volume_7d` (derived, feeds the body colors)
 - **`streaks`**: `profile_id`, `current`, `best`, `freezes_available`, `last_active_date`
 - **`pain_reports`**: `profile_id`, `session_id`, `area`, `side`, `type` (sharp / dull / tired), `action_taken`

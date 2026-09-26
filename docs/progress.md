@@ -249,3 +249,84 @@ Telas conferidas com os mockups 01 a 05, na ordem do fluxo. Tudo local, sem cont
    - cadastrar a chave da Claude no terminal: `npx supabase secrets set ANTHROPIC_API_KEY=... --project-ref vycdrotqkjwvkzgjovpb`.
      Quando estiver feito, eu publico a função.
 3. **Adolescentes e carga:** o gerador prefere peso do corpo e elástico para menores; halteres só entram quando são claramente o melhor exercício para o músculo. Pode ser assim?
+
+## Fase 4 — Fluxo do treino
+
+### Feito
+
+- **Abas:** Início e Corpo. Coach, Progresso e Família entram nas fases delas.
+- **Início (mockup 07, versão enxuta):** dias seguidos, card "Hoje" com "Começar · 40 min" (ou "Continuar treino") e mapa de recuperação com legenda.
+- **Lista do treino (10):**
+  - aquecimento (verde-petróleo) → exercícios → desaquecimento;
+  - nota do coach (equilíbrio, descanso, corte por tempo);
+  - "Só 15 min hoje" (gera de novo com 15 min, mantendo aquecimento e desaquecimento);
+  - "Máquina ocupada" (pergunta qual máquina se houver mais de uma);
+  - selo do revisor certificado. Só aparece quando **todos** os exercícios estão `released`; no build de desenvolvimento aparece o aviso de rascunho.
+- **Troca (seu requisito MVP):**
+  - botão "Trocar" em cada item, na lista e no player;
+  - sheet com até 5 alternativas e "Substituir";
+  - troca na mesma posição, com "Desfazer" por 5 s;
+  - estado vazio "No safe alternative for this muscle with your equipment.";
+  - evento `exercise_swapped` (user_choice / machine_taken / pain) e histórico salvo;
+  - com séries já feitas, a troca vale só para as que faltam.
+- **Player (11):**
+  - aquecimento → exercícios → desaquecimento, na ordem;
+  - passos com timer para aquecimento e desaquecimento;
+  - registro da série com ± repetições (ou segundos) e ± carga (lb/kg pelo perfil), com Trocar / Descanso / Sinto dor;
+  - progressão da SPEC: topo da faixa em 2 sessões → sugere +5 lb / +2,5 kg; abaixo da faixa em 2 → manter;
+  - aquecimento com carga pode ser encurtado (depois da metade), não pulado;
+  - "Pular desaquecimento?" pede confirmação.
+- **Descanso (12):** tela escura, anel com contagem, +30 s, pular, "Registrado", "Última sessão" e "A seguir" com dica de progressão. Volta sozinho ao player quando o tempo acaba.
+- **Dor (21):** onde (ombro direito/esquerdo, pescoço, cotovelo/punho, lombar, quadril, joelho, tornozelo/pé, outro) e tipo.
+  - **Aguda** → parar hoje (salva o que foi feito).
+  - **Incômodo** → troca segura para o mesmo músculo, que poupa a área, mais "Salvar em Minhas restrições" (marcado por padrão, como a SPEC pede). Sem troca segura → "Pular este exercício".
+  - **Só cansaço** → descansar e continuar.
+  - A restrição salva filtra todos os próximos treinos. Para o analytics vai só o tipo da dor, nunca a área.
+- **Sair (13):** "Você fez X de Y séries", Continuar / Salvar e encerrar / Descartar.
+- **Concluído (14):**
+  - o corpo fica vermelho no alvo e laranja no "também trabalhado";
+  - tempo, séries e o músculo com mais séries;
+  - dias seguidos;
+  - "Termine forte": o grupo empurrar/puxar/pernas parado há 5+ dias (ou nunca treinado). "Mais 10 min" gera um treino curto, com aquecimento e desaquecimento; "Pernas na próxima" põe esse grupo primeiro no próximo treino.
+- **Cores de recuperação:** saem do histórico (`muscle_activity` derivada), nas faixas da SPEC (96 h para 60+). Só a parte principal pinta; aquecimento, desaquecimento e finalizador não. O cinza-azulado aparece só para músculos que a pessoa acompanha (metas ou já treinados), e só depois do primeiro treino, para o corpo de quem acabou de chegar não ficar todo cinza.
+- **Dias seguidos:**
+  - um dia de descanso por semana (segunda a domingo) não quebra;
+  - a cada 7 dias ativos, ganha 1 proteção (máximo 2), que cobre um dia perdido depois que o descanso da semana já foi usado;
+  - qualquer treino com algo registrado conta, até "Salvar e encerrar".
+- **Banco:**
+  - migration `workout_flow` com plans, sessions, session_items, set_logs, muscle_activity, streaks, pain_reports e exercise_swaps, todas com RLS;
+  - aplicada no projeto Supabase; o app continua local até a Fase 5;
+  - SPEC §7 ajustada: `sessions.profile_id` e status `active`, `set_logs.exercise_id`.
+- **Correção de bug antigo:** "Recomeçar" não limpava respostas opcionais (ano de nascimento, local, minutos). Corrigido e testado.
+
+### Testes
+
+- `npm run check`: **270 testes** (eram 227), lint, typecheck e Deno limpos.
+  - Lógica (25): dias seguidos (descanso semanal, proteção, quebra), cores de recuperação, fluxo do player, progressão, desfazer em 5 s.
+  - Telas (16): troca na mesma posição + desfazer + evento; máquina ocupada nunca oferece a mesma máquina; estado vazio; "Só 15 min"; player → descanso; pular desaquecimento; dor aguda / incômodo / sem troca; restrição filtrando o próximo treino; sair; concluído; "Mais 10 min".
+- `npm run db:test`: passa, incluindo `workout_flow.sql`:
+  - um estranho não vê nem grava nada no treino de outra pessoa;
+  - uma troca não pode apontar para a sessão de outro perfil;
+  - as constraints funcionam (máximo 2 proteções, repetições mín ≤ máx, carga exige unidade, série duplicada).
+- `npm run bundle:check`: 0 rascunhos nos bundles de produção.
+
+### Como testar
+
+1. `git pull`, depois `npm install`, depois `npx expo start` (no Expo Go os dados duram só a sessão; num development build ficam salvos).
+2. Faça o onboarding, marque o peito e toque em "Gerar meu treino".
+3. Na lista:
+   - toque em ⇄ num exercício → "Substituir" → "Desfazer";
+   - teste "Só 15 min hoje".
+4. "Começar pelo aquecimento":
+   - faça as séries;
+   - toque em "Sinto dor" → Joelho → Incômodo → Aceitar troca.
+5. Toque no × → "Salvar e encerrar": o corpo fica vermelho, e a Início mostra o mapa de recuperação.
+
+### Perguntas em aberto
+
+1. **Ombro e peito:** com dor no ombro, a biblioteca de rascunho não tem nenhum exercício de peito que poupe o ombro (todos têm "shoulder" como contraindicação). O app oferece "Pular este exercício". Vale pedir ao revisor uma opção segura (por exemplo, supino no chão com pegada neutra e amplitude curta), como no mockup 21?
+2. **Semana começa na segunda** para a regra de "1 descanso por semana". Nos EUA o calendário costuma começar no domingo. Prefere domingo?
+3. **Vídeos:** o player mostra um quadro neutro "Demo · loop" até chegar a biblioteca licenciada. Os `ex-*.mp4` de protótipo não entram no app, conforme a SPEC.
+4. **Teste real do coach:** a função `coach-interview` (v2) está publicada, mas este ambiente bloqueia `vycdrotqkjwvkzgjovpb.supabase.co`. Duas saídas:
+   - liberar esse domínio nas configurações de rede do ambiente; ou
+   - testar no seu celular pelo Expo Go, com o `.env` no PC.

@@ -313,13 +313,6 @@
     "bodyPreview": "Vista previa del modelo de cuerpo",
     "cta": "Todo bien"
   },
-  "next": {
-    "title": "Tus objetivos están listos",
-    "body": "Tu mapa del cuerpo y tus objetivos quedaron guardados en este teléfono. El generador de entrenamientos llega en la próxima fase.",
-    "review": "Revisar mi plan",
-    "restart": "Empezar de nuevo",
-    "bodyMap": "Editar mapa del cuerpo"
-  },
   "bodyMap": {
     "title": "Toca un músculo",
     "subtitle": "Según tu edad · cambia cuerpo o edad cuando quieras",
@@ -705,24 +698,200 @@
       }
     }
   },
-  "preview": {
-    "title": "Vista previa del entrenamiento",
-    "eachSide": "por lado",
+  "tabs": {
+    "home": "Inicio",
+    "body": "Cuerpo"
+  },
+  "home": {
+    "title": "Hoy",
+    "dayStreak": "Días seguidos",
+    "inProgress": "En curso",
+    "picked": "Hoy · elegido para tu cuerpo",
+    "fullBody": "Cuerpo completo",
+    "withWarmup": "Unos {{minutes}} min, con calentamiento y vuelta a la calma.",
+    "continue": "Continuar entrenamiento",
+    "start": "Empezar · {{minutes}} min",
+    "pickElse": "Elegir otra cosa",
+    "recoveryMap": "Mapa de recuperación",
+    "recovery": {
+      "fresh": "{{muscles}} · hoy",
+      "recovering": "{{muscles}} · hace 1 día",
+      "almost": "{{muscles}} · hace 2 días",
+      "neglected": "{{muscles}} · 5+ días"
+    },
+    "recoveryEmpty": "Tu primer entrenamiento colorea los músculos que trabajes.",
+    "recoveryNote": "Los colores se apagan a medida que te recuperas. Gris azulado significa que toca entrenarlo.",
+    "openBody": "Abrir mapa del cuerpo"
+  },
+  "workout": {
+    "title": "Tu entrenamiento",
+    "summary_one": "{{minutes}} min · calentamiento + {{count}} ejercicio + vuelta a la calma",
+    "summary_other": "{{minutes}} min · calentamiento + {{count}} ejercicios + vuelta a la calma",
+    "underReview": "Un entrenador certificado está revisando la biblioteca de ejercicios. Tus entrenamientos aparecerán aquí pronto.",
+    "backHome": "Volver al inicio",
+    "eachSide": "cada lado",
     "seconds": "{{value}} s",
     "minutes": "{{value}} min",
-    "underReview": "Un entrenador certificado está revisando la biblioteca de ejercicios. Tus entrenamientos aparecerán aquí pronto.",
-    "devOnly": "Versión de desarrollo: esta vista usa ejercicios en borrador aún sin revisar. Nunca llegan a los usuarios.",
-    "summary": "{{minutes}} min · {{warmup}} min de calentamiento · {{cooldown}} min de vuelta a la calma",
-    "parts": {
-      "warmup_general": "Calentamiento · cardio suave",
-      "warmup_mobility": "Calentamiento · movilidad",
-      "ramp_up": "Calentamiento · serie de aproximación",
-      "main": "Principal",
-      "finisher_cardio": "Final · cardio",
-      "finisher_mobility": "Final · movilidad",
-      "cooldown_walk": "Vuelta a la calma · caminar",
-      "cooldown_stretch": "Vuelta a la calma · estiramiento",
-      "cooldown_breathing": "Vuelta a la calma · respiración"
-    }
+    "rest": {
+      "title": "Descanso",
+      "eyebrow": "Ejercicio {{n}} de {{total}} · serie {{set}} hecha",
+      "of": "de {{total}}",
+      "more": "+30 s",
+      "skip": "Saltar descanso",
+      "logged": "Registrado",
+      "reps_one": "{{count}} repetición",
+      "reps_other": "{{count}} repeticiones",
+      "lastSession": "Última sesión: {{value}}",
+      "upNext": "Lo siguiente",
+      "progressUp": "Llegaste al tope del rango dos veces. Prueba +{{step}}."
+    },
+    "warmup": "Calentamiento · {{minutes}} min",
+    "cooldown": "Vuelta a la calma · {{minutes}} min",
+    "rampUp": "{{sets}} series ligeras de aproximación",
+    "skipped": "Omitido hoy",
+    "startWarmup": "Empezar con el calentamiento",
+    "continue": "Continuar",
+    "only15": "Solo 15 min hoy",
+    "machineTaken": "Máquina ocupada",
+    "reviewed": "Cada movimiento lo revisa un entrenador certificado",
+    "draftBadge": "Versión de desarrollo: ejercicios en borrador, aún sin revisar. Nunca llegan a los usuarios.",
+    "demoLoop": "Demo · bucle",
+    "demoPending": "El video de demostración llega con la biblioteca de ejercicios con licencia.",
+    "bodyNow": "Tu cuerpo ahora",
+    "finisher": {
+      "finisher_cardio": "Final quema grasa",
+      "finisher_mobility": "Final de movilidad"
+    },
+    "units": {
+      "lb": "lb",
+      "kg": "kg"
+    },
+    "load": {
+      "bodyweight": "peso corporal",
+      "light": "carga ligera",
+      "moderate": "carga moderada",
+      "heavy": "carga pesada",
+      "ramp": "cerca de la mitad de tu carga de trabajo"
+    },
+    "swap": {
+      "open": "Cambiar {{name}}",
+      "eyebrow": "Cambiar · mismo músculo",
+      "machineEyebrow": "Máquina ocupada",
+      "title": "En lugar de {{name}}",
+      "whichMachine": "¿Qué máquina está ocupada?",
+      "empty": "No hay una alternativa segura para este músculo con tu equipo.",
+      "replace": "Reemplazar",
+      "replaceWith": "Reemplazar por {{name}}",
+      "remainingOnly": "Las series ya registradas se quedan igual; el cambio cubre las series que faltan.",
+      "done": "Cambiado por {{name}}",
+      "undo": "Deshacer"
+    },
+    "player": {
+      "progress": "{{n}} / {{total}}",
+      "phase": {
+        "warmup": "Calentamiento",
+        "main": "Parte principal",
+        "finisher": "Final",
+        "cooldown": "Vuelta a la calma"
+      },
+      "alsoWorks": "También {{muscle}}",
+      "timeLeft": "quedan {{time}}",
+      "startTimer": "Iniciar temporizador",
+      "doneStep": "Hecho",
+      "warmupShorten": "Hoy hay trabajo con carga: puedes acortar el calentamiento, no saltarlo.",
+      "skipCooldown": "Saltar vuelta a la calma",
+      "skipCooldownConfirm": "¿Saltar la vuelta a la calma? Ayuda a recuperarte y cuenta para tu racha.",
+      "keepCooldown": "Mantenerla",
+      "setOf": "Serie {{n}} de {{total}}",
+      "targetReps": "Objetivo {{range}} repeticiones",
+      "targetHold": "Objetivo {{range}} s",
+      "reps": "Repeticiones",
+      "seconds": "Segundos",
+      "load": "Carga ({{unit}})",
+      "decrease": "Reducir {{label}}",
+      "increase": "Aumentar {{label}}",
+      "progressUp": "Tope del rango dos veces seguidas: la carga sube un paso.",
+      "progressHold": "Mantén esta carga hasta que las repeticiones salgan firmes.",
+      "swap": "Cambiar",
+      "restButton": "Descanso {{seconds}} s",
+      "pain": "Siento dolor",
+      "doneSet": "Serie hecha"
+    },
+    "pain": {
+      "eyebrow": "Dolor reportado · serie en pausa",
+      "title": "¿Dónde te duele?",
+      "spots": {
+        "shoulder_right": "Hombro derecho",
+        "shoulder_left": "Hombro izquierdo",
+        "neck": "Cuello",
+        "elbow_wrist": "Codo / muñeca",
+        "lower_back": "Zona lumbar",
+        "hip": "Cadera",
+        "knee": "Rodilla",
+        "ankle_foot": "Tobillo / pie",
+        "other": "Otro"
+      },
+      "types": {
+        "sharp": "Agudo",
+        "dull": "Molestia / pinchazo",
+        "tired": "Solo cansancio"
+      },
+      "stopTitle": "Para por hoy",
+      "stopBody": "El dolor agudo significa parar. Guardaremos lo que hiciste. Si no se calma, consulta a un médico.",
+      "suggested": "Cambio sugerido · mismo músculo, cuida tu {{area}}",
+      "swapTo": "Cambiar a",
+      "tiredBody": "El cansancio es normal. Descansa un poco más y termina la serie con buena técnica.",
+      "save": "Guardar \"{{area}}\" en Mis restricciones",
+      "end": "Terminar entrenamiento",
+      "accept": "Aceptar cambio",
+      "skipExercise": "Saltar este ejercicio",
+      "keepGoing": "Seguir",
+      "cancel": "Volver a mi serie"
+    },
+    "exit": {
+      "open": "Terminar entrenamiento",
+      "title": "¿Terminar entrenamiento?",
+      "body": "Hiciste {{done}} de {{total}} series. Las guardamos y coloreamos los músculos que trabajaste. Tu racha sigue contando.",
+      "bodyEmpty": "Aún no hay nada registrado. Sigue, o descarta este entrenamiento.",
+      "keepGoing": "Seguir",
+      "saveEnd": "Guardar y terminar",
+      "discard": "Descartar entrenamiento"
+    },
+    "done": {
+      "eyebrow": "Entrenamiento {{n}} · completo",
+      "firstTitle": "¡El primero, hecho!",
+      "title": "¡Entrenamiento hecho!",
+      "streak_one": "Racha de {{count}} día",
+      "streak_other": "Racha de {{count}} días",
+      "time": "Tiempo",
+      "sets": "Series",
+      "home": "Volver al inicio"
+    },
+    "legend": {
+      "main": "Objetivo principal hoy",
+      "also": "También trabajado",
+      "notYet": "Aún sin entrenar",
+      "fade": "El rojo se apaga a medida que el músculo se recupera: naranja tras 1 día, durazno tras 2, neutro tras unas 72 h.",
+      "fadeSenior": "El rojo se apaga a medida que el músculo se recupera: naranja tras 1 día, durazno tras 2, neutro tras unas 96 h."
+    },
+    "finish": {
+      "eyebrow": "Termina fuerte",
+      "never": "Aún no has entrenado tus {{group}}. ¿Añadir un final de 10 minutos ahora, o ponerlos primero la próxima vez?",
+      "stale": "No entrenas tus {{group}} desde hace 5+ días. ¿Añadir un final de 10 minutos ahora, o ponerlos primero la próxima vez?",
+      "saved": "Listo: tus {{group}} van primero la próxima vez.",
+      "addTen": "Añadir 10 min",
+      "nextTime": "{{group}} la próxima",
+      "groups": {
+        "push": "pecho y hombros",
+        "pull": "músculos de la espalda",
+        "legs": "piernas"
+      },
+      "short": {
+        "push": "Empuje",
+        "pull": "Espalda",
+        "legs": "Piernas"
+      }
+    },
+    "restFor": "descanso {{seconds}} s"
   }
 }
