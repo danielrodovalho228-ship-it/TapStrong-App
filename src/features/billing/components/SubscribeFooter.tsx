@@ -9,7 +9,15 @@ import { clock } from '@/lib/clock';
 import { colors, spacing } from '@/theme';
 
 import { buy } from '../actions';
-import { currentPlan, priceLabel, PRODUCTS, TRIAL_DAYS, type Period, type Plan } from '../rules';
+import {
+  currentPlan,
+  priceLabel,
+  PRODUCTS,
+  TRIAL_DAYS,
+  TRIAL_REMINDER_DAYS,
+  type Period,
+  type Plan,
+} from '../rules';
 import { useBillingStore } from '../store';
 
 /**
@@ -66,7 +74,7 @@ export function SubscribeFooter({ plan, period }: { plan: Plan; period: Period }
       <AppText variant="caption" color={colors.mutedStrong} style={styles.center}>
         {hadTrial
           ? t('billing.termsNoTrial', { price, per })
-          : t('billing.terms', { price, per, days: TRIAL_DAYS })}
+          : t('billing.terms', { price, per, days: TRIAL_DAYS, reminder: TRIAL_REMINDER_DAYS })}
       </AppText>
       <View style={styles.center}>
         <TextLink

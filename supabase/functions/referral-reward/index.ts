@@ -1,5 +1,6 @@
 // Referral reward (Daniel, Sep 2026): 1 free week of Premium for both people,
-// only after the invited person completes a first workout, once per person.
+// only after the invited person completes a first workout. The invited person
+// gets it once; the inviter gets 1 week per friend, up to 4 in any 365 days.
 // Called by the app (signed-in user = the invited person) after a workout
 // syncs. Grants RevenueCat promotional entitlements with the secret key.
 import { createClient } from 'npm:@supabase/supabase-js@2';
@@ -8,6 +9,7 @@ import { ENTITLEMENTS } from '../_shared/billing.ts';
 import { corsHeaders, json } from '../_shared/http.ts';
 
 const RC_SECRET = Deno.env.get('REVENUECAT_SECRET_KEY') ?? '';
+const INVITER_WEEKS_PER_YEAR = 4;
 const admin = createClient(
   Deno.env.get('SUPABASE_URL')!,
   Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
@@ -58,11 +60,13 @@ Deno.serve(async (req) => {
   if (!claimed) return json({ status: 'already_rewarded' });
 
   const inviterId = (referral.referral_codes as unknown as { user_id: string }).user_id;
+  const yearAgo = new Date(Date.now() - 365 * 86_400_000).toISOString();
   const { count: inviterRewards } = await admin
     .from('referrals')
     .select('id', { count: 'exact', head: true })
     .eq('code', referral.code)
-    .eq('inviter_rewarded', true);
+    .eq('inviter_rewarded', true)
+    .gte('inviter_rewarded_at', yearAgo);
 
   const invitedOk = await grantWeek(user.id);
   if (!invitedOk) {
@@ -73,12 +77,14 @@ Deno.serve(async (req) => {
     return json({ status: 'error' }, 502);
   }
   let inviterGranted = false;
-  if (!inviterRewards) {
+  if ((inviterRewards ?? 0) < INVITER_WEEKS_PER_YEAR) {
     inviterGranted = await grantWeek(inviterId);
     await admin
       .from('referrals')
       .update(
-        inviterGranted ? { inviter_rewarded: true } : { reward_error: 'grant_inviter_failed' },
+        inviterGranted
+          ? { inviter_rewarded: true, inviter_rewarded_at: new Date().toISOString() }
+          : { reward_error: 'grant_inviter_failed' },
       )
       .eq('id', referral.id);
   }

@@ -286,11 +286,11 @@ Rules:
 - The first workout is free with no account. Prompt to save progress after it (Apple / Google / email / "Not now").
 - **Free plan:** 3 workouts per week.
 - **Premium:** $9.99/mo. **Family:** $14.99/mo.
-  - 7-day trial on both, with a reminder 2 days before charging. (Mockups 19 and 22 say 3 days; this spec wins.)
+  - 7-day trial on both, with a reminder 3 days before charging (Daniel, Sep 2026; matches mockups 19 and 22).
   - Family: up to 5 profiles, the owner included. Annual: Premium $59.99/yr, Family $89.99/yr (Daniel, Sep 2026).
   - Accounts come before purchases, so a subscription always belongs to a saved account (RevenueCat app user id = Supabase user id).
   - Children under 13 (COPPA): the verifiable-consent method is the charged Family subscription (a store transaction) plus the parent notice accepted in the app. A free trial does not count; child profiles open after the first charge. The database only creates child profiles through `create_child_profile()`. Lawyer review before launch (§13).
-  - Referral reward: 1 free week of Premium for both people, granted only after the invited person completes a first workout; each person gets it once (Daniel, Sep 2026).
+  - Referral reward: 1 free week of Premium for both people, granted only after the invited person completes a first workout. The invited person gets it once; the inviter gets 1 week per friend who trains, up to 4 weeks a year (Daniel, Sep 2026).
   - Delete account in the app (App Store rule): deletes the account and all its data; the screen explains the store subscription is cancelled separately, in the store.
 - When the free limit is reached, show the paywall screen (value first, price second, cancel info visible).
 

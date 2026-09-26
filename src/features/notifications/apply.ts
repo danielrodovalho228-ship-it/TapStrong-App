@@ -2,6 +2,8 @@ import { Platform } from 'react-native';
 
 import i18n from '@/i18n';
 
+import { TRIAL_REMINDER_DAYS } from '../billing/rules';
+
 import type { PlannedNotification } from './plan';
 
 type NotificationsModule = typeof import('expo-notifications');
@@ -71,7 +73,7 @@ export async function applyPlan(plan: PlannedNotification[]): Promise<void> {
       await N.scheduleNotificationAsync({
         identifier: p.id,
         content: {
-          title: i18n.t('notifications.trial.title'),
+          title: i18n.t('notifications.trial.title', { count: TRIAL_REMINDER_DAYS }),
           body: i18n.t('notifications.trial.body', { date: day }),
         },
         trigger: { type: N.SchedulableTriggerInputTypes.DATE, date: p.date },

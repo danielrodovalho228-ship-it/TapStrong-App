@@ -148,7 +148,7 @@ describe('Paywall', () => {
     expect(screen.getByText('Keep your streak going')).toBeTruthy();
     expect(screen.getByText(/next free workout is on Sunday/)).toBeTruthy();
     expect(screen.getByText(/Auto-renews at \$9\.99 \/ month after the 7-day trial/)).toBeTruthy();
-    expect(screen.getByText(/We remind you 2 days before/)).toBeTruthy();
+    expect(screen.getByText(/We remind you 3 days before/)).toBeTruthy();
     expect(screen.getByRole('link', { name: 'Cancel anytime in 2 taps' })).toBeTruthy();
     // Subscribing needs a saved account first.
     await fireEvent.press(screen.getByRole('button', { name: 'Save your account to subscribe' }));
@@ -194,7 +194,7 @@ describe('Billing (mockup 22)', () => {
     expect(screen.getByText('Family · 5 profiles')).toBeTruthy();
     expect(screen.getByText('Oct 2')).toBeTruthy();
     expect(screen.getByText('$14.99 on Oct 2')).toBeTruthy();
-    expect(screen.getByText(/We notify you 2 days before/)).toBeTruthy();
+    expect(screen.getByText(/We notify you 3 days before/)).toBeTruthy();
     await fireEvent.press(screen.getByRole('button', { name: 'Cancel subscription' }));
     expect(open).toHaveBeenCalledWith(expect.stringContaining('subscriptions'));
     expect(screen.getByText(/you keep Family until Oct 2/)).toBeTruthy();

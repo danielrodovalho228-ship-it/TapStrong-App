@@ -993,7 +993,7 @@
       "body": "Una sesión corta o un rato de movilidad cuenta. Tú puedes."
     },
     "trial": {
-      "title": "Tu prueba gratis termina en 2 días",
+      "title": "Tu prueba gratis termina en {{count}} días",
       "body": "Se te cobrará el {{date}} si no cancelas. Cancela cuando quieras en las suscripciones de tu tienda."
     }
   },
@@ -1026,7 +1026,7 @@
     "subscribe": "Suscribirme · {{price}} {{per}}",
     "saveFirst": "Guarda tu cuenta para suscribirte",
     "manage": "Gestionar mi suscripción",
-    "terms": "Se renueva a {{price}} {{per}} después de la prueba de {{days}} días hasta que canceles. Te avisamos 2 días antes del cobro.",
+    "terms": "Se renueva a {{price}} {{per}} después de la prueba de {{days}} días hasta que canceles. Te avisamos {{reminder}} días antes del cobro.",
     "termsNoTrial": "Se renueva a {{price}} {{per}} hasta que canceles.",
     "cancelAnytime": "Cancela cuando quieras en 2 toques",
     "errors": {

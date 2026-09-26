@@ -124,10 +124,10 @@ describe('RevenueCat events → subscription row', () => {
     expect(planForEntitlements([])).toBe('free');
   });
 
-  it('reminds 2 days before the trial ends, never in the past', () => {
+  it('reminds 3 days before the trial ends, never in the past', () => {
     const now = new Date('2026-10-01T10:00:00Z');
     expect(trialReminderAt('2026-10-08T10:00:00Z', now)!.toISOString()).toBe(
-      '2026-10-06T10:00:00.000Z',
+      '2026-10-05T10:00:00.000Z',
     );
     expect(trialReminderAt('2026-10-02T10:00:00Z', now)).toBeNull();
     expect(trialReminderAt(null, now)).toBeNull();

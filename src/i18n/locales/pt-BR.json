@@ -993,7 +993,7 @@
       "body": "Uma sessão curta ou um momento de mobilidade já conta. Você consegue."
     },
     "trial": {
-      "title": "Seu teste grátis termina em 2 dias",
+      "title": "Seu teste grátis termina em {{count}} dias",
       "body": "A cobrança será em {{date}} se você não cancelar. Cancele quando quiser nas assinaturas da loja."
     }
   },
@@ -1026,7 +1026,7 @@
     "subscribe": "Assinar · {{price}} {{per}}",
     "saveFirst": "Salve sua conta para assinar",
     "manage": "Gerenciar minha assinatura",
-    "terms": "Renova automaticamente por {{price}} {{per}} depois do teste de {{days}} dias, até você cancelar. Avisamos 2 dias antes da cobrança.",
+    "terms": "Renova automaticamente por {{price}} {{per}} depois do teste de {{days}} dias, até você cancelar. Avisamos {{reminder}} dias antes da cobrança.",
     "termsNoTrial": "Renova por {{price}} {{per}} até você cancelar.",
     "cancelAnytime": "Cancele quando quiser em 2 toques",
     "errors": {

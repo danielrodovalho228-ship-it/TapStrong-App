@@ -122,7 +122,7 @@ describe('development purchase simulator', () => {
 });
 
 describe('trial reminder', () => {
-  it('is scheduled 2 days before the charge even with other reminders off', () => {
+  it('is scheduled 3 days before the charge even with other reminders off', () => {
     const plan = planNotifications({
       prefs: {
         reminders: false,
@@ -140,7 +140,7 @@ describe('trial reminder', () => {
       {
         id: 'trial-reminder',
         kind: 'trial',
-        date: new Date('2026-10-06T10:00:00Z'),
+        date: new Date('2026-10-05T10:00:00Z'),
         chargeOn: '2026-10-08T10:00:00Z',
       },
     ]);

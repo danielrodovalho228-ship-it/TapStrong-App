@@ -993,7 +993,7 @@
       "body": "A short session or a mobility break counts. You've got this."
     },
     "trial": {
-      "title": "Your free trial ends in 2 days",
+      "title": "Your free trial ends in {{count}} days",
       "body": "You'll be charged on {{date}} unless you cancel. Cancel anytime in your store subscriptions."
     }
   },
@@ -1026,7 +1026,7 @@
     "subscribe": "Subscribe · {{price}} {{per}}",
     "saveFirst": "Save your account to subscribe",
     "manage": "Manage my subscription",
-    "terms": "Auto-renews at {{price}} {{per}} after the {{days}}-day trial until you cancel. We remind you 2 days before you're charged.",
+    "terms": "Auto-renews at {{price}} {{per}} after the {{days}}-day trial until you cancel. We remind you {{reminder}} days before you're charged.",
     "termsNoTrial": "Renews at {{price}} {{per}} until you cancel.",
     "cancelAnytime": "Cancel anytime in 2 taps",
     "errors": {

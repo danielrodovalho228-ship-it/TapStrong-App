@@ -7,8 +7,8 @@ export type Period = 'monthly' | 'annual';
 
 export const FREE_WORKOUTS_PER_WEEK = 3;
 export const TRIAL_DAYS = 7;
-/** Honest billing: remind 2 days before a trial turns into a charge (SPEC §8). */
-export const TRIAL_REMINDER_DAYS = 2;
+/** Honest billing: remind 3 days before a trial turns into a charge (SPEC §8; Daniel, Sep 2026). */
+export const TRIAL_REMINDER_DAYS = 3;
 export const FAMILY_MAX_PROFILES = 5;
 export const PARENT_NOTICE_VERSION = 'parent-notice-v1';
 
