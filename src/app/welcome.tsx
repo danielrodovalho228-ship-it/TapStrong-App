@@ -69,7 +69,8 @@ export default function Welcome() {
               style={styles.modelImage}
               contentFit="cover"
               contentPosition="top"
-              accessible={false}
+              // Decorative; the label below names the model.
+              alt=""
             />
             <AppText variant="label" color={colors.mutedStrong} style={styles.modelLabel}>
               {t(`welcome.models.${m.key}`)}

@@ -27,7 +27,9 @@ type IconProps = {
 
 export function Icon({ name, size = 24, color = colors.ink, strokeWidth = 2 }: IconProps) {
   return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" accessible={false}>
+    // Decorative: SVGs are not accessibility elements by default. (Passing
+    // accessible={false} leaks an invalid DOM attribute on web.)
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path
         d={paths[name]}
         stroke={color}

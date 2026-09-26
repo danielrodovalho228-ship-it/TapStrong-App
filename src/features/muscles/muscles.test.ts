@@ -20,8 +20,20 @@ describe('bundled muscle list', () => {
       views: views ? views.split(',') : [],
       labelKey,
       parentKey: parent === 'null' ? null : parent.replace(/'/g, ''),
+      movementGroup: groups.get(key),
     }));
     expect(MUSCLES).toEqual(seeded);
+  });
+
+  const groups = new Map<string, string>();
+  for (const [, group, keys] of sql.matchAll(
+    /update public\.muscles set movement_group = '(\w+)'\s+where key in \(([^)]*)\)/g,
+  )) {
+    for (const [, key] of keys.matchAll(/'(\w+)'/g)) groups.set(key, group);
+  }
+
+  it('every muscle has a movement group in the database', () => {
+    expect(groups.size).toBe(MUSCLES.length);
   });
 
   it('focus chips are real muscle keys', () => {

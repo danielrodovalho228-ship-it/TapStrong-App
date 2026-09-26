@@ -17,6 +17,10 @@ for f in "$ROOT"/supabase/migrations/*.sql; do
   echo "migrate: $(basename "$f")"
   run "$f"
 done
+if [[ -f "$ROOT/supabase/seed.sql" ]]; then
+  echo "seed: seed.sql"
+  run "$ROOT/supabase/seed.sql"
+fi
 for f in "$ROOT"/supabase/tests/local/*.sql; do
   [[ "$(basename "$f")" == auth_stub.sql ]] && continue
   echo "test: $(basename "$f")"

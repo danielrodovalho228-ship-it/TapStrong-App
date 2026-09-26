@@ -11,13 +11,23 @@ export type Muscle = {
   views: ('front' | 'back')[];
   labelKey: string;
   parentKey: string | null;
+  /** push / pull / legs / core, for the weekly balance pass (SPEC §8). */
+  movementGroup: MovementGroup;
 };
+
+export type MovementGroup = 'push' | 'pull' | 'legs' | 'core';
 
 export const MUSCLES = data as Muscle[];
 export const MUSCLE_KEYS = MUSCLES.map((m) => m.key);
 
 export function muscleByKey(key: string): Muscle | undefined {
   return MUSCLES.find((m) => m.key === key);
+}
+
+/** A muscle and its parts: "chest" → upper, mid and lower chest. */
+export function muscleFamily(key: string): string[] {
+  const children = MUSCLES.filter((m) => m.parentKey === key).map((m) => m.key);
+  return children.length ? children : [key];
 }
 
 /** Muscles offered as quick-reply chips in the interview focus step. */

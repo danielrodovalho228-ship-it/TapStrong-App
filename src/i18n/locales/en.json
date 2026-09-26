@@ -405,5 +405,324 @@
     "glutes": "Gluteus maximus and medius",
     "hamstrings": "Hamstrings",
     "calves": "Gastrocnemius and soleus"
+  },
+  "exercises": {
+    "march_in_place": {
+      "name": "March in place",
+      "cues": "Lift your knees at an easy pace and swing your arms."
+    },
+    "seated_march": {
+      "name": "Seated march",
+      "cues": "Sit tall and lift one knee, then the other, at an easy pace."
+    },
+    "jumping_jacks": {
+      "name": "Jumping jacks",
+      "cues": "Jump feet apart as arms go up, then back together. Land softly."
+    },
+    "brisk_walk": {
+      "name": "Brisk walk",
+      "cues": "Walk at a pace where you can still talk."
+    },
+    "stationary_bike": {
+      "name": "Stationary bike",
+      "cues": "Pedal smoothly with light resistance."
+    },
+    "arm_circles": {
+      "name": "Arm circles",
+      "cues": "Draw slow circles with straight arms, forward then back."
+    },
+    "band_pull_apart": {
+      "name": "Band pull-apart",
+      "cues": "Hold the band at chest height and pull it apart, squeezing your shoulder blades."
+    },
+    "leg_swings": {
+      "name": "Leg swings",
+      "cues": "Hold a support and swing one leg forward and back, relaxed."
+    },
+    "hip_circles": {
+      "name": "Hip circles",
+      "cues": "Hands on hips, draw slow circles with your hips both ways."
+    },
+    "cat_cow": {
+      "name": "Cat-cow",
+      "cues": "On hands and knees, round your back, then gently arch it."
+    },
+    "torso_twist": {
+      "name": "Torso twist",
+      "cues": "Turn your upper body side to side, hips facing forward."
+    },
+    "push_up": {
+      "name": "Push-up",
+      "cues": "Body in a straight line; lower your chest to the floor and press up."
+    },
+    "wall_push_up": {
+      "name": "Wall push-up",
+      "cues": "Hands on a wall at chest height; bend your elbows and push back."
+    },
+    "feet_elevated_push_up": {
+      "name": "Feet-elevated push-up",
+      "cues": "Feet on a bench, body straight; lower your chest and press up."
+    },
+    "incline_dumbbell_press": {
+      "name": "Incline dumbbell press 30°",
+      "cues": "Elbows at 45°. Lower to the upper chest, press up and in slightly."
+    },
+    "flat_dumbbell_press": {
+      "name": "Flat dumbbell press",
+      "cues": "Lower the dumbbells beside your chest and press up."
+    },
+    "low_to_high_cable_fly": {
+      "name": "Low-to-high cable fly",
+      "cues": "Bring the handles up and together in an arc to eye level."
+    },
+    "high_to_low_cable_fly": {
+      "name": "High-to-low cable fly",
+      "cues": "Bring the handles down and together in front of your hips."
+    },
+    "seated_chest_press_machine": {
+      "name": "Seated chest press machine",
+      "cues": "Back on the pad; press the handles forward and return slowly."
+    },
+    "dumbbell_shoulder_press": {
+      "name": "Dumbbell shoulder press",
+      "cues": "Press the dumbbells overhead without arching your back."
+    },
+    "band_front_raise": {
+      "name": "Band front raise",
+      "cues": "Raise straight arms to shoulder height and lower slowly."
+    },
+    "band_face_pull": {
+      "name": "Band face pull",
+      "cues": "Pull the band toward your face, elbows high and out."
+    },
+    "one_arm_dumbbell_row": {
+      "name": "One-arm dumbbell row",
+      "cues": "Hand on the bench; pull the dumbbell to your hip."
+    },
+    "band_row": {
+      "name": "Band row",
+      "cues": "Pull the band to your ribs, squeezing your shoulder blades."
+    },
+    "lat_pulldown": {
+      "name": "Lat pulldown",
+      "cues": "Pull the bar to your upper chest, chest up."
+    },
+    "seated_cable_row": {
+      "name": "Seated cable row",
+      "cues": "Sit tall and pull the handle to your belly."
+    },
+    "dumbbell_shrug": {
+      "name": "Dumbbell shrug",
+      "cues": "Lift your shoulders toward your ears, pause, lower."
+    },
+    "superman": {
+      "name": "Superman",
+      "cues": "Lying face down, lift arms and legs a little, then lower."
+    },
+    "bird_dog": {
+      "name": "Bird dog",
+      "cues": "On hands and knees, reach one arm and the opposite leg long."
+    },
+    "dumbbell_curl": {
+      "name": "Dumbbell curl",
+      "cues": "Elbows by your sides; curl up and lower slowly."
+    },
+    "band_curl": {
+      "name": "Band curl",
+      "cues": "Stand on the band and curl your hands to your shoulders."
+    },
+    "overhead_dumbbell_triceps_extension": {
+      "name": "Overhead triceps extension",
+      "cues": "Hold a dumbbell overhead; lower behind your head and extend."
+    },
+    "bench_dip": {
+      "name": "Bench dip",
+      "cues": "Hands on the bench behind you; bend your elbows and press up."
+    },
+    "band_triceps_pushdown": {
+      "name": "Band triceps pushdown",
+      "cues": "Elbows fixed at your sides; push the band down."
+    },
+    "dumbbell_wrist_curl": {
+      "name": "Dumbbell wrist curl",
+      "cues": "Forearms on your thighs; curl the dumbbells with your wrists."
+    },
+    "plank": {
+      "name": "Plank",
+      "cues": "Elbows under shoulders, body in a straight line. Breathe."
+    },
+    "dead_bug": {
+      "name": "Dead bug",
+      "cues": "On your back, lower the opposite arm and leg, low back down."
+    },
+    "crunch": {
+      "name": "Crunch",
+      "cues": "Knees bent; curl your shoulders off the floor, then lower."
+    },
+    "reverse_crunch": {
+      "name": "Reverse crunch",
+      "cues": "On your back, curl your knees toward your chest."
+    },
+    "side_plank": {
+      "name": "Side plank",
+      "cues": "On one elbow, lift your hips into a straight line."
+    },
+    "band_pallof_press": {
+      "name": "Band Pallof press",
+      "cues": "Band at your side; press it straight out and resist the twist."
+    },
+    "bodyweight_squat": {
+      "name": "Bodyweight squat",
+      "cues": "Sit back and down, knees over toes, then stand."
+    },
+    "goblet_squat": {
+      "name": "Goblet squat",
+      "cues": "Hold a dumbbell at your chest; squat down and stand tall."
+    },
+    "sit_to_stand": {
+      "name": "Sit to stand",
+      "cues": "From a chair, stand up without using your hands, then sit slowly."
+    },
+    "reverse_lunge": {
+      "name": "Reverse lunge",
+      "cues": "Step back and lower both knees, then return."
+    },
+    "leg_press": {
+      "name": "Leg press",
+      "cues": "Feet hip-width; lower with control and press away."
+    },
+    "glute_bridge": {
+      "name": "Glute bridge",
+      "cues": "On your back, drive through your heels and lift your hips."
+    },
+    "dumbbell_romanian_deadlift": {
+      "name": "Dumbbell Romanian deadlift",
+      "cues": "Soft knees; hinge at the hips, dumbbells close to your legs."
+    },
+    "lying_hamstring_curl_machine": {
+      "name": "Lying hamstring curl",
+      "cues": "Curl your heels toward your glutes and lower slowly."
+    },
+    "standing_calf_raise": {
+      "name": "Standing calf raise",
+      "cues": "Rise onto your toes, pause, lower slowly."
+    },
+    "seated_knee_raise": {
+      "name": "Seated knee raise",
+      "cues": "Sit tall and lift one knee toward your chest."
+    },
+    "side_lying_adductor_raise": {
+      "name": "Side-lying inner thigh raise",
+      "cues": "Lying on your side, lift the bottom leg a little."
+    },
+    "wall_tibialis_raise": {
+      "name": "Wall tibialis raise",
+      "cues": "Back on a wall, lift your toes up and lower."
+    },
+    "band_terminal_knee_extension": {
+      "name": "Band knee extension",
+      "cues": "Band behind your knee; straighten the knee against it."
+    },
+    "step_up": {
+      "name": "Step-up",
+      "cues": "Step onto the bench, stand tall, step down with control."
+    },
+    "single_leg_balance": {
+      "name": "Single-leg balance",
+      "cues": "Stand on one leg; hold a support if you need it."
+    },
+    "mountain_climber": {
+      "name": "Mountain climber",
+      "cues": "In a plank, drive your knees in, one after the other."
+    },
+    "doorway_chest_stretch": {
+      "name": "Doorway chest stretch",
+      "cues": "Forearm on a door frame; lean forward gently."
+    },
+    "cross_body_shoulder_stretch": {
+      "name": "Cross-body shoulder stretch",
+      "cues": "Pull one arm across your chest with the other."
+    },
+    "overhead_triceps_stretch": {
+      "name": "Overhead triceps stretch",
+      "cues": "Hand behind your head; gently press the elbow."
+    },
+    "standing_quad_stretch": {
+      "name": "Standing quad stretch",
+      "cues": "Hold a support; pull your heel toward your glute."
+    },
+    "seated_hamstring_stretch": {
+      "name": "Seated hamstring stretch",
+      "cues": "Leg straight; lean forward from the hips."
+    },
+    "seated_figure_four_stretch": {
+      "name": "Seated figure-four stretch",
+      "cues": "Ankle over the other knee; lean forward gently."
+    },
+    "wall_calf_stretch": {
+      "name": "Wall calf stretch",
+      "cues": "Hands on a wall, back leg straight, heel down."
+    },
+    "childs_pose": {
+      "name": "Child's pose",
+      "cues": "Sit back on your heels and reach your arms forward."
+    },
+    "kneeling_hip_flexor_stretch": {
+      "name": "Kneeling hip flexor stretch",
+      "cues": "One knee down; shift your hips forward gently."
+    },
+    "upper_trap_stretch": {
+      "name": "Upper trap stretch",
+      "cues": "Tilt your ear toward your shoulder; relax."
+    },
+    "standing_side_stretch": {
+      "name": "Side stretch",
+      "cues": "Reach one arm overhead and lean to the side."
+    },
+    "hug_upper_back_stretch": {
+      "name": "Upper back hug stretch",
+      "cues": "Hug yourself and round your upper back."
+    },
+    "biceps_wall_stretch": {
+      "name": "Biceps wall stretch",
+      "cues": "Palm on a wall behind you; turn away slowly."
+    },
+    "box_breathing": {
+      "name": "Slow breathing",
+      "cues": "Breathe in for 4, hold 4, out for 4, hold 4."
+    }
+  },
+  "generator": {
+    "notes": {
+      "balance": "Added {{groups}} work so your week stays balanced.",
+      "rested": "{{muscles}} rest today: trained two sessions in a row.",
+      "trimmed": "Shortened to fit your time.",
+      "groups": {
+        "push": "push",
+        "pull": "back",
+        "legs": "legs",
+        "core": "core"
+      }
+    }
+  },
+  "preview": {
+    "title": "Workout preview",
+    "eachSide": "each side",
+    "seconds": "{{value}} s",
+    "minutes": "{{value}} min",
+    "underReview": "The exercise library is being reviewed by a certified coach. Your workouts will appear here soon.",
+    "devOnly": "Development build: this preview uses draft exercises that have not been reviewed yet. They never reach users.",
+    "summary": "{{minutes}} min · {{warmup}} min warm-up · {{cooldown}} min cool-down",
+    "parts": {
+      "warmup_general": "Warm-up · easy cardio",
+      "warmup_mobility": "Warm-up · mobility",
+      "ramp_up": "Warm-up · ramp-up set",
+      "main": "Main",
+      "finisher_cardio": "Finisher · cardio",
+      "finisher_mobility": "Finisher · mobility",
+      "cooldown_walk": "Cool-down · walk",
+      "cooldown_stretch": "Cool-down · stretch",
+      "cooldown_breathing": "Cool-down · breathing"
+    }
   }
 }

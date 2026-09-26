@@ -132,14 +132,17 @@ Verify every point on every one of the 28 images; bodies differ.
 - **`restrictions`**: `id`, `profile_id`, `area`, `side?`, `source` (pain_report / repair / manual), `note`, `active`, `created_at`
 - **`preferences`**: `profile_id`, `location` (gym / home / outdoors), `minutes`, `days_per_week`, `equipment[]`, `main_goals[]` (look / lose_weight / strength / bone_health / sport / mobility / balance / fitness; under 18, `fitness` — "More fitness / energy" — replaces `lose_weight`)
 - **`muscle_goals`**: `profile_id`, `muscle_key`, `goal` (grow / firm / strengthen / balance / mobility), `priority`
-- **`muscles`**: `key`, `region`, `view`, `label_i18n_key`, `parent_key?` (upper chest → chest)
+- **`muscles`**: `key`, `region`, `view`, `label_i18n_key`, `anatomy_i18n_key`, `movement_group` (push / pull / legs / core), `parent_key?` (upper chest → chest)
 - **`exercises`**
-  - `id`, `slug`, `name_i18n_key`, `equipment[]`, `location[]`, `level` (1–5), `min_age_band`, `positions[]`
+  - `id`, `slug`, `name_i18n_key`, `equipment[]` (all required; empty = bodyweight), `location[]`, `level` (1–5), `min_age_band`, `positions[]` (position abilities it suits)
   - `contraindications[]` (areas/conditions), `cues_i18n_key`
+  - `movement_pattern`, `session_parts[]` (warmup_general / warmup_mobility / main / finisher_cardio / finisher_mobility / cooldown_walk / cooldown_stretch / cooldown_breathing), `dose_type` (reps / time), `loaded`, `unilateral`, `impact` (0–2)
   - `media_video`, `media_poster`, `media_provider`, `license_ref`
-  - `status` (draft / auto_checked / second_checked / released / retired)
+  - `status` (draft / auto_checked / second_checked / released / retired), `mapping_version`
+  - The database enforces the release rules: new rows start as draft; each status step needs a passing review of the **current** mapping version; `released` also needs licensed, non-prototype media; the mapping is locked unless the exercise is a draft, and any mapping change bumps `mapping_version`.
 - **`exercise_muscles`**: `exercise_id`, `muscle_key`, `role` (primary / secondary / stabilizer), `emphasis` 0–1
-- **`exercise_reviews`**: `exercise_id`, `check` (auto / second / certified), `reviewer_name`, `credential`, `result`, `notes`, `reviewed_at`
+- **`exercise_reviews`**: `exercise_id`, `check` (auto / second / certified), `reviewer_name`, `credential`, `result`, `notes`, `mapping_version`, `reviewed_at`
+- **`exercise_swaps`** (Phase 4): `profile_id`, `session_id`, `item_order`, `from_exercise_id`, `to_exercise_id`, `reason` (user_choice / machine_taken / pain), `sets_done_before`, `swapped_at` — swap history, later used to learn preferences.
 - **`plans`** (generated program): `id`, `profile_id`, `weeks`, `sessions_per_week`, `created_from` (json of goals)
 - **`sessions`**: `id`, `plan_id`, `index`, `scheduled_for`, `status` (planned / done / skipped / partial), `started_at`, `ended_at`
 - **`session_items`**: `session_id`, `order`, `exercise_id`, `sets`, `reps_min`, `reps_max`, `rest_s`, `load_hint`, `role` (warmup / main / finisher / mobility / cooldown)
@@ -226,7 +229,24 @@ Rules:
 
 **Time fit.** Drop the lowest-priority items until the estimated time is within the minutes chosen. "Only 15 min today" re-runs the generator with 15 minutes.
 
-**Swap** ("machine is taken" / pain). Use the same primary muscle and role, with a different equipment or a restriction-safe variant.
+**Swap** (MVP, Daniel, Sep 27 2026). One "Swap" button on every item of the sequence — on the workout list (screen 10) and in the player (screen 11). "Machine is taken" opens the same sheet.
+
+- The sheet shows up to **5 alternatives** for the same primary muscle, each with its demo loop; the user compares and taps "Replace".
+- The choice replaces the exercise **in the same position**; it never adds an exercise. The workout then continues in its normal order.
+- Any item can be swapped. Warm-up and cool-down moves swap only with moves of the same kind (same session part).
+- Alternatives:
+  - same primary muscle and same role in the session;
+  - `released` only;
+  - the same safety filters as the generator: equipment and location, age band, restrictions, health conditions, position (standing / with support / seated);
+  - never an exercise already in the workout;
+  - "machine is taken" also drops options that use the same machine.
+- Order (deterministic): emphasis on the same muscle, then same movement pattern, then closest level; ties by slug.
+- Sets are kept; reps are recomputed from the goal rule for the new exercise. If sets are already logged, the swap applies only to the remaining sets.
+- Fewer than 5 options → show what exists. None → "No safe alternative for this muscle with your equipment."
+- "Undo" for 5 seconds after a swap.
+- Log `exercise_swapped` with the reason `user_choice` or `machine_taken`, and save the swap history (`exercise_swaps`).
+- Implementation: `getAlternatives(item, context, limit = 5)` and `swapItem` in the generator, unit-tested (never violates a restriction, never repeats an exercise in the workout, keeps the primary muscle).
+- Later, not MVP (in order): a reason tag per option ("no equipment", "easier", "spares the shoulder", "same machine free"); quick filters (at home / easier / harder / no impact); favorite and "don't show again", used by the generator; saved progress per exercise (suggest last load); "5 more options".
 
 **Progression:**
 
@@ -278,8 +298,8 @@ Rules:
 | `/(tabs)/home`              | 4a / 4b             | First-week and ongoing states; next session, streak, body preview                                                        |
 | `/(tabs)/body`              | 5 Body map          | Male/Female, age model, front/back, hotspots, goal chips                                                                 |
 | `/goals`                    | 6 Goals             | Per-muscle goal + quantities (exercises, sets, days)                                                                     |
-| `/workout/[id]`             | 7 Generated workout | Warm-up row, exercise list, cool-down row, swap, "Only 15 min", "Machine is taken", reviewed-by-coach badge              |
-| `/workout/[id]/play`        | 8 Player            | Plays warm-up → exercises → cool-down in order; video loop, target label, set logger (± reps, load), voice logging later |
+| `/workout/[id]`             | 7 Generated workout | Warm-up row, exercise list, cool-down row, "Swap" on every item (sheet with up to 5 alternatives, demo loops, "Replace", 5 s "Undo"; §8), "Only 15 min", "Machine is taken" (same sheet), reviewed-by-coach badge |
+| `/workout/[id]/play`        | 8 Player            | Plays warm-up → exercises → cool-down in order; video loop, target label, set logger (± reps, load), "Swap" (same sheet as screen 7; remaining sets only), voice logging later |
 | `/workout/[id]/rest`        | 8a Rest             | Timer, +30 s, skip, last-time comparison                                                                                 |
 | `/workout/[id]/pain`        | 13 Pain swap        | Area, side, type → stop or swap + save restriction                                                                       |
 | `/workout/[id]/exit`        | 8e End workout?     | Keep going / Save & end / Discard                                                                                        |

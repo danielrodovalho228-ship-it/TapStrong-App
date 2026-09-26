@@ -4,174 +4,199 @@
     "region": "upper",
     "views": [],
     "labelKey": "muscles.chest",
-    "parentKey": null
+    "parentKey": null,
+    "movementGroup": "push"
   },
   {
     "key": "abs",
     "region": "core",
     "views": [],
     "labelKey": "muscles.abs",
-    "parentKey": null
+    "parentKey": null,
+    "movementGroup": "core"
   },
   {
     "key": "traps",
     "region": "upper",
     "views": ["front", "back"],
     "labelKey": "muscles.traps",
-    "parentKey": null
+    "parentKey": null,
+    "movementGroup": "pull"
   },
   {
     "key": "shoulders",
     "region": "upper",
     "views": ["front"],
     "labelKey": "muscles.shoulders",
-    "parentKey": null
+    "parentKey": null,
+    "movementGroup": "push"
   },
   {
     "key": "upperChest",
     "region": "upper",
     "views": ["front"],
     "labelKey": "muscles.upperChest",
-    "parentKey": "chest"
+    "parentKey": "chest",
+    "movementGroup": "push"
   },
   {
     "key": "midChest",
     "region": "upper",
     "views": ["front"],
     "labelKey": "muscles.midChest",
-    "parentKey": "chest"
+    "parentKey": "chest",
+    "movementGroup": "push"
   },
   {
     "key": "lowerChest",
     "region": "upper",
     "views": ["front"],
     "labelKey": "muscles.lowerChest",
-    "parentKey": "chest"
+    "parentKey": "chest",
+    "movementGroup": "push"
   },
   {
     "key": "biceps",
     "region": "upper",
     "views": ["front"],
     "labelKey": "muscles.biceps",
-    "parentKey": null
+    "parentKey": null,
+    "movementGroup": "pull"
   },
   {
     "key": "forearms",
     "region": "upper",
     "views": ["front"],
     "labelKey": "muscles.forearms",
-    "parentKey": null
+    "parentKey": null,
+    "movementGroup": "pull"
   },
   {
     "key": "upperAbs",
     "region": "core",
     "views": ["front"],
     "labelKey": "muscles.upperAbs",
-    "parentKey": "abs"
+    "parentKey": "abs",
+    "movementGroup": "core"
   },
   {
     "key": "lowerAbs",
     "region": "core",
     "views": ["front"],
     "labelKey": "muscles.lowerAbs",
-    "parentKey": "abs"
+    "parentKey": "abs",
+    "movementGroup": "core"
   },
   {
     "key": "obliques",
     "region": "core",
     "views": ["front"],
     "labelKey": "muscles.obliques",
-    "parentKey": null
+    "parentKey": null,
+    "movementGroup": "core"
   },
   {
     "key": "hips",
     "region": "lower",
     "views": ["front"],
     "labelKey": "muscles.hips",
-    "parentKey": null
+    "parentKey": null,
+    "movementGroup": "legs"
   },
   {
     "key": "adductors",
     "region": "lower",
     "views": ["front"],
     "labelKey": "muscles.adductors",
-    "parentKey": null
+    "parentKey": null,
+    "movementGroup": "legs"
   },
   {
     "key": "quads",
     "region": "lower",
     "views": ["front"],
     "labelKey": "muscles.quads",
-    "parentKey": null
+    "parentKey": null,
+    "movementGroup": "legs"
   },
   {
     "key": "knees",
     "region": "lower",
     "views": ["front"],
     "labelKey": "muscles.knees",
-    "parentKey": null
+    "parentKey": null,
+    "movementGroup": "legs"
   },
   {
     "key": "shins",
     "region": "lower",
     "views": ["front"],
     "labelKey": "muscles.shins",
-    "parentKey": null
+    "parentKey": null,
+    "movementGroup": "legs"
   },
   {
     "key": "rearDelts",
     "region": "upper",
     "views": ["back"],
     "labelKey": "muscles.rearDelts",
-    "parentKey": null
+    "parentKey": null,
+    "movementGroup": "pull"
   },
   {
     "key": "upperBack",
     "region": "upper",
     "views": ["back"],
     "labelKey": "muscles.upperBack",
-    "parentKey": null
+    "parentKey": null,
+    "movementGroup": "pull"
   },
   {
     "key": "lats",
     "region": "upper",
     "views": ["back"],
     "labelKey": "muscles.lats",
-    "parentKey": null
+    "parentKey": null,
+    "movementGroup": "pull"
   },
   {
     "key": "triceps",
     "region": "upper",
     "views": ["back"],
     "labelKey": "muscles.triceps",
-    "parentKey": null
+    "parentKey": null,
+    "movementGroup": "push"
   },
   {
     "key": "lowerBack",
     "region": "core",
     "views": ["back"],
     "labelKey": "muscles.lowerBack",
-    "parentKey": null
+    "parentKey": null,
+    "movementGroup": "core"
   },
   {
     "key": "glutes",
     "region": "lower",
     "views": ["back"],
     "labelKey": "muscles.glutes",
-    "parentKey": null
+    "parentKey": null,
+    "movementGroup": "legs"
   },
   {
     "key": "hamstrings",
     "region": "lower",
     "views": ["back"],
     "labelKey": "muscles.hamstrings",
-    "parentKey": null
+    "parentKey": null,
+    "movementGroup": "legs"
   },
   {
     "key": "calves",
     "region": "lower",
     "views": ["back"],
     "labelKey": "muscles.calves",
-    "parentKey": null
+    "parentKey": null,
+    "movementGroup": "legs"
   }
 ]

@@ -1,0 +1,1384 @@
+{
+  "_note": "Prototype exercise library (SPEC §12 Phase 3). Every entry is a DRAFT: mappings follow standard training references but have NOT had the second independent check or certified sign-off, so none can reach users. Dev builds only. Source of truth for supabase/seed.sql (npm run seed:build).",
+  "exercises": [
+    {
+      "slug": "march_in_place",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support"],
+      "contraindications": [],
+      "pattern": "cardio",
+      "parts": ["warmup_general", "cooldown_walk"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["quads", "primary", 0.6],
+        ["hips", "secondary", 0.4],
+        ["calves", "secondary", 0.3]
+      ]
+    },
+    {
+      "slug": "seated_march",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": [],
+      "pattern": "cardio",
+      "parts": ["warmup_general", "cooldown_walk"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["hips", "primary", 0.6],
+        ["quads", "secondary", 0.3]
+      ]
+    },
+    {
+      "slug": "jumping_jacks",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 2,
+      "minAgeBand": "kid",
+      "positions": ["standing"],
+      "contraindications": [
+        "knee",
+        "ankle_foot",
+        "hip",
+        "heart_condition",
+        "pregnant_postpartum",
+        "recent_surgery",
+        "osteoporosis",
+        "fell_last_year"
+      ],
+      "pattern": "cardio",
+      "parts": ["warmup_general", "finisher_cardio"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 2,
+      "muscles": [
+        ["calves", "primary", 0.6],
+        ["quads", "secondary", 0.3],
+        ["shoulders", "secondary", 0.3]
+      ]
+    },
+    {
+      "slug": "brisk_walk",
+      "equipment": [],
+      "location": ["gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing"],
+      "contraindications": [],
+      "pattern": "cardio",
+      "parts": ["warmup_general", "finisher_cardio", "cooldown_walk"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["quads", "primary", 0.6],
+        ["calves", "secondary", 0.5],
+        ["glutes", "secondary", 0.4]
+      ]
+    },
+    {
+      "slug": "stationary_bike",
+      "equipment": ["machines"],
+      "location": ["gym"],
+      "level": 1,
+      "minAgeBand": "teen",
+      "positions": ["standing", "with_support"],
+      "contraindications": [],
+      "pattern": "cardio",
+      "parts": ["warmup_general", "finisher_cardio", "cooldown_walk"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["quads", "primary", 0.7],
+        ["glutes", "secondary", 0.3],
+        ["calves", "secondary", 0.3]
+      ]
+    },
+
+    {
+      "slug": "arm_circles",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": [],
+      "pattern": "mobility",
+      "parts": ["warmup_mobility"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["shoulders", "primary", 0.6],
+        ["rearDelts", "secondary", 0.4]
+      ]
+    },
+    {
+      "slug": "band_pull_apart",
+      "equipment": ["bands"],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": [],
+      "pattern": "horizontal_pull",
+      "parts": ["warmup_mobility", "main"],
+      "dose": "reps",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["rearDelts", "primary", 0.8],
+        ["upperBack", "secondary", 0.6]
+      ]
+    },
+    {
+      "slug": "leg_swings",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support"],
+      "contraindications": ["hip"],
+      "pattern": "mobility",
+      "parts": ["warmup_mobility"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["hips", "primary", 0.6],
+        ["hamstrings", "secondary", 0.5]
+      ]
+    },
+    {
+      "slug": "hip_circles",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support"],
+      "contraindications": [],
+      "pattern": "mobility",
+      "parts": ["warmup_mobility"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["hips", "primary", 0.6],
+        ["glutes", "secondary", 0.3]
+      ]
+    },
+    {
+      "slug": "cat_cow",
+      "equipment": [],
+      "location": ["home", "gym"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing"],
+      "contraindications": [],
+      "pattern": "mobility",
+      "parts": ["warmup_mobility", "finisher_mobility"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["lowerBack", "primary", 0.6],
+        ["upperBack", "secondary", 0.4]
+      ]
+    },
+    {
+      "slug": "torso_twist",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": [],
+      "pattern": "mobility",
+      "parts": ["warmup_mobility"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["obliques", "primary", 0.6],
+        ["lowerBack", "secondary", 0.3]
+      ]
+    },
+
+    {
+      "slug": "push_up",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 3,
+      "minAgeBand": "kid",
+      "positions": ["standing"],
+      "contraindications": ["shoulder", "elbow_wrist", "recent_surgery"],
+      "pattern": "horizontal_push",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["midChest", "primary", 1.0],
+        ["triceps", "secondary", 0.5],
+        ["shoulders", "secondary", 0.4],
+        ["upperAbs", "stabilizer", 0.2]
+      ]
+    },
+    {
+      "slug": "wall_push_up",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support"],
+      "contraindications": ["shoulder", "elbow_wrist"],
+      "pattern": "horizontal_push",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["midChest", "primary", 0.7],
+        ["triceps", "secondary", 0.3],
+        ["shoulders", "secondary", 0.3]
+      ]
+    },
+    {
+      "slug": "feet_elevated_push_up",
+      "equipment": ["bench"],
+      "location": ["home", "gym"],
+      "level": 4,
+      "minAgeBand": "teen",
+      "positions": ["standing"],
+      "contraindications": ["shoulder", "elbow_wrist", "recent_surgery", "high_blood_pressure"],
+      "pattern": "horizontal_push",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["upperChest", "primary", 1.0],
+        ["shoulders", "secondary", 0.6],
+        ["triceps", "secondary", 0.5]
+      ]
+    },
+    {
+      "slug": "incline_dumbbell_press",
+      "equipment": ["dumbbells", "bench"],
+      "location": ["home", "gym"],
+      "level": 2,
+      "minAgeBand": "teen",
+      "positions": ["standing"],
+      "contraindications": ["shoulder"],
+      "pattern": "horizontal_push",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": true,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["upperChest", "primary", 1.0],
+        ["shoulders", "secondary", 0.6],
+        ["triceps", "secondary", 0.4]
+      ]
+    },
+    {
+      "slug": "flat_dumbbell_press",
+      "equipment": ["dumbbells", "bench"],
+      "location": ["home", "gym"],
+      "level": 2,
+      "minAgeBand": "teen",
+      "positions": ["standing"],
+      "contraindications": ["shoulder"],
+      "pattern": "horizontal_push",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": true,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["midChest", "primary", 1.0],
+        ["triceps", "secondary", 0.5],
+        ["shoulders", "secondary", 0.4]
+      ]
+    },
+    {
+      "slug": "low_to_high_cable_fly",
+      "equipment": ["cables"],
+      "location": ["gym"],
+      "level": 2,
+      "minAgeBand": "teen",
+      "positions": ["standing"],
+      "contraindications": ["shoulder"],
+      "pattern": "horizontal_push",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": true,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["upperChest", "primary", 1.0],
+        ["shoulders", "secondary", 0.4]
+      ]
+    },
+    {
+      "slug": "high_to_low_cable_fly",
+      "equipment": ["cables"],
+      "location": ["gym"],
+      "level": 2,
+      "minAgeBand": "teen",
+      "positions": ["standing"],
+      "contraindications": ["shoulder"],
+      "pattern": "horizontal_push",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": true,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["lowerChest", "primary", 1.0],
+        ["midChest", "secondary", 0.5]
+      ]
+    },
+    {
+      "slug": "seated_chest_press_machine",
+      "equipment": ["machines"],
+      "location": ["gym"],
+      "level": 1,
+      "minAgeBand": "teen",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": ["shoulder"],
+      "pattern": "horizontal_push",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": true,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["midChest", "primary", 1.0],
+        ["triceps", "secondary", 0.5],
+        ["shoulders", "secondary", 0.4]
+      ]
+    },
+    {
+      "slug": "dumbbell_shoulder_press",
+      "equipment": ["dumbbells"],
+      "location": ["home", "gym"],
+      "level": 2,
+      "minAgeBand": "teen",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": ["shoulder", "neck"],
+      "pattern": "vertical_push",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": true,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["shoulders", "primary", 1.0],
+        ["triceps", "secondary", 0.5],
+        ["traps", "secondary", 0.3]
+      ]
+    },
+    {
+      "slug": "band_front_raise",
+      "equipment": ["bands"],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": ["shoulder"],
+      "pattern": "shoulder_isolation",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [["shoulders", "primary", 0.9]]
+    },
+
+    {
+      "slug": "band_face_pull",
+      "equipment": ["bands"],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": [],
+      "pattern": "horizontal_pull",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["rearDelts", "primary", 1.0],
+        ["upperBack", "secondary", 0.6],
+        ["traps", "secondary", 0.3]
+      ]
+    },
+    {
+      "slug": "one_arm_dumbbell_row",
+      "equipment": ["dumbbells", "bench"],
+      "location": ["home", "gym"],
+      "level": 2,
+      "minAgeBand": "teen",
+      "positions": ["standing", "with_support"],
+      "contraindications": [],
+      "pattern": "horizontal_pull",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": true,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["upperBack", "primary", 0.9],
+        ["lats", "primary", 0.8],
+        ["biceps", "secondary", 0.4],
+        ["rearDelts", "secondary", 0.4]
+      ]
+    },
+    {
+      "slug": "band_row",
+      "equipment": ["bands"],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": [],
+      "pattern": "horizontal_pull",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["upperBack", "primary", 1.0],
+        ["lats", "secondary", 0.5],
+        ["biceps", "secondary", 0.4]
+      ]
+    },
+    {
+      "slug": "lat_pulldown",
+      "equipment": ["cables"],
+      "location": ["gym"],
+      "level": 2,
+      "minAgeBand": "teen",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": ["shoulder"],
+      "pattern": "vertical_pull",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": true,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["lats", "primary", 1.0],
+        ["biceps", "secondary", 0.5],
+        ["upperBack", "secondary", 0.4]
+      ]
+    },
+    {
+      "slug": "seated_cable_row",
+      "equipment": ["cables"],
+      "location": ["gym"],
+      "level": 1,
+      "minAgeBand": "teen",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": [],
+      "pattern": "horizontal_pull",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": true,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["upperBack", "primary", 1.0],
+        ["lats", "secondary", 0.6],
+        ["biceps", "secondary", 0.4]
+      ]
+    },
+    {
+      "slug": "dumbbell_shrug",
+      "equipment": ["dumbbells"],
+      "location": ["home", "gym"],
+      "level": 1,
+      "minAgeBand": "teen",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": ["neck"],
+      "pattern": "shoulder_isolation",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": true,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["traps", "primary", 1.0],
+        ["forearms", "stabilizer", 0.3]
+      ]
+    },
+    {
+      "slug": "superman",
+      "equipment": [],
+      "location": ["home", "gym"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing"],
+      "contraindications": ["lower_back", "pregnant_postpartum", "recent_surgery"],
+      "pattern": "core_stability",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["lowerBack", "primary", 1.0],
+        ["glutes", "secondary", 0.5]
+      ]
+    },
+    {
+      "slug": "bird_dog",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing"],
+      "contraindications": ["recent_surgery"],
+      "pattern": "core_stability",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["lowerBack", "primary", 0.8],
+        ["glutes", "secondary", 0.5],
+        ["lowerAbs", "stabilizer", 0.4]
+      ]
+    },
+
+    {
+      "slug": "dumbbell_curl",
+      "equipment": ["dumbbells"],
+      "location": ["home", "gym"],
+      "level": 1,
+      "minAgeBand": "teen",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": ["elbow_wrist"],
+      "pattern": "elbow_flexion",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": true,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["biceps", "primary", 1.0],
+        ["forearms", "secondary", 0.3]
+      ]
+    },
+    {
+      "slug": "band_curl",
+      "equipment": ["bands"],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": ["elbow_wrist"],
+      "pattern": "elbow_flexion",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["biceps", "primary", 0.9],
+        ["forearms", "secondary", 0.3]
+      ]
+    },
+    {
+      "slug": "overhead_dumbbell_triceps_extension",
+      "equipment": ["dumbbells"],
+      "location": ["home", "gym"],
+      "level": 2,
+      "minAgeBand": "teen",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": ["shoulder", "elbow_wrist"],
+      "pattern": "elbow_extension",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": true,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [["triceps", "primary", 1.0]]
+    },
+    {
+      "slug": "bench_dip",
+      "equipment": ["bench"],
+      "location": ["home", "gym"],
+      "level": 2,
+      "minAgeBand": "teen",
+      "positions": ["standing"],
+      "contraindications": ["shoulder", "elbow_wrist"],
+      "pattern": "elbow_extension",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["triceps", "primary", 1.0],
+        ["lowerChest", "secondary", 0.4],
+        ["shoulders", "secondary", 0.3]
+      ]
+    },
+    {
+      "slug": "band_triceps_pushdown",
+      "equipment": ["bands"],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": ["elbow_wrist"],
+      "pattern": "elbow_extension",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [["triceps", "primary", 0.9]]
+    },
+    {
+      "slug": "dumbbell_wrist_curl",
+      "equipment": ["dumbbells"],
+      "location": ["home", "gym"],
+      "level": 1,
+      "minAgeBand": "teen",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": ["elbow_wrist"],
+      "pattern": "wrist",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": true,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [["forearms", "primary", 1.0]]
+    },
+
+    {
+      "slug": "plank",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 2,
+      "minAgeBand": "kid",
+      "positions": ["standing"],
+      "contraindications": ["shoulder", "recent_surgery", "high_blood_pressure"],
+      "pattern": "core_stability",
+      "parts": ["main"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["upperAbs", "primary", 0.7],
+        ["lowerAbs", "primary", 0.7],
+        ["obliques", "secondary", 0.5],
+        ["shoulders", "stabilizer", 0.3]
+      ]
+    },
+    {
+      "slug": "dead_bug",
+      "equipment": [],
+      "location": ["home", "gym"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing"],
+      "contraindications": ["pregnant_postpartum", "recent_surgery"],
+      "pattern": "core_stability",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["lowerAbs", "primary", 1.0],
+        ["upperAbs", "secondary", 0.5]
+      ]
+    },
+    {
+      "slug": "crunch",
+      "equipment": [],
+      "location": ["home", "gym"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing"],
+      "contraindications": ["neck", "pregnant_postpartum", "recent_surgery", "osteoporosis"],
+      "pattern": "core_flexion",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["upperAbs", "primary", 1.0],
+        ["lowerAbs", "secondary", 0.4]
+      ]
+    },
+    {
+      "slug": "reverse_crunch",
+      "equipment": [],
+      "location": ["home", "gym"],
+      "level": 2,
+      "minAgeBand": "kid",
+      "positions": ["standing"],
+      "contraindications": ["lower_back", "pregnant_postpartum", "recent_surgery"],
+      "pattern": "core_flexion",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["lowerAbs", "primary", 1.0],
+        ["upperAbs", "secondary", 0.3]
+      ]
+    },
+    {
+      "slug": "side_plank",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 2,
+      "minAgeBand": "kid",
+      "positions": ["standing"],
+      "contraindications": ["shoulder", "recent_surgery"],
+      "pattern": "core_stability",
+      "parts": ["main"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["obliques", "primary", 1.0],
+        ["lowerAbs", "secondary", 0.3],
+        ["hips", "secondary", 0.3]
+      ]
+    },
+    {
+      "slug": "band_pallof_press",
+      "equipment": ["bands"],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": [],
+      "pattern": "rotation",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["obliques", "primary", 1.0],
+        ["lowerAbs", "secondary", 0.4]
+      ]
+    },
+
+    {
+      "slug": "bodyweight_squat",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support"],
+      "contraindications": ["knee"],
+      "pattern": "squat",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["quads", "primary", 1.0],
+        ["glutes", "secondary", 0.7],
+        ["adductors", "secondary", 0.3]
+      ]
+    },
+    {
+      "slug": "goblet_squat",
+      "equipment": ["dumbbells"],
+      "location": ["home", "gym"],
+      "level": 2,
+      "minAgeBand": "teen",
+      "positions": ["standing"],
+      "contraindications": ["knee", "lower_back"],
+      "pattern": "squat",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": true,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["quads", "primary", 1.0],
+        ["glutes", "secondary", 0.7],
+        ["upperAbs", "stabilizer", 0.3]
+      ]
+    },
+    {
+      "slug": "sit_to_stand",
+      "equipment": [],
+      "location": ["home", "gym"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support"],
+      "contraindications": [],
+      "pattern": "squat",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["quads", "primary", 0.9],
+        ["glutes", "secondary", 0.7]
+      ]
+    },
+    {
+      "slug": "reverse_lunge",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 2,
+      "minAgeBand": "kid",
+      "positions": ["standing"],
+      "contraindications": ["knee", "hip", "ankle_foot", "fell_last_year"],
+      "pattern": "lunge",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["quads", "primary", 0.8],
+        ["glutes", "primary", 0.8],
+        ["adductors", "secondary", 0.3]
+      ]
+    },
+    {
+      "slug": "leg_press",
+      "equipment": ["machines"],
+      "location": ["gym"],
+      "level": 1,
+      "minAgeBand": "teen",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": ["knee", "lower_back"],
+      "pattern": "squat",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": true,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["quads", "primary", 1.0],
+        ["glutes", "secondary", 0.6]
+      ]
+    },
+    {
+      "slug": "glute_bridge",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing"],
+      "contraindications": ["pregnant_postpartum"],
+      "pattern": "hinge",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["glutes", "primary", 1.0],
+        ["hamstrings", "secondary", 0.5],
+        ["lowerBack", "stabilizer", 0.2]
+      ]
+    },
+    {
+      "slug": "dumbbell_romanian_deadlift",
+      "equipment": ["dumbbells"],
+      "location": ["home", "gym"],
+      "level": 3,
+      "minAgeBand": "teen",
+      "positions": ["standing"],
+      "contraindications": ["lower_back", "recent_surgery"],
+      "pattern": "hinge",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": true,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["hamstrings", "primary", 1.0],
+        ["glutes", "primary", 0.8],
+        ["lowerBack", "secondary", 0.5]
+      ]
+    },
+    {
+      "slug": "lying_hamstring_curl_machine",
+      "equipment": ["machines"],
+      "location": ["gym"],
+      "level": 1,
+      "minAgeBand": "teen",
+      "positions": ["standing"],
+      "contraindications": ["knee"],
+      "pattern": "knee_flexion",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": true,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["hamstrings", "primary", 1.0],
+        ["calves", "secondary", 0.3]
+      ]
+    },
+    {
+      "slug": "standing_calf_raise",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support"],
+      "contraindications": ["ankle_foot"],
+      "pattern": "calf",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [["calves", "primary", 1.0]]
+    },
+    {
+      "slug": "seated_knee_raise",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": ["hip"],
+      "pattern": "hip_isolation",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["hips", "primary", 1.0],
+        ["lowerAbs", "secondary", 0.4]
+      ]
+    },
+    {
+      "slug": "side_lying_adductor_raise",
+      "equipment": [],
+      "location": ["home", "gym"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing"],
+      "contraindications": ["hip"],
+      "pattern": "hip_isolation",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [["adductors", "primary", 1.0]]
+    },
+    {
+      "slug": "wall_tibialis_raise",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support"],
+      "contraindications": ["ankle_foot"],
+      "pattern": "ankle",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [["shins", "primary", 1.0]]
+    },
+    {
+      "slug": "band_terminal_knee_extension",
+      "equipment": ["bands"],
+      "location": ["home", "gym"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support"],
+      "contraindications": [],
+      "pattern": "knee_extension",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["knees", "primary", 0.8],
+        ["quads", "primary", 0.7]
+      ]
+    },
+    {
+      "slug": "step_up",
+      "equipment": ["bench"],
+      "location": ["home", "gym"],
+      "level": 2,
+      "minAgeBand": "kid",
+      "positions": ["standing"],
+      "contraindications": ["knee", "ankle_foot", "fell_last_year"],
+      "pattern": "lunge",
+      "parts": ["main", "finisher_cardio"],
+      "dose": "reps",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["quads", "primary", 0.9],
+        ["glutes", "primary", 0.7]
+      ]
+    },
+    {
+      "slug": "single_leg_balance",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support"],
+      "contraindications": [],
+      "pattern": "balance",
+      "parts": ["main", "finisher_mobility"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["calves", "primary", 0.6],
+        ["glutes", "secondary", 0.5],
+        ["shins", "secondary", 0.4]
+      ]
+    },
+    {
+      "slug": "mountain_climber",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 3,
+      "minAgeBand": "kid",
+      "positions": ["standing"],
+      "contraindications": [
+        "shoulder",
+        "elbow_wrist",
+        "heart_condition",
+        "pregnant_postpartum",
+        "recent_surgery",
+        "high_blood_pressure"
+      ],
+      "pattern": "cardio",
+      "parts": ["finisher_cardio"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 1,
+      "muscles": [
+        ["lowerAbs", "primary", 0.6],
+        ["hips", "secondary", 0.5],
+        ["shoulders", "stabilizer", 0.4]
+      ]
+    },
+
+    {
+      "slug": "doorway_chest_stretch",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support"],
+      "contraindications": ["shoulder"],
+      "pattern": "stretch",
+      "parts": ["cooldown_stretch", "finisher_mobility"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["midChest", "primary", 0.8],
+        ["upperChest", "secondary", 0.6],
+        ["lowerChest", "secondary", 0.5],
+        ["shoulders", "secondary", 0.4]
+      ]
+    },
+    {
+      "slug": "cross_body_shoulder_stretch",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": [],
+      "pattern": "stretch",
+      "parts": ["cooldown_stretch"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["rearDelts", "primary", 0.8],
+        ["shoulders", "secondary", 0.4]
+      ]
+    },
+    {
+      "slug": "overhead_triceps_stretch",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": ["shoulder"],
+      "pattern": "stretch",
+      "parts": ["cooldown_stretch"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["triceps", "primary", 0.8],
+        ["lats", "secondary", 0.3]
+      ]
+    },
+    {
+      "slug": "standing_quad_stretch",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support"],
+      "contraindications": ["knee"],
+      "pattern": "stretch",
+      "parts": ["cooldown_stretch"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["quads", "primary", 0.9],
+        ["hips", "secondary", 0.4],
+        ["knees", "secondary", 0.3]
+      ]
+    },
+    {
+      "slug": "seated_hamstring_stretch",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": [],
+      "pattern": "stretch",
+      "parts": ["cooldown_stretch"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["hamstrings", "primary", 0.9],
+        ["calves", "secondary", 0.3]
+      ]
+    },
+    {
+      "slug": "seated_figure_four_stretch",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": ["hip", "knee"],
+      "pattern": "stretch",
+      "parts": ["cooldown_stretch"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["glutes", "primary", 0.9],
+        ["hips", "secondary", 0.4]
+      ]
+    },
+    {
+      "slug": "wall_calf_stretch",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support"],
+      "contraindications": ["ankle_foot"],
+      "pattern": "stretch",
+      "parts": ["cooldown_stretch"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["calves", "primary", 0.9],
+        ["shins", "secondary", 0.3]
+      ]
+    },
+    {
+      "slug": "childs_pose",
+      "equipment": [],
+      "location": ["home", "gym"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing"],
+      "contraindications": ["knee"],
+      "pattern": "stretch",
+      "parts": ["cooldown_stretch", "finisher_mobility"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["lats", "primary", 0.7],
+        ["lowerBack", "primary", 0.6],
+        ["upperBack", "secondary", 0.4]
+      ]
+    },
+    {
+      "slug": "kneeling_hip_flexor_stretch",
+      "equipment": [],
+      "location": ["home", "gym"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing"],
+      "contraindications": ["knee"],
+      "pattern": "stretch",
+      "parts": ["cooldown_stretch", "finisher_mobility"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["hips", "primary", 0.9],
+        ["quads", "secondary", 0.4]
+      ]
+    },
+    {
+      "slug": "upper_trap_stretch",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": ["neck"],
+      "pattern": "stretch",
+      "parts": ["cooldown_stretch"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [["traps", "primary", 0.8]]
+    },
+    {
+      "slug": "standing_side_stretch",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": [],
+      "pattern": "stretch",
+      "parts": ["cooldown_stretch"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["obliques", "primary", 0.8],
+        ["lats", "secondary", 0.5]
+      ]
+    },
+    {
+      "slug": "hug_upper_back_stretch",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": [],
+      "pattern": "stretch",
+      "parts": ["cooldown_stretch"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["upperBack", "primary", 0.8],
+        ["rearDelts", "secondary", 0.4]
+      ]
+    },
+    {
+      "slug": "biceps_wall_stretch",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support"],
+      "contraindications": ["shoulder"],
+      "pattern": "stretch",
+      "parts": ["cooldown_stretch"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["biceps", "primary", 0.8],
+        ["forearms", "secondary", 0.5]
+      ]
+    },
+    {
+      "slug": "box_breathing",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": [],
+      "pattern": "breathing",
+      "parts": ["cooldown_breathing"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": []
+    }
+  ]
+}

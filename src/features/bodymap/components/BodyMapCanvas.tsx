@@ -70,7 +70,8 @@ export function BodyMapCanvas({
               source={bodyImage(band, sex, view)}
               style={StyleSheet.absoluteFill}
               contentFit="contain"
-              accessible={false}
+              // Decorative; each muscle dot is its own accessible button.
+              alt=""
             />
           </Pressable>
           {/* Halos are visual only, so they never steal a tap from a neighbour. */}

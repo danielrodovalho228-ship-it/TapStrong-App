@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Proves the draft exercise library never ships (SPEC §2.1): exports release
+# bundles and fails if any contains supabase/seed/exercises.json.
+# Slower than unit tests (~1 min); run before any store build.
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+OUT="$(mktemp -d)"
+trap 'rm -rf "$OUT"' EXIT
+
+cd "$ROOT"
+EXPO_OFFLINE=1 CI=1 npx expo export --platform android --platform ios --platform web --output-dir "$OUT" >/dev/null
+
+if grep -rl 'Prototype exercise library' "$OUT" >/dev/null; then
+  echo "FAIL: a release bundle contains the draft exercise library" >&2
+  grep -rl 'Prototype exercise library' "$OUT" >&2
+  exit 1
+fi
+echo "OK: no draft exercises in release bundles"

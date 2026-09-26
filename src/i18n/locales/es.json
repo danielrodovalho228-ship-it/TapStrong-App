@@ -405,5 +405,324 @@
     "glutes": "Glúteo mayor y medio",
     "hamstrings": "Isquiotibiales",
     "calves": "Gastrocnemio y sóleo"
+  },
+  "exercises": {
+    "march_in_place": {
+      "name": "Marcha en el lugar",
+      "cues": "Sube las rodillas a ritmo suave y mueve los brazos."
+    },
+    "seated_march": {
+      "name": "Marcha sentado",
+      "cues": "Siéntate erguido y sube una rodilla y luego la otra, a ritmo suave."
+    },
+    "jumping_jacks": {
+      "name": "Saltos de tijera",
+      "cues": "Salta abriendo piernas y subiendo brazos, luego vuelve. Aterriza suave."
+    },
+    "brisk_walk": {
+      "name": "Caminata rápida",
+      "cues": "Camina a un ritmo en el que aún puedas hablar."
+    },
+    "stationary_bike": {
+      "name": "Bicicleta fija",
+      "cues": "Pedalea suave con poca resistencia."
+    },
+    "arm_circles": {
+      "name": "Círculos de brazos",
+      "cues": "Dibuja círculos lentos con los brazos estirados, adelante y atrás."
+    },
+    "band_pull_apart": {
+      "name": "Apertura con banda",
+      "cues": "Sujeta la banda a la altura del pecho y ábrela juntando los omóplatos."
+    },
+    "leg_swings": {
+      "name": "Balanceo de piernas",
+      "cues": "Apóyate y balancea una pierna adelante y atrás, relajado."
+    },
+    "hip_circles": {
+      "name": "Círculos de cadera",
+      "cues": "Manos en la cadera, dibuja círculos lentos en ambos sentidos."
+    },
+    "cat_cow": {
+      "name": "Gato-vaca",
+      "cues": "En cuatro apoyos, redondea la espalda y luego arquéala suave."
+    },
+    "torso_twist": {
+      "name": "Giro de tronco",
+      "cues": "Gira el tronco de lado a lado con la cadera al frente."
+    },
+    "push_up": {
+      "name": "Flexión de brazos",
+      "cues": "Cuerpo en línea recta; baja el pecho al suelo y empuja."
+    },
+    "wall_push_up": {
+      "name": "Flexión en pared",
+      "cues": "Manos en la pared a la altura del pecho; flexiona los codos y empuja."
+    },
+    "feet_elevated_push_up": {
+      "name": "Flexión con pies elevados",
+      "cues": "Pies en un banco, cuerpo recto; baja el pecho y empuja."
+    },
+    "incline_dumbbell_press": {
+      "name": "Press inclinado con mancuernas 30°",
+      "cues": "Codos a 45°. Baja al pecho superior y empuja hacia arriba."
+    },
+    "flat_dumbbell_press": {
+      "name": "Press plano con mancuernas",
+      "cues": "Baja las mancuernas junto al pecho y empuja hacia arriba."
+    },
+    "low_to_high_cable_fly": {
+      "name": "Aperturas en polea de abajo hacia arriba",
+      "cues": "Lleva los agarres hacia arriba y al centro en arco, a la altura de los ojos."
+    },
+    "high_to_low_cable_fly": {
+      "name": "Aperturas en polea de arriba hacia abajo",
+      "cues": "Lleva los agarres hacia abajo y al centro frente a la cadera."
+    },
+    "seated_chest_press_machine": {
+      "name": "Press de pecho en máquina",
+      "cues": "Espalda en el respaldo; empuja al frente y vuelve despacio."
+    },
+    "dumbbell_shoulder_press": {
+      "name": "Press de hombros con mancuernas",
+      "cues": "Empuja las mancuernas sobre la cabeza sin arquear la espalda."
+    },
+    "band_front_raise": {
+      "name": "Elevación frontal con banda",
+      "cues": "Sube los brazos estirados a la altura del hombro y baja despacio."
+    },
+    "band_face_pull": {
+      "name": "Face pull con banda",
+      "cues": "Tira de la banda hacia la cara con los codos altos."
+    },
+    "one_arm_dumbbell_row": {
+      "name": "Remo a una mano con mancuerna",
+      "cues": "Mano en el banco; lleva la mancuerna a la cadera."
+    },
+    "band_row": {
+      "name": "Remo con banda",
+      "cues": "Tira de la banda hacia las costillas juntando los omóplatos."
+    },
+    "lat_pulldown": {
+      "name": "Jalón al pecho",
+      "cues": "Lleva la barra al pecho superior, con el pecho alto."
+    },
+    "seated_cable_row": {
+      "name": "Remo sentado en polea",
+      "cues": "Siéntate erguido y lleva el agarre al abdomen."
+    },
+    "dumbbell_shrug": {
+      "name": "Encogimiento con mancuernas",
+      "cues": "Sube los hombros hacia las orejas, pausa y baja."
+    },
+    "superman": {
+      "name": "Superman",
+      "cues": "Boca abajo, levanta un poco brazos y piernas y baja."
+    },
+    "bird_dog": {
+      "name": "Bird dog",
+      "cues": "En cuatro apoyos, estira un brazo y la pierna contraria."
+    },
+    "dumbbell_curl": {
+      "name": "Curl con mancuernas",
+      "cues": "Codos pegados; sube y baja despacio."
+    },
+    "band_curl": {
+      "name": "Curl con banda",
+      "cues": "Pisa la banda y sube las manos a los hombros."
+    },
+    "overhead_dumbbell_triceps_extension": {
+      "name": "Extensión de tríceps sobre la cabeza",
+      "cues": "Mancuerna sobre la cabeza; baja detrás y extiende."
+    },
+    "bench_dip": {
+      "name": "Fondos en banco",
+      "cues": "Manos en el banco detrás; flexiona los codos y empuja."
+    },
+    "band_triceps_pushdown": {
+      "name": "Extensión de tríceps con banda",
+      "cues": "Codos fijos a los lados; empuja la banda hacia abajo."
+    },
+    "dumbbell_wrist_curl": {
+      "name": "Curl de muñeca con mancuernas",
+      "cues": "Antebrazos en los muslos; flexiona las muñecas."
+    },
+    "plank": {
+      "name": "Plancha",
+      "cues": "Codos bajo los hombros, cuerpo recto. Respira."
+    },
+    "dead_bug": {
+      "name": "Dead bug",
+      "cues": "Boca arriba, baja brazo y pierna contrarios con la zona lumbar apoyada."
+    },
+    "crunch": {
+      "name": "Abdominal corto",
+      "cues": "Rodillas flexionadas; despega los hombros del suelo y baja."
+    },
+    "reverse_crunch": {
+      "name": "Abdominal inverso",
+      "cues": "Boca arriba, lleva las rodillas hacia el pecho."
+    },
+    "side_plank": {
+      "name": "Plancha lateral",
+      "cues": "Sobre un codo, eleva la cadera en línea recta."
+    },
+    "band_pallof_press": {
+      "name": "Press Pallof con banda",
+      "cues": "Banda a un lado; empuja al frente y resiste el giro."
+    },
+    "bodyweight_squat": {
+      "name": "Sentadilla con peso corporal",
+      "cues": "Baja hacia atrás, rodillas sobre los pies, y sube."
+    },
+    "goblet_squat": {
+      "name": "Sentadilla goblet",
+      "cues": "Mancuerna en el pecho; baja en sentadilla y sube."
+    },
+    "sit_to_stand": {
+      "name": "Sentarse y levantarse",
+      "cues": "Desde una silla, levántate sin las manos y siéntate despacio."
+    },
+    "reverse_lunge": {
+      "name": "Zancada hacia atrás",
+      "cues": "Da un paso atrás, baja ambas rodillas y vuelve."
+    },
+    "leg_press": {
+      "name": "Prensa de piernas",
+      "cues": "Pies al ancho de cadera; baja con control y empuja."
+    },
+    "glute_bridge": {
+      "name": "Puente de glúteos",
+      "cues": "Boca arriba, empuja con los talones y sube la cadera."
+    },
+    "dumbbell_romanian_deadlift": {
+      "name": "Peso muerto rumano con mancuernas",
+      "cues": "Rodillas suaves; flexiona la cadera con las mancuernas cerca."
+    },
+    "lying_hamstring_curl_machine": {
+      "name": "Curl femoral tumbado",
+      "cues": "Lleva los talones hacia los glúteos y baja despacio."
+    },
+    "standing_calf_raise": {
+      "name": "Elevación de talones",
+      "cues": "Sube a puntas de pie, pausa y baja despacio."
+    },
+    "seated_knee_raise": {
+      "name": "Elevación de rodilla sentado",
+      "cues": "Siéntate erguido y sube una rodilla hacia el pecho."
+    },
+    "side_lying_adductor_raise": {
+      "name": "Elevación de aductor de lado",
+      "cues": "De lado, sube un poco la pierna de abajo."
+    },
+    "wall_tibialis_raise": {
+      "name": "Elevación de punta en pared",
+      "cues": "Espalda en la pared, sube las puntas de los pies y baja."
+    },
+    "band_terminal_knee_extension": {
+      "name": "Extensión de rodilla con banda",
+      "cues": "Banda detrás de la rodilla; estírala contra la banda."
+    },
+    "step_up": {
+      "name": "Subida al banco",
+      "cues": "Sube al banco, erguido, y baja con control."
+    },
+    "single_leg_balance": {
+      "name": "Equilibrio en una pierna",
+      "cues": "Párate en una pierna; usa un apoyo si lo necesitas."
+    },
+    "mountain_climber": {
+      "name": "Escalador",
+      "cues": "En plancha, lleva las rodillas al pecho, una tras otra."
+    },
+    "doorway_chest_stretch": {
+      "name": "Estiramiento de pecho en puerta",
+      "cues": "Antebrazo en el marco; inclínate suave hacia adelante."
+    },
+    "cross_body_shoulder_stretch": {
+      "name": "Estiramiento de hombro cruzado",
+      "cues": "Lleva un brazo cruzado al pecho con el otro."
+    },
+    "overhead_triceps_stretch": {
+      "name": "Estiramiento de tríceps",
+      "cues": "Mano detrás de la cabeza; presiona suave el codo."
+    },
+    "standing_quad_stretch": {
+      "name": "Estiramiento de cuádriceps de pie",
+      "cues": "Apóyate; lleva el talón hacia el glúteo."
+    },
+    "seated_hamstring_stretch": {
+      "name": "Estiramiento de isquios sentado",
+      "cues": "Pierna estirada; inclínate desde la cadera."
+    },
+    "seated_figure_four_stretch": {
+      "name": "Estiramiento en cuatro sentado",
+      "cues": "Tobillo sobre la otra rodilla; inclínate suave."
+    },
+    "wall_calf_stretch": {
+      "name": "Estiramiento de gemelos en pared",
+      "cues": "Manos en la pared, pierna de atrás recta, talón abajo."
+    },
+    "childs_pose": {
+      "name": "Postura del niño",
+      "cues": "Siéntate sobre los talones y estira los brazos al frente."
+    },
+    "kneeling_hip_flexor_stretch": {
+      "name": "Estiramiento de flexores de cadera",
+      "cues": "Una rodilla abajo; lleva la cadera suave hacia adelante."
+    },
+    "upper_trap_stretch": {
+      "name": "Estiramiento de trapecio",
+      "cues": "Inclina la oreja hacia el hombro; relaja."
+    },
+    "standing_side_stretch": {
+      "name": "Estiramiento lateral",
+      "cues": "Estira un brazo sobre la cabeza e inclínate al lado."
+    },
+    "hug_upper_back_stretch": {
+      "name": "Estiramiento de espalda alta",
+      "cues": "Abrázate y redondea la espalda alta."
+    },
+    "biceps_wall_stretch": {
+      "name": "Estiramiento de bíceps en pared",
+      "cues": "Palma en la pared detrás; gira despacio."
+    },
+    "box_breathing": {
+      "name": "Respiración lenta",
+      "cues": "Inhala 4, sostén 4, exhala 4, sostén 4."
+    }
+  },
+  "generator": {
+    "notes": {
+      "balance": "Agregamos trabajo de {{groups}} para equilibrar tu semana.",
+      "rested": "{{muscles}} descansa hoy: se entrenó dos sesiones seguidas.",
+      "trimmed": "Acortado para que entre en tu tiempo.",
+      "groups": {
+        "push": "empuje",
+        "pull": "espalda",
+        "legs": "piernas",
+        "core": "core"
+      }
+    }
+  },
+  "preview": {
+    "title": "Vista previa del entrenamiento",
+    "eachSide": "por lado",
+    "seconds": "{{value}} s",
+    "minutes": "{{value}} min",
+    "underReview": "Un entrenador certificado está revisando la biblioteca de ejercicios. Tus entrenamientos aparecerán aquí pronto.",
+    "devOnly": "Versión de desarrollo: esta vista usa ejercicios en borrador aún sin revisar. Nunca llegan a los usuarios.",
+    "summary": "{{minutes}} min · {{warmup}} min de calentamiento · {{cooldown}} min de vuelta a la calma",
+    "parts": {
+      "warmup_general": "Calentamiento · cardio suave",
+      "warmup_mobility": "Calentamiento · movilidad",
+      "ramp_up": "Calentamiento · serie de aproximación",
+      "main": "Principal",
+      "finisher_cardio": "Final · cardio",
+      "finisher_mobility": "Final · movilidad",
+      "cooldown_walk": "Vuelta a la calma · caminar",
+      "cooldown_stretch": "Vuelta a la calma · estiramiento",
+      "cooldown_breathing": "Vuelta a la calma · respiración"
+    }
   }
 }

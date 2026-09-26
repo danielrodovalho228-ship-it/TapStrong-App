@@ -405,5 +405,324 @@
     "glutes": "Glúteo máximo e médio",
     "hamstrings": "Isquiotibiais",
     "calves": "Gastrocnêmio e sóleo"
+  },
+  "exercises": {
+    "march_in_place": {
+      "name": "Marcha parada",
+      "cues": "Suba os joelhos em ritmo leve e balance os braços."
+    },
+    "seated_march": {
+      "name": "Marcha sentado",
+      "cues": "Sente-se ereto e suba um joelho e depois o outro, em ritmo leve."
+    },
+    "jumping_jacks": {
+      "name": "Polichinelo",
+      "cues": "Salte abrindo pernas e braços, depois volte. Aterrisse com suavidade."
+    },
+    "brisk_walk": {
+      "name": "Caminhada rápida",
+      "cues": "Caminhe num ritmo em que ainda dá para conversar."
+    },
+    "stationary_bike": {
+      "name": "Bicicleta ergométrica",
+      "cues": "Pedale suave com pouca resistência."
+    },
+    "arm_circles": {
+      "name": "Círculos com os braços",
+      "cues": "Faça círculos lentos com os braços estendidos, para frente e para trás."
+    },
+    "band_pull_apart": {
+      "name": "Abertura com elástico",
+      "cues": "Segure o elástico na altura do peito e abra, juntando as escápulas."
+    },
+    "leg_swings": {
+      "name": "Balanço de pernas",
+      "cues": "Apoie-se e balance uma perna para frente e para trás, relaxado."
+    },
+    "hip_circles": {
+      "name": "Círculos com o quadril",
+      "cues": "Mãos na cintura, faça círculos lentos com o quadril nos dois sentidos."
+    },
+    "cat_cow": {
+      "name": "Gato-vaca",
+      "cues": "De quatro apoios, arredonde as costas e depois arqueie com suavidade."
+    },
+    "torso_twist": {
+      "name": "Rotação de tronco",
+      "cues": "Gire o tronco de um lado para o outro, com o quadril de frente."
+    },
+    "push_up": {
+      "name": "Flexão de braço",
+      "cues": "Corpo em linha reta; desça o peito até o chão e empurre."
+    },
+    "wall_push_up": {
+      "name": "Flexão na parede",
+      "cues": "Mãos na parede na altura do peito; dobre os cotovelos e empurre."
+    },
+    "feet_elevated_push_up": {
+      "name": "Flexão com pés elevados",
+      "cues": "Pés no banco, corpo reto; desça o peito e empurre."
+    },
+    "incline_dumbbell_press": {
+      "name": "Supino inclinado com halteres 30°",
+      "cues": "Cotovelos a 45°. Desça até o peito superior e empurre para cima."
+    },
+    "flat_dumbbell_press": {
+      "name": "Supino reto com halteres",
+      "cues": "Desça os halteres ao lado do peito e empurre para cima."
+    },
+    "low_to_high_cable_fly": {
+      "name": "Crucifixo na polia de baixo para cima",
+      "cues": "Leve as alças para cima e para o centro em arco, na altura dos olhos."
+    },
+    "high_to_low_cable_fly": {
+      "name": "Crucifixo na polia de cima para baixo",
+      "cues": "Leve as alças para baixo e para o centro na frente do quadril."
+    },
+    "seated_chest_press_machine": {
+      "name": "Supino sentado na máquina",
+      "cues": "Costas no encosto; empurre à frente e volte devagar."
+    },
+    "dumbbell_shoulder_press": {
+      "name": "Desenvolvimento com halteres",
+      "cues": "Empurre os halteres acima da cabeça sem arquear as costas."
+    },
+    "band_front_raise": {
+      "name": "Elevação frontal com elástico",
+      "cues": "Suba os braços estendidos até o ombro e desça devagar."
+    },
+    "band_face_pull": {
+      "name": "Face pull com elástico",
+      "cues": "Puxe o elástico em direção ao rosto, cotovelos altos."
+    },
+    "one_arm_dumbbell_row": {
+      "name": "Remada unilateral com halter",
+      "cues": "Mão no banco; puxe o halter até o quadril."
+    },
+    "band_row": {
+      "name": "Remada com elástico",
+      "cues": "Puxe o elástico até as costelas, juntando as escápulas."
+    },
+    "lat_pulldown": {
+      "name": "Puxada frontal",
+      "cues": "Puxe a barra até o peito superior, peito aberto."
+    },
+    "seated_cable_row": {
+      "name": "Remada sentada na polia",
+      "cues": "Sente-se ereto e puxe a alça até a barriga."
+    },
+    "dumbbell_shrug": {
+      "name": "Encolhimento com halteres",
+      "cues": "Suba os ombros em direção às orelhas, pause e desça."
+    },
+    "superman": {
+      "name": "Super-homem",
+      "cues": "De bruços, levante um pouco braços e pernas e desça."
+    },
+    "bird_dog": {
+      "name": "Perdigueiro",
+      "cues": "De quatro apoios, estenda um braço e a perna oposta."
+    },
+    "dumbbell_curl": {
+      "name": "Rosca com halteres",
+      "cues": "Cotovelos junto ao corpo; suba e desça devagar."
+    },
+    "band_curl": {
+      "name": "Rosca com elástico",
+      "cues": "Pise no elástico e suba as mãos até os ombros."
+    },
+    "overhead_dumbbell_triceps_extension": {
+      "name": "Tríceps francês com halter",
+      "cues": "Halter acima da cabeça; desça atrás e estenda."
+    },
+    "bench_dip": {
+      "name": "Mergulho no banco",
+      "cues": "Mãos no banco atrás; dobre os cotovelos e empurre."
+    },
+    "band_triceps_pushdown": {
+      "name": "Tríceps com elástico",
+      "cues": "Cotovelos fixos ao lado; empurre o elástico para baixo."
+    },
+    "dumbbell_wrist_curl": {
+      "name": "Rosca de punho com halteres",
+      "cues": "Antebraços nas coxas; dobre os punhos."
+    },
+    "plank": {
+      "name": "Prancha",
+      "cues": "Cotovelos sob os ombros, corpo reto. Respire."
+    },
+    "dead_bug": {
+      "name": "Dead bug",
+      "cues": "De barriga para cima, desça braço e perna opostos com a lombar apoiada."
+    },
+    "crunch": {
+      "name": "Abdominal",
+      "cues": "Joelhos dobrados; tire os ombros do chão e desça."
+    },
+    "reverse_crunch": {
+      "name": "Abdominal invertido",
+      "cues": "De barriga para cima, leve os joelhos ao peito."
+    },
+    "side_plank": {
+      "name": "Prancha lateral",
+      "cues": "Apoiado num cotovelo, eleve o quadril em linha reta."
+    },
+    "band_pallof_press": {
+      "name": "Pallof press com elástico",
+      "cues": "Elástico ao lado; empurre à frente e resista à rotação."
+    },
+    "bodyweight_squat": {
+      "name": "Agachamento livre",
+      "cues": "Desça para trás, joelhos alinhados aos pés, e suba."
+    },
+    "goblet_squat": {
+      "name": "Agachamento goblet",
+      "cues": "Halter no peito; agache e suba."
+    },
+    "sit_to_stand": {
+      "name": "Sentar e levantar",
+      "cues": "Da cadeira, levante sem usar as mãos e sente devagar."
+    },
+    "reverse_lunge": {
+      "name": "Afundo para trás",
+      "cues": "Dê um passo para trás, desça os dois joelhos e volte."
+    },
+    "leg_press": {
+      "name": "Leg press",
+      "cues": "Pés na largura do quadril; desça com controle e empurre."
+    },
+    "glute_bridge": {
+      "name": "Ponte de glúteos",
+      "cues": "De barriga para cima, empurre com os calcanhares e suba o quadril."
+    },
+    "dumbbell_romanian_deadlift": {
+      "name": "Levantamento terra romeno com halteres",
+      "cues": "Joelhos leves; incline no quadril com os halteres perto das pernas."
+    },
+    "lying_hamstring_curl_machine": {
+      "name": "Mesa flexora",
+      "cues": "Leve os calcanhares em direção aos glúteos e desça devagar."
+    },
+    "standing_calf_raise": {
+      "name": "Elevação de panturrilha",
+      "cues": "Suba na ponta dos pés, pause e desça devagar."
+    },
+    "seated_knee_raise": {
+      "name": "Elevação de joelho sentado",
+      "cues": "Sente-se ereto e suba um joelho em direção ao peito."
+    },
+    "side_lying_adductor_raise": {
+      "name": "Elevação de adutor de lado",
+      "cues": "Deitado de lado, suba um pouco a perna de baixo."
+    },
+    "wall_tibialis_raise": {
+      "name": "Elevação de ponta na parede",
+      "cues": "Costas na parede, suba as pontas dos pés e desça."
+    },
+    "band_terminal_knee_extension": {
+      "name": "Extensão de joelho com elástico",
+      "cues": "Elástico atrás do joelho; estique contra ele."
+    },
+    "step_up": {
+      "name": "Subida no banco",
+      "cues": "Suba no banco, fique ereto e desça com controle."
+    },
+    "single_leg_balance": {
+      "name": "Equilíbrio numa perna",
+      "cues": "Fique numa perna só; use um apoio se precisar."
+    },
+    "mountain_climber": {
+      "name": "Escalador",
+      "cues": "Em prancha, leve os joelhos ao peito, um de cada vez."
+    },
+    "doorway_chest_stretch": {
+      "name": "Alongamento de peito na porta",
+      "cues": "Antebraço no batente; incline-se para frente com suavidade."
+    },
+    "cross_body_shoulder_stretch": {
+      "name": "Alongamento de ombro cruzado",
+      "cues": "Puxe um braço cruzado sobre o peito com o outro."
+    },
+    "overhead_triceps_stretch": {
+      "name": "Alongamento de tríceps",
+      "cues": "Mão atrás da cabeça; pressione o cotovelo com suavidade."
+    },
+    "standing_quad_stretch": {
+      "name": "Alongamento de quadríceps em pé",
+      "cues": "Apoie-se; puxe o calcanhar em direção ao glúteo."
+    },
+    "seated_hamstring_stretch": {
+      "name": "Alongamento de posterior sentado",
+      "cues": "Perna estendida; incline-se a partir do quadril."
+    },
+    "seated_figure_four_stretch": {
+      "name": "Alongamento em quatro sentado",
+      "cues": "Tornozelo sobre o outro joelho; incline-se com suavidade."
+    },
+    "wall_calf_stretch": {
+      "name": "Alongamento de panturrilha na parede",
+      "cues": "Mãos na parede, perna de trás reta, calcanhar no chão."
+    },
+    "childs_pose": {
+      "name": "Postura da criança",
+      "cues": "Sente sobre os calcanhares e estenda os braços à frente."
+    },
+    "kneeling_hip_flexor_stretch": {
+      "name": "Alongamento de flexores do quadril",
+      "cues": "Um joelho no chão; leve o quadril à frente com suavidade."
+    },
+    "upper_trap_stretch": {
+      "name": "Alongamento de trapézio",
+      "cues": "Incline a orelha em direção ao ombro; relaxe."
+    },
+    "standing_side_stretch": {
+      "name": "Alongamento lateral",
+      "cues": "Estenda um braço acima da cabeça e incline para o lado."
+    },
+    "hug_upper_back_stretch": {
+      "name": "Alongamento de costas altas",
+      "cues": "Abrace-se e arredonde a parte alta das costas."
+    },
+    "biceps_wall_stretch": {
+      "name": "Alongamento de bíceps na parede",
+      "cues": "Palma na parede atrás; gire devagar."
+    },
+    "box_breathing": {
+      "name": "Respiração lenta",
+      "cues": "Inspire em 4, segure 4, expire em 4, segure 4."
+    }
+  },
+  "generator": {
+    "notes": {
+      "balance": "Adicionamos {{groups}} para equilibrar sua semana.",
+      "rested": "{{muscles}} descansa hoje: foi treinado duas sessões seguidas.",
+      "trimmed": "Encurtado para caber no seu tempo.",
+      "groups": {
+        "push": "empurrar",
+        "pull": "costas",
+        "legs": "pernas",
+        "core": "core"
+      }
+    }
+  },
+  "preview": {
+    "title": "Prévia do treino",
+    "eachSide": "cada lado",
+    "seconds": "{{value}} s",
+    "minutes": "{{value}} min",
+    "underReview": "Um treinador certificado está revisando a biblioteca de exercícios. Seus treinos vão aparecer aqui em breve.",
+    "devOnly": "Versão de desenvolvimento: esta prévia usa exercícios em rascunho, ainda sem revisão. Eles nunca chegam aos usuários.",
+    "summary": "{{minutes}} min · {{warmup}} min de aquecimento · {{cooldown}} min de desaquecimento",
+    "parts": {
+      "warmup_general": "Aquecimento · cardio leve",
+      "warmup_mobility": "Aquecimento · mobilidade",
+      "ramp_up": "Aquecimento · série de aproximação",
+      "main": "Principal",
+      "finisher_cardio": "Final · cardio",
+      "finisher_mobility": "Final · mobilidade",
+      "cooldown_walk": "Desaquecimento · caminhada",
+      "cooldown_stretch": "Desaquecimento · alongamento",
+      "cooldown_breathing": "Desaquecimento · respiração"
+    }
   }
 }

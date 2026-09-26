@@ -171,3 +171,81 @@ Telas conferidas com os mockups 01 a 05, na ordem do fluxo. Tudo local, sem cont
 3. **Nomes anatômicos** (ex.: "Peitoral maior · porção clavicular"): convém o revisor certificado conferir junto com os exercícios.
 4. **Modelo de idade:** qualquer pessoa pode escolher qualquer faixa, inclusive a de criança (a SPEC diz "trocar a qualquer momento"). Quer limitar?
 5. **Supabase:** aguardando a URL e a anon key do projeto.
+
+## Decisões da Fase 2 aplicadas e Supabase (27/09/2026)
+
+- **Folha de objetivos:** agora diz "Para o treino todo" acima de exercícios, séries e dias.
+- **Idade do modelo:**
+  - Perfis adultos veem só corpos 18+.
+  - Corpos de criança e adolescente aparecem só em perfis de criança ou adolescente, incluindo o responsável que gerencia um desses perfis.
+  - O modo de segurança continua vindo da data de nascimento.
+- **Supabase (projeto "TapStrong App"):**
+  - Todas as migrations aplicadas pelo conector.
+  - O verificador de segurança apontou que o usuário anônimo podia executar duas funções internas; corrigi com uma migration.
+  - `.env` local criado com a URL e a chave pública. Ele não vai para o git.
+- **Ficou para depois:** pinça com zoom no mapa (Fase 8) e revisão dos nomes anatômicos pelo revisor certificado.
+
+## Fase 3 — Biblioteca de exercícios e gerador (28/09/2026)
+
+### Feito
+
+- **Banco (biblioteca + revisão):**
+  - Tabelas `exercises`, `exercise_muscles` e `exercise_reviews`, com padrão de movimento, onde o exercício pode entrar no treino (aquecimento, principal, finalizador, desaquecimento), tipo de dose, carga, lado único e impacto.
+  - O próprio banco impõe as regras da SPEC §2.1:
+    - todo exercício novo nasce rascunho;
+    - cada passo exige revisão aprovada **da versão atual do mapeamento**: automática, depois segunda checagem, depois revisor certificado com nome e credencial;
+    - `released` exige mídia licenciada; mídia de protótipo é recusada;
+    - o mapeamento só muda em rascunho, e qualquer mudança invalida as revisões antigas.
+  - Músculos ganharam grupo (empurrar / puxar / pernas / core).
+- **Biblioteca de protótipo:** 71 exercícios, todos em **rascunho** (`supabase/seed/exercises.json` → `supabase/seed.sql`).
+  - Passei de ~40 para 71 para cobrir aquecimento e desaquecimento em todas as posições (em pé, com apoio, sentado), em casa, na academia e ao ar livre.
+  - Os mapeamentos seguem referências padrão, mas **precisam** da segunda checagem e do revisor certificado.
+  - Nomes e instruções curtas nos 3 idiomas.
+- **Rascunhos nunca chegam ao usuário:**
+  - Só builds de desenvolvimento carregam a biblioteca de protótipo.
+  - O `npm run bundle:check` exporta os bundles de produção (Android, iOS, web) e falha se algum contiver os rascunhos.
+  - Esse teste pegou um erro meu (o rascunho estava entrando no bundle web de produção), que foi corrigido. Hoje: **0** em produção.
+- **Checagem automática** (`autoCheck`): músculos só do banco, ênfases coerentes, criança sem carga e sem máquina, alto impacto sempre com as restrições certas, alongamento sempre em tempo, e mais. Os 71 passam.
+- **Gerador determinístico** (`src/features/generator`), seguindo a SPEC §8:
+  - **Filtros:** só `released` (rascunhos só em desenvolvimento), local e equipamento, faixa de idade, posição, restrições, dores e condições. Com problema cardíaco, gravidez ou cirurgia recente, só impacto zero. 60+ nunca recebe impacto alto.
+  - **Aquecimento:** cardio leve (movimentos mais animados para jovens, com apoio primeiro para 60+), mobilidade das articulações do dia e série de aproximação do primeiro exercício com carga. A aproximação vale para adultos; adolescentes fazem só leve; crianças não fazem.
+  - **Trabalho principal:** músculos escolhidos por prioridade, com dosagem pela tabela de objetivos.
+  - **Passe de equilíbrio:** se a pessoa só escolhe peito, entram costas e pernas, a não ser que já tenham sido treinadas na semana. Nunca três sessões fortes seguidas no mesmo músculo.
+  - **Finalizador:** cardio para perder peso ou condicionamento; mobilidade para mobilidade ou equilíbrio.
+  - **Desaquecimento:** caminhada, alongamentos dos músculos treinados (com apoio da cadeira primeiro para 60+) e respiração.
+  - **Tempo:** aquecimento e desaquecimento pelos minutos da tabela da SPEC. "Só 15 min" encolhe os dois (mínimo 3 e 2 min), nunca remove. Se não couber, sai primeiro o finalizador, depois o exercício de menor prioridade.
+- **Troca de exercício (seu requisito novo):**
+  - `getAlternatives`: até 5 opções, mesmo músculo principal e mesmo papel, mesmos filtros de segurança, sem repetir o que já está no treino. "Máquina ocupada" tira a mesma máquina. Ordem: ênfase → padrão de movimento → nível → slug.
+  - `swapItem`: troca na mesma posição, nunca adiciona, mantém as séries, recalcula as repetições pelo objetivo e, com séries já feitas, vale só para as que faltam. A série de aproximação acompanha a troca.
+  - SPEC §7, §8 e §9 atualizadas, com a lista das melhorias pós-MVP na ordem que você passou.
+  - A tela da troca, o "Desfazer" de 5 s, o evento e o histórico salvo entram na Fase 4 (a lógica já está pronta).
+- **Prévia:** depois de "Gerar meu treino", o build de desenvolvimento mostra o treino gerado. O de produção diz que a biblioteca está em revisão.
+- **Correção encontrada no teste da web:** ícones e imagens decorativas geravam um aviso de atributo inválido. Corrigido.
+
+### Testes
+
+- `npm run check`: **226 testes** (eram 166). Os 41 do gerador cobrem:
+  - estrutura correta em **192 combinações** (4 modos × 3 posições × 4 locais/equipamentos × 4 durações);
+  - todo item gerado passando por todos os filtros;
+  - só `released` sem rascunhos;
+  - restrições, condições, 60+, criança, sentado, local e equipamento;
+  - dosagem, aproximação, finalizador, tempo e equilíbrio;
+  - determinismo, mesmo com a biblioteca em outra ordem;
+  - troca: mantém o músculo, nunca viola restrição, nunca repete, máquina ocupada, ordem, séries já feitas.
+- `npm run db:test`: passa, incluindo o fluxo de revisão (liberação sem revisão, com mídia de protótipo, mapeamento travado, versão nova invalida revisões, app só enxerga `released`).
+- `npm run bundle:check`: 0 rascunhos nos bundles de produção.
+
+### Como testar
+
+1. `git pull`, depois `npm install`, depois `npx expo start` (Expo Go é build de desenvolvimento, então mostra a prévia).
+2. Faça o onboarding, marque músculos no mapa e toque em "Gerar meu treino".
+3. Troque o local, o tempo e a posição no resumo e veja o treino mudar.
+
+### Perguntas em aberto
+
+1. **Revisão dos 71 exercícios:** antes de qualquer lançamento, o revisor certificado precisa aprovar cada um. Quer que eu prepare uma planilha de revisão (exercício, músculos, ênfases, contraindicações) para mandar a ele?
+2. **Edge Function do coach:** ainda falta você fazer duas coisas no painel do Supabase:
+   - **Authentication → Sign In / Providers → Allow anonymous sign-ins** (ligar);
+   - cadastrar a chave da Claude no terminal: `npx supabase secrets set ANTHROPIC_API_KEY=... --project-ref vycdrotqkjwvkzgjovpb`.
+     Quando estiver feito, eu publico a função.
+3. **Adolescentes e carga:** o gerador prefere peso do corpo e elástico para menores; halteres só entram quando são claramente o melhor exercício para o músculo. Pode ser assim?

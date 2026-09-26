@@ -61,7 +61,9 @@
     "test": "jest",
     "check": "npm run lint && npm run typecheck && npm run functions:check && npm test",
     "db:test": "bash scripts/db-test.sh",
-    "functions:check": "deno check --config supabase/functions/deno.json supabase/functions/*/index.ts && deno lint --config supabase/functions/deno.json supabase/functions"
+    "functions:check": "deno check --config supabase/functions/deno.json supabase/functions/*/index.ts && deno lint --config supabase/functions/deno.json supabase/functions",
+    "seed:build": "node scripts/build-seed.mjs",
+    "bundle:check": "bash scripts/check-release-bundle.sh"
   },
   "private": true
 }
