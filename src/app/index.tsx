@@ -39,6 +39,7 @@ export default function ComponentGallery() {
 
         <View style={styles.section}>
           <AppText variant="h2">{t('dev.gallery.buttons')}</AppText>
+          <Button variant="accent" label={t('dev.gallery.accent')} />
           <Button label={t('dev.gallery.primary')} />
           <Button variant="secondary" label={t('dev.gallery.secondary')} />
           <Button variant="ghost" label={t('dev.gallery.ghost')} />

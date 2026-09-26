@@ -12,6 +12,8 @@ export const colors = {
   accent: '#C23E17',
   accentPressed: '#A3340F',
   teal: '#1F5F5B',
+  /** Light teal fill behind safety notes (mockups 1b, 2b, 3, 12). */
+  tealTint: '#E3ECEA',
   surface: '#FFFFFF',
   onAccent: '#FFFFFF',
   bodyCanvas: '#E9E5DE',
@@ -73,7 +75,7 @@ export const typeSteps = [13, 15, 17, 20, 24, 28, 34, 42, 52, 64] as const;
 export const SENIOR_TYPE_BOOST = 2;
 
 export type TextVariant =
-  'display' | 'h1' | 'h2' | 'h3' | 'body' | 'bodyStrong' | 'label' | 'caption';
+  'display' | 'h1' | 'h2' | 'h3' | 'button' | 'body' | 'bodyStrong' | 'label' | 'caption';
 
 type VariantSpec = {
   step: number;
@@ -99,6 +101,13 @@ export const textVariants: Record<TextVariant, VariantSpec> = {
     uppercase: true,
     letterSpacing: 0.3,
     lineHeightRatio: 1.15,
+  },
+  button: {
+    step: 1,
+    font: fonts.heading,
+    uppercase: true,
+    letterSpacing: 0.9,
+    lineHeightRatio: 1.2,
   },
   body: { step: 2, font: fonts.body, lineHeightRatio: 1.4 },
   bodyStrong: { step: 2, font: fonts.bodySemi, lineHeightRatio: 1.4 },

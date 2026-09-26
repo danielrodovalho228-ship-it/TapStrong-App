@@ -22,6 +22,7 @@
       "title": "Componentes",
       "subtitle": "Peças da fase 0. Esta tela será trocada pela Boas-vindas na fase 1.",
       "buttons": "Botões",
+      "accent": "Gerar meu treino",
       "primary": "Começar",
       "secondary": "Já tenho conta",
       "ghost": "Pular por agora",

@@ -124,9 +124,10 @@ Verify every point on every one of the 28 images; bodies differ.
 ## 7. Data model (Postgres)
 
 - **`profiles`**
-  - `id` (= auth user), `display_name`, `birth_month`, `birth_year`, `sex` (m/f), `body_band` (derived), `height_cm?`, `weight_kg?`, `waist_cm?`
+  - `id` (own profile id), `user_id?` (= auth user, for profiles with their own login), `display_name`, `birth_month`, `birth_year`, `sex` (m/f; null = neutral body), `body_band` (derived), `height_cm?`, `weight_kg?`, `waist_cm?`
   - `units` (imperial default in US), `locale`, `mode` (child/teen/adult/senior)
   - `guardian_id?` (child and senior profiles managed under a family plan), `created_at`
+  - The signed-in user owns the account. Managed profiles (a child, a parent or grandparent) may have no login: `user_id` is null and they are linked through `guardian_id` / `family_members`. Every profile has a `user_id` or a `guardian_id`.
 - **`health_screen`**: `profile_id`, `pain_areas[]`, `conditions[]`, `position` (standing / with_support / seated_only), `red_flag` bool, `answered_at`
 - **`restrictions`**: `id`, `profile_id`, `area`, `side?`, `source` (pain_report / repair / manual), `note`, `active`, `created_at`
 - **`preferences`**: `profile_id`, `location` (gym / home / outdoors), `minutes`, `days_per_week`, `equipment[]`, `main_goals[]` (look / lose_weight / strength / bone_health / sport / mobility / balance)

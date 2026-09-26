@@ -3,7 +3,7 @@ import '@/i18n';
 import { act, fireEvent, render, screen } from '@testing-library/react-native';
 
 import { useAppModeStore } from '@/stores/app-mode';
-import { fontSizeFor, SENIOR_TYPE_BOOST } from '@/theme';
+import { colors, fontSizeFor, SENIOR_TYPE_BOOST } from '@/theme';
 
 import { AppText } from './AppText';
 import { Button } from './Button';
@@ -33,6 +33,25 @@ describe('Button', () => {
       ...[screen.getByRole('button').props.style].flat(Infinity).filter(Boolean),
     );
     expect(flat.minHeight).toBeGreaterThanOrEqual(54);
+  });
+});
+
+describe('Button variants', () => {
+  const bg = (label: string) =>
+    Object.assign(
+      {},
+      ...[screen.getByRole('button', { name: label }).props.style].flat(Infinity).filter(Boolean),
+    ).backgroundColor;
+
+  it('primary is black and accent is orange', async () => {
+    await render(
+      <>
+        <Button label="Continue" />
+        <Button label="Generate" variant="accent" />
+      </>,
+    );
+    expect(bg('Continue')).toBe(colors.ink);
+    expect(bg('Generate')).toBe(colors.accent);
   });
 });
 

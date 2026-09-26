@@ -19,6 +19,6 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   default: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.line },
-  safety: { backgroundColor: colors.surface, borderWidth: 1.5, borderColor: colors.teal },
+  safety: { backgroundColor: colors.tealTint },
   dark: { backgroundColor: colors.dark.background },
 });

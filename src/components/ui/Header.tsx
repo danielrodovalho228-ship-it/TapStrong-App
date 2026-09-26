@@ -9,22 +9,26 @@ import { IconButton } from './IconButton';
 
 export type HeaderProps = {
   title?: string;
-  /** Small uppercase line above the title (e.g. "Step 2 of 5"). */
+  /** Small uppercase line (e.g. "Step 1 of 7"), shown beside the back button. */
   eyebrow?: string;
   onBack?: () => void;
   right?: ReactNode;
 };
 
+/** Left-aligned top bar, as in the mockups: outlined back box, eyebrow, optional title. */
 export function Header({ title, eyebrow, onBack, right }: HeaderProps) {
   const { t } = useTranslation();
   return (
     <View style={styles.row}>
-      <View style={styles.side}>
-        {onBack ? (
-          <IconButton icon="chevron-left" accessibilityLabel={t('common.back')} onPress={onBack} />
-        ) : null}
-      </View>
-      <View style={styles.center}>
+      {onBack ? (
+        <IconButton
+          icon="chevron-left"
+          variant="outlined"
+          accessibilityLabel={t('common.back')}
+          onPress={onBack}
+        />
+      ) : null}
+      <View style={styles.text}>
         {eyebrow ? (
           <AppText variant="caption" color={colors.muted} style={styles.eyebrow}>
             {eyebrow}
@@ -36,7 +40,7 @@ export function Header({ title, eyebrow, onBack, right }: HeaderProps) {
           </AppText>
         ) : null}
       </View>
-      <View style={[styles.side, styles.right]}>{right}</View>
+      {right ? <View style={styles.right}>{right}</View> : null}
     </View>
   );
 }
@@ -46,10 +50,10 @@ const styles = StyleSheet.create({
     minHeight: sizes.touchTarget + spacing.sm,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: spacing.sm,
+    gap: spacing.md,
+    paddingHorizontal: spacing.lg,
   },
-  side: { width: sizes.touchTarget, alignItems: 'flex-start' },
+  text: { flex: 1 },
   right: { alignItems: 'flex-end' },
-  center: { flex: 1, alignItems: 'center' },
-  eyebrow: { textTransform: 'uppercase', letterSpacing: 0.6 },
+  eyebrow: { textTransform: 'uppercase', letterSpacing: 0.8 },
 });

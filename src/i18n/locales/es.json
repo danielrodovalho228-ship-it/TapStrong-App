@@ -22,6 +22,7 @@
       "title": "Componentes",
       "subtitle": "Bloques de la fase 0. Esta pantalla se reemplaza por Bienvenida en la fase 1.",
       "buttons": "Botones",
+      "accent": "Generar mi entrenamiento",
       "primary": "Comenzar",
       "secondary": "Ya tengo una cuenta",
       "ghost": "Omitir por ahora",

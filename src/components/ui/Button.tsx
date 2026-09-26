@@ -4,7 +4,12 @@ import { colors, radius, sizes, spacing } from '@/theme';
 
 import { AppText } from './AppText';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost';
+/**
+ * primary: black, the default main button (Continue, Get started).
+ * accent: orange, only for the single most important action on a screen
+ *   (e.g. Generate my workout, Start with warm-up).
+ */
+export type ButtonVariant = 'primary' | 'accent' | 'secondary' | 'ghost';
 
 export type ButtonProps = Omit<PressableProps, 'children' | 'style'> & {
   label: string;
@@ -22,7 +27,8 @@ export function Button({
   ...rest
 }: ButtonProps) {
   const isDisabled = disabled || loading;
-  const textColor = variant === 'primary' ? colors.onAccent : colors.ink;
+  const filled = variant === 'primary' || variant === 'accent';
+  const textColor = filled ? colors.onAccent : colors.ink;
 
   return (
     <Pressable
@@ -34,7 +40,8 @@ export function Button({
       style={({ pressed }) => [
         styles.base,
         fullWidth && styles.fullWidth,
-        variant === 'primary' && {
+        variant === 'primary' && { backgroundColor: pressed ? colors.mutedStrong : colors.ink },
+        variant === 'accent' && {
           backgroundColor: pressed ? colors.accentPressed : colors.accent,
         },
         variant === 'secondary' && [styles.secondary, pressed && styles.secondaryPressed],
@@ -47,7 +54,7 @@ export function Button({
         {loading ? (
           <ActivityIndicator color={textColor} />
         ) : (
-          <AppText variant="h3" color={textColor} numberOfLines={1}>
+          <AppText variant="button" color={textColor} numberOfLines={1}>
             {label}
           </AppText>
         )}
