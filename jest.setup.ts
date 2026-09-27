@@ -40,3 +40,9 @@ jest.mock('expo-speech', () => ({
   speak: jest.fn(),
   stop: jest.fn(async () => undefined),
 }));
+
+// Kids under 13 are off for launch (Phase 12), but their code stays and is
+// tested: suites run with the switch on unless they turn it off themselves
+// (see qa3-kids-off.test.tsx for the launch behaviour).
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+require('./src/lib/features').setKidsUnder13Enabled(true);

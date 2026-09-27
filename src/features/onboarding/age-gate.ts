@@ -9,6 +9,8 @@ import {
   type YearMonth,
 } from '../profile/age';
 
+import { kidsUnder13Enabled, LAUNCH_MIN_AGE } from '@/lib/features';
+
 import type { Who } from './options';
 
 export type ChildLock = 'under13' | 'teen';
@@ -30,7 +32,14 @@ export type AgeGateResult =
   | { status: 'child_locked'; age: number }
   /** A teen profile stays 13–17: moving it under 13 would skip parental consent (QA R2-01). */
   | { status: 'teen_locked'; age: number }
-  | { status: 'parent_too_young'; age: number };
+  | { status: 'parent_too_young'; age: number }
+  /**
+   * Kids under 13 are off (launch, Phase 12): someone under 13 answering for
+   * themselves gets the neutral "13 and up" stop, locked on the device.
+   */
+  | { status: 'under_min'; age: number }
+  /** Kids under 13 are off: a parent can't add a child profile under 13 yet. */
+  | { status: 'child_unavailable'; age: number };
 
 /** Routes the age gate (mockup 02, SPEC §2.3 and §8 "Age & mode"). */
 export function evaluateAgeGate(
@@ -48,6 +57,10 @@ export function evaluateAgeGate(
   const age = ageFrom(birth, today);
   if (lock === 'under13' && age >= 13) return { status: 'child_locked', age };
   if (lock === 'teen' && age < 13) return { status: 'teen_locked', age };
+  if (!kidsUnder13Enabled() && age < LAUNCH_MIN_AGE) {
+    if (who === 'child') return { status: 'child_unavailable', age };
+    if (who === 'me') return { status: 'under_min', age };
+  }
   if (age < MIN_AGE) return { status: 'too_young', age };
   if (who === 'child' && age >= 18) return { status: 'child_too_old', age };
   if (who === 'parent' && age < 18) return { status: 'parent_too_young', age };

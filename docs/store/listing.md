@@ -53,7 +53,7 @@ FOR THE WHOLE FAMILY
 
 - 60+ mode: bigger text, balance focus, seated and supported options, audio summaries.
 - Teens get a training-only experience: no body-fat numbers, no photos.
-- Kids 9–12 join through a parent on the Family plan, with parental consent.
+- Teens 13–17 can join a parent's Family plan, with a parent PIN for plan and profile changes.
 
 HONEST BILLING
 
@@ -104,7 +104,7 @@ PARA TODA LA FAMILIA
 
 - Modo 60+: letra más grande, enfoque en equilibrio, opciones sentado o con apoyo, resúmenes en audio.
 - Los adolescentes solo entrenan: sin números de grasa corporal, sin fotos.
-- Niños de 9 a 12 años entran con un padre o madre en el plan Familia, con consentimiento parental.
+- Los adolescentes de 13 a 17 años pueden unirse al plan Familia de su padre o madre, con un PIN de padres para cambios de plan y perfiles.
 
 COBRO HONESTO
 
@@ -155,7 +155,7 @@ PARA A FAMÍLIA TODA
 
 - Modo 60+: letra maior, foco em equilíbrio, opções sentado ou com apoio, resumos em áudio.
 - Adolescentes só treinam: sem números de gordura corporal, sem fotos.
-- Crianças de 9 a 12 anos entram pelo pai ou pela mãe no plano Família, com consentimento dos pais.
+- Adolescentes de 13 a 17 anos podem entrar no plano Família do pai ou da mãe, com um PIN dos pais para mudanças de plano e de perfis.
 
 COBRANÇA HONESTA
 

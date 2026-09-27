@@ -1,3 +1,5 @@
+import { kidsUnder13Enabled } from '@/lib/features';
+
 import { MUSCLES } from '../muscles';
 import type { AppMode, BodyBand } from '../profile/age';
 
@@ -54,6 +56,8 @@ const MINOR_BANDS: BodyBand[] = ['kid', 'teen'];
  * birth date, never from the chosen image.
  */
 export function allowedBands(mode: AppMode): BodyBand[] {
+  // Kids under 13 off for launch (Phase 12): no child body models at all.
+  if (!kidsUnder13Enabled() && mode === 'teen') return ['teen'];
   return mode === 'child' || mode === 'teen' ? MINOR_BANDS : ADULT_BANDS;
 }
 

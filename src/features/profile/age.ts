@@ -8,11 +8,13 @@
  */
 
 import { clock } from '@/lib/clock';
+import { KIDS_MIN_AGE, kidsUnder13Enabled, minAge } from '@/lib/features';
 
 export type BodyBand = 'kid' | 'teen' | 'young' | 'adult' | 'mid' | 'senior' | 'elder';
 export type AppMode = 'child' | 'teen' | 'adult' | 'senior';
 
-export const MIN_AGE = 9;
+/** Lowest supported age with kids on (SPEC §5); see minAge() for the live one. */
+export const MIN_AGE = KIDS_MIN_AGE;
 export const MAX_AGE = 110;
 
 export type YearMonth = { year: number; month: number }; // month 1–12
@@ -27,7 +29,7 @@ export function ageFrom(birth: YearMonth, today: YearMonth = currentYearMonth())
 }
 
 export function bandForAge(age: number): BodyBand | null {
-  if (age < MIN_AGE) return null;
+  if (age < minAge()) return null;
   if (age <= 12) return 'kid';
   if (age <= 17) return 'teen';
   if (age <= 29) return 'young';
@@ -46,7 +48,9 @@ export function modeForAge(age: number): AppMode {
 
 /** Birth years offered in the age gate, newest first. */
 export function birthYearOptions(today: YearMonth = currentYearMonth()): number[] {
-  const newest = today.year - MIN_AGE;
+  // A neutral age screen (store rule): the list never hints at the cut-off,
+  // so with kids off it still reaches young ages and the gate says no.
+  const newest = today.year - (kidsUnder13Enabled() ? MIN_AGE : 5);
   const oldest = today.year - MAX_AGE;
   const years: number[] = [];
   for (let y = newest; y >= oldest; y--) years.push(y);

@@ -882,16 +882,16 @@ O relatório de QA está em `docs/qa-round-1.md`. Corrigi na ordem pedida: seç�
 
 O relatório da rodada 2 está em `docs/qa-round-2.md`. Segui a ordem pedida (seção 0, P0, P1, P2) e incluí as suas duas decisões aprovadas. Cada grupo tem seu commit:
 
-| Grupo | Commit |
-| --- | --- |
-| Relatório da QA rodada 2 | `37e3662` |
-| Seção 0 — mapa de recuperação = mapa do corpo | `5266740` |
+| Grupo                                                                   | Commit    |
+| ----------------------------------------------------------------------- | --------- |
+| Relatório da QA rodada 2                                                | `37e3662` |
+| Seção 0 — mapa de recuperação = mapa do corpo                           | `5266740` |
 | P0 — adolescentes na família, remover membro, dor aguda por articulação | `55cddab` |
-| P1 — paywall só para o dono, consentimento só de adulto, PIN dos pais | `c5789f8` |
-| P1 — gerador (recuperação, equilíbrio, carga leve, semana equilibrada) | `b79e3a2` |
-| Decisão 1 — mobilidade curta conta para a sequência | `280098d` |
-| Biblioteca — cobertura sentado/com apoio, fases 2 e 3 do reparo | `0c66bfb` |
-| P2 — acabamento | `86b8aba` |
+| P1 — paywall só para o dono, consentimento só de adulto, PIN dos pais   | `c5789f8` |
+| P1 — gerador (recuperação, equilíbrio, carga leve, semana equilibrada)  | `b79e3a2` |
+| Decisão 1 — mobilidade curta conta para a sequência                     | `280098d` |
+| Biblioteca — cobertura sentado/com apoio, fases 2 e 3 do reparo         | `0c66bfb` |
+| P2 — acabamento                                                         | `86b8aba` |
 
 ### Feito
 

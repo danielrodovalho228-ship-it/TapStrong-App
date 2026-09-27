@@ -76,7 +76,8 @@
       "men": "Men",
       "women": "Women",
       "kids": "Kids 9+",
-      "seniors": "60+"
+      "seniors": "60+",
+      "teens": "Teens 13+"
     },
     "tap": "Tap.",
     "talk": "Talk.",
@@ -132,7 +133,8 @@
     "options": {
       "me": "Me",
       "child": "My child (under 18)",
-      "parent": "My parent or grandparent"
+      "parent": "My parent or grandparent",
+      "childTeen": "My teen (13–17)"
     },
     "birth": {
       "me": "Your birth month and year",
@@ -162,7 +164,9 @@
       "child_too_old": "This option is for kids under 18. Adults can set up their own profile.",
       "parent_too_young": "Check the birth year. This option is for parents and grandparents.",
       "child_locked": "A child profile stays in kids mode until they turn 13. To change it, contact support.",
-      "teen_locked": "A teen profile stays between 13 and 17. A child under 13 needs its own profile with parental consent."
+      "teen_locked": "A teen profile stays between 13 and 17. A child under 13 needs its own profile with parental consent.",
+      "under_min": "TapStrong is for ages 13 and up.",
+      "child_unavailable": "Profiles for children under 13 aren’t available yet. Teens 13–17 can join."
     },
     "footnote": "We use your age only to keep training safe for you.",
     "locked": "Only a parent can change the birth date on a child or teen profile.",
@@ -3904,7 +3908,8 @@
     "addTitle": "Add a family member",
     "kinds": {
       "child": "My child (under 18)",
-      "parent": "My parent or grandparent"
+      "parent": "My parent or grandparent",
+      "childTeen": "My teen (13–17)"
     },
     "name": "First name",
     "next": "Next: parent consent",
@@ -3941,7 +3946,8 @@
         "need_family": "Children need the Family plan.",
         "not_charged": "Child profiles open after the first Family plan charge. The free trial is not parental consent.",
         "owner_minor": "Only an adult (18+) can manage family profiles and give parental consent.",
-        "too_young": "TapStrong is for ages 9 and up."
+        "too_young": "TapStrong is for ages 9 and up.",
+        "disabled": "Child profiles under 13 aren’t available yet."
       }
     },
     "dashboard": {
@@ -4504,5 +4510,9 @@
     "title": "A friend invited you",
     "body": "Once you save your account and finish your first workout, you both get 1 free week of Premium.",
     "continue": "Continue"
+  },
+  "ageBlock": {
+    "title": "TapStrong is for ages 13 and up",
+    "body": "Thanks for stopping by. You can come back when you turn 13."
   }
 }

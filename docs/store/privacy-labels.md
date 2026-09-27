@@ -39,10 +39,9 @@ stays with the stores).
 - Data shared with third parties: No sharing for their own purposes. Service providers (Supabase, RevenueCat, Anthropic, PostHog, Sentry) process data on our behalf, which Google does not count as sharing.
 - Encrypted in transit: Yes.
 - Deletion: Yes, in the app (Account → Delete account) deletes the account and all its data; the store subscription is cancelled in the store.
-- Target audience includes children (9–12 via a parent's Family plan): answer the Families policy questions; the lawyer confirms the COPPA method (store transaction + parent notice).
+- Target audience: 13 and up (launch; under-13 is switched off, Phase 12). Declare no children under 13. If version 2 turns kids on, answer the Families policy questions and have the lawyer confirm the COPPA method (store transaction + parent notice) first.
 
 ## Age rating
 
 Health & Fitness, no objectionable content. Apple: 4+ is likely, but the
-app is not in the Kids category (mixed audience, children only through a
-parent). Google: complete the IARC questionnaire; declare the mixed audience.
+app is not in the Kids category (13 and up at launch). Google: complete the IARC questionnaire; target audience 13 and up.

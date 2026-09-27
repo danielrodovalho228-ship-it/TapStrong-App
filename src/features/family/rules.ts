@@ -1,3 +1,5 @@
+import { kidsUnder13Enabled } from '@/lib/features';
+
 import { currentPlan, FAMILY_MAX_PROFILES } from '../billing/rules';
 import type { Entitlement } from '../billing/store';
 import { evaluateAgeGate } from '../onboarding/age-gate';
@@ -6,7 +8,15 @@ import { currentYearMonth, type YearMonth } from '../profile/age';
 import type { LocalProfile } from './store';
 
 export type ChildBlocker =
-  'bad_params' | 'not_child' | 'too_young' | 'owner_minor' | 'full' | 'need_family' | 'not_charged';
+  /** Kids under 13 are off for launch (Phase 12). */
+  | 'disabled'
+  | 'bad_params'
+  | 'not_child'
+  | 'too_young'
+  | 'owner_minor'
+  | 'full'
+  | 'need_family'
+  | 'not_charged';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -27,6 +37,7 @@ export function childConsentBlocker(input: {
   ownerAge: number | null;
 }): ChildBlocker | null {
   const { id, birth, profiles, entitlement, now } = input;
+  if (!kidsUnder13Enabled()) return 'disabled';
   if (!id || !UUID.test(id) || profiles.some((p) => p.id === id)) return 'bad_params';
   if (!birth.year || !birth.month || birth.month < 1 || birth.month > 12) return 'bad_params';
   const gate = evaluateAgeGate(

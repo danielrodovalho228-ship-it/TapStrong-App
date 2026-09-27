@@ -76,7 +76,8 @@
       "men": "Homens",
       "women": "Mulheres",
       "kids": "Crianças 9+",
-      "seniors": "60+"
+      "seniors": "60+",
+      "teens": "Adolescentes 13+"
     },
     "tap": "Toque.",
     "talk": "Fale.",
@@ -132,7 +133,8 @@
     "options": {
       "me": "Eu",
       "child": "Meu filho ou filha (menor de 18)",
-      "parent": "Meu pai, mãe, avô ou avó"
+      "parent": "Meu pai, mãe, avô ou avó",
+      "childTeen": "Meu filho ou filha adolescente (13–17)"
     },
     "birth": {
       "me": "Seu mês e ano de nascimento",
@@ -162,7 +164,9 @@
       "child_too_old": "Esta opção é para menores de 18. Adultos podem criar o próprio perfil.",
       "parent_too_young": "Confira o ano de nascimento. Esta opção é para pais e avós.",
       "child_locked": "Um perfil infantil fica no modo criança até os 13 anos. Para mudar, fale com o suporte.",
-      "teen_locked": "Um perfil de adolescente fica entre 13 e 17 anos. Uma criança com menos de 13 precisa de um perfil próprio, com o consentimento dos pais."
+      "teen_locked": "Um perfil de adolescente fica entre 13 e 17 anos. Uma criança com menos de 13 precisa de um perfil próprio, com o consentimento dos pais.",
+      "under_min": "O TapStrong é para quem tem 13 anos ou mais.",
+      "child_unavailable": "Perfis para crianças com menos de 13 anos ainda não estão disponíveis. Adolescentes de 13 a 17 podem entrar."
     },
     "footnote": "Usamos sua idade só para manter o treino seguro para você.",
     "locked": "Só o pai ou a mãe pode mudar a data de nascimento num perfil de criança ou adolescente.",
@@ -3904,7 +3908,8 @@
     "addTitle": "Adicionar familiar",
     "kinds": {
       "child": "Meu filho ou filha (menor de 18)",
-      "parent": "Meu pai, mãe, avô ou avó"
+      "parent": "Meu pai, mãe, avô ou avó",
+      "childTeen": "Meu filho ou filha adolescente (13–17)"
     },
     "name": "Primeiro nome",
     "next": "Próximo: consentimento do responsável",
@@ -3941,7 +3946,8 @@
         "need_family": "Crianças precisam do plano Família.",
         "not_charged": "Perfis infantis abrem depois da primeira cobrança do plano Família. O teste grátis não é consentimento dos pais.",
         "owner_minor": "Só um adulto (18+) pode gerenciar perfis da família e dar o consentimento dos pais.",
-        "too_young": "O TapStrong é para quem tem 9 anos ou mais."
+        "too_young": "O TapStrong é para quem tem 9 anos ou mais.",
+        "disabled": "Perfis de crianças com menos de 13 anos ainda não estão disponíveis."
       }
     },
     "dashboard": {
@@ -4504,5 +4510,9 @@
     "title": "Um amigo convidou você",
     "body": "Quando você salvar sua conta e terminar o primeiro treino, vocês dois ganham 1 semana grátis de Premium.",
     "continue": "Continuar"
+  },
+  "ageBlock": {
+    "title": "O TapStrong é para quem tem 13 anos ou mais",
+    "body": "Obrigado pela visita. Você pode voltar quando fizer 13."
   }
 }

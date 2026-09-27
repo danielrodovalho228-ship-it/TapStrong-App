@@ -8,14 +8,18 @@ import { bodyImage } from '@/features/bodymap/images';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { SUPPORTED_LOCALES, type SupportedLocale } from '@/i18n';
 import { track } from '@/lib/analytics';
+import { kidsUnder13Enabled } from '@/lib/features';
 import { colors, fonts, radius, spacing } from '@/theme';
 
-const MODELS = [
-  { key: 'men', source: bodyImage('young', 'm') },
-  { key: 'women', source: bodyImage('young', 'f') },
-  { key: 'kids', source: bodyImage('kid', 'f') },
-  { key: 'seniors', source: bodyImage('senior', 'm') },
-] as const;
+// Kids under 13 off for launch (Phase 12): the fourth tile shows teens 13+.
+const models = () => [
+  { key: 'men' as const, source: bodyImage('young', 'm') },
+  { key: 'women' as const, source: bodyImage('young', 'f') },
+  kidsUnder13Enabled()
+    ? { key: 'kids' as const, source: bodyImage('kid', 'f') }
+    : { key: 'teens' as const, source: bodyImage('teen', 'f') },
+  { key: 'seniors' as const, source: bodyImage('senior', 'm') },
+];
 
 /** Mockup 01 — Welcome. */
 export default function Welcome() {
@@ -62,7 +66,7 @@ export default function Welcome() {
       </View>
 
       <View style={styles.models}>
-        {MODELS.map((m) => (
+        {models().map((m) => (
           <View key={m.key} style={styles.model}>
             <Image
               source={m.source}

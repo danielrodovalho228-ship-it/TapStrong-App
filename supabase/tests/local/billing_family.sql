@@ -28,6 +28,27 @@ begin
   execute 'set role authenticated';
 end $$;
 
+-- Phase 12: kids under 13 are off by default. Even an adult owner with a
+-- charged Family plan and the notice can't create a child profile, and no
+-- client can read or flip the switch.
+do $$ begin
+  perform pg_temp.act_as('00000000-0000-0000-0000-0000000000f3');
+  begin
+    perform public.create_child_profile(gen_random_uuid(), 5::smallint, 2016::smallint, 'f', 'Mia', 'parent-notice-v1');
+    raise exception 'child profile created while kids under 13 are off';
+  exception when insufficient_privilege then null;
+  end;
+  begin
+    update public.app_settings set value = 'true' where key = 'kids_under_13_enabled';
+    raise exception 'a client flipped the kids switch';
+  exception when insufficient_privilege then null;
+  end;
+  execute 'reset role';
+end $$;
+
+-- The rest of the suite tests the (kept) child flow with the switch on.
+update public.app_settings set value = 'true' where key = 'kids_under_13_enabled';
+
 do $$ begin
   -- Clients read only their own subscription and cannot write it.
   perform pg_temp.act_as('00000000-0000-0000-0000-0000000000f2');

@@ -8,9 +8,11 @@ import { ParentGate } from '@/features/family/ParentGate';
 import { activeProfile, useFamilyStore } from '@/features/family/store';
 import { childLockFor, evaluateAgeGate } from '@/features/onboarding/age-gate';
 import { STEP_NUMBER, TOTAL_STEPS, WHO_OPTIONS, type Who } from '@/features/onboarding/options';
+import { useAgeBlockStore } from '@/features/onboarding/ageBlock';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { birthYearOptions } from '@/features/profile/age';
 import { track } from '@/lib/analytics';
+import { kidsUnder13Enabled } from '@/lib/features';
 import { useAppModeStore } from '@/stores/app-mode';
 import { colors, fonts, spacing } from '@/theme';
 
@@ -28,6 +30,7 @@ export default function WhoScreen() {
   const [year, setYear] = useState<number | undefined>(stored.birthYear);
 
   const years = useMemo(() => birthYearOptions(), []);
+  const ageBlock = useAgeBlockStore();
   const profile = useFamilyStore(activeProfile);
   const consented = profile?.kind === 'child' && !!profile.consentAt;
   // A child or teen profile's birth date is locked: only a parent, behind the
@@ -44,6 +47,8 @@ export default function WhoScreen() {
       : null;
 
   const onContinue = () => {
+    // Under 13 answering for themselves (kids off): neutral stop, kept on this phone.
+    if (result?.status === 'under_min') return ageBlock.block();
     if (result?.status !== 'ok') return;
     stored.update({ who: effectiveWho, birthMonth: month, birthYear: year });
     setMode(result.mode);
@@ -51,6 +56,19 @@ export default function WhoScreen() {
     if (edit) router.back();
     else router.push('/onboarding/chat');
   };
+
+  if (ageBlock.blocked) {
+    return (
+      <Screen>
+        <View style={styles.block}>
+          <AppText variant="h1" accessibilityRole="header">
+            {t('ageBlock.title')}
+          </AppText>
+          <AppText color={colors.mutedStrong}>{t('ageBlock.body')}</AppText>
+        </View>
+      </Screen>
+    );
+  }
 
   return (
     <Screen
@@ -65,7 +83,7 @@ export default function WhoScreen() {
           <Button
             label={t('common.continue')}
             onPress={onContinue}
-            disabled={result?.status !== 'ok'}
+            disabled={result?.status !== 'ok' && result?.status !== 'under_min'}
           />
           <AppText variant="caption" color={colors.muted} style={styles.center}>
             {t('who.footnote')}
@@ -82,7 +100,11 @@ export default function WhoScreen() {
           {WHO_OPTIONS.map((option) => (
             <RadioCard
               key={option}
-              label={t(`who.options.${option}`)}
+              label={
+                option === 'child' && !kidsUnder13Enabled()
+                  ? t('who.options.childTeen')
+                  : t(`who.options.${option}`)
+              }
               selected={who === option}
               onPress={() => setWho(option)}
             />
@@ -143,7 +165,8 @@ export default function WhoScreen() {
           {t(`who.modeBody.${result.mode}`)}
         </Notice>
       ) : null}
-      {result && result.status !== 'ok' ? (
+      {/* Neutral: the "13 and up" stop shows only after Continue, never as a live hint. */}
+      {result && result.status !== 'ok' && result.status !== 'under_min' ? (
         <Notice tone="warning" icon>
           {t(`who.errors.${result.status}`)}
         </Notice>
@@ -171,4 +194,5 @@ const styles = StyleSheet.create({
   sectionLabel: { textTransform: 'uppercase', letterSpacing: 1.5, fontFamily: fonts.heading },
   row: { flexDirection: 'row', gap: spacing.md },
   center: { textAlign: 'center' },
+  block: { gap: spacing.md, paddingTop: spacing.xxl },
 });

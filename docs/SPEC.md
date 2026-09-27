@@ -22,6 +22,7 @@ TapStrong is a fitness app for ages 9 to 75+, men and women, launching in the US
    - Pain reporting runs during workouts. Sharp pain means stop today's workout. Dull pain means a safe swap plus a saved restriction.
    - Restrictions filter every future workout.
 3. **Kids & teens.**
+   - **Launch: under 13 is OFF** (Daniel, Phase 12). Minimum age 13, with a neutral age screen: someone under 13 answering for themselves sees "TapStrong is for ages 13 and up", kept on the device so a new birth date does not unlock it. "My child" means a teen (13–17); no parental-consent flow, no child body models, no "Kids 9+". Switches: `EXPO_PUBLIC_KIDS_UNDER_13_ENABLED` in the app and `public.app_settings.kids_under_13_enabled` in the database (checked by `create_child_profile`), both false. The kids code, rules and tests stay for version 2 (after the lawyer). The under-13 rules below apply only when both switches are on.
    - Under 13: the profile must be created by a parent or guardian (COPPA — verifiable parental consent). No open-ended AI chat, no social sharing, no photos, no body measurements. The child uses guided choices only.
    - 13–17: no body-fat language, no BMI or waist index, no before/after photos.
 4. **Privacy.** Before/after photos are adults only and stored **on device only** (never uploaded). In 60+ mode they are off by default and turned on from Progress (Daniel, Sep 2026). Height and weight are optional.

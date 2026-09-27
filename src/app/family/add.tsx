@@ -16,6 +16,7 @@ import { ensureSelfProfile, switchProfile } from '@/features/family/switch';
 import { evaluateAgeGate } from '@/features/onboarding/age-gate';
 import { birthYearOptions } from '@/features/profile/age';
 import { clock } from '@/lib/clock';
+import { kidsUnder13Enabled } from '@/lib/features';
 import { uuid } from '@/lib/uuid';
 import { spacing } from '@/theme';
 import { OwnerOnly } from '@/features/family/OwnerOnly';
@@ -98,7 +99,11 @@ function AddMemberScreenInner() {
         {(['child', 'parent'] as const).map((k) => (
           <RadioCard
             key={k}
-            label={t(`family.kinds.${k}`)}
+            label={
+              k === 'child' && !kidsUnder13Enabled()
+                ? t('family.kinds.childTeen')
+                : t(`family.kinds.${k}`)
+            }
             selected={kind === k}
             onPress={() => setKind(k)}
           />
