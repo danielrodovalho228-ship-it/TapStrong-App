@@ -2,6 +2,7 @@ import { getSupabase } from '@/lib/supabase';
 
 import { useBillingStore } from '../billing/store';
 import { useFamilyStore } from '../family/store';
+import { useParentPinStore } from '../family/parentPin';
 import { clearSnapshots } from '../family/switch';
 import { useOnboardingStore } from '../onboarding/store';
 import { deleteAllPhotos } from '../progress/photos';
@@ -18,6 +19,7 @@ export type DeleteResult = 'ok' | 'offline' | 'error';
 export function wipeLocalData() {
   clearSnapshots();
   useFamilyStore.getState().reset();
+  useParentPinStore.getState().reset();
   useOnboardingStore.getState().reset();
   useWorkoutStore.getState().reset();
   useRestrictionsStore.getState().reset();

@@ -8,7 +8,7 @@ import RestrictionsScreen from '@/app/restrictions';
 import DoneScreen from '@/app/workout/[id]/done';
 import WorkoutScreen from '@/app/workout/[id]/index';
 import { devLibrary } from '@/features/exercises/library';
-import { gateQuestion } from '@/features/family/ParentGate';
+import { setParentPin, useParentPinStore } from '@/features/family/parentPin';
 import { useFamilyStore } from '@/features/family/store';
 import { generateSession } from '@/features/generator';
 import { blockReason } from '@/features/generator/filters';
@@ -118,13 +118,16 @@ describe('B-01 a child profile cannot be re-aged', () => {
     expect(
       screen.getByText('Only a parent can change the birth date on a child or teen profile.'),
     ).toBeTruthy();
+    await act(() => {
+      useParentPinStore.getState().reset();
+      setParentPin('2468');
+    });
     await fireEvent.press(screen.getByRole('button', { name: 'Change (parent)' }));
-    const { answer } = gateQuestion(NOW.getMinutes());
-    await fireEvent.changeText(screen.getByLabelText('Answer'), String(answer + 1));
+    await fireEvent.changeText(screen.getByLabelText('Parent PIN'), '1111');
     await fireEvent.press(screen.getByRole('button', { name: 'Confirm' }));
-    expect(screen.getByText("That's not it. Please ask a parent.")).toBeTruthy();
+    expect(screen.getByText('Wrong PIN. 4 tries left.')).toBeTruthy();
     expect(screen.queryByRole('button', { name: /^Birth year:/ })).toBeNull();
-    await fireEvent.changeText(screen.getByLabelText('Answer'), String(answer));
+    await fireEvent.changeText(screen.getByLabelText('Parent PIN'), '2468');
     await fireEvent.press(screen.getByRole('button', { name: 'Confirm' }));
     expect(screen.getByRole('button', { name: /^Birth year:/ })).toBeTruthy();
   });

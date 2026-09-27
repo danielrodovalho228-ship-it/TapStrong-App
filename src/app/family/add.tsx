@@ -6,7 +6,12 @@ import { StyleSheet, View } from 'react-native';
 import { Button, Header, Notice, RadioCard, Screen, Select, TextField } from '@/components/ui';
 import { currentPlan, FAMILY_MAX_PROFILES } from '@/features/billing/rules';
 import { useBillingStore } from '@/features/billing/store';
+import { ParentPinSetup } from '@/features/family/ParentGate';
+import { hasParentPin } from '@/features/family/parentPin';
+import { ownerAge } from '@/features/family/profiles';
 import { useFamilyStore } from '@/features/family/store';
+import { useOnboardingStore } from '@/features/onboarding/store';
+import { kvStorage } from '@/lib/storage';
 import { ensureSelfProfile, switchProfile } from '@/features/family/switch';
 import { evaluateAgeGate } from '@/features/onboarding/age-gate';
 import { birthYearOptions } from '@/features/profile/age';
@@ -24,7 +29,11 @@ const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1);
  */
 function AddMemberScreenInner() {
   const { t } = useTranslation();
-  const { profiles, add } = useFamilyStore();
+  const { profiles, add, activeId } = useFamilyStore();
+  const live = useOnboardingStore();
+  // Only an adult owner manages family profiles or gives parental consent (QA R2-04).
+  const owner = ownerAge(profiles, activeId, live, kvStorage.getItem);
+  const ownerMinor = owner == null || owner < 18;
   const entitlement = useBillingStore((s) => s.entitlement);
   const plan = currentPlan(entitlement, clock.now());
   const [kind, setKind] = useState<Kind>('child');
@@ -32,6 +41,8 @@ function AddMemberScreenInner() {
   const [month, setMonth] = useState<number>();
   const [year, setYear] = useState<number>();
   const years = useMemo(() => birthYearOptions(), []);
+  // Kids and teens are protected by the parent PIN: create it first (QA R2-05).
+  const [needPin, setNeedPin] = useState(false);
 
   const full = profiles.length >= FAMILY_MAX_PROFILES;
   const gate = month && year ? evaluateAgeGate(kind, { year, month }) : null;
@@ -39,18 +50,24 @@ function AddMemberScreenInner() {
   const charged =
     plan === 'family' && entitlement.status !== 'trial' && !!entitlement.firstChargedAt;
 
-  const blocker = full
-    ? t('family.errors.full', { count: FAMILY_MAX_PROFILES })
-    : plan !== 'family'
-      ? t('family.errors.needFamily')
-      : gate && gate.status !== 'ok' && !underThirteen
-        ? t(`who.errors.${gate.status}`)
-        : underThirteen && !charged
-          ? t('family.errors.needCharge')
-          : null;
+  const blocker = ownerMinor
+    ? t('family.errors.ownerMinor')
+    : full
+      ? t('family.errors.full', { count: FAMILY_MAX_PROFILES })
+      : plan !== 'family'
+        ? t('family.errors.needFamily')
+        : gate && gate.status !== 'ok' && !underThirteen
+          ? t(`who.errors.${gate.status}`)
+          : underThirteen && !charged
+            ? t('family.errors.needCharge')
+            : null;
 
   const next = () => {
     if (!gate || blocker || !month || !year) return;
+    if (kind === 'child' && !hasParentPin()) {
+      setNeedPin(true);
+      return;
+    }
     const id = uuid();
     const seed = { who: kind, birthMonth: month, birthYear: year };
     if (underThirteen) {
@@ -105,6 +122,15 @@ function AddMemberScreenInner() {
         />
       </View>
       {blocker ? <Notice tone="warning">{blocker}</Notice> : null}
+      {needPin ? (
+        <ParentPinSetup
+          onDone={() => {
+            setNeedPin(false);
+            next();
+          }}
+          onCancel={() => setNeedPin(false)}
+        />
+      ) : null}
       {plan !== 'family' ? (
         <Button
           variant="secondary"

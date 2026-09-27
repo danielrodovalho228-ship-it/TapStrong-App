@@ -3015,7 +3015,8 @@
       "progress": "Seu histórico e progresso completos"
     },
     "nextFree": "Ou espere: seu próximo treino grátis é {{day}}.",
-    "notNow": "Agora não"
+    "notNow": "Agora não",
+    "eyebrowSubscribed": "Seu plano · {{plan}}"
   },
   "family": {
     "title": "Família",
@@ -3050,7 +3051,8 @@
       "full_one": "O plano Família tem até {{count}} perfil.",
       "full_other": "O plano Família tem até {{count}} perfis.",
       "needFamily": "Familiares precisam do plano Família.",
-      "needCharge": "Perfis de crianças com menos de 13 anos são liberados depois do primeiro pagamento do plano Família. O teste grátis não conta: o pagamento é como verificamos o consentimento do responsável."
+      "needCharge": "Perfis de crianças com menos de 13 anos são liberados depois do primeiro pagamento do plano Família. O teste grátis não conta: o pagamento é como verificamos o consentimento do responsável.",
+      "ownerMinor": "Só um adulto (18+) pode gerenciar perfis da família e dar o consentimento dos pais."
     },
     "consent": {
       "title": "Consentimento do responsável",
@@ -3075,7 +3077,9 @@
         "not_child": "A etapa de consentimento é só para crianças com menos de 13 anos.",
         "full": "Sua família já tem 5 perfis.",
         "need_family": "Crianças precisam do plano Família.",
-        "not_charged": "Perfis infantis abrem depois da primeira cobrança do plano Família. O teste grátis não é consentimento dos pais."
+        "not_charged": "Perfis infantis abrem depois da primeira cobrança do plano Família. O teste grátis não é consentimento dos pais.",
+        "owner_minor": "Só um adulto (18+) pode gerenciar perfis da família e dar o consentimento dos pais.",
+        "too_young": "O TapStrong é para quem tem 9 anos ou mais."
       }
     },
     "dashboard": {
@@ -3602,16 +3606,20 @@
   },
   "parentGate": {
     "title": "Para o pai, a mãe ou o responsável",
-    "question": "Quanto é {{a}} vezes {{b}}? Digite o número.",
-    "answer": "Resposta",
-    "wrong": "Não é isso. Peça ajuda a um adulto.",
-    "continue": "Confirmar",
-    "numbers": {
-      "6": "seis",
-      "7": "sete",
-      "8": "oito",
-      "9": "nove"
-    }
+    "enterPin": "Digite o PIN dos pais.",
+    "pin": "PIN dos pais",
+    "wrong_one": "PIN errado. Resta {{count}} tentativa.",
+    "wrong_other": "PIN errado. Restam {{count}} tentativas.",
+    "locked_one": "Tentativas demais. Tente de novo em {{count}} minuto.",
+    "locked_other": "Tentativas demais. Tente de novo em {{count}} minutos.",
+    "noPin": "Primeiro o pai ou a mãe precisa criar um PIN dos pais no próprio perfil (Configurações).",
+    "setupTitle": "Crie um PIN dos pais",
+    "setupBody": "4 dígitos. Crianças e adolescentes neste celular precisam dele para mudar planos, perfis ou configurações. Não conte para ninguém.",
+    "newPin": "PIN novo",
+    "repeatPin": "Repita o PIN",
+    "mismatch": "Os PINs não conferem. Tente de novo.",
+    "savePin": "Salvar PIN",
+    "continue": "Confirmar"
   },
   "ownerOnly": {
     "title": "Para o titular da conta",
@@ -3624,7 +3632,10 @@
     "plan": "Plano e cobrança",
     "restrictions": "Restrições",
     "deleteNote": "Excluir sua conta apaga seus dados dos nossos servidores e limpa este celular, inclusive as fotos. A próxima tela explica cada passo.",
-    "delete": "Excluir conta"
+    "delete": "Excluir conta",
+    "setPin": "Criar um PIN dos pais",
+    "changePin": "Mudar o PIN dos pais",
+    "pinSaved": "PIN dos pais salvo."
   },
   "referral": {
     "eyebrow": "Convite recebido",

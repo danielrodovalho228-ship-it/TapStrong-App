@@ -3015,7 +3015,8 @@
       "progress": "Tu historial y progreso completos"
     },
     "nextFree": "O espera: tu próximo entrenamiento gratis es el {{day}}.",
-    "notNow": "Ahora no"
+    "notNow": "Ahora no",
+    "eyebrowSubscribed": "Tu plan · {{plan}}"
   },
   "family": {
     "title": "Familia",
@@ -3050,7 +3051,8 @@
       "full_one": "El plan Familia admite hasta {{count}} perfil.",
       "full_other": "El plan Familia admite hasta {{count}} perfiles.",
       "needFamily": "Los familiares necesitan el plan Familia.",
-      "needCharge": "Los perfiles de menores de 13 se abren después de tu primer pago del plan Familia. La prueba gratis no cuenta: el pago es cómo verificamos el consentimiento de un padre o madre."
+      "needCharge": "Los perfiles de menores de 13 se abren después de tu primer pago del plan Familia. La prueba gratis no cuenta: el pago es cómo verificamos el consentimiento de un padre o madre.",
+      "ownerMinor": "Solo un adulto (18+) puede gestionar perfiles familiares y dar el consentimiento de los padres."
     },
     "consent": {
       "title": "Consentimiento de los padres",
@@ -3075,7 +3077,9 @@
         "not_child": "El paso de consentimiento es solo para menores de 13 años.",
         "full": "Tu familia ya tiene 5 perfiles.",
         "need_family": "Los niños necesitan el plan Familia.",
-        "not_charged": "Los perfiles infantiles se abren después del primer cobro del plan Familia. La prueba gratis no es consentimiento parental."
+        "not_charged": "Los perfiles infantiles se abren después del primer cobro del plan Familia. La prueba gratis no es consentimiento parental.",
+        "owner_minor": "Solo un adulto (18+) puede gestionar perfiles familiares y dar el consentimiento de los padres.",
+        "too_young": "TapStrong es para mayores de 9 años."
       }
     },
     "dashboard": {
@@ -3602,16 +3606,20 @@
   },
   "parentGate": {
     "title": "Para el padre, la madre o el tutor",
-    "question": "¿Cuánto es {{a}} por {{b}}? Escribe el número.",
-    "answer": "Respuesta",
-    "wrong": "No es correcto. Pide ayuda a un adulto.",
-    "continue": "Confirmar",
-    "numbers": {
-      "6": "seis",
-      "7": "siete",
-      "8": "ocho",
-      "9": "nueve"
-    }
+    "enterPin": "Escribe el PIN de padres.",
+    "pin": "PIN de padres",
+    "wrong_one": "PIN incorrecto. Te queda {{count}} intento.",
+    "wrong_other": "PIN incorrecto. Te quedan {{count}} intentos.",
+    "locked_one": "Demasiados intentos. Prueba de nuevo en {{count}} minuto.",
+    "locked_other": "Demasiados intentos. Prueba de nuevo en {{count}} minutos.",
+    "noPin": "Primero un padre o una madre tiene que crear un PIN de padres desde su propio perfil (Ajustes).",
+    "setupTitle": "Crea un PIN de padres",
+    "setupBody": "4 dígitos. Los niños y adolescentes de este teléfono lo necesitan para cambiar planes, perfiles o ajustes. No lo compartas.",
+    "newPin": "PIN nuevo",
+    "repeatPin": "Repite el PIN",
+    "mismatch": "Los PIN no coinciden. Inténtalo de nuevo.",
+    "savePin": "Guardar PIN",
+    "continue": "Confirmar"
   },
   "ownerOnly": {
     "title": "Para el titular de la cuenta",
@@ -3624,7 +3632,10 @@
     "plan": "Plan y facturación",
     "restrictions": "Restricciones",
     "deleteNote": "Eliminar tu cuenta borra tus datos de nuestros servidores y limpia este teléfono, fotos incluidas. La siguiente pantalla explica cada paso.",
-    "delete": "Eliminar cuenta"
+    "delete": "Eliminar cuenta",
+    "setPin": "Crear un PIN de padres",
+    "changePin": "Cambiar el PIN de padres",
+    "pinSaved": "PIN de padres guardado."
   },
   "referral": {
     "eyebrow": "Invitación recibida",

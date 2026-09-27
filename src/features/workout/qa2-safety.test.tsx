@@ -9,7 +9,7 @@ import FamilyScreen from '@/app/(tabs)/family';
 import WhoScreen from '@/app/onboarding/who';
 import { useBillingStore } from '@/features/billing/store';
 import { devLibrary } from '@/features/exercises/library';
-import { gateQuestion } from '@/features/family/ParentGate';
+import { setParentPin, useParentPinStore } from '@/features/family/parentPin';
 import { useFamilyStore } from '@/features/family/store';
 import { removeMember } from '@/features/family/switch';
 import { generateSession } from '@/features/generator';
@@ -61,6 +61,8 @@ beforeEach(async () => {
     useWorkoutStore.getState().reset();
     useFamilyStore.getState().reset();
     useBillingStore.getState().reset();
+    useParentPinStore.getState().reset();
+    setParentPin('2468');
   });
   mockParams = {};
 });
@@ -134,8 +136,7 @@ describe('R2-01 teens can be added; members can be removed', () => {
     await render(<FamilyScreen />);
     await fireEvent.press(screen.getByRole('button', { name: 'Remove Leo' }));
     expect(useFamilyStore.getState().profiles).toHaveLength(2);
-    const { answer } = gateQuestion(NOW.getMinutes());
-    await fireEvent.changeText(screen.getByLabelText('Answer'), String(answer));
+    await fireEvent.changeText(screen.getByLabelText('Parent PIN'), '2468');
     await fireEvent.press(screen.getByRole('button', { name: 'Confirm' }));
     expect(useFamilyStore.getState().profiles).toHaveLength(2);
     await fireEvent.press(screen.getByRole('button', { name: 'Yes, remove Leo' }));

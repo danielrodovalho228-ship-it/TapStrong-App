@@ -3015,7 +3015,8 @@
       "progress": "Your full history and progress"
     },
     "nextFree": "Or wait: your next free workout is on {{day}}.",
-    "notNow": "Not now"
+    "notNow": "Not now",
+    "eyebrowSubscribed": "Your plan · {{plan}}"
   },
   "family": {
     "title": "Family",
@@ -3050,7 +3051,8 @@
       "full_one": "The Family plan holds up to {{count}} profile.",
       "full_other": "The Family plan holds up to {{count}} profiles.",
       "needFamily": "Family members need the Family plan.",
-      "needCharge": "Profiles for children under 13 open after your first Family payment. The free trial doesn't count: the payment is how we verify a parent's consent."
+      "needCharge": "Profiles for children under 13 open after your first Family payment. The free trial doesn't count: the payment is how we verify a parent's consent.",
+      "ownerMinor": "Only an adult (18+) can manage family profiles and give parental consent."
     },
     "consent": {
       "title": "Parent consent",
@@ -3075,7 +3077,9 @@
         "not_child": "The consent step is only for children under 13.",
         "full": "Your family already has 5 profiles.",
         "need_family": "Children need the Family plan.",
-        "not_charged": "Child profiles open after the first Family plan charge. The free trial is not parental consent."
+        "not_charged": "Child profiles open after the first Family plan charge. The free trial is not parental consent.",
+        "owner_minor": "Only an adult (18+) can manage family profiles and give parental consent.",
+        "too_young": "TapStrong is for ages 9 and up."
       }
     },
     "dashboard": {
@@ -3602,16 +3606,20 @@
   },
   "parentGate": {
     "title": "For a parent or guardian",
-    "question": "What is {{a}} times {{b}}? Type the number.",
-    "answer": "Answer",
-    "wrong": "That's not it. Please ask a parent.",
-    "continue": "Confirm",
-    "numbers": {
-      "6": "six",
-      "7": "seven",
-      "8": "eight",
-      "9": "nine"
-    }
+    "enterPin": "Enter the parent PIN.",
+    "pin": "Parent PIN",
+    "wrong_one": "Wrong PIN. {{count}} try left.",
+    "wrong_other": "Wrong PIN. {{count}} tries left.",
+    "locked_one": "Too many tries. Try again in {{count}} minute.",
+    "locked_other": "Too many tries. Try again in {{count}} minutes.",
+    "noPin": "A parent needs to create a parent PIN first, from their own profile (Settings).",
+    "setupTitle": "Create a parent PIN",
+    "setupBody": "4 digits. Kids and teens on this phone need it to change plans, profiles or settings. Keep it to yourself.",
+    "newPin": "New PIN",
+    "repeatPin": "Repeat the PIN",
+    "mismatch": "The PINs don’t match. Try again.",
+    "savePin": "Save PIN",
+    "continue": "Confirm"
   },
   "ownerOnly": {
     "title": "For the account owner",
@@ -3624,7 +3632,10 @@
     "plan": "Plan and billing",
     "restrictions": "Restrictions",
     "deleteNote": "Deleting your account removes your data from our servers and clears this phone, photos included. The next screen explains each step.",
-    "delete": "Delete account"
+    "delete": "Delete account",
+    "setPin": "Create a parent PIN",
+    "changePin": "Change the parent PIN",
+    "pinSaved": "Parent PIN saved."
   },
   "referral": {
     "eyebrow": "Invite received",

@@ -4,12 +4,22 @@
 insert into auth.users (id, is_anonymous) values
   ('00000000-0000-0000-0000-0000000000f1', false), -- family on trial
   ('00000000-0000-0000-0000-0000000000f2', false), -- no plan
-  ('00000000-0000-0000-0000-0000000000f3', false); -- family, charged
+  ('00000000-0000-0000-0000-0000000000f3', false), -- family, charged
+  ('00000000-0000-0000-0000-0000000000f4', false); -- family, charged, owner is 17
+
+-- Owners' own profiles (QA R2-04: only an adult manages family profiles).
+insert into public.profiles (user_id, birth_month, birth_year, body_band, mode) values
+  ('00000000-0000-0000-0000-0000000000f1', 4, 1985, 'adult', 'adult'),
+  ('00000000-0000-0000-0000-0000000000f2', 4, 1985, 'adult', 'adult'),
+  ('00000000-0000-0000-0000-0000000000f3', 4, 1985, 'adult', 'adult'),
+  ('00000000-0000-0000-0000-0000000000f4', 1, extract(year from now())::int - 17, 'teen', 'teen');
 
 insert into public.subscriptions (user_id, plan, status, store, trial_ends_at, last_transaction_id)
 values ('00000000-0000-0000-0000-0000000000f1', 'family', 'trial', 'test', now() + interval '5 days', 'tx-1');
 insert into public.subscriptions (user_id, plan, status, store, first_charged_at, last_transaction_id)
 values ('00000000-0000-0000-0000-0000000000f3', 'family', 'active', 'test', now(), 'tx-3');
+insert into public.subscriptions (user_id, plan, status, store, first_charged_at, last_transaction_id)
+values ('00000000-0000-0000-0000-0000000000f4', 'family', 'active', 'test', now(), 'tx-4');
 
 create or replace function pg_temp.act_as(uid text) returns void language plpgsql as $$
 begin
@@ -45,6 +55,20 @@ do $$ begin
   begin
     perform public.create_child_profile(gen_random_uuid(), 5::smallint, 2016::smallint, 'f', 'Mia', 'parent-notice-v1');
     raise exception 'child profile during the free trial';
+  exception when insufficient_privilege then null;
+  end;
+
+  -- QA R2-04: a 17-year-old owner can't give parental consent or manage profiles.
+  perform pg_temp.act_as('00000000-0000-0000-0000-0000000000f4');
+  begin
+    perform public.create_child_profile(gen_random_uuid(), 5::smallint, 2016::smallint, 'f', 'Mia', 'parent-notice-v1');
+    raise exception 'a minor gave parental consent';
+  exception when insufficient_privilege then null;
+  end;
+  begin
+    insert into public.profiles (guardian_id, birth_month, birth_year, body_band, mode)
+    values ('00000000-0000-0000-0000-0000000000f4', 1, 1950, 'senior', 'senior');
+    raise exception 'a minor manages a family profile';
   exception when insufficient_privilege then null;
   end;
 

@@ -6,7 +6,10 @@ import { StyleSheet, View } from 'react-native';
 import { AppText, Button, Checkbox, Header, Icon, Notice, Screen } from '@/components/ui';
 import { useBillingStore } from '@/features/billing/store';
 import { createChildProfileRemote } from '@/features/family/remote';
+import { ownerAge } from '@/features/family/profiles';
 import { childConsentBlocker } from '@/features/family/rules';
+import { useOnboardingStore } from '@/features/onboarding/store';
+import { kvStorage } from '@/lib/storage';
 import { useFamilyStore } from '@/features/family/store';
 import { ensureSelfProfile, switchProfile } from '@/features/family/switch';
 import { clock } from '@/lib/clock';
@@ -23,7 +26,8 @@ const POINTS = ['collect', 'use', 'never', 'rights'] as const;
 function ParentConsentScreenInner() {
   const { t } = useTranslation();
   const params = useLocalSearchParams<{ id: string; name?: string; month: string; year: string }>();
-  const { add, profiles } = useFamilyStore();
+  const { add, profiles, activeId } = useFamilyStore();
+  const live = useOnboardingStore();
   const entitlement = useBillingStore((s) => s.entitlement);
   const birthMonth = Number(params.month);
   const birthYear = Number(params.year);
@@ -34,6 +38,7 @@ function ParentConsentScreenInner() {
     profiles,
     entitlement,
     now: clock.now(),
+    ownerAge: ownerAge(profiles, activeId, live, kvStorage.getItem),
   });
   const [agreed, setAgreed] = useState(false);
   const [busy, setBusy] = useState(false);

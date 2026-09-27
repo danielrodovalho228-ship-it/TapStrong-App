@@ -7,16 +7,24 @@ import { AppText, Icon, Screen, TextLink } from '@/components/ui';
 import { PlanPicker } from '@/features/billing/components/PlanPicker';
 import { SubscribeFooter } from '@/features/billing/components/SubscribeFooter';
 import { FREE_WORKOUTS_PER_WEEK, type Period, type Plan } from '@/features/billing/rules';
+import { OwnerOnly } from '@/features/family/OwnerOnly';
+import { currentPlan } from '@/features/billing/rules';
+import { useBillingStore } from '@/features/billing/store';
 import { track } from '@/lib/analytics';
+import { clock } from '@/lib/clock';
 import { colors, fonts, spacing } from '@/theme';
 
 const VALUE = ['unlimited', 'repair', 'family', 'progress'] as const;
 
 /** Free limit reached (SPEC §8): value first, price second, cancel info visible. */
-export default function PaywallScreen() {
+function PaywallScreenInner() {
   const { t, i18n } = useTranslation();
   const { next } = useLocalSearchParams<{ next?: string }>();
-  const [plan, setPlan] = useState<Plan>('premium');
+  const current = currentPlan(
+    useBillingStore((st) => st.entitlement),
+    clock.now(),
+  );
+  const [plan, setPlan] = useState<Plan>(current === 'free' ? 'premium' : current);
   const [period, setPeriod] = useState<Period>('monthly');
 
   useEffect(() => {
@@ -43,7 +51,10 @@ export default function PaywallScreen() {
       }
     >
       <AppText variant="caption" color={colors.accent} style={styles.caps}>
-        {t('paywall.eyebrow', { count: FREE_WORKOUTS_PER_WEEK })}
+        {/* A subscriber is never told they are on the free plan (QA R2-03). */}
+        {current === 'free'
+          ? t('paywall.eyebrow', { count: FREE_WORKOUTS_PER_WEEK })
+          : t('paywall.eyebrowSubscribed', { plan: t(`billing.plans.${current}.name`) })}
       </AppText>
       <AppText variant="h1" accessibilityRole="header">
         {t('paywall.title')}
@@ -56,7 +67,7 @@ export default function PaywallScreen() {
           </View>
         ))}
       </View>
-      {nextDay ? (
+      {nextDay && current === 'free' ? (
         <AppText color={colors.mutedStrong}>{t('paywall.nextFree', { day: nextDay })}</AppText>
       ) : null}
       <PlanPicker
@@ -80,3 +91,12 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   center: { alignItems: 'center' },
 });
+
+/** Owner-only: a child or teen can't change the parent's plan (QA R2-03). */
+export default function PaywallScreen() {
+  return (
+    <OwnerOnly>
+      <PaywallScreenInner />
+    </OwnerOnly>
+  );
+}

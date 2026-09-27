@@ -12,6 +12,7 @@ import PlansScreen from '@/app/plans';
 import WorkoutScreen from '@/app/workout/[id]/index';
 import { useAccountStore } from '@/features/account/store';
 import { devLibrary } from '@/features/exercises/library';
+import { useParentPinStore } from '@/features/family/parentPin';
 import { useFamilyStore } from '@/features/family/store';
 import { generateSession } from '@/features/generator';
 import { inputFromProfile } from '@/features/generator/fromProfile';
@@ -235,6 +236,9 @@ describe('Family members', () => {
   });
 
   it('after the first charge, goes to the parent notice', async () => {
+    await act(() => {
+      useParentPinStore.getState().reset();
+    });
     await act(() =>
       useBillingStore.getState().set({
         entitlement: {
@@ -250,6 +254,11 @@ describe('Family members', () => {
     await fireEvent.changeText(screen.getByLabelText('First name'), 'Mia');
     await pick('May', '2016');
     await fireEvent.press(screen.getByRole('button', { name: 'Next: parent consent' }));
+    // Kids are protected by the parent PIN: it is created first (QA R2-05).
+    expect(mockRouter.push).not.toHaveBeenCalled();
+    await fireEvent.changeText(screen.getByLabelText('New PIN'), '2468');
+    await fireEvent.changeText(screen.getByLabelText('Repeat the PIN'), '2468');
+    await fireEvent.press(screen.getByRole('button', { name: 'Save PIN' }));
     expect(mockRouter.push).toHaveBeenCalledWith(
       expect.objectContaining({ pathname: '/family/consent' }),
     );

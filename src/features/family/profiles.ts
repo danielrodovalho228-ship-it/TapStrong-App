@@ -83,3 +83,18 @@ export function activitySummary(
     streak: snap.streak ? streakToday(snap.streak, localDate(now), startsOn) : 0,
   };
 }
+
+/**
+ * The account owner's age (their own profile), wherever it is stored: live
+ * when active, otherwise in its snapshot. Null until they set a birth date.
+ */
+export function ownerAge(
+  profiles: LocalProfile[],
+  activeId: string | null,
+  live: OnboardingData,
+  read: (key: string) => string | null,
+): number | null {
+  const self = profiles.find((p) => p.kind === 'self');
+  if (!self) return derive({ birthMonth: live.birthMonth, birthYear: live.birthYear })?.age ?? null;
+  return summarize(self, activeId ?? self.id, live, read).age;
+}

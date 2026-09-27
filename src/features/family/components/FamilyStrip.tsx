@@ -1,15 +1,17 @@
 import { router } from 'expo-router';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { AppText, Icon } from '@/components/ui';
+import { useAccountStore } from '@/features/account/store';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { kvStorage } from '@/lib/storage';
 import { colors, fonts, radius, sizes, spacing } from '@/theme';
 
 import { FAMILY_MAX_PROFILES } from '../../billing/rules';
 import { summarize } from '../profiles';
-import { useFamilyStore } from '../store';
+import { useFamilyStore, type LocalProfile } from '../store';
 import { ensureSelfProfile } from '../switch';
 
 /** Family profiles and the "Add" card (mockup 19). */
@@ -17,7 +19,15 @@ export function FamilyStrip() {
   const { t } = useTranslation();
   const live = useOnboardingStore();
   const { profiles, activeId } = useFamilyStore();
-  const list = profiles.length ? profiles : [ensureSelfProfile()];
+  // Registering the owner writes to a store: in an effect, never during
+  // render (QA A-10, R2-12).
+  useEffect(() => {
+    if (!profiles.length) ensureSelfProfile();
+  }, [profiles.length]);
+  const selfId = useAccountStore((st) => st.profileId);
+  const list: LocalProfile[] = profiles.length
+    ? profiles
+    : [{ id: selfId, kind: 'self', createdAt: '' }];
 
   return (
     <ScrollView
