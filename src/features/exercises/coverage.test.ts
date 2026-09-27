@@ -10,6 +10,7 @@ import { generateSession, getAlternatives } from '../generator';
 import type { GeneratorInput } from '../generator/types';
 import type { MovementCatalog } from '../movement/catalog';
 import { MUSCLES, muscleByKey } from '../muscles';
+import { resources } from '@/i18n';
 
 import { devLibrary } from './library';
 import type { Exercise } from './types';
@@ -42,39 +43,31 @@ const primary = (e: Exercise, m: string) =>
 const regular = LIBRARY.filter((e) => !e.rehab);
 
 const GOAL_MUSCLES = MUSCLES.filter((m) => m.views.length).map((m) => m.key);
+const POSITIONS = ['standing', 'with_support', 'seated_only'] as const;
 
 describe('library coverage (QA O-3)', () => {
   it('has roughly 250 or more exercises', () => {
     expect(LIBRARY.length).toBeGreaterThanOrEqual(250);
   });
 
+  // Every muscle × equipment level × position cell (QA round 2: the old
+  // check ignored position, so seated bodyweight glutes had 0).
   it.each(Object.keys(LEVELS) as (keyof typeof LEVELS)[])(
-    'every muscle has ≥ 5 main options at the "%s" equipment level',
+    'every muscle has ≥ 5 main options at the "%s" level, standing, supported and seated',
     (level) => {
-      const short = GOAL_MUSCLES.map((m) => ({
-        m,
-        n: regular.filter((e) => e.parts.includes('main') && primary(e, m) && fits(e, level))
-          .length,
-      })).filter((c) => c.n < MIN);
+      const short = GOAL_MUSCLES.flatMap((m) =>
+        POSITIONS.map((position) => ({
+          cell: `${m} · ${position}`,
+          n: regular.filter(
+            (e) =>
+              e.parts.includes('main') &&
+              primary(e, m) &&
+              fits(e, level) &&
+              e.positions.includes(position),
+          ).length,
+        })),
+      ).filter((c) => c.n < MIN);
       expect(short).toEqual([]);
-    },
-  );
-
-  it.each(['upper', 'core', 'lower'] as const)(
-    'seated and supported people have ≥ 5 main options for the %s body (bodyweight or bands)',
-    (region) => {
-      for (const position of ['seated_only', 'with_support'] as const) {
-        const n = regular.filter(
-          (e) =>
-            e.parts.includes('main') &&
-            e.positions.includes(position) &&
-            fits(e, 'bands') &&
-            e.muscles.some(
-              (m) => m.role === 'primary' && muscleByKey(m.muscleKey)?.region === region,
-            ),
-        ).length;
-        expect({ position, region, n: Math.min(n, MIN) }).toEqual({ position, region, n: MIN });
-      }
     },
   );
 
@@ -97,31 +90,40 @@ describe('library coverage (QA O-3)', () => {
     });
   });
 
-  it('cool-down: ≥ 3 static stretches for every muscle group', () => {
+  it('cool-down: ≥ 3 static stretches for every muscle group, in every position', () => {
     const stretches = regular.filter((e) => e.parts.includes('cooldown_stretch'));
     const groups: Record<string, string[]> = {
       chest: ['chest', 'upperChest', 'midChest', 'lowerChest'],
-      shoulders: ['shoulders', 'rearDelts'],
-      back: ['upperBack', 'lats'],
+      shoulders: ['shoulders'],
+      rearDelts: ['rearDelts'],
+      rotatorCuff: ['rotatorCuff'],
+      upperBack: ['upperBack'],
+      lats: ['lats'],
       neck: ['traps'],
       biceps: ['biceps'],
       triceps: ['triceps'],
       forearms: ['forearms'],
-      core: ['abs', 'upperAbs', 'lowerAbs', 'obliques'],
+      core: ['abs', 'upperAbs', 'lowerAbs'],
+      obliques: ['obliques'],
       lowerBack: ['lowerBack'],
       glutes: ['glutes'],
       hips: ['hips'],
       adductors: ['adductors'],
       quads: ['quads'],
+      knees: ['knees'],
       hamstrings: ['hamstrings'],
       calves: ['calves'],
       shins: ['shins'],
     };
     const short = Object.entries(groups)
-      .map(([g, keys]) => ({
-        g,
-        n: stretches.filter((e) => keys.some((k) => primary(e, k))).length,
-      }))
+      .flatMap(([g, keys]) =>
+        POSITIONS.map((position) => ({
+          cell: `${g} · ${position}`,
+          n: stretches.filter(
+            (e) => keys.some((k) => primary(e, k)) && e.positions.includes(position),
+          ).length,
+        })),
+      )
       .filter((c) => c.n < 3);
     expect(short).toEqual([]);
   });
@@ -168,16 +170,62 @@ describe('library coverage (QA O-3)', () => {
     expect(short).toEqual([]);
   });
 
-  it('Repair: ≥ 2 pain-free-range strengthening moves (phase 2) for every joint', () => {
-    const short = Object.keys(CATALOG.joints).filter(
-      (joint) =>
-        LIBRARY.filter(
+  // Decision 2 (QA round 2): every joint movement has ≥ 3 moves in phase 2
+  // (pain-free / shorter range) and phase 3 (progressive load, full range).
+  const movements = Object.entries(CATALOG.joints).flatMap(([joint, entry]) =>
+    entry.movements.map((movement) => ({ joint, movement, key: `${joint}.${movement}` })),
+  );
+  const uses = (e: Exercise, joint: string, movement: string, range: string) =>
+    e.joints.some((j) => j.joint === joint && j.movement === movement && j.range === range);
+
+  it('Repair: ≥ 3 pain-free-range moves (phase 2) for every joint movement', () => {
+    const short = movements
+      .map(({ joint, movement, key }) => ({
+        key,
+        n: LIBRARY.filter(
           (e) =>
             e.parts.includes('main') &&
-            e.joints.some((j) => j.joint === joint && j.range === 'partial'),
-        ).length < 2,
-    );
+            (uses(e, joint, movement, 'partial') ||
+              e.rangeLimit.includes(key as Exercise['rangeLimit'][number])),
+        ).length,
+      }))
+      .filter((c) => c.n < 3);
     expect(short).toEqual([]);
+  });
+
+  it('Repair: ≥ 3 progressive-loading moves (phase 3) for every joint movement', () => {
+    const short = movements
+      .map(({ joint, movement, key }) => ({
+        key,
+        n: LIBRARY.filter(
+          (e) =>
+            e.parts.includes('main') &&
+            uses(e, joint, movement, 'full') &&
+            (e.loaded || e.equipment.includes('bands') || e.level >= 2),
+        ).length,
+      }))
+      .filter((c) => c.n < 3);
+    expect(short).toEqual([]);
+  });
+
+  it('every main exercise lists its contraindications (QA round 2)', () => {
+    expect(
+      LIBRARY.filter((e) => e.parts.includes('main') && !e.contraindications.length).map(
+        (e) => e.slug,
+      ),
+    ).toEqual([]);
+    const press = LIBRARY.find((e) => e.slug === 'neutral_grip_machine_chest_press')!;
+    expect(press.contraindications).toContain('shoulder');
+  });
+
+  it.each(['en', 'es', 'pt-BR'] as const)('every exercise name is unique in %s', (locale) => {
+    const names = LIBRARY.map((e) =>
+      (resources[locale].translation.exercises as Record<string, { name: string }>)[
+        e.slug
+      ].name.toLowerCase(),
+    );
+    const dupes = names.filter((n, i) => names.indexOf(n) !== i);
+    expect(dupes).toEqual([]);
   });
 
   it('the shoulder set includes the rotator cuff', () => {
@@ -191,6 +239,20 @@ describe('swap options (QA O-3: arm circles had none)', () => {
     { location: 'home', equipment: ['bands'], position: 'with_support' },
     { location: 'home', equipment: [], position: 'seated_only', mode: 'senior', band: 'senior' },
     { location: 'gym', equipment: LEVELS.gym as GeneratorInput['equipment'], position: 'standing' },
+    // Seated and supported people (QA round 2: seated knee extension had 0).
+    {
+      location: 'home',
+      equipment: ['bands'],
+      position: 'seated_only',
+      mode: 'senior',
+      band: 'senior',
+    },
+    { location: 'home', equipment: [], position: 'with_support', mode: 'senior', band: 'senior' },
+    {
+      location: 'gym',
+      equipment: LEVELS.gym as GeneratorInput['equipment'],
+      position: 'seated_only',
+    },
   ];
   const base: GeneratorInput = {
     library: LIBRARY,

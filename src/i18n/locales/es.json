@@ -2185,7 +2185,7 @@
       "cues": "Sostén una mancuerna ligera por un extremo, antebrazo en el muslo, y mantenla vertical."
     },
     "rx_band_wrist_extension": {
-      "name": "Extensión de muñeca con banda",
+      "name": "Extensión suave de muñeca con banda",
       "cues": "Antebrazo en el muslo, palma abajo, sube el dorso de la mano contra una banda suave sin dolor."
     },
     "rx_forearm_rotation_partial": {
@@ -2241,7 +2241,7 @@
       "cues": "Boca arriba, rodillas y cadera a 90°, espalda baja apoyada, brazos arriba, sostén respirando."
     },
     "rx_seated_lean_back_hold": {
-      "name": "Inclinación atrás sentado",
+      "name": "Inclinación atrás corta sentado",
       "cues": "Sentado al borde de la silla, brazos cruzados, inclínate un poco atrás con la espalda recta y sostén."
     },
     "rx_bird_dog_hold": {
@@ -2357,15 +2357,15 @@
       "cues": "Sentado erguido, estira una rodilla hasta donde sea cómodo, aprieta el muslo, sostén y baja."
     },
     "rx_straight_leg_raise": {
-      "name": "Elevación de pierna recta",
+      "name": "Elevación suave de pierna recta",
       "cues": "Boca arriba, otra rodilla doblada, aprieta el muslo y sube la pierna recta hasta la otra rodilla, baja lento."
     },
     "rx_short_arc_quad": {
-      "name": "Extensión corta de rodilla",
+      "name": "Extensión corta de rodilla suave",
       "cues": "Acostado con una toalla enrollada bajo la rodilla, estira la pierna, sostén un segundo y baja lento."
     },
     "rx_low_step_up": {
-      "name": "Subida a escalón bajo",
+      "name": "Subida a escalón bajo con apoyo",
       "cues": "Con baranda, sube a un escalón bajo con todo el pie, quédate erguido y baja lento."
     },
     "rx_iso_ankle_dorsiflexion": {
@@ -2498,15 +2498,15 @@
     },
     "seated_palm_press": {
       "name": "Presión de palmas sentado",
-      "cues": "Siéntate erguido y presiona las palmas frente al pecho 5 s, luego relaja; repite."
+      "cues": "Cada repetición: siéntate erguido y presiona las palmas frente al pecho 5 s, luego relaja; repite."
     },
     "seated_high_palm_press": {
       "name": "Presión de palmas alta sentado",
-      "cues": "Sentado, presiona las palmas a la altura de los ojos, codos suaves, 5 s; repite."
+      "cues": "Cada repetición: sentado, presiona las palmas a la altura de los ojos, codos suaves, 5 s; repite."
     },
     "seated_low_palm_press": {
       "name": "Presión de palmas baja sentado",
-      "cues": "Sentado, presiona las palmas abajo, frente al abdomen, 5 s; repite."
+      "cues": "Cada repetición: sentado, presiona las palmas abajo, frente al abdomen, 5 s; repite."
     },
     "seated_hug_squeeze": {
       "name": "Gran abrazo sentado",
@@ -2522,7 +2522,7 @@
     },
     "seated_w_squeeze": {
       "name": "Apretón en W sentado",
-      "cues": "Sentado, brazos en W a los lados, empuja los codos abajo y atrás y sostén 5 s."
+      "cues": "Cada repetición: sentado, brazos en W a los lados, empuja los codos abajo y atrás y sostén 5 s."
     },
     "seated_towel_row_hold": {
       "name": "Remo sostenido con toalla",
@@ -2562,7 +2562,831 @@
     },
     "seated_diagonal_press": {
       "name": "Presión diagonal sentado",
-      "cues": "Sentado, empuja una palma hacia arriba y en diagonal contra la otra mano 5 s; cambia."
+      "cues": "Cada repetición: sentado, empuja una palma hacia arriba y en diagonal contra la otra mano 5 s; cambia."
+    },
+    "su_seated_shrug_hold": {
+      "name": "Encogimiento sentado con pausa",
+      "cues": "Siéntate derecho, sube ambos hombros hacia las orejas, sostén dos segundos y baja despacio."
+    },
+    "su_seated_chair_grip_shrug_hold": {
+      "name": "Encogimiento sujetando la silla",
+      "cues": "Sujeta los lados del asiento e intenta subir los hombros contra él; sostén respirando con calma."
+    },
+    "su_seated_y_raise": {
+      "name": "Elevación en Y sentado",
+      "cues": "Siéntate derecho, sube los brazos rectos en Y con pulgares arriba, baja las escápulas y desciende."
+    },
+    "su_seated_slow_lateral_raise": {
+      "name": "Elevación lenta de brazos sentado",
+      "cues": "Siéntate derecho, sube los brazos rectos a los lados hasta el hombro en tres segundos, pausa y baja."
+    },
+    "su_seated_scaption_raise": {
+      "name": "Elevación sentado pulgares arriba",
+      "cues": "Con pulgares arriba, sube los brazos en diagonal hasta el hombro, hombros abajo, y baja."
+    },
+    "su_seated_towel_overhead_press": {
+      "name": "Press sobre la cabeza con toalla",
+      "cues": "Sujeta una toalla tensa a la altura del hombro, llévala arriba tirando de los extremos y baja."
+    },
+    "su_seated_elbow_squeeze_fly": {
+      "name": "Apertura sentado juntando codos",
+      "cues": "Con brazos doblados a la altura del hombro, junta los antebrazos al frente, aprieta el pecho y abre."
+    },
+    "su_seated_palm_press_slide": {
+      "name": "Empuje sentado con palmas unidas",
+      "cues": "Aprieta las palmas frente al pecho, empújalas al frente hasta casi estirar los brazos y regresa."
+    },
+    "su_doorway_chest_press_hold": {
+      "name": "Empuje sostenido en el marco",
+      "cues": "De pie en un marco de puerta, palmas a la altura del pecho, empuja al frente sin moverte y sostén."
+    },
+    "su_seated_low_crossover": {
+      "name": "Cruce bajo sentado",
+      "cues": "Empieza con los brazos abiertos y algo altos, bájalos hasta cruzarlos frente a la cadera y aprieta."
+    },
+    "su_seated_diagonal_palm_press": {
+      "name": "Empuje de palmas hacia abajo",
+      "cues": "Aprieta las palmas frente al pecho y empújalas abajo y al frente hacia las rodillas; regresa."
+    },
+    "su_seated_leg_lift_curl": {
+      "name": "Curl sentado levantando la pierna",
+      "cues": "Siéntate derecho, entrelaza las manos bajo un muslo y súbelo con los brazos, pierna relajada."
+    },
+    "su_seated_reverse_self_curl": {
+      "name": "Curl invertido con autorresistencia",
+      "cues": "Con la palma abajo, sube una mano mientras la otra presiona su muñeca hacia abajo; cambia de lado."
+    },
+    "su_seated_hammer_self_curl": {
+      "name": "Curl martillo con autorresistencia",
+      "cues": "Pulgar arriba y puño cerrado, sube un brazo mientras la otra mano presiona el puño; cambia."
+    },
+    "su_seated_towel_overhead_extension": {
+      "name": "Extensión de tríceps con toalla",
+      "cues": "La mano de arriba sujeta la toalla tras la cabeza y la de abajo resiste; estira el codo y dobla."
+    },
+    "su_seated_air_kickback": {
+      "name": "Patada de tríceps sin peso",
+      "cues": "Inclínate un poco al frente, codos junto a las costillas, estira los brazos atrás y aprieta un segundo."
+    },
+    "su_seated_table_press_down_hold": {
+      "name": "Empuje sostenido sobre la mesa",
+      "cues": "Sentado a la mesa, palmas apoyadas y codos algo doblados; empuja hacia abajo con fuerza y sostén."
+    },
+    "su_seated_finger_spread_squeeze": {
+      "name": "Puño y dedos abiertos",
+      "cues": "Brazos al frente, cierra el puño fuerte dos segundos y abre bien los dedos; repite a ritmo constante."
+    },
+    "su_seated_self_resisted_palm_turn": {
+      "name": "Giro de palma con autorresistencia",
+      "cues": "Codo doblado al costado, gira la palma arriba y abajo mientras la otra mano sujeta y resiste la muñeca."
+    },
+    "su_seated_bent_t_raise": {
+      "name": "Elevación en T inclinado sentado",
+      "cues": "Inclínate desde la cadera con espalda recta, sube los brazos rectos en T con pulgares arriba y baja."
+    },
+    "su_seated_elbow_pull_back": {
+      "name": "Codos hacia atrás sentado",
+      "cues": "Codos doblados a la altura del hombro, llévalos atrás en línea con el cuerpo, pausa y regresa."
+    },
+    "su_seated_w_pulldown": {
+      "name": "Jalón en W sentado",
+      "cues": "Estira los brazos arriba, baja los codos en W junto a las costillas, aprieta la espalda y sube."
+    },
+    "su_seated_armrest_press_hold": {
+      "name": "Presión de codos en apoyabrazos",
+      "cues": "Siéntate derecho con los codos en los apoyabrazos, presiónalos hacia abajo sin encoger y sostén."
+    },
+    "su_seated_straight_arm_press_back": {
+      "name": "Brazos rectos hacia atrás sentado",
+      "cues": "Siéntate al borde, brazos rectos a los lados, lleva las palmas atrás pasando la cadera y aprieta."
+    },
+    "su_seated_table_edge_pull_hold": {
+      "name": "Tirón sostenido en la mesa",
+      "cues": "Sujeta el borde de una mesa firme, codos al costado, tira como si te acercaras y sostén."
+    },
+    "su_seated_band_overhead_pulldown": {
+      "name": "Jalón separando la banda sentado",
+      "cues": "Sujeta una banda sobre la cabeza, sepárala y bájala al frente hasta el pecho y regresa con control."
+    },
+    "su_seated_band_straight_arm_pulldown": {
+      "name": "Jalón sentado brazos rectos con banda",
+      "cues": "Banda anclada arriba al frente, brazos rectos, baja las manos a los muslos y súbelas despacio."
+    },
+    "su_seated_clasped_hands_squeeze": {
+      "name": "Apretón con manos atrás sentado",
+      "cues": "Siéntate al borde, entrelaza las manos tras la espalda baja, junta las escápulas y sube un poco las manos."
+    },
+    "su_seated_air_row": {
+      "name": "Remo sentado sin peso",
+      "cues": "Inclínate un poco al frente, estira los brazos, lleva los codos atrás, aprieta y vuelve a estirar."
+    },
+    "sl_seated_knee_reach_crunch": {
+      "name": "Encogimiento sentado hacia rodillas",
+      "cues": "Siéntate erguido, exhala y curva las costillas hacia abajo mientras las manos bajan a las rodillas; sube despacio."
+    },
+    "sl_seated_abdominal_thigh_press": {
+      "name": "Presión abdominal sobre muslos",
+      "cues": "Manos en los muslos, inclina el pecho un poco y presiona las palmas hacia abajo respirando normal; no contengas el aire."
+    },
+    "sl_seated_crossed_arm_crunch_pulses": {
+      "name": "Pulsos abdominales con brazos cruzados",
+      "cues": "Brazos cruzados en el pecho, reclínate un poco y haz pequeños pulsos hacia adelante con la espalda alta, exhalando."
+    },
+    "sl_seated_double_knee_tuck": {
+      "name": "Recogida de ambas rodillas sentado",
+      "cues": "Sujeta el asiento, reclínate un poco y lleva ambas rodillas hacia el pecho; baja los pies despacio."
+    },
+    "sl_seated_pelvic_tuck": {
+      "name": "Basculación pélvica sentado",
+      "cues": "Siéntate erguido, mete el coxis hacia abajo contrayendo el bajo vientre, pausa y vuelve a neutro."
+    },
+    "sl_seated_feet_hover_hold": {
+      "name": "Pies suspendidos sentado",
+      "cues": "Sujeta los lados de la silla, siéntate erguido y eleva ambos pies del piso; respira y baja antes de arquear la espalda."
+    },
+    "sl_seated_torso_twist": {
+      "name": "Giro de torso sentado",
+      "cues": "Brazos cruzados en el pecho, siéntate erguido y gira las costillas despacio a cada lado sin mover la cadera."
+    },
+    "sl_seated_cross_body_knee_touch": {
+      "name": "Codo a rodilla cruzado sentado",
+      "cues": "Manos junto a las orejas, eleva una rodilla y gira para acercar el codo contrario; cambia de lado con control."
+    },
+    "sl_seated_cross_knee_press_hold": {
+      "name": "Presión mano-rodilla cruzada",
+      "cues": "Pon una mano en la rodilla contraria y empújalas entre sí sin moverte; respira y cambia de lado."
+    },
+    "sl_seated_straight_leg_raise": {
+      "name": "Elevación de pierna recta sentado",
+      "cues": "Siéntate erguido, estira una pierna con los dedos hacia arriba y elévala unos centímetros; baja despacio."
+    },
+    "sl_seated_turned_out_knee_lift": {
+      "name": "Elevación de rodilla hacia afuera",
+      "cues": "Gira una rodilla hacia afuera y lleva ese pie hacia la espinilla contraria con la espalda erguida; baja despacio."
+    },
+    "sl_seated_knee_circles": {
+      "name": "Círculos de rodilla sentado",
+      "cues": "Eleva un poco una rodilla y dibuja círculos pequeños y lentos en ambos sentidos, sin mover el tronco."
+    },
+    "sl_seated_hands_out_knee_squeeze": {
+      "name": "Cierre de rodillas contra las manos",
+      "cues": "Manos en la cara interna de las rodillas, empuja hacia afuera mientras cierras las rodillas despacio; luego ábrelas."
+    },
+    "sl_seated_towel_ankle_squeeze": {
+      "name": "Apretón de toalla entre tobillos",
+      "cues": "Pon una toalla enrollada entre los tobillos, estira las piernas con talones apoyados y apriétala; sigue respirando."
+    },
+    "sl_supported_cross_body_leg_sweep": {
+      "name": "Barrido de pierna cruzado con apoyo",
+      "cues": "Sujétate de una silla, párate erguido y cruza una pierna recta por delante de la otra; vuelve al centro despacio."
+    },
+    "sl_seated_leg_crossover_lift": {
+      "name": "Cruce de pierna elevada sentado",
+      "cues": "Eleva un poco un pie, cruza esa pierna hacia el otro lado y regresa, sin apoyar el pie."
+    },
+    "sl_seated_floor_push_hold": {
+      "name": "Empuje de pies contra el piso",
+      "cues": "Pies bajo las rodillas, empújalos fuerte contra el piso como para pararte, sin levantarte; respira y relaja."
+    },
+    "sl_seated_leg_extension_pulses": {
+      "name": "Pulsos de extensión de pierna",
+      "cues": "Estira una pierna y haz pequeños pulsos arriba y abajo cerca del final sin trabar la rodilla; cambia de pierna."
+    },
+    "sl_seated_double_leg_extension": {
+      "name": "Extensión de ambas piernas sentado",
+      "cues": "Sujeta el asiento, siéntate erguido y estira ambas piernas a la vez, pausa y dóblalas despacio."
+    },
+    "sl_seated_wall_foot_press_hold": {
+      "name": "Presión de pie contra la pared",
+      "cues": "Frente a una pared, apoya una planta con la rodilla doblada y empuja sin moverte; respira y cambia."
+    },
+    "sl_seated_knee_cocontraction_hold": {
+      "name": "Estabilización de rodilla sentado",
+      "cues": "Pie apoyado, empuja el talón abajo y atrás y a la vez la rodilla hacia adelante para tensar todo el muslo; sostén."
+    },
+    "sl_seated_heel_slides": {
+      "name": "Deslizamiento de talón sentado",
+      "cues": "Desliza un talón por el piso hasta casi estirar la pierna y luego llévalo bajo la silla despacio."
+    },
+    "sl_seated_knee_tracking_lift": {
+      "name": "Elevación lenta con rótula al frente",
+      "cues": "Estira una pierna con la rótula apuntando al techo y tarda cinco segundos en bajarla con control."
+    },
+    "sl_seated_shin_rotation_control": {
+      "name": "Control de rotación de espinilla",
+      "cues": "Rodilla en ángulo recto y talón apoyado, gira los dedos hacia adentro y afuera rotando la espinilla, sin mover el muslo."
+    },
+    "sl_seated_alternating_toe_taps": {
+      "name": "Toques de punta alternados sentado",
+      "cues": "Talones en el piso, eleva y golpea con la punta de un pie y luego del otro, a ritmo ágil y constante."
+    },
+    "sl_seated_inward_toe_lifts": {
+      "name": "Elevación de punta hacia adentro",
+      "cues": "Talones apoyados, eleva las puntas girándolas un poco hacia adentro, pausa y baja despacio."
+    },
+    "sl_seated_heel_walks": {
+      "name": "Caminata de talones sentado",
+      "cues": "Con las puntas elevadas, camina con los talones hacia adelante en pasos cortos y luego regresa."
+    },
+    "sl_seated_hand_pressed_heel_raise": {
+      "name": "Elevación de talón con resistencia",
+      "cues": "Presiona con ambas manos sobre una rodilla y eleva ese talón lo más alto posible; baja despacio."
+    },
+    "sl_seated_heel_raise_pulses": {
+      "name": "Pulsos de talones sentado",
+      "cues": "Eleva ambos talones y haz pulsos pequeños y rápidos arriba antes de bajar por completo."
+    },
+    "sl_seated_turned_out_heel_raise": {
+      "name": "Elevación de talones con puntas afuera",
+      "cues": "Gira las puntas un poco hacia afuera con los talones juntos y elévalos alto; baja con control."
+    },
+    "sl_seated_back_extension": {
+      "name": "Extensión de espalda sentado",
+      "cues": "Manos en los muslos, eleva el pecho y arquea suavemente la zona lumbar un poco; vuelve a sentarte erguido."
+    },
+    "sl_seated_hip_hinge_hold": {
+      "name": "Bisagra de cadera sentado",
+      "cues": "Brazos cruzados, inclínate desde la cadera con la espalda recta, sostén respirando y vuelve arriba."
+    },
+    "sl_seated_backrest_press_hold": {
+      "name": "Presión contra el respaldo",
+      "cues": "Siéntate erguido contra el respaldo y presiona la espalda suavemente sin encorvarte; sostén, respira y relaja."
+    },
+    "sl_supported_standing_back_extension": {
+      "name": "Extensión lumbar de pie apoyada",
+      "cues": "Sujeta el respaldo de una silla, aprieta glúteos y eleva el pecho arqueando un poco; vuelve a la posición recta."
+    },
+    "sl_supported_hip_hinge": {
+      "name": "Bisagra de cadera con apoyo",
+      "cues": "Manos en el respaldo, lleva la cadera atrás con espalda recta y rodillas flojas; sube apretando glúteos."
+    },
+    "sl_seated_glute_squeeze_hold": {
+      "name": "Apretón de glúteos sentado",
+      "cues": "Siéntate erguido y aprieta los glúteos con fuerza hasta subir un poco en el asiento; sostén, respira y relaja."
+    },
+    "sl_seated_knee_out_press_hold": {
+      "name": "Presión de rodillas hacia afuera",
+      "cues": "Manos en la parte externa de las rodillas, empújalas hacia afuera contra las manos sin moverte; respira."
+    },
+    "sl_seated_leg_back_floor_press": {
+      "name": "Presión de pierna atrás sentado",
+      "cues": "Al borde de la silla, lleva un pie atrás apoyando la punta y presiónalo contra el piso; sostén y cambia."
+    },
+    "sl_seated_clamshell": {
+      "name": "Almeja sentado",
+      "cues": "Pies juntos en el piso, separa las rodillas hasta donde sea cómodo, pausa y ciérralas despacio."
+    },
+    "sl_seated_seat_hover_hold": {
+      "name": "Suspensión sobre el asiento",
+      "cues": "Inclínate con los pies bajo las rodillas y despega la cola del asiento; sostén un momento y siéntate suave."
+    },
+    "sl_seated_band_leg_back_pull": {
+      "name": "Pierna atrás con banda sentado",
+      "cues": "Banda en ambos tobillos, al borde de la silla lleva un pie atrás bajo la silla contra la banda y regresa."
+    },
+    "sl_seated_band_clamshell": {
+      "name": "Almeja con banda sentado",
+      "cues": "Banda sobre las rodillas y pies juntos, separa las rodillas contra la banda, pausa y ciérralas despacio."
+    },
+    "sl_seated_heel_dig_hold": {
+      "name": "Presión de talón hacia atrás",
+      "cues": "Rodilla un poco doblada, clava un talón en el piso y tira hacia la silla sin moverlo; sostén y cambia."
+    },
+    "sl_seated_towel_heel_drag": {
+      "name": "Arrastre de talón con toalla",
+      "cues": "Talón sobre una toalla en piso liso, presiona y arrástralo bajo la silla; luego deslízalo al frente."
+    },
+    "sl_seated_crossed_ankle_curl_press": {
+      "name": "Presión de tobillos cruzados",
+      "cues": "Cruza los tobillos, tira del talón de atrás hacia la silla mientras la otra pierna resiste; sostén y cambia."
+    },
+    "sl_seated_straight_leg_heel_press": {
+      "name": "Presión de talón con pierna recta",
+      "cues": "Estira una pierna al frente con el talón en el piso y presiónalo hacia abajo; sostén, respira y cambia."
+    },
+    "sl_seated_heel_back_kicks": {
+      "name": "Patadas de talón hacia atrás",
+      "cues": "Al borde de la silla, eleva un pie y lleva el talón atrás bajo la silla; luego estíralo al frente."
+    },
+    "sl_seated_band_heel_dig_hold": {
+      "name": "Talón atrás sostenido con banda",
+      "cues": "Banda anclada al frente en un tobillo, lleva el talón atrás bajo la silla y sostén contra la banda; cambia."
+    },
+    "sl_seated_band_double_leg_curl": {
+      "name": "Curl de ambas piernas con banda",
+      "cues": "Banda anclada al frente en ambos tobillos, lleva los dos talones hacia la silla a la vez y regresa despacio."
+    },
+    "sv_cs_hands_behind_head_chest": {
+      "name": "Pecho con manos en la nuca",
+      "cues": "Siéntate erguido, apoya las manos detrás de la cabeza y abre los codos; no jales la cabeza."
+    },
+    "sv_cs_seat_edge_front_shoulder": {
+      "name": "Hombro frontal al borde del asiento",
+      "cues": "Sujeta el borde del asiento detrás de la cadera y eleva el pecho hasta sentir el frente de los hombros."
+    },
+    "sv_cs_palms_up_overhead": {
+      "name": "Palmas arriba sobre la cabeza sentado",
+      "cues": "Entrelaza los dedos, gira las palmas hacia arriba y empuja suave al techo con hombros relajados."
+    },
+    "sv_cs_arm_behind_back_shoulder": {
+      "name": "Brazo detrás de la espalda sentado",
+      "cues": "Apoya una mano en la espalda baja y con la otra guía suave esa muñeca hacia la cadera opuesta."
+    },
+    "sv_cs_low_cross_arm": {
+      "name": "Brazo cruzado bajo sentado",
+      "cues": "Cruza un brazo frente al abdomen y abrázalo con el otro antebrazo, con ese hombro relajado."
+    },
+    "sv_cs_opposite_knee_reach": {
+      "name": "Alcance a la rodilla opuesta sentado",
+      "cues": "Sujeta la parte externa de la rodilla opuesta y deja que el omóplato avance, respirando lento."
+    },
+    "sv_cs_forearm_press_down": {
+      "name": "Antebrazo hacia abajo sentado",
+      "cues": "Eleva un codo a la altura del pecho doblado a 90 grados y con la otra mano baja un poco el antebrazo."
+    },
+    "sv_cs_goalpost_hold": {
+      "name": "Brazos en portería sentado",
+      "cues": "Sube los brazos como portería, codos a la altura de los hombros, y lleva las manos atrás sin molestia."
+    },
+    "sv_cs_elbows_in_forearm_open": {
+      "name": "Apertura de antebrazos codos pegados",
+      "cues": "Codos pegados al cuerpo a 90 grados, abre los antebrazos hacia afuera y sostén donde sientas estirar."
+    },
+    "sv_cs_lean_away_back": {
+      "name": "Inclinación hacia afuera sentado",
+      "cues": "Sujeta el asiento junto al muslo e inclina el torso hacia el otro lado hasta estirar la espalda alta."
+    },
+    "sv_cs_wrist_pull_lat": {
+      "name": "Dorsal jalando la muñeca sentado",
+      "cues": "Sube ambos brazos, sujeta una muñeca e inclínate suave al otro lado, sintiendo el costado."
+    },
+    "sv_cs_diagonal_fold": {
+      "name": "Alcance diagonal de dorsal sentado",
+      "cues": "Inclínate despacio y desliza ambas manos hacia el lado externo de un pie, con los pies apoyados."
+    },
+    "sv_cs_side_lean_lat": {
+      "name": "Codo arriba e inclinación lateral",
+      "cues": "Pon una mano detrás de la cabeza, apunta ese codo arriba e inclínate suave al otro lado."
+    },
+    "sv_cs_straight_arm_reach_back": {
+      "name": "Bíceps con brazos atrás en silla",
+      "cues": "Siéntate al frente de la silla, lleva los brazos rectos atrás con pulgares abajo, sin inclinarte."
+    },
+    "sv_cs_seat_grip_biceps": {
+      "name": "Bíceps sujetando el asiento",
+      "cues": "Sujeta el asiento justo detrás de la cadera, estira ese brazo y gira el pecho un poco al lado contrario."
+    },
+    "sv_cs_elbow_up_triceps": {
+      "name": "Codo hacia el techo sentado",
+      "cues": "Lleva una mano a la espalda alta y con la otra guía suave ese codo hacia arriba."
+    },
+    "sv_cs_lean_back_belly": {
+      "name": "Abdomen inclinándose atrás sentado",
+      "cues": "Apoya las manos en el asiento detrás, eleva el pecho y reclínate un poco mirando al frente."
+    },
+    "sv_cs_arms_up_arch": {
+      "name": "Arco con brazos arriba sentado",
+      "cues": "Entrelaza las manos arriba, eleva el pecho y arquea solo un poco, con el cuello largo."
+    },
+    "sv_cs_diagonal_reach_up": {
+      "name": "Alcance diagonal hacia arriba sentado",
+      "cues": "Lleva un brazo arriba y un poco atrás, abriendo el pecho, con ambas caderas en el asiento."
+    },
+    "sv_cs_single_knee_hug": {
+      "name": "Abrazo de una rodilla sentado",
+      "cues": "Sube una rodilla, abrázala hacia el pecho y deja que la espalda baja se redondee; usa la silla si hace falta."
+    },
+    "sv_cs_c_curve_hold": {
+      "name": "Curva en C sentado",
+      "cues": "Manos en las rodillas, mete la pelvis y redondea la espalda en C, empujando suave las rodillas."
+    },
+    "sv_cs_knee_across_hug": {
+      "name": "Rodilla al hombro opuesto sentado",
+      "cues": "Sube una rodilla y llévala suave hacia el hombro opuesto, con la espalda erguida."
+    },
+    "sv_cs_crossed_leg_twist": {
+      "name": "Giro de glúteo con pierna cruzada",
+      "cues": "Cruza una rodilla sobre la otra, gira hacia la rodilla de arriba y presiónala suave con la mano opuesta."
+    },
+    "sv_cs_knee_drop_hip": {
+      "name": "Rodilla hacia adentro sentado",
+      "cues": "Separa bien los pies y deja caer despacio una rodilla hacia adentro, hacia el otro pie, y sostén."
+    },
+    "sv_cs_frog_leg_opener": {
+      "name": "Apertura con plantas juntas sentado",
+      "cues": "Avanza en la silla, junta las plantas de los pies en el piso y deja que las rodillas se abran suave."
+    },
+    "sv_cs_side_leg_adductor": {
+      "name": "Aductor con pierna al lado sentado",
+      "cues": "Desliza una pierna recta hacia el lado, dedos arriba, e inclínate suave hacia la rodilla doblada."
+    },
+    "sv_cs_elbow_press_groin": {
+      "name": "Ingle con presión de codos sentado",
+      "cues": "Rodillas abiertas y pies apoyados, inclínate y deja que los codos separen suave las rodillas."
+    },
+    "sv_cs_side_sit_quad": {
+      "name": "Cuádriceps sentado de lado",
+      "cues": "Siéntate de lado, deja la pierna externa doblada atrás junto al asiento y sujeta la silla."
+    },
+    "sv_cs_foot_tuck_quad": {
+      "name": "Cuádriceps con pie atrás sentado",
+      "cues": "Desliza un pie hacia atrás bajo la silla, en puntas, hasta sentir estirar el frente del muslo."
+    },
+    "sv_cs_tucked_feet_lean_back": {
+      "name": "Pies atrás y reclinado sentado",
+      "cues": "Lleva ambos pies atrás bajo la silla y reclina un poco el torso contra el respaldo."
+    },
+    "sv_cs_heel_slide_knee_bend": {
+      "name": "Flexión de rodilla deslizando el talón",
+      "cues": "Desliza un talón hacia atrás por el piso hasta doblar la rodilla cómodamente y sostén sin dolor."
+    },
+    "sv_cs_knee_straightening_hold": {
+      "name": "Extensión suave de rodilla sentado",
+      "cues": "Apoya un talón adelante en el piso y presiona suave el muslo sobre la rodilla, nunca la rótula."
+    },
+    "sv_cs_shin_pull_knee_bend": {
+      "name": "Flexión de rodilla jalando la espinilla",
+      "cues": "Sube un pie, sujeta la espinilla y acerca el talón a la silla, deteniéndote antes de sentir dolor."
+    },
+    "sv_cs_leg_lift_hamstring": {
+      "name": "Isquiotibial con pierna elevada",
+      "cues": "Sujeta detrás de un muslo, sube el pie y estira la rodilla solo hasta sentir un estiramiento suave."
+    },
+    "sv_cs_two_leg_hamstring": {
+      "name": "Isquiotibiales con ambas piernas",
+      "cues": "Siéntate al borde, ambos talones adelante con dedos arriba, e inclínate desde la cadera con espalda larga."
+    },
+    "sv_cs_flexed_foot_hold": {
+      "name": "Pantorrilla con pie flexionado",
+      "cues": "Estira una pierna adelante sobre el talón y lleva los dedos hacia ti, sosteniendo la posición."
+    },
+    "sv_cs_bent_knee_calf": {
+      "name": "Pantorrilla con rodilla doblada",
+      "cues": "Lleva un pie un poco atrás, mantén el talón abajo y adelanta la rodilla sobre los dedos."
+    },
+    "sv_cs_ankle_cross_shin": {
+      "name": "Espinilla con tobillo sobre rodilla",
+      "cues": "Apoya un tobillo sobre la otra rodilla y presiona suave el empeine para estirar los dedos."
+    },
+    "sv_cs_pointed_toe_hold": {
+      "name": "Punta del pie con pierna larga",
+      "cues": "Sube un poco una pierna al frente y estira la punta del pie, sintiendo el frente del tobillo."
+    },
+    "sv_mo_chair_cat_cow": {
+      "name": "Gato-vaca en silla",
+      "cues": "Manos en las rodillas, redondea la espalda al exhalar y eleva el pecho al inhalar, despacio."
+    },
+    "sv_mo_crossed_arm_rotations": {
+      "name": "Rotaciones con brazos cruzados en silla",
+      "cues": "Cruza los brazos en el pecho y gira despacio de lado a lado, con la cadera quieta y rodillas al frente."
+    },
+    "sv_mo_overhead_side_reaches": {
+      "name": "Alcances laterales por arriba en silla",
+      "cues": "Lleva un brazo arriba y hacia el lado, vuelve al centro y cambia, al ritmo de tu respiración."
+    },
+    "sv_mo_seated_trunk_circles": {
+      "name": "Círculos de tronco sentado",
+      "cues": "Manos en las rodillas, haz círculos lentos y pequeños con el torso y luego cambia de sentido."
+    },
+    "sv_br_counted_chair_breathing": {
+      "name": "Respiración contada en silla",
+      "cues": "Siéntate erguido, inhala por la nariz en 4 tiempos y exhala despacio por la boca en 6."
+    },
+    "sv_br_shoulder_drop_breathing": {
+      "name": "Respiración soltando hombros",
+      "cues": "Inhala suave y, al exhalar despacio, deja caer y relajar los hombros."
+    },
+    "sv_br_humming_exhale": {
+      "name": "Respiración con zumbido al exhalar",
+      "cues": "Inhala por la nariz y luego tararea suave con los labios cerrados en una exhalación larga."
+    },
+    "sv_cw_seated_walking_arms": {
+      "name": "Marcha lenta sentado con brazos",
+      "cues": "Sube los pies despacio por turnos mientras balanceas el brazo opuesto, calmando la respiración."
+    },
+    "sv_cw_seated_foot_shuffle": {
+      "name": "Arrastre de pies sentado",
+      "cues": "Desliza un pie adelante y el otro atrás por el piso, alternando a un ritmo cada vez más suave."
+    },
+    "sv_fc_seated_uppercuts": {
+      "name": "Ganchos rápidos sentado",
+      "cues": "Siéntate erguido y lanza golpes rápidos hacia arriba, alternando brazos y girando un poco el torso."
+    },
+    "sv_fc_seated_knee_elbow_taps": {
+      "name": "Toques de rodilla a codo sentado",
+      "cues": "Sube una rodilla y acerca el codo opuesto, luego cambia de lado a un ritmo ágil y constante."
+    },
+    "sv_fc_seated_sprint_arms": {
+      "name": "Sprint sentado con brazos",
+      "cues": "Mueve los pies rápido en el piso mientras bombeas los brazos doblados; sujeta la silla si hace falta."
+    },
+    "kid_chair_rainbow_stretch": {
+      "name": "Estiramiento arcoíris",
+      "cues": "Siéntate erguido, lleva un brazo por arriba de la cabeza como un arcoíris y sostén contando hasta cinco."
+    },
+    "kid_sleepy_turtle_stretch": {
+      "name": "Tortuga dormilona",
+      "cues": "Dóblate sobre tus piernas como una tortuga entrando a su caparazón, brazos sueltos, y respira lento."
+    },
+    "kid_flower_candle_breathing": {
+      "name": "Huele la flor, sopla la vela",
+      "cues": "Inhala despacio por la nariz como si olieras una flor y sopla suave como apagando una vela."
+    },
+    "rp_band_ir_short_arc": {
+      "name": "Giro interno corto con banda",
+      "cues": "Codo pegado al cuerpo, lleva la banda un poco hacia el abdomen, solo hasta donde no duela."
+    },
+    "rp_side_lying_ir_small": {
+      "name": "Giro interno corto de lado",
+      "cues": "Acostado de lado, codo a 90 grados, sube el antebrazo hacia el abdomen en un arco corto sin dolor."
+    },
+    "rp_light_suitcase_walk": {
+      "name": "Caminata corta con peso ligero",
+      "cues": "Sostén un peso ligero en una mano, mantente erguido y da unos pasos cortos; suéltalo antes de forzar."
+    },
+    "rp_short_farmer_walk": {
+      "name": "Caminata de granjero corta",
+      "cues": "Sostén pesos ligeros a los lados, hombros atrás y abajo, y camina una distancia corta con calma."
+    },
+    "rp_supine_nod_small": {
+      "name": "Asentimiento corto acostado",
+      "cues": "Boca arriba, mete el mentón y despega la cabeza del suelo apenas un poco, sin dolor."
+    },
+    "rp_prone_head_lift_small": {
+      "name": "Elevación corta de cabeza boca abajo",
+      "cues": "Boca abajo sobre los antebrazos, mentón adentro, levanta un poco la cabeza sin llegar al dolor."
+    },
+    "rp_seated_neck_extension_arc": {
+      "name": "Mirada corta hacia arriba sentado",
+      "cues": "Siéntate erguido, mete el mentón y luego inclina la cabeza hacia atrás solo un poco; vuelve lento."
+    },
+    "rp_seated_neck_turn_arc": {
+      "name": "Giros cortos de cabeza sentado",
+      "cues": "Siéntate erguido y gira la cabeza de lado a lado en un rango corto sin dolor, mirada al frente."
+    },
+    "rp_quadruped_head_turn_small": {
+      "name": "Giros cortos de cabeza en cuadrupedia",
+      "cues": "En cuatro apoyos con el cuello largo, gira un poco la cabeza a cada lado sin dejarla caer."
+    },
+    "rp_seated_side_tilt_arc": {
+      "name": "Inclinaciones cortas de oreja sentado",
+      "cues": "Siéntate erguido e inclina una oreja un poco hacia el hombro y luego la otra, sin subir los hombros."
+    },
+    "rp_side_lying_head_lift_small": {
+      "name": "Elevación corta de cabeza de lado",
+      "cues": "Acostado de lado con una almohada, levanta la cabeza apenas de ella, sin dolor."
+    },
+    "rp_band_neck_tilt_short": {
+      "name": "Inclinación de cuello con banda, corta",
+      "cues": "Con una banda ligera alrededor de la cabeza sujeta al lado, inclina un poco hacia el otro lado sin dolor."
+    },
+    "rp_bench_kettlebell_lift": {
+      "name": "Peso muerto con pesa rusa elevada",
+      "cues": "Pon la pesa rusa sobre un escalón o banco bajo, inclínate desde la cadera con espalda recta y levántate."
+    },
+    "rp_chair_height_dumbbell_lift": {
+      "name": "Levantar mancuerna desde una silla",
+      "cues": "Levanta una mancuerna ligera del asiento de una silla doblando la cadera, espalda recta, y ponte erguido."
+    },
+    "rp_side_lying_adduction_small": {
+      "name": "Elevación corta de pierna interna",
+      "cues": "Acostado de lado, pie de arriba adelante, sube la pierna de abajo unos centímetros sin dolor."
+    },
+    "rp_short_arc_clamshell": {
+      "name": "Almeja de arco corto",
+      "cues": "Acostado de lado, rodillas dobladas, abre la rodilla de arriba solo en parte, sin mover la pelvis."
+    },
+    "rp_cushion_half_kneel_rise": {
+      "name": "Subida desde media rodilla con cojín",
+      "cues": "Arrodíllate sobre un cojín grueso, sujétate de un apoyo y sube empujando con la pierna de adelante."
+    },
+    "rp_tall_kneel_hip_hinge": {
+      "name": "Bisagra de rodillas con cojín",
+      "cues": "De rodillas sobre un cojín grueso, lleva la cadera un poco atrás y aprieta los glúteos para subir."
+    },
+    "rp_low_step_up": {
+      "name": "Subida a escalón muy bajo",
+      "cues": "Sube a un escalón bajo, a la altura del tobillo, sujetándote, y baja despacio con control."
+    },
+    "rp_quarter_pivot_step": {
+      "name": "Paso de giro de un cuarto",
+      "cues": "Sujetándote, gira un cuarto sobre la punta de un pie, rodilla suave sobre los dedos, y regresa."
+    },
+    "rp_supported_heel_pivot": {
+      "name": "Giros cortos del pie con apoyo",
+      "cues": "Sujétate de una mesa, sube un poco a la punta de un pie y gira el talón hacia dentro y fuera."
+    },
+    "rp_slow_angled_step": {
+      "name": "Paso en diagonal lento",
+      "cues": "Camina hacia adelante y sal en un ángulo pequeño, rodilla alineada con los dedos, lento y controlado."
+    },
+    "rp_supported_mini_hops": {
+      "name": "Saltitos con apoyo",
+      "cues": "Sujétate de una mesa y da saltitos muy bajos y suaves, cayendo con la punta de los pies."
+    },
+    "rp_soft_heel_drops": {
+      "name": "Caídas suaves de talón",
+      "cues": "Sube un poco a la punta de los pies y deja caer los talones suave, rodillas flojas, con apoyo."
+    },
+    "rp_small_line_hops": {
+      "name": "Saltitos cortos sobre una línea",
+      "cues": "Salta bajito sobre una línea hacia adelante y atrás con ambos pies, cayendo suave con rodillas dobladas."
+    },
+    "rp_band_ir_full": {
+      "name": "Giro interno completo con banda",
+      "cues": "Codo al costado, gira el antebrazo completamente hacia dentro contra la banda y vuelve lento."
+    },
+    "rp_side_lying_ir_dumbbell": {
+      "name": "Giro interno con mancuerna de lado",
+      "cues": "Acostado sobre el lado que trabaja, codo a 90 grados, sube una mancuerna ligera hacia el abdomen."
+    },
+    "rp_band_ir_90": {
+      "name": "Giro interno con banda a 90°",
+      "cues": "Brazo a la altura del hombro, codo a 90 grados, gira el antebrazo hacia adelante y abajo contra la banda."
+    },
+    "rp_band_er_90": {
+      "name": "Giro externo con banda a 90°",
+      "cues": "Brazo a la altura del hombro, codo a 90 grados, gira el antebrazo hacia arriba y atrás contra la banda."
+    },
+    "rp_band_behind_back_lift": {
+      "name": "Mano tras la espalda con banda",
+      "cues": "Con la banda fija abajo detrás de ti, sube la mano por la espalda hasta donde sea cómodo y baja lento."
+    },
+    "rp_dumbbell_forearm_turns": {
+      "name": "Giros de palma con mancuerna",
+      "cues": "Antebrazo sobre el muslo, sostén una mancuerna ligera y gira la palma arriba y luego abajo, lento."
+    },
+    "rp_band_neck_nod": {
+      "name": "Asentimiento de cuello con banda",
+      "cues": "Banda ligera detrás de la cabeza sujeta adelante, mete el mentón y llévalo al pecho; vuelve lento."
+    },
+    "rp_supine_head_lift_full": {
+      "name": "Elevación mentón al pecho acostado",
+      "cues": "Boca arriba, mete el mentón y lleva la cabeza hacia el pecho; luego baja despacio."
+    },
+    "rp_hand_resisted_neck_four_way": {
+      "name": "Cuello con resistencia de la mano",
+      "cues": "Presiona suave la mano contra la cabeza mientras la mueves adelante, atrás y a cada lado en todo el rango."
+    },
+    "rp_band_neck_extension": {
+      "name": "Extensión de cuello con banda",
+      "cues": "Banda ligera en la frente sujeta adelante, mentón nivelado, lleva la cabeza atrás y vuelve lento."
+    },
+    "rp_prone_head_lift_full": {
+      "name": "Elevación completa de cabeza boca abajo",
+      "cues": "Boca abajo con la frente abajo, levanta la cabeza hasta mirar al frente y baja con control."
+    },
+    "rp_band_neck_turn": {
+      "name": "Giro de cabeza con banda",
+      "cues": "Banda ligera en la cabeza sujeta a un lado, gira la cabeza del todo hacia el otro lado y vuelve."
+    },
+    "rp_hand_resisted_head_turn": {
+      "name": "Giro de cabeza contra la mano",
+      "cues": "Mano al costado de la cara, gira la cabeza del todo hacia ese lado mientras la mano empuja suave."
+    },
+    "rp_quadruped_head_turn_full": {
+      "name": "Giros completos de cabeza en cuadrupedia",
+      "cues": "En cuatro apoyos con el cuello largo, gira la cabeza del todo para mirar sobre cada hombro, lento."
+    },
+    "rp_band_neck_tilt_full": {
+      "name": "Inclinación de cuello con banda, completa",
+      "cues": "Banda ligera en la cabeza sujeta al lado, inclina la oreja del todo hacia el otro hombro y vuelve lento."
+    },
+    "rp_side_lying_head_lift_full": {
+      "name": "Elevación completa de cabeza de lado",
+      "cues": "Acostado de lado sin almohada, lleva la oreja hacia el hombro de arriba y baja despacio."
+    },
+    "rp_controlled_roll_up": {
+      "name": "Enrollado lento controlado",
+      "cues": "Boca arriba, enróllate vértebra a vértebra hasta sentarte y baja despacio con control."
+    },
+    "rp_slow_reverse_crunch": {
+      "name": "Encogimiento inverso lento",
+      "cues": "Boca arriba con rodillas dobladas, eleva la cadera del suelo hacia el pecho y baja despacio."
+    },
+    "rp_prone_back_raise": {
+      "name": "Elevación de espalda boca abajo",
+      "cues": "Boca abajo, manos junto a las orejas, levanta el pecho del suelo con el cuello largo y baja lento."
+    },
+    "rp_bench_back_extension": {
+      "name": "Extensión de espalda en banco",
+      "cues": "Boca abajo con la cadera en un banco y las piernas sujetas, eleva el tronco hasta quedar recto."
+    },
+    "rp_prone_swimmer_lift": {
+      "name": "Nadador boca abajo",
+      "cues": "Boca abajo con brazos al frente, levanta brazo y pierna contrarios a la vez y alterna, lento."
+    },
+    "rp_band_trunk_rotation": {
+      "name": "Giro de tronco con banda",
+      "cues": "Banda fija a la altura del pecho a tu lado, brazos rectos, gira el tronco del todo y vuelve lento."
+    },
+    "rp_cable_woodchop": {
+      "name": "Leñador en polea de arriba abajo",
+      "cues": "Tira del cable de arriba de un lado hacia abajo cruzando el cuerpo, girando el tronco y el pie de atrás."
+    },
+    "rp_band_low_to_high_lift": {
+      "name": "Elevación diagonal con banda",
+      "cues": "Banda fija abajo a un lado, llévala arriba cruzando el cuerpo mientras giras el tronco y vuelve lento."
+    },
+    "rp_dumbbell_side_bend": {
+      "name": "Inclinación lateral con mancuerna",
+      "cues": "Sostén una mancuerna a un lado, inclínate hacia ella en todo el rango y sube con el otro costado."
+    },
+    "rp_side_lying_trunk_raise": {
+      "name": "Elevación lateral de tronco acostado",
+      "cues": "Acostado de lado con los pies sujetos bajo un sofá, levanta el hombro del suelo y baja lento."
+    },
+    "rp_band_side_bend": {
+      "name": "Inclinación lateral con banda",
+      "cues": "Pisa una banda sujetando el extremo al costado e inclínate al lado contrario en todo el rango."
+    },
+    "rp_kettlebell_deadlift_floor": {
+      "name": "Peso muerto con pesa rusa, suelo",
+      "cues": "Pesa rusa entre los pies, inclínate con espalda recta, tómala y levántate llevando la cadera adelante."
+    },
+    "rp_dumbbell_rdl_full": {
+      "name": "Peso muerto rumano completo con mancuernas",
+      "cues": "Con mancuernas y rodillas suaves, lleva la cadera atrás y baja a media tibia con espalda recta; sube."
+    },
+    "rp_band_side_lying_abduction": {
+      "name": "Elevación lateral de pierna con banda",
+      "cues": "Acostado de lado con una banda sobre las rodillas, sube la pierna de arriba del todo y baja lento."
+    },
+    "rp_cable_hip_abduction": {
+      "name": "Abducción de cadera en polea",
+      "cues": "Tobillera en el pie lejano, sujétate y lleva la pierna hacia afuera del todo con el tronco recto."
+    },
+    "rp_band_standing_adduction": {
+      "name": "Pierna hacia dentro con banda",
+      "cues": "Banda fija abajo a tu lado en el tobillo cercano, lleva la pierna cruzando por delante de la otra."
+    },
+    "rp_cable_hip_adduction": {
+      "name": "Aducción de cadera en polea",
+      "cues": "Tobillera en el pie cercano, sujétate y cruza la pierna por delante del cuerpo con el tronco recto."
+    },
+    "rp_band_clamshell_full": {
+      "name": "Almeja completa con banda",
+      "cues": "Acostado de lado con banda sobre las rodillas, abre la rodilla de arriba al máximo, pelvis quieta."
+    },
+    "rp_band_seated_hip_in_turn": {
+      "name": "Giro interno de cadera, banda sentado",
+      "cues": "Siéntate erguido con banda en un tobillo tirando hacia dentro y lleva el pie afuera sin mover la rodilla."
+    },
+    "rp_band_seated_hip_out_turn": {
+      "name": "Giro externo de cadera, banda sentado",
+      "cues": "Siéntate erguido con banda en un tobillo tirando hacia afuera y lleva el pie adentro sin mover la rodilla."
+    },
+    "rp_weighted_kneel_to_stand": {
+      "name": "Arrodillado a de pie con peso",
+      "cues": "Con mancuernas ligeras, baja una rodilla a la colchoneta y sube empujando con el pie de adelante."
+    },
+    "rp_dumbbell_step_up": {
+      "name": "Subida a banco con mancuernas",
+      "cues": "Con mancuernas, sube a un banco a la altura de la rodilla, erguido arriba, y baja despacio."
+    },
+    "rp_lateral_step_down": {
+      "name": "Bajada lateral lenta del escalón",
+      "cues": "De lado sobre un escalón, baja lento el talón libre al suelo, rodilla sobre los dedos, y vuelve a subir."
+    },
+    "rp_half_turn_pivot_step": {
+      "name": "Paso de giro de media vuelta",
+      "cues": "Gira media vuelta sobre la punta de un pie, rodilla doblada sobre los dedos, y vuelve a girar."
+    },
+    "rp_band_lateral_shuffle": {
+      "name": "Desplazamiento lateral con banda",
+      "cues": "Banda sobre las rodillas, en media sentadilla, desplázate de lado y cambia de dirección con control."
+    },
+    "rp_cone_cutting_steps": {
+      "name": "Ejercicio de cambios de dirección",
+      "cues": "Trota unos pasos, apoya el pie de afuera y cambia de dirección a 45 grados, rodilla sobre los dedos."
+    },
+    "rp_lateral_line_hops": {
+      "name": "Saltos laterales sobre una línea",
+      "cues": "Salta de lado a lado sobre una línea con ambos pies, cayendo suave con rodillas dobladas."
+    },
+    "rp_pogo_hops": {
+      "name": "Saltos de resorte",
+      "cues": "Rebota rápido con la punta de los pies, tobillos firmes y rodillas un poco dobladas, cayendo suave."
+    },
+    "rp_single_leg_hop_stick": {
+      "name": "Salto a una pierna con freno",
+      "cues": "Salta un poco hacia adelante en una pierna y cae suave, mantén dos segundos, rodilla sobre los dedos."
+    },
+    "sf_seated_prayer_press_pulses": {
+      "name": "Pulsos de presión en oración sentado",
+      "cues": "Junta las palmas a la altura del pecho y empújalas adelante y atrás en pulsos cortos, sin soltar la presión."
+    },
+    "sf_seated_fist_knee_squeeze": {
+      "name": "Apretón de rodillas con puños",
+      "cues": "Siéntate erguido con los puños entre las rodillas, apriétalas 3 segundos y relaja."
+    },
+    "sf_seated_back_arch_reach": {
+      "name": "Arco de espalda sentado",
+      "cues": "Siéntate al borde de la silla, inclínate un poco, luego eleva el pecho y estira los brazos al frente con la espalda larga."
+    },
+    "sf_seated_hip_hinge_lift": {
+      "name": "Elevación en bisagra sentado",
+      "cues": "Manos en los muslos, inclínate desde la cadera con la espalda recta y vuelve arriba apretando la zona lumbar."
     }
   },
   "generator": {
