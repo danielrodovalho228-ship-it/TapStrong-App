@@ -3,6 +3,7 @@ import { MUSCLES, muscleByKey, muscleFamily, type MovementGroup } from '../muscl
 import { defaultMuscleGoal, type MuscleGoal } from '../onboarding/options';
 import type { AppMode } from '../profile/age';
 
+import { rampAllowed } from './alternatives';
 import { doseFor, estimateSeconds, needsCaution } from './dosage';
 import { emphasisOn, isKidMove, needsJointCare, rangeFor, safePool, userLevel } from './filters';
 import type {
@@ -603,12 +604,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   let rampSeconds = 0;
   let ramp: SessionItem | null = null;
   // No ramp-up for a lift that loads a restricted or painful joint (QA R2-07).
-  if (
-    first?.loaded &&
-    input.mode !== 'child' &&
-    !needsCaution(input.conditions) &&
-    !needsJointCare(first, input)
-  ) {
+  if (first && rampAllowed(first, input)) {
     const sets = input.mode === 'teen' || warmup <= MIN_WARMUP ? 1 : 2;
     rampSeconds = sets * 60;
     ramp = {

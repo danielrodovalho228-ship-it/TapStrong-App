@@ -51,6 +51,12 @@ export function movementVerdict(
     if (RANK[v] > RANK[worst]) worst = v;
   };
   for (const limit of limits) {
+    // Recovery phase 1 uses only holds cleared for the area, in a workout,
+    // a recovery session or a swap alike (QA R3-07).
+    if (limit.phase === 1 && e.contraindications.includes(limit.area)) {
+      raise('blocked');
+      continue;
+    }
     const uses = e.joints.filter((j) => limit.joints.includes(j.joint));
     if (!uses.length) {
       // Ruled out for the area but untagged for its joints: cannot judge, keep it out.

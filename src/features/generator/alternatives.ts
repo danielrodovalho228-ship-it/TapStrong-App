@@ -3,7 +3,7 @@ import { muscleByKey, muscleFamily } from '../muscles';
 import { defaultMuscleGoal } from '../onboarding/options';
 
 import { doseFor, estimateSeconds, needsCaution } from './dosage';
-import { emphasisOn, isMachine, safePool } from './filters';
+import { emphasisOn, isMachine, needsJointCare, safePool } from './filters';
 import type {
   GeneratedSession,
   GeneratorInput,
@@ -114,6 +114,16 @@ export function getAlternatives(
     .map((x) => x.e);
 }
 
+/** The generator's ramp-up rule (SPEC §8 table, QA R2-07): same check on swap. */
+export function rampAllowed(e: Exercise, input: GeneratorInput): boolean {
+  return (
+    e.loaded &&
+    input.mode !== 'child' &&
+    !needsCaution(input.conditions) &&
+    !needsJointCare(e, input)
+  );
+}
+
 /**
  * Replaces one item in place — never adds an item (SPEC §8 "Swap").
  * Sets are kept; reps are recomputed from the goal for the new exercise.
@@ -139,8 +149,11 @@ export function swapItem(
       next,
       old.sets,
       {
+        // Same dosing as generation (QA R3-07): a swapped-in move that loads a
+        // restricted or painful joint is dosed light too.
         caution: needsCaution(input.conditions),
         rehab: input.rehab,
+        jointCare: needsJointCare(next, input),
       },
     );
     const kept = { ...dose, sets: old.sets };
@@ -168,12 +181,20 @@ export function swapItem(
 
   let items = session.items.map((i, n) => (n === index ? updated : i));
 
-  // The ramp-up mirrors the first loaded main lift: follow the swap, or drop
-  // the ramp-up when the new exercise has no load (still never adds an item).
+  // The ramp-up mirrors the first loaded main lift: follow the swap when the
+  // new lift may have one (the generator's own check, QA R3-07), otherwise
+  // drop it. Still never adds an item.
   const ramp = items.find((i) => i.part === 'ramp_up');
   if (old.role === 'main' && ramp?.exerciseId === old.exerciseId && setsDone === 0) {
+    const keep = rampAllowed(next, input);
     items = items
-      .map((i) => (i.part === 'ramp_up' ? (next.loaded ? { ...i, exerciseId: next.id } : null) : i))
+      .map((i) =>
+        i.part === 'ramp_up'
+          ? keep
+            ? { ...i, exerciseId: next.id, perSide: next.unilateral }
+            : null
+          : i,
+      )
       .filter((i): i is SessionItem => i !== null);
   }
 

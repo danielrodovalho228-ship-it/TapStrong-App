@@ -19,7 +19,13 @@ import { useOnboardingStore } from '../onboarding/store';
 import { activeAreas, doctorFirstAreas, useRestrictionsStore } from '../restrictions/store';
 
 import { withFocus, recentSessions } from './plan';
-import { dullPainAreasToday, safetyKey, safetyRefresh, sharpStopAreasToday } from './safety';
+import {
+  dullPainAreasToday,
+  safetyKey,
+  safetyRefresh,
+  sharpStopAreasToday,
+  workoutInput,
+} from './safety';
 import { bodyStates, muscleActivity } from './recovery';
 import { findWorkout, useWorkoutStore } from './store';
 
@@ -120,7 +126,10 @@ export function useWorkout(id: string | undefined) {
   const workout = useWorkoutStore((s) => findWorkout(s.workouts, id));
   const library = useExerciseLibrary();
   const byId = useMemo(() => new Map(library.map((e) => [e.id, e])), [library]);
-  const input = useGeneratorInput(library);
+  const base = useGeneratorInput(library);
+  const kind = workout?.kind;
+  // Swaps and safety checks on this workout use its own rules (QA R3-07).
+  const input = useMemo(() => (base ? workoutInput({ kind }, base) : base), [base, kind]);
   return { workout, library, byId, input };
 }
 

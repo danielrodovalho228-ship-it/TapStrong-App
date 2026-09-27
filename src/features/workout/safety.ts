@@ -25,12 +25,25 @@ export type SafetyRefresh =
   | { kind: 'patch'; session: GeneratedSession; skip: string[] };
 
 /**
+ * The input a stored workout is swapped and re-checked with (QA R3-07): a
+ * recovery session keeps its recovery rules — rehab dosing and no shorter
+ * range of a painful movement — so a swap never offers what the recovery
+ * plan left out.
+ */
+export function workoutInput(
+  w: { kind?: WorkoutRecord['kind'] } | undefined,
+  input: GeneratorInput,
+): GeneratorInput {
+  return w?.kind === 'repair' ? { ...input, rehab: true, allowReducedRange: false } : input;
+}
+
+/**
  * Re-checks a stored workout against today's safety input: restrictions,
  * red flags, "Movement that hurts" reports and health answers may have
  * changed since it was generated. Only items still to do are touched.
  */
 export function safetyRefresh(w: WorkoutRecord, input: GeneratorInput): SafetyRefresh {
-  const check: GeneratorInput = w.kind === 'repair' ? { ...input, rehab: true } : input;
+  const check = workoutInput(w, input);
   const byId = new Map(check.library.map((e) => [e.id, e]));
   const logged = (itemId: string) => w.logs.filter((l) => l.itemId === itemId).length;
   const unsafe = w.session.items.filter((item) => {
