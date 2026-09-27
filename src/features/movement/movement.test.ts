@@ -208,6 +208,8 @@ describe('pain traffic light', () => {
 
   it('worse the next morning is red', () => {
     expect(workoutLight(2, 4, 2)).toBe('red');
+    expect(workoutLight(2, 6, 6)).toBe('red'); // over 5 the next morning, even if usual
+    expect(workoutLight(2, 5, 5)).toBe('yellow');
     expect(workoutLight(2, 3, 2)).toBe('green');
     expect(workoutLight(2, 2, 2)).toBe('green');
     expect(workoutLight(4, undefined, 4)).toBe('yellow');
@@ -326,6 +328,7 @@ describe('recovery plan (inside Repair)', () => {
     expect(next.allowReducedRange).toBe(true);
     expect(next.setsPerExercise).toBe(3);
     expect(next.muscleGoals.map((g) => g.muscleKey)).toEqual(CATALOG.joints.shoulder.focus['3']);
+    expect(CATALOG.joints.shoulder.focus['1']).toContain('rotatorCuff');
   });
 
   it('uses only muscles from the database', () => {

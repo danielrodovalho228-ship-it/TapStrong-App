@@ -289,8 +289,8 @@ Physical therapists map the **movement**, not only the place ("which movement hu
   2. keeps exercises that only use pain-free movements;
   3. uses a shorter range when the exercise allows it for that movement (`range_limit`), shown as "Shorter range: stop before it hurts".
   A hold without moving (isometric) in the painful direction is allowed while pain is 5 or less. Pain 7+ leaves every movement of the joint out. Recovery-only exercises never appear in regular workouts.
-- **Recovery plan** (inside Repair; 15-min sessions, always with warm-up and cool-down): phase 1 gentle holds and pain-free range; phase 2 strengthening in pain-free range (shoulder: rotator cuff and shoulder-blade muscles, mapped to the existing muscle keys); phase 3 shorter range of the painful movements allowed and more sets.
-- **Traffic light** after each workout and the next morning (local notification at 8:30): 0–3 green (one step up), 4–5 yellow (hold), over 5 or 2+ points worse the next morning red (one step back). Six steps: phase 1 = steps 1–2, phase 2 = 3–4, phase 3 = 5–6.
+- **Recovery plan** (inside Repair; 15-min sessions, always with warm-up and cool-down): phase 1 gentle holds and pain-free range; phase 2 strengthening in pain-free range (shoulder: rotator cuff and shoulder-blade muscles; `rotatorCuff` is a muscle with no body-map hotspot); phase 3 shorter range of the painful movements allowed and more sets.
+- **Traffic light** after each workout and the next morning (local notification at 8:30): 0–3 green (one step up), 4–5 yellow (hold), red (one step back) when over 5 right after, or the next morning over 5 or 2+ points above the previous score. Six steps: phase 1 = steps 1–2, phase 2 = 3–4, phase 3 = 5–6.
 - **Weekly retest** of the painful movements, charted in Progress. Worse than at the start, or no better after 3 weeks → recommend a physical therapist.
 - **Rules:** never diagnose; pain data never goes to analytics; everything stays draft until the certified reviewer approves the catalog and the tags.
 

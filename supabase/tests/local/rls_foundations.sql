@@ -43,7 +43,7 @@ do $$ begin
   assert (select count(*) from public.profiles) = 0, 'stranger sees no profiles';
   assert (select count(*) from public.restrictions) = 0, 'stranger sees no restrictions';
   assert (select count(*) from public.family_members) = 0, 'stranger sees no family links';
-  assert (select count(*) from public.muscles) = 25, 'muscles are readable';
+  assert (select count(*) from public.muscles) = 26, 'muscles are readable';
 end $$;
 
 do $$ begin
@@ -82,7 +82,7 @@ end $$;
 reset role;
 set role anon;
 do $$ begin
-  assert (select count(*) from public.muscles) = 25, 'anon reads muscles';
+  assert (select count(*) from public.muscles) = 26, 'anon reads muscles';
 end $$;
 reset role;
 

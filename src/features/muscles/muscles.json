@@ -198,5 +198,13 @@
     "labelKey": "muscles.calves",
     "parentKey": null,
     "movementGroup": "legs"
+  },
+  {
+    "key": "rotatorCuff",
+    "region": "upper",
+    "views": [],
+    "labelKey": "muscles.rotatorCuff",
+    "parentKey": null,
+    "movementGroup": "pull"
   }
 ]

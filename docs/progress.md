@@ -719,3 +719,9 @@ Decisões aplicadas: a Aba Coach fica para a primeira atualização e o ícone e
 1. **Manguito rotador:** o banco de músculos não tem "manguito rotador". Usei deltoides, deltoide posterior e parte alta das costas. Quer que eu acrescente o músculo "manguito rotador" ao banco (migração e texto em 3 idiomas), para o revisor mapear direito?
 2. **"Pior na manhã seguinte":** considerei vermelho quando a nota da manhã fica 2 ou mais pontos acima da anterior. Com 1 ponto, qualquer oscilação faria o plano recuar. O revisor pode ajustar esse valor.
 3. **Revisor:** o catálogo, as etiquetas dos 82 exercícios e os 5 testes Repair, as regras (dor 5 e dor 7) e as 3 fases estão na planilha, na aba "Movements".
+
+### Ajustes depois da Fase 9 (suas respostas)
+
+- **Manguito rotador:** entrou no banco de músculos (`rotatorCuff`, sem ponto no mapa do corpo), com texto nos 3 idiomas. Aplicado no Supabase. Agora é o foco do ombro nas fases 1 e 2 e o músculo principal das contrações de rotação e da rotação externa com elástico.
+- **Manhã seguinte:** vermelho quando a nota sobe 2 pontos ou mais em relação à anterior **ou** quando a nota da manhã passa de 5. Há teste para os dois casos.
+- **Planilha do revisor:** gerada de novo com o manguito rotador.

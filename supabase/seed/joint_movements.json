@@ -16,9 +16,9 @@
         "carry"
       ],
       "focus": {
-        "1": ["shoulders", "rearDelts"],
-        "2": ["rearDelts", "upperBack", "shoulders"],
-        "3": ["shoulders", "upperBack", "chest", "lats"]
+        "1": ["rotatorCuff", "rearDelts"],
+        "2": ["rotatorCuff", "rearDelts", "upperBack"],
+        "3": ["shoulders", "rotatorCuff", "upperBack", "chest"]
       }
     },
     "elbow": {
@@ -35,7 +35,11 @@
       "area": "elbow_wrist",
       "sided": true,
       "movements": ["extension_load", "flexion", "grip", "rotation"],
-      "focus": { "1": ["forearms"], "2": ["forearms"], "3": ["forearms", "biceps"] }
+      "focus": {
+        "1": ["forearms"],
+        "2": ["forearms"],
+        "3": ["forearms", "biceps"]
+      }
     },
     "neck": {
       "area": "neck",

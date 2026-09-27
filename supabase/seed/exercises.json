@@ -1826,8 +1826,8 @@
       "unilateral": true,
       "impact": 0,
       "muscles": [
-        ["rearDelts", "primary", 0.6],
-        ["shoulders", "secondary", 0.4]
+        ["rotatorCuff", "primary", 0.8],
+        ["rearDelts", "secondary", 0.4]
       ],
       "joints": [["shoulder", "external_rotation", "isometric"]],
       "rangeLimit": [],
@@ -1848,7 +1848,7 @@
       "unilateral": true,
       "impact": 0,
       "muscles": [
-        ["shoulders", "primary", 0.5],
+        ["rotatorCuff", "primary", 0.8],
         ["chest", "secondary", 0.3]
       ],
       "joints": [["shoulder", "internal_rotation", "isometric"]],
@@ -1869,7 +1869,10 @@
       "loaded": false,
       "unilateral": true,
       "impact": 0,
-      "muscles": [["shoulders", "primary", 0.6]],
+      "muscles": [
+        ["shoulders", "primary", 0.6],
+        ["rotatorCuff", "secondary", 0.5]
+      ],
       "joints": [["shoulder", "abduction", "isometric"]],
       "rangeLimit": [],
       "rehab": true
@@ -1888,7 +1891,10 @@
       "loaded": false,
       "unilateral": true,
       "impact": 0,
-      "muscles": [["shoulders", "primary", 0.6]],
+      "muscles": [
+        ["shoulders", "primary", 0.6],
+        ["rotatorCuff", "secondary", 0.4]
+      ],
       "joints": [["shoulder", "flexion", "isometric"]],
       "rangeLimit": [],
       "rehab": true
@@ -1908,7 +1914,8 @@
       "unilateral": true,
       "impact": 0,
       "muscles": [
-        ["rearDelts", "primary", 0.6],
+        ["rotatorCuff", "primary", 0.8],
+        ["rearDelts", "secondary", 0.4],
         ["upperBack", "secondary", 0.3]
       ],
       "joints": [

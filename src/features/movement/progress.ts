@@ -29,7 +29,8 @@ export function workoutLight(
   baseline: number,
 ): Light {
   const scores = [after, morning].filter((s): s is number => s != null);
-  if (morning != null && morning >= baseline + WORSE_BY) return 'red';
+  // Next morning: 2+ points above the usual, or over 5 (Daniel, Sep 2026).
+  if (morning != null && (morning >= baseline + WORSE_BY || morning > 5)) return 'red';
   const worst = Math.max(0, ...scores);
   return lightFor(worst);
 }
