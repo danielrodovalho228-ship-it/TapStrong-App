@@ -42,6 +42,8 @@ export type GeneratorInput = {
    * "Movement that hurts" report would allow pain-free moves (QA A-05).
    */
   painToday?: string[];
+  /** Areas where a sharp pain stopped a workout today: no exercise moving that joint today (QA R2-02). */
+  stoppedToday?: string[];
   /**
    * "Movement that hurts" reports (SPEC §8): these areas are filtered movement
    * by movement instead of as a whole.

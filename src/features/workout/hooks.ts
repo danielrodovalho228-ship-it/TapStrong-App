@@ -45,6 +45,7 @@ export function useGeneratorInput(library: Exercise[]): GeneratorInput | null {
     ],
     hardRestrictions: doctorFirstAreas(restrictions),
     painToday: dullPainAreasToday(workouts, today),
+    stoppedToday: sharpStopAreasToday(workouts, today),
     movementLimits: activeReports(reports).map(limitFrom),
     recentSessions: recentSessions(workouts, library),
     today: localDate(clock.now()),

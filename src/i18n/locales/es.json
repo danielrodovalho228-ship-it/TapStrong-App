@@ -12,7 +12,8 @@
     "add": "Agregar",
     "remove": "Quitar",
     "edit": "Editar",
-    "separator": " · "
+    "separator": " · ",
+    "cancel": "Cancelar"
   },
   "language": {
     "en": "English",
@@ -160,10 +161,11 @@
       "guardian_consent": "Los menores de 13 necesitan el consentimiento de un padre o madre. Primero crea tu propio perfil y luego añade a tu hijo en Familia (plan Familia).",
       "child_too_old": "Esta opción es para menores de 18. Los adultos pueden crear su propio perfil.",
       "parent_too_young": "Revisa el año de nacimiento. Esta opción es para padres y abuelos.",
-      "child_locked": "Un perfil infantil se queda en modo niños hasta los 13 años. Para cambiarlo, contacta a soporte."
+      "child_locked": "Un perfil infantil se queda en modo niños hasta los 13 años. Para cambiarlo, contacta a soporte.",
+      "teen_locked": "Un perfil de adolescente se queda entre 13 y 17 años. Un niño menor de 13 necesita su propio perfil con el consentimiento de los padres."
     },
     "footnote": "Usamos tu edad solo para que entrenes de forma segura.",
-    "locked": "Solo el padre, la madre o el tutor puede cambiar la fecha de nacimiento en un perfil infantil.",
+    "locked": "Solo un padre o una madre puede cambiar la fecha de nacimiento en un perfil de niño o adolescente.",
     "changeParent": "Cambiar (adulto)",
     "parentFirst": "Crear primero mi perfil"
   },
@@ -3083,7 +3085,11 @@
       "last": "Último entrenamiento: {{date}} · racha {{streak}}",
       "none": "Aún no hay entrenamientos.",
       "privacy": "Ves solo entrenamientos y rachas. Las respuestas de salud y los reportes de dolor son privados de cada perfil."
-    }
+    },
+    "remove": "Quitar miembro",
+    "removeName": "Quitar a {{name}}",
+    "removeBody": "Esto quita a {{name}} de tu familia y borra sus entrenamientos, restricciones y progreso en este teléfono y en tu cuenta. Libera uno de los 5 lugares.",
+    "removeConfirm": "Sí, quitar a {{name}}"
   },
   "deleteAccount": {
     "title": "Eliminar cuenta",

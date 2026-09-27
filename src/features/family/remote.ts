@@ -36,3 +36,20 @@ export async function createChildProfileRemote(input: {
     return 'offline';
   }
 }
+
+/**
+ * Deletes a managed profile in the cloud (RLS: its guardian only). Its
+ * workouts, restrictions and consent record go with it (on delete cascade).
+ * Development builds and profiles never synced have nothing to delete.
+ */
+export async function deleteManagedProfileRemote(id: string): Promise<'ok' | 'offline' | 'error'> {
+  if (__DEV__ && getBilling().kind === 'dev') return 'ok';
+  const supabase = getSupabase();
+  if (!supabase) return 'offline';
+  try {
+    const { error } = await supabase.from('profiles').delete().eq('id', id);
+    return error ? 'error' : 'ok';
+  } catch {
+    return 'offline';
+  }
+}

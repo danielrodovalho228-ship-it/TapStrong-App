@@ -12,7 +12,8 @@
     "add": "Adicionar",
     "remove": "Remover",
     "edit": "Editar",
-    "separator": " · "
+    "separator": " · ",
+    "cancel": "Cancelar"
   },
   "language": {
     "en": "English",
@@ -160,10 +161,11 @@
       "guardian_consent": "Menores de 13 precisam do consentimento dos pais. Primeiro crie o seu próprio perfil e depois adicione a criança em Família (plano Família).",
       "child_too_old": "Esta opção é para menores de 18. Adultos podem criar o próprio perfil.",
       "parent_too_young": "Confira o ano de nascimento. Esta opção é para pais e avós.",
-      "child_locked": "Um perfil infantil fica no modo criança até os 13 anos. Para mudar, fale com o suporte."
+      "child_locked": "Um perfil infantil fica no modo criança até os 13 anos. Para mudar, fale com o suporte.",
+      "teen_locked": "Um perfil de adolescente fica entre 13 e 17 anos. Uma criança com menos de 13 precisa de um perfil próprio, com o consentimento dos pais."
     },
     "footnote": "Usamos sua idade só para manter o treino seguro para você.",
-    "locked": "Só o pai, a mãe ou o responsável pode mudar a data de nascimento num perfil infantil.",
+    "locked": "Só o pai ou a mãe pode mudar a data de nascimento num perfil de criança ou adolescente.",
     "changeParent": "Mudar (adulto)",
     "parentFirst": "Criar meu perfil primeiro"
   },
@@ -3083,7 +3085,11 @@
       "last": "Último treino: {{date}} · sequência {{streak}}",
       "none": "Nenhum treino ainda.",
       "privacy": "Você vê só treinos e sequências. Respostas de saúde e relatos de dor ficam privados em cada perfil."
-    }
+    },
+    "remove": "Remover membro",
+    "removeName": "Remover {{name}}",
+    "removeBody": "Isso tira {{name}} da sua família e apaga os treinos, restrições e progresso neste celular e na sua conta. Libera uma das 5 vagas.",
+    "removeConfirm": "Sim, remover {{name}}"
   },
   "deleteAccount": {
     "title": "Excluir conta",

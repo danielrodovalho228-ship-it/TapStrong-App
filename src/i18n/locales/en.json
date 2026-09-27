@@ -12,7 +12,8 @@
     "add": "Add",
     "remove": "Remove",
     "edit": "Edit",
-    "separator": " · "
+    "separator": " · ",
+    "cancel": "Cancel"
   },
   "language": {
     "en": "English",
@@ -160,10 +161,11 @@
       "guardian_consent": "Kids under 13 need a parent's consent. First set up your own profile, then add your child in Family (Family plan).",
       "child_too_old": "This option is for kids under 18. Adults can set up their own profile.",
       "parent_too_young": "Check the birth year. This option is for parents and grandparents.",
-      "child_locked": "A child profile stays in kids mode until they turn 13. To change it, contact support."
+      "child_locked": "A child profile stays in kids mode until they turn 13. To change it, contact support.",
+      "teen_locked": "A teen profile stays between 13 and 17. A child under 13 needs its own profile with parental consent."
     },
     "footnote": "We use your age only to keep training safe for you.",
-    "locked": "Only a parent can change the birth date on a child profile.",
+    "locked": "Only a parent can change the birth date on a child or teen profile.",
     "changeParent": "Change (parent)",
     "parentFirst": "Set up my profile first"
   },
@@ -3083,7 +3085,11 @@
       "last": "Last workout: {{date}} · streak {{streak}}",
       "none": "No workouts yet.",
       "privacy": "You see workouts and streaks only. Health answers and pain reports stay private to each profile."
-    }
+    },
+    "remove": "Remove member",
+    "removeName": "Remove {{name}}",
+    "removeBody": "This removes {{name}} from your family and deletes their workouts, restrictions and progress on this phone and in your account. It frees one of the 5 places.",
+    "removeConfirm": "Yes, remove {{name}}"
   },
   "deleteAccount": {
     "title": "Delete account",

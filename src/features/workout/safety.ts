@@ -86,6 +86,7 @@ export const safetyKey = (input: GeneratorInput | null) =>
         input.restrictions,
         input.hardRestrictions ?? [],
         input.painToday ?? [],
+        input.stoppedToday ?? [],
         input.movementLimits ?? [],
       ])
     : '';

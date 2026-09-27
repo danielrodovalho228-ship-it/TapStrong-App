@@ -84,11 +84,13 @@ const input = (patch: Partial<GeneratorInput> = {}): GeneratorInput => ({
 describe('B-01 a child profile cannot be re-aged', () => {
   it('the age gate keeps a child profile under 13', () => {
     const today = { year: 2026, month: 9 };
-    expect(evaluateAgeGate('child', { year: 2016, month: 5 }, today, true, true).status).toBe('ok');
-    expect(evaluateAgeGate('child', { year: 2010, month: 5 }, today, true, true).status).toBe(
+    expect(evaluateAgeGate('child', { year: 2016, month: 5 }, today, true, 'under13').status).toBe(
+      'ok',
+    );
+    expect(evaluateAgeGate('child', { year: 2010, month: 5 }, today, true, 'under13').status).toBe(
       'child_locked',
     );
-    expect(evaluateAgeGate('me', { year: 1990, month: 5 }, today, true, true).status).toBe(
+    expect(evaluateAgeGate('me', { year: 1990, month: 5 }, today, true, 'under13').status).toBe(
       'child_locked',
     );
   });
@@ -114,7 +116,7 @@ describe('B-01 a child profile cannot be re-aged', () => {
     expect(screen.queryByRole('radio', { name: 'Me' })).toBeNull();
     expect(screen.queryByRole('button', { name: /^Birth year:/ })).toBeNull();
     expect(
-      screen.getByText('Only a parent can change the birth date on a child profile.'),
+      screen.getByText('Only a parent can change the birth date on a child or teen profile.'),
     ).toBeTruthy();
     await fireEvent.press(screen.getByRole('button', { name: 'Change (parent)' }));
     const { answer } = gateQuestion(NOW.getMinutes());

@@ -18,6 +18,8 @@ export type ProfileExtras = {
   hardRestrictions?: string[];
   /** Dull pain reported today. */
   painToday?: string[];
+  /** Sharp-pain stops today. */
+  stoppedToday?: string[];
 };
 
 /** Builds generator input from the local profile (onboarding + body map). */
@@ -50,6 +52,7 @@ export function inputFromProfile(
     movementLimits: extras.movementLimits,
     hardRestrictions: extras.hardRestrictions,
     painToday: extras.painToday,
+    stoppedToday: extras.stoppedToday,
     recentSessions: extras.recentSessions,
     today: extras.today,
   };

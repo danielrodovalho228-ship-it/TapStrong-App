@@ -11,6 +11,12 @@ import {
 
 import type { Who } from './options';
 
+export type ChildLock = 'under13' | 'teen';
+
+/** The lock for a managed profile: consented under-13 profiles vs teen profiles. */
+export const childLockFor = (profile: { kind: string; consentAt?: string } | null) =>
+  profile?.kind === 'child' ? (profile.consentAt ? 'under13' : 'teen') : undefined;
+
 export type AgeGateResult =
   | { status: 'ok'; age: number; mode: AppMode; band: BodyBand }
   /** Under 9: not supported. */
@@ -22,6 +28,8 @@ export type AgeGateResult =
   | { status: 'child_too_old'; age: number }
   /** A consented child profile stays in kids mode until they really turn 13 (QA B-01). */
   | { status: 'child_locked'; age: number }
+  /** A teen profile stays 13–17: moving it under 13 would skip parental consent (QA R2-01). */
+  | { status: 'teen_locked'; age: number }
   | { status: 'parent_too_young'; age: number };
 
 /** Routes the age gate (mockup 02, SPEC §2.3 and §8 "Age & mode"). */
@@ -31,11 +39,15 @@ export function evaluateAgeGate(
   today: YearMonth = currentYearMonth(),
   /** The parent's verified consent is on file for this child profile (Phase 6). */
   consented = false,
-  /** A child profile: its age can't be moved to 13+ by editing the birth date. */
-  childLocked = false,
+  /**
+   * A managed child or teen profile (QA B-01, R2-01): an under-13 profile
+   * (created with consent) can't move to 13+, and a teen profile stays 13–17.
+   */
+  lock?: ChildLock,
 ): AgeGateResult {
   const age = ageFrom(birth, today);
-  if (childLocked && age >= 13) return { status: 'child_locked', age };
+  if (lock === 'under13' && age >= 13) return { status: 'child_locked', age };
+  if (lock === 'teen' && age < 13) return { status: 'teen_locked', age };
   if (age < MIN_AGE) return { status: 'too_young', age };
   if (who === 'child' && age >= 18) return { status: 'child_too_old', age };
   if (who === 'parent' && age < 18) return { status: 'parent_too_young', age };

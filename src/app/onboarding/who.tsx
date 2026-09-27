@@ -6,7 +6,7 @@ import { StyleSheet, View } from 'react-native';
 import { AppText, Button, Header, Notice, RadioCard, Screen, Select } from '@/components/ui';
 import { ParentGate } from '@/features/family/ParentGate';
 import { activeProfile, useFamilyStore } from '@/features/family/store';
-import { evaluateAgeGate } from '@/features/onboarding/age-gate';
+import { childLockFor, evaluateAgeGate } from '@/features/onboarding/age-gate';
 import { STEP_NUMBER, TOTAL_STEPS, WHO_OPTIONS, type Who } from '@/features/onboarding/options';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { birthYearOptions } from '@/features/profile/age';
@@ -30,15 +30,17 @@ export default function WhoScreen() {
   const years = useMemo(() => birthYearOptions(), []);
   const profile = useFamilyStore(activeProfile);
   const consented = profile?.kind === 'child' && !!profile.consentAt;
-  // A child profile's birth date is locked: only a parent, behind the gate,
-  // may fix it, and it can never move the profile out of kids mode (QA B-01).
+  // A child or teen profile's birth date is locked: only a parent, behind the
+  // gate, may fix it. An under-13 profile can never move to 13+, and a teen
+  // profile stays 13–17 (QA B-01, R2-01).
   const locked = profile?.kind === 'child';
+  const lock = childLockFor(profile);
   const [unlocked, setUnlocked] = useState(false);
   const [gate, setGate] = useState(false);
   const effectiveWho: Who = locked ? 'child' : who;
   const result =
     month && year
-      ? evaluateAgeGate(effectiveWho, { year, month }, undefined, consented, locked)
+      ? evaluateAgeGate(effectiveWho, { year, month }, undefined, consented, lock)
       : null;
 
   const onContinue = () => {

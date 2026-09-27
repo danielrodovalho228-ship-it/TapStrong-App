@@ -12,7 +12,8 @@ import { useOwnerAccess } from '@/features/family/OwnerOnly';
 import { ParentGate } from '@/features/family/ParentGate';
 import { useFamilyStore, type LocalProfile } from '@/features/family/store';
 import { useAccountStore } from '@/features/account/store';
-import { ensureSelfProfile, switchProfile } from '@/features/family/switch';
+import { deleteManagedProfileRemote } from '@/features/family/remote';
+import { ensureSelfProfile, removeMember, switchProfile } from '@/features/family/switch';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { clock } from '@/lib/clock';
 import { deviceWeekStart } from '@/lib/dates';
@@ -28,6 +29,13 @@ export default function FamilyScreen() {
   const plan = currentPlan(entitlement, clock.now());
   const access = useOwnerAccess();
   const [gateFor, setGateFor] = useState<string | null>(null);
+  // Remove member (QA R2-01): parent gate, then an explicit confirmation.
+  const [removing, setRemoving] = useState<{ id: string; step: 'gate' | 'confirm' } | null>(null);
+  const confirmRemove = (id: string) => {
+    removeMember(id);
+    void deleteManagedProfileRemote(id);
+    setRemoving(null);
+  };
   // Registering the owner's profile writes to a store: never during render (QA A-10).
   useEffect(() => {
     if (!profiles.length) ensureSelfProfile();
@@ -133,6 +141,37 @@ export default function FamilyScreen() {
               ) : (
                 <AppText color={colors.mutedStrong}>{t('family.dashboard.none')}</AppText>
               )}
+              {removing?.id === p.id && removing.step === 'gate' ? (
+                <ParentGate
+                  onPass={() => setRemoving({ id: p.id, step: 'confirm' })}
+                  onCancel={() => setRemoving(null)}
+                />
+              ) : removing?.id === p.id ? (
+                <View style={styles.remove}>
+                  <AppText color={colors.mutedStrong}>
+                    {t('family.removeBody', { name: p.name ?? t('family.member') })}
+                  </AppText>
+                  <Button
+                    variant="danger"
+                    label={t('family.removeConfirm', { name: p.name ?? t('family.member') })}
+                    onPress={() => confirmRemove(p.id)}
+                  />
+                  <Button
+                    variant="ghost"
+                    label={t('common.cancel')}
+                    onPress={() => setRemoving(null)}
+                  />
+                </View>
+              ) : (
+                <Button
+                  variant="dangerText"
+                  label={t('family.remove')}
+                  accessibilityLabel={t('family.removeName', {
+                    name: p.name ?? t('family.member'),
+                  })}
+                  onPress={() => setRemoving({ id: p.id, step: 'gate' })}
+                />
+              )}
             </Card>
           ))}
           <AppText variant="caption" color={colors.muted}>
@@ -167,4 +206,5 @@ const styles = StyleSheet.create({
   caps: { textTransform: 'uppercase', letterSpacing: 0.8, fontFamily: fonts.headingSemi },
   dashboard: { gap: spacing.sm },
   memberCard: { gap: spacing.xs },
+  remove: { gap: spacing.sm },
 });

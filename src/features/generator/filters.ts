@@ -39,11 +39,22 @@ export function blockReason(e: Exercise, input: GeneratorInput): string | null {
     ...(input.painToday ?? []),
   ]);
   if (e.contraindications.some((c) => risks.has(c))) return 'contraindication';
-  const hard = input.hardRestrictions ?? [];
+  // Red flags ("Doctor first") and a sharp-pain stop today leave out every
+  // exercise that moves the joint, not only the ones tagged with the area
+  // (QA C-02, R2-02). Dull pain today leaves out moves through the joint but
+  // keeps pain-free holds, so a safe swap is still possible (QA A-05).
+  const hard = [...(input.hardRestrictions ?? []), ...(input.stoppedToday ?? [])];
   if (
     hard.length &&
     (e.contraindications.some((c) => hard.includes(c)) ||
       e.joints.some((j) => hard.includes(JOINT_AREA[j.joint])))
+  ) {
+    return 'contraindication';
+  }
+  const dull = input.painToday ?? [];
+  if (
+    dull.length &&
+    e.joints.some((j) => j.range !== 'isometric' && dull.includes(JOINT_AREA[j.joint]))
   ) {
     return 'contraindication';
   }

@@ -86,6 +86,21 @@ export function switchProfile(targetId: string, seed: Partial<OnboardingData> = 
   family.setActive(targetId);
 }
 
+/**
+ * Removes a family member (QA R2-01): frees the slot and deletes the member's
+ * data on this phone. Never the owner's own profile. The caller shows the
+ * parent gate first and deletes the cloud copy (remote.ts).
+ */
+export function removeMember(id: string): boolean {
+  const family = useFamilyStore.getState();
+  const target = family.profiles.find((p) => p.id === id);
+  if (!target || target.kind === 'self') return false;
+  if (family.activeId === id) switchProfile(ensureSelfProfile().id);
+  kvStorage.removeItem(key(id));
+  useFamilyStore.getState().remove(id);
+  return true;
+}
+
 /** Forgets every profile snapshot (account deletion). */
 export function clearSnapshots() {
   for (const p of useFamilyStore.getState().profiles) kvStorage.removeItem(key(p.id));
