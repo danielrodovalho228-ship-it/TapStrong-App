@@ -24,7 +24,8 @@ export function userLevel(mode: AppMode): number {
  */
 export function blockReason(e: Exercise, input: GeneratorInput): string | null {
   if (e.status === 'retired') return 'retired';
-  if (e.status !== 'released' && !input.includeDrafts) return 'not_released';
+  // The person's own exercise (B5) skips the release check, never the safety ones.
+  if (!e.custom && e.status !== 'released' && !input.includeDrafts) return 'not_released';
   if (!e.location.includes(input.location)) return 'location';
   if (!e.equipment.every((q) => input.equipment.includes(q))) return 'equipment';
   if (bandRank(input.band) < bandRank(e.minAgeBand)) return 'age';
@@ -95,6 +96,11 @@ export function rangeFor(e: Exercise, input: GeneratorInput) {
 
 export function safePool(input: GeneratorInput): Exercise[] {
   return input.library.filter((e) => blockReason(e, input) === null);
+}
+
+/** What the generator and swap sheet may program: custom exercises never (B5). */
+export function programmablePool(input: GeneratorInput): Exercise[] {
+  return safePool(input).filter((e) => !e.custom);
 }
 
 export function emphasisOn(e: Exercise, muscles: string[], role?: 'primary'): number {

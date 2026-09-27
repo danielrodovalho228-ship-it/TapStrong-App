@@ -3,6 +3,7 @@ import { kvStorage } from '@/lib/storage';
 import { useAccountStore } from '../account/store';
 import { useMovementPainStore, type MovementPain } from '../movement/store';
 import { initialOnboarding, useOnboardingStore, type OnboardingData } from '../onboarding/store';
+import { initialLibrary, useLibraryStore, type LibraryData } from '../library/store';
 import { useProgramStore } from '../program/store';
 import { initialProgress, useProgressStore, type ProgressData } from '../progress/store';
 import { useRestrictionsStore, type Restriction } from '../restrictions/store';
@@ -21,6 +22,7 @@ type Snapshot = {
   progress?: ProgressData;
   movementPain?: MovementPain[];
   program?: { planId: string | null; startedAt: string | null };
+  library?: LibraryData;
 };
 
 const key = (id: string) => `profile-snapshot:${id}`;
@@ -44,6 +46,9 @@ function capture(): Snapshot {
     }))(useProgressStore.getState()),
     movementPain: useMovementPainStore.getState().reports,
     program: (({ planId, startedAt }) => ({ planId, startedAt }))(useProgramStore.getState()),
+    library: (({ favourites, notes, goals, custom }) => ({ favourites, notes, goals, custom }))(
+      useLibraryStore.getState(),
+    ),
   };
 }
 
@@ -60,6 +65,7 @@ function load(snapshot: Snapshot | null, seed: Partial<OnboardingData>) {
   useRestrictionsStore.setState({ items: snapshot?.restrictions ?? [] });
   useProgressStore.setState({ ...initialProgress(), ...snapshot?.progress });
   useMovementPainStore.setState({ reports: snapshot?.movementPain ?? [] });
+  useLibraryStore.setState({ ...initialLibrary(), ...snapshot?.library });
   useProgramStore.setState({
     planId: snapshot?.program?.planId ?? null,
     startedAt: snapshot?.program?.startedAt ?? null,

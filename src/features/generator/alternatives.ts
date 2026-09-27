@@ -3,7 +3,7 @@ import { muscleByKey, muscleFamily } from '../muscles';
 import { defaultMuscleGoal } from '../onboarding/options';
 
 import { doseFor, estimateSeconds, needsCaution } from './dosage';
-import { emphasisOn, isMachine, needsJointCare, safePool } from './filters';
+import { emphasisOn, isMachine, needsJointCare, programmablePool } from './filters';
 import type {
   GeneratedSession,
   GeneratorInput,
@@ -110,12 +110,13 @@ export function getAlternatives(
     return null;
   };
 
-  const ranked = safePool(input)
+  const ranked = programmablePool(input)
     .filter((e) => !inSession.has(e.id) && slotOk(e))
     .filter((e) => !e.equipment.some((q) => busyMachines.includes(q)))
     .map((e) => ({
       e,
       tier: tier(e),
+      fav: input.favourites?.includes(e.id) ? 1 : 0,
       emphasis: Math.round(emphasisOn(e, family, 'primary') * 10),
       samePattern: current && e.pattern === current.pattern ? 1 : 0,
       distance: Math.abs(e.level - (current?.level ?? e.level)),
@@ -124,6 +125,7 @@ export function getAlternatives(
     .sort(
       (a, b) =>
         a.tier - b.tier ||
+        b.fav - a.fav ||
         b.emphasis - a.emphasis ||
         b.samePattern - a.samePattern ||
         a.distance - b.distance ||

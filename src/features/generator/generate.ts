@@ -7,7 +7,15 @@ import { deloadSets } from '../program/block';
 
 import { rampAllowed } from './alternatives';
 import { doseFor, estimateSeconds, needsCaution } from './dosage';
-import { emphasisOn, isKidMove, needsJointCare, rangeFor, safePool, userLevel } from './filters';
+import {
+  emphasisOn,
+  isKidMove,
+  needsJointCare,
+  programmablePool,
+  rangeFor,
+  safePool,
+  userLevel,
+} from './filters';
 import type {
   GeneratedSession,
   GeneratorInput,
@@ -75,7 +83,12 @@ const MOBILITY_PARTS: SessionPart[] = ['finisher_mobility', 'cooldown_stretch', 
 const MINOR_UNLOADED_BONUS = 2;
 
 /** Main-work candidates for a target muscle, best first. Deterministic. */
-export function rankForTarget(pool: Exercise[], target: Target, mode: AppMode): Exercise[] {
+export function rankForTarget(
+  pool: Exercise[],
+  target: Target,
+  mode: AppMode,
+  favourites: readonly string[] = [],
+): Exercise[] {
   const level = userLevel(mode);
   const minor = mode === 'child' || mode === 'teen';
   return pool
@@ -89,6 +102,8 @@ export function rankForTarget(pool: Exercise[], target: Target, mode: AppMode): 
       e,
       // Balance goal: balance work first (QA B-08).
       balance: target.goal === 'balance' && e.pattern === 'balance' ? 1 : 0,
+      // Starred and safe: preferred (improvements v1, B4).
+      fav: favourites.includes(e.id) ? 1 : 0,
       emphasis:
         Math.round(emphasisOn(e, target.family, 'primary') * 10) +
         (minor && !e.loaded ? MINOR_UNLOADED_BONUS : 0),
@@ -98,6 +113,7 @@ export function rankForTarget(pool: Exercise[], target: Target, mode: AppMode): 
     .sort(
       (a, b) =>
         b.balance - a.balance ||
+        b.fav - a.fav ||
         b.emphasis - a.emphasis ||
         b.fit - a.fit ||
         a.distance - b.distance ||
@@ -130,6 +146,7 @@ function rankForGroup(
   group: MovementGroup,
   goal: MuscleGoal,
   mode: AppMode,
+  favourites: readonly string[] = [],
 ): Exercise[] {
   const level = userLevel(mode);
   return pool
@@ -141,12 +158,14 @@ function rankForGroup(
     .map((e) => ({
       e,
       compound: COMPOUND[group].includes(e.pattern) ? 1 : 0,
+      fav: favourites.includes(e.id) ? 1 : 0,
       emphasis: Math.round(Math.max(...e.muscles.map((m) => m.emphasis)) * 10),
       fit: goalFit(e, goal, mode),
       distance: Math.abs(e.level - level),
     }))
     .sort(
       (a, b) =>
+        b.fav - a.fav ||
         b.compound - a.compound ||
         b.fit - a.fit ||
         b.emphasis - a.emphasis ||
@@ -323,7 +342,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     });
     return s.error ? s : { ...s, deload: true };
   }
-  const pool = safePool(input);
+  const pool = programmablePool(input);
   const minutes = Math.max(10, Math.min(120, Math.round(input.minutes)));
   const { warmup, cooldown } = warmupCooldownMinutes(input.mode, minutes);
   const notes: GeneratorNote[] = [];
@@ -422,6 +441,8 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     const equipped = strengthGym ? list.filter((e) => e.equipment.length > 0) : list;
     const top = (equipped.length ? equipped : list).slice(0, 3);
     if (!top.length) return undefined;
+    // A starred exercise at the top is picked, not rotated away (B4).
+    if (input.favourites?.includes(top[0].id)) return top[0];
     const mix = Math.imul((day + 1) * 2654435761, salt + 7) >>> 0;
     return top[(mix >>> 7) % top.length];
   };
@@ -431,7 +452,9 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     main.push(mainItem(pick, target, input));
   };
   targets.slice(0, slots).forEach((target, i) => {
-    const options = rankForTarget(pool, target, input.mode).filter((e) => !used.has(e.id));
+    const options = rankForTarget(pool, target, input.mode, input.favourites).filter(
+      (e) => !used.has(e.id),
+    );
     const pick = input.rehab ? options[0] : rotate(options, i);
     if (pick) add(pick, target);
     else unavailable.push(target.muscle);
@@ -441,7 +464,9 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   for (let pass = 0; focused && main.length < slots && pass < 3; pass++) {
     for (const target of targets) {
       if (main.length >= slots) break;
-      const pick = rankForTarget(pool, target, input.mode).find((e) => !used.has(e.id));
+      const pick = rankForTarget(pool, target, input.mode, input.favourites).find(
+        (e) => !used.has(e.id),
+      );
       if (pick) add(pick, target);
     }
   }
@@ -469,7 +494,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   const restedKeys = new Set(rested.flatMap((t) => root(t)));
   const nextFor = (g: MovementGroup) =>
     rotate(
-      rankForGroup(pool, g, defaultGoal, input.mode).filter(
+      rankForGroup(pool, g, defaultGoal, input.mode, input.favourites).filter(
         (e) =>
           !used.has(e.id) &&
           !usedParents.has(parentOf(topPrimary(e)!)) &&
@@ -906,15 +931,17 @@ export function generateCustomSession(
   const left = exerciseIds.filter((id) => !pool.has(id));
   const goal = defaultMuscleGoal(input.mainGoals);
   const muscles = [...new Set(chosen.map((e) => topPrimary(e)).filter((m): m is string => !!m))];
-  const base = generateSession({
-    ...input,
-    // Warm-up and cool-down fitted to the chosen muscles; no filler or finisher.
-    library: input.library.filter((e) => !e.parts.includes('main') || exerciseIds.includes(e.id)),
-    mobilityOnly: true,
-    mainGoals: input.mainGoals,
-    muscleGoals: muscles.map((muscleKey) => ({ muscleKey, goal })),
-    exercisesPerSession: Math.max(1, chosen.length),
-  });
+  // Warm-up and cool-down fitted to the chosen muscles; the base session's
+  // own main work is dropped (no filler or finisher either).
+  const around = (muscleGoals: GeneratorInput['muscleGoals']) =>
+    generateSession({
+      ...input,
+      mobilityOnly: true,
+      muscleGoals,
+      exercisesPerSession: Math.max(1, muscles.length),
+    });
+  let base = around(muscles.map((muscleKey) => ({ muscleKey, goal })));
+  if (base.error) base = around(input.muscleGoals);
   if (!chosen.length) return { ...base, items: [], estimatedMinutes: 0, error: 'no_main' };
   if (base.error) return base;
   const main = chosen.map((e) => {

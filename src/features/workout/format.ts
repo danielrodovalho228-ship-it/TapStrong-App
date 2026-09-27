@@ -6,10 +6,10 @@ import { muscleLabel } from '../onboarding/summaries';
 
 /** i18n keys come from the database rows, so they are typed loosely here. */
 export const exerciseName = (t: TFunction, e: Exercise | undefined, fallback: string) =>
-  e ? t(e.nameKey as 'app.name') : fallback;
+  e?.custom ? (e.customName ?? fallback) : e ? t(e.nameKey as 'app.name') : fallback;
 
 export const exerciseCues = (t: TFunction, e: Exercise | undefined) =>
-  e ? t(e.cuesKey as 'app.name') : '';
+  e?.custom ? '' : e ? t(e.cuesKey as 'app.name') : '';
 
 const range = ([a, b]: [number, number]) => (a === b ? `${a}` : `${a}–${b}`);
 

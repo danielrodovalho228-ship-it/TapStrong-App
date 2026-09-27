@@ -80,5 +80,11 @@ export type Exercise = {
   rehab: boolean;
   /** Single-joint work tagged with a push/pull pattern: dosed 10–15, never heavy (QA round 3). */
   isolation?: boolean;
+  /**
+   * Made by the person (improvements v1, B5): never auto-programmed, only in
+   * Custom workouts, "Not reviewed by a coach"; its name is `customName`.
+   */
+  custom?: boolean;
+  customName?: string;
   media: { video: string | null; poster: string | null; provider: string | null };
 };

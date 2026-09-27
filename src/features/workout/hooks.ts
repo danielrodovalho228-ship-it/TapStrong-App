@@ -18,6 +18,8 @@ import { derive } from '../onboarding/derived';
 import { useOnboardingStore } from '../onboarding/store';
 import { activeAreas, doctorFirstAreas, useRestrictionsStore } from '../restrictions/store';
 
+import { customToExercise } from '../library/custom';
+import { useLibraryStore } from '../library/store';
 import { withProgram } from '../program/apply';
 import { useProgramStore } from '../program/store';
 
@@ -38,7 +40,10 @@ import { findWorkout, useWorkoutStore } from './store';
  * once accounts sync (Phase 5) and until then have none.
  */
 export function useExerciseLibrary(): Exercise[] {
-  return useMemo(() => devLibrary(), []);
+  // The person's own exercises join the library (B5); the generator never
+  // programs them on its own.
+  const custom = useLibraryStore((s) => s.custom);
+  return useMemo(() => [...devLibrary(), ...custom.map(customToExercise)], [custom]);
 }
 
 /** Generator input from the profile, saved restrictions and workout history. */
@@ -48,6 +53,7 @@ export function useGeneratorInput(library: Exercise[]): GeneratorInput | null {
   const workouts = useWorkoutStore((s) => s.workouts);
   const reports = useMovementPainStore((s) => s.reports);
   const program = useProgramStore();
+  const favourites = useLibraryStore((s) => s.favourites);
   const today = localDate(clock.now());
   const base = inputFromProfile(profile, library, __DEV__, {
     restrictions: [
@@ -62,7 +68,8 @@ export function useGeneratorInput(library: Exercise[]): GeneratorInput | null {
     now: clock.now().toISOString(),
   });
   // A ready-made plan and the deload week apply on top (improvements v1, A2/A5).
-  return base ? withProgram(base, library, workouts, program, today) : null;
+  // Starred exercises are preferred when safe (B4).
+  return base ? { ...withProgram(base, library, workouts, program, today), favourites } : null;
 }
 
 /**

@@ -3468,7 +3468,8 @@
     "home": "Inicio",
     "body": "Cuerpo",
     "family": "Familia",
-    "progress": "Progreso"
+    "progress": "Progreso",
+    "library": "Biblioteca"
   },
   "home": {
     "title": "Hoy",
@@ -4707,5 +4708,127 @@
     "allow": "Permitir que {{name}} comparta entrenamientos",
     "on": "Compartir activado",
     "off": "Compartir desactivado"
+  },
+  "library": {
+    "title": "Biblioteca",
+    "exercises": "Ejercicios",
+    "plans": "Planes",
+    "search": "Buscar ejercicios",
+    "filters": {
+      "equipment": "Equipo",
+      "position": "Posición",
+      "role": "Función",
+      "bodyweight": "Peso corporal"
+    },
+    "roles": {
+      "main": "Principal",
+      "warmup": "Calentamiento",
+      "stretch": "Estiramiento",
+      "balance": "Equilibrio",
+      "repair": "Reparación"
+    },
+    "positions": {
+      "standing": "De pie",
+      "with_support": "Con apoyo",
+      "seated_only": "Sentado"
+    },
+    "muscle": "Mostrando: {{muscle}}",
+    "clearMuscle": "Todos los músculos",
+    "tapDot": "Toca un punto para ver ejercicios de ese músculo.",
+    "count_one": "{{count}} ejercicio",
+    "count_other": "{{count}} ejercicios",
+    "notForYou": "Ahora no son para ti ({{count}})",
+    "hide": "Ocultar",
+    "reasons": {
+      "restriction": "Descartado por una restricción",
+      "pain": "Un movimiento que duele",
+      "age": "No es para tu edad"
+    },
+    "favourite": "Marcar {{name}}",
+    "unfavourite": "Quitar la marca de {{name}}",
+    "areas": {
+      "arms": "Brazos",
+      "legs": "Piernas",
+      "back": "Espalda",
+      "chest": "Pecho",
+      "core": "Abdomen",
+      "balance": "Equilibrio"
+    },
+    "create": "Crear ejercicio",
+    "empty": "Ningún ejercicio coincide con estos filtros."
+  },
+  "exercise": {
+    "guidance": "Guía",
+    "performance": "Rendimiento",
+    "cues": "Cómo hacerlo",
+    "mistakes": "Errores comunes",
+    "worked": "Músculos trabajados",
+    "primary": "Músculos principales (puntos llenos)",
+    "secondary": "También trabaja (puntos claros)",
+    "notReviewed": "No revisado por un coach",
+    "records": "Récords personales",
+    "heaviest": "Más pesado",
+    "oneRepMax": "1 repetición máxima estimada",
+    "bestSet": "Mejor volumen en una serie",
+    "history": "Mejor carga por sesión",
+    "sessions": "Sesiones anteriores",
+    "noSessions": "Aún no lo has hecho. Tus sesiones aparecerán aquí.",
+    "sessionLine": "{{sets}} series · mejor {{best}}",
+    "note": "Nota privada",
+    "notePlaceholder": "Solo tú la ves.",
+    "notForYou": "Ahora no es para ti: {{reason}}.",
+    "delete": "Eliminar este ejercicio",
+    "labelled": "{{label}}: {{list}}"
+  },
+  "mistakes": {
+    "horizontal_push": "Arquear la zona lumbar o dejar caer la cadera. Abrir los codos hacia los lados.",
+    "vertical_push": "Arquear la espalda para empujar. Subir los hombros hacia las orejas.",
+    "horizontal_pull": "Encorvar la espalda o tirar a tirones. Tirar solo con los brazos, sin las escápulas.",
+    "vertical_pull": "Balancear el cuerpo. Quedarse a mitad en vez de un recorrido completo y controlado.",
+    "squat": "Rodillas hacia dentro. Talones que se levantan del suelo.",
+    "hinge": "Encorvar la zona lumbar. Doblar las rodillas como sentadilla en vez de llevar la cadera atrás.",
+    "lunge": "Rodilla delantera que se va hacia dentro. Inclinar mucho el pecho hacia delante.",
+    "knee_flexion": "Levantar la cadera para terminar. Dejar caer el peso rápido.",
+    "knee_extension": "Subir el peso de golpe. Bloquear fuerte la rodilla arriba.",
+    "calf": "Rebotar abajo. Levantar solo a medias los talones.",
+    "ankle": "Hacerlo con prisa. Apoyarse en el borde externo del pie.",
+    "hip_isolation": "Inclinar el tronco para hacer trampa. Ir tan rápido que no se siente la cadera.",
+    "shoulder_isolation": "Encoger los hombros para subir. Balancear el peso con el cuerpo.",
+    "elbow_flexion": "Llevar los codos hacia delante. Echarse atrás para subir.",
+    "elbow_extension": "Abrir los codos. Mover los hombros en vez de los codos.",
+    "wrist": "Usar demasiado peso. Mover el antebrazo en vez de la muñeca.",
+    "core_flexion": "Tirar del cuello. Usar impulso en vez del abdomen.",
+    "core_stability": "Aguantar la respiración. Dejar caer la zona lumbar.",
+    "rotation": "Girar solo desde la zona lumbar. Ir demasiado rápido.",
+    "cardio": "Empezar demasiado rápido. Aguantar la respiración.",
+    "mobility": "Forzar el recorrido. Aguantar la respiración.",
+    "stretch": "Rebotar en el estiramiento. Llegar al dolor.",
+    "balance": "Mirar los pies. Bloquear la rodilla de apoyo.",
+    "breathing": "Subir los hombros al inhalar. Soltar el aire con prisa."
+  },
+  "createExercise": {
+    "title": "Crear ejercicio",
+    "name": "Nombre",
+    "primary": "Músculos principales: toca los puntos",
+    "secondary": "También trabaja: toca los puntos",
+    "mode": "Eligiendo",
+    "primaryMode": "Principal",
+    "secondaryMode": "También trabaja",
+    "equipment": "Equipo",
+    "joints": "Articulaciones que mueve",
+    "save": "Guardar ejercicio",
+    "note": "Tu propio ejercicio nunca se añade solo a tus entrenamientos. Úsalo en un entrenamiento a medida. Pasa los mismos controles de dolor y restricciones según las articulaciones que marques.",
+    "needName": "Ponle un nombre y al menos un músculo principal.",
+    "adultsOnly": "Solo los adultos pueden crear ejercicios.",
+    "jointNames": {
+      "shoulder": "Hombro",
+      "elbow": "Codo",
+      "wrist": "Muñeca",
+      "neck": "Cuello",
+      "lower_back": "Zona lumbar",
+      "hip": "Cadera",
+      "knee": "Rodilla",
+      "ankle": "Tobillo"
+    }
   }
 }

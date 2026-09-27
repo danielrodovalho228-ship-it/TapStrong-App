@@ -3468,7 +3468,8 @@
     "home": "Home",
     "body": "Body",
     "family": "Family",
-    "progress": "Progress"
+    "progress": "Progress",
+    "library": "Library"
   },
   "home": {
     "title": "Today",
@@ -4707,5 +4708,127 @@
     "allow": "Allow {{name}} to share workouts",
     "on": "Sharing on",
     "off": "Sharing off"
+  },
+  "library": {
+    "title": "Library",
+    "exercises": "Exercises",
+    "plans": "Plans",
+    "search": "Search exercises",
+    "filters": {
+      "equipment": "Equipment",
+      "position": "Position",
+      "role": "Role",
+      "bodyweight": "Bodyweight"
+    },
+    "roles": {
+      "main": "Main",
+      "warmup": "Warm-up",
+      "stretch": "Stretch",
+      "balance": "Balance",
+      "repair": "Repair"
+    },
+    "positions": {
+      "standing": "Standing",
+      "with_support": "Supported",
+      "seated_only": "Seated"
+    },
+    "muscle": "Showing: {{muscle}}",
+    "clearMuscle": "All muscles",
+    "tapDot": "Tap a dot to see exercises for that muscle.",
+    "count_one": "{{count}} exercise",
+    "count_other": "{{count}} exercises",
+    "notForYou": "Not for you right now ({{count}})",
+    "hide": "Hide",
+    "reasons": {
+      "restriction": "Ruled out by a restriction",
+      "pain": "A movement that hurts",
+      "age": "Not for your age"
+    },
+    "favourite": "Star {{name}}",
+    "unfavourite": "Remove star from {{name}}",
+    "areas": {
+      "arms": "Arms",
+      "legs": "Legs",
+      "back": "Back",
+      "chest": "Chest",
+      "core": "Core",
+      "balance": "Balance"
+    },
+    "create": "Create exercise",
+    "empty": "No exercise matches these filters."
+  },
+  "exercise": {
+    "guidance": "Guidance",
+    "performance": "Performance",
+    "cues": "How to do it",
+    "mistakes": "Common mistakes",
+    "worked": "Muscles worked",
+    "primary": "Main muscles (solid dots)",
+    "secondary": "Also worked (light dots)",
+    "notReviewed": "Not reviewed by a coach",
+    "records": "Personal records",
+    "heaviest": "Heaviest",
+    "oneRepMax": "Estimated 1-rep max",
+    "bestSet": "Best set volume",
+    "history": "Best load by session",
+    "sessions": "Past sessions",
+    "noSessions": "Not done yet. Your sessions will show here.",
+    "sessionLine": "{{sets}} sets · best {{best}}",
+    "note": "Private note",
+    "notePlaceholder": "Only you see this.",
+    "notForYou": "Not for you right now: {{reason}}.",
+    "delete": "Delete this exercise",
+    "labelled": "{{label}}: {{list}}"
+  },
+  "mistakes": {
+    "horizontal_push": "Letting the lower back arch or the hips sag. Elbows flaring straight out to the sides.",
+    "vertical_push": "Arching the lower back to press. Shrugging the shoulders up to the ears.",
+    "horizontal_pull": "Rounding the back or jerking the weight. Pulling with the arms only, not the shoulder blades.",
+    "vertical_pull": "Swinging the body. Stopping halfway instead of a full, controlled range.",
+    "squat": "Knees caving in. Heels lifting off the floor.",
+    "hinge": "Rounding the lower back. Bending the knees into a squat instead of pushing the hips back.",
+    "lunge": "Front knee drifting inward. Leaning the chest far forward.",
+    "knee_flexion": "Lifting the hips to finish the curl. Letting the weight drop fast.",
+    "knee_extension": "Kicking the weight up with a jerk. Locking the knee hard at the top.",
+    "calf": "Bouncing at the bottom. Only half lifting the heels.",
+    "ankle": "Rushing the movement. Rolling onto the outside of the foot.",
+    "hip_isolation": "Leaning the trunk to cheat the lift. Moving too fast to feel the hip work.",
+    "shoulder_isolation": "Shrugging to lift. Swinging the weight with the body.",
+    "elbow_flexion": "Swinging the elbows forward. Leaning back to lift.",
+    "elbow_extension": "Letting the elbows drift out. Moving the shoulders instead of the elbows.",
+    "wrist": "Using a weight that's too heavy. Moving the forearm instead of the wrist.",
+    "core_flexion": "Pulling on the neck. Using momentum instead of the belly.",
+    "core_stability": "Holding the breath. Letting the lower back sag.",
+    "rotation": "Twisting from the lower back only. Moving too fast.",
+    "cardio": "Starting too fast. Holding the breath.",
+    "mobility": "Forcing the range. Holding the breath.",
+    "stretch": "Bouncing into the stretch. Pushing into pain.",
+    "balance": "Looking down at the feet. Locking the standing knee.",
+    "breathing": "Lifting the shoulders to breathe in. Rushing the exhale."
+  },
+  "createExercise": {
+    "title": "Create exercise",
+    "name": "Name",
+    "primary": "Main muscles: tap dots",
+    "secondary": "Also worked: tap dots",
+    "mode": "Picking",
+    "primaryMode": "Main",
+    "secondaryMode": "Also worked",
+    "equipment": "Equipment",
+    "joints": "Joints it moves",
+    "save": "Save exercise",
+    "note": "Your own exercise is never put into workouts for you. Use it in a Custom workout. It gets the same pain and restriction checks through the joints you tag.",
+    "needName": "Give it a name and at least one main muscle.",
+    "adultsOnly": "Only adults can create exercises.",
+    "jointNames": {
+      "shoulder": "Shoulder",
+      "elbow": "Elbow",
+      "wrist": "Wrist",
+      "neck": "Neck",
+      "lower_back": "Lower back",
+      "hip": "Hip",
+      "knee": "Knee",
+      "ankle": "Ankle"
+    }
   }
 }

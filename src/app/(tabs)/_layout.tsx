@@ -51,6 +51,13 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="library"
+        options={{
+          title: t('tabs.library'),
+          tabBarIcon: ({ color }) => <Icon name="library" color={color as string} />,
+        }}
+      />
+      <Tabs.Screen
         name="progress"
         options={{
           title: t('tabs.progress'),
