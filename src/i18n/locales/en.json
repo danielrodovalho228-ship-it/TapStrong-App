@@ -4519,7 +4519,10 @@
   },
   "ageBlock": {
     "title": "TapStrong is for ages 13 and up",
-    "body": "Thanks for stopping by. You can come back when you turn 13."
+    "body": "Thanks for stopping by. You can come back when you turn 13.",
+    "support": "Typed the wrong date? Our support team can help: {{email}}",
+    "contact": "Contact support",
+    "subject": "Age check help"
   },
   "pinReset": {
     "forgot": "Forgot the PIN?",

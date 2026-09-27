@@ -1,5 +1,6 @@
 import { clock } from '@/lib/clock';
 import { kvStorage } from '@/lib/storage';
+import { isNetworkError } from '@/lib/network';
 import { getSupabase } from '@/lib/supabase';
 
 import { refreshBilling } from '../billing/actions';
@@ -110,16 +111,18 @@ export async function ensureOwnerProfileSynced(): Promise<OwnerSync> {
     : null;
   if (!owner || !derived) return 'no_profile';
   try {
-    const { data: auth } = await supabase.auth.getUser();
+    const { data: auth, error: authError } = await supabase.auth.getUser();
+    // QA R3-02: supabase-js reports a dropped connection as an error, not a throw.
+    if (isNetworkError(authError)) return 'offline';
     const user = auth.user;
     if (!user || user.is_anonymous) return 'no_account';
-    const { data: existing, error: readError } = await supabase
-      .from('profiles')
-      .select('id')
-      .eq('user_id', user.id)
-      .maybeSingle();
-    if (readError) return 'error';
-    const { error } = await supabase.from('profiles').upsert({
+    const {
+      data: existing,
+      error: readError,
+      status: readStatus,
+    } = await supabase.from('profiles').select('id').eq('user_id', user.id).maybeSingle();
+    if (readError) return isNetworkError(readError, readStatus) ? 'offline' : 'error';
+    const { error, status } = await supabase.from('profiles').upsert({
       id: (existing as { id: string } | null)?.id ?? useAccountStore.getState().profileId,
       user_id: user.id,
       birth_month: owner.birthMonth,
@@ -130,7 +133,8 @@ export async function ensureOwnerProfileSynced(): Promise<OwnerSync> {
       units: owner.units ?? 'metric',
       locale: owner.locale ?? 'en',
     });
-    return error ? 'error' : 'ok';
+    if (!error) return 'ok';
+    return isNetworkError(error, status) ? 'offline' : 'error';
   } catch {
     return 'offline';
   }

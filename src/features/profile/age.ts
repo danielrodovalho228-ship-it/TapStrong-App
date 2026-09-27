@@ -1,10 +1,10 @@
 /**
  * Age, body band and app mode — SPEC §5 (bands) and §8 (modes).
  *
- * Only birth month and year are known. When today is in the birth month we
- * cannot tell whether the birthday has passed, so we count it as not yet
- * reached. That errs toward the younger band, which is the safer side for the
- * child (under 13) and teen (under 18) rules.
+ * Usually only birth month and year are known. When the day is known, it
+ * decides; otherwise someone whose birthday is this month gets the benefit of
+ * the month and counts as having had it (QA R3-01) — nobody is held a year
+ * younger for up to 30 days.
  */
 
 import { clock } from '@/lib/clock';
@@ -17,15 +17,18 @@ export type AppMode = 'child' | 'teen' | 'adult' | 'senior';
 export const MIN_AGE = KIDS_MIN_AGE;
 export const MAX_AGE = 110;
 
-export type YearMonth = { year: number; month: number }; // month 1–12
+export type YearMonth = { year: number; month: number; day?: number }; // month 1–12
 
 export function currentYearMonth(date = clock.now()): YearMonth {
-  return { year: date.getFullYear(), month: date.getMonth() + 1 };
+  return { year: date.getFullYear(), month: date.getMonth() + 1, day: date.getDate() };
 }
 
 export function ageFrom(birth: YearMonth, today: YearMonth = currentYearMonth()): number {
   const years = today.year - birth.year;
-  return today.month > birth.month ? years : years - 1;
+  if (today.month !== birth.month) return today.month > birth.month ? years : years - 1;
+  // Birthday month: the day decides when both are known, otherwise the month counts.
+  if (birth.day != null && today.day != null) return today.day >= birth.day ? years : years - 1;
+  return years;
 }
 
 export function bandForAge(age: number): BodyBand | null {

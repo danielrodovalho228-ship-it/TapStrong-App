@@ -1,5 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 
+import { isNetworkError } from '@/lib/network';
+
 import { useAccountStore } from '../account/store';
 
 /**
@@ -37,6 +39,7 @@ export async function sendPinResetCode(supabase: SupabaseClient | null): Promise
       options: { shouldCreateUser: false },
     });
     if (!error) return 'sent';
+    if (isNetworkError(error)) return 'offline';
     const e = error as AuthError;
     return e?.status === 429 || e?.code === 'over_email_send_rate_limit' ? 'rate_limited' : 'error';
   } catch {
@@ -56,6 +59,7 @@ export async function verifyPinResetCode(
   try {
     const { error } = await supabase.auth.verifyOtp({ email, token, type: 'email' });
     if (!error) return 'ok';
+    if (isNetworkError(error)) return 'offline';
     const e = error as AuthError;
     return e?.code === 'otp_expired' || e?.status === 403 ? 'wrong_code' : 'error';
   } catch {

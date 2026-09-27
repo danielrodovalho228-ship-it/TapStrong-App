@@ -97,7 +97,7 @@ describe('kids under 13 off (launch default)', () => {
     await render(<WhoScreen />);
     expect(screen.getByRole('header', { name: 'TapStrong is for ages 13 and up' })).toBeTruthy();
     expect(screen.queryByRole('button', { name: /^Birth year:/ })).toBeNull();
-    expect(useAgeBlockStore.getState().blocked).toBe(true);
+    expect(useAgeBlockStore.getState().birth).toEqual({ year: 2016, month: 5 });
   });
 
   it('"My child" becomes "My teen (13–17)"', async () => {

@@ -3,16 +3,27 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
-import { AppText, Button, Header, Notice, RadioCard, Screen, Select } from '@/components/ui';
+import {
+  AppText,
+  Button,
+  Header,
+  Notice,
+  RadioCard,
+  Screen,
+  Select,
+  TextLink,
+} from '@/components/ui';
+import { useAccountStore } from '@/features/account/store';
 import { ParentGate } from '@/features/family/ParentGate';
 import { activeProfile, useFamilyStore } from '@/features/family/store';
 import { childLockFor, evaluateAgeGate } from '@/features/onboarding/age-gate';
 import { STEP_NUMBER, TOTAL_STEPS, WHO_OPTIONS, type Who } from '@/features/onboarding/options';
-import { useAgeBlockStore } from '@/features/onboarding/ageBlock';
+import { ageLockApplies, isAgeBlocked, useAgeBlockStore } from '@/features/onboarding/ageBlock';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { birthYearOptions } from '@/features/profile/age';
 import { track } from '@/lib/analytics';
 import { kidsUnder13Enabled } from '@/lib/features';
+import { contactSupport, SUPPORT_EMAIL } from '@/lib/support';
 import { useAppModeStore } from '@/stores/app-mode';
 import { colors, fonts, spacing } from '@/theme';
 
@@ -31,7 +42,9 @@ export default function WhoScreen() {
 
   const years = useMemo(() => birthYearOptions(), []);
   const ageBlock = useAgeBlockStore();
+  const accountSaved = useAccountStore((s) => s.saved);
   const profile = useFamilyStore(activeProfile);
+  const [underMinShown, setUnderMinShown] = useState(false);
   const consented = profile?.kind === 'child' && !!profile.consentAt;
   // A child or teen profile's birth date is locked: only a parent, behind the
   // gate, may fix it. An under-13 profile can never move to 13+, and a teen
@@ -46,9 +59,22 @@ export default function WhoScreen() {
       ? evaluateAgeGate(effectiveWho, { year, month }, undefined, consented, lock)
       : null;
 
+  // QA R3-01: the phone-wide stop is only for the self-signup "Me" flow before
+  // an account exists. A family profile or an edit just says "13 and up".
+  const lockApplies = ageLockApplies({
+    who: effectiveWho,
+    editing: !!edit,
+    accountSaved,
+    familyProfile: !!profile && profile.kind !== 'self',
+  });
+
   const onContinue = () => {
-    // Under 13 answering for themselves (kids off): neutral stop, kept on this phone.
-    if (result?.status === 'under_min') return ageBlock.block();
+    if (result?.status === 'under_min' && month && year) {
+      // Under 13 answering for themselves (kids off): neutral stop, kept on
+      // this phone until the date entered turns 13.
+      if (lockApplies) return ageBlock.block({ year, month });
+      return setUnderMinShown(true);
+    }
     if (result?.status !== 'ok') return;
     stored.update({ who: effectiveWho, birthMonth: month, birthYear: year });
     setMode(result.mode);
@@ -57,7 +83,7 @@ export default function WhoScreen() {
     else router.push('/onboarding/chat');
   };
 
-  if (ageBlock.blocked) {
+  if (lockApplies && isAgeBlocked(ageBlock.birth)) {
     return (
       <Screen>
         <View style={styles.block}>
@@ -65,6 +91,14 @@ export default function WhoScreen() {
             {t('ageBlock.title')}
           </AppText>
           <AppText color={colors.mutedStrong}>{t('ageBlock.body')}</AppText>
+          <AppText variant="caption" color={colors.muted}>
+            {t('ageBlock.support', { email: SUPPORT_EMAIL })}
+          </AppText>
+          <TextLink
+            tone="accent"
+            label={t('ageBlock.contact')}
+            onPress={() => contactSupport(t('ageBlock.subject'))}
+          />
         </View>
       </Screen>
     );
@@ -144,14 +178,20 @@ export default function WhoScreen() {
               label={t('who.month')}
               placeholder={t('who.monthPlaceholder')}
               value={month}
-              onChange={setMonth}
+              onChange={(m) => {
+                setMonth(m);
+                setUnderMinShown(false);
+              }}
               options={MONTHS.map((m) => ({ value: m, label: t(`months.${m}` as 'months.1') }))}
             />
             <Select
               label={t('who.year')}
               placeholder={t('who.yearPlaceholder')}
               value={year}
-              onChange={setYear}
+              onChange={(y) => {
+                setYear(y);
+                setUnderMinShown(false);
+              }}
               options={years.map((y) => ({ value: y, label: String(y) }))}
             />
           </View>
@@ -166,6 +206,11 @@ export default function WhoScreen() {
         </Notice>
       ) : null}
       {/* Neutral: the "13 and up" stop shows only after Continue, never as a live hint. */}
+      {result?.status === 'under_min' && underMinShown ? (
+        <Notice tone="warning" icon>
+          {t('who.errors.under_min')}
+        </Notice>
+      ) : null}
       {result && result.status !== 'ok' && result.status !== 'under_min' ? (
         <Notice tone="warning" icon>
           {t(`who.errors.${result.status}`)}

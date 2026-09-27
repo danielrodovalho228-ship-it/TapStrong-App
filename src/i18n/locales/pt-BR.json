@@ -4519,7 +4519,10 @@
   },
   "ageBlock": {
     "title": "O TapStrong é para quem tem 13 anos ou mais",
-    "body": "Obrigado pela visita. Você pode voltar quando fizer 13."
+    "body": "Obrigado pela visita. Você pode voltar quando fizer 13.",
+    "support": "Digitou a data errada? Nosso suporte pode ajudar: {{email}}",
+    "contact": "Falar com o suporte",
+    "subject": "Ajuda com a verificação de idade"
   },
   "pinReset": {
     "forgot": "Esqueceu o PIN?",

@@ -2,11 +2,15 @@ import { ageFrom, bandForAge, birthYearOptions, modeForAge, recoveryHoursFor } f
 
 describe('ageFrom', () => {
   const today = { year: 2026, month: 9 };
-  it('counts the birthday only after the birth month', () => {
+  it('gives the benefit of the birth month; the day decides when known (QA R3-01)', () => {
     expect(ageFrom({ year: 1983, month: 3 }, today)).toBe(43);
     expect(ageFrom({ year: 2013, month: 8 }, today)).toBe(13);
-    // Same month: birthday may not have happened yet — younger side.
-    expect(ageFrom({ year: 2013, month: 9 }, today)).toBe(12);
+    // Same month, no day: counts as had.
+    expect(ageFrom({ year: 2013, month: 9 }, today)).toBe(13);
+    // Same month with days on both sides: the day decides.
+    const day15 = { ...today, day: 15 };
+    expect(ageFrom({ year: 2013, month: 9, day: 15 }, day15)).toBe(13);
+    expect(ageFrom({ year: 2013, month: 9, day: 16 }, day15)).toBe(12);
     expect(ageFrom({ year: 2013, month: 10 }, today)).toBe(12);
   });
 });
