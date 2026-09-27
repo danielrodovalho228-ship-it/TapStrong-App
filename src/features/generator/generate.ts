@@ -27,12 +27,6 @@ const BASE_MINUTES: Record<AppMode, [warmup: number, cooldown: number]> = {
   senior: [9, 6],
 };
 export const MIN_WARMUP = 3;
-/** Most main exercises in one session, even when filling to the time (QA R3 P2). */
-const MAX_MAIN = 8;
-/** Seconds kept free for a finisher when filling a session to its time. */
-const FINISHER_ROOM = 270;
-/** A session under this share of its minutes gets extra exercises. */
-const UNDERFILL = 0.75;
 export const MIN_COOLDOWN = 2;
 
 export function warmupCooldownMinutes(mode: AppMode, minutes: number) {
@@ -473,12 +467,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
       ),
       main.length + 11,
     );
-  // Fill the slots, then keep filling to the requested time with recovered
-  // muscles (QA R3 P2: 22 of 40 minutes), room left for a finisher.
-  const budgetSeconds = minutes * 60 - (warmup + cooldown) * 60 - FINISHER_ROOM;
-  const mainSeconds = () => main.reduce((n, i) => n + i.estSeconds, 0);
-  const fixedSeconds = (warmup + cooldown) * 60;
-  while (!focused) {
+  while (!focused && main.length < slots) {
     const options = fill
       // Core once per session; the big groups share the rest.
       .filter((g) => g !== 'core' || sessionCount('core') === 0)
@@ -501,16 +490,6 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     if (!ranked.length) break;
     const { g, pick } = ranked[0];
     const muscle = topPrimary(pick)!;
-    const item = mainItem(pick, { muscle, family: [muscle], goal: defaultGoal }, input);
-    // Past the chosen number of exercises only while the session is well
-    // short of the minutes asked for, never past 8.
-    if (
-      main.length >= slots &&
-      (main.length >= MAX_MAIN ||
-        fixedSeconds + mainSeconds() >= UNDERFILL * minutes * 60 ||
-        mainSeconds() + item.estSeconds > budgetSeconds)
-    )
-      break;
     add(pick, { muscle, family: [muscle], goal: defaultGoal });
     added.set(pick.id, g);
   }
@@ -872,6 +851,34 @@ export function generateBalanceSession(
     setsPerExercise: 1,
   });
   return { ...session, focus: 'balance' };
+}
+
+/**
+ * Spare time (Daniel, Phase 13): the generator keeps the number of exercises
+ * the person chose; when a session ends well short of its minutes, the
+ * workout screen offers one more exercise and the person decides.
+ */
+export const SPARE_OFFER_MINUTES = 6;
+export function spareMinutes(session: GeneratedSession): number {
+  return Math.max(0, session.minutes - session.estimatedMinutes);
+}
+
+/**
+ * The same session with one more main exercise, or null when none fits.
+ * With `built`, only when that session came from this input (the offer never
+ * reshuffles a workout built another way).
+ */
+export function withOneMoreExercise(
+  input: GeneratorInput,
+  built?: GeneratedSession,
+): GeneratedSession | null {
+  const mainIds = (s: GeneratedSession) =>
+    s.items.filter((i) => i.role === 'main').map((i) => i.exerciseId);
+  const current = generateSession(input);
+  if (built && mainIds(current).join() !== mainIds(built).join()) return null;
+  const more = generateSession({ ...input, exercisesPerSession: input.exercisesPerSession + 1 });
+  if (more.error || mainIds(more).length <= mainIds(current).length) return null;
+  return more;
 }
 
 /** "Only 15 min today" re-runs the generator with 15 minutes (SPEC §8). */

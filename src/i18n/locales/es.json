@@ -3439,6 +3439,10 @@
     "wu_seated_knee_lifts": {
       "name": "Elevación de rodillas sentado",
       "cues": "Siéntate erguido al borde de la silla y sube un poco una rodilla y luego la otra, como una marcha lenta."
+    },
+    "wu_seated_toe_taps": {
+      "name": "Toques de punta sentado",
+      "cues": "Siéntate erguido, estira un poco una pierna y toca con la punta al frente; cambia con un ritmo suave."
     }
   },
   "generator": {
@@ -3740,7 +3744,12 @@
     "rampUp_other": "{{count}} series ligeras de aproximación",
     "minSec": "{{minutes}} min {{seconds}} s",
     "backToFull": "Volver al entrenamiento completo",
-    "restDay": "Tomar un día de descanso"
+    "restDay": "Tomar un día de descanso",
+    "spare": {
+      "body_one": "Te sobra {{count}} min de tu tiempo.",
+      "body_other": "Te sobran {{count}} min de tu tiempo.",
+      "add": "¿Añadir 1 ejercicio?"
+    }
   },
   "account": {
     "eyebrow": "Tu cuenta",

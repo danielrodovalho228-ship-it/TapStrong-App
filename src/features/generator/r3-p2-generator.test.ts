@@ -10,7 +10,15 @@ import type { MovementKey } from '../movement/catalog';
 import { muscleByKey } from '../muscles';
 import { GYM_EQUIPMENT_OPTIONS } from '../onboarding/options';
 
-import { blockReason, doseFor, generateSession, type GeneratorInput } from './index';
+import {
+  blockReason,
+  doseFor,
+  generateSession,
+  SPARE_OFFER_MINUTES,
+  spareMinutes,
+  withOneMoreExercise,
+  type GeneratorInput,
+} from './index';
 import type { RecentSession } from './types';
 
 const LIBRARY: Exercise[] = (seed.exercises as SeedExercise[]).map(fromSeed);
@@ -71,12 +79,20 @@ describe('isolation moves are never dosed heavy', () => {
 });
 
 describe('the filler', () => {
-  it('fills a 40-minute session to at least three quarters of its time', () => {
-    for (const minutes of [40, 60]) {
-      const s = generateSession({ ...base, minutes, exercisesPerSession: 3 });
-      expect(s.estimatedMinutes).toBeGreaterThanOrEqual(Math.floor(minutes * 0.7));
-      expect(s.estimatedMinutes).toBeLessThanOrEqual(minutes);
-    }
+  it('keeps the number of exercises chosen and offers one more when time is left', () => {
+    const input = { ...base, minutes: 60, exercisesPerSession: 3 };
+    const s = generateSession(input);
+    expect(main(s)).toHaveLength(3);
+    expect(spareMinutes(s)).toBeGreaterThanOrEqual(SPARE_OFFER_MINUTES);
+    const more = withOneMoreExercise(input)!;
+    expect(main(more)).toHaveLength(4);
+    // The first three stay the same: the person only adds one.
+    expect(
+      main(more)
+        .slice(0, 3)
+        .map((i) => i.exerciseId),
+    ).toEqual(expect.arrayContaining(main(s).map((i) => i.exerciseId)));
+    expect(more.estimatedMinutes).toBeLessThanOrEqual(60);
   });
 
   it('keeps push and pull within one exercise of each other, day after day', () => {

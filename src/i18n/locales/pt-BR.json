@@ -3439,6 +3439,10 @@
     "wu_seated_knee_lifts": {
       "name": "Elevação de joelhos sentado",
       "cues": "Sente-se ereto na ponta da cadeira e levante um pouco um joelho e depois o outro, como uma marcha lenta."
+    },
+    "wu_seated_toe_taps": {
+      "name": "Toques de ponta sentado",
+      "cues": "Sente-se ereto, estique um pouco uma perna e toque a ponta do pé à frente; troque num ritmo leve."
     }
   },
   "generator": {
@@ -3740,7 +3744,12 @@
     "rampUp_other": "{{count}} séries leves de aproximação",
     "minSec": "{{minutes}} min {{seconds}} s",
     "backToFull": "Voltar ao treino completo",
-    "restDay": "Tirar um dia de descanso"
+    "restDay": "Tirar um dia de descanso",
+    "spare": {
+      "body_one": "Sobrou {{count}} min do seu tempo.",
+      "body_other": "Sobraram {{count}} min do seu tempo.",
+      "add": "Adicionar 1 exercício?"
+    }
   },
   "account": {
     "eyebrow": "Sua conta",

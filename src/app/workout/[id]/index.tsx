@@ -7,7 +7,14 @@ import { AppText, Button, Card, Icon, IconButton, Notice, Screen } from '@/compo
 import { canStartWorkout, currentPlan } from '@/features/billing/rules';
 import { useBillingStore } from '@/features/billing/store';
 import type { Exercise } from '@/features/exercises/types';
-import { generateSession, MOBILITY_MINUTES, swapItem } from '@/features/generator';
+import {
+  generateSession,
+  MOBILITY_MINUTES,
+  SPARE_OFFER_MINUTES,
+  spareMinutes,
+  swapItem,
+  withOneMoreExercise,
+} from '@/features/generator';
 import type { GeneratorNote, SessionItem } from '@/features/generator/types';
 import { muscleLabel } from '@/features/onboarding/summaries';
 import { RangeNote } from '@/features/movement/RangeNote';
@@ -118,6 +125,16 @@ export default function WorkoutScreen() {
     }
     return t(n.key);
   };
+
+  // Only on an untouched planned workout, when enough time is left.
+  const oneMore =
+    planned &&
+    workout.kind === 'regular' &&
+    !workout.swaps.length &&
+    !workout.fullSession &&
+    spareMinutes(session) >= SPARE_OFFER_MINUTES
+      ? withOneMoreExercise(input, session)
+      : null;
 
   // "Only 15 min" keeps the swaps already made and can be undone (QA P2).
   const onlyFifteen = () => {
@@ -262,6 +279,18 @@ export default function WorkoutScreen() {
 
       {phaseCard(cool, 'workout.cooldown', blockMinutes(cool))}
 
+      {/* Spare time (Daniel, Phase 13): the person decides to add one exercise. */}
+      {oneMore ? (
+        <Card style={styles.spare}>
+          <AppText>{t('workout.spare.body', { count: spareMinutes(session) })}</AppText>
+          <Button
+            variant="secondary"
+            label={t('workout.spare.add')}
+            onPress={() => store.replaceSession(workout.id, oneMore)}
+          />
+        </Card>
+      ) : null}
+
       <View style={styles.actions}>
         {planned && session.minutes > SHORT_MINUTES ? (
           <View style={styles.action}>
@@ -325,6 +354,7 @@ export default function WorkoutScreen() {
 }
 
 const styles = StyleSheet.create({
+  spare: { gap: spacing.sm },
   header: {
     flexDirection: 'row',
     alignItems: 'flex-start',

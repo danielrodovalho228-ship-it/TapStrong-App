@@ -8446,6 +8446,30 @@
       "rangeLimit": []
     },
     {
+      "slug": "wu_seated_toe_taps",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": [],
+      "pattern": "mobility",
+      "parts": ["warmup_mobility"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["shins", "primary", 0.5],
+        ["quads", "secondary", 0.3]
+      ],
+      "joints": [
+        ["ankle", "dorsiflexion", "partial"],
+        ["knee", "straighten_load", "partial"]
+      ],
+      "rangeLimit": []
+    },
+    {
       "slug": "wu_seated_heel_toe_taps",
       "equipment": [],
       "location": ["home", "gym", "outdoors"],

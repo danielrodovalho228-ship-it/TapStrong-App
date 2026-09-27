@@ -10,6 +10,9 @@ export {
   MIN_COOLDOWN,
   MIN_WARMUP,
   shortSession,
+  SPARE_OFFER_MINUTES,
+  spareMinutes,
+  withOneMoreExercise,
   warmupCooldownMinutes,
 } from './generate';
 export type * from './types';

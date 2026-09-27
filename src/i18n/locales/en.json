@@ -3439,6 +3439,10 @@
     "wu_seated_knee_lifts": {
       "name": "Seated knee lifts",
       "cues": "Sit tall at the front of the chair and lift one knee a little, then the other, like a slow march."
+    },
+    "wu_seated_toe_taps": {
+      "name": "Seated toe taps",
+      "cues": "Sit tall, straighten one leg a little and tap the toes forward, then switch, in an easy rhythm."
     }
   },
   "generator": {
@@ -3740,7 +3744,12 @@
     "rampUp_other": "{{count}} light ramp-up sets",
     "minSec": "{{minutes}} min {{seconds}} s",
     "backToFull": "Back to the full workout",
-    "restDay": "Take a rest day"
+    "restDay": "Take a rest day",
+    "spare": {
+      "body_one": "{{count}} min left in your time.",
+      "body_other": "{{count}} min left in your time.",
+      "add": "Add 1 exercise?"
+    }
   },
   "account": {
     "eyebrow": "Your account",
