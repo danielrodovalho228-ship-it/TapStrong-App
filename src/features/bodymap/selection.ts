@@ -45,15 +45,16 @@ export function priorityOf(entries: MuscleGoalEntry[], muscleKey: string): numbe
 
 export const BAND_OPTIONS: BodyBand[] = ['kid', 'teen', 'young', 'adult', 'mid', 'senior', 'elder'];
 const ADULT_BANDS: BodyBand[] = ['young', 'adult', 'mid', 'senior', 'elder'];
+const MINOR_BANDS: BodyBand[] = ['kid', 'teen'];
 
 /**
- * Age models a profile may show (Daniel, Sep 27 2026): adult profiles see 18+
- * bodies only; kid and teen bodies appear only on kid or teen profiles
- * (including a guardian managing one). Safety mode still comes from the
+ * Age models a profile may show (Daniel, Sep 27 2026; QA round 1): adult
+ * profiles see 18+ bodies only, and kid or teen profiles (including a guardian
+ * managing one) see kid and teen bodies only. Safety mode still comes from the
  * birth date, never from the chosen image.
  */
 export function allowedBands(mode: AppMode): BodyBand[] {
-  return mode === 'child' || mode === 'teen' ? BAND_OPTIONS : ADULT_BANDS;
+  return mode === 'child' || mode === 'teen' ? MINOR_BANDS : ADULT_BANDS;
 }
 
 /** The stored model band if still allowed for this profile, else its own band. */

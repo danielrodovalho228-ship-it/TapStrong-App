@@ -59,11 +59,19 @@ describe('body map selection', () => {
     expect(clampQuantity('days', 8)).toBe(7);
   });
 
-  it('adult profiles see 18+ bodies only; minors see all (Daniel, Sep 27)', () => {
+  it('adult profiles see 18+ bodies only; minors see kid and teen bodies only', () => {
     expect(allowedBands('adult')).toEqual(['young', 'adult', 'mid', 'senior', 'elder']);
     expect(allowedBands('senior')).not.toContain('kid');
-    expect(allowedBands('teen')).toContain('kid');
-    expect(allowedBands('child')).toContain('teen');
+    expect(allowedBands('teen')).toEqual(['kid', 'teen']);
+    expect(allowedBands('child')).toEqual(['kid', 'teen']);
+  });
+
+  it('a minor never displays an adult body, even one stored before (QA round 1)', () => {
+    for (const stored of ['young', 'adult', 'mid', 'senior', 'elder'] as const) {
+      expect(displayBand(stored, 'kid', 'child')).toBe('kid');
+      expect(displayBand(stored, 'teen', 'teen')).toBe('teen');
+    }
+    expect(displayBand('teen', 'kid', 'child')).toBe('teen');
   });
 
   it('falls back to the own band when a stored one is not allowed', () => {
