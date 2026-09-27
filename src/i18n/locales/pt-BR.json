@@ -2576,7 +2576,9 @@
         "legs": "pernas",
         "core": "core"
       },
-      "substituted": "Nenhum exercício seguro para {{muscles}} combina com hoje, então hoje você treina outras áreas. Acrescente equipamento ou outra posição para trabalhá-los."
+      "substituted": "Nenhum exercício seguro para {{muscles}} combina com hoje, então hoje você treina outras áreas. Acrescente equipamento ou outra posição para trabalhá-los.",
+      "recovering": "{{muscles}} ainda se recupera do último treino, então hoje você treina outras áreas.",
+      "unavailable": "Nenhum exercício seguro para {{muscles}} cabe na configuração de hoje (posição, equipamento, restrições). Adicione equipamento ou outra posição para trabalhá-los."
     }
   },
   "tabs": {
@@ -2831,7 +2833,8 @@
       "no_warmup": "Nenhum aquecimento seguro combina com hoje. Tente outra posição ou acrescente equipamento.",
       "no_cooldown": "Nenhum desaquecimento seguro combina com hoje. Tente outra posição ou acrescente equipamento.",
       "editPlan": "Mudar meu plano",
-      "gone": "Este treino não está mais disponível. Volte ao início para montar o de hoje."
+      "gone": "Este treino não está mais disponível. Volte ao início para montar o de hoje.",
+      "all_recovering": "Tudo o que você escolheu ainda está se recuperando. Hoje é bom para uma sessão curta de mobilidade, uma caminhada ou um dia de descanso."
     },
     "cues": {
       "support": "Segure numa cadeira ou bancada para ter equilíbrio o tempo todo.",

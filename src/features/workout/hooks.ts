@@ -49,6 +49,7 @@ export function useGeneratorInput(library: Exercise[]): GeneratorInput | null {
     movementLimits: activeReports(reports).map(limitFrom),
     recentSessions: recentSessions(workouts, library),
     today: localDate(clock.now()),
+    now: clock.now().toISOString(),
   });
 }
 

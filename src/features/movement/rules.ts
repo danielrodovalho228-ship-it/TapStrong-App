@@ -15,6 +15,8 @@ export type MovementLimit = {
   painFree: MovementKey[];
   /** Latest pain score, 0–10. */
   score: number;
+  /** Recovery plan phase (1–3); phase 1 is holds only (QA R2-07). */
+  phase?: 1 | 2 | 3;
 };
 
 /** From this score up the joint is too irritable: every movement of it is left out. */
@@ -63,8 +65,11 @@ export function movementVerdict(
       const key = movementKey(use.joint, use.movement);
       if (limit.painFree.includes(key)) continue;
       const lowPain = limit.score <= REDUCED_RANGE_MAX_SCORE;
+      // While the recovery plan is in phase 1 (holds only), a painful movement
+      // is never used, not even in a shorter range (QA R2-07).
+      const reducedOk = opts.allowReducedRange && limit.phase !== 1;
       if (use.range === 'isometric' && lowPain) raise('isometric');
-      else if (opts.allowReducedRange && lowPain && e.rangeLimit.includes(key)) raise('reduced');
+      else if (reducedOk && lowPain && e.rangeLimit.includes(key)) raise('reduced');
       else raise('blocked');
     }
   }

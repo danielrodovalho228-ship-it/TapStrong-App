@@ -10,6 +10,8 @@ export type RecentSession = {
   date: string;
   /** Primary muscles of the main work that day. */
   mainMuscles: string[];
+  /** When it ended (ISO time), for recovery hours. */
+  at?: string;
 };
 
 /** Everything the generator needs. Pure data in, pure data out (SPEC §8). */
@@ -43,6 +45,8 @@ export type GeneratorInput = {
    */
   painToday?: string[];
   /** Areas where a sharp pain stopped a workout today: no exercise moving that joint today (QA R2-02). */
+  /** Now (ISO time): recovery hours for the targets (QA R2-08). */
+  now?: string;
   stoppedToday?: string[];
   /**
    * "Movement that hurts" reports (SPEC §8): these areas are filtered movement
@@ -90,7 +94,11 @@ export type GeneratorNote =
   | { key: 'generator.notes.rested'; muscles: string[] }
   | { key: 'generator.notes.trimmed'; count: number }
   /** None of the chosen muscles had a safe exercise today; others were trained instead. */
-  | { key: 'generator.notes.substituted'; muscles: string[] };
+  | { key: 'generator.notes.substituted'; muscles: string[] }
+  /** Chosen muscles still recovering from a recent workout (QA R2-08). */
+  | { key: 'generator.notes.recovering'; muscles: string[] }
+  /** Chosen muscles with no safe exercise for this setup today (QA R2-10). */
+  | { key: 'generator.notes.unavailable'; muscles: string[] };
 
 export type GeneratedSession = {
   items: SessionItem[];
@@ -100,7 +108,7 @@ export type GeneratedSession = {
   estimatedMinutes: number;
   notes: GeneratorNote[];
   /** Set when no safe session can be built. */
-  error?: 'no_library' | 'no_warmup' | 'no_cooldown' | 'no_main';
+  error?: 'no_library' | 'no_warmup' | 'no_cooldown' | 'no_main' | 'all_recovering';
 };
 
 export type SwapReason = 'user_choice' | 'machine_taken' | 'pain';

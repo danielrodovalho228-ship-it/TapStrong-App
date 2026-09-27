@@ -206,12 +206,16 @@ describe('safety filters (SPEC §2, §8 "Filter")', () => {
 });
 
 describe('main work and dosage', () => {
-  it('works the selected muscles first, by priority', () => {
+  it('works the selected muscles first, one exercise per parent muscle (QA R2-09)', () => {
     const s = gen();
     const main = s.items.filter((i) => i.role === 'main');
-    expect(main[0].targetMuscle).toBe('upperChest');
-    expect(main[1].targetMuscle).toBe('midChest');
-    expect(ex(main[0].exerciseId).muscles.find((m) => m.role === 'primary')?.muscleKey).toBe(
+    const chest = main.filter((i) =>
+      ['upperChest', 'midChest', 'lowerChest'].includes(i.targetMuscle ?? ''),
+    );
+    // Upper chest first by priority; mid and lower chest take later sessions.
+    expect(chest.map((i) => i.targetMuscle)).toEqual(['upperChest']);
+    const item = chest[0];
+    expect(ex(item.exerciseId).muscles.find((m) => m.role === 'primary')?.muscleKey).toBe(
       'upperChest',
     );
   });
@@ -398,12 +402,28 @@ describe('balance pass (SPEC §8)', () => {
     expect(s.notes).toContainEqual({ key: 'generator.notes.balance', groups: ['pull', 'legs'] });
   });
 
-  it('does not add a group already trained this week', () => {
+  it('adds the group trained least this week first (QA R2-09)', () => {
     const s = gen({
       today: '2026-09-28',
       recentSessions: [{ date: '2026-09-26', mainMuscles: ['upperBack', 'lats'] }],
     });
-    expect(s.notes).toContainEqual({ key: 'generator.notes.balance', groups: ['legs'] });
+    const note = s.notes.find((n) => n.key === 'generator.notes.balance');
+    expect(note && 'groups' in note && note.groups[0]).toBe('legs');
+  });
+
+  it('a back workout this morning: no back again today (QA R2-08)', () => {
+    const s = gen({
+      today: '2026-09-28',
+      now: '2026-09-28T18:00:00Z',
+      recentSessions: [
+        { date: '2026-09-28', at: '2026-09-28T08:00:00Z', mainMuscles: ['upperBack', 'lats'] },
+      ],
+    });
+    const primaries = s.items
+      .filter((i) => i.role === 'main')
+      .flatMap((i) => ex(i.exerciseId).muscles.filter((m) => m.role === 'primary'))
+      .map((m) => m.muscleKey);
+    expect(primaries.some((m) => ['upperBack', 'lats'].includes(m))).toBe(false);
   });
 
   it('never a third hard session in a row on the same muscle', () => {

@@ -20,7 +20,23 @@ export type DoseOptions = {
   caution?: boolean;
   /** A Repair recovery session: gentle holds and light reps (QA A-03). */
   rehab?: boolean;
+  /**
+   * The move loads a restricted or painful joint: light, 12–15, no heavy
+   * sets (QA R2-07; reviewer to confirm).
+   */
+  jointCare?: boolean;
 };
+
+/** Multi-joint patterns: the only ones dosed as heavy strength (QA round 2). */
+const COMPOUND_PATTERNS = [
+  'horizontal_push',
+  'vertical_push',
+  'horizontal_pull',
+  'vertical_pull',
+  'squat',
+  'hinge',
+  'lunge',
+];
 
 /** Heart condition or high blood pressure call for moderate effort. */
 export const needsCaution = (conditions: readonly string[]) =>
@@ -58,11 +74,11 @@ export function doseFor(
       loadHint: 'bodyweight',
     };
   }
-  if (options.rehab) {
+  if (options.rehab || options.jointCare) {
     return {
-      sets: clamp(sets, 2, 3),
+      sets: clamp(sets, options.rehab ? 2 : 1, 3),
       ...(timed ? { holdSeconds: [20, 30] } : { reps: [12, 15] }),
-      restSeconds: 45,
+      restSeconds: options.rehab ? 45 : 60,
       perSide,
       loadHint: weighted('light'),
     };
@@ -82,7 +98,7 @@ export function doseFor(
       return {
         sets,
         ...(timed ? { holdSeconds: [30, 45] } : { reps: [8, 12] }),
-        restSeconds: 75,
+        restSeconds: mode === 'senior' || !exercise.loaded ? 60 : 75,
         perSide,
         loadHint: weighted('moderate'),
       };
@@ -95,18 +111,22 @@ export function doseFor(
         loadHint: weighted('moderate'),
       };
     case 'strengthen':
-      return minor
+      // Heavy 4–8 only for loaded multi-joint lifts; isolation, unloaded, 60+
+      // and minors get 8–12 with moderate rest (QA round 2).
+      return minor ||
+        mode === 'senior' ||
+        !exercise.loaded ||
+        !COMPOUND_PATTERNS.includes(exercise.pattern)
         ? {
             sets,
             ...(timed ? { holdSeconds: [20, 30] } : { reps: [8, 12] }),
-            restSeconds: 90,
+            restSeconds: minor ? 90 : 75,
             perSide,
-            loadHint: weighted('light'),
+            loadHint: weighted(minor ? 'light' : 'moderate'),
           }
         : {
             sets,
-            // Heavy 4–8 only with real load; bodyweight and bands stay at 8–12.
-            ...(timed ? { holdSeconds: [20, 40] } : { reps: exercise.loaded ? [4, 8] : [8, 12] }),
+            ...(timed ? { holdSeconds: [20, 40] } : { reps: [4, 8] }),
             restSeconds: 120,
             perSide,
             loadHint: weighted('heavy'),

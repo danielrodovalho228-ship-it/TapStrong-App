@@ -134,6 +134,7 @@ export const limitFrom = (report: MovementPain): MovementLimit => ({
   painful: report.painful,
   painFree: report.painFree,
   score: currentScore(report),
+  phase: phaseFor(levelFor(report)),
 });
 
 /**
@@ -164,6 +165,7 @@ export function recoveryInput(
   const holds = input.library.filter(
     (e) =>
       e.parts.includes('main') &&
+      !e.contraindications.includes(report.area) &&
       e.joints.some((j) => report.joints.includes(j.joint) && j.range === 'isometric'),
   );
   const library =
@@ -191,7 +193,7 @@ export function recoveryInput(
 /** Phase 1 main work: holds for the joint, or exercises using only its pain-free movements. */
 function phaseOneMain(e: Exercise, report: MovementPain): boolean {
   const uses = e.joints.filter((j) => report.joints.includes(j.joint));
-  if (!uses.length) return false;
+  if (!uses.length || e.contraindications.includes(report.area)) return false;
   if (uses.some((u) => u.range === 'isometric')) return true;
   return movementVerdict(e, [limitFrom(report)], { allowReducedRange: false }) === 'ok';
 }

@@ -2576,7 +2576,9 @@
         "legs": "piernas",
         "core": "core"
       },
-      "substituted": "Ningún ejercicio seguro para {{muscles}} encaja con lo de hoy, así que hoy entrenas otras zonas. Añade equipo u otra posición para trabajarlos."
+      "substituted": "Ningún ejercicio seguro para {{muscles}} encaja con lo de hoy, así que hoy entrenas otras zonas. Añade equipo u otra posición para trabajarlos.",
+      "recovering": "{{muscles}} todavía se recupera del último entrenamiento, así que hoy entrenas otras zonas.",
+      "unavailable": "Ningún ejercicio seguro para {{muscles}} encaja con tu configuración de hoy (posición, equipo, restricciones). Agrega equipo u otra posición para trabajarlos."
     }
   },
   "tabs": {
@@ -2831,7 +2833,8 @@
       "no_warmup": "Ningún calentamiento seguro encaja con lo de hoy. Prueba otra posición o añade equipo.",
       "no_cooldown": "Ningún enfriamiento seguro encaja con lo de hoy. Prueba otra posición o añade equipo.",
       "editPlan": "Cambiar mi plan",
-      "gone": "Este entrenamiento ya no está disponible. Vuelve al inicio para armar el de hoy."
+      "gone": "Este entrenamiento ya no está disponible. Vuelve al inicio para armar el de hoy.",
+      "all_recovering": "Todo lo que elegiste todavía se está recuperando. Hoy va bien una sesión corta de movilidad, una caminata o un día de descanso."
     },
     "cues": {
       "support": "Sujétate de una silla o encimera para mantener el equilibrio todo el tiempo.",

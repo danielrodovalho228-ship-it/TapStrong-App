@@ -28,6 +28,7 @@ export function blockReason(e: Exercise, input: GeneratorInput): string | null {
   if (!e.location.includes(input.location)) return 'location';
   if (!e.equipment.every((q) => input.equipment.includes(q))) return 'equipment';
   if (bandRank(input.band) < bandRank(e.minAgeBand)) return 'age';
+  if (isKidMove(e) && input.mode !== 'child') return 'age';
   if (!e.positions.includes(input.position)) return 'position';
   if (e.rehab && !input.rehab) return 'rehab_only';
   // Areas with a "Movement that hurts" report are judged movement by movement.
@@ -64,6 +65,25 @@ export function blockReason(e: Exercise, input: GeneratorInput): string | null {
   if (e.level > userLevel(input.mode) + 2) return 'level';
   return null;
 }
+
+/**
+ * The move loads a joint with a restriction, a pain area or a "Movement that
+ * hurts" report: it gets a light dose and no ramp-up (QA R2-07).
+ */
+export function needsJointCare(
+  e: Pick<Exercise, 'joints'>,
+  input: Partial<Pick<GeneratorInput, 'restrictions' | 'painAreas' | 'movementLimits'>>,
+): boolean {
+  const areas = new Set([
+    ...(input.restrictions ?? []),
+    ...(input.painAreas ?? []),
+    ...(input.movementLimits ?? []).map((l) => l.area),
+  ]);
+  return areas.size > 0 && e.joints.some((j) => areas.has(JOINT_AREA[j.joint]));
+}
+
+/** Kid game moves ("Penguin march") are for kids only (QA R2-11). */
+export const isKidMove = (e: Pick<Exercise, 'slug'>) => e.slug.startsWith('kid_');
 
 /** How an exercise must be done given the movement limits (SPEC §8 "Movement that hurts"). */
 export function rangeFor(e: Exercise, input: GeneratorInput) {

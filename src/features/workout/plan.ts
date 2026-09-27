@@ -26,6 +26,7 @@ export function recentSessions(history: WorkoutRecord[], library: Exercise[]): R
         );
       return {
         date: localDate(new Date(w.endedAt ?? w.createdAt)),
+        at: w.endedAt ?? w.createdAt,
         mainMuscles: [...new Set(muscles)],
       };
     });

@@ -12,6 +12,8 @@ export type ProfileExtras = {
   restrictions?: string[];
   recentSessions?: RecentSession[];
   today?: string;
+  /** Now (ISO time), for recovery hours. */
+  now?: string;
   /** "Movement that hurts" reports (SPEC §8). */
   movementLimits?: MovementLimit[];
   /** Red-flag areas ("Doctor first"). */
@@ -55,5 +57,6 @@ export function inputFromProfile(
     stoppedToday: extras.stoppedToday,
     recentSessions: extras.recentSessions,
     today: extras.today,
+    now: extras.now,
   };
 }

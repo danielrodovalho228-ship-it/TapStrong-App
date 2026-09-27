@@ -93,7 +93,12 @@ export default function WorkoutScreen() {
     if (n.key === 'generator.notes.balance') {
       return t(n.key, { groups: n.groups.map((g) => t(`generator.notes.groups.${g}`)).join(', ') });
     }
-    if (n.key === 'generator.notes.rested' || n.key === 'generator.notes.substituted') {
+    if (
+      n.key === 'generator.notes.rested' ||
+      n.key === 'generator.notes.substituted' ||
+      n.key === 'generator.notes.recovering' ||
+      n.key === 'generator.notes.unavailable'
+    ) {
       return t(n.key, { muscles: n.muscles.map((m) => muscleLabel(t, m)).join(', ') });
     }
     return t(n.key);

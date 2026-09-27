@@ -2576,7 +2576,9 @@
         "legs": "legs",
         "core": "core"
       },
-      "substituted": "No safe exercise for {{muscles}} fits today’s settings, so today trains other areas. Add equipment or another position to work them."
+      "substituted": "No safe exercise for {{muscles}} fits today’s settings, so today trains other areas. Add equipment or another position to work them.",
+      "recovering": "{{muscles}} still recovering from your last workout, so today trains other areas.",
+      "unavailable": "No safe exercise for {{muscles}} fits today’s setup (position, equipment, restrictions). Add equipment or another position to work them."
     }
   },
   "tabs": {
@@ -2831,7 +2833,8 @@
       "no_warmup": "No safe warm-up fits today’s settings. Try another training position or add equipment.",
       "no_cooldown": "No safe cool-down fits today’s settings. Try another training position or add equipment.",
       "editPlan": "Change my plan",
-      "gone": "This workout is no longer available. Go back home to build today’s."
+      "gone": "This workout is no longer available. Go back home to build today’s.",
+      "all_recovering": "Everything you picked is still recovering. Today is good for a short mobility session, a walk or a rest day."
     },
     "cues": {
       "support": "Hold a chair or counter for balance the whole time.",
