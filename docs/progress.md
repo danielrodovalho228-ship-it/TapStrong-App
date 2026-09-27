@@ -877,3 +877,152 @@ O relatório de QA está em `docs/qa-round-1.md`. Corrigi na ordem pedida: seç�
 2. **Repair, fases 2 e 3:** a fase 1 tem 3 ou mais isometrias por movimento articular. A fase 2 tem pelo menos 2 exercícios de amplitude curta por articulação, não 3 por movimento. A fase 3 usa a biblioteca geral com carga progressiva. Quer que eu complete 3 por movimento nas fases 2 e 3 antes da revisão?
 3. **Revisor:** os 536 exercícios são `draft` e dependem da revisão (planilha gerada de novo). Também dependem dele as regras de pressão alta/cardíaco (carga moderada) e as sustentações de equilíbrio.
 4. **Pagamentos:** as mudanças em Planos e no paywall são só de tela e navegação (Premium marcado, troca de plano, voltar ao treino, data do teste), feitas porque estavam no relatório. Nada mudou em preços, produtos ou RevenueCat.
+
+## Fase 11 — QA rodada 2 (20 personas)
+
+O relatório da rodada 2 está em `docs/qa-round-2.md`. Segui a ordem pedida (seção 0, P0, P1, P2) e incluí as suas duas decisões aprovadas. Cada grupo tem seu commit:
+
+| Grupo | Commit |
+| --- | --- |
+| Relatório da QA rodada 2 | `37e3662` |
+| Seção 0 — mapa de recuperação = mapa do corpo | `5266740` |
+| P0 — adolescentes na família, remover membro, dor aguda por articulação | `55cddab` |
+| P1 — paywall só para o dono, consentimento só de adulto, PIN dos pais | `c5789f8` |
+| P1 — gerador (recuperação, equilíbrio, carga leve, semana equilibrada) | `b79e3a2` |
+| Decisão 1 — mobilidade curta conta para a sequência | `280098d` |
+| Biblioteca — cobertura sentado/com apoio, fases 2 e 3 do reparo | `0c66bfb` |
+| P2 — acabamento | `86b8aba` |
+
+### Feito
+
+**Seção 0: as bolinhas**
+
+- O mapa de recuperação (Home, Fim de treino e Compartilhar) agora é o próprio mapa do corpo, com a mesma imagem, as mesmas posições e a mesma bolinha.
+- O tamanho da bolinha é proporcional ao corpo (cerca de 18 px no mapa grande), nunca um tamanho fixo.
+- Músculo treinado: bolinha colorida com um halo suave, como a bolinha selecionada no `/body`. Músculo recuperado: bolinha branca pequena.
+- O corpo ocupa a largura inteira do cartão, com a legenda embaixo e uma linha nova para as bolinhas brancas ("recuperado / pronto").
+- A legenda fala do estado ("recuperando", "quase pronto"), não de um tempo falso.
+- Um teste compara o mapa de recuperação com o `/body` na mesma largura: tamanho e posição de cada bolinha iguais.
+
+**P0 (com testes)**
+
+- **R2-01:**
+  - dá para adicionar adolescentes (13–17) na família;
+  - um perfil de criança com consentimento continua travado abaixo de 13, e um de adolescente fica entre 13 e 17;
+  - "Remover membro" pede o PIN dos pais e uma confirmação, libera a vaga e apaga os dados do membro no celular e na nuvem.
+- **R2-02:** depois de parar por dor aguda, nada que mova aquela articulação entra no mesmo dia (joelho: sem extensora; lombar: sem elevação de quadril). Com dor fraca no dia, saem os movimentos pela articulação, mas ficam as sustentações sem dor, para a troca segura continuar existindo.
+
+**P1: segurança e família (com testes)**
+
+- **R2-03:** o paywall pede o PIN dos pais num perfil de criança. Quem assina não vê mais "Plano grátis · 3 treinos".
+- **R2-04:** só um dono adulto (18+) adiciona membros e dá consentimento dos pais. A regra vale no app e no banco (`is_adult_owner`, aplicado no Supabase).
+- **R2-05:** a pergunta de multiplicação virou um **PIN dos pais** de 4 dígitos:
+  - o dono cria o PIN ao adicionar uma criança ou adolescente e pode mudá-lo em Configurações;
+  - 5 erros bloqueiam por 15 minutos;
+  - só o hash fica guardado;
+  - um perfil de criança nunca consegue criar o PIN.
+- **R2-12:** a aba Família não mexe mais no estado durante a renderização.
+
+**P1: gerador (com testes)**
+
+- **R2-06:** o exercício de equilíbrio não é mais cortado quando o treino encurta (Rosa mantém o equilíbrio em 30, 20 e 15 min).
+- **R2-07:** articulação restrita ou dolorida recebe carga leve (12–15, sem série de aproximação). Na fase 1 do plano de recuperação, o movimento dolorido fica de fora (Laura não recebe elevação lateral).
+- **R2-08:** o músculo só volta a ser treinado depois de recuperado: 48 h, ou 96 h aos 60+. Quando tudo ainda está se recuperando, o app oferece mobilidade curta ou dia de descanso.
+- **R2-09:** um exercício por músculo principal em cada treino (as partes do peito se revezam). As vagas livres vão para o grupo menos treinado na semana; na simulação, uma semana de peito ficou em 4 empurrar : 4 puxar : 4 pernas.
+- **R2-10:** um músculo escolhido sem opção segura aparece numa nota, nunca some calado.
+- **R2-11:** os aquecimentos-brincadeira são só para crianças e vêm primeiro para elas. Adultos e idosos não recebem mais "marcha do pinguim".
+
+**Decisão 1 (mobilidade curta)**
+
+- Sessão de 10 min (aquecimento, 3 movimentos de mobilidade, desaquecimento), com botão na Home a qualquer hora.
+- Conta como dia ativo e nunca entra nos 3 treinos por semana do plano grátis.
+- Um teste confirma que 3 treinos mais 4 dias de mobilidade chegam ao marco de 7 dias no grátis.
+- É um tipo de sessão próprio (`mobility`) no banco, aplicado no Supabase.
+
+**Decisão 2 e biblioteca**
+
+- A biblioteca passou de 536 para **747 exercícios**, todos `draft`:
+  - 82 exercícios principais sentados ou com apoio, a maioria sem equipamento;
+  - 44 alongamentos sentados (inclusive para joelho e manguito rotador);
+  - 4 aquecimentos de tronco, 3 respirações, 5 itens sentados de desaquecimento e finalizador, e 3 desaquecimentos para crianças;
+  - 70 exercícios de reparo: cada um dos 41 movimentos articulares tem pelo menos 3 exercícios nas fases 2 e 3.
+- Todos os exercícios principais agora têm contraindicações; 42 estavam vazios.
+- Os nomes repetidos foram trocados.
+- O teste de cobertura agora confere:
+  - pelo menos 5 opções por músculo × equipamento × posição;
+  - pelo menos 3 alongamentos por grupo × posição;
+  - fases 2 e 3 por movimento;
+  - contraindicações e nomes únicos;
+  - trocas para quem treina sentado ou com apoio.
+- A planilha do revisor foi gerada de novo.
+
+**P2**
+
+- **Minutos e sequência:**
+  - o card da Home mostra os minutos do treino gerado;
+  - aparecem proteções de sequência;
+  - o dia de descanso não é mais reaproveitado depois de uma quebra.
+- **Variedade e doses:**
+  - os treinos variam semana a semana;
+  - o mesmo exercício nunca se repete no treino;
+  - a série de aproximação fica junto do primeiro exercício;
+  - exercícios isolados, sem carga e de 60+ nunca recebem dose de força pesada.
+- **Sessão de recuperação:** tem 4 sustentações, sem notas de "equilíbrio" e "encurtado".
+- **Trocas:**
+  - trocar um alongamento mantém o mesmo grupo muscular;
+  - um desaquecimento não aparece mais como opção de aquecimento.
+- **Compartilhar:** o cartão segue a ordem dos alvos do treino.
+- **Fim de treino e player:**
+  - o quadro de estatística agora tem unidade;
+  - o player não repete o nome do músculo.
+- **Check da manhã:** aparece na Home.
+- **Dados:**
+  - a gravidez sai quando a idade vai para 60+;
+  - "Voltar às restrições" abre Restrições.
+- **Textos:**
+  - Menino/Menina no mapa para crianças e adolescentes;
+  - sem "mude a idade quando quiser" em perfil de criança;
+  - "Fortalecer" sem "(Reparar)";
+  - aviso para adolescentes sem falar de gordura;
+  - exercícios de reparo só a partir de adolescente;
+  - plural de "dia seguido";
+  - "Zona lumbar" em todo o espanhol.
+- **Acessibilidade:**
+  - rótulos das abas não cortam;
+  - RadioCard sempre informa se está marcado;
+  - imagem do mapa fora do foco;
+  - nomes distintos para os dois "Nenhum" e para "Vista de costas".
+- **Marco de sequência:** com poucos dias, o marco não diz mais "uma semana inteira".
+
+### Verificações
+
+- `npm run check`: lint, typecheck, funções e **539 testes** passando.
+- Arquivos novos de teste:
+  - `qa2-recovery.test.tsx`: seção 0;
+  - `qa2-safety.test.tsx`: P0;
+  - `qa2-family.test.tsx` e `qa2-generator.test.ts`: P1;
+  - `qa2-mobility.test.tsx`: decisão 1;
+  - `coverage.test.ts`: biblioteca e decisão 2;
+  - `qa2-p2.test.tsx`: P2.
+- `npm run db:test` (com dono menor de idade barrado) e `npm run bundle:check`: limpos.
+
+### Como testar (build de desenvolvimento)
+
+1. **Bolinhas:** faça um treino e veja a Home. O corpo ocupa o cartão inteiro, as bolinhas têm o mesmo tamanho do `/body`, o treinado fica colorido com halo e o resto fica branco. Troque entre Frente e Costas.
+2. **Família:** Família → Adicionar → Meu filho, nascido em 2012. O app pede para criar o PIN dos pais e o adolescente termina o cadastro. Depois use "Remover membro" (PIN mais confirmação).
+3. **Dor aguda:** no treino, "Sinto dor" → joelho → aguda → parar. O próximo treino do dia não tem nada de joelho.
+4. **Criança no paywall:** num perfil de criança, abra Planos ou o paywall. Aparece o pedido de PIN; errando 5 vezes, bloqueia por 15 minutos.
+5. **Recuperação:** faça um treino de pernas e toque em Começar de novo. Pernas não aparecem; se tudo estiver se recuperando, surge "Mobilidade curta · 10 min".
+6. **Mobilidade no grátis:** depois de 3 treinos na semana, "Mobilidade curta" continua liberada e conta para a sequência.
+
+### Perguntas em aberto
+
+1. **PIN esquecido:** hoje não há como recuperar o PIN. Proponho recuperar por um código enviado para o e-mail da conta salva do dono. Posso fazer?
+2. **Revisor:** 747 exercícios `draft`. Ele também precisa confirmar:
+   - as horas de recuperação (48 h, 96 h aos 60+);
+   - a carga leve em articulação restrita;
+   - a regra da fase 1.
+3. **Remover membro:** apagar um perfil de criança apaga também o registro de consentimento (em cascata no banco). O advogado precisa dizer se esse registro deve ser guardado.
+4. **Consentimento na nuvem:** o banco confere a idade pelo perfil do dono na nuvem. Se o dono ainda não sincronizou o próprio perfil, criar a criança falha com uma mensagem genérica. Quer que eu sincronize o perfil do dono antes dessa etapa?
+5. **Trocas:** todas têm pelo menos 3 opções seguras. 17 itens, quase todos sentados, ficam com 3–4 opções (a meta era 5). Dá para completar numa próxima leva.
+6. **Planos e paywall:** mexi só em tela e permissão (PIN e texto para quem assina). Preços, produtos e RevenueCat não mudaram.

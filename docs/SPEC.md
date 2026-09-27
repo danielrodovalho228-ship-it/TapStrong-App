@@ -196,6 +196,10 @@ RLS: a user sees only their own rows plus family members they manage. `exercises
 1. **Warm-up** (mandatory; see "Warm-up & cool-down" below).
 2. **Main work:** selected muscles first, weighted by priority and goal.
 3. **Balance pass:** never more than 2 hard sessions in a row on the same muscle. Keep push/pull/legs roughly balanced over the week, even if the user taps only the chest. Explain this in one line.
+   - A muscle trains again only after it has recovered: 48 h, or 96 h at 60+ (reviewer to confirm). When everything chosen is still recovering, offer the short mobility session, a walk or a rest day (QA round 2).
+   - One exercise per parent muscle per session; sub-regions (upper, mid, lower chest) take turns across sessions. Open slots go to the group with the least work this week.
+   - A chosen muscle with no safe option is named in a note, never dropped silently. Balance / fall-prevention work is never cut by the time fit.
+   - Moves that load a restricted or painful joint get a light dose (12–15, no ramp-up); a painful movement is left out while its recovery plan is in phase 1. Heavy 4–8 only for loaded multi-joint lifts (not isolation, unloaded or 60+ work).
 4. **Finisher** (optional): cardio for lose_weight; mobility for mobility/balance.
 5. **Cool-down** (mandatory; see below).
 
@@ -274,7 +278,7 @@ Rules:
 - When a session item is logged, update `last_trained_at` for its primary muscles (full intensity) and its secondary muscles (shown as "also worked").
 - The color comes from the time since training (table in §4). Muscles untrained for 5+ days show grey-blue, and the Done screen suggests a short finisher for them.
 - **Streak:**
-  - An active day is any logged workout or mobility session.
+  - An active day is any logged workout or mobility session. The short mobility session (~10 min: warm-up, 3 mobility moves, cool-down) can be started from Home any time; on the free plan it is unlimited and never counts toward the 3 workouts a week, so the 7-day milestone is reachable (Daniel, decision 1, QA round 2).
   - 1 rest day per calendar week does not break it.
   - At 7 days the user earns 1 streak freeze (max 2 banked).
 
@@ -290,7 +294,7 @@ Physical therapists map the **movement**, not only the place ("which movement hu
   2. keeps exercises that only use pain-free movements;
   3. uses a shorter range when the exercise allows it for that movement (`range_limit`), shown as "Shorter range: stop before it hurts".
   A hold without moving (isometric) in the painful direction is allowed while pain is 5 or less. Pain 7+ leaves every movement of the joint out. Recovery-only exercises never appear in regular workouts.
-- **Recovery plan** (inside Repair; 15-min sessions, always with warm-up and cool-down): phase 1 gentle holds and pain-free range; phase 2 strengthening in pain-free range (shoulder: rotator cuff and shoulder-blade muscles; `rotatorCuff` is a muscle with no body-map hotspot); phase 3 shorter range of the painful movements allowed and more sets.
+- **Recovery plan** (inside Repair; 15-min sessions, always with warm-up and cool-down): phase 1 gentle holds and pain-free range; phase 2 strengthening in pain-free range (shoulder: rotator cuff and shoulder-blade muscles; `rotatorCuff` is a muscle with no body-map hotspot); phase 3 shorter range of the painful movements allowed and more sets. The library has ≥ 3 draft moves per joint movement in each phase (decision 2, QA round 2); phase-1 sessions have 4 holds and never a move contraindicated for the area.
 - **Traffic light** after each workout and the next morning (local notification at 8:30): 0–3 green (one step up), 4–5 yellow (hold), red (one step back) when over 5 right after, or the next morning over 5 or 2+ points above the previous score. Six steps: phase 1 = steps 1–2, phase 2 = 3–4, phase 3 = 5–6.
 - **Weekly retest** of the painful movements, charted in Progress. Worse than at the start, or no better after 3 weeks → recommend a physical therapist.
 - **Rules:** never diagnose; pain data never goes to analytics; everything stays draft until the certified reviewer approves the catalog and the tags.
@@ -307,12 +311,15 @@ Physical therapists map the **movement**, not only the place ("which movement hu
 ### Paywall & account
 
 - The first workout is free with no account. Prompt to save progress after it (Apple / Google / email / "Not now").
-- **Free plan:** 3 workouts per week.
+- **Free plan:** 3 workouts per week (the short mobility session is unlimited, see "Body colors & streak").
 - **Premium:** $9.99/mo. **Family:** $14.99/mo.
   - 7-day trial on both, with a reminder 3 days before charging (Daniel, Sep 2026; matches mockups 19 and 22).
   - Family: up to 5 profiles, the owner included. Annual: Premium $59.99/yr, Family $89.99/yr (Daniel, Sep 2026).
   - Accounts come before purchases, so a subscription always belongs to a saved account (RevenueCat app user id = Supabase user id).
   - Children under 13 (COPPA): the verifiable-consent method is the charged Family subscription (a store transaction) plus the parent notice accepted in the app. A free trial does not count; child profiles open after the first charge. The database only creates child profiles through `create_child_profile()`. Lawyer review before launch (§13).
+  - Only an adult owner (18+, from their own profile) can manage family profiles or give parental consent; checked in the app and the database (`is_adult_owner`, QA round 2).
+  - Parent gate: a 4-digit parent PIN set by the owner on their own profile (created when a child or teen is added, changed in Settings), 15-minute lockout after 5 wrong tries. A child profile can never create one. It guards owner controls (plans, paywall, billing, add/remove member, consent, account, delete account, profile switching, a child's birth date).
+  - A consented under-13 profile can't be re-aged to 13+; a teen profile stays 13–17. "Remove member" (parent gate) frees a family slot and deletes that member's data.
   - Referral reward: 1 free week of Premium for both people, granted only after the invited person completes a first workout. The invited person gets it once; the inviter gets 1 week per friend who trains, up to 4 weeks a year (Daniel, Sep 2026).
   - Delete account in the app (App Store rule): deletes the account and all its data; the screen explains the store subscription is cancelled separately, in the store.
 - When the free limit is reached, show the paywall screen (value first, price second, cancel info visible).
