@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
-import { AppText, Button, Card, Screen } from '@/components/ui';
+import { AppText, Button, Card, Notice, Screen } from '@/components/ui';
 import { currentPlan } from '@/features/billing/rules';
 import { useBillingStore } from '@/features/billing/store';
 import { FamilyStrip } from '@/features/family/components/FamilyStrip';
@@ -12,7 +12,11 @@ import { useOwnerAccess } from '@/features/family/OwnerOnly';
 import { ParentGate } from '@/features/family/ParentGate';
 import { useFamilyStore, type LocalProfile } from '@/features/family/store';
 import { useAccountStore } from '@/features/account/store';
-import { deleteManagedProfileRemote } from '@/features/family/remote';
+import {
+  deleteOrQueue,
+  retryPendingDeletes,
+  usePendingDeletesStore,
+} from '@/features/family/remote';
 import { ensureSelfProfile, removeMember, switchProfile } from '@/features/family/switch';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { clock } from '@/lib/clock';
@@ -31,11 +35,18 @@ export default function FamilyScreen() {
   const [gateFor, setGateFor] = useState<string | null>(null);
   // Remove member (QA R2-01): parent gate, then an explicit confirmation.
   const [removing, setRemoving] = useState<{ id: string; step: 'gate' | 'confirm' } | null>(null);
+  // A failed cloud delete is queued and retried, and the owner is told (QA round 3).
+  const pendingDeletes = usePendingDeletesStore((st) => st.ids.length);
   const confirmRemove = (id: string) => {
     removeMember(id);
-    void deleteManagedProfileRemote(id);
+    void deleteOrQueue(id);
     setRemoving(null);
   };
+  useEffect(() => {
+    if (pendingDeletes) void retryPendingDeletes();
+    // Once per visit.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   // Registering the owner's profile writes to a store: never during render (QA A-10).
   useEffect(() => {
     if (!profiles.length) ensureSelfProfile();
@@ -71,6 +82,9 @@ export default function FamilyScreen() {
         {t('family.title')}
       </AppText>
       <FamilyStrip />
+      {pendingDeletes ? (
+        <Notice>{t('family.removePending', { count: pendingDeletes })}</Notice>
+      ) : null}
       {gateFor ? (
         <ParentGate
           onPass={() => {

@@ -14,6 +14,7 @@ import { kvStorage } from '@/lib/storage';
 import { useFamilyStore } from '@/features/family/store';
 import { ensureSelfProfile, switchProfile } from '@/features/family/switch';
 import { clock } from '@/lib/clock';
+import { kidsUnder13Enabled } from '@/lib/features';
 import { colors, spacing } from '@/theme';
 import { OwnerOnly } from '@/features/family/OwnerOnly';
 
@@ -122,7 +123,26 @@ const styles = StyleSheet.create({
 });
 
 /** Owner-only: a child profile needs the parent gate (QA B-03). */
+/** Kids under 13 off (Phase 12): a deep link gets a short "not available", not the notice (QA round 3). */
+function ConsentUnavailable() {
+  const { t } = useTranslation();
+  return (
+    <Screen
+      header={
+        <Header onBack={() => (router.canGoBack() ? router.back() : router.replace('/family'))} />
+      }
+      footer={<Button label={t('workout.backHome')} onPress={() => router.replace('/home')} />}
+    >
+      <AppText variant="h1" accessibilityRole="header">
+        {t('family.consent.unavailableTitle')}
+      </AppText>
+      <Notice>{t('family.consent.blockers.disabled')}</Notice>
+    </Screen>
+  );
+}
+
 export default function ParentConsentScreen() {
+  if (!kidsUnder13Enabled()) return <ConsentUnavailable />;
   return (
     <OwnerOnly>
       <ParentConsentScreenInner />

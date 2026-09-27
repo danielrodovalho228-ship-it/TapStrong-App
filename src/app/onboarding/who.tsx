@@ -16,7 +16,7 @@ import {
 import { useAccountStore } from '@/features/account/store';
 import { ParentGate } from '@/features/family/ParentGate';
 import { activeProfile, useFamilyStore } from '@/features/family/store';
-import { childLockFor, evaluateAgeGate } from '@/features/onboarding/age-gate';
+import { childLockFor, evaluateAgeGate, whoErrorKey } from '@/features/onboarding/age-gate';
 import { STEP_NUMBER, TOTAL_STEPS, WHO_OPTIONS, type Who } from '@/features/onboarding/options';
 import { ageLockApplies, isAgeBlocked, useAgeBlockStore } from '@/features/onboarding/ageBlock';
 import { useOnboardingStore } from '@/features/onboarding/store';
@@ -213,7 +213,7 @@ export default function WhoScreen() {
       ) : null}
       {result && result.status !== 'ok' && result.status !== 'under_min' ? (
         <Notice tone="warning" icon>
-          {t(`who.errors.${result.status}`)}
+          {t(whoErrorKey(result.status))}
         </Notice>
       ) : null}
       {result?.status === 'guardian_consent' ? (

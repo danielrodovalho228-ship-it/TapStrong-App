@@ -1,3 +1,8 @@
+import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
+
+import { isNetworkError } from '@/lib/network';
+import { kvStorage } from '@/lib/storage';
 import { getSupabase } from '@/lib/supabase';
 
 import { getBilling } from '../billing/provider';
@@ -47,9 +52,52 @@ export async function deleteManagedProfileRemote(id: string): Promise<'ok' | 'of
   const supabase = getSupabase();
   if (!supabase) return 'offline';
   try {
-    const { error } = await supabase.from('profiles').delete().eq('id', id);
-    return error ? 'error' : 'ok';
+    const { error, status } = await supabase.from('profiles').delete().eq('id', id);
+    if (!error) return 'ok';
+    return isNetworkError(error, status) ? 'offline' : 'error';
   } catch {
     return 'offline';
   }
+}
+
+/**
+ * Cloud deletes that didn't go through (QA round 3): kept on the phone and
+ * retried on the next sync or Family visit, so a removed member doesn't stay
+ * in the account.
+ */
+type PendingState = { ids: string[]; add: (id: string) => void; done: (id: string) => void };
+
+export const usePendingDeletesStore = create<PendingState>()(
+  persist(
+    (set, get) => ({
+      ids: [],
+      add: (id) => set({ ids: [...new Set([...get().ids, id])] }),
+      done: (id) => set({ ids: get().ids.filter((x) => x !== id) }),
+    }),
+    {
+      name: 'family-pending-deletes',
+      version: 1,
+      storage: createJSONStorage(() => kvStorage),
+      partialize: ({ ids }) => ({ ids }),
+    },
+  ),
+);
+
+/** Deletes in the cloud, or queues it for later. */
+export async function deleteOrQueue(id: string): Promise<'ok' | 'queued'> {
+  const result = await deleteManagedProfileRemote(id);
+  if (result === 'ok') {
+    usePendingDeletesStore.getState().done(id);
+    return 'ok';
+  }
+  usePendingDeletesStore.getState().add(id);
+  return 'queued';
+}
+
+/** Retries every queued delete; returns how many are still waiting. */
+export async function retryPendingDeletes(): Promise<number> {
+  for (const id of usePendingDeletesStore.getState().ids) {
+    if ((await deleteManagedProfileRemote(id)) === 'ok') usePendingDeletesStore.getState().done(id);
+  }
+  return usePendingDeletesStore.getState().ids.length;
 }

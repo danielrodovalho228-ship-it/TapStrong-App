@@ -1,8 +1,14 @@
 import { track } from '@/lib/analytics';
+import { kvStorage } from '@/lib/storage';
 
 import { requestPermission } from '../notifications/apply';
 
-import { getBilling } from './provider';
+import { ownerAge } from '../family/profiles';
+import { useFamilyStore } from '../family/store';
+import { useOnboardingStore } from '../onboarding/store';
+
+import { getBilling, type PurchaseResult } from './provider';
+import { familyPurchaseBlocked, PRODUCTS } from './rules';
 import { useBillingStore } from './store';
 
 /** Pulls the latest entitlement and prices from the store (best effort). */
@@ -25,7 +31,18 @@ export async function refreshBilling(): Promise<void> {
   }
 }
 
-export async function buy(productId: string) {
+/** The account owner's age, from their own profile (live or its snapshot). */
+export function currentOwnerAge(): number | null {
+  const family = useFamilyStore.getState();
+  return ownerAge(family.profiles, family.activeId, useOnboardingStore.getState(), (key) =>
+    kvStorage.getItem(key),
+  );
+}
+
+export async function buy(productId: string): Promise<PurchaseResult | 'adults_only'> {
+  // Never start a Family purchase for an owner under 18, whatever the screen shows.
+  const family = (Object.values(PRODUCTS.family) as string[]).includes(productId);
+  if (family && familyPurchaseBlocked(currentOwnerAge())) return 'adults_only';
   const before = useBillingStore.getState().entitlement;
   const result = await getBilling().purchase(productId);
   if (result === 'ok') {

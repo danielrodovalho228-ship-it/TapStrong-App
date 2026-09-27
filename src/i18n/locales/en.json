@@ -166,7 +166,8 @@
       "child_locked": "A child profile stays in kids mode until they turn 13. To change it, contact support.",
       "teen_locked": "A teen profile stays between 13 and 17. A child under 13 needs its own profile with parental consent.",
       "under_min": "TapStrong is for ages 13 and up.",
-      "child_unavailable": "Profiles for children under 13 aren’t available yet. Teens 13–17 can join."
+      "child_unavailable": "Profiles for children under 13 aren’t available yet. Teens 13–17 can join.",
+      "teen_lockedTeens": "A teen profile stays between 13 and 17."
     },
     "footnote": "We use your age only to keep training safe for you.",
     "locked": "Only a parent can change the birth date on a child or teen profile.",
@@ -3842,7 +3843,8 @@
       },
       "family": {
         "name": "Family",
-        "detail": "Premium for 5 profiles · parent-managed kids"
+        "detail": "Premium for 5 profiles · parent-managed kids",
+        "detailTeens": "Premium for 5 profiles · parent-managed teens"
       }
     },
     "freeNote": "Free stays free: 3 workouts a week, no card needed.",
@@ -3855,7 +3857,8 @@
     "cancelAnytime": "Cancel anytime in 2 taps",
     "errors": {
       "unavailable": "Subscriptions aren't available in this build yet.",
-      "error": "The store didn't complete the purchase. You were not charged. Try again."
+      "error": "The store didn't complete the purchase. You were not charged. Try again.",
+      "adults_only": "The Family plan is for adults 18 and over."
     },
     "title": "Your subscription",
     "onFree": "You're on the Free plan: 3 workouts a week.",
@@ -3889,7 +3892,9 @@
       "expire": "Dev: back to Free"
     },
     "switchTo": "Switch to {{plan}} · {{price}} {{per}}",
-    "trialEnds": "Free trial ends {{date}}. Cancel before then and you pay nothing."
+    "trialEnds": "Free trial ends {{date}}. Cancel before then and you pay nothing.",
+    "familyAdultsOnly": "The Family plan is for adults 18 and over. Premium works for you.",
+    "familyIntroTeens": "Each age gets its own safe rules: lighter, technique-first loads for teens, seated and balance options for 60+. A parent manages teen profiles."
   },
   "paywall": {
     "eyebrow_one": "Free plan · {{count}} workout this week",
@@ -3969,7 +3974,8 @@
         "owner_minor": "Only an adult (18+) can manage family profiles and give parental consent.",
         "too_young": "TapStrong is for ages 9 and up.",
         "disabled": "Child profiles under 13 aren’t available yet."
-      }
+      },
+      "unavailableTitle": "Not available yet"
     },
     "dashboard": {
       "title": "Your family this week",
@@ -3988,7 +3994,9 @@
       "no_account": "Save your account first: family profiles belong to a saved account.",
       "no_profile": "Finish your own profile first (birth month and year), then add a family member.",
       "error": "Couldn’t save your profile to your account. Nothing was created. Try again."
-    }
+    },
+    "removePending_one": "One removed profile is still in your account. We’ll finish removing it when you’re back online.",
+    "removePending_other": "{{count}} removed profiles are still in your account. We’ll finish removing them when you’re back online."
   },
   "deleteAccount": {
     "title": "Delete account",

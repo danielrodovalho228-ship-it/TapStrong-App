@@ -15,6 +15,16 @@ import type { Entitlement } from './store';
 export * from '../../../supabase/functions/_shared/billing';
 
 /** Plan in force now, from the phone's entitlement copy. */
+/**
+ * Only an adult buys the Family plan (Daniel, Phase 13: payment change
+ * approved): a 17-year-old owner can't start or be charged for it. The
+ * database already refuses family profiles to an under-18 owner (QA R2-04).
+ */
+export const FAMILY_MIN_OWNER_AGE = 18;
+export function familyPurchaseBlocked(ownerAge: number | null): boolean {
+  return ownerAge !== null && ownerAge < FAMILY_MIN_OWNER_AGE;
+}
+
 export function currentPlan(e: Entitlement, now: Date): Plan {
   return activePlan({ plan: e.plan, status: e.status, expires_at: e.expiresAt }, now);
 }

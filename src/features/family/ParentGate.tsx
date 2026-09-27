@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet } from 'react-native';
 
@@ -15,14 +15,15 @@ import {
   setParentPin,
   useParentPinStore,
 } from './parentPin';
+import { clearPinLock, pullPinLock, reportPinCheck } from './pinLockout';
 import { maskEmail, ownerEmail, sendPinResetCode, verifyPinResetCode } from './pinReset';
 import { activeProfile, useFamilyStore } from './store';
 
 /**
  * Parent gate (QA B-01, B-03, R2-05): owner-only actions on a child or teen
  * profile ask for the parent PIN, with a 15-minute lockout after 5 wrong
- * tries. Without a PIN, only the owner's own profile may create one; a child
- * profile is told to ask a parent.
+ * tries (also counted on the account when online). Without a PIN, only the
+ * owner's own profile may create one; a child profile is told to ask a parent.
  */
 export function ParentGate({ onPass, onCancel }: { onPass: () => void; onCancel?: () => void }) {
   const { t } = useTranslation();
@@ -32,6 +33,11 @@ export function ParentGate({ onPass, onCancel }: { onPass: () => void; onCancel?
   const [value, setValue] = useState('');
   const [message, setMessage] = useState<string | null>(null);
   const [resetting, setResetting] = useState(false);
+  // A lock counted on the account applies here too (QA round 3).
+  const [, setSynced] = useState(0);
+  useEffect(() => {
+    if (hasPin) void pullPinLock(getSupabase()).then(() => setSynced((n) => n + 1));
+  }, [hasPin]);
 
   // Forgotten PIN: the owner proves it with an email code (Phase 12).
   if (hasPin && resetting)
@@ -52,6 +58,7 @@ export function ParentGate({ onPass, onCancel }: { onPass: () => void; onCancel?
   const check = () => {
     const result = checkParentPin(value.trim());
     setValue('');
+    void reportPinCheck(getSupabase(), result);
     if (result === 'ok') return onPass();
     if (result === 'locked') setMessage(t('parentGate.locked', { count: lockMinutesLeft() }));
     else
@@ -160,7 +167,16 @@ export function ParentPinReset({ onDone, onCancel }: { onDone: () => void; onCan
   const [message, setMessage] = useState<string | null>(null);
   const email = ownerEmail();
 
-  if (step === 'new') return <ParentPinSetup onDone={onDone} onCancel={onCancel} />;
+  if (step === 'new')
+    return (
+      <ParentPinSetup
+        onDone={() => {
+          void clearPinLock(getSupabase());
+          onDone();
+        }}
+        onCancel={onCancel}
+      />
+    );
 
   const send = async () => {
     setBusy(true);

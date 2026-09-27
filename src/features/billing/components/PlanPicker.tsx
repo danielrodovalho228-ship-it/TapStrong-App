@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { AppText, SegmentedControl } from '@/components/ui';
+import { kidsUnder13Enabled } from '@/lib/features';
 import { colors, fonts, radius, sizes, spacing } from '@/theme';
 
 import { priceLabel, type Period, type Plan } from '../rules';
@@ -60,7 +61,11 @@ export function PlanPicker({ plan, period, onPlan, onPeriod, showFree = true }: 
                   ) : null}
                 </View>
                 <AppText variant="caption" color={colors.mutedStrong}>
-                  {t(`billing.plans.${p}.detail`)}
+                  {t(
+                    p === 'family' && !kidsUnder13Enabled()
+                      ? 'billing.plans.family.detailTeens'
+                      : `billing.plans.${p}.detail`,
+                  )}
                 </AppText>
               </View>
               <View style={styles.price}>

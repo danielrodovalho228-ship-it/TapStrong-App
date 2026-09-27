@@ -26,6 +26,9 @@ describe('interview steps', () => {
   it('children get guided choices only and no measurements (SPEC §2.3)', () => {
     expect(allowsFreeText('child')).toBe(false);
     expect(allowsMeasurements('child')).toBe(false);
+    // QA round 3: no height or weight for teens either.
+    expect(allowsMeasurements('teen')).toBe(false);
+    expect(allowsMeasurements('senior')).toBe(true);
     expect(allowsFreeText('teen')).toBe(true);
     expect(allowsMeasurements('adult')).toBe(true);
   });

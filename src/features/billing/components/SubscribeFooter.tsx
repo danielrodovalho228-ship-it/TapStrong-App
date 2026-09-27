@@ -8,9 +8,10 @@ import { useAccountStore } from '@/features/account/store';
 import { clock } from '@/lib/clock';
 import { colors, spacing } from '@/theme';
 
-import { buy } from '../actions';
+import { buy, currentOwnerAge } from '../actions';
 import {
   currentPlan,
+  familyPurchaseBlocked,
   priceLabel,
   PRODUCTS,
   TRIAL_DAYS,
@@ -47,6 +48,12 @@ export function SubscribeFooter({
         {t('billing.freeNote')}
       </AppText>
     );
+  }
+
+  const subscribedFamily = plan === 'family' && current === 'family';
+  if (plan === 'family' && !subscribedFamily && familyPurchaseBlocked(currentOwnerAge())) {
+    // Owners under 18 can't buy the Family plan (Phase 13, Daniel).
+    return <Notice tone="warning">{t('billing.familyAdultsOnly')}</Notice>;
   }
 
   const price = priceLabel(prices, plan, period);

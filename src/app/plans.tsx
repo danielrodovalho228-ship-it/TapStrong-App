@@ -11,6 +11,7 @@ import { currentPlan, type Period, type Plan } from '@/features/billing/rules';
 import { useBillingStore } from '@/features/billing/store';
 import { FamilyStrip } from '@/features/family/components/FamilyStrip';
 import { clock } from '@/lib/clock';
+import { kidsUnder13Enabled } from '@/lib/features';
 import { colors, fonts, spacing } from '@/theme';
 import { OwnerOnly } from '@/features/family/OwnerOnly';
 
@@ -34,7 +35,9 @@ function PlansScreenInner() {
       footer={<SubscribeFooter plan={plan} period={period} />}
     >
       <FamilyStrip />
-      <AppText color={colors.mutedStrong}>{t('billing.familyIntro')}</AppText>
+      <AppText color={colors.mutedStrong}>
+        {t(kidsUnder13Enabled() ? 'billing.familyIntro' : 'billing.familyIntroTeens')}
+      </AppText>
       <AppText variant="caption" style={styles.caps}>
         {t('billing.choose')}
       </AppText>

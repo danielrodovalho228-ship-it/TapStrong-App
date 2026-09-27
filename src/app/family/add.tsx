@@ -14,7 +14,7 @@ import { useFamilyStore } from '@/features/family/store';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { kvStorage } from '@/lib/storage';
 import { ensureSelfProfile, switchProfile } from '@/features/family/switch';
-import { evaluateAgeGate } from '@/features/onboarding/age-gate';
+import { evaluateAgeGate, whoErrorKey } from '@/features/onboarding/age-gate';
 import { birthYearOptions } from '@/features/profile/age';
 import { clock } from '@/lib/clock';
 import { kidsUnder13Enabled } from '@/lib/features';
@@ -61,7 +61,7 @@ function AddMemberScreenInner() {
       : plan !== 'family'
         ? t('family.errors.needFamily')
         : gate && gate.status !== 'ok' && !underThirteen
-          ? t(`who.errors.${gate.status}`)
+          ? t(whoErrorKey(gate.status))
           : underThirteen && !charged
             ? t('family.errors.needCharge')
             : null;

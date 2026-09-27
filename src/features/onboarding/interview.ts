@@ -38,9 +38,12 @@ export function allowsFreeText(mode: AppMode): boolean {
   return mode !== 'child';
 }
 
-/** Children never enter measurements (SPEC §2.3). */
+/**
+ * Children and teens never enter measurements (SPEC §2.3; QA round 3: the
+ * teen notice promises no measurements, so height and weight aren't asked).
+ */
 export function allowsMeasurements(mode: AppMode): boolean {
-  return mode !== 'child';
+  return mode === 'adult' || mode === 'senior';
 }
 
 // ---------------------------------------------------------------------------

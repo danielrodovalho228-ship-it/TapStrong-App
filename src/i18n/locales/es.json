@@ -166,7 +166,8 @@
       "child_locked": "Un perfil infantil se queda en modo niños hasta los 13 años. Para cambiarlo, contacta a soporte.",
       "teen_locked": "Un perfil de adolescente se queda entre 13 y 17 años. Un niño menor de 13 necesita su propio perfil con el consentimiento de los padres.",
       "under_min": "TapStrong es para mayores de 13 años.",
-      "child_unavailable": "Los perfiles para menores de 13 años todavía no están disponibles. Los adolescentes de 13 a 17 sí pueden unirse."
+      "child_unavailable": "Los perfiles para menores de 13 años todavía no están disponibles. Los adolescentes de 13 a 17 sí pueden unirse.",
+      "teen_lockedTeens": "Un perfil de adolescente se mantiene entre 13 y 17 años."
     },
     "footnote": "Usamos tu edad solo para que entrenes de forma segura.",
     "locked": "Solo un padre o una madre puede cambiar la fecha de nacimiento en un perfil de niño o adolescente.",
@@ -3842,7 +3843,8 @@
       },
       "family": {
         "name": "Familia",
-        "detail": "Premium para 5 perfiles · niños gestionados por los padres"
+        "detail": "Premium para 5 perfiles · niños gestionados por los padres",
+        "detailTeens": "Premium para 5 perfiles · adolescentes gestionados por un padre o madre"
       }
     },
     "freeNote": "Gratis sigue siendo gratis: 3 entrenamientos por semana, sin tarjeta.",
@@ -3855,7 +3857,8 @@
     "cancelAnytime": "Cancela cuando quieras en 2 toques",
     "errors": {
       "unavailable": "Las suscripciones aún no están disponibles en esta versión.",
-      "error": "La tienda no completó la compra. No se te cobró. Inténtalo de nuevo."
+      "error": "La tienda no completó la compra. No se te cobró. Inténtalo de nuevo.",
+      "adults_only": "El plan Familia es para adultos de 18 años o más."
     },
     "title": "Tu suscripción",
     "onFree": "Estás en el plan Gratis: 3 entrenamientos por semana.",
@@ -3889,7 +3892,9 @@
       "expire": "Dev: volver a Gratis"
     },
     "switchTo": "Cambiar a {{plan}} · {{price}} {{per}}",
-    "trialEnds": "La prueba gratis termina el {{date}}. Cancela antes y no pagas nada."
+    "trialEnds": "La prueba gratis termina el {{date}}. Cancela antes y no pagas nada.",
+    "familyAdultsOnly": "El plan Familia es para adultos de 18 años o más. Premium es para ti.",
+    "familyIntroTeens": "Cada edad tiene sus propias reglas seguras: cargas ligeras y técnica primero para adolescentes, opciones sentadas y de equilibrio para mayores de 60. Un padre o madre gestiona los perfiles de adolescentes."
   },
   "paywall": {
     "eyebrow_one": "Plan Gratis · {{count}} entrenamiento esta semana",
@@ -3969,7 +3974,8 @@
         "owner_minor": "Solo un adulto (18+) puede gestionar perfiles familiares y dar el consentimiento de los padres.",
         "too_young": "TapStrong es para mayores de 9 años.",
         "disabled": "Los perfiles de menores de 13 años todavía no están disponibles."
-      }
+      },
+      "unavailableTitle": "Aún no disponible"
     },
     "dashboard": {
       "title": "Tu familia esta semana",
@@ -3988,7 +3994,9 @@
       "no_account": "Primero guarda tu cuenta: los perfiles familiares pertenecen a una cuenta guardada.",
       "no_profile": "Primero completa tu propio perfil (mes y año de nacimiento) y luego agrega a un familiar.",
       "error": "No pudimos guardar tu perfil en tu cuenta. No se creó nada. Inténtalo de nuevo."
-    }
+    },
+    "removePending_one": "Un perfil eliminado sigue en tu cuenta. Terminaremos de eliminarlo cuando vuelvas a tener conexión.",
+    "removePending_other": "{{count}} perfiles eliminados siguen en tu cuenta. Terminaremos de eliminarlos cuando vuelvas a tener conexión."
   },
   "deleteAccount": {
     "title": "Eliminar cuenta",

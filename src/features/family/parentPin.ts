@@ -1,53 +1,99 @@
+import { bytesToHex, utf8ToBytes } from '@noble/hashes/utils.js';
+import { pbkdf2 } from '@noble/hashes/pbkdf2.js';
+import { sha256 } from '@noble/hashes/sha2.js';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { clock } from '@/lib/clock';
+import { secureStorage } from '@/lib/secureStorage';
 import { kvStorage } from '@/lib/storage';
 import { uuid } from '@/lib/uuid';
 
 /**
  * Parent PIN (QA R2-05): set by the account owner on their own profile, asked
  * by the parent gate on a child or teen profile. After 5 wrong tries the gate
- * locks for 15 minutes. Only a salted hash is kept on the phone; the lockout
- * is what stops guessing.
+ * locks for 15 minutes.
+ *
+ * Storage (QA round 3): only a salted PBKDF2-SHA256 key (100,000 rounds) is
+ * kept, in the Keychain / Keystore, together with the lockout, so neither can
+ * be read or edited in plain app storage. The lockout is also mirrored on the
+ * server when online (pinLockout.ts).
  */
 export const PIN_LENGTH = 4;
 export const MAX_TRIES = 5;
 export const LOCK_MINUTES = 15;
+export const PIN_ROUNDS = 100_000;
+
+type Algo = 'pbkdf2' | 'fnv';
 
 type State = {
   hash: string | null;
   salt: string | null;
+  /** 'fnv' only for a PIN carried over from the old storage; rehashed on the next right PIN. */
+  algo: Algo;
   failures: number;
   lockedUntil: string | null;
   reset: () => void;
 };
 
+const EMPTY = { hash: null, salt: null, algo: 'pbkdf2' as Algo, failures: 0, lockedUntil: null };
+
 export const useParentPinStore = create<State>()(
   persist(
     (set) => ({
-      hash: null,
-      salt: null,
-      failures: 0,
-      lockedUntil: null,
-      reset: () => set({ hash: null, salt: null, failures: 0, lockedUntil: null }),
+      ...EMPTY,
+      reset: () => set({ ...EMPTY }),
     }),
     {
-      name: 'parent-pin',
+      name: 'parent-pin-secure',
       version: 1,
-      storage: createJSONStorage(() => kvStorage),
-      partialize: ({ hash, salt, failures, lockedUntil }) => ({
+      storage: createJSONStorage(() => secureStorage),
+      partialize: ({ hash, salt, algo, failures, lockedUntil }) => ({
         hash,
         salt,
+        algo,
         failures,
         lockedUntil,
       }),
+      // A PIN set before the secure store keeps working once, then is rehashed.
+      onRehydrateStorage: () => (state) => {
+        if (state?.hash) return;
+        const legacy = readLegacy();
+        if (legacy) useParentPinStore.setState(legacy);
+      },
     },
   ),
 );
 
-/** FNV-1a, iterated with a salt: keeps the PIN itself out of storage. */
-function digest(pin: string, salt: string): string {
+/** The old plain-storage PIN (Phase 11), moved into the secure store and deleted. */
+function readLegacy(): Partial<State> | null {
+  try {
+    const raw = kvStorage.getItem('parent-pin');
+    if (typeof raw !== 'string') return null;
+    kvStorage.removeItem('parent-pin');
+    const { state } = JSON.parse(raw) as { state?: Partial<State> };
+    if (!state?.hash || !state.salt) return null;
+    return {
+      hash: state.hash,
+      salt: state.salt,
+      algo: 'fnv',
+      failures: state.failures ?? 0,
+      lockedUntil: state.lockedUntil ?? null,
+    };
+  } catch {
+    return null;
+  }
+}
+
+/** Slow key derivation: guessing all 10,000 PINs takes real time, not a second. */
+export function derivePin(pin: string, salt: string): string {
+  return bytesToHex(
+    pbkdf2(sha256, utf8ToBytes(pin), utf8ToBytes(salt), { c: PIN_ROUNDS, dkLen: 32 }),
+  );
+}
+
+/** The old FNV-1a digest, only to accept a PIN set before round 3 once. */
+function legacyDigest(pin: string, salt: string): string {
   let h = 0x811c9dc5;
   let text = `${salt}:${pin}`;
   for (let round = 0; round < 1000; round++) {
@@ -60,6 +106,14 @@ function digest(pin: string, salt: string): string {
   return h.toString(16).padStart(8, '0');
 }
 
+/** Constant-time compare of two hex strings. */
+function sameHex(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
+
 export const isValidPin = (pin: string) => new RegExp(`^\\d{${PIN_LENGTH}}$`).test(pin);
 
 export const hasParentPin = () => !!useParentPinStore.getState().hash;
@@ -67,7 +121,13 @@ export const hasParentPin = () => !!useParentPinStore.getState().hash;
 export function setParentPin(pin: string): boolean {
   if (!isValidPin(pin)) return false;
   const salt = uuid();
-  useParentPinStore.setState({ salt, hash: digest(pin, salt), failures: 0, lockedUntil: null });
+  useParentPinStore.setState({
+    salt,
+    hash: derivePin(pin, salt),
+    algo: 'pbkdf2',
+    failures: 0,
+    lockedUntil: null,
+  });
   return true;
 }
 
@@ -84,8 +144,13 @@ export function checkParentPin(pin: string, now: Date = clock.now()): PinCheck {
   const s = useParentPinStore.getState();
   if (!s.hash || !s.salt) return 'no_pin';
   if (lockMinutesLeft(now) > 0) return 'locked';
-  if (digest(pin, s.salt) === s.hash) {
-    useParentPinStore.setState({ failures: 0, lockedUntil: null });
+  const right =
+    s.algo === 'fnv'
+      ? sameHex(legacyDigest(pin, s.salt), s.hash)
+      : sameHex(derivePin(pin, s.salt), s.hash);
+  if (right) {
+    if (s.algo === 'fnv') setParentPin(pin);
+    else useParentPinStore.setState({ failures: 0, lockedUntil: null });
     return 'ok';
   }
   const failures = (s.lockedUntil ? 0 : s.failures) + 1;

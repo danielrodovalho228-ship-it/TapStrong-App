@@ -69,3 +69,10 @@ export function evaluateAgeGate(
   }
   return { status: 'ok', age, mode: modeForAge(age), band: bandForAge(age)! };
 }
+
+/** The message for a gate result; with kids under 13 off it never mentions them (QA round 3). */
+export function whoErrorKey(status: AgeGateResult['status']) {
+  return status === 'teen_locked' && !kidsUnder13Enabled()
+    ? ('who.errors.teen_lockedTeens' as const)
+    : (`who.errors.${status as 'teen_locked'}` as const);
+}

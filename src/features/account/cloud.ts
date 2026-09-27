@@ -7,6 +7,7 @@ import { refreshBilling } from '../billing/actions';
 import { getBilling } from '../billing/provider';
 import { devLibrary } from '../exercises/library';
 import { ownerOnboarding } from '../family/profiles';
+import { retryPendingDeletes } from '../family/remote';
 import { activeProfile, useFamilyStore } from '../family/store';
 import { derive } from '../onboarding/derived';
 import { useMovementPainStore } from '../movement/store';
@@ -32,6 +33,8 @@ export function syncNow(): Promise<SyncResult> {
   if (!supabase || !useAccountStore.getState().saved) {
     return Promise.resolve({ status: 'skipped', reason: supabase ? 'no_account' : 'offline' });
   }
+  // Member removals that failed offline (QA round 3).
+  void retryPendingDeletes();
   const library = devLibrary();
   const workouts = useWorkoutStore.getState();
   const slugs = [...new Set(library.map((e) => e.slug))];

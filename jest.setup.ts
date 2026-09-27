@@ -46,3 +46,15 @@ jest.mock('expo-speech', () => ({
 // (see qa3-kids-off.test.tsx for the launch behaviour).
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 require('./src/lib/features').setKidsUnder13Enabled(true);
+
+// Keychain / Keystore: an in-memory stand-in (the parent PIN store).
+jest.mock('expo-secure-store', () => {
+  const items = new Map<string, string>();
+  return {
+    getItem: (key: string) => items.get(key) ?? null,
+    setItem: (key: string, value: string) => void items.set(key, value),
+    getItemAsync: async (key: string) => items.get(key) ?? null,
+    setItemAsync: async (key: string, value: string) => void items.set(key, value),
+    deleteItemAsync: async (key: string) => void items.delete(key),
+  };
+});
