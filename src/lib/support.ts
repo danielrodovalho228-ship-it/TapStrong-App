@@ -5,7 +5,8 @@ import { Linking } from 'react-native';
  * date). Temporary address from Daniel (Phase 13); set
  * EXPO_PUBLIC_SUPPORT_EMAIL to the real support address before publishing.
  */
-export const SUPPORT_EMAIL = process.env.EXPO_PUBLIC_SUPPORT_EMAIL || 'danielrodovalho228@gmail.com';
+export const SUPPORT_EMAIL =
+  process.env.EXPO_PUBLIC_SUPPORT_EMAIL || 'danielrodovalho228@gmail.com';
 
 export function supportMailto(subject: string): string {
   return `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(subject)}`;
