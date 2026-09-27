@@ -161,15 +161,15 @@ export default function DoneScreen() {
         </View>
       </View>
 
+      {/* Full-width body, legend below (QA O-1b). */}
       <View style={styles.bodyRow}>
-        <View style={styles.bodyCol}>
-          <RecoveryBody band={band} sex={sex} states={states} maxHeight={340} />
-        </View>
+        <AppText variant="h3">{t('workout.bodyNow')}</AppText>
+        <RecoveryBody band={band} sex={sex} states={states} />
         <View style={styles.legend}>
-          <AppText variant="h3">{t('workout.bodyNow')}</AppText>
           <LegendRow color={STATE_COLOR.fresh} label={t('workout.legend.main')} />
           <LegendRow color={STATE_COLOR.recovering} label={t('workout.legend.also')} />
           <LegendRow color={STATE_COLOR.neglected} label={t('workout.legend.notYet')} />
+          <LegendRow label={t('home.recovery.ready')} />
           <AppText variant="caption" color={colors.muted}>
             {t(derived.mode === 'senior' ? 'workout.legend.fadeSenior' : 'workout.legend.fade')}
           </AppText>
@@ -179,7 +179,9 @@ export default function DoneScreen() {
       <View style={styles.stats}>
         <Stat value={t('workout.minutes', { value: minutes })} label={t('workout.done.time')} />
         <Stat value={`${sets}`} label={t('workout.done.sets')} />
-        {top ? <Stat value={`${top[1]}`} label={muscleLabel(t, top[0])} /> : null}
+        {top ? (
+          <Stat value={t('share.sets', { count: top[1] })} label={muscleLabel(t, top[0])} />
+        ) : null}
       </View>
 
       {stopped ? <Notice tone="warning">{t('workout.done.stoppedBody')}</Notice> : null}
@@ -226,7 +228,7 @@ function Stat({ value, label }: { value: string; label: string }) {
   return (
     <View style={styles.stat}>
       <AppText variant="h2">{value}</AppText>
-      <AppText variant="caption" color={colors.muted} style={styles.caps} numberOfLines={1}>
+      <AppText variant="caption" color={colors.muted} style={styles.caps} numberOfLines={2}>
         {label}
       </AppText>
     </View>
@@ -255,9 +257,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  bodyRow: { flexDirection: 'row', gap: spacing.lg },
-  bodyCol: { flex: 1.1 },
-  legend: { flex: 1, gap: spacing.sm },
+  bodyRow: { gap: spacing.md },
+  legend: { gap: spacing.sm },
   stats: { flexDirection: 'row', gap: spacing.sm },
   stat: {
     flex: 1,

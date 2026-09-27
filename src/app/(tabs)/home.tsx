@@ -69,7 +69,9 @@ export default function HomeScreen() {
     router.push({ pathname: '/workout/[id]', params: { id: id ?? 'unavailable' } });
   };
 
-  // Grey-blue splits into "not trained yet" and "5+ days" (QA P2).
+  // Labels name the state, not an elapsed time (QA round 2): a secondary muscle
+  // worked minutes ago reads "recovering", never "1–2 days ago". Grey-blue
+  // splits into "not trained yet" and "time to train" (QA P2).
   const never = (key: string) => !activity[key]?.lastPrimaryAt && !activity[key]?.lastSecondaryAt;
   const byState = (state: RecoveryState, neverTrained?: boolean) =>
     MUSCLES.filter(
@@ -83,13 +85,14 @@ export default function HomeScreen() {
       .join(', ');
   const legend = [
     ...LEGEND.filter((s) => s !== 'neglected').map((s) => ({
-      state: s,
+      state: s as RecoveryState,
       key: s,
       muscles: byState(s),
     })),
     { state: 'neglected' as const, key: 'neglected', muscles: byState('neglected', false) },
     { state: 'neglected' as const, key: 'never', muscles: byState('neglected', true) },
   ].filter((l) => l.muscles);
+  const trainedAny = legend.some((l) => l.state !== 'neglected');
 
   if (derived.mode === 'senior') return <SeniorHome onStart={openWorkout} targets={goals} />;
 
@@ -159,23 +162,23 @@ export default function HomeScreen() {
         </Pressable>
       ) : null}
 
+      {/* The body takes the full card width; the legend sits below it (QA O-1b). */}
       <Card style={styles.recovery}>
-        <View style={styles.bodyCol}>
-          <RecoveryBody band={band} sex={sex} states={states} maxHeight={260} />
-        </View>
+        <AppText variant="h3">{t('home.recoveryMap')}</AppText>
+        <RecoveryBody band={band} sex={sex} states={states} />
         <View style={styles.legend}>
-          <AppText variant="h3">{t('home.recoveryMap')}</AppText>
           {legend.length ? (
             legend.map((l) => (
               <LegendRow
                 key={l.key}
-                color={STATE_COLOR[l.state]}
+                color={STATE_COLOR[l.state as Exclude<RecoveryState, 'neutral'>]}
                 label={t(`home.recovery.${l.key as 'never'}`, { muscles: l.muscles })}
               />
             ))
           ) : (
             <AppText color={colors.mutedStrong}>{t('home.recoveryEmpty')}</AppText>
           )}
+          {trainedAny ? <LegendRow label={t('home.recovery.ready')} /> : null}
           <AppText variant="caption" color={colors.muted}>
             {t('home.recoveryNote')}
           </AppText>
@@ -192,9 +195,8 @@ const styles = StyleSheet.create({
   caps: { textTransform: 'uppercase', letterSpacing: 1.2, fontFamily: fonts.headingSemi },
   streak: { alignItems: 'flex-end' },
   today: { gap: spacing.md, padding: spacing.xl },
-  recovery: { flexDirection: 'row', gap: spacing.lg },
-  bodyCol: { flex: 0.8 },
-  legend: { flex: 1, gap: spacing.sm },
+  recovery: { gap: spacing.md },
+  legend: { gap: spacing.sm },
   checkin: {
     flexDirection: 'row',
     alignItems: 'center',

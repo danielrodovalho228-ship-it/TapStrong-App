@@ -20,9 +20,23 @@ import type { BodyBand } from '../../profile/age';
 import { FRAME, hotspotsFor, nearestHotspot } from '../hotspots';
 import { bodyImage, type BodySex, type BodyView } from '../images';
 
-const DOT = 18;
-const HALO = 30;
-const RECOVERY = 40;
+/**
+ * Dot geometry in hotspot-frame units (288 × 516), so a dot keeps the
+ * same size relative to the body at any size: about 18 px on the full body
+ * map, smaller on a card (QA O-1b). The recovery map uses the same numbers.
+ */
+export const DOT_FRAME = 19;
+export const HALO_FRAME = 32;
+export const RING_FRAME = 2.6;
+
+export function dotGeometry(scale: number) {
+  return {
+    dot: DOT_FRAME * scale,
+    halo: HALO_FRAME * scale,
+    ring: Math.max(1, RING_FRAME * scale),
+  };
+}
+
 // Dot hit area: the 44 px minimum touch target (QA D-05). Taps between dots
 // still go to the nearest one via the image press.
 const HIT = sizes.touchTarget;
@@ -40,10 +54,19 @@ export type BodyMapCanvasProps = {
   sex: BodySex;
   view: BodyView;
   selected: string[];
-  /** Recovery colors shown behind the dots (SPEC §4); neutral muscles have none. */
+  /**
+   * Recovery colors (SPEC §4); neutral muscles have none. On the tappable map
+   * they show as a soft halo; read-only, they also fill the dot.
+   */
   recovery?: Record<string, string | undefined>;
-  onToggle: (muscleKey: string) => void;
+  onToggle?: (muscleKey: string) => void;
   maxHeight: number;
+  /** Recovery map (Home, Done, Share): same drawing, no taps, no zoom. */
+  readOnly?: boolean;
+  /** Read-only: one accessible image with this label. */
+  accessibilityLabel?: string;
+  /** Read-only: a test id per dot, e.g. "recovery-glutes-fresh". */
+  dotTestID?: (muscleKey: string) => string;
 };
 
 /** Body image with tappable muscle dots (mockup 08). */
@@ -53,8 +76,11 @@ export function BodyMapCanvas({
   view,
   selected,
   recovery = {},
-  onToggle,
+  onToggle = () => undefined,
   maxHeight,
+  readOnly = false,
+  accessibilityLabel,
+  dotTestID,
 }: BodyMapCanvasProps) {
   const { t } = useTranslation();
   const [width, setWidth] = useState(0);
@@ -63,6 +89,14 @@ export function BodyMapCanvas({
   const height = Math.min(maxHeight, (width * FRAME.height) / FRAME.width);
   const imageWidth = (height * FRAME.width) / FRAME.height;
   const scale = imageWidth / FRAME.width;
+  const geo = dotGeometry(scale);
+  const place = (x: number, y: number, size: number) => ({
+    left: x * scale - size / 2,
+    top: y * scale - size / 2,
+    width: size,
+    height: size,
+    borderRadius: size / 2,
+  });
 
   const onLayout = (e: LayoutChangeEvent) => setWidth(e.nativeEvent.layout.width);
 
@@ -136,6 +170,72 @@ export function BodyMapCanvas({
     if (key) onToggle(key);
   };
 
+  // Soft halos: recovery color (or the accent when selected), visual only.
+  const halos = hotspots.flatMap((h) => {
+    const color = recovery[h.key];
+    const on = !readOnly && selected.includes(h.key);
+    if (!color && !on) return [];
+    return h.points.map(([x, y], i) => (
+      <View
+        key={`halo-${h.key}-${i}`}
+        pointerEvents="none"
+        style={[
+          styles.abs,
+          place(x, y, geo.halo),
+          on ? styles.haloOn : { backgroundColor: color, opacity: 0.35 },
+        ]}
+      />
+    ));
+  });
+
+  const dotStyle = (key: string) => {
+    const color = readOnly ? recovery[key] : undefined;
+    const on = !readOnly && selected.includes(key);
+    return [
+      { borderWidth: geo.ring },
+      color
+        ? { backgroundColor: color, borderColor: colors.surface }
+        : on
+          ? styles.dotOn
+          : styles.dotOff,
+    ];
+  };
+
+  if (readOnly) {
+    return (
+      <View
+        testID="recovery-body"
+        style={styles.canvas}
+        onLayout={onLayout}
+        accessible
+        accessibilityRole="image"
+        accessibilityLabel={accessibilityLabel}
+      >
+        {width > 0 ? (
+          <View style={{ width: imageWidth, height }}>
+            <Image
+              source={bodyImage(band, sex, view)}
+              style={StyleSheet.absoluteFill}
+              contentFit="contain"
+              alt=""
+            />
+            {halos}
+            {hotspots.flatMap((h) =>
+              h.points.map(([x, y], i) => (
+                <View
+                  key={`${h.key}-${i}`}
+                  testID={dotTestID?.(h.key)}
+                  pointerEvents="none"
+                  style={[styles.abs, place(x, y, geo.dot), ...dotStyle(h.key)]}
+                />
+              )),
+            )}
+          </View>
+        ) : null}
+      </View>
+    );
+  }
+
   return (
     <View testID="bodymap-canvas" style={styles.canvas} onLayout={onLayout}>
       {width > 0 ? (
@@ -145,6 +245,8 @@ export function BodyMapCanvas({
               onPress={onPressImage}
               style={StyleSheet.absoluteFill}
               accessible={false}
+              focusable={false}
+              tabIndex={-1}
               importantForAccessibility="no"
             >
               <Image
@@ -155,39 +257,8 @@ export function BodyMapCanvas({
                 alt=""
               />
             </Pressable>
-            {hotspots.flatMap((h) =>
-              recovery[h.key]
-                ? h.points.map(([x, y], i) => (
-                    <View
-                      key={`recovery-${h.key}-${i}`}
-                      pointerEvents="none"
-                      style={[
-                        styles.recovery,
-                        {
-                          left: x * scale - RECOVERY / 2,
-                          top: y * scale - RECOVERY / 2,
-                          backgroundColor: recovery[h.key],
-                        },
-                      ]}
-                    />
-                  ))
-                : [],
-            )}
             {/* Halos are visual only, so they never steal a tap from a neighbour. */}
-            {hotspots.flatMap((h) =>
-              selected.includes(h.key)
-                ? h.points.map(([x, y], i) => (
-                    <View
-                      key={`halo-${h.key}-${i}`}
-                      pointerEvents="none"
-                      style={[
-                        styles.halo,
-                        { left: x * scale - HALO / 2, top: y * scale - HALO / 2 },
-                      ]}
-                    />
-                  ))
-                : [],
-            )}
+            {halos}
             {hotspots.flatMap((h) => {
               const isSelected = selected.includes(h.key);
               const muscle = muscleByKey(h.key);
@@ -206,7 +277,13 @@ export function BodyMapCanvas({
                   accessibilityState={{ selected: isSelected }}
                   style={[styles.hit, { left: x * scale - HIT / 2, top: y * scale - HIT / 2 }]}
                 >
-                  <View style={[styles.dot, isSelected ? styles.dotOn : styles.dotOff]} />
+                  <View
+                    testID={`dot-${h.key}`}
+                    style={[
+                      { width: geo.dot, height: geo.dot, borderRadius: geo.dot / 2 },
+                      ...dotStyle(h.key),
+                    ]}
+                  />
                 </Pressable>
               ));
             })}
@@ -255,21 +332,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  halo: {
-    position: 'absolute',
-    width: HALO,
-    height: HALO,
-    borderRadius: HALO / 2,
-    backgroundColor: 'rgba(194, 62, 23, 0.25)',
-  },
-  recovery: {
-    position: 'absolute',
-    width: RECOVERY,
-    height: RECOVERY,
-    borderRadius: RECOVERY / 2,
-    opacity: 0.55,
-  },
-  dot: { width: DOT, height: DOT, borderRadius: DOT / 2, borderWidth: 2.5 },
+  abs: { position: 'absolute' },
+  // Same soft halo as a selected dot on the body map.
+  haloOn: { backgroundColor: 'rgba(194, 62, 23, 0.25)' },
   dotOn: { backgroundColor: colors.accent, borderColor: colors.surface },
   dotOff: { backgroundColor: colors.surface, borderColor: colors.ink },
 });

@@ -730,15 +730,15 @@ Decisões aplicadas: a Aba Coach fica para a primeira atualização e o ícone e
 
 O relatório de QA está em `docs/qa-round-1.md`. Corrigi na ordem pedida: seção 0 (seus pedidos), P0, P1 e P2. Cada grupo tem seu commit:
 
-| Grupo | Commit |
-| --- | --- |
-| Relatório de QA | `f34d9fc` |
-| P0 — segurança e crianças | `6524be8` |
-| O-1 e O-2 — mapa de recuperação e demo em tudo | `e153699` |
-| P1 — lógica e UX | `4a4a569` |
-| O-3 — biblioteca maior | `782ac5e` |
+| Grupo                                                       | Commit    |
+| ----------------------------------------------------------- | --------- |
+| Relatório de QA                                             | `f34d9fc` |
+| P0 — segurança e crianças                                   | `6524be8` |
+| O-1 e O-2 — mapa de recuperação e demo em tudo              | `e153699` |
+| P1 — lógica e UX                                            | `4a4a569` |
+| O-3 — biblioteca maior                                      | `782ac5e` |
 | Decisão extra — menores só veem corpos infantil/adolescente | `1b8516e` |
-| P2 — acabamento | `c042cd6` |
+| P2 — acabamento                                             | `c042cd6` |
 
 ### Feito
 

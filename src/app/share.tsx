@@ -150,7 +150,7 @@ export default function ShareScreen() {
               </AppText>
             </View>
           </View>
-          <RecoveryBody band={band} sex={sex} states={states} maxHeight={300} views="both" />
+          <RecoveryBody band={band} sex={sex} states={states} views="both" />
           <View style={styles.legend}>
             {names('fresh') ? <LegendRow color={STATE_COLOR.fresh} label={names('fresh')} /> : null}
             {names('recovering') ? (

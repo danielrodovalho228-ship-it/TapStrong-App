@@ -2595,11 +2595,12 @@
     "pickElse": "Escolher outra coisa",
     "recoveryMap": "Mapa de recuperação",
     "recovery": {
-      "fresh": "{{muscles}} · últimas 24 h",
-      "recovering": "{{muscles}} · há 1–2 dias",
-      "almost": "{{muscles}} · há 2–3 dias",
-      "neglected": "{{muscles}} · 5+ dias",
-      "never": "{{muscles}} · ainda sem treino"
+      "fresh": "{{muscles}} · acabou de treinar",
+      "recovering": "{{muscles}} · recuperando",
+      "almost": "{{muscles}} · quase pronto",
+      "neglected": "{{muscles}} · hora de treinar",
+      "never": "{{muscles}} · ainda não treinado",
+      "ready": "Pontos brancos · recuperado / pronto"
     },
     "recoveryEmpty": "Seu primeiro treino colore os músculos que você treinar.",
     "recoveryNote": "As cores somem conforme você se recupera. Cinza-azulado quer dizer que é hora de treinar.",

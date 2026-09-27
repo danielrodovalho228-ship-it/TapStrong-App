@@ -17,7 +17,7 @@ import { derive } from '@/features/onboarding/derived';
 import { defaultMuscleGoal } from '@/features/onboarding/options';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { muscleLabel } from '@/features/onboarding/summaries';
-import { STATE_COLOR } from '@/features/workout/components/RecoveryBody';
+import { recoveryFills } from '@/features/workout/components/RecoveryBody';
 import { useBodyStates } from '@/features/workout/hooks';
 import { track } from '@/lib/analytics';
 import { colors, fonts, radius, sizes, spacing } from '@/theme';
@@ -104,12 +104,7 @@ export default function BodyMapScreen() {
           sex={sex}
           view={s.bodyView}
           selected={selected}
-          recovery={Object.fromEntries(
-            Object.entries(states).map(([k, v]) => [
-              k,
-              v === 'neutral' ? undefined : STATE_COLOR[v],
-            ]),
-          )}
+          recovery={recoveryFills(states)}
           onToggle={toggle}
           maxHeight={Math.max(360, Math.min(560, screenHeight * 0.58))}
         />

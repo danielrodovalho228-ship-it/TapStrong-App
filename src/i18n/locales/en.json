@@ -2595,11 +2595,12 @@
     "pickElse": "Pick something else",
     "recoveryMap": "Recovery map",
     "recovery": {
-      "fresh": "{{muscles}} · last 24 h",
-      "recovering": "{{muscles}} · 1–2 days ago",
-      "almost": "{{muscles}} · 2–3 days ago",
-      "neglected": "{{muscles}} · 5+ days",
-      "never": "{{muscles}} · not trained yet"
+      "fresh": "{{muscles}} · just trained",
+      "recovering": "{{muscles}} · recovering",
+      "almost": "{{muscles}} · almost ready",
+      "neglected": "{{muscles}} · time to train",
+      "never": "{{muscles}} · not trained yet",
+      "ready": "White dots · recovered / ready"
     },
     "recoveryEmpty": "Your first workout colors the muscles you train.",
     "recoveryNote": "Colors fade as you recover. Grey-blue means it's time to train it.",
