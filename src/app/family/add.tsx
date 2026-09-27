@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { Button, Header, Notice, RadioCard, Screen, Select, TextField } from '@/components/ui';
+import { ensureOwnerProfileSynced } from '@/features/account/cloud';
 import { currentPlan, FAMILY_MAX_PROFILES } from '@/features/billing/rules';
 import { useBillingStore } from '@/features/billing/store';
 import { ParentPinSetup } from '@/features/family/ParentGate';
@@ -44,6 +45,8 @@ function AddMemberScreenInner() {
   const years = useMemo(() => birthYearOptions(), []);
   // Kids and teens are protected by the parent PIN: create it first (QA R2-05).
   const [needPin, setNeedPin] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [syncError, setSyncError] = useState<string | null>(null);
 
   const full = profiles.length >= FAMILY_MAX_PROFILES;
   const gate = month && year ? evaluateAgeGate(kind, { year, month }) : null;
@@ -63,10 +66,20 @@ function AddMemberScreenInner() {
             ? t('family.errors.needCharge')
             : null;
 
-  const next = () => {
-    if (!gate || blocker || !month || !year) return;
+  const next = async () => {
+    if (!gate || blocker || !month || !year || busy) return;
     if (kind === 'child' && !hasParentPin()) {
       setNeedPin(true);
+      return;
+    }
+    // The owner's own profile goes to the cloud first: the database checks the
+    // owner's age from it (Phase 12). Offline: say so, create nothing.
+    setBusy(true);
+    setSyncError(null);
+    const synced = await ensureOwnerProfileSynced();
+    setBusy(false);
+    if (synced !== 'ok') {
+      setSyncError(t(`family.ownerSync.${synced}`));
       return;
     }
     const id = uuid();
@@ -91,7 +104,8 @@ function AddMemberScreenInner() {
         <Button
           label={underThirteen ? t('family.next') : t('family.create')}
           disabled={!gate || !!blocker || !name.trim()}
-          onPress={next}
+          loading={busy}
+          onPress={() => void next()}
         />
       }
     >
@@ -127,11 +141,12 @@ function AddMemberScreenInner() {
         />
       </View>
       {blocker ? <Notice tone="warning">{blocker}</Notice> : null}
+      {syncError ? <Notice tone="warning">{syncError}</Notice> : null}
       {needPin ? (
         <ParentPinSetup
           onDone={() => {
             setNeedPin(false);
-            next();
+            void next();
           }}
           onCancel={() => setNeedPin(false)}
         />

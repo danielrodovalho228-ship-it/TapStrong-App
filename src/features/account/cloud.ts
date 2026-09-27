@@ -1,10 +1,13 @@
 import { clock } from '@/lib/clock';
+import { kvStorage } from '@/lib/storage';
 import { getSupabase } from '@/lib/supabase';
 
 import { refreshBilling } from '../billing/actions';
 import { getBilling } from '../billing/provider';
 import { devLibrary } from '../exercises/library';
+import { ownerOnboarding } from '../family/profiles';
 import { activeProfile, useFamilyStore } from '../family/store';
+import { derive } from '../onboarding/derived';
 import { useMovementPainStore } from '../movement/store';
 import { useOnboardingStore } from '../onboarding/store';
 import { useProgressStore } from '../progress/store';
@@ -80,6 +83,57 @@ export function syncNow(): Promise<SyncResult> {
       running = null;
     });
   return running;
+}
+
+export type OwnerSync = 'ok' | 'offline' | 'no_account' | 'no_profile' | 'error';
+
+/**
+ * Before a family profile is created (Phase 12): the owner's own profile must
+ * be in the cloud, because the database checks the owner's age from it (QA
+ * R2-04). Upserts just that row. Development builds without RevenueCat have
+ * no cloud family and skip it.
+ */
+export async function ensureOwnerProfileSynced(): Promise<OwnerSync> {
+  if (__DEV__ && getBilling().kind === 'dev') return 'ok';
+  const supabase = getSupabase();
+  if (!supabase) return 'offline';
+  if (!useAccountStore.getState().saved) return 'no_account';
+  const family = useFamilyStore.getState();
+  const owner = ownerOnboarding(
+    family.profiles,
+    family.activeId,
+    useOnboardingStore.getState(),
+    kvStorage.getItem,
+  );
+  const derived = owner
+    ? derive({ birthMonth: owner.birthMonth, birthYear: owner.birthYear })
+    : null;
+  if (!owner || !derived) return 'no_profile';
+  try {
+    const { data: auth } = await supabase.auth.getUser();
+    const user = auth.user;
+    if (!user || user.is_anonymous) return 'no_account';
+    const { data: existing, error: readError } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('user_id', user.id)
+      .maybeSingle();
+    if (readError) return 'error';
+    const { error } = await supabase.from('profiles').upsert({
+      id: (existing as { id: string } | null)?.id ?? useAccountStore.getState().profileId,
+      user_id: user.id,
+      birth_month: owner.birthMonth,
+      birth_year: owner.birthYear,
+      sex: owner.sex ?? null,
+      body_band: derived.band,
+      mode: derived.mode,
+      units: owner.units ?? 'metric',
+      locale: owner.locale ?? 'en',
+    });
+    return error ? 'error' : 'ok';
+  } catch {
+    return 'offline';
+  }
 }
 
 /** After the account is saved: link purchases, redeem a pending referral, then sync. */

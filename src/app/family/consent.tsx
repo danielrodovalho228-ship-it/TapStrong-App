@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText, Button, Checkbox, Header, Icon, Notice, Screen } from '@/components/ui';
+import { ensureOwnerProfileSynced } from '@/features/account/cloud';
 import { useBillingStore } from '@/features/billing/store';
 import { createChildProfileRemote } from '@/features/family/remote';
 import { ownerAge } from '@/features/family/profiles';
@@ -48,6 +49,13 @@ function ParentConsentScreenInner() {
     if (blocker) return;
     setBusy(true);
     setError(null);
+    // Owner first (Phase 12): the database checks the owner's age from it.
+    const synced = await ensureOwnerProfileSynced();
+    if (synced !== 'ok') {
+      setBusy(false);
+      setError(t(`family.ownerSync.${synced}`));
+      return;
+    }
     const result = await createChildProfileRemote({
       id: params.id,
       birthMonth,

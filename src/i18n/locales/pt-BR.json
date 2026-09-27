@@ -3961,7 +3961,13 @@
     "remove": "Remover membro",
     "removeName": "Remover {{name}}",
     "removeBody": "Isso tira {{name}} da sua família e apaga os treinos, restrições e progresso neste celular e na sua conta. Libera uma das 5 vagas.",
-    "removeConfirm": "Sim, remover {{name}}"
+    "removeConfirm": "Sim, remover {{name}}",
+    "ownerSync": {
+      "offline": "Você está sem internet. Conecte-se para adicionar alguém da família: primeiro o seu próprio perfil é salvo na sua conta.",
+      "no_account": "Salve sua conta primeiro: perfis da família pertencem a uma conta salva.",
+      "no_profile": "Termine o seu próprio perfil primeiro (mês e ano de nascimento) e depois adicione alguém da família.",
+      "error": "Não conseguimos salvar o seu perfil na sua conta. Nada foi criado. Tente de novo."
+    }
   },
   "deleteAccount": {
     "title": "Excluir conta",

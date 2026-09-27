@@ -98,3 +98,16 @@ export function ownerAge(
   if (!self) return derive({ birthMonth: live.birthMonth, birthYear: live.birthYear })?.age ?? null;
   return summarize(self, activeId ?? self.id, live, read).age;
 }
+
+/** The account owner's own onboarding answers: live when active, else its snapshot. */
+export function ownerOnboarding(
+  profiles: LocalProfile[],
+  activeId: string | null,
+  live: OnboardingData,
+  read: (key: string) => string | null,
+): Partial<OnboardingData> | null {
+  const self = profiles.find((p) => p.kind === 'self');
+  if (!self || self.id === (activeId ?? self.id)) return live;
+  const raw = read(KEY(self.id));
+  return raw ? (JSON.parse(raw) as { onboarding: Partial<OnboardingData> }).onboarding : null;
+}

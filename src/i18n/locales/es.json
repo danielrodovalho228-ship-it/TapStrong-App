@@ -3961,7 +3961,13 @@
     "remove": "Quitar miembro",
     "removeName": "Quitar a {{name}}",
     "removeBody": "Esto quita a {{name}} de tu familia y borra sus entrenamientos, restricciones y progreso en este teléfono y en tu cuenta. Libera uno de los 5 lugares.",
-    "removeConfirm": "Sí, quitar a {{name}}"
+    "removeConfirm": "Sí, quitar a {{name}}",
+    "ownerSync": {
+      "offline": "No tienes conexión. Conéctate a internet para agregar a un familiar: primero se guarda tu propio perfil en tu cuenta.",
+      "no_account": "Primero guarda tu cuenta: los perfiles familiares pertenecen a una cuenta guardada.",
+      "no_profile": "Primero completa tu propio perfil (mes y año de nacimiento) y luego agrega a un familiar.",
+      "error": "No pudimos guardar tu perfil en tu cuenta. No se creó nada. Inténtalo de nuevo."
+    }
   },
   "deleteAccount": {
     "title": "Eliminar cuenta",

@@ -3961,7 +3961,13 @@
     "remove": "Remove member",
     "removeName": "Remove {{name}}",
     "removeBody": "This removes {{name}} from your family and deletes their workouts, restrictions and progress on this phone and in your account. It frees one of the 5 places.",
-    "removeConfirm": "Yes, remove {{name}}"
+    "removeConfirm": "Yes, remove {{name}}",
+    "ownerSync": {
+      "offline": "You’re offline. Connect to the internet to add a family member: your own profile is saved to your account first.",
+      "no_account": "Save your account first: family profiles belong to a saved account.",
+      "no_profile": "Finish your own profile first (birth month and year), then add a family member.",
+      "error": "Couldn’t save your profile to your account. Nothing was created. Try again."
+    }
   },
   "deleteAccount": {
     "title": "Delete account",
