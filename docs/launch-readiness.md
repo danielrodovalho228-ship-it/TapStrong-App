@@ -22,9 +22,9 @@ Situação no fim da Fase 9 (27/09/2026). O código das Fases 0 a 9 está comple
 ## Depende de você (bloqueia o lançamento)
 
 1. **Contas de desenvolvedor:** Apple Developer (US$ 99/ano) e Google Play Console (US$ 25, uma vez). Sem elas não há build nas lojas, RevenueCat nem login com Apple/Google.
-2. **Revisor certificado** (NSCA-CSCS ou ACSM): aprovar os 82 exercícios (74 + 8 de recuperação), os 5 testes Repair, as etiquetas de movimento e o catálogo de movimentos (aba "Movements") na planilha `docs/review/exercise-review.xlsx`. Até a aprovação, a versão de loja mostra "em revisão" no lugar dos treinos.
+2. **Revisor certificado** (NSCA-CSCS ou ACSM): aprovar os 747 exercícios `draft`, os 5 testes Repair, as etiquetas de movimento e o catálogo de movimentos (aba "Movements") na planilha `docs/review/exercise-review.xlsx`. Até a aprovação, a versão de loja mostra "em revisão" no lugar dos treinos.
 3. **Biblioteca de exercícios licenciada (3D):** licença e preço. Os vídeos `ex-*.mp4` atuais são só protótipos e não vão para a loja.
-4. **Advogado:** revisar o fluxo COPPA, o aviso aos pais (`parent-notice-v1`), a política de privacidade, os termos e os avisos de saúde. O inventário de dados para ele está em `docs/store/privacy-labels.md`.
+4. **Advogado:** revisar a política de privacidade, os termos e os avisos de saúde. No lançamento, menores de 13 estão desligados (Fase 12), então o fluxo COPPA e o aviso aos pais (`parent-notice-v1`) só precisam de revisão antes de religar na versão 2. Nessa revisão, ele também diz se o registro de consentimento deve ser guardado quando um perfil de criança é removido (hoje é apagado junto com o perfil). O inventário de dados para ele está em `docs/store/privacy-labels.md`.
 5. **Páginas web:** política de privacidade e termos publicados numa URL (exigência das duas lojas), de preferência em `tapstrong.app`.
 6. **RevenueCat:** criar os 4 produtos com teste de 7 dias e os entitlements `premium` e `family`. As chaves públicas vão no `.env`; os segredos vão no Supabase, pelo terminal; depois configurar o webhook (passo a passo na seção da Fase 6 em `docs/progress.md`).
 7. **Chave da API do Claude:** `ANTHROPIC_API_KEY` nos segredos do Supabase, pelo terminal. Ativar também o login anônimo em Authentication → Providers.
@@ -47,6 +47,8 @@ Situação no fim da Fase 9 (27/09/2026). O código das Fases 0 a 9 está comple
 - **Login com Apple e Google:** escondidos até existirem as contas de desenvolvedor.
 - **Depois do lançamento:** registro das séries por voz e o contorno de pose na câmera.
 - **Plano grátis e marco de 7 dias:** resolvido na Fase 11. A mobilidade curta (~10 min) conta como dia ativo, sem limite, e os 3 treinos completos por semana continuam.
+- **Menores de 13:** desligados no lançamento (Fase 12), no app (`EXPO_PUBLIC_KIDS_UNDER_13_ENABLED`) e no banco (`app_settings.kids_under_13_enabled`). Para religar na versão 2, as duas chaves precisam ser ligadas, e antes disso o advogado precisa revisar o fluxo COPPA.
+- **PIN dos pais esquecido:** a redefinição usa um código por e-mail, que só chega a usuários reais depois do SMTP do Resend (`docs/store/smtp-resend.md`).
 - **QA rodadas 1 e 2:** corrigidas (ver `docs/qa-round-1.md`, `docs/qa-round-2.md` e os relatórios das Fases 10 e 11 em `docs/progress.md`). Falta o reteste da rodada 2: mapa de recuperação, família (PIN, adolescentes, remover membro), mobilidade curta e fases 2 e 3 do reparo.
 - **Revisor certificado:** 747 exercícios `draft`. Ele também precisa confirmar as horas de recuperação (48 h, 96 h aos 60+), a carga leve em articulações restritas e as doses de equilíbrio.
 

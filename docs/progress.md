@@ -1026,3 +1026,70 @@ O relatório da rodada 2 está em `docs/qa-round-2.md`. Segui a ordem pedida (se
 4. **Consentimento na nuvem:** o banco confere a idade pelo perfil do dono na nuvem. Se o dono ainda não sincronizou o próprio perfil, criar a criança falha com uma mensagem genérica. Quer que eu sincronize o perfil do dono antes dessa etapa?
 5. **Trocas:** todas têm pelo menos 3 opções seguras. 17 itens, quase todos sentados, ficam com 3–4 opções (a meta era 5). Dá para completar numa próxima leva.
 6. **Planos e paywall:** mexi só em tela e permissão (PIN e texto para quem assina). Preços, produtos e RevenueCat não mudaram.
+
+## Fase 12 — Menores de 13 fora do lançamento, PIN e família
+
+Suas decisões, confirmadas nesta conversa: menores de 13 desligados no app e no banco, adolescentes de 13 a 17 mantidos, e as outras três decisões como combinado. Cada grupo tem seu commit:
+
+| Grupo                                                 | Commit    |
+| ----------------------------------------------------- | --------- |
+| Menores de 13 desligados (app + banco)                | `b7bfdeb` |
+| PIN dos pais esquecido → código por e-mail            | `13a9610` |
+| Perfil do dono salvo antes de criar alguém da família | `66753b8` |
+
+### Feito
+
+**1. Menores de 13 fora do lançamento (desligado, nada apagado)**
+
+- **Chave no app:** `KIDS_UNDER_13_ENABLED` (variável `EXPO_PUBLIC_KIDS_UNDER_13_ENABLED`), desligada por padrão.
+- **Idade mínima 13:**
+  - a lista de anos continua indo até idades baixas, sem revelar o corte;
+  - quem tem menos de 13 e responde por si só vê "TapStrong is for ages 13 and up" depois de tocar em Continuar, nunca como aviso antecipado;
+  - o bloqueio fica guardado no aparelho: trocar a data não desbloqueia.
+- **O que muda na tela:**
+  - "Meu filho" vira "Meu filho ou filha adolescente (13–17)";
+  - não dá mais para adicionar criança menor de 13, e o consentimento dos pais fica fechado;
+  - os modelos de corpo infantil somem;
+  - na boas-vindas, "Kids 9+" virou "Teens 13+".
+- **Chave no banco:** tabela `app_settings` com `kids_under_13_enabled = false`, sem acesso de nenhum cliente. A `create_child_profile` recusa enquanto estiver desligada, mesmo com dono adulto, plano Família cobrado e aviso aceito. Já aplicado no Supabase.
+- **Adolescentes (13–17):** continuam com tudo, inclusive o plano Família, o PIN dos pais e as regras de adolescente.
+- **SPEC e textos da loja** (`docs/store/listing.md`, `privacy-labels.md`): público 13+, sem "Kids 9–12".
+- **Testes:** com a chave desligada (comportamento do lançamento) e ligada (o fluxo guardado continua funcionando). O banco testa as duas situações.
+- **Religar na versão 2:** `EXPO_PUBLIC_KIDS_UNDER_13_ENABLED=true` e `update public.app_settings set value = 'true' where key = 'kids_under_13_enabled';`, depois da revisão do advogado.
+
+**2. PIN esquecido**
+
+- No portão dos pais há "Esqueceu o PIN?". O app envia um código de acesso para o e-mail do titular da conta (mostrado parcialmente, "d•••@…"), confere o código e deixa criar um PIN novo, o que também desfaz o bloqueio de 15 minutos.
+- Uma criança não passa sem acesso ao e-mail do dono.
+- Sem conta salva não há como redefinir. Como o plano Família exige conta salva, na prática sempre existe um e-mail.
+- **Atenção:** o código sai pelo Supabase Auth. Usuários reais só recebem depois do SMTP do Resend; até lá, só o e-mail da equipe do projeto recebe.
+
+**3. Remover membro**
+
+Nada mudou. Com a chave desligada não existe registro de consentimento de menor de 13. A nota para o advogado está em `docs/launch-readiness.md`.
+
+**4. Dono salvo antes de criar alguém da família**
+
+- Ao adicionar alguém (e no fluxo de consentimento guardado), o app primeiro grava na nuvem o perfil do próprio dono, porque o banco confere a idade por ele.
+- Sem internet, sem conta salva ou com o perfil do dono incompleto, a tela diz exatamente isso e não cria nada.
+
+### Verificações
+
+- `npm run check`: lint, typecheck, funções e **555 testes** passando.
+- Testes novos:
+  - `qa3-kids-off.test.tsx`: chave desligada e ligada;
+  - `qa3-pin-reset.test.tsx`;
+  - `qa3-owner-sync.test.tsx`.
+- `npm run db:test` (chave desligada recusa, e nenhum cliente consegue ligar a chave) e `npm run bundle:check`: limpos.
+
+### Como testar (build de desenvolvimento)
+
+1. **Idade:** comece do zero e escolha "Eu", nascido em 2016, e toque em Continuar. Aparece "TapStrong is for ages 13 and up". Volte e escolha 1990: continua bloqueado.
+2. **Adolescente:** Família → Adicionar → "Meu filho ou filha adolescente (13–17)", nascido em 2012. O perfil é criado. Com nascimento em 2016, aparece "ainda não disponível".
+3. **Boas-vindas:** o quarto quadro mostra "Teens 13+".
+4. **PIN esquecido:** num perfil de adolescente, abra Planos → "Esqueceu o PIN?". O código vai para o e-mail da conta, que precisa estar salva.
+
+### Perguntas em aberto
+
+1. **SMTP do Resend:** sem ele, o código do PIN (e o de salvar a conta) só chega aos e-mails da equipe do projeto no Supabase. Quando a chave chegar, ela vai direto no painel do Supabase, como combinado.
+2. **Advogado:** fica para a versão 2, junto com religar os menores de 13 (fluxo COPPA, aviso aos pais e o que fazer com o registro de consentimento quando um perfil de criança for removido).
