@@ -150,10 +150,10 @@ export function swapItem(
 
   let items = session.items.map((i, n) => (n === index ? updated : i));
 
-  // The ramp-up mirrors the first main exercise: follow the swap, or drop the
-  // ramp-up when the new exercise has no load (still never adds an item).
-  const firstMain = items.find((i) => i.role === 'main');
-  if (firstMain?.id === itemId && setsDone === 0) {
+  // The ramp-up mirrors the first loaded main lift: follow the swap, or drop
+  // the ramp-up when the new exercise has no load (still never adds an item).
+  const ramp = items.find((i) => i.part === 'ramp_up');
+  if (old.role === 'main' && ramp?.exerciseId === old.exerciseId && setsDone === 0) {
     items = items
       .map((i) => (i.part === 'ramp_up' ? (next.loaded ? { ...i, exerciseId: next.id } : null) : i))
       .filter((i): i is SessionItem => i !== null);

@@ -51,6 +51,18 @@ function coverGap(
   return { restDays, freezes };
 }
 
+/**
+ * After a break, a missed day in this week still used the week's rest day,
+ * so it cannot cover another gap later that week (QA round 1).
+ */
+function restUsedByBreak(from: LocalDate, to: LocalDate, startsOn: WeekStartDay): LocalDate[] {
+  const week = weekStart(to, startsOn);
+  for (let d = addDays(from, 1); d < to; d = addDays(d, 1)) {
+    if (weekStart(d, startsOn) === week) return [d];
+  }
+  return [];
+}
+
 /** The streak as it stands today, without changing anything. */
 export function streakToday(
   state: StreakState,
@@ -79,7 +91,9 @@ export function recordActiveDay(
       best: Math.max(state.best, current),
       freezes: milestone ? Math.min(MAX_FREEZES, freezes + 1) : freezes,
       lastActive: today,
-      restDays: covered?.restDays ?? [],
+      restDays:
+        covered?.restDays ??
+        (state.lastActive ? restUsedByBreak(state.lastActive, today, startsOn) : []),
     },
     milestone,
   };

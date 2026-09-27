@@ -40,7 +40,7 @@ export default function HomeScreen() {
   const library = useExerciseLibrary();
   const input = useGeneratorInput(library);
   const { workouts, streak, nextFocus } = useWorkoutStore();
-  const { states } = useBodyStates();
+  const { states, activity } = useBodyStates();
   const member = useFamilyStore(activeProfile);
   const checkins = useProgressStore((st) => st.checkins);
   if (!profile.onboardingComplete || !derived) return <Redirect href="/welcome" />;
@@ -69,12 +69,27 @@ export default function HomeScreen() {
     router.push({ pathname: '/workout/[id]', params: { id: id ?? 'unavailable' } });
   };
 
-  const byState = (state: RecoveryState) =>
-    MUSCLES.filter((m) => m.views.length && states[m.key] === state)
+  // Grey-blue splits into "not trained yet" and "5+ days" (QA P2).
+  const never = (key: string) => !activity[key]?.lastPrimaryAt && !activity[key]?.lastSecondaryAt;
+  const byState = (state: RecoveryState, neverTrained?: boolean) =>
+    MUSCLES.filter(
+      (m) =>
+        m.views.length &&
+        states[m.key] === state &&
+        (neverTrained === undefined || never(m.key) === neverTrained),
+    )
       .slice(0, 3)
       .map((m) => muscleLabel(t, m.key))
       .join(', ');
-  const legend = LEGEND.map((s) => ({ state: s, muscles: byState(s) })).filter((l) => l.muscles);
+  const legend = [
+    ...LEGEND.filter((s) => s !== 'neglected').map((s) => ({
+      state: s,
+      key: s,
+      muscles: byState(s),
+    })),
+    { state: 'neglected' as const, key: 'neglected', muscles: byState('neglected', false) },
+    { state: 'neglected' as const, key: 'never', muscles: byState('neglected', true) },
+  ].filter((l) => l.muscles);
 
   if (derived.mode === 'senior') return <SeniorHome onStart={openWorkout} targets={goals} />;
 
@@ -99,6 +114,11 @@ export default function HomeScreen() {
           <AppText variant="caption" color={colors.muted} style={styles.caps}>
             {t('home.dayStreak')}
           </AppText>
+          {streak.freezes > 0 ? (
+            <AppText variant="caption" color={colors.teal}>
+              {t('home.freezes', { count: streak.freezes })}
+            </AppText>
+          ) : null}
         </View>
       </View>
 
@@ -148,9 +168,9 @@ export default function HomeScreen() {
           {legend.length ? (
             legend.map((l) => (
               <LegendRow
-                key={l.state}
+                key={l.key}
                 color={STATE_COLOR[l.state]}
-                label={t(`home.recovery.${l.state}`, { muscles: l.muscles })}
+                label={t(`home.recovery.${l.key as 'never'}`, { muscles: l.muscles })}
               />
             ))
           ) : (

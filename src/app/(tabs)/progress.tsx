@@ -46,7 +46,11 @@ export default function ProgressScreen() {
   const [muscle, setMuscle] = useState<string | null>(null);
   const selected = muscle ?? muscles[0] ?? null;
   const { workouts: count, sets } = totals(workouts);
-  const last = checkins.at(-1);
+  // Latest known value of each, even if the last check-in skipped it (QA P2).
+  const last = {
+    waistCm: [...checkins].reverse().find((c) => c.waistCm)?.waistCm,
+    weightKg: [...checkins].reverse().find((c) => c.weightKg)?.weightKg,
+  };
   const adult = measurementsAllowed(mode);
 
   return (
@@ -100,7 +104,7 @@ export default function ProgressScreen() {
         {checkinDue(workouts, checkins, now) ? (
           <AppText color={colors.teal}>{t('progress.checkinReady')}</AppText>
         ) : null}
-        {adult && last?.waistCm ? (
+        {adult && last.waistCm ? (
           <>
             <Line
               label={t('progress.waist')}
@@ -140,6 +144,11 @@ export default function ProgressScreen() {
             onPress={() => router.push('/before-after')}
           />
         ) : null}
+        <LinkRow
+          icon="family"
+          label={t('settings.open')}
+          onPress={() => router.push('/settings')}
+        />
       </View>
       {mode === 'senior' ? (
         <Card>

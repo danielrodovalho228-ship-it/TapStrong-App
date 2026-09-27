@@ -2,7 +2,7 @@ import { Image } from 'expo-image';
 import { Redirect, router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, View } from 'react-native';
 
 import {
   AppText,
@@ -101,7 +101,14 @@ export default function BeforeAfterScreen() {
       }
       footer={
         <>
-          <Button label={t('photos.take')} onPress={take} />
+          {/* Photos live only in the phone's private storage: on web, say so (QA round 1). */}
+          {Platform.OS === 'web' ? (
+            <AppText variant="caption" color={colors.mutedStrong} style={styles.center}>
+              {t('photos.webOnly')}
+            </AppText>
+          ) : (
+            <Button label={t('photos.take')} onPress={take} />
+          )}
           <Button
             variant="secondary"
             label={t('photos.shareMap')}

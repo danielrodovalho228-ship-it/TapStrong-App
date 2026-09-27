@@ -7,10 +7,10 @@ export function toggleInList<T>(list: readonly T[], value: T): T[] {
   return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
 }
 
-/** Pregnancy is not offered to children or users who chose the male body. */
+/** Pregnancy is not offered to children, 60+ (QA round 1) or users who chose the male body. */
 export function visibleConditions(mode: AppMode, sex: Sex | null | undefined): Condition[] {
   return CONDITIONS.filter((c) => {
-    if (c === 'pregnant_postpartum') return mode !== 'child' && sex !== 'm';
+    if (c === 'pregnant_postpartum') return mode !== 'child' && mode !== 'senior' && sex !== 'm';
     return true;
   });
 }

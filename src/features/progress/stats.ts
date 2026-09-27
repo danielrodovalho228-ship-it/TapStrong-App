@@ -59,13 +59,8 @@ export function weeklySets(
   return bars;
 }
 
-/** Muscles offered as chart tabs: the goals first, then the most trained. */
-export function chartMuscles(
-  goals: string[],
-  workouts: WorkoutRecord[],
-  library: Exercise[],
-  max = 3,
-): string[] {
+/** Primary muscles by main-work sets, most trained first (ties by key). */
+export function trainedMuscles(workouts: WorkoutRecord[], library: Exercise[]): string[] {
   const byId = new Map(library.map((e) => [e.id, e]));
   const counts = new Map<string, number>();
   for (const w of workouts.filter(finished)) {
@@ -77,8 +72,35 @@ export function chartMuscles(
       }
     }
   }
-  const trained = [...counts.entries()]
+  return [...counts.entries()]
     .sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1))
     .map(([k]) => k);
-  return [...new Set([...goals, ...trained])].slice(0, max);
+}
+
+/** Muscles offered as chart tabs: the goals first, then the most trained. */
+export function chartMuscles(
+  goals: string[],
+  workouts: WorkoutRecord[],
+  library: Exercise[],
+  max = 3,
+): string[] {
+  return [...new Set([...goals, ...trainedMuscles(workouts, library)])].slice(0, max);
+}
+
+/** Workouts finished in the last `days` days, with their minutes and main sets. */
+export function rangeTotals(workouts: WorkoutRecord[], now: Date, days: number) {
+  const since = now.getTime() - days * 24 * 60 * 60 * 1000;
+  const done = workouts.filter((w) => finished(w) && Date.parse(w.endedAt ?? w.createdAt) >= since);
+  return {
+    workouts: done,
+    minutes: done.reduce((n, w) => n + workoutMinutes(w, now), 0),
+    sets: totals(done).sets,
+  };
+}
+
+/** Minutes from start to end, at least 1. */
+export function workoutMinutes(w: WorkoutRecord, now: Date): number {
+  const end = Date.parse(w.endedAt ?? now.toISOString());
+  const start = Date.parse(w.startedAt ?? w.createdAt);
+  return Math.max(1, Math.round((end - start) / 60000));
 }

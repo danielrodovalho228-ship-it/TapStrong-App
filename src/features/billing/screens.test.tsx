@@ -160,7 +160,9 @@ describe('Plans (mockup 19)', () => {
   it('starts the Family trial (simulated) once the account is saved', async () => {
     await act(() => useAccountStore.getState().update({ saved: true }));
     await render(<PlansScreen />);
-    expect(screen.getByRole('radio', { name: 'Family, $14.99' })).toBeSelected();
+    // Premium is preselected (QA round 1); the buyer picks Family.
+    expect(screen.getByRole('radio', { name: 'Premium, $9.99' })).toBeSelected();
+    await fireEvent.press(screen.getByRole('radio', { name: 'Family, $14.99' }));
     await fireEvent.press(screen.getByRole('radio', { name: 'Yearly' }));
     expect(screen.getByRole('radio', { name: 'Family, $89.99' })).toBeTruthy();
     await fireEvent.press(screen.getByRole('button', { name: 'Start 7-day free trial' }));

@@ -195,7 +195,7 @@ describe('Profile summary (mockup 05)', () => {
   it('Edit opens the right step and "Looks right" finishes onboarding', async () => {
     await act(() => store().update(answers));
     await render(<ProfileScreen />);
-    await fireEvent.press(screen.getByRole('link', { name: 'Edit: Schedule' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Edit: Schedule' }));
     expect(mockRouter.push).toHaveBeenCalledWith({
       pathname: '/onboarding/chat',
       params: { step: 'schedule', edit: '1' },

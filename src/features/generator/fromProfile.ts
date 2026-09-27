@@ -3,6 +3,7 @@ import type { MovementLimit } from '../movement/rules';
 import { derive } from '../onboarding/derived';
 import { restrictionAreas } from '../onboarding/safety';
 import type { OnboardingData } from '../onboarding/store';
+import { goalForMode } from '../onboarding/visible';
 
 import type { GeneratorInput, RecentSession } from './types';
 
@@ -38,8 +39,9 @@ export function inputFromProfile(
     location: s.location,
     equipment: s.equipment,
     minutes: s.minutes,
-    mainGoals: s.mainGoals,
-    muscleGoals: s.muscleGoals,
+    // Goals hidden for this age (e.g. "grow" for kids) are never trained.
+    mainGoals: derived.mode === 'child' ? s.mainGoals.filter((g) => g !== 'look') : s.mainGoals,
+    muscleGoals: s.muscleGoals.map((m) => ({ ...m, goal: goalForMode(m.goal, derived.mode) })),
     exercisesPerSession: s.exercisesPerSession,
     setsPerExercise: s.setsPerExercise,
     painAreas: s.painAreas,

@@ -182,9 +182,7 @@ describe('Workout list (mockup 10)', () => {
         onSwapped={jest.fn()}
       />,
     );
-    expect(
-      screen.getByText('No safe alternative for this muscle with your equipment.'),
-    ).toBeTruthy();
+    expect(screen.getByText('No other safe option for this move right now.')).toBeTruthy();
   });
 
   it('without a workout it says why, and "under review" only without a library (QA C-03)', async () => {

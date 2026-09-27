@@ -257,6 +257,10 @@ export default function MovementPainScreen() {
                       options={(['hurts', 'fine', 'untried'] as const).map((v) => ({
                         value: v,
                         label: t(`movementPain.states.${v}`),
+                        accessibilityLabel: t('movementPain.moveA11y', {
+                          movement: movementName(t, key),
+                          state: t(`movementPain.states.${v}`),
+                        }),
                       }))}
                     />
                   </Card>

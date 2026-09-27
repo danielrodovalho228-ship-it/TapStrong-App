@@ -54,6 +54,8 @@ export type WorkoutRecord = {
   skipped: string[];
   swaps: StoredSwap[];
   pains: PainReport[];
+  /** The full session before "Only 15 min", so it can be restored (QA P2). */
+  fullSession?: GeneratedSession;
   /** Set once the finished workout is copied to the account (Phase 5). */
   syncedAt?: string;
 };

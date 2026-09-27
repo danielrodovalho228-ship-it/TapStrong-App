@@ -14,7 +14,8 @@ import {
   setGoal,
 } from '@/features/bodymap/selection';
 import { derive } from '@/features/onboarding/derived';
-import { MUSCLE_GOALS, type MuscleGoal } from '@/features/onboarding/options';
+import type { MuscleGoal } from '@/features/onboarding/options';
+import { goalForMode, visibleMuscleGoals } from '@/features/onboarding/visible';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { muscleLabel } from '@/features/onboarding/summaries';
 import { muscleByKey } from '@/features/muscles';
@@ -113,12 +114,12 @@ export default function GoalsSheet() {
         {t('goalsSheet.goalFor')}
       </AppText>
       <View accessibilityRole="radiogroup" style={styles.goals}>
-        {MUSCLE_GOALS.map((goal) => (
+        {visibleMuscleGoals(derived.mode).map((goal) => (
           <RadioCard
             key={goal}
             label={t(`goalsSheet.goals.${goal}.title`)}
             description={description(goal)}
-            selected={entry.goal === goal}
+            selected={goalForMode(entry.goal, derived.mode) === goal}
             onPress={() => s.update({ muscleGoals: setGoal(s.muscleGoals, muscle, goal) })}
           />
         ))}

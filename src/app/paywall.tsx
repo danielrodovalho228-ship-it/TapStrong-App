@@ -32,7 +32,16 @@ export default function PaywallScreen() {
     : null;
 
   return (
-    <Screen footer={<SubscribeFooter plan={plan} period={period} />}>
+    <Screen
+      footer={
+        <SubscribeFooter
+          plan={plan}
+          period={period}
+          // Back to the workout (or Repair) that asked, now unlocked (QA round 1).
+          onBought={() => (router.canGoBack() ? router.back() : router.replace('/home'))}
+        />
+      }
+    >
       <AppText variant="caption" color={colors.accent} style={styles.caps}>
         {t('paywall.eyebrow', { count: FREE_WORKOUTS_PER_WEEK })}
       </AppText>

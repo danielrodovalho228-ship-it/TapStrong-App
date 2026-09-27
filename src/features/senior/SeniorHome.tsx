@@ -15,7 +15,7 @@ import { useWorkoutStore } from '@/features/workout/store';
 import { clock } from '@/lib/clock';
 import { colors, fonts, radius, sizes, spacing } from '@/theme';
 
-import { dayPart, lastWorkout } from './summary';
+import { dayPart, lastWorkout, relativeDay } from './summary';
 
 /**
  * Mockup 23 — 60+ home: one big "Start", then progress, then an audio
@@ -44,7 +44,11 @@ export function SeniorHome({ onStart, targets }: { onStart: () => void; targets:
   const meta = [
     t('home.senior.today'),
     t('home.senior.minutes', { count: minutes }),
-    ...(profile.position !== 'standing' ? [t('home.senior.seated')] : []),
+    ...(profile.position === 'seated_only'
+      ? [t('home.senior.seated')]
+      : profile.position === 'with_support'
+        ? [t('home.senior.supported')]
+        : []),
   ].join(' · ');
 
   const lastText = last
@@ -59,9 +63,8 @@ export function SeniorHome({ onStart, targets }: { onStart: () => void; targets:
         .filter(Boolean)
         .join(' ')
     : '';
-  const lastDay = last
-    ? new Date(last.endedAt).toLocaleDateString(i18n.language, { weekday: 'long' })
-    : '';
+  // "today" / "yesterday" instead of a weekday that reads like last week (QA P2).
+  const lastDay = last ? relativeDay(last.endedAt, now, i18n.language, t) : '';
 
   const readAloud = async () => {
     if (speaking) {
@@ -82,14 +85,19 @@ export function SeniorHome({ onStart, targets }: { onStart: () => void; targets:
   return (
     <Screen>
       <View>
-        <AppText color={colors.mutedStrong}>{t(`home.senior.greeting.${dayPart(now)}`)}</AppText>
         {managed && member.name ? (
-          <AppText variant="display" accessibilityRole="header">
-            {member.name}
-          </AppText>
+          <>
+            <AppText color={colors.mutedStrong}>
+              {t(`home.senior.greeting.${dayPart(now)}`)}
+            </AppText>
+            <AppText variant="display" accessibilityRole="header">
+              {member.name}
+            </AppText>
+          </>
         ) : (
+          // No name: just "Good morning", never "Good morning, TODAY" (QA P2).
           <AppText variant="h1" accessibilityRole="header">
-            {t('home.title')}
+            {t(`home.senior.greetingAlone.${dayPart(now)}`)}
           </AppText>
         )}
       </View>

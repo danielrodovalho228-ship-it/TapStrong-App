@@ -154,6 +154,7 @@ export default function FamilyScreen() {
           onPress={() => router.push(plan === 'free' ? '/plans' : '/billing')}
         />
       )}
+      <Button variant="ghost" label={t('settings.open')} onPress={() => router.push('/settings')} />
     </Screen>
   );
 }

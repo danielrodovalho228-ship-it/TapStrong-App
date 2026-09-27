@@ -4,7 +4,12 @@ import { colors, radius, sizes, spacing } from '@/theme';
 
 import { AppText } from './AppText';
 
-export type SegmentedOption<T extends string> = { value: T; label: string };
+export type SegmentedOption<T extends string> = {
+  value: T;
+  label: string;
+  /** Screen-reader name when several controls share option labels (QA round 1). */
+  accessibilityLabel?: string;
+};
 
 export type SegmentedControlProps<T extends string> = {
   options: SegmentedOption<T>[];
@@ -28,7 +33,7 @@ export function SegmentedControl<T extends string>({
           <Pressable
             key={option.value}
             accessibilityRole="radio"
-            accessibilityLabel={option.label}
+            accessibilityLabel={option.accessibilityLabel ?? option.label}
             accessibilityState={{ checked: selected }}
             onPress={() => onChange(option.value)}
             style={[styles.segment, selected && styles.selected]}

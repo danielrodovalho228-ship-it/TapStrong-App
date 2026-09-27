@@ -114,12 +114,15 @@ export default function BodyMapScreen() {
           maxHeight={Math.max(360, Math.min(560, screenHeight * 0.58))}
         />
         <ViewToggle value={s.bodyView} onChange={(bodyView) => s.update({ bodyView })} />
-        <AppText variant="caption" color={colors.mutedStrong} style={styles.hint}>
-          {t('bodyMap.hint')}
-        </AppText>
-        <AppText variant="caption" color={colors.mutedStrong} style={styles.hint}>
-          {t('bodyMap.zoomHint')}
-        </AppText>
+        {/* One stacked column so the two captions never overlap (QA round 1). */}
+        <View style={styles.hints} pointerEvents="none">
+          <AppText variant="caption" color={colors.mutedStrong}>
+            {t('bodyMap.hint')}
+          </AppText>
+          <AppText variant="caption" color={colors.mutedStrong}>
+            {t('bodyMap.zoomHint')}
+          </AppText>
+        </View>
       </View>
 
       <View style={styles.selectedHeader}>
@@ -212,7 +215,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   toggleOn: { backgroundColor: colors.ink },
-  hint: { position: 'absolute', left: spacing.md, bottom: spacing.md, maxWidth: 112 },
+  hints: {
+    position: 'absolute',
+    left: spacing.md,
+    bottom: spacing.md,
+    maxWidth: 120,
+    gap: spacing.sm,
+  },
   selectedHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',

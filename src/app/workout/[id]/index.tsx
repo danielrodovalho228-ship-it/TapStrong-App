@@ -7,7 +7,7 @@ import { AppText, Button, Card, Icon, IconButton, Notice, Screen } from '@/compo
 import { canStartWorkout, currentPlan } from '@/features/billing/rules';
 import { useBillingStore } from '@/features/billing/store';
 import type { Exercise } from '@/features/exercises/types';
-import { generateSession } from '@/features/generator';
+import { generateSession, swapItem } from '@/features/generator';
 import type { GeneratorNote, SessionItem } from '@/features/generator/types';
 import { muscleLabel } from '@/features/onboarding/summaries';
 import { RangeNote } from '@/features/movement/RangeNote';
@@ -18,7 +18,13 @@ import {
   type SwapReasonUi,
 } from '@/features/workout/components/SwapSheet';
 import { UndoBar } from '@/features/workout/components/UndoBar';
-import { doseLine, durationText, exerciseName, targetText } from '@/features/workout/format';
+import {
+  blockMinutes,
+  doseLine,
+  durationText,
+  exerciseName,
+  targetText,
+} from '@/features/workout/format';
 import { useSafetyRefresh, useWorkout } from '@/features/workout/hooks';
 import { isReviewed } from '@/features/workout/plan';
 import { useWorkoutStore } from '@/features/workout/store';
@@ -93,9 +99,16 @@ export default function WorkoutScreen() {
     return t(n.key);
   };
 
+  // "Only 15 min" keeps the swaps already made and can be undone (QA P2).
   const onlyFifteen = () => {
-    const short = generateSession({ ...input, minutes: SHORT_MINUTES });
-    if (!short.error) store.replaceSession(workout.id, short);
+    let short = generateSession({ ...input, minutes: SHORT_MINUTES });
+    if (short.error) return;
+    for (const swap of workout.swaps) {
+      const item = short.items.find((i) => i.exerciseId === swap.fromExerciseId);
+      const to = byId.get(swap.toExerciseId);
+      if (item && to) short = swapItem(short, item.id, to, input, { reason: swap.reason }).session;
+    }
+    store.shorten(workout.id, short);
   };
 
   const start = () => {
@@ -149,7 +162,7 @@ export default function WorkoutScreen() {
               <AppText variant="bodyStrong">{exerciseName(t, e, item.exerciseId)}</AppText>
               <AppText variant="caption" color={colors.mutedStrong}>
                 {item.part === 'ramp_up'
-                  ? t('workout.rampUp', { sets: item.sets })
+                  ? t('workout.rampUp', { count: item.sets })
                   : item.durationSeconds
                     ? durationText(t, item.durationSeconds)
                     : doseLine(t, item)}
@@ -203,7 +216,7 @@ export default function WorkoutScreen() {
         </View>
       ))}
 
-      {phaseCard(warm, 'workout.warmup', session.warmupMinutes)}
+      {phaseCard(warm, 'workout.warmup', blockMinutes(warm))}
 
       {main.map((item) => {
         const e = byId.get(item.exerciseId);
@@ -227,12 +240,21 @@ export default function WorkoutScreen() {
         );
       })}
 
-      {phaseCard(cool, 'workout.cooldown', session.cooldownMinutes)}
+      {phaseCard(cool, 'workout.cooldown', blockMinutes(cool))}
 
       <View style={styles.actions}>
         {planned && session.minutes > SHORT_MINUTES ? (
           <View style={styles.action}>
             <Button variant="secondary" label={t('workout.only15')} onPress={onlyFifteen} />
+          </View>
+        ) : null}
+        {planned && workout.fullSession ? (
+          <View style={styles.action}>
+            <Button
+              variant="secondary"
+              label={t('workout.backToFull')}
+              onPress={() => store.restoreFull(workout.id)}
+            />
           </View>
         ) : null}
         {machines.length ? (

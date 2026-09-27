@@ -39,6 +39,9 @@ type Data = {
 type Actions = {
   create: (session: GeneratedSession, kind?: WorkoutKind) => string;
   replaceSession: (id: string, session: GeneratedSession) => void;
+  /** "Only 15 min": keeps the full session to go back to. */
+  shorten: (id: string, short: GeneratedSession) => void;
+  restoreFull: (id: string) => void;
   start: (id: string) => void;
   logSet: (id: string, log: Omit<SetLog, 'loggedAt'>) => void;
   skipItem: (id: string, itemId: string) => void;
@@ -94,6 +97,12 @@ export const useWorkoutStore = create<Data & Actions>()(
         },
 
         replaceSession: (id, session) => update(id, (w) => ({ ...w, session })),
+        shorten: (id, short) =>
+          update(id, (w) => ({ ...w, fullSession: w.fullSession ?? w.session, session: short })),
+        restoreFull: (id) =>
+          update(id, (w) =>
+            w.fullSession ? { ...w, session: w.fullSession, fullSession: undefined } : w,
+          ),
 
         start: (id) =>
           update(id, (w) =>

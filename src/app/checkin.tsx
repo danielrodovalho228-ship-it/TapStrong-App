@@ -38,7 +38,13 @@ export default function CheckinScreen() {
   const imperial = profile.units === 'imperial';
   const now = clock.now();
   const strength = strengthChanges(workouts, now);
-  const previous = checkins.at(-1);
+  // The one before this visit: saving must not make it compare with itself,
+  // and each value comes from the last check-in that had it (QA P2).
+  const [previous] = useState(() => ({
+    waistCm: [...checkins].reverse().find((c) => c.waistCm)?.waistCm,
+    weightKg: [...checkins].reverse().find((c) => c.weightKg)?.weightKg,
+    whtr: [...checkins].reverse().find((c) => c.whtr)?.whtr,
+  }));
 
   const [waist, setWaist] = useState('');
   const [weight, setWeight] = useState('');
@@ -113,7 +119,7 @@ export default function CheckinScreen() {
                 <Button
                   variant="accent"
                   label={t('checkin.share')}
-                  onPress={() => router.push('/share')}
+                  onPress={() => router.push({ pathname: '/share', params: { range: '4w' } })}
                 />
               </View>
             ) : null}

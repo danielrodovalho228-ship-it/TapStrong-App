@@ -24,10 +24,21 @@ export function doseText(t: TFunction, item: SessionItem): string {
   return durationText(t, item.durationSeconds ?? 0);
 }
 
+/** Same time as the player shows: "2 min 42 s", not a rounded "3 min" (QA P2). */
 export function durationText(t: TFunction, seconds: number): string {
-  return seconds >= 60
-    ? t('workout.minutes', { value: Math.round(seconds / 60) })
-    : t('workout.seconds', { value: seconds });
+  const s = Math.round(seconds);
+  if (s < 60) return t('workout.seconds', { value: s });
+  const m = Math.floor(s / 60);
+  const rest = s % 60;
+  return rest
+    ? t('workout.minSec', { minutes: m, seconds: rest })
+    : t('workout.minutes', { value: m });
+}
+
+/** Minutes of a warm-up or cool-down block: the sum of its items (QA P2). */
+export function blockMinutes(items: SessionItem[]): number {
+  const seconds = items.reduce((n, i) => n + (i.durationSeconds ?? i.estSeconds), 0);
+  return Math.max(1, Math.round(seconds / 60));
 }
 
 /** "3 × 8–10 · rest 90 s" for main items (mockup 10). */

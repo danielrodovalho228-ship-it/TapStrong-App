@@ -58,14 +58,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.ink,
     borderRadius: radius.chip,
-    minHeight: sizes.touchTarget,
+    minHeight: sizes.touchTarget + 4,
     paddingLeft: spacing.md,
     gap: spacing.xs,
   },
   main: { minHeight: sizes.touchTarget, justifyContent: 'center' },
   remove: {
-    width: sizes.touchTarget - 4,
-    height: sizes.touchTarget - 4,
+    // Full 44 px target (QA round 1).
+    width: sizes.touchTarget,
+    height: sizes.touchTarget,
     margin: 2,
     borderRadius: radius.chip,
     backgroundColor: '#2A2A2A',

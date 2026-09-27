@@ -27,6 +27,8 @@ export function SummaryRow({ label, value, editLabel, onEdit, last }: SummaryRow
         <TextLink
           label={editLabel}
           tone="accent"
+          // An action on this screen, not a navigation link (QA round 1).
+          accessibilityRole="button"
           onPress={onEdit}
           accessibilityLabel={`${editLabel}: ${label}`}
         />

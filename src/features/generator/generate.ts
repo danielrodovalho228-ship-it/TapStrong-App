@@ -348,16 +348,16 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     if (main.length === before) break;
   }
 
-  const added: MovementGroup[] = [];
+  // Balance picks by exercise id, so the note can follow the time fit below.
+  const added = new Map<string, MovementGroup>();
   for (const group of missing.slice(0, complementSlots)) {
     const pick = rankForGroup(pool, group, defaultGoal, input.mode).find((e) => !used.has(e.id));
     if (!pick) continue;
     used.add(pick.id);
     const muscle = topPrimary(pick)!;
     main.push(mainItem(pick, { muscle, family: [muscle], goal: defaultGoal }, input));
-    added.push(group);
+    added.set(pick.id, group);
   }
-  if (targets.length && added.length) notes.push({ key: 'generator.notes.balance', groups: added });
   // Nothing safe for the chosen muscles (e.g. seated legs): train what is safe
   // and say so, instead of no workout at all (QA C-03, C-07).
   if (!main.length && targets.length) {
@@ -452,6 +452,9 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     } else break;
   }
   if (dropped) notes.push({ key: 'generator.notes.trimmed', count: dropped });
+  // "Added push / legs for balance" only names work that survived the time fit (QA round 1).
+  const kept = [...new Set(main.flatMap((i) => added.get(i.exerciseId) ?? []))];
+  if (targets.length && kept.length) notes.push({ key: 'generator.notes.balance', groups: kept });
 
   const byId = new Map(pool.map((e) => [e.id, e]));
   const mainExercises = main.map((i) => byId.get(i.exerciseId)!);
@@ -473,7 +476,10 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
 
   // Ramp-up: light sets of the first loaded exercise. Adults with weights;
   // teens light only; never kids (SPEC §8 table).
-  const first = mainExercises[0];
+  // Ramp-up for the first LOADED main lift, even when a bodyweight move comes
+  // before it (QA P2).
+  const firstLoadedIndex = mainExercises.findIndex((e) => e.loaded);
+  const first = firstLoadedIndex >= 0 ? mainExercises[firstLoadedIndex] : undefined;
   let rampSeconds = 0;
   let ramp: SessionItem | null = null;
   if (first?.loaded && input.mode !== 'child' && !needsCaution(input.conditions)) {
@@ -484,7 +490,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
       role: 'warmup',
       part: 'ramp_up',
       exerciseId: first.id,
-      targetMuscle: main[0].targetMuscle,
+      targetMuscle: main[firstLoadedIndex].targetMuscle,
       goal: null,
       sets,
       reps: [8, 10],
@@ -548,8 +554,24 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
           emphasisOn(b, muscles, 'primary') - emphasisOn(a, muscles, 'primary') ||
           byText(a.slug, b.slug),
       )[0];
-  for (const muscle of mainMuscles) {
-    const s = stretchFor([muscle]);
+  // Stretch what was trained: each main exercise's own muscle first, then its
+  // other primaries, then the wider family (QA round 1). A muscle with no
+  // stretch of its own falls back to its parent group (e.g. chest for upper chest).
+  const parentSet = (m: string) => {
+    const base = muscleByKey(m)?.parentKey ?? m;
+    return [...new Set([base, ...muscleFamily(base)])];
+  };
+  const stretchOrder = [
+    ...new Set([
+      ...main.flatMap((i, n) => i.targetMuscle ?? topPrimary(mainExercises[n]) ?? []),
+      ...mainExercises.flatMap((e) =>
+        e.muscles.filter((m) => m.role === 'primary').map((m) => m.muscleKey),
+      ),
+      ...mainMuscles,
+    ]),
+  ];
+  for (const muscle of stretchOrder) {
+    const s = stretchFor([muscle]) ?? stretchFor(parentSet(muscle));
     if (!s) continue;
     const hold = 30 * (s.unilateral ? 2 : 1) + 10;
     if (stretches.length && hold > stretchBudget) break;

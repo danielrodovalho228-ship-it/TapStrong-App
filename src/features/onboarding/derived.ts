@@ -22,10 +22,9 @@ export function summaryNotes(s: OnboardingData, mode: AppMode): SummaryNote[] {
   const notes: SummaryNote[] = [];
   if (hasRedFlag(s.painAreas, s.conditions)) notes.push('redFlag');
   const adult = mode === 'adult' || mode === 'senior';
+  // "Look better" alone may mean more muscle: no body-fat callout (QA round 1).
   const wantsLeaner =
-    s.mainGoals.includes('look') ||
-    s.mainGoals.includes('lose_weight') ||
-    s.muscleGoals.some((m) => m.goal === 'firm');
+    s.mainGoals.includes('lose_weight') || s.muscleGoals.some((m) => m.goal === 'firm');
   if (adult && wantsLeaner) notes.push('bodyFat');
   if (mode === 'senior') notes.push('senior');
   return notes;

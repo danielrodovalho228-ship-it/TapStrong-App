@@ -92,7 +92,16 @@ export default function ChatScreen() {
     s.applyAnswer(current, answer);
     s.setChatTurn(current, {
       userText: text,
-      reply: result.reply ?? t(understood ? 'chat.understood' : 'chat.notUnderstood'),
+      reply:
+        result.reply ??
+        // Coach not reached: say so instead of blaming the answer (QA P2).
+        t(
+          understood
+            ? 'chat.understood'
+            : result.source === 'none'
+              ? 'chat.offline'
+              : 'chat.notUnderstood',
+        ),
     });
     setBusy(false);
     requestAnimationFrame(() => scrollRef.current?.scrollToEnd({ animated: true }));

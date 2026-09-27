@@ -23,3 +23,18 @@ export const dayPart = (now: Date): 'morning' | 'afternoon' | 'evening' => {
   const h = now.getHours();
   return h < 12 ? 'morning' : h < 18 ? 'afternoon' : 'evening';
 };
+
+/** "today", "yesterday", else the weekday (local dates). */
+export function relativeDay(
+  iso: string,
+  now: Date,
+  locale: string,
+  t: (key: 'home.senior.dayToday' | 'home.senior.dayYesterday') => string,
+): string {
+  const d = new Date(iso);
+  const day = (x: Date) => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+  const diff = Math.round((day(now) - day(d)) / 86_400_000);
+  if (diff === 0) return t('home.senior.dayToday');
+  if (diff === 1) return t('home.senior.dayYesterday');
+  return d.toLocaleDateString(locale, { weekday: 'long' });
+}

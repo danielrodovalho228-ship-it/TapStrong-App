@@ -8,6 +8,7 @@ import { bodyImage } from '@/features/bodymap/images';
 import { derive, summaryNotes } from '@/features/onboarding/derived';
 import { restrictionAreas } from '@/features/onboarding/safety';
 import { useOnboardingStore } from '@/features/onboarding/store';
+import { sexLabelKey } from '@/features/onboarding/visible';
 import { measurementText, musclePairs } from '@/features/onboarding/summaries';
 import { colors, fonts, radius, spacing } from '@/theme';
 
@@ -20,7 +21,7 @@ export default function ProfileScreen() {
   const { mode, band, age } = derived;
 
   const measures = measurementText(t, s);
-  const sexLabel = t(`sex.${s.sex ?? 'neutral'}`);
+  const sexLabel = t(sexLabelKey(s.sex, mode));
   const restrictions = restrictionAreas(s.painAreas);
   const equipment = s.equipment.length
     ? s.equipment.map((e) => t(`equipment.${e}`)).join(', ')
@@ -32,7 +33,7 @@ export default function ProfileScreen() {
       value: t('profile.bornValue', {
         month: t(`monthsShort.${s.birthMonth}` as 'monthsShort.1'),
         year: s.birthYear,
-        group: t(`profile.groups.${mode}`),
+        group: t(`profile.groups.${mode === 'adult' && s.sex === 'f' ? 'adult_f' : mode}`),
         age,
       }),
       edit: () => router.push({ pathname: '/onboarding/who', params: { edit: '1' } }),
@@ -48,6 +49,18 @@ export default function ProfileScreen() {
       value: restrictions.length
         ? restrictions.map((a) => t(`safety.painAreas.${a}`)).join(', ')
         : t('profile.restrictionsNone'),
+      edit: () => router.push({ pathname: '/onboarding/safety', params: { edit: '1' } }),
+    },
+    {
+      key: 'conditions',
+      value: s.conditions.length
+        ? s.conditions.map((c) => t(`safety.conditions.${c}`)).join(', ')
+        : t('profile.conditionsNone'),
+      edit: () => router.push({ pathname: '/onboarding/safety', params: { edit: '1' } }),
+    },
+    {
+      key: 'position',
+      value: t(`safety.positions.${s.position}`),
       edit: () => router.push({ pathname: '/onboarding/safety', params: { edit: '1' } }),
     },
     {

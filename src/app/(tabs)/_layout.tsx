@@ -20,10 +20,11 @@ export default function TabsLayout() {
         tabBarActiveTintColor: colors.ink,
         tabBarInactiveTintColor: colors.muted,
         tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.line },
+        // Tighter tracking so "PROGRESSO" / "FAMILIA" fit at 60+ size (QA round 1).
         tabBarLabelStyle: {
           fontFamily: fonts.headingSemi,
-          fontSize: senior ? 15 : 13,
-          letterSpacing: 1,
+          fontSize: senior ? 14 : 12,
+          letterSpacing: 0.3,
           textTransform: 'uppercase',
         },
         sceneStyle: { backgroundColor: colors.background },

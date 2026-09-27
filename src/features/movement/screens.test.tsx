@@ -85,9 +85,11 @@ describe('Movement that hurts — report', () => {
 
     expect(screen.getByText('Reaching sideways for something on the counter')).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled();
-    await fireEvent.press(screen.getAllByRole('radio', { name: 'Hurts' })[1]); // to the side
-    await fireEvent.press(screen.getAllByRole('radio', { name: 'Hurts' })[3]); // turn outward
-    await fireEvent.press(screen.getAllByRole('radio', { name: 'No pain' })[0]); // in front
+    // Each option names its movement, so screen readers hear distinct choices.
+    expect(screen.queryAllByRole('radio', { name: 'Hurts' })).toHaveLength(0);
+    await fireEvent.press(screen.getByRole('radio', { name: 'Raise arm to the side: Hurts' }));
+    await fireEvent.press(screen.getByRole('radio', { name: /^Turn .*outward.*: Hurts$/ }));
+    await fireEvent.press(screen.getByRole('radio', { name: 'Raise arm in front: No pain' }));
     await next();
     await fireEvent.press(screen.getByRole('radio', { name: 'Pain 4 out of 10' }));
     await next();

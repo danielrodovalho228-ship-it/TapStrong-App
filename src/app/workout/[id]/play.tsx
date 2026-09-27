@@ -128,7 +128,12 @@ export default function PlayerScreen() {
       </View>
 
       {stepKind(step.item) === 'timed' ? (
-        <TimedStep key={`${step.item.id}-${step.item.exerciseId}`} workout={workout} step={step} />
+        <TimedStep
+          key={`${step.item.id}-${step.item.exerciseId}`}
+          workout={workout}
+          step={step}
+          onSwap={() => setSheet('user_choice')}
+        />
       ) : (
         <SetStep
           key={`${step.item.id}-${step.setNo}-${step.item.exerciseId}`}
@@ -163,7 +168,15 @@ export default function PlayerScreen() {
 }
 
 /** Warm-up, finisher and cool-down steps with a countdown. */
-function TimedStep({ workout, step }: { workout: WorkoutRecord; step: Step }) {
+function TimedStep({
+  workout,
+  step,
+  onSwap,
+}: {
+  workout: WorkoutRecord;
+  step: Step;
+  onSwap: () => void;
+}) {
   const { t } = useTranslation();
   const { logSet, skipItem } = useWorkoutStore();
   const [startedAt, setStartedAt] = useState<number | null>(null);
@@ -210,10 +223,27 @@ function TimedStep({ workout, step }: { workout: WorkoutRecord; step: Step }) {
       )}
       <Button label={t('workout.player.doneStep')} disabled={!canEnd} onPress={done} />
       {!canEnd ? (
+        // Say when "Done" unlocks (QA P2).
         <AppText variant="caption" color={colors.muted}>
-          {t('workout.player.warmupShorten')}
+          {startedAt ? t('workout.player.halfHint') : t('workout.player.startFirst')}
+          {dayHasLoad ? ` ${t('workout.player.warmupShorten')}` : ''}
         </AppText>
       ) : null}
+      {/* Swap and "I feel pain" on timed steps too (QA P2). */}
+      <View style={styles.row}>
+        <View style={styles.flex}>
+          <Button variant="secondary" label={t('workout.player.swap')} onPress={onSwap} />
+        </View>
+        <View style={styles.flex}>
+          <Button
+            variant="danger"
+            label={t('workout.player.pain')}
+            onPress={() =>
+              router.push({ pathname: '/workout/[id]/pain', params: { id: workout.id } })
+            }
+          />
+        </View>
+      </View>
       {step.item.role === 'cooldown' ? (
         confirmSkip ? (
           <View style={styles.confirm}>
@@ -272,7 +302,10 @@ function SetStep({
 
   const past = pastSessions(workouts, item.exerciseId, workout.id);
   const progression = item.role === 'main' ? progressionFor(past, range) : null;
-  const earlier = workout.logs.filter((l) => l.itemId === item.id && l.load != null).pop();
+  // Only this exercise's own sets: after a swap the old load doesn't carry over (QA P2).
+  const earlier = workout.logs
+    .filter((l) => l.itemId === item.id && l.exerciseId === item.exerciseId && l.load != null)
+    .pop();
   const initialLoad =
     earlier?.load ?? (item.role === 'main' ? suggestedLoad(past, progression, unit) : null) ?? 0;
 

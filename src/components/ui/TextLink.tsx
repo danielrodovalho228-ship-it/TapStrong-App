@@ -31,7 +31,13 @@ export function TextLink({ label, tone = 'ink', ...rest }: TextLinkProps) {
 }
 
 const styles = StyleSheet.create({
-  base: { minHeight: sizes.touchTarget, justifyContent: 'center', alignItems: 'center' },
+  base: {
+    minHeight: sizes.touchTarget,
+    minWidth: sizes.touchTarget,
+    paddingHorizontal: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   pressed: { opacity: 0.6 },
   text: { textDecorationLine: 'underline' },
 });

@@ -26,6 +26,7 @@ import { clock } from '@/lib/clock';
 import { getSupabase } from '@/lib/supabase';
 import { colors, fonts, spacing } from '@/theme';
 import { OwnerOnly } from '@/features/family/OwnerOnly';
+import { useWorkoutStore } from '@/features/workout/store';
 
 type Step = 'start' | 'code';
 
@@ -33,6 +34,11 @@ type Step = 'start' | 'code';
 function AccountScreenInner() {
   const { t, i18n } = useTranslation();
   const { from } = useLocalSearchParams<{ from?: string }>();
+  // "First workout · done" only after the first one (QA P2).
+  const firstDone =
+    useWorkoutStore(
+      (st) => st.workouts.filter((w) => w.status === 'done' || w.status === 'partial').length,
+    ) <= 1;
   const account = useAccountStore();
   const profile = useOnboardingStore();
   const mode = derive(profile)?.mode ?? 'adult';
@@ -97,7 +103,7 @@ function AccountScreenInner() {
     <Screen header={<Header onBack={close} />}>
       <View style={styles.head}>
         <AppText variant="caption" color={colors.accent} style={styles.caps}>
-          {from === 'done' ? t('account.eyebrowDone') : t('account.eyebrow')}
+          {from === 'done' && firstDone ? t('account.eyebrowDone') : t('account.eyebrow')}
         </AppText>
         <AppText variant="h1" accessibilityRole="header">
           {account.saved ? t('account.savedTitle') : t('account.title')}

@@ -28,7 +28,7 @@ import {
 } from '../options';
 import { toggleInList } from '../safety';
 import { useOnboardingStore } from '../store';
-import { visibleMainGoals } from '../visible';
+import { sexLabelKey, visibleMainGoals } from '../visible';
 
 function Group({ label, children }: { label?: string; children: React.ReactNode }) {
   return (
@@ -216,7 +216,7 @@ function BodyControls({ mode }: { mode: AppMode }) {
         {BODY_OPTIONS.map((sex) => (
           <Chip
             key={sex ?? 'neutral'}
-            label={t(`sex.${sex ?? 'neutral'}`)}
+            label={t(sexLabelKey(sex, mode))}
             selected={s.sex === sex}
             onPress={() => s.update({ sex })}
           />

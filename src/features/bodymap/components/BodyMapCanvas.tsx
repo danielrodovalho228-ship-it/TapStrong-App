@@ -4,6 +4,7 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useTranslation } from 'react-i18next';
 import {
+  Platform,
   Pressable,
   StyleSheet,
   View,
@@ -66,7 +67,8 @@ export function BodyMapCanvas({
   const onLayout = (e: LayoutChangeEvent) => setWidth(e.nativeEvent.layout.width);
 
   // Pinch to zoom, two fingers to move (one finger stays for tapping dots).
-  // The +/- buttons do the same for people who cannot pinch.
+  // The +/- buttons do the same for people who cannot pinch. Web has no second
+  // finger on a mouse, so there a one-pointer drag moves the zoomed body (QA round 1).
   const zoom = useSharedValue(1);
   const startZoom = useSharedValue(1);
   const x = useSharedValue(0);
@@ -98,7 +100,8 @@ export function BodyMapCanvas({
     .runOnJS(true)
     .onFinalize(() => setZoomLevel(zoom.value));
   const pan = Gesture.Pan()
-    .minPointers(2)
+    .minPointers(Platform.OS === 'web' ? 1 : 2)
+    .minDistance(10)
     .onStart(() => {
       startX.value = x.value;
       startY.value = y.value;
@@ -197,6 +200,7 @@ export function BodyMapCanvas({
                   accessible={i === 0}
                   aria-hidden={i > 0}
                   focusable={i === 0}
+                  tabIndex={i === 0 ? 0 : -1}
                   accessibilityRole="button"
                   accessibilityLabel={label}
                   accessibilityState={{ selected: isSelected }}

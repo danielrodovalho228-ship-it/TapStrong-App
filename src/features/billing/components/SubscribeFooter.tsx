@@ -24,8 +24,17 @@ import { useBillingStore } from '../store';
  * The subscribe button with honest terms right under it (SPEC §2.5):
  * the price after the trial, the reminder, and cancel steps one tap away.
  */
-export function SubscribeFooter({ plan, period }: { plan: Plan; period: Period }) {
-  const { t } = useTranslation();
+export function SubscribeFooter({
+  plan,
+  period,
+  onBought,
+}: {
+  plan: Plan;
+  period: Period;
+  /** Where to go after a purchase; Billing by default (the paywall resumes the workout). */
+  onBought?: () => void;
+}) {
+  const { t, i18n } = useTranslation();
   const saved = useAccountStore((s) => s.saved);
   const { entitlement, prices, hadTrial } = useBillingStore();
   const [busy, setBusy] = useState(false);
@@ -43,6 +52,13 @@ export function SubscribeFooter({ plan, period }: { plan: Plan; period: Period }
   const price = priceLabel(prices, plan, period);
   const per = t(period === 'annual' ? 'billing.perYear' : 'billing.perMonth');
   const subscribed = current === plan && entitlement.productId === PRODUCTS[plan][period];
+  // A subscriber picking another plan or period switches in the store (QA round 1).
+  const switching = !subscribed && current !== 'free';
+  const trialEnd = new Date(clock.now().getTime() + TRIAL_DAYS * 24 * 60 * 60 * 1000);
+  const trialEndText = trialEnd.toLocaleDateString(i18n.language, {
+    month: 'long',
+    day: 'numeric',
+  });
 
   const onPress = async () => {
     if (subscribed) return router.push('/billing');
@@ -51,7 +67,7 @@ export function SubscribeFooter({ plan, period }: { plan: Plan; period: Period }
     setMessage(null);
     const result = await buy(PRODUCTS[plan][period]);
     setBusy(false);
-    if (result === 'ok') router.replace('/billing');
+    if (result === 'ok') (onBought ?? (() => router.replace('/billing')))();
     else if (result !== 'cancelled') setMessage(t(`billing.errors.${result}`));
   };
 
@@ -64,18 +80,25 @@ export function SubscribeFooter({ plan, period }: { plan: Plan; period: Period }
             ? t('billing.manage')
             : !saved
               ? t('billing.saveFirst')
-              : hadTrial
-                ? t('billing.subscribe', { price, per })
-                : t('billing.startTrial', { days: TRIAL_DAYS })
+              : switching
+                ? t('billing.switchTo', { plan: t(`billing.plans.${plan}.name`), price, per })
+                : hadTrial
+                  ? t('billing.subscribe', { price, per })
+                  : t('billing.startTrial', { days: TRIAL_DAYS })
         }
         loading={busy}
         onPress={onPress}
       />
       <AppText variant="caption" color={colors.mutedStrong} style={styles.center}>
-        {hadTrial
+        {hadTrial || switching
           ? t('billing.termsNoTrial', { price, per })
           : t('billing.terms', { price, per, days: TRIAL_DAYS, reminder: TRIAL_REMINDER_DAYS })}
       </AppText>
+      {!hadTrial && !switching && !subscribed ? (
+        <AppText variant="caption" color={colors.ink} style={styles.center}>
+          {t('billing.trialEnds', { date: trialEndText })}
+        </AppText>
+      ) : null}
       <View style={styles.center}>
         <TextLink
           tone="accent"

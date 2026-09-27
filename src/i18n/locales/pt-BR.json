@@ -131,7 +131,7 @@
     "options": {
       "me": "Eu",
       "child": "Meu filho ou filha (menor de 18)",
-      "parent": "Meu pai, mãe ou avô"
+      "parent": "Meu pai, mãe, avô ou avó"
     },
     "birth": {
       "me": "Seu mês e ano de nascimento",
@@ -205,6 +205,10 @@
     "f": "Mulher",
     "neutral": "Corpo neutro"
   },
+  "sexMinor": {
+    "m": "Menino",
+    "f": "Menina"
+  },
   "chat": {
     "title": "Entrevista com o coach",
     "questions": {
@@ -249,7 +253,8 @@
     "guidedOnly": "Toque numa opção para responder.",
     "summary": {
       "schedule": "{{place}}, {{minutes}} minutos, {{days}} dias por semana."
-    }
+    },
+    "offline": "Não consegui falar com seu coach agora, então só entendo respostas curtas. Escolha nas opções abaixo."
   },
   "safety": {
     "name": "Segurança",
@@ -257,7 +262,7 @@
     "pain": "Dor ou lesões antigas",
     "health": "Saúde",
     "position": "Como você treina melhor?",
-    "none": "Nenhum",
+    "none": "Nenhuma",
     "painAreas": {
       "neck": "Pescoço",
       "shoulder": "Ombro",
@@ -296,14 +301,17 @@
       "restrictions": "Restrições",
       "goals": "Objetivos",
       "schedule": "Rotina",
-      "equipment": "Equipamentos"
+      "equipment": "Equipamentos",
+      "conditions": "Saúde",
+      "position": "Posição"
     },
     "bornValue": "{{month}} {{year}} · {{group}} ({{age}})",
     "groups": {
       "teen": "Adolescente",
       "adult": "Adulto",
       "senior": "60+",
-      "child": "Criança"
+      "child": "Criança",
+      "adult_f": "Adulta"
     },
     "restrictionsNone": "Nenhuma por enquanto · adicione quando quiser",
     "goalsNone": "Você vai escolher os músculos no mapa do corpo",
@@ -316,7 +324,8 @@
       "redFlag": "Fale com seu médico antes do primeiro treino."
     },
     "bodyPreview": "Prévia do modelo de corpo",
-    "cta": "Está certo"
+    "cta": "Está certo",
+    "conditionsNone": "Nenhuma"
   },
   "bodyMap": {
     "title": "Toque num músculo",
@@ -2586,10 +2595,11 @@
     "pickElse": "Escolher outra coisa",
     "recoveryMap": "Mapa de recuperação",
     "recovery": {
-      "fresh": "{{muscles}} · hoje",
-      "recovering": "{{muscles}} · há 1 dia",
-      "almost": "{{muscles}} · há 2 dias",
-      "neglected": "{{muscles}} · 5+ dias"
+      "fresh": "{{muscles}} · últimas 24 h",
+      "recovering": "{{muscles}} · há 1–2 dias",
+      "almost": "{{muscles}} · há 2–3 dias",
+      "neglected": "{{muscles}} · 5+ dias",
+      "never": "{{muscles}} · ainda sem treino"
     },
     "recoveryEmpty": "Seu primeiro treino colore os músculos que você treinar.",
     "recoveryNote": "As cores somem conforme você se recupera. Cinza-azulado quer dizer que é hora de treinar.",
@@ -2606,8 +2616,8 @@
       "start": "Começar",
       "progress": "Meu progresso",
       "lastTitle": "Último treino: {{day}}",
-      "lastBody_one": "Você fez {{count}} exercício em {{minutes}} minutos. Está salvo.",
-      "lastBody_other": "Você fez {{count}} exercícios em {{minutes}} minutos. Está salvo.",
+      "lastBody_one": "Você fez {{count}} exercício em {{minutes}} min. Está salvo.",
+      "lastBody_other": "Você fez {{count}} exercícios em {{minutes}} min. Está salvo.",
       "familySees": "{{name}} também pode ver no plano Família.",
       "familySeesPlan": "Sua família também pode ver no plano Família.",
       "readIt": "Ler para mim",
@@ -2617,8 +2627,18 @@
         "morning": "Bom dia,",
         "afternoon": "Boa tarde,",
         "evening": "Boa noite,"
-      }
-    }
+      },
+      "greetingAlone": {
+        "morning": "Bom dia",
+        "afternoon": "Boa tarde",
+        "evening": "Boa noite"
+      },
+      "dayToday": "hoje",
+      "dayYesterday": "ontem",
+      "supported": "opções com apoio"
+    },
+    "freezes_one": "{{count}} proteção de sequência guardada",
+    "freezes_other": "{{count}} proteções de sequência guardadas"
   },
   "workout": {
     "title": "Seu treino",
@@ -2644,7 +2664,6 @@
     },
     "warmup": "Aquecimento · {{minutes}} min",
     "cooldown": "Desaquecimento · {{minutes}} min",
-    "rampUp": "{{sets}} séries leves de aproximação",
     "skipped": "Pulado hoje",
     "startWarmup": "Começar pelo aquecimento",
     "continue": "Continuar",
@@ -2652,7 +2671,7 @@
     "machineTaken": "Máquina ocupada",
     "reviewed": "Cada movimento é conferido por um treinador certificado",
     "draftBadge": "Build de desenvolvimento: exercícios em rascunho, ainda sem revisão. Nunca chegam aos usuários.",
-    "demoLoop": "Demo · loop",
+    "demoLoop": "Demonstração · em repetição",
     "demoPending": "O vídeo de demonstração chega com a biblioteca de exercícios licenciada.",
     "bodyNow": "Seu corpo agora",
     "finisher": {
@@ -2676,7 +2695,7 @@
       "machineEyebrow": "Máquina ocupada",
       "title": "No lugar de {{name}}",
       "whichMachine": "Qual máquina está ocupada?",
-      "empty": "Nenhuma alternativa segura para este músculo com o seu equipamento.",
+      "empty": "Agora não há outra opção segura para este exercício.",
       "replace": "Substituir",
       "replaceWith": "Substituir por {{name}}",
       "remainingOnly": "As séries já registradas ficam como estão; a troca vale para as séries restantes.",
@@ -2712,7 +2731,9 @@
       "swap": "Trocar",
       "restButton": "Descanso {{seconds}} s",
       "pain": "Sinto dor",
-      "doneSet": "Série feita"
+      "doneSet": "Série feita",
+      "startFirst": "Comece o cronômetro primeiro.",
+      "halfHint": "\"Feito\" libera na metade do tempo."
     },
     "pain": {
       "eyebrow": "Dor relatada · série pausada",
@@ -2812,7 +2833,11 @@
     "cues": {
       "support": "Segure numa cadeira ou bancada para ter equilíbrio o tempo todo.",
       "breathe": "Solte o ar no esforço e nunca prenda a respiração. Pare se sentir tontura ou falta de ar; a orientação do seu médico vem primeiro."
-    }
+    },
+    "rampUp_one": "{{count}} série leve de aproximação",
+    "rampUp_other": "{{count}} séries leves de aproximação",
+    "minSec": "{{minutes}} min {{seconds}} s",
+    "backToFull": "Voltar ao treino completo"
   },
   "account": {
     "eyebrow": "Sua conta",
@@ -2861,7 +2886,10 @@
     "shareLink": "Enviar meu link de convite",
     "inviteMessage": "Estou treinando com o TapStrong. Vem comigo: {{link}}",
     "saveForLink": "Salve sua conta para ter seu próprio link de convite.",
-    "failed": "Não foi possível compartilhar a imagem neste aparelho."
+    "failed": "Não foi possível compartilhar a imagem neste aparelho.",
+    "title4w": "Compartilhar minhas 4 semanas",
+    "eyebrow4w": "Últimas 4 semanas · {{date}}",
+    "cardTitle4w": "Minhas 4 semanas"
   },
   "milestone": {
     "eyebrow": "Nova conquista",
@@ -2969,7 +2997,9 @@
       "note": "Build de desenvolvimento: as compras são simuladas.",
       "charge": "Dev: fim do teste, primeira cobrança",
       "expire": "Dev: voltar ao Grátis"
-    }
+    },
+    "switchTo": "Mudar para {{plan}} · {{price}} {{per}}",
+    "trialEnds": "O teste grátis termina em {{date}}. Cancele antes e você não paga nada."
   },
   "paywall": {
     "eyebrow_one": "Plano Grátis · {{count}} treino nesta semana",
@@ -3164,7 +3194,8 @@
       "denied": "O acesso à câmera está desligado. Ligue nos ajustes do celular.",
       "unavailable": "Fotos não estão disponíveis neste aparelho."
     },
-    "slotLabel": "{{label}} · {{date}}"
+    "slotLabel": "{{label}} · {{date}}",
+    "webOnly": "As fotos funcionam no app TapStrong para celular, onde ficam privadas no seu aparelho."
   },
   "repair": {
     "eyebrow": "Reparo",
@@ -3578,5 +3609,20 @@
   "ownerOnly": {
     "title": "Para o titular da conta",
     "managed": "O titular da conta cuida do plano e da família no próprio perfil."
+  },
+  "settings": {
+    "title": "Configurações",
+    "open": "Configurações e conta",
+    "account": "Conta e login",
+    "plan": "Plano e cobrança",
+    "restrictions": "Restrições",
+    "deleteNote": "Excluir sua conta apaga seus dados dos nossos servidores e limpa este celular, inclusive as fotos. A próxima tela explica cada passo.",
+    "delete": "Excluir conta"
+  },
+  "referral": {
+    "eyebrow": "Convite recebido",
+    "title": "Um amigo convidou você",
+    "body": "Quando você salvar sua conta e terminar o primeiro treino, vocês dois ganham 1 semana grátis de Premium.",
+    "continue": "Continuar"
   }
 }

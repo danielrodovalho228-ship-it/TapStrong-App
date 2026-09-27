@@ -19,7 +19,8 @@ function PlansScreenInner() {
   const { t } = useTranslation();
   const entitlement = useBillingStore((s) => s.entitlement);
   const current = currentPlan(entitlement, clock.now());
-  const [plan, setPlan] = useState<Plan>(current === 'free' ? 'family' : current);
+  // Premium first for new buyers; subscribers start on their plan (QA round 1).
+  const [plan, setPlan] = useState<Plan>(current === 'free' ? 'premium' : current);
   const [period, setPeriod] = useState<Period>('monthly');
 
   return (

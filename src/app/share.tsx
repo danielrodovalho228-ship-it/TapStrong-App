@@ -1,4 +1,4 @@
-import { Redirect, router } from 'expo-router';
+import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Share, StyleSheet, View } from 'react-native';
@@ -9,11 +9,13 @@ import { loadReferralCode, referralLink } from '@/features/account/cloud';
 import { useAccountStore } from '@/features/account/store';
 import type { BodySex } from '@/features/bodymap/images';
 import { displayBand } from '@/features/bodymap/selection';
-import { MUSCLES } from '@/features/muscles';
+import { muscleByKey } from '@/features/muscles';
 import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { muscleLabel } from '@/features/onboarding/summaries';
 import { LegendRow, RecoveryBody, STATE_COLOR } from '@/features/workout/components/RecoveryBody';
+import { CHECKIN_DAYS } from '@/features/progress/checkin';
+import { rangeTotals, trainedMuscles, workoutMinutes } from '@/features/progress/stats';
 import { mainSetCounts } from '@/features/workout/flow';
 import { useBodyStates } from '@/features/workout/hooks';
 import { useWorkoutStore } from '@/features/workout/store';
@@ -25,6 +27,7 @@ import { colors, fonts, radius, spacing } from '@/theme';
 
 /**
  * Mockup 15 — share card: today's muscle map, streak and an invite link.
+ * `range=4w` (from the 4-week check-in) shows the last 4 weeks instead.
  * Hidden in child mode (no social sharing under 13, SPEC §2.3). The card
  * shows the body map only — never photos, measurements or health details.
  */
@@ -34,7 +37,8 @@ export default function ShareScreen() {
   const derived = derive(profile);
   const account = useAccountStore();
   const { workouts, streak } = useWorkoutStore();
-  const { states } = useBodyStates();
+  const { states, library } = useBodyStates();
+  const fourWeeks = useLocalSearchParams<{ range?: string }>().range === '4w';
   const card = useRef<View>(null);
   const [code, setCode] = useState<string | null>(account.referralCode ?? null);
   const [failed, setFailed] = useState(false);
@@ -48,24 +52,36 @@ export default function ShareScreen() {
   const now = clock.now();
   const finished = workouts.filter((w) => w.status === 'done' || w.status === 'partial');
   const last = finished.at(-1);
-  const minutes = last
-    ? Math.max(
-        1,
-        Math.round(
-          (Date.parse(last.endedAt ?? now.toISOString()) -
-            Date.parse(last.startedAt ?? last.createdAt)) /
-            60000,
-        ),
-      )
-    : 0;
+  const month = rangeTotals(workouts, now, CHECKIN_DAYS);
+  const stats = fourWeeks
+    ? { workouts: month.workouts.length, minutes: month.minutes, sets: month.sets }
+    : {
+        workouts: finished.length,
+        minutes: last ? workoutMinutes(last, now) : 0,
+        sets: last ? mainSetCounts(last).done : 0,
+      };
   const band = displayBand(profile.bodyModel.band, derived.band, derived.mode);
   const sex: BodySex = profile.bodyModel.sex ?? (profile.sex === 'f' ? 'f' : 'm');
+  // Muscles actually trained, most sets first — not catalog order (QA round 1).
+  const trained = trainedMuscles(fourWeeks ? month.workouts : last ? [last] : [], library).filter(
+    (k) => muscleByKey(k)?.views.length,
+  );
   const names = (state: 'fresh' | 'recovering') =>
-    MUSCLES.filter((m) => m.views.length && states[m.key] === state)
+    trained
+      .filter((k) => states[k] === state)
       .slice(0, 3)
-      .map((m) => muscleLabel(t, m.key))
+      .map((k) => muscleLabel(t, k))
       .join(', ');
+  const title = fourWeeks ? t('share.title4w') : t('share.title');
   const link = code ? referralLink(code) : null;
+
+  const textSummary = [
+    title,
+    t('share.workouts', { count: stats.workouts }),
+    t('workout.minutes', { value: stats.minutes }),
+    t('share.sets', { count: stats.sets }),
+    t('share.tagline'),
+  ].join(' · ');
 
   const shareImage = async () => {
     setFailed(false);
@@ -77,10 +93,16 @@ export default function ShareScreen() {
       /* eslint-enable @typescript-eslint/no-require-imports */
       const uri = await captureRef(card, { format: 'png', quality: 1 });
       if (!(await Sharing.isAvailableAsync())) throw new Error('sharing unavailable');
-      await Sharing.shareAsync(uri, { mimeType: 'image/png', dialogTitle: t('share.title') });
+      await Sharing.shareAsync(uri, { mimeType: 'image/png', dialogTitle: title });
       track('share_card_shared', { target: 'image' });
     } catch {
-      setFailed(true);
+      // No image sharing (web, some devices): share a short text instead (QA round 1).
+      try {
+        await Share.share({ message: textSummary });
+        track('share_card_shared', { target: 'text' });
+      } catch {
+        setFailed(true);
+      }
     }
   };
 
@@ -100,7 +122,7 @@ export default function ShareScreen() {
           onPress={() => (router.canGoBack() ? router.back() : router.replace('/home'))}
         />
         <AppText variant="caption" color={colors.dark.accentSoft} style={styles.caps}>
-          {t('share.title')}
+          {title}
         </AppText>
         <View style={styles.spacer} />
       </View>
@@ -110,12 +132,14 @@ export default function ShareScreen() {
           <View style={styles.cardHead}>
             <View style={styles.flex}>
               <AppText variant="caption" color={colors.muted} style={styles.caps}>
-                {t('share.eyebrow', {
+                {t(fourWeeks ? 'share.eyebrow4w' : 'share.eyebrow', {
                   n: finished.length,
                   date: now.toLocaleDateString(i18n.language, { month: 'short', day: 'numeric' }),
                 })}
               </AppText>
-              <AppText variant="h1">{t('share.cardTitle')}</AppText>
+              <AppText variant="h1">
+                {fourWeeks ? t('share.cardTitle4w') : t('share.cardTitle')}
+              </AppText>
             </View>
             <View style={styles.streak}>
               <AppText variant="h1" color={colors.accent}>
@@ -134,13 +158,9 @@ export default function ShareScreen() {
             ) : null}
           </View>
           <View style={styles.stats}>
-            <AppText variant="bodyStrong">
-              {t('share.workouts', { count: finished.length })}
-            </AppText>
-            <AppText variant="bodyStrong">{t('workout.minutes', { value: minutes })}</AppText>
-            <AppText variant="bodyStrong">
-              {t('share.sets', { count: last ? mainSetCounts(last).done : 0 })}
-            </AppText>
+            <AppText variant="bodyStrong">{t('share.workouts', { count: stats.workouts })}</AppText>
+            <AppText variant="bodyStrong">{t('workout.minutes', { value: stats.minutes })}</AppText>
+            <AppText variant="bodyStrong">{t('share.sets', { count: stats.sets })}</AppText>
           </View>
           <View style={styles.brand}>
             <AppText variant="h3">{t('app.name')}</AppText>
@@ -153,7 +173,7 @@ export default function ShareScreen() {
         <Button variant="accent" label={t('share.shareImage')} onPress={shareImage} />
         {link ? (
           <Button variant="onDark" label={t('share.shareLink')} onPress={shareLink} />
-        ) : (
+        ) : account.saved ? null : (
           <AppText variant="caption" color={colors.dark.accentSoft} style={styles.centerText}>
             {t('share.saveForLink')}
           </AppText>
