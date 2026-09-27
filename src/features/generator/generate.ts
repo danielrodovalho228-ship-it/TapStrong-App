@@ -1,5 +1,5 @@
 import type { Exercise, SessionPart } from '../exercises/types';
-import { MUSCLES, muscleByKey, muscleFamily, type MovementGroup } from '../muscles';
+import { muscleByKey, muscleFamily, type MovementGroup } from '../muscles';
 import { defaultMuscleGoal, type MuscleGoal } from '../onboarding/options';
 import type { AppMode } from '../profile/age';
 
@@ -163,17 +163,23 @@ function hitIn(session: { mainMuscles: string[] } | undefined, family: string[])
   return !!session && family.some((k) => session.mainMuscles.includes(k));
 }
 
-/** Hours before a muscle trains again (QA R2-08): peach at 60+ lasts 96 h. */
-const READY_HOURS: Record<AppMode, number> = { child: 48, teen: 48, adult: 48, senior: 96 };
+/**
+ * Hours before a muscle trains again (QA R2-08), counted from the start of
+ * the last session that trained it. About 48 h (96 h at 60+) with a few hours
+ * of tolerance, so training at the same time every other day works (QA R3-04).
+ */
+export const READY_HOURS: Record<AppMode, number> = { child: 44, teen: 44, adult: 44, senior: 90 };
+
+/**
+ * Patterns that don't load a muscle hard enough to need recovery: balance,
+ * mobility, stretches and breathing never turn a muscle red, never block it
+ * and never title a session (QA R3-05, R3-08).
+ */
+const NO_RECOVERY_PATTERNS = ['balance', 'mobility', 'stretch', 'breathing'];
+export const needsRecovery = (e: Pick<Exercise, 'pattern'> | undefined) =>
+  !!e && !NO_RECOVERY_PATTERNS.includes(e.pattern);
 
 const GROUP_ORDER: Record<MovementGroup, number> = { pull: 0, legs: 1, push: 2, core: 3 };
-
-const MUSCLES_BY_GROUP: Partial<Record<MovementGroup, string[]>> = Object.fromEntries(
-  (['push', 'pull', 'legs', 'core'] as MovementGroup[]).map((g) => [
-    g,
-    MUSCLES.filter((m) => m.movementGroup === g).map((m) => m.key),
-  ]),
-);
 
 /**
  * Work per group this week (last 7 days): distinct parent muscles trained in
@@ -331,7 +337,12 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   }));
   // Rules count the parent muscle: upper, middle and lower chest are all chest (QA D-03).
   const parentOf = (muscle: string) => muscleByKey(muscle)?.parentKey ?? muscle;
-  const root = (t: Target) => muscleFamily(parentOf(t.muscle));
+  // The parent muscle itself too: a session logged as "chest" trained upper chest.
+  const rootOf = (muscle: string) => {
+    const p = parentOf(muscle);
+    return [...new Set([p, ...muscleFamily(p)])];
+  };
+  const root = (t: Target) => rootOf(t.muscle);
   // A Repair recovery session or a short mobility session stays on its focus.
   const focused = !!input.rehab || !!input.mobilityOnly;
   const rested = input.mobilityOnly
@@ -421,10 +432,13 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   // groups trained least this week first, only recovered ones, never a
   // parent muscle twice (QA R2-09). A Repair recovery session stays focused.
   const weekCount = groupWeekCounts(input);
-  const groupReady = (g: MovementGroup) => isReady(MUSCLES_BY_GROUP[g] ?? []) || !recent.length;
-  const fill: MovementGroup[] = (['push', 'pull', 'legs', 'core'] as MovementGroup[])
-    .filter(groupReady)
-    .sort((a, b) => weekCount[a] - weekCount[b] || GROUP_ORDER[a] - GROUP_ORDER[b]);
+  // Readiness is per muscle (QA R3-04): one recent muscle no longer closes its
+  // whole group, only the moves that train it.
+  const primariesReady = (e: Exercise) =>
+    e.muscles.filter((m) => m.role === 'primary').every((m) => isReady(rootOf(m.muscleKey)));
+  const fill: MovementGroup[] = (['push', 'pull', 'legs', 'core'] as MovementGroup[]).sort(
+    (a, b) => weekCount[a] - weekCount[b] || GROUP_ORDER[a] - GROUP_ORDER[b],
+  );
   const added = new Map<string, MovementGroup>();
   // Each open slot goes to the group with the fewest sessions this week plus
   // exercises today, so a chest goal does not make the week push-heavy.
@@ -432,7 +446,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     main.filter((i) => groupOf(i.targetMuscle ?? '') === g).length;
   const nextFor = (g: MovementGroup) =>
     rankForGroup(pool, g, defaultGoal, input.mode).find(
-      (e) => !used.has(e.id) && !usedParents.has(parentOf(topPrimary(e)!)),
+      (e) => !used.has(e.id) && !usedParents.has(parentOf(topPrimary(e)!)) && primariesReady(e),
     );
   while (!focused && main.length < slots) {
     const options = fill
@@ -478,14 +492,19 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
       .filter((e) => e.pattern === 'balance' && e.parts.includes('main') && !used.has(e.id))
       .sort(
         (a, b) =>
-          supportedFirst(b) - supportedFirst(a) || a.level - b.level || byText(a.slug, b.slug),
+          // Recovered muscles first (QA R3-08).
+          Number(primariesReady(b)) - Number(primariesReady(a)) ||
+          supportedFirst(b) - supportedFirst(a) ||
+          a.level - b.level ||
+          byText(a.slug, b.slug),
       )[0];
     if (pick) {
-      const item = mainItem(
-        pick,
-        { muscle: topPrimary(pick)!, family: [], goal: 'balance' },
-        input,
-      );
+      // Labelled "Balance", not a muscle: it never titles the session or
+      // counts as training a muscle (QA R3-08).
+      const item: SessionItem = {
+        ...mainItem(pick, { muscle: topPrimary(pick)!, family: [], goal: 'balance' }, input),
+        targetMuscle: null,
+      };
       if (main.length >= slots && main.length > 1) {
         const drop = main.pop()!;
         used.delete(drop.exerciseId);
@@ -547,7 +566,8 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     }
     return false;
   };
-  while (total() > budget) {
+  // A short mobility session keeps its 3 moves; they are dosed to fit (QA R3-05).
+  while (!input.mobilityOnly && total() > budget) {
     // A recovery session keeps its 4 holds when it runs at most 3 min over (QA round 2).
     if (input.rehab && main.length <= 4 && total() - budget <= 180) break;
     if (finisher && promisedCardio && main.length > 2 && dropOne()) continue;
@@ -740,25 +760,30 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
 }
 
 export const MOBILITY_MINUTES = 10;
-const MOBILITY_FOCUS = ['hips', 'upperBack', 'hamstrings', 'shoulders'];
+/** Focus areas that take turns day by day (QA R3-05). */
+export const MOBILITY_FOCUS = ['hips', 'upperBack', 'shoulders', 'calves'] as const;
 
 /**
  * A short mobility session (~10 min, decision 1 of QA round 2): warm-up,
- * 3 mobility moves, cool-down. It counts as an active day for the streak,
- * with no limit on the free plan.
+ * 3 mobility moves, cool-down. The lead focus rotates by day (hips, upper
+ * back, shoulders, ankles) so it is not always the same stretch (QA R3-05).
+ * It counts as an active day for the streak, with no limit on the free plan.
  */
 export function generateMobilitySession(
   input: GeneratorInput,
   minutes = MOBILITY_MINUTES,
 ): GeneratedSession {
+  const day = input.today ? Math.floor(Date.parse(input.today) / 86_400_000) : 0;
+  const start = ((day % MOBILITY_FOCUS.length) + MOBILITY_FOCUS.length) % MOBILITY_FOCUS.length;
+  const focus = [...MOBILITY_FOCUS.slice(start), ...MOBILITY_FOCUS.slice(0, start)].slice(0, 3);
   return generateSession({
     ...input,
     minutes,
     mobilityOnly: true,
     mainGoals: ['mobility'],
-    muscleGoals: MOBILITY_FOCUS.map((muscleKey) => ({ muscleKey, goal: 'mobility' as const })),
+    muscleGoals: focus.map((muscleKey) => ({ muscleKey, goal: 'mobility' as const })),
     exercisesPerSession: 3,
-    setsPerExercise: 2,
+    setsPerExercise: 1,
   });
 }
 
@@ -773,7 +798,7 @@ export function mainWorkMuscles(session: GeneratedSession, library: Exercise[]):
   return [
     ...new Set(
       session.items
-        .filter((i) => i.role === 'main')
+        .filter((i) => i.role === 'main' && needsRecovery(byId.get(i.exerciseId)))
         .flatMap((i) =>
           (byId.get(i.exerciseId)?.muscles ?? [])
             .filter((m) => m.role === 'primary')

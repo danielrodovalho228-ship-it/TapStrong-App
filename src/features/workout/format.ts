@@ -53,8 +53,11 @@ export function doseLine(t: TFunction, item: SessionItem): string {
 export function targetText(t: TFunction, item: SessionItem, e: Exercise | undefined): string {
   const muscle =
     item.targetMuscle ?? e?.muscles.find((m) => m.role === 'primary')?.muscleKey ?? null;
-  const name = muscle ? muscleLabel(t, muscle) : '';
   if (item.role === 'finisher') return t(`workout.finisher.${item.part as 'finisher_cardio'}`);
+  // The protected balance item is labelled "Balance", not a muscle (QA R3-08).
+  if (item.role === 'main' && item.goal === 'balance' && !item.targetMuscle)
+    return t('muscleGoals.balance');
+  const name = muscle ? muscleLabel(t, muscle) : '';
   return item.goal ? `${name} · ${t(`muscleGoals.${item.goal}`)}` : name;
 }
 

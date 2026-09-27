@@ -3418,6 +3418,18 @@
     "sv_seated_hands_on_knees_lift": {
       "name": "Estiramiento de abdomen sentado",
       "cues": "Manos en las rodillas, presiona suave, eleva el pecho y mira un poco arriba para estirar el bajo abdomen; respira."
+    },
+    "bal_seated_head_turns": {
+      "name": "Giros de cabeza sentado",
+      "cues": "Siéntate erguido sin apoyar la espalda, pies en el suelo; gira la cabeza despacio de lado a lado con el tronco quieto."
+    },
+    "bal_seated_knee_lift_hold": {
+      "name": "Rodilla arriba sentado",
+      "cues": "Siéntate erguido al borde de la silla, levanta un poco una rodilla y mantén sin echarte atrás; cambia."
+    },
+    "bal_seated_arms_up_hold": {
+      "name": "Brazos al frente sentado",
+      "cues": "Siéntate erguido sin apoyar la espalda, sube ambos brazos al frente a la altura de los hombros y mantén; respira."
     }
   },
   "generator": {
@@ -3654,7 +3666,9 @@
       "seeMilestone": "Ver mi logro",
       "stoppedEyebrow": "Detenido por dolor",
       "stoppedTitle": "Bien hecho en parar",
-      "stoppedBody": "El dolor agudo significa descansar hoy. Los entrenamientos de hoy dejan fuera esta zona. Si el dolor es fuerte, vuelve o no se va, consulta a un médico o fisioterapeuta."
+      "stoppedBody": "El dolor agudo significa descansar hoy. Los entrenamientos de hoy dejan fuera esta zona. Si el dolor es fuerte, vuelve o no se va, consulta a un médico o fisioterapeuta.",
+      "mobilityEyebrow": "Movilidad corta · completada",
+      "mobilityTitle": "¡Movilidad hecha!"
     },
     "legend": {
       "main": "Objetivo principal hoy",

@@ -6,12 +6,17 @@ import type { WorkoutRecord } from '../workout/types';
 
 const finished = (w: WorkoutRecord) => w.status === 'done' || w.status === 'partial';
 
+/** A finished workout with work logged; short mobility sessions don't count. */
+export const countsAsWorkout = (w: WorkoutRecord) =>
+  finished(w) && w.logs.length > 0 && w.kind !== 'mobility';
+
 const mainItemIds = (w: WorkoutRecord) =>
   new Set(w.session.items.filter((i) => i.role === 'main').map((i) => i.id));
 
 /** Totals for the Progress header (mockup 18). */
 export function totals(workouts: WorkoutRecord[]) {
-  const done = workouts.filter((w) => finished(w) && w.logs.length > 0);
+  // A short mobility session keeps the streak but is not a workout (QA R3-05).
+  const done = workouts.filter((w) => countsAsWorkout(w));
   return {
     workouts: done.length,
     sets: done.reduce((n, w) => {

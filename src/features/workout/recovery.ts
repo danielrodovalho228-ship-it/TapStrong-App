@@ -1,6 +1,7 @@
 import { HOUR_MS } from '@/lib/dates';
 
 import type { Exercise } from '../exercises/types';
+import { needsRecovery } from '../generator/generate';
 import { MUSCLES, muscleByKey, muscleFamily, type MovementGroup } from '../muscles';
 import { recoveryHoursFor, type AppMode } from '../profile/age';
 
@@ -36,11 +37,15 @@ export function muscleActivity(
   const touch = (key: string) => (out[key] ??= { sets7d: 0 });
   const later = (a: string | undefined, b: string) => (!a || b > a ? b : a);
 
-  for (const w of history.filter(finished)) {
+  // A short mobility session, balance holds and stretches never turn a muscle
+  // red (QA R3-05, R3-08).
+  for (const w of history.filter((x) => finished(x) && x.kind !== 'mobility')) {
     const main = new Set(w.session.items.filter((i) => i.role === 'main').map((i) => i.id));
     for (const log of w.logs) {
       if (!main.has(log.itemId)) continue;
-      for (const m of byId.get(log.exerciseId)?.muscles ?? []) {
+      const e = byId.get(log.exerciseId);
+      if (!needsRecovery(e)) continue;
+      for (const m of e?.muscles ?? []) {
         if (m.role === 'primary') {
           const a = touch(m.muscleKey);
           a.lastPrimaryAt = later(a.lastPrimaryAt, log.loggedAt);

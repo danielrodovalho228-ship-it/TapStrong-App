@@ -9885,6 +9885,72 @@
       "rangeLimit": []
     },
     {
+      "slug": "bal_seated_head_turns",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": ["neck", "recent_surgery"],
+      "pattern": "balance",
+      "parts": ["main", "finisher_mobility"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["abs", "primary", 0.5],
+        ["traps", "secondary", 0.3],
+        ["obliques", "secondary", 0.3]
+      ],
+      "joints": [["neck", "rotation", "partial"]],
+      "rangeLimit": []
+    },
+    {
+      "slug": "bal_seated_knee_lift_hold",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": ["hip", "recent_surgery"],
+      "pattern": "balance",
+      "parts": ["main", "finisher_mobility"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["abs", "primary", 0.5],
+        ["hips", "secondary", 0.4],
+        ["obliques", "secondary", 0.3]
+      ],
+      "joints": [["hip", "flexion", "partial"]],
+      "rangeLimit": []
+    },
+    {
+      "slug": "bal_seated_arms_up_hold",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": ["shoulder", "recent_surgery"],
+      "pattern": "balance",
+      "parts": ["main", "finisher_mobility"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["abs", "primary", 0.5],
+        ["lowerBack", "secondary", 0.4],
+        ["shoulders", "secondary", 0.3]
+      ],
+      "joints": [["shoulder", "flexion", "isometric"]],
+      "rangeLimit": []
+    },
+    {
       "slug": "bal_chair_single_leg_hold",
       "equipment": [],
       "location": ["home", "gym", "outdoors"],

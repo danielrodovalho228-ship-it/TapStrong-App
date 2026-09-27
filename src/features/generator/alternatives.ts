@@ -58,7 +58,8 @@ function primaryFamily(item: SessionItem, current: Exercise | undefined): string
  *   filter: location and equipment, age band, restrictions, conditions,
  *   position;
  * - never an exercise already in the session;
- * - "machine is taken" also drops options that use the same machine.
+ * - "machine is taken" also drops options that use the same machine;
+ * - the balance item swaps only for balance work.
  * Order: emphasis on the muscle, then same movement pattern, then closest
  * level, then slug. Deterministic.
  */
@@ -90,6 +91,9 @@ export function getAlternatives(
         );
       if (item.role !== 'main')
         return e.parts.includes(item.part as SessionPart) && sameRegion(e, current);
+      // The balance item swaps only for other balance work, any muscle (QA R3-08).
+      if (item.goal === 'balance' && current?.pattern === 'balance')
+        return e.pattern === 'balance' && e.parts.includes('main');
       const sameSlot =
         item.goal === 'mobility'
           ? e.parts.some((p) => MOBILITY_PARTS.includes(p))

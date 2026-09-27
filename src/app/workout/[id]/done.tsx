@@ -44,7 +44,11 @@ export default function DoneScreen() {
   const now = clock.now();
   // Stopped for sharp pain: calm copy, no finisher, no new workout (QA C-01).
   const stopped = stoppedForPain(workout);
-  const finished = workouts.filter((w) => w.status === 'done' || w.status === 'partial');
+  // Short mobility is not "Workout n" (QA R3-05).
+  const mobility = workout.kind === 'mobility';
+  const finished = workouts.filter(
+    (w) => (w.status === 'done' || w.status === 'partial') && w.kind !== 'mobility',
+  );
   const number = finished.findIndex((w) => w.id === workout.id) + 1 || finished.length;
   const activity = muscleActivity(workouts, library, now);
   const group = neglectedGroup(activity, library, now);
@@ -139,14 +143,20 @@ export default function DoneScreen() {
       <View style={styles.head}>
         <View style={styles.flex}>
           <AppText variant="caption" color={colors.accent} style={styles.caps}>
-            {stopped ? t('workout.done.stoppedEyebrow') : t('workout.done.eyebrow', { n: number })}
+            {stopped
+              ? t('workout.done.stoppedEyebrow')
+              : mobility
+                ? t('workout.done.mobilityEyebrow')
+                : t('workout.done.eyebrow', { n: number })}
           </AppText>
           <AppText variant="h1" accessibilityRole="header">
             {stopped
               ? t('workout.done.stoppedTitle')
-              : number === 1
-                ? t('workout.done.firstTitle')
-                : t('workout.done.title')}
+              : mobility
+                ? t('workout.done.mobilityTitle')
+                : number === 1
+                  ? t('workout.done.firstTitle')
+                  : t('workout.done.title')}
           </AppText>
         </View>
         <View style={styles.streak}>

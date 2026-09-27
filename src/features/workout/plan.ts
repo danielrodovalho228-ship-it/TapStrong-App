@@ -3,7 +3,7 @@ import { localDate } from '@/lib/dates';
 import type { Exercise } from '../exercises/types';
 import type { GeneratedSession, GeneratorInput, RecentSession } from '../generator/types';
 import type { MovementGroup } from '../muscles';
-import { generateSession } from '../generator/generate';
+import { generateSession, needsRecovery } from '../generator/generate';
 import { defaultMuscleGoal } from '../onboarding/options';
 
 import { groupMuscles } from './recovery';
@@ -18,7 +18,8 @@ export function recentSessions(history: WorkoutRecord[], library: Exercise[]): R
     .map((w) => {
       const main = new Set(w.session.items.filter((i) => i.role === 'main').map((i) => i.id));
       const muscles = w.logs
-        .filter((l) => main.has(l.itemId))
+        // Balance and mobility moves don't need recovery (QA R3-08).
+        .filter((l) => main.has(l.itemId) && needsRecovery(byId.get(l.exerciseId)))
         .flatMap((l) =>
           (byId.get(l.exerciseId)?.muscles ?? [])
             .filter((m) => m.role === 'primary')
@@ -26,7 +27,8 @@ export function recentSessions(history: WorkoutRecord[], library: Exercise[]): R
         );
       return {
         date: localDate(new Date(w.endedAt ?? w.createdAt)),
-        at: w.endedAt ?? w.createdAt,
+        // Recovery counts from the start of the session (QA R3-04).
+        at: w.startedAt ?? w.endedAt ?? w.createdAt,
         mainMuscles: [...new Set(muscles)],
       };
     });

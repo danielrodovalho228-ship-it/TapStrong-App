@@ -3418,6 +3418,18 @@
     "sv_seated_hands_on_knees_lift": {
       "name": "Alongamento de barriga sentado",
       "cues": "Mãos nos joelhos, pressione de leve, erga o peito e olhe um pouco para cima para alongar a barriga; respire."
+    },
+    "bal_seated_head_turns": {
+      "name": "Giro de cabeça sentado",
+      "cues": "Sente-se ereto sem encostar, pés no chão; gire a cabeça devagar de um lado para o outro com o tronco parado."
+    },
+    "bal_seated_knee_lift_hold": {
+      "name": "Joelho elevado sentado",
+      "cues": "Sente-se ereto na ponta da cadeira, levante um pouco um joelho e segure sem inclinar para trás; troque."
+    },
+    "bal_seated_arms_up_hold": {
+      "name": "Braços à frente sentado",
+      "cues": "Sente-se ereto sem encostar, eleve os dois braços à frente na altura dos ombros e segure firme; respire."
     }
   },
   "generator": {
@@ -3654,7 +3666,9 @@
       "seeMilestone": "Ver minha conquista",
       "stoppedEyebrow": "Parado por dor",
       "stoppedTitle": "Fez bem em parar",
-      "stoppedBody": "Dor aguda pede descanso hoje. Os treinos de hoje deixam esta área de fora. Se a dor for forte, voltar ou não passar, procure um médico ou fisioterapeuta."
+      "stoppedBody": "Dor aguda pede descanso hoje. Os treinos de hoje deixam esta área de fora. Se a dor for forte, voltar ou não passar, procure um médico ou fisioterapeuta.",
+      "mobilityEyebrow": "Mobilidade curta · concluída",
+      "mobilityTitle": "Mobilidade feita!"
     },
     "legend": {
       "main": "Alvo principal hoje",
