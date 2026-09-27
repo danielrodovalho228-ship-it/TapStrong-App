@@ -27,6 +27,12 @@ const BASE_MINUTES: Record<AppMode, [warmup: number, cooldown: number]> = {
   senior: [9, 6],
 };
 export const MIN_WARMUP = 3;
+/** Most main exercises in one session, even when filling to the time (QA R3 P2). */
+const MAX_MAIN = 8;
+/** Seconds kept free for a finisher when filling a session to its time. */
+const FINISHER_ROOM = 270;
+/** A session under this share of its minutes gets extra exercises. */
+const UNDERFILL = 0.75;
 export const MIN_COOLDOWN = 2;
 
 export function warmupCooldownMinutes(mode: AppMode, minutes: number) {
@@ -400,10 +406,20 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   const usedParents = new Set<string>();
   const main: SessionItem[] = [];
   const unavailable: string[] = [];
-  // Variety (QA round 2): the pick rotates week to week among the best few options.
-  const week = input.today ? Math.floor(Date.parse(input.today) / (7 * 86_400_000)) : 0;
-  const rotate = <T>(list: T[], salt: number) =>
-    list.length ? list[(week + salt) % Math.min(3, list.length)] : undefined;
+  // Variety (QA round 2, R3 P2): the pick rotates among the best 3 options,
+  // mixed by date and slot so neither an A/B pattern nor a 3-week cycle
+  // repeats. A gym "Get stronger" adult never gets a bodyweight pick when a
+  // loaded one fits.
+  const day = input.today ? Math.floor(Date.parse(input.today) / 86_400_000) : 0;
+  const strengthGym =
+    input.location === 'gym' && input.mainGoals.includes('strength') && input.mode === 'adult';
+  const rotate = (list: Exercise[], salt: number) => {
+    const equipped = strengthGym ? list.filter((e) => e.equipment.length > 0) : list;
+    const top = (equipped.length ? equipped : list).slice(0, 3);
+    if (!top.length) return undefined;
+    const mix = Math.imul((day + 1) * 2654435761, salt + 7) >>> 0;
+    return top[(mix >>> 7) % top.length];
+  };
   const add = (pick: Exercise, target: Target) => {
     used.add(pick.id);
     usedParents.add(parentOf(topPrimary(pick) ?? target.muscle));
@@ -444,24 +460,57 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   // exercises today, so a chest goal does not make the week push-heavy.
   const sessionCount = (g: MovementGroup) =>
     main.filter((i) => groupOf(i.targetMuscle ?? '') === g).length;
+  // Muscles with a "rest today" note stay out of the filler too (QA R3 P2).
+  const restedKeys = new Set(rested.flatMap((t) => root(t)));
   const nextFor = (g: MovementGroup) =>
-    rankForGroup(pool, g, defaultGoal, input.mode).find(
-      (e) => !used.has(e.id) && !usedParents.has(parentOf(topPrimary(e)!)) && primariesReady(e),
+    rotate(
+      rankForGroup(pool, g, defaultGoal, input.mode).filter(
+        (e) =>
+          !used.has(e.id) &&
+          !usedParents.has(parentOf(topPrimary(e)!)) &&
+          primariesReady(e) &&
+          !e.muscles.some((m) => m.role === 'primary' && restedKeys.has(m.muscleKey)),
+      ),
+      main.length + 11,
     );
-  while (!focused && main.length < slots) {
+  // Fill the slots, then keep filling to the requested time with recovered
+  // muscles (QA R3 P2: 22 of 40 minutes), room left for a finisher.
+  const budgetSeconds = minutes * 60 - (warmup + cooldown) * 60 - FINISHER_ROOM;
+  const mainSeconds = () => main.reduce((n, i) => n + i.estSeconds, 0);
+  const fixedSeconds = (warmup + cooldown) * 60;
+  while (!focused) {
     const options = fill
       // Core once per session; the big groups share the rest.
       .filter((g) => g !== 'core' || sessionCount('core') === 0)
       .map((g) => ({ g, pick: nextFor(g) }))
-      .filter((o): o is { g: MovementGroup; pick: Exercise } => !!o.pick)
-      .sort(
-        (a, b) =>
-          weekCount[a.g] + sessionCount(a.g) - (weekCount[b.g] + sessionCount(b.g)) ||
-          GROUP_ORDER[a.g] - GROUP_ORDER[b.g],
-      );
-    if (!options.length) break;
-    const { g, pick } = options[0];
+      .filter((o): o is { g: MovementGroup; pick: Exercise } => !!o.pick);
+    // Push and pull stay within one exercise of each other when both can be filled.
+    const has = (g: MovementGroup) => options.some((o) => o.g === g);
+    const balanced = options.filter(
+      (o) =>
+        !(o.g === 'push' && has('pull') && sessionCount('push') > sessionCount('pull')) &&
+        !(o.g === 'pull' && has('push') && sessionCount('pull') > sessionCount('push')),
+    );
+    // Ties take turns by date, so one group doesn't always win them (QA R3 P2).
+    const turn = (g: MovementGroup) => (GROUP_ORDER[g] + day) % 4;
+    const ranked = (balanced.length ? balanced : options).sort(
+      (a, b) =>
+        weekCount[a.g] + sessionCount(a.g) - (weekCount[b.g] + sessionCount(b.g)) ||
+        turn(a.g) - turn(b.g),
+    );
+    if (!ranked.length) break;
+    const { g, pick } = ranked[0];
     const muscle = topPrimary(pick)!;
+    const item = mainItem(pick, { muscle, family: [muscle], goal: defaultGoal }, input);
+    // Past the chosen number of exercises only while the session is well
+    // short of the minutes asked for, never past 8.
+    if (
+      main.length >= slots &&
+      (main.length >= MAX_MAIN ||
+        fixedSeconds + mainSeconds() >= UNDERFILL * minutes * 60 ||
+        mainSeconds() + item.estSeconds > budgetSeconds)
+    )
+      break;
     add(pick, { muscle, family: [muscle], goal: defaultGoal });
     added.set(pick.id, g);
   }
@@ -556,11 +605,16 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   const total = () =>
     fixed + main.reduce((s, i) => s + i.estSeconds, 0) + (finisher?.estSeconds ?? 0);
   let dropped = 0;
+  const droppedTargets: string[] = [];
+  const chosen = new Set(allTargets.map((t) => t.muscle));
   // Drops the last main item that is not protected (the balance work stays, QA R2-06).
   const dropOne = () => {
     for (let i = main.length - 1; i >= 0; i--) {
       if (protectedIds.has(main[i].exerciseId)) continue;
-      used.delete(main.splice(i, 1)[0].exerciseId);
+      const [gone] = main.splice(i, 1);
+      used.delete(gone.exerciseId);
+      if (gone.targetMuscle && chosen.has(gone.targetMuscle))
+        droppedTargets.push(gone.targetMuscle);
       dropped++;
       return true;
     }
@@ -576,7 +630,14 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
       finisher = null;
     } else if (main.length <= 1 || !dropOne()) break;
   }
-  if (dropped && !focused) notes.push({ key: 'generator.notes.trimmed', count: dropped });
+  // Name the chosen muscles that didn't fit: they lead the next session,
+  // since the least recently trained go first (QA R2-10).
+  if (dropped && !focused)
+    notes.push(
+      droppedTargets.length
+        ? { key: 'generator.notes.trimmedMuscles', muscles: droppedTargets.reverse() }
+        : { key: 'generator.notes.trimmed', count: dropped },
+    );
   // "Added push / legs for balance" only names work that survived the time fit (QA round 1).
   const chosenGroups = new Set(allTargets.map((t) => groupOf(t.muscle)));
   const kept = [
@@ -591,7 +652,8 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     notes.push({ key: 'generator.notes.balance', groups: kept });
 
   // The first loaded lift leads, so its ramp-up sits right before it (QA round 2).
-  const firstLoaded = main.findIndex((i) => byIdAll.get(i.exerciseId)?.loaded);
+  const leads = (e: Exercise | undefined) => !!e?.loaded && !e.isolation;
+  const firstLoaded = main.findIndex((i) => leads(byIdAll.get(i.exerciseId)));
   if (firstLoaded > 0) main.unshift(...main.splice(firstLoaded, 1));
 
   const byId = new Map(pool.map((e) => [e.id, e]));
@@ -619,7 +681,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   // teens light only; never kids (SPEC §8 table).
   // Ramp-up for the first LOADED main lift, even when a bodyweight move comes
   // before it (QA P2).
-  const firstLoadedIndex = mainExercises.findIndex((e) => e.loaded);
+  const firstLoadedIndex = mainExercises.findIndex((e) => e.loaded && !e.isolation);
   const first = firstLoadedIndex >= 0 ? mainExercises[firstLoadedIndex] : undefined;
   let rampSeconds = 0;
   let ramp: SessionItem | null = null;

@@ -520,12 +520,15 @@ describe('getAlternatives (swap, SPEC §8)', () => {
   });
 
   it('returns nothing when no safe option exists', () => {
-    // Only one main exercise trains the middle chest here.
+    // Only one main exercise trains the chest group here (the swap sheet
+    // looks at the whole group, and at secondaries, when the muscle has too
+    // few options: QA R3 P2).
+    const CHEST = ['chest', 'upperChest', 'midChest', 'lowerChest'];
     const tiny = LIBRARY.filter(
       (e) =>
         e.slug === 'push_up' ||
         !e.parts.includes('main') ||
-        !e.muscles.some((m) => m.muscleKey === 'midChest' && m.role === 'primary'),
+        !e.muscles.some((m) => CHEST.includes(m.muscleKey)),
     );
     const input = { ...base, library: tiny, location: 'outdoors' as const, equipment: [] };
     const s = generateSession({ ...input, muscleGoals: [{ muscleKey: 'midChest', goal: 'grow' }] });

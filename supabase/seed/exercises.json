@@ -100,7 +100,11 @@
         ["calves", "secondary", 0.5],
         ["glutes", "secondary", 0.4]
       ],
-      "joints": [],
+      "joints": [
+        ["knee", "straighten_load", "partial"],
+        ["ankle", "dorsiflexion", "partial"],
+        ["ankle", "plantarflexion", "partial"]
+      ],
       "rangeLimit": []
     },
     {
@@ -175,7 +179,8 @@
         ["shoulder", "flexion", "partial"],
         ["wrist", "grip", "partial"]
       ],
-      "rangeLimit": []
+      "rangeLimit": [],
+      "isolation": true
     },
     {
       "slug": "leg_swings",
@@ -233,7 +238,7 @@
       "level": 1,
       "minAgeBand": "kid",
       "positions": ["standing"],
-      "contraindications": [],
+      "contraindications": ["knee"],
       "pattern": "mobility",
       "parts": ["warmup_mobility", "finisher_mobility"],
       "dose": "time",
@@ -428,7 +433,8 @@
         ["shoulder", "push", "partial"],
         ["wrist", "grip", "partial"]
       ],
-      "rangeLimit": ["shoulder.flexion"]
+      "rangeLimit": ["shoulder.flexion"],
+      "isolation": true
     },
     {
       "slug": "high_to_low_cable_fly",
@@ -452,7 +458,8 @@
         ["shoulder", "push", "full"],
         ["wrist", "grip", "partial"]
       ],
-      "rangeLimit": ["shoulder.push"]
+      "rangeLimit": ["shoulder.push"],
+      "isolation": true
     },
     {
       "slug": "seated_chest_press_machine",
@@ -634,7 +641,8 @@
         ["elbow", "flexion", "full"],
         ["wrist", "grip", "partial"]
       ],
-      "rangeLimit": []
+      "rangeLimit": [],
+      "isolation": true
     },
     {
       "slug": "one_arm_dumbbell_row",
@@ -798,7 +806,7 @@
       "level": 1,
       "minAgeBand": "kid",
       "positions": ["standing"],
-      "contraindications": ["recent_surgery"],
+      "contraindications": ["recent_surgery", "knee"],
       "pattern": "core_stability",
       "parts": ["main"],
       "dose": "reps",
@@ -1800,7 +1808,7 @@
       "level": 1,
       "minAgeBand": "kid",
       "positions": ["standing", "with_support", "seated_only"],
-      "contraindications": [],
+      "contraindications": ["heart_condition", "high_blood_pressure"],
       "pattern": "breathing",
       "parts": ["cooldown_breathing"],
       "dose": "time",
@@ -1995,7 +2003,7 @@
       "level": 1,
       "minAgeBand": "kid",
       "positions": ["standing"],
-      "contraindications": ["shoulder", "elbow_wrist", "recent_surgery"],
+      "contraindications": ["shoulder", "elbow_wrist", "recent_surgery", "knee"],
       "pattern": "horizontal_push",
       "parts": ["main"],
       "dose": "reps",
@@ -2048,7 +2056,7 @@
       "level": 2,
       "minAgeBand": "kid",
       "positions": ["standing"],
-      "contraindications": ["shoulder", "elbow_wrist", "recent_surgery"],
+      "contraindications": ["shoulder", "elbow_wrist", "recent_surgery", "knee"],
       "pattern": "horizontal_push",
       "parts": ["main"],
       "dose": "reps",
@@ -2662,7 +2670,8 @@
         ["traps", "secondary", 0.4]
       ],
       "joints": [["shoulder", "pull", "full"]],
-      "rangeLimit": ["shoulder.pull"]
+      "rangeLimit": ["shoulder.pull"],
+      "isolation": true
     },
     {
       "slug": "prone_y_raise",
@@ -2714,7 +2723,8 @@
         ["shoulder", "pull", "full"],
         ["shoulder", "external_rotation", "partial"]
       ],
-      "rangeLimit": ["shoulder.pull"]
+      "rangeLimit": ["shoulder.pull"],
+      "isolation": true
     },
     {
       "slug": "prone_cobra",
@@ -2835,7 +2845,8 @@
         ["shoulder", "pull", "isometric"],
         ["wrist", "grip", "isometric"]
       ],
-      "rangeLimit": []
+      "rangeLimit": [],
+      "isolation": true
     },
     {
       "slug": "doorframe_face_pull",
@@ -2864,7 +2875,8 @@
         ["elbow", "flexion", "full"],
         ["wrist", "grip", "full"]
       ],
-      "rangeLimit": ["shoulder.pull"]
+      "rangeLimit": ["shoulder.pull"],
+      "isolation": true
     },
     {
       "slug": "doorframe_curl",
@@ -3160,7 +3172,8 @@
         ["shoulder", "push", "partial"],
         ["wrist", "grip", "partial"]
       ],
-      "rangeLimit": ["shoulder.flexion"]
+      "rangeLimit": ["shoulder.flexion"],
+      "isolation": true
     },
     {
       "slug": "seated_low_to_high_band_fly",
@@ -3185,7 +3198,8 @@
         ["shoulder", "push", "partial"],
         ["wrist", "grip", "partial"]
       ],
-      "rangeLimit": ["shoulder.flexion"]
+      "rangeLimit": ["shoulder.flexion"],
+      "isolation": true
     },
     {
       "slug": "band_incline_press",
@@ -3342,7 +3356,8 @@
         ["shoulder", "push", "full"],
         ["wrist", "grip", "partial"]
       ],
-      "rangeLimit": ["shoulder.push"]
+      "rangeLimit": ["shoulder.push"],
+      "isolation": true
     },
     {
       "slug": "band_push_up",
@@ -3418,7 +3433,8 @@
         ["shoulder", "push", "full"],
         ["wrist", "grip", "partial"]
       ],
-      "rangeLimit": ["shoulder.push"]
+      "rangeLimit": ["shoulder.push"],
+      "isolation": true
     },
     {
       "slug": "seated_high_to_low_band_fly",
@@ -3442,7 +3458,8 @@
         ["shoulder", "push", "full"],
         ["wrist", "grip", "partial"]
       ],
-      "rangeLimit": ["shoulder.push"]
+      "rangeLimit": ["shoulder.push"],
+      "isolation": true
     },
     {
       "slug": "band_decline_press",
@@ -3516,7 +3533,8 @@
         ["shoulder", "push", "full"],
         ["wrist", "grip", "partial"]
       ],
-      "rangeLimit": ["shoulder.push"]
+      "rangeLimit": ["shoulder.push"],
+      "isolation": true
     },
     {
       "slug": "band_lateral_raise",
@@ -3645,7 +3663,8 @@
         ["shoulder", "pull", "full"],
         ["wrist", "grip", "partial"]
       ],
-      "rangeLimit": ["shoulder.pull"]
+      "rangeLimit": ["shoulder.pull"],
+      "isolation": true
     },
     {
       "slug": "band_wide_row",
@@ -3698,7 +3717,8 @@
         ["shoulder", "abduction", "partial"],
         ["wrist", "grip", "partial"]
       ],
-      "rangeLimit": ["shoulder.pull"]
+      "rangeLimit": ["shoulder.pull"],
+      "isolation": true
     },
     {
       "slug": "band_shrug",
@@ -3934,7 +3954,8 @@
         ["shoulder", "pull", "full"],
         ["wrist", "grip", "partial"]
       ],
-      "rangeLimit": ["shoulder.flexion"]
+      "rangeLimit": ["shoulder.flexion"],
+      "isolation": true
     },
     {
       "slug": "band_hammer_curl",
@@ -4194,7 +4215,8 @@
         ["shoulder", "flexion", "partial"],
         ["wrist", "grip", "partial"]
       ],
-      "rangeLimit": ["shoulder.push"]
+      "rangeLimit": ["shoulder.push"],
+      "isolation": true
     },
     {
       "slug": "incline_dumbbell_squeeze_press",
@@ -4297,7 +4319,8 @@
         ["shoulder", "push", "full"],
         ["wrist", "grip", "partial"]
       ],
-      "rangeLimit": ["shoulder.push"]
+      "rangeLimit": ["shoulder.push"],
+      "isolation": true
     },
     {
       "slug": "dumbbell_squeeze_press",
@@ -4346,7 +4369,8 @@
         ["shoulder", "push", "partial"],
         ["wrist", "grip", "partial"]
       ],
-      "rangeLimit": []
+      "rangeLimit": [],
+      "isolation": true
     },
     {
       "slug": "bridge_floor_press",
@@ -4480,7 +4504,8 @@
         ["elbow", "flexion", "isometric"],
         ["wrist", "grip", "full"]
       ],
-      "rangeLimit": ["shoulder.overhead"]
+      "rangeLimit": ["shoulder.overhead"],
+      "isolation": true
     },
     {
       "slug": "dumbbell_lateral_raise",
@@ -4656,7 +4681,8 @@
         ["lower_back", "extension", "isometric"],
         ["hip", "flexion", "isometric"]
       ],
-      "rangeLimit": ["shoulder.pull"]
+      "rangeLimit": ["shoulder.pull"],
+      "isolation": true
     },
     {
       "slug": "chest_supported_reverse_fly",
@@ -4681,7 +4707,8 @@
         ["shoulder", "pull", "full"],
         ["wrist", "grip", "partial"]
       ],
-      "rangeLimit": ["shoulder.pull"]
+      "rangeLimit": ["shoulder.pull"],
+      "isolation": true
     },
     {
       "slug": "seated_reverse_fly",
@@ -4706,7 +4733,8 @@
         ["wrist", "grip", "partial"],
         ["lower_back", "extension", "isometric"]
       ],
-      "rangeLimit": ["shoulder.pull"]
+      "rangeLimit": ["shoulder.pull"],
+      "isolation": true
     },
     {
       "slug": "side_lying_rear_delt_raise",
@@ -4731,7 +4759,8 @@
         ["shoulder", "abduction", "partial"],
         ["wrist", "grip", "partial"]
       ],
-      "rangeLimit": ["shoulder.pull"]
+      "rangeLimit": ["shoulder.pull"],
+      "isolation": true
     },
     {
       "slug": "dumbbell_rear_delt_row",
@@ -5290,7 +5319,8 @@
         ["shoulder", "flexion", "partial"],
         ["wrist", "grip", "partial"]
       ],
-      "rangeLimit": ["shoulder.push"]
+      "rangeLimit": ["shoulder.push"],
+      "isolation": true
     },
     {
       "slug": "cable_incline_press",
@@ -5367,7 +5397,8 @@
         ["shoulder", "push", "full"],
         ["wrist", "grip", "partial"]
       ],
-      "rangeLimit": ["shoulder.push"]
+      "rangeLimit": ["shoulder.push"],
+      "isolation": true
     },
     {
       "slug": "cable_chest_fly",
@@ -5391,7 +5422,8 @@
         ["shoulder", "push", "full"],
         ["wrist", "grip", "partial"]
       ],
-      "rangeLimit": ["shoulder.push"]
+      "rangeLimit": ["shoulder.push"],
+      "isolation": true
     },
     {
       "slug": "assisted_dip_machine",
@@ -5400,7 +5432,7 @@
       "level": 2,
       "minAgeBand": "teen",
       "positions": ["standing", "with_support"],
-      "contraindications": ["shoulder", "elbow_wrist", "recent_surgery"],
+      "contraindications": ["shoulder", "elbow_wrist", "recent_surgery", "knee"],
       "pattern": "vertical_push",
       "parts": ["main"],
       "dose": "reps",
@@ -5416,7 +5448,8 @@
         ["shoulder", "push", "full"],
         ["shoulder", "reach_behind", "partial"],
         ["elbow", "extension", "full"],
-        ["wrist", "extension_load", "full"]
+        ["wrist", "extension_load", "full"],
+        ["knee", "kneel", "partial"]
       ],
       "rangeLimit": ["shoulder.reach_behind"]
     },
@@ -5494,7 +5527,8 @@
         ["shoulder", "push", "full"],
         ["wrist", "grip", "partial"]
       ],
-      "rangeLimit": ["shoulder.push"]
+      "rangeLimit": ["shoulder.push"],
+      "isolation": true
     },
     {
       "slug": "machine_shoulder_press",
@@ -5644,7 +5678,8 @@
         ["shoulder", "pull", "full"],
         ["wrist", "grip", "partial"]
       ],
-      "rangeLimit": ["shoulder.pull"]
+      "rangeLimit": ["shoulder.pull"],
+      "isolation": true
     },
     {
       "slug": "cable_face_pull",
@@ -5673,7 +5708,8 @@
         ["elbow", "flexion", "full"],
         ["wrist", "grip", "partial"]
       ],
-      "rangeLimit": []
+      "rangeLimit": [],
+      "isolation": true
     },
     {
       "slug": "cable_reverse_fly",
@@ -5698,7 +5734,8 @@
         ["shoulder", "pull", "full"],
         ["wrist", "grip", "partial"]
       ],
-      "rangeLimit": ["shoulder.pull"]
+      "rangeLimit": ["shoulder.pull"],
+      "isolation": true
     },
     {
       "slug": "single_arm_cable_reverse_fly",
@@ -5722,7 +5759,8 @@
         ["shoulder", "pull", "full"],
         ["wrist", "grip", "partial"]
       ],
-      "rangeLimit": ["shoulder.pull"]
+      "rangeLimit": ["shoulder.pull"],
+      "isolation": true
     },
     {
       "slug": "wide_grip_cable_row",
@@ -5993,7 +6031,7 @@
       "level": 2,
       "minAgeBand": "teen",
       "positions": ["standing", "with_support"],
-      "contraindications": ["shoulder", "recent_surgery"],
+      "contraindications": ["shoulder", "recent_surgery", "knee"],
       "pattern": "vertical_pull",
       "parts": ["main"],
       "dose": "reps",
@@ -6009,7 +6047,8 @@
         ["shoulder", "overhead", "full"],
         ["shoulder", "pull", "full"],
         ["elbow", "flexion", "full"],
-        ["wrist", "grip", "full"]
+        ["wrist", "grip", "full"],
+        ["knee", "kneel", "partial"]
       ],
       "rangeLimit": ["shoulder.overhead"]
     },
@@ -6037,7 +6076,8 @@
         ["shoulder", "pull", "full"],
         ["wrist", "grip", "full"]
       ],
-      "rangeLimit": ["shoulder.flexion"]
+      "rangeLimit": ["shoulder.flexion"],
+      "isolation": true
     },
     {
       "slug": "single_arm_cable_pulldown",
@@ -6722,7 +6762,12 @@
       "level": 1,
       "minAgeBand": "kid",
       "positions": ["standing"],
-      "contraindications": ["pregnant_postpartum", "recent_surgery"],
+      "contraindications": [
+        "pregnant_postpartum",
+        "recent_surgery",
+        "heart_condition",
+        "high_blood_pressure"
+      ],
       "pattern": "hinge",
       "parts": ["main"],
       "dose": "reps",
@@ -7200,7 +7245,7 @@
       "level": 1,
       "minAgeBand": "kid",
       "positions": ["standing"],
-      "contraindications": ["shoulder", "recent_surgery"],
+      "contraindications": ["shoulder", "recent_surgery", "knee"],
       "pattern": "core_stability",
       "parts": ["main"],
       "dose": "time",
@@ -8354,6 +8399,51 @@
       ],
       "joints": [["knee", "straighten_load", "partial"]],
       "rangeLimit": ["knee.straighten_load"]
+    },
+    {
+      "slug": "wu_seated_heel_toe_rocks",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": [],
+      "pattern": "mobility",
+      "parts": ["warmup_mobility"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["calves", "primary", 0.5],
+        ["shins", "secondary", 0.4]
+      ],
+      "joints": [
+        ["ankle", "dorsiflexion", "partial"],
+        ["ankle", "plantarflexion", "partial"]
+      ],
+      "rangeLimit": []
+    },
+    {
+      "slug": "wu_seated_knee_lifts",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": [],
+      "pattern": "mobility",
+      "parts": ["warmup_mobility"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["hips", "primary", 0.5],
+        ["quads", "secondary", 0.3]
+      ],
+      "joints": [["hip", "flexion", "partial"]],
+      "rangeLimit": []
     },
     {
       "slug": "wu_seated_heel_toe_taps",
@@ -11186,7 +11276,7 @@
       "level": 1,
       "minAgeBand": "teen",
       "positions": ["standing"],
-      "contraindications": ["recent_surgery"],
+      "contraindications": ["recent_surgery", "knee"],
       "pattern": "mobility",
       "parts": ["main"],
       "dose": "reps",
@@ -11288,7 +11378,7 @@
       "level": 1,
       "minAgeBand": "teen",
       "positions": ["standing"],
-      "contraindications": ["recent_surgery"],
+      "contraindications": ["recent_surgery", "knee"],
       "pattern": "core_stability",
       "parts": ["main"],
       "dose": "time",
@@ -11416,7 +11506,7 @@
       "level": 1,
       "minAgeBand": "teen",
       "positions": ["standing"],
-      "contraindications": ["recent_surgery", "shoulder"],
+      "contraindications": ["recent_surgery", "shoulder", "knee"],
       "pattern": "core_stability",
       "parts": ["main"],
       "dose": "time",
@@ -12328,7 +12418,11 @@
         ["quads", "primary", 0.5],
         ["calves", "secondary", 0.3]
       ],
-      "joints": [],
+      "joints": [
+        ["knee", "straighten_load", "partial"],
+        ["ankle", "dorsiflexion", "partial"],
+        ["ankle", "plantarflexion", "partial"]
+      ],
       "rangeLimit": []
     },
     {
@@ -12415,7 +12509,11 @@
         ["quads", "primary", 0.5],
         ["shoulders", "secondary", 0.2]
       ],
-      "joints": [],
+      "joints": [
+        ["knee", "straighten_load", "partial"],
+        ["ankle", "dorsiflexion", "partial"],
+        ["ankle", "plantarflexion", "partial"]
+      ],
       "rangeLimit": []
     },
     {
@@ -13274,7 +13372,8 @@
         ["shoulders", "secondary", 0.3]
       ],
       "joints": [["shoulder", "push", "full"]],
-      "rangeLimit": ["shoulder.push"]
+      "rangeLimit": ["shoulder.push"],
+      "isolation": true
     },
     {
       "slug": "su_seated_palm_press_slide",
@@ -13348,7 +13447,8 @@
         ["shoulder", "push", "full"],
         ["shoulder", "flexion", "partial"]
       ],
-      "rangeLimit": ["shoulder.push"]
+      "rangeLimit": ["shoulder.push"],
+      "isolation": true
     },
     {
       "slug": "su_seated_diagonal_palm_press",
@@ -13584,7 +13684,8 @@
         ["shoulder", "pull", "full"],
         ["lower_back", "flexion", "isometric"]
       ],
-      "rangeLimit": ["shoulder.pull"]
+      "rangeLimit": ["shoulder.pull"],
+      "isolation": true
     },
     {
       "slug": "su_seated_elbow_pull_back",
@@ -13682,7 +13783,8 @@
         ["shoulder", "pull", "partial"],
         ["shoulder", "reach_behind", "partial"]
       ],
-      "rangeLimit": ["shoulder.pull"]
+      "rangeLimit": ["shoulder.pull"],
+      "isolation": true
     },
     {
       "slug": "su_seated_table_edge_pull_hold",
@@ -13761,7 +13863,8 @@
         ["shoulder", "pull", "full"],
         ["wrist", "grip", "partial"]
       ],
-      "rangeLimit": ["shoulder.flexion"]
+      "rangeLimit": ["shoulder.flexion"],
+      "isolation": true
     },
     {
       "slug": "su_seated_clasped_hands_squeeze",

@@ -22,7 +22,7 @@ export function buildSeed(exercises) {
     lines.push(
       'insert into public.exercises (slug, name_i18n_key, cues_i18n_key, equipment, location, level,' +
         ' min_age_band, positions, contraindications, movement_pattern, session_parts, dose_type,' +
-        ' loaded, unilateral, impact, media_provider, joint_movements, range_limit, rehab) values (' +
+        ' loaded, unilateral, impact, media_provider, joint_movements, range_limit, rehab, isolation) values (' +
         [
           q(e.slug),
           q(`exercises.${e.slug}.name`),
@@ -43,6 +43,7 @@ export function buildSeed(exercises) {
           `${q(JSON.stringify(e.joints ?? []))}::jsonb`,
           arr(e.rangeLimit ?? [], 'text'),
           e.rehab ?? false,
+          e.isolation ?? false,
         ].join(', ') +
         ');',
     );

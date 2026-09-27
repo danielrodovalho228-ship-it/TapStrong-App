@@ -88,7 +88,7 @@ beforeEach(async () => {
 const root = (k: string) => muscleByKey(k)?.parentKey ?? k;
 
 describe('Swap sheet', () => {
-  it('a stretch swap stays on the same muscle group', () => {
+  it('a stretch swap stays on the same muscle group (as a primary or, after those, a secondary)', () => {
     const s = generateSession({ ...base, muscleGoals: [{ muscleKey: 'traps', goal: 'grow' }] });
     for (const item of s.items.filter((i) => i.part === 'cooldown_stretch')) {
       const own = byId
@@ -97,7 +97,7 @@ describe('Swap sheet', () => {
         .map((m) => root(m.muscleKey));
       for (const alt of getAlternatives(s, item.id, base)) {
         const theirs = alt.muscles
-          .filter((m) => m.role === 'primary')
+          .filter((m) => m.role !== 'stabilizer')
           .map((m) => root(m.muscleKey));
         expect(theirs.some((m) => own.includes(m))).toBe(true);
       }

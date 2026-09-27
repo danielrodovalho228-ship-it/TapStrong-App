@@ -1514,7 +1514,7 @@
     },
     "bridge_pillow_squeeze": {
       "name": "Ponte apertando almofada",
-      "cues": "Almofada entre os joelhos; aperte e suba um pouco o quadril, segure e desça devagar."
+      "cues": "Travesseiro entre os joelhos; solte o ar ao apertar e subir um pouco o quadril, inspire ao descer devagar. Nunca prenda a respiração."
     },
     "short_lever_copenhagen": {
       "name": "Prancha Copenhague curta",
@@ -3431,6 +3431,14 @@
     "bal_seated_arms_up_hold": {
       "name": "Braços à frente sentado",
       "cues": "Sente-se ereto sem encostar, eleve os dois braços à frente na altura dos ombros e segure firme; respire."
+    },
+    "wu_seated_heel_toe_rocks": {
+      "name": "Calcanhares e pontas sentado",
+      "cues": "Sente-se ereto com os pés no chão; levante as pontas e depois os calcanhares, num ritmo lento."
+    },
+    "wu_seated_knee_lifts": {
+      "name": "Elevação de joelhos sentado",
+      "cues": "Sente-se ereto na ponta da cadeira e levante um pouco um joelho e depois o outro, como uma marcha lenta."
     }
   },
   "generator": {
@@ -3438,6 +3446,7 @@
       "balance": "Adicionamos {{groups}} para equilibrar sua semana.",
       "rested": "{{muscles}} descansa hoje: foi treinado duas sessões seguidas.",
       "trimmed": "Encurtado para caber no seu tempo.",
+      "trimmedMuscles": "Encurtado para caber no seu tempo: {{muscles}} vêm primeiro na próxima sessão.",
       "groups": {
         "push": "empurrar",
         "pull": "costas",

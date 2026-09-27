@@ -1514,7 +1514,7 @@
     },
     "bridge_pillow_squeeze": {
       "name": "Bridge with pillow squeeze",
-      "cues": "Pillow between knees; squeeze it and lift hips a little, hold a breath, then lower slowly."
+      "cues": "Pillow between knees; breathe out as you squeeze and lift your hips a little, breathe in as you lower slowly. Never hold your breath."
     },
     "short_lever_copenhagen": {
       "name": "Short Copenhagen plank",
@@ -3431,6 +3431,14 @@
     "bal_seated_arms_up_hold": {
       "name": "Seated arms-up hold",
       "cues": "Sit tall away from the backrest, raise both arms forward to shoulder height and hold steady; breathe."
+    },
+    "wu_seated_heel_toe_rocks": {
+      "name": "Seated heel-toe rocks",
+      "cues": "Sit tall, feet flat; lift your toes, then your heels, in a slow easy rhythm."
+    },
+    "wu_seated_knee_lifts": {
+      "name": "Seated knee lifts",
+      "cues": "Sit tall at the front of the chair and lift one knee a little, then the other, like a slow march."
     }
   },
   "generator": {
@@ -3438,6 +3446,7 @@
       "balance": "Added {{groups}} work so your week stays balanced.",
       "rested": "{{muscles}} rest today: trained two sessions in a row.",
       "trimmed": "Shortened to fit your time.",
+      "trimmedMuscles": "Shortened to fit your time: {{muscles}} come first next session.",
       "groups": {
         "push": "push",
         "pull": "back",

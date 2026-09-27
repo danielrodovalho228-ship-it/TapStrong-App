@@ -1514,7 +1514,7 @@
     },
     "bridge_pillow_squeeze": {
       "name": "Puente apretando almohada",
-      "cues": "Almohada entre las rodillas; apriétala y sube un poco la cadera, sostén y baja lento."
+      "cues": "Almohada entre las rodillas; suelta el aire al apretar y subir un poco la cadera, inhala al bajar despacio. Nunca aguantes la respiración."
     },
     "short_lever_copenhagen": {
       "name": "Plancha Copenhague corta",
@@ -3431,6 +3431,14 @@
     "bal_seated_arms_up_hold": {
       "name": "Brazos al frente sentado",
       "cues": "Siéntate erguido sin apoyar la espalda, sube ambos brazos al frente a la altura de los hombros y mantén; respira."
+    },
+    "wu_seated_heel_toe_rocks": {
+      "name": "Talones y puntas sentado",
+      "cues": "Siéntate erguido con los pies en el suelo; levanta las puntas y luego los talones con un ritmo lento."
+    },
+    "wu_seated_knee_lifts": {
+      "name": "Elevación de rodillas sentado",
+      "cues": "Siéntate erguido al borde de la silla y sube un poco una rodilla y luego la otra, como una marcha lenta."
     }
   },
   "generator": {
@@ -3438,6 +3446,7 @@
       "balance": "Agregamos trabajo de {{groups}} para equilibrar tu semana.",
       "rested": "{{muscles}} descansa hoy: se entrenó dos sesiones seguidas.",
       "trimmed": "Acortado para que entre en tu tiempo.",
+      "trimmedMuscles": "Acortado para tu tiempo: {{muscles}} irán primero en la próxima sesión.",
       "groups": {
         "push": "empuje",
         "pull": "espalda",

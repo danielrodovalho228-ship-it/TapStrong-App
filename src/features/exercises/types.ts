@@ -78,5 +78,7 @@ export type Exercise = {
   rangeLimit: MovementKey[];
   /** Recovery-plan exercise: only in Repair recovery sessions, never in regular workouts. */
   rehab: boolean;
+  /** Single-joint work tagged with a push/pull pattern: dosed 10–15, never heavy (QA round 3). */
+  isolation?: boolean;
   media: { video: string | null; poster: string | null; provider: string | null };
 };

@@ -156,7 +156,8 @@ describe('recovery colors', () => {
   });
 
   // One exercise: no balance-pass extras, so legs and back stay untrained.
-  const s = session({ exercisesPerSession: 1 });
+  // A 10-minute session isn't filled past its one exercise (QA R3 P2).
+  const s = session({ exercisesPerSession: 1, minutes: 10 });
   const done = record(s, { status: 'done', endedAt: '2026-09-20T11:00:00.000Z' });
   done.logs = logAll(done, '2026-09-20T10:30:00.000Z');
   const now = new Date('2026-09-20T12:00:00.000Z');

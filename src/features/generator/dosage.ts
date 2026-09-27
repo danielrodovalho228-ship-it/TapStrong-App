@@ -93,6 +93,18 @@ export function doseFor(
     };
   }
 
+  // Isolation moves (flys, face pulls, pullovers) are never dosed heavy:
+  // 10–15 with moderate rest, whatever the pattern tag (QA round 3).
+  if (exercise.isolation && (goal === 'grow' || goal === 'strengthen')) {
+    return {
+      sets,
+      ...(timed ? { holdSeconds: [20, 30] } : { reps: [10, 15] }),
+      restSeconds: 60,
+      perSide,
+      loadHint: weighted(minor ? 'light' : 'moderate'),
+    };
+  }
+
   switch (goal) {
     case 'grow':
       return {

@@ -31,6 +31,8 @@ export type SeedExercise = {
   joints: [string, string, string][];
   rangeLimit: string[];
   rehab?: boolean;
+  /** Single-joint work in a push/pull pattern (flys, face pulls): dosed 10–15, never heavy. */
+  isolation?: boolean;
 };
 
 const tags = (joints: [string, string, string][]): JointMovementTag[] =>
@@ -68,6 +70,7 @@ export function fromSeed(entry: SeedExercise): Exercise {
     joints: tags(entry.joints),
     rangeLimit: entry.rangeLimit as MovementKey[],
     rehab: entry.rehab ?? false,
+    isolation: entry.isolation ?? false,
     media: { video: null, poster: null, provider: 'prototype' },
   };
 }
@@ -97,6 +100,7 @@ export type ExerciseRow = {
   joint_movements?: [string, string, string][] | null;
   range_limit?: string[] | null;
   rehab?: boolean | null;
+  isolation?: boolean | null;
   exercise_muscles: { muscle_key: string; role: string; emphasis: number }[];
 };
 
@@ -127,6 +131,7 @@ export function fromRow(row: ExerciseRow): Exercise {
     joints: tags(row.joint_movements ?? []),
     rangeLimit: (row.range_limit ?? []) as MovementKey[],
     rehab: row.rehab ?? false,
+    isolation: row.isolation ?? false,
     media: { video: row.media_video, poster: row.media_poster, provider: row.media_provider },
   };
 }
@@ -166,5 +171,5 @@ export function prototypeVideo(slug: string): number | null {
 export const RELEASED_LIBRARY_SELECT =
   'id, slug, name_i18n_key, cues_i18n_key, equipment, location, level, min_age_band, positions, ' +
   'contraindications, movement_pattern, session_parts, dose_type, loaded, unilateral, impact, ' +
-  'status, media_video, media_poster, media_provider, joint_movements, range_limit, rehab, ' +
+  'status, media_video, media_poster, media_provider, joint_movements, range_limit, rehab, isolation, ' +
   'exercise_muscles (muscle_key, role, emphasis)';

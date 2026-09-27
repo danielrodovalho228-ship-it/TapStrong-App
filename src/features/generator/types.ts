@@ -95,6 +95,8 @@ export type GeneratorNote =
   | { key: 'generator.notes.balance'; groups: MovementGroup[] }
   | { key: 'generator.notes.rested'; muscles: string[] }
   | { key: 'generator.notes.trimmed'; count: number }
+  /** Chosen muscles cut to fit the time; they come first next session (QA R2-10). */
+  | { key: 'generator.notes.trimmedMuscles'; muscles: string[] }
   /** None of the chosen muscles had a safe exercise today; others were trained instead. */
   | { key: 'generator.notes.substituted'; muscles: string[] }
   /** Chosen muscles still recovering from a recent workout (QA R2-08). */

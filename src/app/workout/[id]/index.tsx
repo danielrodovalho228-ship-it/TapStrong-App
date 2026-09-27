@@ -111,7 +111,8 @@ export default function WorkoutScreen() {
       n.key === 'generator.notes.rested' ||
       n.key === 'generator.notes.substituted' ||
       n.key === 'generator.notes.recovering' ||
-      n.key === 'generator.notes.unavailable'
+      n.key === 'generator.notes.unavailable' ||
+      n.key === 'generator.notes.trimmedMuscles'
     ) {
       return t(n.key, { muscles: n.muscles.map((m) => muscleLabel(t, m)).join(', ') });
     }

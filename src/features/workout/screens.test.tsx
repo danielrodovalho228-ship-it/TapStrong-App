@@ -54,7 +54,7 @@ beforeAll(() => {
   clock.now = () => new Date('2026-09-26T12:00:00Z');
 });
 
-async function setUp(place: 'gym' | 'home' = 'gym', exercisesPerSession = 3) {
+async function setUp(place: 'gym' | 'home' = 'gym', exercisesPerSession = 3, minutes = 40) {
   await act(() => {
     profile().reset();
     profile().update({
@@ -62,7 +62,7 @@ async function setUp(place: 'gym' | 'home' = 'gym', exercisesPerSession = 3) {
       birthYear: 1983,
       sex: 'm',
       mainGoals: ['look'],
-      minutes: 40,
+      minutes,
       muscleGoals: [{ muscleKey: 'upperChest', goal: 'grow' }],
       onboardingComplete: true,
       exercisesPerSession,
@@ -115,10 +115,13 @@ describe('Workout list (mockup 10)', () => {
     await fireEvent.press(replaceButtons[0]);
 
     const after = current().session;
-    expect(after.items).toHaveLength(before.items.length);
-    const index = before.items.findIndex((i) => i.id === target.id);
-    expect(after.items[index].id).toBe(target.id);
-    expect(after.items[index].exerciseId).not.toBe(target.exerciseId);
+    // Never adds an item; the ramp-up goes when the new lift may not have one (QA R3-07).
+    const ramped = (x: typeof before) => x.items.filter((i) => i.part !== 'ramp_up');
+    expect(ramped(after)).toHaveLength(ramped(before).length);
+    expect(after.items.length).toBeLessThanOrEqual(before.items.length);
+    const swapped = after.items.find((i) => i.id === target.id)!;
+    expect(swapped).toBeTruthy();
+    expect(swapped.exerciseId).not.toBe(target.exerciseId);
     expect(current().swaps).toHaveLength(1);
     expect(events).toContainEqual({ event: 'exercise_swapped', props: { reason: 'user_choice' } });
 
@@ -383,8 +386,9 @@ describe('Exit (mockup 13) and Done (mockup 14)', () => {
   });
 
   it('celebrates, shows the streak and suggests the untrained group', async () => {
-    // One exercise: chest only, so legs stay untrained.
-    await setUp('gym', 1);
+    // One exercise in a 10-minute session: chest only, so legs stay untrained
+    // (a longer session would be filled up to its time, QA R3 P2).
+    await setUp('gym', 1, 10);
     const w = current();
     const main = w.session.items.filter((i) => i.role === 'main');
     await act(() => {
@@ -429,8 +433,9 @@ describe('Exit (mockup 13) and Done (mockup 14)', () => {
   });
 
   it('"Add 10 min" creates a short finisher with warm-up and cool-down', async () => {
-    // One exercise: chest only, so legs stay untrained.
-    await setUp('gym', 1);
+    // One exercise in a 10-minute session: chest only, so legs stay untrained
+    // (a longer session would be filled up to its time, QA R3 P2).
+    await setUp('gym', 1, 10);
     const w = current();
     const main = w.session.items.filter((i) => i.role === 'main');
     await act(() => {

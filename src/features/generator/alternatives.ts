@@ -13,6 +13,8 @@ import type {
 } from './types';
 
 export const MAX_ALTERNATIVES = 5;
+/** Below this many same-muscle options, the swap sheet looks one circle wider. */
+const MIN_OPTIONS = 3;
 
 /** Body regions of an exercise's primary muscles (upper, core, lower). */
 const regionsOf = (e: Exercise | undefined) =>
@@ -79,49 +81,64 @@ export function getAlternatives(
   const busyMachines =
     options.reason === 'machine_taken' ? (current?.equipment ?? []).filter(isMachine) : [];
 
-  return safePool(input)
-    .filter((e) => !inSession.has(e.id))
-    .filter((e) => {
-      // Warm-up and cool-down swaps stay in the same part AND body region (QA A-11).
-      // A stretch swap is "same muscle": the stretched muscle or its group,
-      // never another one (QA round 2: a neck stretch offered triceps).
-      if (item.part === 'cooldown_stretch')
-        return (
-          e.parts.includes('cooldown_stretch') && emphasisOn(e, groupOf(family), 'primary') > 0
-        );
-      if (item.role !== 'main')
-        return e.parts.includes(item.part as SessionPart) && sameRegion(e, current);
-      // The balance item swaps only for other balance work, any muscle (QA R3-08).
-      if (item.goal === 'balance' && current?.pattern === 'balance')
-        return e.pattern === 'balance' && e.parts.includes('main');
-      const sameSlot =
-        item.goal === 'mobility'
-          ? e.parts.some((p) => MOBILITY_PARTS.includes(p))
-          : e.parts.includes('main');
-      return sameSlot && emphasisOn(e, family, 'primary') > 0;
-    })
+  const group = groupOf(family);
+  const slotOk = (e: Exercise) => {
+    // Warm-up and cool-down swaps stay in the same part AND body region (QA A-11).
+    if (item.part === 'cooldown_stretch') return e.parts.includes('cooldown_stretch');
+    if (item.role !== 'main')
+      return e.parts.includes(item.part as SessionPart) && sameRegion(e, current);
+    // The balance item swaps only for other balance work, any muscle (QA R3-08).
+    if (item.goal === 'balance' && current?.pattern === 'balance')
+      return e.pattern === 'balance' && e.parts.includes('main');
+    return item.goal === 'mobility'
+      ? e.parts.some((p) => MOBILITY_PARTS.includes(p))
+      : e.parts.includes('main');
+  };
+  /**
+   * How close an option is to the muscle: 0 = the same muscle as a primary,
+   * 1 = its muscle group as a primary (upper chest → chest), 2 = the muscle
+   * or group as a secondary. Warm-up moves and the balance item don't use it.
+   * A stretch is "same muscle": its muscle or its group, never another one
+   * (QA round 2: a neck stretch offered triceps).
+   */
+  const tier = (e: Exercise): number | null => {
+    if (item.part !== 'cooldown_stretch' && item.role !== 'main') return 0;
+    if (item.goal === 'balance' && current?.pattern === 'balance') return 0;
+    if (emphasisOn(e, family, 'primary') > 0) return 0;
+    if (emphasisOn(e, group, 'primary') > 0) return item.part === 'cooldown_stretch' ? 0 : 1;
+    if (emphasisOn(e, group) > 0) return 2;
+    return null;
+  };
+
+  const ranked = safePool(input)
+    .filter((e) => !inSession.has(e.id) && slotOk(e))
     .filter((e) => !e.equipment.some((q) => busyMachines.includes(q)))
     .map((e) => ({
       e,
+      tier: tier(e),
       emphasis: Math.round(emphasisOn(e, family, 'primary') * 10),
       samePattern: current && e.pattern === current.pattern ? 1 : 0,
       distance: Math.abs(e.level - (current?.level ?? e.level)),
     }))
+    .filter((x): x is typeof x & { tier: number } => x.tier !== null)
     .sort(
       (a, b) =>
+        a.tier - b.tier ||
         b.emphasis - a.emphasis ||
         b.samePattern - a.samePattern ||
         a.distance - b.distance ||
         byText(a.e.slug, b.e.slug),
-    )
-    .slice(0, limit)
-    .map((x) => x.e);
+    );
+  // Wider circles only when the same muscle leaves fewer than 3 options (QA R3 P2).
+  const closest = ranked.filter((x) => x.tier === 0);
+  return (closest.length >= MIN_OPTIONS ? closest : ranked).slice(0, limit).map((x) => x.e);
 }
 
 /** The generator's ramp-up rule (SPEC §8 table, QA R2-07): same check on swap. */
 export function rampAllowed(e: Exercise, input: GeneratorInput): boolean {
   return (
     e.loaded &&
+    !e.isolation &&
     input.mode !== 'child' &&
     !needsCaution(input.conditions) &&
     !needsJointCare(e, input)

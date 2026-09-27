@@ -289,3 +289,64 @@ describe('swap options (QA O-3: arm circles had none)', () => {
     },
   );
 });
+
+// QA round 3 (P2): every profile — each equipment level × position × adult and
+// 60+, strength and per-muscle "Mobility" goals — gets ≥ 3 swap options for
+// every item it is given.
+describe('swap options for every profile and the mobility goal (QA R3)', () => {
+  const GOAL_SETS: GeneratorInput['muscleGoals'][] = [
+    [
+      { muscleKey: 'upperChest', goal: 'grow' },
+      { muscleKey: 'glutes', goal: 'grow' },
+    ],
+    [
+      { muscleKey: 'traps', goal: 'strengthen' },
+      { muscleKey: 'hamstrings', goal: 'strengthen' },
+      { muscleKey: 'forearms', goal: 'strengthen' },
+    ],
+    [
+      { muscleKey: 'hips', goal: 'mobility' },
+      { muscleKey: 'upperBack', goal: 'mobility' },
+      { muscleKey: 'hamstrings', goal: 'mobility' },
+    ],
+    [
+      { muscleKey: 'shoulders', goal: 'mobility' },
+      { muscleKey: 'calves', goal: 'mobility' },
+    ],
+  ];
+  const cases = (Object.keys(LEVELS) as (keyof typeof LEVELS)[]).flatMap((level) =>
+    POSITIONS.flatMap((position) =>
+      (['adult', 'senior'] as const).map((mode) => [level, position, mode] as const),
+    ),
+  );
+
+  it.each(cases)('%s · %s · %s', (level, position, mode) => {
+    const thin: string[] = [];
+    for (const muscleGoals of GOAL_SETS) {
+      const input: GeneratorInput = {
+        library: LIBRARY,
+        includeDrafts: true,
+        mode,
+        band: mode,
+        position,
+        location: level === 'gym' ? 'gym' : 'home',
+        equipment: LEVELS[level] as GeneratorInput['equipment'],
+        minutes: 45,
+        mainGoals: muscleGoals[0].goal === 'mobility' ? ['mobility'] : ['look'],
+        muscleGoals,
+        exercisesPerSession: 3,
+        setsPerExercise: 3,
+        painAreas: [],
+        conditions: [],
+        restrictions: [],
+      };
+      const s = generateSession(input);
+      if (s.error) continue;
+      for (const i of s.items.filter((x) => x.part !== 'ramp_up')) {
+        const n = getAlternatives(s, i.id, input).length;
+        if (n < 3) thin.push(`${i.exerciseId} (${i.part}, ${n})`);
+      }
+    }
+    expect([...new Set(thin)]).toEqual([]);
+  });
+});
