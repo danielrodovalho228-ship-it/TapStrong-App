@@ -13,6 +13,8 @@ export type ProfileExtras = {
   today?: string;
   /** "Movement that hurts" reports (SPEC §8). */
   movementLimits?: MovementLimit[];
+  /** Red-flag areas ("Doctor first"). */
+  hardRestrictions?: string[];
 };
 
 /** Builds generator input from the local profile (onboarding + body map). */
@@ -42,6 +44,7 @@ export function inputFromProfile(
     conditions: s.conditions,
     restrictions: [...new Set([...restrictionAreas(s.painAreas), ...(extras.restrictions ?? [])])],
     movementLimits: extras.movementLimits,
+    hardRestrictions: extras.hardRestrictions,
     recentSessions: extras.recentSessions,
     today: extras.today,
   };

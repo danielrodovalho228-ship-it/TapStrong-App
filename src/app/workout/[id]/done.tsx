@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
-import { AppText, Button, Card, Icon, Screen } from '@/components/ui';
+import { AppText, Button, Card, Icon, Notice, Screen } from '@/components/ui';
 import { RatePainButtons } from '@/features/movement/Entry';
 import type { BodySex } from '@/features/bodymap/images';
 import { displayBand } from '@/features/bodymap/selection';
@@ -15,6 +15,7 @@ import { muscleLabel } from '@/features/onboarding/summaries';
 import { LegendRow, RecoveryBody, STATE_COLOR } from '@/features/workout/components/RecoveryBody';
 import { mainSetCounts } from '@/features/workout/flow';
 import { useWorkout } from '@/features/workout/hooks';
+import { stoppedForPain } from '@/features/workout/safety';
 import { finisherInput } from '@/features/workout/plan';
 import {
   bodyStates,
@@ -41,6 +42,8 @@ export default function DoneScreen() {
   if (!workout || !derived) return <Redirect href="/home" />;
 
   const now = clock.now();
+  // Stopped for sharp pain: calm copy, no finisher, no new workout (QA C-01).
+  const stopped = stoppedForPain(workout);
   const finished = workouts.filter((w) => w.status === 'done' || w.status === 'partial');
   const number = finished.findIndex((w) => w.id === workout.id) + 1 || finished.length;
   const activity = muscleActivity(workouts, library, now);
@@ -136,10 +139,14 @@ export default function DoneScreen() {
       <View style={styles.head}>
         <View style={styles.flex}>
           <AppText variant="caption" color={colors.accent} style={styles.caps}>
-            {t('workout.done.eyebrow', { n: number })}
+            {stopped ? t('workout.done.stoppedEyebrow') : t('workout.done.eyebrow', { n: number })}
           </AppText>
           <AppText variant="h1" accessibilityRole="header">
-            {number === 1 ? t('workout.done.firstTitle') : t('workout.done.title')}
+            {stopped
+              ? t('workout.done.stoppedTitle')
+              : number === 1
+                ? t('workout.done.firstTitle')
+                : t('workout.done.title')}
           </AppText>
         </View>
         <View style={styles.streak}>
@@ -175,7 +182,8 @@ export default function DoneScreen() {
         {top ? <Stat value={`${top[1]}`} label={muscleLabel(t, top[0])} /> : null}
       </View>
 
-      {group && input ? (
+      {stopped ? <Notice tone="warning">{t('workout.done.stoppedBody')}</Notice> : null}
+      {group && input && !stopped ? (
         <Card tone="dark" style={styles.finish}>
           <AppText variant="caption" color={colors.dark.accentSoft} style={styles.caps}>
             {t('workout.finish.eyebrow')}

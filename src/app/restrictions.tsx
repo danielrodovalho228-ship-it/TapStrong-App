@@ -37,6 +37,7 @@ export default function RestrictionsScreen() {
   const library = useExerciseLibrary();
   const [adding, setAdding] = useState(false);
   const [area, setArea] = useState<PainArea | null>(null);
+  const [confirmId, setConfirmId] = useState<string | null>(null);
   const [side, setSide] = useState<Side | 'both' | undefined>();
 
   const active = items.filter((r) => r.active);
@@ -91,11 +92,15 @@ export default function RestrictionsScreen() {
               <View
                 style={[
                   styles.badge,
-                  r.source === 'pain_report' ? styles.badgeAccent : styles.badgeMuted,
+                  r.source === 'pain_report' || r.source === 'doctor'
+                    ? styles.badgeAccent
+                    : styles.badgeMuted,
                 ]}
               >
                 <AppText variant="caption" style={styles.caps}>
-                  {t(`restrictions.sources.${r.source}`, { date: date(r.createdAt) })}
+                  {r.source === 'doctor'
+                    ? t('restrictions.sources.doctor')
+                    : t(`restrictions.sources.${r.source}`, { date: date(r.createdAt) })}
                 </AppText>
               </View>
             </View>
@@ -108,7 +113,37 @@ export default function RestrictionsScreen() {
                 {t('restrictions.swaps', { count: swaps })}
               </AppText>
             ) : null}
-            <TextLink label={t('restrictions.healed')} onPress={() => setActive(r.id, false)} />
+            {r.source === 'doctor' ? (
+              <AppText variant="caption" color={colors.mutedStrong}>
+                {t('restrictions.doctorNote')}
+              </AppText>
+            ) : null}
+            {confirmId === r.id ? (
+              <View style={styles.confirm}>
+                <AppText variant="bodyStrong">{t('restrictions.clearedQ')}</AppText>
+                <Button
+                  variant="secondary"
+                  label={t('restrictions.clearedYes')}
+                  onPress={() => {
+                    setActive(r.id, false);
+                    setConfirmId(null);
+                  }}
+                />
+                <Button
+                  variant="ghost"
+                  label={t('restrictions.clearedNo')}
+                  onPress={() => setConfirmId(null)}
+                />
+              </View>
+            ) : (
+              <TextLink
+                label={t('restrictions.healed')}
+                // A red-flag area needs an explicit "cleared by a doctor" (QA C-02).
+                onPress={() =>
+                  r.source === 'doctor' ? setConfirmId(r.id) : setActive(r.id, false)
+                }
+              />
+            )}
           </Card>
         );
       })}
@@ -207,6 +242,7 @@ const styles = StyleSheet.create({
   card: { gap: spacing.sm },
   row: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   flex: { flex: 1 },
+  confirm: { gap: spacing.sm },
   badge: { borderRadius: radius.chip, paddingHorizontal: spacing.sm, paddingVertical: spacing.xxs },
   badgeAccent: { backgroundColor: colors.dark.accentSoft },
   badgeMuted: { backgroundColor: colors.line },

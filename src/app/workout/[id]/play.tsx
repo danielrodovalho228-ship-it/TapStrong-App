@@ -23,7 +23,7 @@ import {
   type Step,
 } from '@/features/workout/flow';
 import { clockText, exerciseCues, exerciseName, targetText } from '@/features/workout/format';
-import { endWorkout, useWorkout } from '@/features/workout/hooks';
+import { endWorkout, useSafetyRefresh, useWorkout } from '@/features/workout/hooks';
 import {
   LOAD_STEP,
   pastSessions,
@@ -41,7 +41,8 @@ import { colors, fonts, radius, sizes, spacing } from '@/theme';
 export default function PlayerScreen() {
   const { t } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { workout, byId, input } = useWorkout(id);
+  const { workout, byId, input, library } = useWorkout(id);
+  useSafetyRefresh(workout?.id, input, library);
   const [sheet, setSheet] = useState<SwapReasonUi | null>(null);
   const [undoMessage, setUndoMessage] = useState<string | null>(null);
   const clearUndo = useCallback(() => setUndoMessage(null), []);

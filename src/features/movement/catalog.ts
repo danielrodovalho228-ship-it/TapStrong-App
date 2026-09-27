@@ -16,6 +16,18 @@ export const JOINTS = [
 ] as const;
 export type JointKey = (typeof JOINTS)[number];
 
+/** Pain area of each joint (structural; mirrors the catalog, used in release builds too). */
+export const JOINT_AREA: Record<JointKey, string> = {
+  shoulder: 'shoulder',
+  elbow: 'elbow_wrist',
+  wrist: 'elbow_wrist',
+  neck: 'neck',
+  lower_back: 'lower_back',
+  hip: 'hip',
+  knee: 'knee',
+  ankle: 'ankle_foot',
+};
+
 /** How an exercise uses a movement: full range, part of it, or a hold without moving. */
 export type MovementRange = 'full' | 'partial' | 'isometric';
 

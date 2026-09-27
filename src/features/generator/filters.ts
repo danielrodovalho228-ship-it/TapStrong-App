@@ -1,4 +1,5 @@
 import type { Exercise } from '../exercises/types';
+import { JOINT_AREA } from '../movement/catalog';
 import { limitAreas, movementVerdict } from '../movement/rules';
 import type { AppMode, BodyBand } from '../profile/age';
 
@@ -37,6 +38,14 @@ export function blockReason(e: Exercise, input: GeneratorInput): string | null {
     ),
   );
   if (e.contraindications.some((c) => risks.has(c))) return 'contraindication';
+  const hard = input.hardRestrictions ?? [];
+  if (
+    hard.length &&
+    (e.contraindications.some((c) => hard.includes(c)) ||
+      e.joints.some((j) => hard.includes(JOINT_AREA[j.joint])))
+  ) {
+    return 'contraindication';
+  }
   if (rangeFor(e, input) === 'blocked') return 'painful_movement';
   if (input.mode === 'senior' && e.impact >= 2) return 'impact';
   if (input.conditions.some((c) => LOW_IMPACT_ONLY.includes(c)) && e.impact > 0) return 'impact';

@@ -19,7 +19,7 @@ import {
 } from '@/features/workout/components/SwapSheet';
 import { UndoBar } from '@/features/workout/components/UndoBar';
 import { doseLine, durationText, exerciseName, targetText } from '@/features/workout/format';
-import { useWorkout } from '@/features/workout/hooks';
+import { useSafetyRefresh, useWorkout } from '@/features/workout/hooks';
 import { isReviewed } from '@/features/workout/plan';
 import { useWorkoutStore } from '@/features/workout/store';
 import { track } from '@/lib/analytics';
@@ -36,20 +36,41 @@ export default function WorkoutScreen() {
   const { t } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { workout, byId, input, library } = useWorkout(id);
+  useSafetyRefresh(workout?.id, input, library);
   const store = useWorkoutStore();
   const [sheet, setSheet] = useState<SheetState>(null);
   const [undoMessage, setUndoMessage] = useState<string | null>(null);
   const clearUndo = useCallback(() => setUndoMessage(null), []);
 
   if (!workout || !input) {
+    // Honest reason, with a way forward (QA C-03): "under review" only when
+    // there really is no library.
+    const reason = !library.length
+      ? 'no_library'
+      : !input
+        ? 'no_profile'
+        : (generateSession(input).error ?? 'gone');
     return (
       <Screen
-        footer={<Button label={t('workout.backHome')} onPress={() => router.replace('/home')} />}
+        footer={
+          <>
+            {reason !== 'no_library' ? (
+              <Button
+                variant="secondary"
+                label={t('workout.unavailable.editPlan')}
+                onPress={() => router.push('/onboarding/profile')}
+              />
+            ) : null}
+            <Button label={t('workout.backHome')} onPress={() => router.replace('/home')} />
+          </>
+        }
       >
         <AppText variant="h1" accessibilityRole="header">
           {t('workout.title')}
         </AppText>
-        <Notice icon>{t('workout.underReview')}</Notice>
+        <Notice icon>
+          {reason === 'no_library' ? t('workout.underReview') : t(`workout.unavailable.${reason}`)}
+        </Notice>
       </Screen>
     );
   }
@@ -66,7 +87,7 @@ export default function WorkoutScreen() {
     if (n.key === 'generator.notes.balance') {
       return t(n.key, { groups: n.groups.map((g) => t(`generator.notes.groups.${g}`)).join(', ') });
     }
-    if (n.key === 'generator.notes.rested') {
+    if (n.key === 'generator.notes.rested' || n.key === 'generator.notes.substituted') {
       return t(n.key, { muscles: n.muscles.map((m) => muscleLabel(t, m)).join(', ') });
     }
     return t(n.key);

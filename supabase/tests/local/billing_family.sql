@@ -69,6 +69,22 @@ do $$ begin
   assert (select count(*) from public.family_members where member_profile_id = '20000000-0000-0000-0000-0000000000f3'
           and consent_record_id is not null) = 1, 'family link with consent';
 
+  -- QA B-01: the child's birth date can't move the profile out of kids mode.
+  begin
+    update public.profiles set birth_year = 2010, body_band = 'teen', mode = 'teen'
+    where id = '20000000-0000-0000-0000-0000000000f3';
+    raise exception 'child profile re-aged to teen';
+  exception when check_violation then null;
+  end;
+  begin
+    update public.profiles set body_band = 'teen', mode = 'teen'
+    where id = '20000000-0000-0000-0000-0000000000f3';
+    raise exception 'child profile switched to teen mode before 13';
+  exception when check_violation then null;
+  end;
+  -- A typo fix that keeps kids mode is fine.
+  update public.profiles set birth_month = 6 where id = '20000000-0000-0000-0000-0000000000f3';
+
   -- Up to 5 profiles: the owner + 4 managed.
   insert into public.profiles (guardian_id, birth_month, birth_year, body_band, mode)
   select '00000000-0000-0000-0000-0000000000f3', 1, 1950, 'senior', 'senior' from generate_series(1, 3);

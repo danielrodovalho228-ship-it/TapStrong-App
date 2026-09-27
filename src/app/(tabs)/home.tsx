@@ -16,6 +16,7 @@ import { muscleLabel } from '@/features/onboarding/summaries';
 import { LegendRow, RecoveryBody, STATE_COLOR } from '@/features/workout/components/RecoveryBody';
 import {
   createWorkoutFrom,
+  refreshWorkout,
   useBodyStates,
   useExerciseLibrary,
   useGeneratorInput,
@@ -53,7 +54,9 @@ export default function HomeScreen() {
   const openWorkout = () => {
     const existing = active ?? planned;
     if (existing) {
-      router.push({ pathname: '/workout/[id]', params: { id: existing.id } });
+      // Restrictions or pain reports may have changed since it was built (QA A-01).
+      const openId = refreshWorkout(existing.id, input, library);
+      router.push({ pathname: '/workout/[id]', params: { id: openId ?? 'unavailable' } });
       return;
     }
     const id = createWorkoutFrom(input, library);

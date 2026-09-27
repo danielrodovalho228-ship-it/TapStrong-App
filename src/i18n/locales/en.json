@@ -159,9 +159,12 @@
       "ask_parent": "Kids under 13 need a parent or guardian to set up TapStrong. Ask a parent to help you.",
       "guardian_consent": "Kids under 13 need a parent's consent first. Kids' profiles are set up from the Family plan, which arrives in a later update.",
       "child_too_old": "This option is for kids under 18. Adults can set up their own profile.",
-      "parent_too_young": "Check the birth year. This option is for parents and grandparents."
+      "parent_too_young": "Check the birth year. This option is for parents and grandparents.",
+      "child_locked": "A child profile stays in kids mode until they turn 13. To change it, contact support."
     },
-    "footnote": "We use your age only to keep training safe for you."
+    "footnote": "We use your age only to keep training safe for you.",
+    "locked": "Only a parent can change the birth date on a child profile.",
+    "changeParent": "Change (parent)"
   },
   "mainGoals": {
     "look": "Look better",
@@ -744,7 +747,8 @@
         "pull": "back",
         "legs": "legs",
         "core": "core"
-      }
+      },
+      "substituted": "No safe exercise for {{muscles}} fits today’s settings, so today trains other areas. Add equipment or another position to work them."
     }
   },
   "tabs": {
@@ -835,7 +839,7 @@
     "demoPending": "The demo video arrives with the licensed exercise library.",
     "bodyNow": "Your body now",
     "finisher": {
-      "finisher_cardio": "Fat-loss finisher",
+      "finisher_cardio": "Cardio finisher",
       "finisher_mobility": "Mobility finisher"
     },
     "units": {
@@ -944,7 +948,10 @@
       "home": "Back to home",
       "share": "Share my map",
       "save": "Save my progress",
-      "seeMilestone": "See my milestone"
+      "seeMilestone": "See my milestone",
+      "stoppedEyebrow": "Stopped for pain",
+      "stoppedTitle": "Good call to stop",
+      "stoppedBody": "Sharp pain means rest for today. Today's workouts leave this area out. If the pain is strong, keeps coming back or lasts, see a doctor or physical therapist."
     },
     "legend": {
       "main": "Main target today",
@@ -976,6 +983,14 @@
     "range": {
       "reduced": "Shorter range: stop before it hurts",
       "isometric": "Gentle hold: push without moving, no pain"
+    },
+    "unavailable": {
+      "no_profile": "Your plan is missing a few answers (where you train and for how long).",
+      "no_main": "No safe exercise fits all of today’s settings together: your position, equipment, restrictions and chosen muscles. Try adding equipment, another training position, or other muscles.",
+      "no_warmup": "No safe warm-up fits today’s settings. Try another training position or add equipment.",
+      "no_cooldown": "No safe cool-down fits today’s settings. Try another training position or add equipment.",
+      "editPlan": "Change my plan",
+      "gone": "This workout is no longer available. Go back home to build today’s."
     }
   },
   "account": {
@@ -1409,7 +1424,8 @@
       "pain_report": "From a pain report · {{date}}",
       "manual": "Added by you · {{date}}",
       "repair": "From Repair check · {{date}}",
-      "health": "From your safety check"
+      "health": "From your safety check",
+      "doctor": "Doctor first"
     },
     "impact": "{{excluded}} of {{total}} exercises in your library are left out.",
     "swaps_one": "{{count}} exercise swapped so far because of it.",
@@ -1423,7 +1439,11 @@
     "healedTitle": "Healed",
     "reactivate": "Turn back on",
     "disclaimer": "TapStrong adapts training, it doesn't diagnose. Sharp or lasting pain? See a doctor or physical therapist.",
-    "done": "Done"
+    "done": "Done",
+    "doctorNote": "Workouts leave out every exercise that moves this area until a doctor or physical therapist has checked it.",
+    "clearedQ": "Has a doctor or physical therapist cleared you to train this area?",
+    "clearedYes": "Yes, I was cleared",
+    "clearedNo": "Not yet"
   },
   "movementPain": {
     "eyebrow": "Movement that hurts",
@@ -1710,6 +1730,19 @@
       "2_6_weeks": "2 to 6 weeks",
       "6_12_weeks": "6 to 12 weeks",
       "over_3_months": "More than 3 months"
+    }
+  },
+  "parentGate": {
+    "title": "For a parent or guardian",
+    "question": "What is {{a}} times {{b}}? Type the number.",
+    "answer": "Answer",
+    "wrong": "That's not it. Please ask a parent.",
+    "continue": "Confirm",
+    "numbers": {
+      "6": "six",
+      "7": "seven",
+      "8": "eight",
+      "9": "nine"
     }
   }
 }

@@ -17,7 +17,8 @@ export type Restriction = {
   id: string;
   area: PainArea;
   side?: Side;
-  source: 'pain_report' | 'repair' | 'manual';
+  /** doctor: a red flag in "Movement that hurts" — see a doctor first (QA C-02). */
+  source: 'pain_report' | 'repair' | 'manual' | 'doctor';
   active: boolean;
   createdAt: string;
 };
@@ -73,6 +74,11 @@ export const useRestrictionsStore = create<State>()(
 );
 
 /** Active areas; the side does not matter to contraindications. */
+/** Red-flag areas: every exercise that moves the joint is left out, not only the ruled-out ones. */
+export function doctorFirstAreas(items: Restriction[]): PainArea[] {
+  return [...new Set(items.filter((r) => r.active && r.source === 'doctor').map((r) => r.area))];
+}
+
 export function activeAreas(items: Restriction[]): PainArea[] {
   return [...new Set(items.filter((r) => r.active).map((r) => r.area))];
 }

@@ -90,7 +90,7 @@ export default function MovementPainScreen() {
         addRestriction({
           area: area as PainArea,
           side: side === 'left' || side === 'right' ? side : undefined,
-          source: 'manual',
+          source: 'doctor',
         });
         setStep('stop');
       } else setStep('moves');

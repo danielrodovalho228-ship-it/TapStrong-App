@@ -33,6 +33,11 @@ export type GeneratorInput = {
   /** Areas from the restrictions list (manual, pain reports, repair). */
   restrictions: string[];
   /**
+   * "Doctor first" areas (red flag): every exercise that moves a joint of the
+   * area is left out, not only the ones ruled out for it (QA C-02).
+   */
+  hardRestrictions?: string[];
+  /**
    * "Movement that hurts" reports (SPEC §8): these areas are filtered movement
    * by movement instead of as a whole.
    */
@@ -76,7 +81,9 @@ export type SessionItem = {
 export type GeneratorNote =
   | { key: 'generator.notes.balance'; groups: MovementGroup[] }
   | { key: 'generator.notes.rested'; muscles: string[] }
-  | { key: 'generator.notes.trimmed'; count: number };
+  | { key: 'generator.notes.trimmed'; count: number }
+  /** None of the chosen muscles had a safe exercise today; others were trained instead. */
+  | { key: 'generator.notes.substituted'; muscles: string[] };
 
 export type GeneratedSession = {
   items: SessionItem[];

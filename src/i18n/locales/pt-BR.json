@@ -159,9 +159,12 @@
       "ask_parent": "Menores de 13 precisam que um pai, mãe ou responsável configure o TapStrong. Peça ajuda a um adulto.",
       "guardian_consent": "Menores de 13 precisam primeiro do consentimento dos pais. Perfis de crianças são criados pelo plano Família, que chega numa próxima atualização.",
       "child_too_old": "Esta opção é para menores de 18. Adultos podem criar o próprio perfil.",
-      "parent_too_young": "Confira o ano de nascimento. Esta opção é para pais e avós."
+      "parent_too_young": "Confira o ano de nascimento. Esta opção é para pais e avós.",
+      "child_locked": "Um perfil infantil fica no modo criança até os 13 anos. Para mudar, fale com o suporte."
     },
-    "footnote": "Usamos sua idade só para manter o treino seguro para você."
+    "footnote": "Usamos sua idade só para manter o treino seguro para você.",
+    "locked": "Só o pai, a mãe ou o responsável pode mudar a data de nascimento num perfil infantil.",
+    "changeParent": "Mudar (adulto)"
   },
   "mainGoals": {
     "look": "Ficar com um visual melhor",
@@ -744,7 +747,8 @@
         "pull": "costas",
         "legs": "pernas",
         "core": "core"
-      }
+      },
+      "substituted": "Nenhum exercício seguro para {{muscles}} combina com hoje, então hoje você treina outras áreas. Acrescente equipamento ou outra posição para trabalhá-los."
     }
   },
   "tabs": {
@@ -835,7 +839,7 @@
     "demoPending": "O vídeo de demonstração chega com a biblioteca de exercícios licenciada.",
     "bodyNow": "Seu corpo agora",
     "finisher": {
-      "finisher_cardio": "Finalizador queima-gordura",
+      "finisher_cardio": "Finalizador de cardio",
       "finisher_mobility": "Finalizador de mobilidade"
     },
     "units": {
@@ -944,7 +948,10 @@
       "home": "Voltar ao início",
       "share": "Compartilhar meu mapa",
       "save": "Salvar meu progresso",
-      "seeMilestone": "Ver minha conquista"
+      "seeMilestone": "Ver minha conquista",
+      "stoppedEyebrow": "Parado por dor",
+      "stoppedTitle": "Fez bem em parar",
+      "stoppedBody": "Dor aguda pede descanso hoje. Os treinos de hoje deixam esta área de fora. Se a dor for forte, voltar ou não passar, procure um médico ou fisioterapeuta."
     },
     "legend": {
       "main": "Alvo principal hoje",
@@ -976,6 +983,14 @@
     "range": {
       "reduced": "Amplitude curta: pare antes de doer",
       "isometric": "Contração leve: empurre sem mover, sem dor"
+    },
+    "unavailable": {
+      "no_profile": "Faltam algumas respostas no seu plano (onde você treina e por quanto tempo).",
+      "no_main": "Nenhum exercício seguro combina com tudo de hoje ao mesmo tempo: sua posição, equipamento, restrições e músculos escolhidos. Tente acrescentar equipamento, outra posição ou outros músculos.",
+      "no_warmup": "Nenhum aquecimento seguro combina com hoje. Tente outra posição ou acrescente equipamento.",
+      "no_cooldown": "Nenhum desaquecimento seguro combina com hoje. Tente outra posição ou acrescente equipamento.",
+      "editPlan": "Mudar meu plano",
+      "gone": "Este treino não está mais disponível. Volte ao início para montar o de hoje."
     }
   },
   "account": {
@@ -1409,7 +1424,8 @@
       "pain_report": "De um relato de dor · {{date}}",
       "manual": "Adicionada por você · {{date}}",
       "repair": "Do Reparo · {{date}}",
-      "health": "Da sua checagem de segurança"
+      "health": "Da sua checagem de segurança",
+      "doctor": "Médico primeiro"
     },
     "impact": "{{excluded}} de {{total}} exercícios da sua biblioteca ficam de fora.",
     "swaps_one": "{{count}} exercício trocado até agora por causa dela.",
@@ -1423,7 +1439,11 @@
     "healedTitle": "Curadas",
     "reactivate": "Ativar de novo",
     "disclaimer": "O TapStrong adapta o treino, não faz diagnóstico. Dor aguda ou que não passa? Procure um médico ou fisioterapeuta.",
-    "done": "Pronto"
+    "done": "Pronto",
+    "doctorNote": "Os treinos deixam de fora todo exercício que mexe esta área até um médico ou fisioterapeuta avaliar.",
+    "clearedQ": "Um médico ou fisioterapeuta liberou você para treinar esta área?",
+    "clearedYes": "Sim, fui liberado(a)",
+    "clearedNo": "Ainda não"
   },
   "movementPain": {
     "eyebrow": "Movimento que dói",
@@ -1710,6 +1730,19 @@
       "2_6_weeks": "2 a 6 semanas",
       "6_12_weeks": "6 a 12 semanas",
       "over_3_months": "Mais de 3 meses"
+    }
+  },
+  "parentGate": {
+    "title": "Para o pai, a mãe ou o responsável",
+    "question": "Quanto é {{a}} vezes {{b}}? Digite o número.",
+    "answer": "Resposta",
+    "wrong": "Não é isso. Peça ajuda a um adulto.",
+    "continue": "Confirmar",
+    "numbers": {
+      "6": "seis",
+      "7": "sete",
+      "8": "oito",
+      "9": "nove"
     }
   }
 }

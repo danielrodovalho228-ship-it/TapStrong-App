@@ -1,4 +1,5 @@
-import { useMemo } from 'react';
+import { router } from 'expo-router';
+import { useEffect, useMemo } from 'react';
 
 import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
@@ -15,9 +16,10 @@ import { limitFrom } from '../movement/progress';
 import { activeReports, useMovementPainStore } from '../movement/store';
 import { derive } from '../onboarding/derived';
 import { useOnboardingStore } from '../onboarding/store';
-import { activeAreas, useRestrictionsStore } from '../restrictions/store';
+import { activeAreas, doctorFirstAreas, useRestrictionsStore } from '../restrictions/store';
 
 import { withFocus, recentSessions } from './plan';
+import { safetyKey, safetyRefresh, sharpStopAreasToday } from './safety';
 import { bodyStates, muscleActivity } from './recovery';
 import { findWorkout, useWorkoutStore } from './store';
 
@@ -36,12 +38,60 @@ export function useGeneratorInput(library: Exercise[]): GeneratorInput | null {
   const restrictions = useRestrictionsStore((s) => s.items);
   const workouts = useWorkoutStore((s) => s.workouts);
   const reports = useMovementPainStore((s) => s.reports);
+  const today = localDate(clock.now());
   return inputFromProfile(profile, library, __DEV__, {
-    restrictions: activeAreas(restrictions),
+    restrictions: [
+      ...new Set([...activeAreas(restrictions), ...sharpStopAreasToday(workouts, today)]),
+    ],
+    hardRestrictions: doctorFirstAreas(restrictions),
     movementLimits: activeReports(reports).map(limitFrom),
     recentSessions: recentSessions(workouts, library),
     today: localDate(clock.now()),
   });
+}
+
+/**
+ * Re-checks a stored workout before it opens (QA A-01, C-04). Returns the id
+ * to open: a fresh workout when a planned one is no longer safe.
+ */
+export function refreshWorkout(
+  id: string,
+  input: GeneratorInput | null,
+  library: Exercise[],
+): string | null {
+  const store = useWorkoutStore.getState();
+  const w = findWorkout(store.workouts, id);
+  if (!w || !input) return id;
+  const r = safetyRefresh(w, input);
+  if (r.kind === 'ok') return id;
+  if (r.kind === 'regenerate') {
+    store.discard(id);
+    return createWorkoutFrom(input, library);
+  }
+  store.replaceSession(id, r.session);
+  for (const itemId of r.skip) store.skipItem(id, itemId);
+  return id;
+}
+
+/**
+ * Keeps an open workout safe while it is on screen: when restrictions or pain
+ * reports change (e.g. a dull-pain swap), unsafe items still to do are
+ * swapped or skipped; a planned workout is rebuilt (QA A-01, C-04).
+ */
+export function useSafetyRefresh(
+  id: string | undefined,
+  input: GeneratorInput | null,
+  library: Exercise[],
+) {
+  const key = safetyKey(input);
+  useEffect(() => {
+    if (!id || !input) return;
+    const next = refreshWorkout(id, input, library);
+    if (next !== id)
+      router.replace({ pathname: '/workout/[id]', params: { id: next ?? 'unavailable' } });
+    // Re-run only when the safety side of the input changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, key]);
 }
 
 /** Builds today's workout and stores it. Returns its id, or null when none is safe. */

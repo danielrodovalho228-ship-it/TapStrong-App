@@ -332,6 +332,20 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     added.push(group);
   }
   if (targets.length && added.length) notes.push({ key: 'generator.notes.balance', groups: added });
+  // Nothing safe for the chosen muscles (e.g. seated legs): train what is safe
+  // and say so, instead of no workout at all (QA C-03, C-07).
+  if (!main.length && targets.length) {
+    for (const group of [...big, 'core' as const]) {
+      if (main.length >= slots) break;
+      const pick = rankForGroup(pool, group, defaultGoal, input.mode).find((e) => !used.has(e.id));
+      if (!pick) continue;
+      used.add(pick.id);
+      const muscle = topPrimary(pick)!;
+      main.push(mainItem(pick, { muscle, family: [muscle], goal: defaultGoal }, input));
+    }
+    if (main.length)
+      notes.push({ key: 'generator.notes.substituted', muscles: targets.map((t) => t.muscle) });
+  }
   if (!main.length) return fail('no_main');
 
   // --- Finisher (optional) ---------------------------------------------------

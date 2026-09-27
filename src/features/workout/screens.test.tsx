@@ -187,11 +187,12 @@ describe('Workout list (mockup 10)', () => {
     ).toBeTruthy();
   });
 
-  it('without a workout it says the library is under review', async () => {
+  it('without a workout it says why, and "under review" only without a library (QA C-03)', async () => {
     await setUp();
     mockParams = { id: 'unavailable' };
     await render(<WorkoutScreen />);
-    expect(screen.getByText(/being reviewed by a certified coach/)).toBeTruthy();
+    expect(screen.queryByText(/being reviewed by a certified coach/)).toBeNull();
+    expect(screen.getByText(/This workout is no longer available/)).toBeTruthy();
   });
 });
 
