@@ -1093,3 +1093,116 @@ Nada mudou. Com a chave desligada não existe registro de consentimento de menor
 
 1. **SMTP do Resend:** sem ele, o código do PIN (e o de salvar a conta) só chega aos e-mails da equipe do projeto no Supabase. Quando a chave chegar, ela vai direto no painel do Supabase, como combinado.
 2. **Advogado:** fica para a versão 2, junto com religar os menores de 13 (fluxo COPPA, aviso aos pais e o que fazer com o registro de consentimento quando um perfil de criança for removido).
+
+---
+
+## Fase 13 — QA rodada 3 (P1 e P2)
+
+O relatório completo está em `docs/qa-round-3.md`. Todos os P1 e P2 foram corrigidos, em commits separados por grupo:
+
+| Grupo                                                                    | Commit    |
+| ------------------------------------------------------------------------ | --------- |
+| Texto da QA 3                                                            | `95083a7` |
+| P1 · trava de idade e erros sem internet (R3-01, R3-02)                  | `993507a` |
+| P1 · segurança das trocas e cargas com as duas mãos (R3-07, R3-09)       | `1131502` |
+| P1 · recuperação por músculo, mobilidade curta, equilíbrio (R3-04/05/08) | `d92128e` |
+| P1 · Home "tudo se recuperando" e mobilidade para 60+ (R3-03, R3-06)     | `5fab956` |
+| P2 · família, pagamento e PIN dos pais                                   | `e834c7b` |
+| P2 · gerador, trocas e etiquetas da biblioteca                           | `6ba775b` |
+| P2 · textos, acessibilidade, traduções e legenda do Share                | `ca07f3e` |
+
+### Feito — P1
+
+- **R3-01 Trava de idade.**
+  - Vale só no cadastro "Eu", antes de existir conta.
+  - Nunca bloqueia perfis da família nem a edição da data. Um adulto que digita 2016 por engano vê só a mensagem "13 anos ou mais" e pode corrigir.
+  - Guarda a data digitada e se desfaz sozinha quando essa data completa 13 anos.
+  - A tela de bloqueio tem "Falar com o suporte" (e-mail).
+  - Mês de aniversário: quem faz aniversário no mês atual já conta a idade nova (o dia decide quando é conhecido). O banco já calculava assim.
+- **R3-02 Sem internet.** Erros de rede do Supabase (que vêm como objeto, sem exceção) agora mostram "Você está offline" na sincronização do dono e no PIN esquecido, não mais "Salve sua conta" ou "Algo deu errado".
+- **R3-03 Home.** Quando tudo está se recuperando, a Home (e a Home 60+) mostra "Tudo está se recuperando" com mobilidade curta, equilíbrio curto (novo: 3 exercícios, cerca de 10 min) ou descanso, em vez de um "Começar" que não gerava treino.
+- **R3-04 Recuperação.**
+  - Um músculo volta a ser treinado 44 h depois do _início_ da sessão (90 h para 60+).
+  - Checagem por músculo, não pelo grupo inteiro.
+  - Teste: quem treina 4 dias por semana (seg, ter, qui, sáb) recebe 4 treinos.
+- **R3-05 Mobilidade curta.**
+  - Aquecimento + 3 movimentos + desaquecimento, cerca de 10 min.
+  - Foco alternando por dia: quadril, parte alta das costas, ombros, tornozelos.
+  - O Done diz "Mobilidade feita!". O Progresso não conta como treino.
+  - Alongamento, mobilidade, equilíbrio e respiração nunca deixam músculo vermelho no mapa.
+- **R3-06 60+.** Botão de mobilidade curta; os minutos do cartão vêm da sessão, não do perfil.
+- **R3-07 Trocas seguras.**
+  - A troca usa a mesma dosagem da geração (articulação com restrição = leve, 12–15).
+  - A rampa de aquecimento só acompanha o exercício novo se a geração permitiria.
+  - Na fase 1 da recuperação, ficam fora os exercícios contraindicados para a área (Laura não recebe mais "Airplane arm hold").
+  - O treino de recuperação troca com as regras de recuperação.
+- **R3-08 Item de equilíbrio.** Aparece como "Equilíbrio", não entra no título do cartão nem no mapa, e a troca oferece só equilíbrio (3 rascunhos novos de equilíbrio sentado).
+- **R3-09 Com apoio.** 40 exercícios com carga nas duas mãos perderam a posição "com apoio" (afundo com halteres, levantamento terra unilateral, roscas em pé, woodchop etc.). Um teste de auditoria impede novos casos.
+
+### Feito — P2
+
+- **Plano Família só para adultos (aprovado por você):**
+  - dono com menos de 18 vê "O plano Família é para adultos a partir de 18 anos" e não tem botão de compra;
+  - o próprio `buy()` recusa os produtos Família;
+  - o Premium continua disponível.
+- **Menores de 13 desligados:** Planos falam só de adolescentes; a mensagem da trava de adolescente não cita crianças; o link direto para o consentimento mostra "Ainda não disponível".
+- **Remover membro:** se a exclusão na nuvem falhar, fica na fila, tenta de novo na sincronização e ao abrir Família, e o dono é avisado.
+- **Adolescentes** não informam altura nem peso.
+- **PIN dos pais:**
+  - PBKDF2-SHA256 com 100.000 rodadas;
+  - guardado no Keychain/Keystore (`expo-secure-store`);
+  - o PIN antigo funciona uma vez e é convertido;
+  - o bloqueio de 5 tentativas também é contado no servidor (`parent_pin_lockouts`, já aplicado no Supabase, com teste de banco).
+- **Gerador:**
+  - nova marca `isolation` (39 crucifixos, face pulls, pullovers): 10–15, nunca pesado, nunca com rampa;
+  - o preenchimento respeita "descansa hoje", alterna entre as 3 melhores opções por data, mantém empurrar/puxar equilibrados e completa sessões curtas até perto do tempo pedido (máx. 8 exercícios);
+  - usuário de academia com meta "Ficar mais forte" nunca recebe exercício só com peso do corpo;
+  - sessão encurtada diz quais músculos ficaram para a próxima.
+- **Trocas ≥ 3:** quando o músculo tem menos de 3 opções, a troca olha o grupo e depois os secundários. O `coverage.test.ts` agora roda 24 perfis (4 níveis × 3 posições × adulto/60+), incluindo a meta Mobilidade. 2 aquecimentos sentados novos.
+- **Etiquetas:**
+  - exercícios ajoelhados ficam fora com restrição no joelho;
+  - máquinas assistidas marcadas como ajoelhadas;
+  - caminhadas com joelho/tornozelo;
+  - respiração quadrada e ponte com travesseiro ficam fora para coração/pressão alta (a dica da ponte não pede mais para prender a respiração).
+- **Textos e acessibilidade:**
+  - legenda "branco (recuperado) após ~3 dias", cinza-azulado = 5+ dias;
+  - a legenda da Home começa pelos alvos do dia e concorda no plural;
+  - desempate do Done pela ordem da sessão; nada de "PEITO · TAMBÉM PEITO SUPERIOR";
+  - `aria-checked` nos seletores; altura explícita nos rótulos das abas;
+  - PT "Mantenha sua sequência de N dias"; ES "Empezar" e "darles";
+  - legenda do Share com pontos brancos e cinza.
+
+### Verificações
+
+- Lint, typecheck e **654 testes** passando; `npm run db:test` e `npm run bundle:check` limpos.
+- **Testes de segurança novos:**
+  - `r3-age-lock`;
+  - `r3-offline`;
+  - `r3-safety` (trocas, fase 1, auditoria "com apoio");
+  - `r3-generator`;
+  - `r3-home`;
+  - `r3-pin` (PBKDF2, SecureStore, bloqueio no servidor);
+  - `r3-family` (Família 18+, consentimento, fila de exclusão);
+  - `r3-p2-generator`;
+  - banco: `parent_pin.sql`.
+- **Migrações aplicadas no Supabase:** `parent_pin_lockout` e `exercise_isolation`.
+
+### Como testar (build de desenvolvimento)
+
+1. **Trava de idade:** "Eu", nascido em 2016 → bloqueio com "Falar com o suporte". Adicione um avô em Família: entra normalmente.
+2. **Tudo se recuperando:** treine tudo e abra a Home no dia seguinte → "Tudo está se recuperando" com mobilidade, equilíbrio e descanso.
+3. **Mobilidade curta:** 3 movimentos e ~10 min; o Done diz "Mobilidade feita!"; em dias diferentes o primeiro movimento muda.
+4. **Rosa (60+, caiu, com apoio, halteres):** nenhum exercício com halteres nas duas mãos.
+5. **Família com dono de 17 anos:** Planos → Família mostra "só para adultos", sem botão de compra.
+6. **PIN:** erre 5 vezes → bloqueio de 15 min, que continua mesmo apagando os dados do app, se estiver online.
+
+### Perguntas em aberto
+
+1. **PIN no aparelho:** o PBKDF2 com 100.000 rodadas roda em JavaScript puro (Hermes não tem JIT). Levou ~0,3 s no teste; num Android simples pode levar alguns segundos. Se ficar lento no aparelho, a saída é `react-native-quick-crypto` (gratuito, nativo), mas é dependência nativa nova, então preciso do seu OK. Adicionei `expo-secure-store` e `@noble/hashes` (gratuitos) porque a QA pediu explicitamente SecureStore e KDF lento.
+2. **E-mail de suporte:** usei `support@tapstrong.app` como padrão (configurável em `EXPO_PUBLIC_SUPPORT_EMAIL`). Qual e-mail real devo usar?
+3. **`kind` do perfil editável:** o PIN e o bloqueio estão no Keychain; a lista de perfis continua no armazenamento normal. Proteger também o tipo de perfil é um passo maior, que posso fazer numa próxima fase.
+4. **Preenchimento até o tempo:** quando a sessão fica abaixo de 75% dos minutos pedidos, o gerador passa do número de exercícios escolhido (até 8). Se preferir respeitar sempre o número escolhido, é uma linha.
+
+### Fase 14
+
+Recebi o texto das melhorias v1 (pacotes A–D). Como você pediu, só começo depois de aprovar a Fase 13.
