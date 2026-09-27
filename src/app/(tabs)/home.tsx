@@ -15,6 +15,8 @@ import { SeniorHome } from '@/features/senior/SeniorHome';
 import { muscleLabel } from '@/features/onboarding/summaries';
 import { LegendRow, RecoveryBody, STATE_COLOR } from '@/features/workout/components/RecoveryBody';
 import { MOBILITY_MINUTES } from '@/features/generator';
+import { morningCheckOpen, pendingMorningChecks } from '@/features/movement/progress';
+import { useMovementPainStore } from '@/features/movement/store';
 import {
   createMobilityWorkout,
   createWorkoutFrom,
@@ -45,9 +47,11 @@ export default function HomeScreen() {
   const { states, activity } = useBodyStates();
   const member = useFamilyStore(activeProfile);
   const checkins = useProgressStore((st) => st.checkins);
+  const painReports = useMovementPainStore((st) => st.reports);
   if (!profile.onboardingComplete || !derived) return <Redirect href="/welcome" />;
 
   const now = clock.now();
+  const morning = pendingMorningChecks(painReports).find((c) => morningCheckOpen(c.afterAt, now));
   const active = workouts.find((w) => w.status === 'active');
   const planned = workouts.find((w) => w.status === 'planned' && w.kind === 'regular');
   // The card names what today's workout really trains (QA D-01): the stored
@@ -123,7 +127,7 @@ export default function HomeScreen() {
         <View style={styles.streak}>
           <AppText variant="h1">{streakToday(streak, localDate(now), deviceWeekStart())}</AppText>
           <AppText variant="caption" color={colors.muted} style={styles.caps}>
-            {t('home.dayStreak')}
+            {t('home.dayStreak', { count: streakToday(streak, localDate(now), deviceWeekStart()) })}
           </AppText>
           {streak.freezes > 0 ? (
             <AppText variant="caption" color={colors.teal}>
@@ -161,6 +165,28 @@ export default function HomeScreen() {
             {t('home.mobilityNote')}
           </AppText>
         </View>
+      ) : null}
+
+      {morning ? (
+        // Morning check after a recovery session, right on Home (QA round 2).
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t('home.morningCheck')}
+          onPress={() =>
+            router.push({ pathname: '/movement-pain/[id]', params: { id: morning.reportId } })
+          }
+          style={styles.checkin}
+        >
+          <View style={styles.flex}>
+            <AppText variant="bodyStrong" color={colors.teal}>
+              {t('home.morningCheck')}
+            </AppText>
+            <AppText variant="caption" color={colors.mutedStrong}>
+              {t('home.morningCheckBody')}
+            </AppText>
+          </View>
+          <Icon name="chevron-right" color={colors.teal} />
+        </Pressable>
       ) : null}
 
       {checkinDue(workouts, checkins, now) ? (

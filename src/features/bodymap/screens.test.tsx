@@ -77,7 +77,7 @@ describe('Body map (mockup 08)', () => {
   it('switches to the back view and its muscles', async () => {
     await renderMap();
     expect(screen.queryByRole('button', { name: 'Hamstrings' })).toBeNull();
-    await fireEvent.press(screen.getByRole('radio', { name: 'Back' }));
+    await fireEvent.press(screen.getByRole('radio', { name: 'Back view' }));
     await fireEvent.press(screen.getByRole('button', { name: 'Hamstrings' }));
     expect(store().muscleGoals.map((m) => m.muscleKey)).toEqual(['hamstrings']);
   });

@@ -146,7 +146,11 @@ export default function MovementPainScreen() {
       header={header}
       footer={
         step === 'stop' ? (
-          <Button label={t('movementPain.stopDone')} onPress={() => router.back()} />
+          // Straight to the restrictions list, where "Doctor first" now shows (QA round 2).
+          <Button
+            label={t('movementPain.stopDone')}
+            onPress={() => router.replace('/restrictions')}
+          />
         ) : (
           <Button
             label={step === 'duration' ? t('movementPain.save') : t('movementPain.next')}

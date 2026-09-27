@@ -59,8 +59,20 @@ export function weeklySets(
   return bars;
 }
 
-/** Primary muscles by main-work sets, most trained first (ties by key). */
+/**
+ * Primary muscles by main-work sets, most trained first. Ties follow the
+ * sessions' own target order (QA round 2: lats beat the goal muscles
+ * alphabetically), then the key.
+ */
 export function trainedMuscles(workouts: WorkoutRecord[], library: Exercise[]): string[] {
+  const order = workouts
+    .filter(finished)
+    .flatMap((w) => w.session.items.filter((i) => i.role === 'main'))
+    .flatMap((i) => (i.targetMuscle ? [i.targetMuscle] : []));
+  const rank = (k: string) => {
+    const i = order.indexOf(k);
+    return i < 0 ? Number.MAX_SAFE_INTEGER : i;
+  };
   const byId = new Map(library.map((e) => [e.id, e]));
   const counts = new Map<string, number>();
   for (const w of workouts.filter(finished)) {
@@ -73,7 +85,7 @@ export function trainedMuscles(workouts: WorkoutRecord[], library: Exercise[]): 
     }
   }
   return [...counts.entries()]
-    .sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1))
+    .sort((a, b) => b[1] - a[1] || rank(a[0]) - rank(b[0]) || (a[0] < b[0] ? -1 : 1))
     .map(([k]) => k);
 }
 

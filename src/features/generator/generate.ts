@@ -547,6 +547,8 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     return false;
   };
   while (total() > budget) {
+    // A recovery session keeps its 4 holds when it runs at most 3 min over (QA round 2).
+    if (input.rehab && main.length <= 4 && total() - budget <= 180) break;
     if (finisher && promisedCardio && main.length > 2 && dropOne()) continue;
     if (finisher) {
       used.delete(finisher.exerciseId);

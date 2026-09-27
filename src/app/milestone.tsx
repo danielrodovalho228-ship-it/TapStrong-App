@@ -64,9 +64,12 @@ export default function MilestoneScreen() {
             {t('milestone.title', { count: days })}
           </AppText>
           <AppText color={colors.dark.text} style={styles.centerText}>
-            {streak.freezes > 0
-              ? t(streak.freezes >= MAX_FREEZES ? 'milestone.bodyMax' : 'milestone.body')
-              : t('milestone.bodyNoFreeze')}
+            {/* A deep link with a short streak is not "a full week" (QA round 2). */}
+            {days < 7
+              ? t('milestone.bodyEarly', { count: 7 - days })
+              : streak.freezes > 0
+                ? t(streak.freezes >= MAX_FREEZES ? 'milestone.bodyMax' : 'milestone.body')
+                : t('milestone.bodyNoFreeze')}
           </AppText>
         </View>
 

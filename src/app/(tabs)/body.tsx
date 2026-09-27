@@ -13,6 +13,7 @@ import {
   expandToHotspots,
   toggleMuscle,
 } from '@/features/bodymap/selection';
+import { activeProfile, useFamilyStore } from '@/features/family/store';
 import { derive } from '@/features/onboarding/derived';
 import { defaultMuscleGoal } from '@/features/onboarding/options';
 import { useOnboardingStore } from '@/features/onboarding/store';
@@ -29,6 +30,7 @@ export default function BodyMapScreen() {
   const s = useOnboardingStore();
   const derived = derive(s);
   const { states } = useBodyStates();
+  const member = useFamilyStore(activeProfile);
 
   // Goals set on a parent (e.g. "chest") in the interview apply to its parts.
   useEffect(() => {
@@ -41,6 +43,7 @@ export default function BodyMapScreen() {
   const band = displayBand(s.bodyModel.band, derived.band, derived.mode);
   const sex: BodySex = s.bodyModel.sex ?? (s.sex === 'f' ? 'f' : 'm');
   const selected = s.muscleGoals.map((m) => m.muscleKey);
+  const minor = derived.mode === 'child' || derived.mode === 'teen';
 
   const toggle = (key: string) => {
     const adding = !selected.includes(key);
@@ -59,7 +62,8 @@ export default function BodyMapScreen() {
             title={t('bodyMap.title')}
           />
           <AppText variant="caption" color={colors.teal} style={styles.subtitle}>
-            {t('bodyMap.subtitle')}
+            {/* A child or teen profile can't change its age: no "change anytime" (QA round 2). */}
+            {member?.kind === 'child' ? t('bodyMap.subtitleLocked') : t('bodyMap.subtitle')}
           </AppText>
         </View>
       }
@@ -80,7 +84,11 @@ export default function BodyMapScreen() {
           {(['m', 'f'] as const).map((value) => (
             <Chip
               key={value}
-              label={t(value === 'm' ? 'bodyMap.male' : 'bodyMap.female')}
+              label={
+                minor
+                  ? t(value === 'm' ? 'bodyMap.boy' : 'bodyMap.girl')
+                  : t(value === 'm' ? 'bodyMap.male' : 'bodyMap.female')
+              }
               selected={sex === value}
               onPress={() => s.update({ bodyModel: { ...s.bodyModel, sex: value } })}
             />
@@ -168,7 +176,8 @@ function ViewToggle({ value, onChange }: { value: BodyView; onChange: (v: BodyVi
           <Pressable
             key={v}
             accessibilityRole="radio"
-            accessibilityLabel={t(`bodyMap.${v}`)}
+            // "Back view", not a second "Back" next to the header's back button (QA round 2).
+            accessibilityLabel={t(`bodyMap.${v}View`)}
             accessibilityState={{ checked: on }}
             onPress={() => onChange(v)}
             style={[styles.toggleItem, on && styles.toggleOn]}

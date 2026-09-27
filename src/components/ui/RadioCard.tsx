@@ -18,6 +18,8 @@ export function RadioCard({ label, description, selected, ...rest }: RadioCardPr
       accessibilityRole="radio"
       accessibilityLabel={description ? `${label}, ${description}` : label}
       accessibilityState={{ checked: selected }}
+      // Web reads aria-checked from here; never null (QA round 2).
+      aria-checked={selected}
       style={({ pressed }) => [
         styles.card,
         selected ? styles.selected : styles.idle,

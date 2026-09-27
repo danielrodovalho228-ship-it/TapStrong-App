@@ -149,7 +149,7 @@ describe('Safety screen (mockup 04)', () => {
     expect(screen.queryByRole('button', { name: 'Pregnant / postpartum' })).toBeNull();
     await fireEvent.press(screen.getByRole('button', { name: 'Knee' }));
     expect(store().painAreas).toEqual(['knee']);
-    await fireEvent.press(screen.getAllByRole('button', { name: 'None' })[0]);
+    await fireEvent.press(screen.getByRole('button', { name: 'No pain areas' }));
     expect(store().painAreas).toEqual([]);
   });
 });

@@ -64,7 +64,7 @@
     "upperBack": "Espalda alta",
     "lats": "Dorsales",
     "triceps": "Tríceps",
-    "lowerBack": "Espalda baja",
+    "lowerBack": "Zona lumbar",
     "glutes": "Glúteos",
     "hamstrings": "Isquiotibiales",
     "calves": "Pantorrillas",
@@ -151,7 +151,7 @@
       "senior": "60+"
     },
     "modeBody": {
-      "teen": "Pensado para adolescentes: sin números de grasa corporal ni fotos. Ahora, unas preguntas rápidas de seguridad.",
+      "teen": "Hecho para adolescentes: sin medidas del cuerpo y sin fotos. Ahora unas preguntas rápidas de seguridad.",
       "adult": "App completa. Ahora, unas preguntas rápidas de seguridad.",
       "senior": "Texto más grande, foco en el equilibrio y opciones sentado o con apoyo primero. Ahora, unas preguntas rápidas de seguridad."
     },
@@ -269,7 +269,7 @@
       "neck": "Cuello",
       "shoulder": "Hombro",
       "elbow_wrist": "Codo / muñeca",
-      "lower_back": "Espalda baja",
+      "lower_back": "Zona lumbar",
       "hip": "Cadera",
       "knee": "Rodilla",
       "ankle_foot": "Tobillo / pie",
@@ -292,7 +292,9 @@
     "redFlagTitle": "Consulta a tu médico",
     "redFlagBody": "Algunas respuestas indican que debes consultar a tu médico antes del primer entrenamiento. Igual puedes armar tu plan ahora.",
     "acknowledge": "Entendido",
-    "footnote": "TapStrong adapta el entrenamiento; no da consejos médicos."
+    "footnote": "TapStrong adapta el entrenamiento; no da consejos médicos.",
+    "noPain": "Sin zonas de dolor",
+    "noConditions": "Sin condiciones de salud"
   },
   "profile": {
     "eyebrow": "De tu entrevista",
@@ -359,7 +361,12 @@
     "setGoals": "Definir objetivos",
     "zoomIn": "Acercar",
     "zoomOut": "Alejar",
-    "zoomHint": "Pellizca para hacer zoom, o usa + y −."
+    "zoomHint": "Pellizca para hacer zoom, o usa + y −.",
+    "subtitleLocked": "Según tu edad",
+    "boy": "Niño",
+    "girl": "Niña",
+    "frontView": "Vista de frente",
+    "backView": "Vista de espalda"
   },
   "goalsSheet": {
     "goalFor": "Objetivo para esta zona",
@@ -374,7 +381,7 @@
         "descMinor": "Aspecto más firme + final corto de cardio"
       },
       "strengthen": {
-        "title": "Fortalecer (Reparar)"
+        "title": "Fortalecer"
       },
       "balance": {
         "title": "Equilibrar izquierda y derecha"
@@ -3387,6 +3394,26 @@
     "sf_seated_hip_hinge_lift": {
       "name": "Elevación en bisagra sentado",
       "cues": "Manos en los muslos, inclínate desde la cadera con la espalda recta y vuelve arriba apretando la zona lumbar."
+    },
+    "sv_seated_backrest_chest_opener": {
+      "name": "Apertura de pecho en el respaldo",
+      "cues": "Siéntate erguido, toma los lados del respaldo por detrás y eleva el pecho con suavidad hasta sentir el estiramiento."
+    },
+    "sv_seated_knee_hug_glute": {
+      "name": "Abrazo de rodilla sentado",
+      "cues": "Siéntate erguido, sube una rodilla y abrázala suave hacia el pecho; sostén, respira y cambia de lado."
+    },
+    "sv_seated_cross_knee_glute": {
+      "name": "Glúteo con rodilla cruzada sentado",
+      "cues": "Siéntate erguido, cruza una rodilla sobre la otra y llévala suave hacia el hombro opuesto; sostén y cambia."
+    },
+    "sv_seated_sky_reach_belly": {
+      "name": "Alcance al cielo sentado",
+      "cues": "Siéntate erguido, entrelaza los dedos, estira hacia arriba y un poco atrás, siente alargar el abdomen; respira."
+    },
+    "sv_seated_hands_on_knees_lift": {
+      "name": "Estiramiento de abdomen sentado",
+      "cues": "Manos en las rodillas, presiona suave, eleva el pecho y mira un poco arriba para estirar el bajo abdomen; respira."
     }
   },
   "generator": {
@@ -3413,7 +3440,6 @@
   },
   "home": {
     "title": "Hoy",
-    "dayStreak": "Días seguidos",
     "inProgress": "En curso",
     "picked": "Hoy · elegido para tu cuerpo",
     "fullBody": "Cuerpo completo",
@@ -3469,7 +3495,11 @@
     "freezes_one": "{{count}} protección de racha guardada",
     "freezes_other": "{{count}} protecciones de racha guardadas",
     "mobility": "Movilidad corta · {{minutes}} min",
-    "mobilityNote": "Cuenta para tu racha. Siempre gratis, cuantas veces quieras."
+    "mobilityNote": "Cuenta para tu racha. Siempre gratis, cuantas veces quieras.",
+    "morningCheck": "Califica tu dolor esta mañana",
+    "morningCheckBody": "Un toque: tu plan de recuperación avanza o se suaviza.",
+    "dayStreak_one": "Día seguido",
+    "dayStreak_other": "Días seguidos"
   },
   "workout": {
     "title": "Tu entrenamiento",
@@ -3631,8 +3661,8 @@
     },
     "finish": {
       "eyebrow": "Termina fuerte",
-      "never": "Aún no has entrenado tus {{group}}. ¿Añadir un final de 10 minutos ahora, o ponerlos primero la próxima vez?",
-      "stale": "No entrenas tus {{group}} desde hace 5+ días. ¿Añadir un final de 10 minutos ahora, o ponerlos primero la próxima vez?",
+      "never": "Aún no has entrenado {{group}}. ¿Añadir un final de 10 minutos ahora, o darle prioridad la próxima vez?",
+      "stale": "No entrenas {{group}} desde hace 5+ días. ¿Añadir un final de 10 minutos ahora, o darle prioridad la próxima vez?",
       "saved": "Listo: tus {{group}} van primero la próxima vez.",
       "addTen": "Añadir 10 min",
       "nextTime": "{{group}} la próxima",
@@ -3743,7 +3773,9 @@
       "streak_30": "Racha de 30 días"
     },
     "share": "Compartir mi racha",
-    "keepGoing": "Seguir"
+    "keepGoing": "Seguir",
+    "bodyEarly_one": "Cada día activo cuenta: falta {{count}} día para tu racha de 7.",
+    "bodyEarly_other": "Cada día activo cuenta: faltan {{count}} días para tu racha de 7."
   },
   "notifications": {
     "reminder": {

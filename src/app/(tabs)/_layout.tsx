@@ -24,6 +24,8 @@ export default function TabsLayout() {
         tabBarLabelStyle: {
           fontFamily: fonts.headingSemi,
           fontSize: senior ? 14 : 12,
+          // Room for the full line so labels are never clipped (QA round 2).
+          lineHeight: senior ? 18 : 16,
           letterSpacing: 0.3,
           textTransform: 'uppercase',
         },

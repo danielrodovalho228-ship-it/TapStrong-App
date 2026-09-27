@@ -8,6 +8,8 @@ import { NEUTRAL_BODY_AVAILABLE, type BodySex, type BodyView } from '../bodymap/
 import type { BodyBand } from '../profile/age';
 import { deviceUnits, type Units } from '../profile/units';
 
+import { derive } from './derived';
+
 import {
   defaultMuscleGoal,
   GYM_EQUIPMENT,
@@ -23,6 +25,7 @@ import {
   type Sex,
   type Who,
 } from './options';
+import { visibleConditions } from './safety';
 
 export type ChatTurn = { userText?: string; reply?: string };
 
@@ -94,18 +97,23 @@ export const useOnboardingStore = create<OnboardingData & Actions>()(
     (set, get) => ({
       ...initialOnboarding(),
 
-      // Pregnancy is hidden for the male body: drop it if the body changes (QA C-10).
-      update: (patch) =>
+      // Pregnancy is hidden for the male body, kids and 60+: drop it when the
+      // body or the birth date changes (QA C-10, round 2).
+      update: (patch) => {
+        const next = { ...get(), ...patch };
+        const mode = derive(next)?.mode;
+        const conditions = patch.conditions ?? get().conditions;
+        const hidden =
+          conditions.includes('pregnant_postpartum') &&
+          (next.sex === 'm' ||
+            (mode !== undefined &&
+              !visibleConditions(mode, next.sex).includes('pregnant_postpartum')));
         set(
-          patch.sex === 'm' && get().conditions.includes('pregnant_postpartum')
-            ? {
-                ...patch,
-                conditions: (patch.conditions ?? get().conditions).filter(
-                  (c) => c !== 'pregnant_postpartum',
-                ),
-              }
+          hidden
+            ? { ...patch, conditions: conditions.filter((c) => c !== 'pregnant_postpartum') }
             : patch,
-        ),
+        );
+      },
 
       applyAnswer: (step, a) => {
         const s = get();

@@ -146,7 +146,9 @@ export default function ShareScreen() {
                 {streakToday(streak, localDate(now), deviceWeekStart())}
               </AppText>
               <AppText variant="caption" color={colors.muted} style={styles.caps}>
-                {t('home.dayStreak')}
+                {t('home.dayStreak', {
+                  count: streakToday(streak, localDate(now), deviceWeekStart()),
+                })}
               </AppText>
             </View>
           </View>

@@ -57,6 +57,8 @@ export default function SafetyScreen() {
       <Section label={t('safety.pain')}>
         <Chip
           label={t('safety.none')}
+          // Two "None" chips: each says what it answers (QA round 2).
+          accessibilityLabel={t('safety.noPain')}
           selected={s.painAreas.length === 0}
           onPress={() => s.update({ painAreas: [], redFlagAcknowledged: false })}
         />
@@ -75,6 +77,7 @@ export default function SafetyScreen() {
       <Section label={t('safety.health')}>
         <Chip
           label={t('safety.none')}
+          accessibilityLabel={t('safety.noConditions')}
           selected={selectedConditions.length === 0}
           onPress={() => s.update({ conditions: [], redFlagAcknowledged: false })}
         />

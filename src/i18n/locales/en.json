@@ -151,7 +151,7 @@
       "senior": "60+"
     },
     "modeBody": {
-      "teen": "Made for teens: no body-fat numbers and no photos. Next we ask a few quick safety questions.",
+      "teen": "Made for teens: no body measurements and no photos. Next we ask a few quick safety questions.",
       "adult": "Full app. Next we ask a few quick safety questions.",
       "senior": "Bigger text, balance focus, and seated or supported options first. Next, a few quick safety questions."
     },
@@ -292,7 +292,9 @@
     "redFlagTitle": "Check with your doctor",
     "redFlagBody": "Some of your answers mean you should check with your doctor before your first workout. You can still set up your plan now.",
     "acknowledge": "I understand",
-    "footnote": "TapStrong adapts training; it doesn't give medical advice."
+    "footnote": "TapStrong adapts training; it doesn't give medical advice.",
+    "noPain": "No pain areas",
+    "noConditions": "No health conditions"
   },
   "profile": {
     "eyebrow": "From your interview",
@@ -359,7 +361,12 @@
     "setGoals": "Set goals",
     "zoomIn": "Zoom in",
     "zoomOut": "Zoom out",
-    "zoomHint": "Pinch to zoom, or use + and −."
+    "zoomHint": "Pinch to zoom, or use + and −.",
+    "subtitleLocked": "Matched to your age",
+    "boy": "Boy",
+    "girl": "Girl",
+    "frontView": "Front view",
+    "backView": "Back view"
   },
   "goalsSheet": {
     "goalFor": "Goal for this area",
@@ -374,7 +381,7 @@
         "descMinor": "Tighter look + short cardio finisher"
       },
       "strengthen": {
-        "title": "Strengthen (Repair)"
+        "title": "Strengthen"
       },
       "balance": {
         "title": "Balance left & right"
@@ -3387,6 +3394,26 @@
     "sf_seated_hip_hinge_lift": {
       "name": "Seated hip hinge lift",
       "cues": "Hands on thighs, hinge forward from the hips with a flat back, then lift back up by tightening your lower back."
+    },
+    "sv_seated_backrest_chest_opener": {
+      "name": "Seated backrest chest opener",
+      "cues": "Sit tall, hold the sides of the backrest behind you and gently lift your chest until you feel a stretch."
+    },
+    "sv_seated_knee_hug_glute": {
+      "name": "Seated knee hug",
+      "cues": "Sit tall, lift one knee and hug it gently toward your chest; hold, breathe, then switch sides."
+    },
+    "sv_seated_cross_knee_glute": {
+      "name": "Seated cross-knee glute pull",
+      "cues": "Sit tall, cross one knee over the other and pull it gently toward the opposite shoulder; hold, then switch."
+    },
+    "sv_seated_sky_reach_belly": {
+      "name": "Seated sky reach",
+      "cues": "Sit tall, interlace your fingers, reach up and slightly back, feel the front of your belly lengthen; breathe."
+    },
+    "sv_seated_hands_on_knees_lift": {
+      "name": "Seated chest-lift belly stretch",
+      "cues": "Hands on knees, press them gently, lift your chest and look slightly up to stretch the lower belly; breathe."
     }
   },
   "generator": {
@@ -3413,7 +3440,6 @@
   },
   "home": {
     "title": "Today",
-    "dayStreak": "Day streak",
     "inProgress": "In progress",
     "picked": "Today · picked for your body",
     "fullBody": "Full body",
@@ -3469,7 +3495,11 @@
     "freezes_one": "{{count}} streak freeze saved",
     "freezes_other": "{{count}} streak freezes saved",
     "mobility": "Short mobility · {{minutes}} min",
-    "mobilityNote": "Counts for your streak. Always free, as often as you like."
+    "mobilityNote": "Counts for your streak. Always free, as often as you like.",
+    "morningCheck": "Rate your pain this morning",
+    "morningCheckBody": "One tap: it moves your recovery plan on or eases it back.",
+    "dayStreak_one": "Day streak",
+    "dayStreak_other": "Day streak"
   },
   "workout": {
     "title": "Your workout",
@@ -3743,7 +3773,9 @@
       "streak_30": "30-day streak"
     },
     "share": "Share my streak",
-    "keepGoing": "Keep going"
+    "keepGoing": "Keep going",
+    "bodyEarly_one": "Every active day counts: {{count}} more day to your 7-day streak.",
+    "bodyEarly_other": "Every active day counts: {{count}} more days to your 7-day streak."
   },
   "notifications": {
     "reminder": {

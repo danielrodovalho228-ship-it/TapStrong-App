@@ -33,6 +33,18 @@ function sameRegion(e: Exercise, current: Exercise | undefined): boolean {
 const MOBILITY_PARTS: SessionPart[] = ['finisher_mobility', 'cooldown_stretch', 'warmup_mobility'];
 const byText = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
 
+/** A muscle and its group: upper chest → chest, upper, mid and lower chest. */
+function groupOf(muscles: string[]): string[] {
+  return [
+    ...new Set(
+      muscles.flatMap((m) => {
+        const base = muscleByKey(m)?.parentKey ?? m;
+        return [m, base, ...muscleFamily(base)];
+      }),
+    ),
+  ];
+}
+
 function primaryFamily(item: SessionItem, current: Exercise | undefined): string[] {
   if (item.targetMuscle) return muscleFamily(item.targetMuscle);
   return (current?.muscles ?? []).filter((m) => m.role === 'primary').map((m) => m.muscleKey);
@@ -70,6 +82,12 @@ export function getAlternatives(
     .filter((e) => !inSession.has(e.id))
     .filter((e) => {
       // Warm-up and cool-down swaps stay in the same part AND body region (QA A-11).
+      // A stretch swap is "same muscle": the stretched muscle or its group,
+      // never another one (QA round 2: a neck stretch offered triceps).
+      if (item.part === 'cooldown_stretch')
+        return (
+          e.parts.includes('cooldown_stretch') && emphasisOn(e, groupOf(family), 'primary') > 0
+        );
       if (item.role !== 'main')
         return e.parts.includes(item.part as SessionPart) && sameRegion(e, current);
       const sameSlot =

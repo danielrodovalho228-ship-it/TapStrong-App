@@ -151,7 +151,7 @@
       "senior": "60+"
     },
     "modeBody": {
-      "teen": "Feito para adolescentes: sem números de gordura corporal e sem fotos. Agora, algumas perguntas rápidas de segurança.",
+      "teen": "Feito para adolescentes: sem medidas do corpo e sem fotos. Agora algumas perguntas rápidas de segurança.",
       "adult": "App completo. Agora, algumas perguntas rápidas de segurança.",
       "senior": "Texto maior, foco em equilíbrio e opções sentado ou com apoio primeiro. Agora, algumas perguntas rápidas de segurança."
     },
@@ -292,7 +292,9 @@
     "redFlagTitle": "Fale com seu médico",
     "redFlagBody": "Algumas respostas indicam que você deve falar com seu médico antes do primeiro treino. Você já pode montar seu plano agora.",
     "acknowledge": "Entendi",
-    "footnote": "O TapStrong adapta o treino; não dá conselho médico."
+    "footnote": "O TapStrong adapta o treino; não dá conselho médico.",
+    "noPain": "Sem áreas de dor",
+    "noConditions": "Sem condições de saúde"
   },
   "profile": {
     "eyebrow": "Da sua entrevista",
@@ -359,7 +361,12 @@
     "setGoals": "Definir objetivos",
     "zoomIn": "Aproximar",
     "zoomOut": "Afastar",
-    "zoomHint": "Use dois dedos para dar zoom, ou + e −."
+    "zoomHint": "Use dois dedos para dar zoom, ou + e −.",
+    "subtitleLocked": "De acordo com a sua idade",
+    "boy": "Menino",
+    "girl": "Menina",
+    "frontView": "Vista de frente",
+    "backView": "Vista de costas"
   },
   "goalsSheet": {
     "goalFor": "Objetivo para esta área",
@@ -374,7 +381,7 @@
         "descMinor": "Visual mais firme + final curto de cardio"
       },
       "strengthen": {
-        "title": "Fortalecer (Reparar)"
+        "title": "Fortalecer"
       },
       "balance": {
         "title": "Equilibrar esquerda e direita"
@@ -3387,6 +3394,26 @@
     "sf_seated_hip_hinge_lift": {
       "name": "Dobradiça de quadril sentado",
       "cues": "Mãos nas coxas, incline a partir do quadril com as costas retas e volte contraindo a lombar."
+    },
+    "sv_seated_backrest_chest_opener": {
+      "name": "Abertura de peito no encosto",
+      "cues": "Sente-se ereto, segure as laterais do encosto atrás de você e erga o peito com calma até sentir alongar."
+    },
+    "sv_seated_knee_hug_glute": {
+      "name": "Abraço no joelho sentado",
+      "cues": "Sente-se ereto, erga um joelho e abrace-o com calma em direção ao peito; segure, respire e troque de lado."
+    },
+    "sv_seated_cross_knee_glute": {
+      "name": "Glúteo com joelho cruzado sentado",
+      "cues": "Sente-se ereto, cruze um joelho sobre o outro e puxe com calma em direção ao ombro oposto; segure e troque."
+    },
+    "sv_seated_sky_reach_belly": {
+      "name": "Alcance ao céu sentado",
+      "cues": "Sente-se ereto, entrelace os dedos, estique para cima e um pouco para trás, sinta a barriga alongar; respire."
+    },
+    "sv_seated_hands_on_knees_lift": {
+      "name": "Alongamento de barriga sentado",
+      "cues": "Mãos nos joelhos, pressione de leve, erga o peito e olhe um pouco para cima para alongar a barriga; respire."
     }
   },
   "generator": {
@@ -3413,7 +3440,6 @@
   },
   "home": {
     "title": "Hoje",
-    "dayStreak": "Dias seguidos",
     "inProgress": "Em andamento",
     "picked": "Hoje · escolhido para o seu corpo",
     "fullBody": "Corpo inteiro",
@@ -3469,7 +3495,11 @@
     "freezes_one": "{{count}} proteção de sequência guardada",
     "freezes_other": "{{count}} proteções de sequência guardadas",
     "mobility": "Mobilidade curta · {{minutes}} min",
-    "mobilityNote": "Conta para a sua sequência. Sempre grátis, quantas vezes quiser."
+    "mobilityNote": "Conta para a sua sequência. Sempre grátis, quantas vezes quiser.",
+    "morningCheck": "Dê nota à dor desta manhã",
+    "morningCheckBody": "Um toque: seu plano de recuperação avança ou fica mais leve.",
+    "dayStreak_one": "Dia seguido",
+    "dayStreak_other": "Dias seguidos"
   },
   "workout": {
     "title": "Seu treino",
@@ -3743,7 +3773,9 @@
       "streak_30": "30 dias seguidos"
     },
     "share": "Compartilhar minha sequência",
-    "keepGoing": "Continuar"
+    "keepGoing": "Continuar",
+    "bodyEarly_one": "Cada dia ativo conta: falta {{count}} dia para a sua sequência de 7.",
+    "bodyEarly_other": "Cada dia ativo conta: faltam {{count}} dias para a sua sequência de 7."
   },
   "notifications": {
     "reminder": {

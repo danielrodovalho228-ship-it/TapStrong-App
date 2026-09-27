@@ -109,7 +109,8 @@ export default function PlayerScreen() {
         chips={[
           { label: targetText(t, step.item, exercise), strong: true },
           ...(exercise?.muscles ?? [])
-            .filter((m) => m.role === 'secondary')
+            // Never "Upper chest · also Upper chest" (QA round 2).
+            .filter((m) => m.role === 'secondary' && m.muscleKey !== step.item.targetMuscle)
             .slice(0, 1)
             .map((m) => ({
               label: t('workout.player.alsoWorks', {
