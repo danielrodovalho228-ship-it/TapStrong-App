@@ -3,6 +3,7 @@ import { kvStorage } from '@/lib/storage';
 import { useAccountStore } from '../account/store';
 import { useMovementPainStore, type MovementPain } from '../movement/store';
 import { initialOnboarding, useOnboardingStore, type OnboardingData } from '../onboarding/store';
+import { useProgramStore } from '../program/store';
 import { initialProgress, useProgressStore, type ProgressData } from '../progress/store';
 import { useRestrictionsStore, type Restriction } from '../restrictions/store';
 import { initialStreak, type StreakState } from '../workout/streak';
@@ -19,6 +20,7 @@ type Snapshot = {
   restrictions: Restriction[];
   progress?: ProgressData;
   movementPain?: MovementPain[];
+  program?: { planId: string | null; startedAt: string | null };
 };
 
 const key = (id: string) => `profile-snapshot:${id}`;
@@ -41,6 +43,7 @@ function capture(): Snapshot {
       seniorPhotos,
     }))(useProgressStore.getState()),
     movementPain: useMovementPainStore.getState().reports,
+    program: (({ planId, startedAt }) => ({ planId, startedAt }))(useProgramStore.getState()),
   };
 }
 
@@ -57,6 +60,10 @@ function load(snapshot: Snapshot | null, seed: Partial<OnboardingData>) {
   useRestrictionsStore.setState({ items: snapshot?.restrictions ?? [] });
   useProgressStore.setState({ ...initialProgress(), ...snapshot?.progress });
   useMovementPainStore.setState({ reports: snapshot?.movementPain ?? [] });
+  useProgramStore.setState({
+    planId: snapshot?.program?.planId ?? null,
+    startedAt: snapshot?.program?.startedAt ?? null,
+  });
 }
 
 /** The owner's own profile, registered the first time the family is used. */

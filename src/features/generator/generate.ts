@@ -3,6 +3,8 @@ import { muscleByKey, muscleFamily, type MovementGroup } from '../muscles';
 import { defaultMuscleGoal, type MuscleGoal } from '../onboarding/options';
 import type { AppMode } from '../profile/age';
 
+import { deloadSets } from '../program/block';
+
 import { rampAllowed } from './alternatives';
 import { doseFor, estimateSeconds, needsCaution } from './dosage';
 import { emphasisOn, isKidMove, needsJointCare, rangeFor, safePool, userLevel } from './filters';
@@ -312,6 +314,15 @@ function pickByOverlap(
 // ---------------------------------------------------------------------------
 
 export function generateSession(input: GeneratorInput): GeneratedSession {
+  // A deload week keeps the exercises and cuts the sets by 40% (A2).
+  if (input.deload) {
+    const s = generateSession({
+      ...input,
+      deload: false,
+      setsPerExercise: deloadSets(input.setsPerExercise),
+    });
+    return s.error ? s : { ...s, deload: true };
+  }
   const pool = safePool(input);
   const minutes = Math.max(10, Math.min(120, Math.round(input.minutes)));
   const { warmup, cooldown } = warmupCooldownMinutes(input.mode, minutes);
@@ -879,6 +890,48 @@ export function withOneMoreExercise(
   const more = generateSession({ ...input, exercisesPerSession: input.exercisesPerSession + 1 });
   if (more.error || mainIds(more).length <= mainIds(current).length) return null;
   return more;
+}
+
+/**
+ * A Custom workout (improvements v1, A6): the person's own list, still
+ * through every safety filter (unsafe picks are left out and named), with
+ * the usual warm-up and cool-down around it. Never auto-programmed.
+ */
+export function generateCustomSession(
+  input: GeneratorInput,
+  exerciseIds: string[],
+): GeneratedSession {
+  const pool = new Map(safePool(input).map((e) => [e.id, e]));
+  const chosen = exerciseIds.map((id) => pool.get(id)).filter((e): e is Exercise => !!e);
+  const left = exerciseIds.filter((id) => !pool.has(id));
+  const goal = defaultMuscleGoal(input.mainGoals);
+  const muscles = [...new Set(chosen.map((e) => topPrimary(e)).filter((m): m is string => !!m))];
+  const base = generateSession({
+    ...input,
+    // Warm-up and cool-down fitted to the chosen muscles; no filler or finisher.
+    library: input.library.filter((e) => !e.parts.includes('main') || exerciseIds.includes(e.id)),
+    mobilityOnly: true,
+    mainGoals: input.mainGoals,
+    muscleGoals: muscles.map((muscleKey) => ({ muscleKey, goal })),
+    exercisesPerSession: Math.max(1, chosen.length),
+  });
+  if (!chosen.length) return { ...base, items: [], estimatedMinutes: 0, error: 'no_main' };
+  if (base.error) return base;
+  const main = chosen.map((e) => {
+    const muscle = topPrimary(e) ?? '';
+    return mainItem(e, { muscle, family: muscleFamily(muscle), goal }, input);
+  });
+  const warm = base.items.filter((i) => i.role === 'warmup' && i.part !== 'ramp_up');
+  const cool = base.items.filter((i) => i.role === 'cooldown');
+  const items = [...warm, ...main, ...cool].map((item, i) => ({ ...item, id: `i${i}` }));
+  const seconds = items.reduce((n, i) => n + (i.durationSeconds ?? i.estSeconds), 0);
+  return {
+    ...base,
+    items,
+    focus: undefined,
+    estimatedMinutes: Math.round(seconds / 60),
+    notes: left.length ? [{ key: 'generator.notes.customLeftOut', count: left.length }] : [],
+  };
 }
 
 /** "Only 15 min today" re-runs the generator with 15 minutes (SPEC §8). */

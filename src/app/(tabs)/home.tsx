@@ -16,6 +16,10 @@ import { SeniorHome } from '@/features/senior/SeniorHome';
 import { muscleLabel } from '@/features/onboarding/summaries';
 import { LegendRow, RecoveryBody, STATE_COLOR } from '@/features/workout/components/RecoveryBody';
 import { MOBILITY_MINUTES } from '@/features/generator';
+import { programStatus } from '@/features/program/apply';
+import { dayName, sessionSummary } from '@/features/program/block';
+import { WeekStrip } from '@/features/program/components/WeekStrip';
+import { useProgramStore } from '@/features/program/store';
 import { morningCheckOpen, pendingMorningChecks } from '@/features/movement/progress';
 import { useMovementPainStore } from '@/features/movement/store';
 import {
@@ -51,6 +55,7 @@ export default function HomeScreen() {
   const checkins = useProgressStore((st) => st.checkins);
   const painReports = useMovementPainStore((st) => st.reports);
   const [resting, setResting] = useState(false);
+  const programState = useProgramStore();
   if (!profile.onboardingComplete || !derived) return <Redirect href="/welcome" />;
 
   const now = clock.now();
@@ -68,6 +73,8 @@ export default function HomeScreen() {
   const goals = (preview ? sessionTargets(preview) : []).map((m) => muscleLabel(t, m));
   // The session's own length, not the profile setting (QA round 2).
   const cardMinutes = preview?.estimatedMinutes || profile.minutes || 30;
+  const program = programStatus(programState, workouts, localDate(now));
+  const summary = preview ? sessionSummary(preview, derived.mode, profile.weightKg) : null;
   const openMobility = () => {
     const id = createMobilityWorkout(input);
     router.push({ pathname: '/workout/[id]', params: { id: id ?? 'unavailable' } });
@@ -149,6 +156,7 @@ export default function HomeScreen() {
 
   return (
     <Screen>
+      <WeekStrip />
       <View style={styles.head}>
         <View style={styles.flex}>
           <AppText variant="caption" color={colors.muted} style={styles.caps}>
@@ -205,13 +213,31 @@ export default function HomeScreen() {
       ) : (
         <Card tone="dark" style={styles.today}>
           <AppText variant="caption" color={colors.dark.accentSoft} style={styles.caps}>
-            {active ? t('home.inProgress') : t('home.picked')}
+            {active
+              ? t('home.inProgress')
+              : [
+                  t(`program.block.${program.block.phase}`, {
+                    week: program.block.week,
+                    of: program.block.of,
+                  }),
+                  preview ? t(`program.day.${dayName(preview, library)}`) : null,
+                ]
+                  .filter(Boolean)
+                  .join(' · ')}
           </AppText>
           <AppText variant="h1" color={colors.dark.text}>
             {goals.length ? goals.join(' & ') : t('home.fullBody')}
           </AppText>
+          {/* "6 exercises · 45 min" (+ kcal for adults only, never teens). */}
           <AppText color={colors.dark.text}>
-            {t('home.withWarmup', { minutes: cardMinutes })}
+            {summary
+              ? [
+                  t('program.summary', { count: summary.exercises, minutes: summary.minutes }),
+                  summary.kcal ? t('program.kcal', { kcal: summary.kcal }) : null,
+                ]
+                  .filter(Boolean)
+                  .join(' · ')
+              : t('home.withWarmup', { minutes: cardMinutes })}
           </AppText>
           <Button
             variant="accent"
@@ -221,7 +247,7 @@ export default function HomeScreen() {
           <Button
             variant="onDark"
             label={t('home.pickElse')}
-            onPress={() => router.push('/body')}
+            onPress={() => router.push('/workout/new')}
           />
         </Card>
       )}

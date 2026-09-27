@@ -8,6 +8,7 @@ import { RatePainButtons } from '@/features/movement/Entry';
 import type { BodySex } from '@/features/bodymap/images';
 import { displayBand } from '@/features/bodymap/selection';
 import { useAccountStore } from '@/features/account/store';
+import { activeProfile, canShare, useFamilyStore } from '@/features/family/store';
 import { generateSession } from '@/features/generator';
 import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
@@ -37,6 +38,7 @@ export default function DoneScreen() {
   const profile = useOnboardingStore();
   const { workouts, streak, create, setNextFocus } = useWorkoutStore();
   const account = useAccountStore();
+  const member = useFamilyStore(activeProfile);
   const [focusSaved, setFocusSaved] = useState(false);
   const derived = derive(profile);
   if (!workout || !derived) return <Redirect href="/home" />;
@@ -102,7 +104,12 @@ export default function DoneScreen() {
       footer={
         <>
           <View style={styles.row}>
-            {derived.mode !== 'child' ? (
+            {member?.kind === 'child' && !member.shareAllowed && derived.mode !== 'child' ? (
+              <AppText variant="caption" color={colors.mutedStrong} style={styles.flex}>
+                {t('share.teenOff')}
+              </AppText>
+            ) : null}
+            {canShare(member, derived.mode) ? (
               <View style={styles.flex}>
                 <Button
                   variant="secondary"

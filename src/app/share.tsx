@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText, Button, IconButton } from '@/components/ui';
 import { loadReferralCode, referralLink } from '@/features/account/cloud';
 import { useAccountStore } from '@/features/account/store';
+import { activeProfile, canShare, useFamilyStore } from '@/features/family/store';
 import type { BodySex } from '@/features/bodymap/images';
 import { displayBand } from '@/features/bodymap/selection';
 import { muscleByKey } from '@/features/muscles';
@@ -36,6 +37,7 @@ export default function ShareScreen() {
   const profile = useOnboardingStore();
   const derived = derive(profile);
   const account = useAccountStore();
+  const member = useFamilyStore(activeProfile);
   const { workouts, streak } = useWorkoutStore();
   const { states, library } = useBodyStates();
   const fourWeeks = useLocalSearchParams<{ range?: string }>().range === '4w';
@@ -47,7 +49,7 @@ export default function ShareScreen() {
     if (account.saved && !code) void loadReferralCode().then(setCode);
   }, [account.saved, code]);
 
-  if (!derived || derived.mode === 'child') return <Redirect href="/home" />;
+  if (!derived || !canShare(member, derived.mode)) return <Redirect href="/home" />;
 
   const now = clock.now();
   const finished = workouts.filter((w) => w.status === 'done' || w.status === 'partial');

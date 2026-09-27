@@ -18,6 +18,9 @@ import { derive } from '../onboarding/derived';
 import { useOnboardingStore } from '../onboarding/store';
 import { activeAreas, doctorFirstAreas, useRestrictionsStore } from '../restrictions/store';
 
+import { withProgram } from '../program/apply';
+import { useProgramStore } from '../program/store';
+
 import { withFocus, recentSessions } from './plan';
 import {
   dullPainAreasToday,
@@ -44,8 +47,9 @@ export function useGeneratorInput(library: Exercise[]): GeneratorInput | null {
   const restrictions = useRestrictionsStore((s) => s.items);
   const workouts = useWorkoutStore((s) => s.workouts);
   const reports = useMovementPainStore((s) => s.reports);
+  const program = useProgramStore();
   const today = localDate(clock.now());
-  return inputFromProfile(profile, library, __DEV__, {
+  const base = inputFromProfile(profile, library, __DEV__, {
     restrictions: [
       ...new Set([...activeAreas(restrictions), ...sharpStopAreasToday(workouts, today)]),
     ],
@@ -57,6 +61,8 @@ export function useGeneratorInput(library: Exercise[]): GeneratorInput | null {
     today: localDate(clock.now()),
     now: clock.now().toISOString(),
   });
+  // A ready-made plan and the deload week apply on top (improvements v1, A2/A5).
+  return base ? withProgram(base, library, workouts, program, today) : null;
 }
 
 /**

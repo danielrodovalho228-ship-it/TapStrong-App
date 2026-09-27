@@ -45,6 +45,8 @@ export type GeneratorInput = {
    */
   painToday?: string[];
   /** Areas where a sharp pain stopped a workout today: no exercise moving that joint today (QA R2-02). */
+  /** The last week of a program block: 40% less volume (improvements v1, A2). */
+  deload?: boolean;
   /** A short mobility session (~10 min): mobility moves only, no recovery rule (QA round 2, decision 1). */
   mobilityOnly?: boolean;
   /** Now (ISO time): recovery hours for the targets (QA R2-08). */
@@ -95,6 +97,8 @@ export type GeneratorNote =
   | { key: 'generator.notes.balance'; groups: MovementGroup[] }
   | { key: 'generator.notes.rested'; muscles: string[] }
   | { key: 'generator.notes.trimmed'; count: number }
+  /** Custom workout picks left out because they aren't safe for this profile. */
+  | { key: 'generator.notes.customLeftOut'; count: number }
   /** Chosen muscles cut to fit the time; they come first next session (QA R2-10). */
   | { key: 'generator.notes.trimmedMuscles'; muscles: string[] }
   /** None of the chosen muscles had a safe exercise today; others were trained instead. */
@@ -111,6 +115,8 @@ export type GeneratedSession = {
   cooldownMinutes: number;
   estimatedMinutes: number;
   notes: GeneratorNote[];
+  /** A deload week: 40% less volume (improvements v1, A2). */
+  deload?: boolean;
   /** A short mobility or balance session instead of a workout (QA R3-03, R3-05). */
   focus?: 'mobility' | 'balance';
   /** Set when no safe session can be built. */

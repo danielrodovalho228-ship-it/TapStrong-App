@@ -7,6 +7,11 @@ import { AppText, Button, Card, Icon, IconButton, Notice, Screen } from '@/compo
 import { canStartWorkout, currentPlan } from '@/features/billing/rules';
 import { useBillingStore } from '@/features/billing/store';
 import type { Exercise } from '@/features/exercises/types';
+import { dayName, sessionSummary } from '@/features/program/block';
+import { WeekStrip } from '@/features/program/components/WeekStrip';
+import { adviceForItem, loadText } from '@/features/workout/loads';
+import type { LoadUnit } from '@/features/workout/types';
+import { useOnboardingStore } from '@/features/onboarding/store';
 import {
   generateSession,
   MOBILITY_MINUTES,
@@ -49,6 +54,9 @@ export default function WorkoutScreen() {
   const { t } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { workout, byId, input, library } = useWorkout(id);
+  const mode = input?.mode ?? 'adult';
+  const weightKg = useOnboardingStore((st) => st.weightKg);
+  const units = useOnboardingStore((st) => st.units);
   useSafetyRefresh(workout?.id, input, library);
   const store = useWorkoutStore();
   const [sheet, setSheet] = useState<SheetState>(null);
@@ -123,8 +131,27 @@ export default function WorkoutScreen() {
     ) {
       return t(n.key, { muscles: n.muscles.map((m) => muscleLabel(t, m)).join(', ') });
     }
+    if (n.key === 'generator.notes.customLeftOut') return t(n.key, { count: n.count });
     return t(n.key);
   };
+
+  // "3 × 10–12 · 25 lb" (A4): the suggested load from the person's history.
+  const unit: LoadUnit = units === 'imperial' ? 'lb' : 'kg';
+  const loadLabel = (item: SessionItem, e: Exercise | undefined) =>
+    loadText(
+      adviceForItem({
+        workouts: store.workouts,
+        workoutId: workout.id,
+        item,
+        exercise: e,
+        unit,
+        generator: { ...input, deload: session.deload },
+      }),
+      t(`workout.units.${unit}`),
+    );
+
+  // Adults and 60+ only; never teens (improvements v1, A3).
+  const kcal = sessionSummary(session, mode, weightKg).kcal;
 
   // Only on an untouched planned workout, when enough time is left.
   const oneMore =
@@ -222,10 +249,17 @@ export default function WorkoutScreen() {
               {t('workout.title')}
             </AppText>
             <AppText variant="caption" color={colors.muted} style={styles.caps}>
-              {t('workout.summary', {
-                minutes: session.estimatedMinutes,
-                count: session.items.filter((i) => i.role === 'main').length,
-              })}
+              {[
+                t(`program.day.${dayName(session, library, workout.kind)}`),
+                t('workout.summary', {
+                  minutes: session.estimatedMinutes,
+                  count: session.items.filter((i) => i.role === 'main').length,
+                }),
+                kcal ? t('program.kcal', { kcal }) : null,
+                session.deload ? t('workout.deload') : null,
+              ]
+                .filter(Boolean)
+                .join(' · ')}
             </AppText>
           </View>
           <IconButton
@@ -247,6 +281,7 @@ export default function WorkoutScreen() {
         </>
       }
     >
+      {workout.kind === 'regular' ? <WeekStrip /> : null}
       {session.notes.map((n) => (
         <View key={n.key} style={styles.coachNote}>
           <AppText color={colors.mutedStrong}>{note(n)}</AppText>
@@ -264,7 +299,9 @@ export default function WorkoutScreen() {
             <View style={styles.rowText}>
               <AppText variant="bodyStrong">{exerciseName(t, e, item.exerciseId)}</AppText>
               <AppText variant="caption" color={colors.mutedStrong}>
-                {skipped ? t('workout.skipped') : doseLine(t, item)}
+                {skipped
+                  ? t('workout.skipped')
+                  : [doseLine(t, item), loadLabel(item, e)].filter(Boolean).join(' · ')}
               </AppText>
               <RangeNote exercise={e} />
               <Tag

@@ -3,7 +3,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
-import { AppText, Button, Card, IconButton, Screen } from '@/components/ui';
+import { AppText, Button, Card, Chip, IconButton, Screen } from '@/components/ui';
+import { adviceForItem } from '@/features/workout/loads';
 import { prototypeVideo } from '@/features/exercises/library';
 import type { Exercise } from '@/features/exercises/types';
 import { isMachine } from '@/features/generator/filters';
@@ -26,13 +27,7 @@ import {
 } from '@/features/workout/flow';
 import { clockText, exerciseCues, exerciseName, targetText } from '@/features/workout/format';
 import { endWorkout, useSafetyRefresh, useWorkout } from '@/features/workout/hooks';
-import {
-  LOAD_STEP,
-  pastSessions,
-  progressionFor,
-  suggestedLoad,
-  targetRange,
-} from '@/features/workout/progression';
+import { LOAD_STEP, targetRange } from '@/features/workout/progression';
 import { useWorkoutStore } from '@/features/workout/store';
 import type { LoadUnit, WorkoutRecord } from '@/features/workout/types';
 import { track } from '@/lib/analytics';
@@ -305,17 +300,21 @@ function SetStep({
   const range = targetRange(item) ?? [8, 12];
   const loaded = !!exercise?.loaded && item.loadHint !== 'bodyweight';
 
-  const past = pastSessions(workouts, item.exerciseId, workout.id);
-  const progression = item.role === 'main' ? progressionFor(past, range) : null;
+  const generator = useWorkout(workout.id).input;
+  const advice = generator
+    ? adviceForItem({ workouts, workoutId: workout.id, item, exercise, unit, generator })
+    : null;
   // Only this exercise's own sets: after a swap the old load doesn't carry over (QA P2).
   const earlier = workout.logs
     .filter((l) => l.itemId === item.id && l.exerciseId === item.exerciseId && l.load != null)
     .pop();
-  const initialLoad =
-    earlier?.load ?? (item.role === 'main' ? suggestedLoad(past, progression, unit) : null) ?? 0;
+  const initialLoad = earlier?.load ?? (advice?.kind === 'load' ? advice.load : null) ?? 0;
 
   const [value, setValue] = useState(range[0]);
   const [load, setLoad] = useState(initialLoad);
+  // How hard the set felt (A4): Easy 6, Solid 8, Very hard 10.
+  const [rpe, setRpe] = useState<number | undefined>(undefined);
+  const askEffort = loaded && item.role === 'main' && !hold;
   const valueStep = hold ? 5 : 1;
 
   const done = () => {
@@ -325,7 +324,9 @@ function SetStep({
       setNo: step.setNo,
       ...(hold ? { seconds: value } : { reps: value }),
       ...(loaded ? { load, unit } : {}),
+      ...(askEffort && rpe ? { rpe } : {}),
     });
+    setRpe(undefined);
     track('set_logged');
     const next = stepAfter(workout, step);
     if (next && item.restSeconds > 0 && item.role === 'main') {
@@ -367,14 +368,54 @@ function SetStep({
             step={LOAD_STEP[unit]}
           />
         ) : null}
-        {progression === 'increase' ? (
+        {advice?.kind === 'first' && !earlier ? (
           <AppText variant="caption" color={colors.teal}>
-            {t('workout.player.progressUp')}
+            {t('load.first')}
           </AppText>
-        ) : progression === 'hold' ? (
-          <AppText variant="caption" color={colors.mutedStrong}>
-            {t('workout.player.progressHold')}
+        ) : advice?.kind === 'reps' && advice.change === 'up' ? (
+          <AppText variant="caption" color={colors.teal}>
+            {t('load.repsUp', { reps: advice.reps })}
           </AppText>
+        ) : advice?.kind === 'load' && advice.change !== 'same' ? (
+          <AppText
+            variant="caption"
+            color={advice.change === 'up' ? colors.teal : colors.mutedStrong}
+          >
+            {t(advice.change === 'up' ? 'load.up' : 'load.down', {
+              load: advice.load,
+              unit: t(`workout.units.${unit}`),
+            })}
+          </AppText>
+        ) : null}
+        {askEffort ? (
+          <View
+            accessibilityRole="radiogroup"
+            accessibilityLabel={t('load.effort')}
+            style={styles.effort}
+          >
+            <AppText variant="caption" color={colors.mutedStrong}>
+              {t('load.effort')}
+            </AppText>
+            <View style={styles.effortRow}>
+              {(
+                [
+                  ['easy', 6],
+                  ['solid', 8],
+                  ['hard', 10],
+                ] as const
+              ).map(([key, value]) => (
+                <Chip
+                  key={key}
+                  label={t(`load.${key}`)}
+                  selected={rpe === value}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: rpe === value }}
+                  aria-checked={rpe === value}
+                  onPress={() => setRpe(rpe === value ? undefined : value)}
+                />
+              ))}
+            </View>
+          </View>
         ) : null}
       </Card>
 
@@ -453,6 +494,8 @@ function Counter({
 }
 
 const styles = StyleSheet.create({
+  effort: { gap: spacing.xs },
+  effortRow: { flexDirection: 'row', gap: spacing.sm, flexWrap: 'wrap' },
   top: {
     flexDirection: 'row',
     alignItems: 'center',

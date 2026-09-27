@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
-import { AppText, Button, Card, Notice, Screen } from '@/components/ui';
+import { AppText, Button, Card, Notice, Screen, ToggleRow } from '@/components/ui';
 import { currentPlan } from '@/features/billing/rules';
 import { useBillingStore } from '@/features/billing/store';
 import { FamilyStrip } from '@/features/family/components/FamilyStrip';
@@ -28,7 +28,7 @@ import { colors, fonts, spacing } from '@/theme';
 export default function FamilyScreen() {
   const { t, i18n } = useTranslation();
   const live = useOnboardingStore();
-  const { profiles, activeId } = useFamilyStore();
+  const { profiles, activeId, setShareAllowed } = useFamilyStore();
   const entitlement = useBillingStore((s) => s.entitlement);
   const plan = currentPlan(entitlement, clock.now());
   const access = useOwnerAccess();
@@ -155,6 +155,14 @@ export default function FamilyScreen() {
               ) : (
                 <AppText color={colors.mutedStrong}>{t('family.dashboard.none')}</AppText>
               )}
+              {/* A managed teen shares only when the parent says so (improvements v1, A7). */}
+              {p.kind === 'child' ? (
+                <ToggleRow
+                  label={t('familyShare.allow', { name: p.name ?? t('family.member') })}
+                  value={!!p.shareAllowed}
+                  onChange={(v) => setShareAllowed(p.id, v)}
+                />
+              ) : null}
               {removing?.id === p.id && removing.step === 'gate' ? (
                 <ParentGate
                   onPass={() => setRemoving({ id: p.id, step: 'confirm' })}

@@ -7,6 +7,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { AppText, Button, Card, Icon, Screen, type IconName } from '@/components/ui';
 import { currentPlan } from '@/features/billing/rules';
 import { MOBILITY_MINUTES } from '@/features/generator';
+import { WeekStrip } from '@/features/program/components/WeekStrip';
 import { useBillingStore } from '@/features/billing/store';
 import { activeProfile, useFamilyStore } from '@/features/family/store';
 import { useOnboardingStore } from '@/features/onboarding/store';
@@ -100,6 +101,7 @@ export function SeniorHome({
 
   return (
     <Screen>
+      <WeekStrip large />
       <View>
         {managed && member.name ? (
           <>

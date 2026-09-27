@@ -3,6 +3,7 @@ export { doseFor, estimateSeconds } from './dosage';
 export { blockReason, safePool } from './filters';
 export {
   generateBalanceSession,
+  generateCustomSession,
   generateMobilitySession,
   generateSession,
   mainWorkMuscles,

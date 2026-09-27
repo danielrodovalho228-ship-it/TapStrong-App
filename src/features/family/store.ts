@@ -20,6 +20,8 @@ export type LocalProfile = {
   createdAt: string;
   /** Children under 13: when the parent's verified consent was recorded. */
   consentAt?: string;
+  /** A managed teen may share workouts only once the parent turns this on (A7). */
+  shareAllowed?: boolean;
 };
 
 type State = {
@@ -28,6 +30,7 @@ type State = {
   add: (p: Omit<LocalProfile, 'createdAt'>) => boolean;
   setActive: (id: string) => void;
   remove: (id: string) => void;
+  setShareAllowed: (id: string, allowed: boolean) => void;
   reset: () => void;
 };
 
@@ -48,6 +51,10 @@ export const useFamilyStore = create<State>()(
         set({
           profiles: get().profiles.filter((p) => p.id !== id || p.kind === 'self'),
         }),
+      setShareAllowed: (id, allowed) =>
+        set({
+          profiles: get().profiles.map((p) => (p.id === id ? { ...p, shareAllowed: allowed } : p)),
+        }),
       reset: () => set({ profiles: [], activeId: null }),
     }),
     {
@@ -61,3 +68,13 @@ export const useFamilyStore = create<State>()(
 
 export const activeProfile = (s: Pick<State, 'profiles' | 'activeId'>) =>
   s.profiles.find((p) => p.id === s.activeId) ?? null;
+
+/**
+ * Sharing a workout (improvements v1, A7): never in child mode; a teen on a
+ * Family plan only when the parent turned it on; everyone else can.
+ */
+export function canShare(profile: LocalProfile | null, mode: string): boolean {
+  if (mode === 'child') return false;
+  if (profile?.kind === 'child') return profile.shareAllowed === true;
+  return true;
+}

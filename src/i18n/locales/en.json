@@ -3459,7 +3459,9 @@
       },
       "substituted": "No safe exercise for {{muscles}} fits today’s settings, so today trains other areas. Add equipment or another position to work them.",
       "recovering": "{{muscles}} still recovering from your last workout, so today trains other areas.",
-      "unavailable": "No safe exercise for {{muscles}} fits today’s setup (position, equipment, restrictions). Add equipment or another position to work them."
+      "unavailable": "No safe exercise for {{muscles}} fits today’s setup (position, equipment, restrictions). Add equipment or another position to work them.",
+      "customLeftOut_one": "One pick was left out: it isn’t safe for you right now.",
+      "customLeftOut_other": "{{count}} picks were left out: they aren’t safe for you right now."
     }
   },
   "tabs": {
@@ -3749,7 +3751,8 @@
       "body_one": "{{count}} min left in your time.",
       "body_other": "{{count}} min left in your time.",
       "add": "Add 1 exercise?"
-    }
+    },
+    "deload": "Deload week: fewer sets"
   },
   "account": {
     "eyebrow": "Your account",
@@ -3801,7 +3804,8 @@
     "failed": "Couldn't share the image on this device.",
     "title4w": "Share my 4 weeks",
     "eyebrow4w": "Last 4 weeks · {{date}}",
-    "cardTitle4w": "My 4 weeks"
+    "cardTitle4w": "My 4 weeks",
+    "teenOff": "Sharing is off for this profile. A parent can turn it on in Family."
   },
   "milestone": {
     "eyebrow": "New milestone",
@@ -4591,5 +4595,117 @@
       "wrong_code": "That code didn’t work. Check the latest email and try again.",
       "error": "Something went wrong. Try again."
     }
+  },
+  "week": {
+    "title": "This week",
+    "today": "today",
+    "trained": "trained",
+    "planned": "planned"
+  },
+  "day": {
+    "sets_one": "{{count}} set",
+    "sets_other": "{{count}} sets",
+    "start": "Start today's workout",
+    "nothing": "No workout logged this day.",
+    "preview": "Preview",
+    "noPreview": "No session can be built for this day yet."
+  },
+  "program": {
+    "day": {
+      "push": "Push",
+      "pull": "Pull",
+      "legs": "Legs",
+      "upper": "Upper body",
+      "lower": "Lower body",
+      "fullBody": "Full body",
+      "mobility": "Mobility",
+      "repair": "Repair",
+      "balance": "Balance"
+    },
+    "block": {
+      "build": "Week {{week}} of {{of}} · Build",
+      "deload": "Week {{week}} of {{of}} · Deload (lighter)"
+    },
+    "summary_one": "{{count}} exercise · {{minutes}} min",
+    "summary_other": "{{count}} exercises · {{minutes}} min",
+    "kcal": "about {{kcal}} kcal"
+  },
+  "load": {
+    "first": "First time: pick a weight you could lift 2 more times, then log it.",
+    "repsUp": "Aim for {{reps}} reps this time, same weight.",
+    "up": "Up a step today: {{load}} {{unit}}.",
+    "down": "A step lighter today: {{load}} {{unit}}.",
+    "effort": "How hard was that set?",
+    "easy": "Easy",
+    "solid": "Solid",
+    "hard": "Very hard"
+  },
+  "plans": {
+    "title": "Ready-made plans",
+    "myPlan": "My plan",
+    "myPlanBody": "Built by the coach from your answers. Always the default.",
+    "use": "Use this plan",
+    "useMine": "Back to My plan",
+    "active": "Active",
+    "chosen": "Plan set. Your next workouts follow it; exercises are still picked safely for you.",
+    "empty": "No plan matches these filters.",
+    "meta": "{{days}} days a week · {{minutes}} min",
+    "weeks": "{{count}}-week blocks, the last week lighter",
+    "filters": {
+      "days": "Days",
+      "goal": "Goal",
+      "split": "Split",
+      "any": "Any",
+      "short": "30 min or less",
+      "daysValue_one": "{{count}} day",
+      "daysValue_other": "{{count}} days"
+    },
+    "goals": {
+      "shape": "Get in shape",
+      "muscle": "Build muscle",
+      "strength": "Get stronger",
+      "weightLoss": "Lose weight",
+      "mobilityBalance": "Mobility & balance",
+      "seniorSteady": "60+ strong & steady"
+    },
+    "splits": {
+      "fullBody": "Full body",
+      "upperLower": "Upper / lower",
+      "ppl": "Push / pull / legs"
+    },
+    "schedule": "Week layout"
+  },
+  "modes": {
+    "title": "What do you want to do?",
+    "myPlan": "My plan",
+    "myPlanBody": "Today's workout from your plan.",
+    "single": "Single workout",
+    "singleBody": "Pick muscles on the body map for one session. Your plan stays the same.",
+    "custom": "Custom workout",
+    "customBody": "Build your own list from the Library. Safety filters still apply.",
+    "plans": "Ready-made plans",
+    "plansBody": "Pick a plan by days, goal and split."
+  },
+  "single": {
+    "title": "Muscles for today",
+    "hint": "Tap the dots you want to train today.",
+    "build": "Build this session",
+    "none": "Pick at least one muscle."
+  },
+  "custom": {
+    "title": "Custom workout",
+    "search": "Search exercises",
+    "add": "Add {{name}}",
+    "remove": "Remove {{name}}",
+    "build": "Start this workout",
+    "empty": "Add exercises from the list below.",
+    "note": "Your own list. Exercises that aren't safe for you right now aren't shown.",
+    "chosen_one": "{{count}} exercise chosen",
+    "chosen_other": "{{count}} exercises chosen"
+  },
+  "familyShare": {
+    "allow": "Allow {{name}} to share workouts",
+    "on": "Sharing on",
+    "off": "Sharing off"
   }
 }

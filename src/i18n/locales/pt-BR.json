@@ -3459,7 +3459,9 @@
       },
       "substituted": "Nenhum exercício seguro para {{muscles}} combina com hoje, então hoje você treina outras áreas. Acrescente equipamento ou outra posição para trabalhá-los.",
       "recovering": "{{muscles}} ainda se recupera do último treino, então hoje você treina outras áreas.",
-      "unavailable": "Nenhum exercício seguro para {{muscles}} cabe na configuração de hoje (posição, equipamento, restrições). Adicione equipamento ou outra posição para trabalhá-los."
+      "unavailable": "Nenhum exercício seguro para {{muscles}} cabe na configuração de hoje (posição, equipamento, restrições). Adicione equipamento ou outra posição para trabalhá-los.",
+      "customLeftOut_one": "Uma escolha ficou de fora: não é segura para você agora.",
+      "customLeftOut_other": "{{count}} escolhas ficaram de fora: não são seguras para você agora."
     }
   },
   "tabs": {
@@ -3749,7 +3751,8 @@
       "body_one": "Sobrou {{count}} min do seu tempo.",
       "body_other": "Sobraram {{count}} min do seu tempo.",
       "add": "Adicionar 1 exercício?"
-    }
+    },
+    "deload": "Semana de alívio: menos séries"
   },
   "account": {
     "eyebrow": "Sua conta",
@@ -3801,7 +3804,8 @@
     "failed": "Não foi possível compartilhar a imagem neste aparelho.",
     "title4w": "Compartilhar minhas 4 semanas",
     "eyebrow4w": "Últimas 4 semanas · {{date}}",
-    "cardTitle4w": "Minhas 4 semanas"
+    "cardTitle4w": "Minhas 4 semanas",
+    "teenOff": "Compartilhar está desligado neste perfil. Um responsável pode ligar em Família."
   },
   "milestone": {
     "eyebrow": "Nova conquista",
@@ -4591,5 +4595,117 @@
       "wrong_code": "Esse código não funcionou. Veja o e-mail mais recente e tente de novo.",
       "error": "Algo deu errado. Tente de novo."
     }
+  },
+  "week": {
+    "title": "Esta semana",
+    "today": "hoje",
+    "trained": "treinado",
+    "planned": "planejado"
+  },
+  "day": {
+    "sets_one": "{{count}} série",
+    "sets_other": "{{count}} séries",
+    "start": "Começar o treino de hoje",
+    "nothing": "Nenhum treino registrado neste dia.",
+    "preview": "Prévia",
+    "noPreview": "Ainda não dá para montar uma sessão para este dia."
+  },
+  "program": {
+    "day": {
+      "push": "Empurrar",
+      "pull": "Puxar",
+      "legs": "Pernas",
+      "upper": "Parte de cima",
+      "lower": "Parte de baixo",
+      "fullBody": "Corpo inteiro",
+      "mobility": "Mobilidade",
+      "repair": "Reparo",
+      "balance": "Equilíbrio"
+    },
+    "block": {
+      "build": "Semana {{week}} de {{of}} · Evolução",
+      "deload": "Semana {{week}} de {{of}} · Alívio (mais leve)"
+    },
+    "summary_one": "{{count}} exercício · {{minutes}} min",
+    "summary_other": "{{count}} exercícios · {{minutes}} min",
+    "kcal": "cerca de {{kcal}} kcal"
+  },
+  "load": {
+    "first": "Primeira vez: escolha um peso com que você faria mais 2 repetições e registre.",
+    "repsUp": "Tente {{reps}} repetições desta vez, com o mesmo peso.",
+    "up": "Suba um degrau hoje: {{load}} {{unit}}.",
+    "down": "Um degrau mais leve hoje: {{load}} {{unit}}.",
+    "effort": "Quão pesada foi a série?",
+    "easy": "Fácil",
+    "solid": "Firme",
+    "hard": "Muito pesada"
+  },
+  "plans": {
+    "title": "Planos prontos",
+    "myPlan": "Meu plano",
+    "myPlanBody": "Montado pelo coach a partir das suas respostas. É sempre o padrão.",
+    "use": "Usar este plano",
+    "useMine": "Voltar para Meu plano",
+    "active": "Ativo",
+    "chosen": "Plano escolhido. Os próximos treinos seguem ele; os exercícios continuam escolhidos com segurança para você.",
+    "empty": "Nenhum plano combina com estes filtros.",
+    "meta": "{{days}} dias por semana · {{minutes}} min",
+    "weeks": "Blocos de {{count}} semanas; a última mais leve",
+    "filters": {
+      "days": "Dias",
+      "goal": "Objetivo",
+      "split": "Divisão",
+      "any": "Qualquer",
+      "short": "30 min ou menos",
+      "daysValue_one": "{{count}} dia",
+      "daysValue_other": "{{count}} dias"
+    },
+    "goals": {
+      "shape": "Entrar em forma",
+      "muscle": "Ganhar músculo",
+      "strength": "Ficar mais forte",
+      "weightLoss": "Perder peso",
+      "mobilityBalance": "Mobilidade e equilíbrio",
+      "seniorSteady": "60+ forte e firme"
+    },
+    "splits": {
+      "fullBody": "Corpo inteiro",
+      "upperLower": "Cima / baixo",
+      "ppl": "Empurrar / puxar / pernas"
+    },
+    "schedule": "Organização da semana"
+  },
+  "modes": {
+    "title": "O que você quer fazer?",
+    "myPlan": "Meu plano",
+    "myPlanBody": "O treino de hoje do seu plano.",
+    "single": "Treino avulso",
+    "singleBody": "Escolha músculos no mapa do corpo para uma sessão. Seu plano não muda.",
+    "custom": "Treino personalizado",
+    "customBody": "Monte sua própria lista pela Biblioteca. Os filtros de segurança continuam valendo.",
+    "plans": "Planos prontos",
+    "plansBody": "Escolha um plano por dias, objetivo e divisão."
+  },
+  "single": {
+    "title": "Músculos de hoje",
+    "hint": "Toque nos pontos que você quer treinar hoje.",
+    "build": "Montar esta sessão",
+    "none": "Escolha pelo menos um músculo."
+  },
+  "custom": {
+    "title": "Treino personalizado",
+    "search": "Buscar exercícios",
+    "add": "Adicionar {{name}}",
+    "remove": "Tirar {{name}}",
+    "build": "Começar este treino",
+    "empty": "Adicione exercícios da lista abaixo.",
+    "note": "Sua própria lista. Exercícios que não são seguros para você agora não aparecem.",
+    "chosen_one": "{{count}} exercício escolhido",
+    "chosen_other": "{{count}} exercícios escolhidos"
+  },
+  "familyShare": {
+    "allow": "Permitir que {{name}} compartilhe treinos",
+    "on": "Compartilhar ligado",
+    "off": "Compartilhar desligado"
   }
 }

@@ -17,6 +17,8 @@ export type SetLog = {
   seconds?: number;
   load?: number;
   unit?: LoadUnit;
+  /** How hard the set felt, 1–10 (optional; missing counts as 8 or easier). */
+  rpe?: number;
   loggedAt: string;
 };
 
