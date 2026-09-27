@@ -62,6 +62,7 @@ export function ScoreChips({
             accessibilityRole="radio"
             accessibilityLabel={`${t('movementPain.scoreLabel')} ${t('movementPain.scoreValue', { score: n })}`}
             accessibilityState={{ checked: value === n }}
+            aria-checked={value === n}
             onPress={() => onChange(n)}
           />
         ))}

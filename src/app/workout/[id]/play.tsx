@@ -8,6 +8,7 @@ import { prototypeVideo } from '@/features/exercises/library';
 import type { Exercise } from '@/features/exercises/types';
 import { isMachine } from '@/features/generator/filters';
 import type { SessionItem } from '@/features/generator/types';
+import { sameMuscleGroup } from '@/features/muscles';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { RangeNote } from '@/features/movement/RangeNote';
 import { DemoLoop } from '@/features/workout/components/Media';
@@ -110,7 +111,10 @@ export default function PlayerScreen() {
           { label: targetText(t, step.item, exercise), strong: true },
           ...(exercise?.muscles ?? [])
             // Never "Upper chest · also Upper chest" (QA round 2).
-            .filter((m) => m.role === 'secondary' && m.muscleKey !== step.item.targetMuscle)
+            .filter(
+              (m) =>
+                m.role === 'secondary' && !sameMuscleGroup(m.muscleKey, step.item.targetMuscle),
+            )
             .slice(0, 1)
             .map((m) => ({
               label: t('workout.player.alsoWorks', {

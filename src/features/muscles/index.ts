@@ -43,3 +43,10 @@ export const FOCUS_CHIP_KEYS = [
   'hamstrings',
   'calves',
 ] as const;
+
+/** Same muscle or same group: upper chest and chest, or two chest regions (QA R3). */
+export function sameMuscleGroup(a: string, b: string | null | undefined): boolean {
+  if (!b) return false;
+  const parent = (k: string) => muscleByKey(k)?.parentKey ?? k;
+  return parent(a) === parent(b);
+}

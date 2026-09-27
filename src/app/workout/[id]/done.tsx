@@ -16,7 +16,7 @@ import { LegendRow, RecoveryBody, STATE_COLOR } from '@/features/workout/compone
 import { mainSetCounts } from '@/features/workout/flow';
 import { useWorkout } from '@/features/workout/hooks';
 import { stoppedForPain } from '@/features/workout/safety';
-import { finisherInput } from '@/features/workout/plan';
+import { finisherInput, sessionTargets } from '@/features/workout/plan';
 import {
   bodyStates,
   groupMuscles,
@@ -79,7 +79,10 @@ export default function DoneScreen() {
       perMuscle.set(item.targetMuscle, (perMuscle.get(item.targetMuscle) ?? 0) + 1);
     }
   }
-  const top = [...perMuscle.entries()].sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1))[0];
+  // Ties go to the session's own target order, not the alphabet (QA R3).
+  const order = sessionTargets(workout.session, 20);
+  const at = (m: string) => (order.indexOf(m) < 0 ? order.length : order.indexOf(m));
+  const top = [...perMuscle.entries()].sort((a, b) => b[1] - a[1] || at(a[0]) - at(b[0]))[0];
 
   const addTen = () => {
     if (!input || !group) return;

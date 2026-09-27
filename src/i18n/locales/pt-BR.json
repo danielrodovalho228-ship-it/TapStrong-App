@@ -3475,15 +3475,20 @@
     "pickElse": "Escolher outra coisa",
     "recoveryMap": "Mapa de recuperação",
     "recovery": {
-      "fresh": "{{muscles}} · acabou de treinar",
-      "recovering": "{{muscles}} · recuperando",
-      "almost": "{{muscles}} · quase pronto",
-      "neglected": "{{muscles}} · hora de treinar",
-      "never": "{{muscles}} · ainda não treinado",
+      "fresh_one": "{{muscles}} · acabou de ser treinado",
+      "fresh_other": "{{muscles}} · acabaram de ser treinados",
+      "recovering_one": "{{muscles}} · recuperando",
+      "recovering_other": "{{muscles}} · recuperando",
+      "almost_one": "{{muscles}} · quase pronto",
+      "almost_other": "{{muscles}} · quase prontos",
+      "neglected_one": "{{muscles}} · hora de treinar",
+      "neglected_other": "{{muscles}} · hora de treinar",
+      "never_one": "{{muscles}} · ainda não treinado",
+      "never_other": "{{muscles}} · ainda não treinados",
       "ready": "Pontos brancos · recuperado / pronto"
     },
     "recoveryEmpty": "Seu primeiro treino colore os músculos que você treinar.",
-    "recoveryNote": "As cores somem conforme você se recupera. Cinza-azulado quer dizer que é hora de treinar.",
+    "recoveryNote": "As cores somem conforme você se recupera. Pontos brancos estão prontos; cinza-azulado significa 5 dias ou mais sem treinar.",
     "openBody": "Abrir mapa do corpo",
     "trainingAs": "Treinando como {{name}}",
     "checkinReady": "Seu check-in de 4 semanas está pronto",
@@ -3690,9 +3695,9 @@
     "legend": {
       "main": "Alvo principal hoje",
       "also": "Também trabalhado",
-      "notYet": "Ainda não treinado",
-      "fade": "O vermelho some conforme o músculo se recupera: laranja após 1 dia, pêssego após 2, neutro após cerca de 72 h.",
-      "fadeSenior": "O vermelho some conforme o músculo se recupera: laranja após 1 dia, pêssego após 2, neutro após cerca de 96 h."
+      "notYet": "Sem treinar ultimamente",
+      "fade": "O vermelho some conforme você se recupera: laranja após 1 dia, pêssego após 2 e branco (recuperado) após cerca de 3 dias.",
+      "fadeSenior": "O vermelho some conforme você se recupera: laranja após 1 dia, pêssego após 2 e branco (recuperado) após cerca de 4 dias."
     },
     "finish": {
       "eyebrow": "Termine forte",
@@ -3818,8 +3823,8 @@
       "body": "Seu treino está pronto: aquecimento, parte principal e desaquecimento."
     },
     "streakSaver": {
-      "title_one": "Mantenha seu {{count}} dia seguido",
-      "title_other": "Mantenha seus {{count}} dias seguidos",
+      "title_one": "Mantenha sua sequência de {{count}} dia",
+      "title_other": "Mantenha sua sequência de {{count}} dias",
       "body": "Uma sessão curta ou um momento de mobilidade já conta. Você consegue."
     },
     "trial": {

@@ -3475,15 +3475,20 @@
     "pickElse": "Pick something else",
     "recoveryMap": "Recovery map",
     "recovery": {
-      "fresh": "{{muscles}} · just trained",
-      "recovering": "{{muscles}} · recovering",
-      "almost": "{{muscles}} · almost ready",
-      "neglected": "{{muscles}} · time to train",
-      "never": "{{muscles}} · not trained yet",
+      "fresh_one": "{{muscles}} · just trained",
+      "fresh_other": "{{muscles}} · just trained",
+      "recovering_one": "{{muscles}} · recovering",
+      "recovering_other": "{{muscles}} · recovering",
+      "almost_one": "{{muscles}} · almost ready",
+      "almost_other": "{{muscles}} · almost ready",
+      "neglected_one": "{{muscles}} · time to train",
+      "neglected_other": "{{muscles}} · time to train",
+      "never_one": "{{muscles}} · not trained yet",
+      "never_other": "{{muscles}} · not trained yet",
       "ready": "White dots · recovered / ready"
     },
     "recoveryEmpty": "Your first workout colors the muscles you train.",
-    "recoveryNote": "Colors fade as you recover. Grey-blue means it's time to train it.",
+    "recoveryNote": "Colors fade as you recover. White dots are ready; grey-blue means 5 or more days since you trained it.",
     "openBody": "Open full body map",
     "trainingAs": "Training as {{name}}",
     "checkinReady": "Your 4-week check-in is ready",
@@ -3690,9 +3695,9 @@
     "legend": {
       "main": "Main target today",
       "also": "Also worked",
-      "notYet": "Not trained yet",
-      "fade": "Red fades as muscles recover: orange after 1 day, peach after 2, neutral after about 72 h.",
-      "fadeSenior": "Red fades as muscles recover: orange after 1 day, peach after 2, neutral after about 96 h."
+      "notYet": "Not trained lately",
+      "fade": "Red fades as muscles recover: orange after 1 day, peach after 2, white (recovered) after about 3 days.",
+      "fadeSenior": "Red fades as muscles recover: orange after 1 day, peach after 2, white (recovered) after about 4 days."
     },
     "finish": {
       "eyebrow": "Finish strong",

@@ -6,7 +6,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { AppText, Button, Card, Icon, Screen, TextLink } from '@/components/ui';
 import type { BodySex } from '@/features/bodymap/images';
 import { displayBand } from '@/features/bodymap/selection';
-import { MUSCLES } from '@/features/muscles';
+import { MUSCLES, muscleByKey, muscleFamily } from '@/features/muscles';
 import { activeProfile, useFamilyStore } from '@/features/family/store';
 import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
@@ -95,7 +95,23 @@ export default function HomeScreen() {
   // Labels name the state, not an elapsed time (QA round 2): a secondary muscle
   // worked minutes ago reads "recovering", never "1–2 days ago". Grey-blue
   // splits into "not trained yet" and "time to train" (QA P2).
-  const never = (key: string) => !activity[key]?.lastPrimaryAt && !activity[key]?.lastSecondaryAt;
+  // A muscle counts as trained when it, its parent or a sibling was (QA R3:
+  // mid chest isn't "not trained yet" after a chest workout).
+  const touched = (key: string) =>
+    !!activity[key]?.lastPrimaryAt || !!activity[key]?.lastSecondaryAt;
+  const never = (key: string) => {
+    const parent = muscleByKey(key)?.parentKey ?? key;
+    return ![parent, ...muscleFamily(parent), key].some(touched);
+  };
+  // Today's targets and the chosen muscles lead each line, then anatomy order (QA R3).
+  const lead = [
+    ...(preview ? sessionTargets(preview, 10) : []),
+    ...profile.muscleGoals.map((g) => g.muscleKey),
+  ];
+  const rank = (key: string) => {
+    const i = lead.findIndex((k) => k === key || muscleByKey(key)?.parentKey === k);
+    return i < 0 ? lead.length : i;
+  };
   const byState = (state: RecoveryState, neverTrained?: boolean) =>
     MUSCLES.filter(
       (m) =>
@@ -103,9 +119,11 @@ export default function HomeScreen() {
         states[m.key] === state &&
         (neverTrained === undefined || never(m.key) === neverTrained),
     )
+      .map((m, order) => ({ m, order }))
+      .sort((a, b) => rank(a.m.key) - rank(b.m.key) || a.order - b.order)
+      .map(({ m }) => m)
       .slice(0, 3)
-      .map((m) => muscleLabel(t, m.key))
-      .join(', ');
+      .map((m) => muscleLabel(t, m.key));
   const legend = [
     ...LEGEND.filter((s) => s !== 'neglected').map((s) => ({
       state: s as RecoveryState,
@@ -114,7 +132,7 @@ export default function HomeScreen() {
     })),
     { state: 'neglected' as const, key: 'neglected', muscles: byState('neglected', false) },
     { state: 'neglected' as const, key: 'never', muscles: byState('neglected', true) },
-  ].filter((l) => l.muscles);
+  ].filter((l) => l.muscles.length);
   const trainedAny = legend.some((l) => l.state !== 'neglected');
 
   if (derived.mode === 'senior')
@@ -273,7 +291,11 @@ export default function HomeScreen() {
               <LegendRow
                 key={l.key}
                 color={STATE_COLOR[l.state as Exclude<RecoveryState, 'neutral'>]}
-                label={t(`home.recovery.${l.key as 'never'}`, { muscles: l.muscles })}
+                // Plural agreement with the list (QA R3: "ainda não treinados").
+                label={t(`home.recovery.${l.key as 'never'}`, {
+                  muscles: l.muscles.join(', '),
+                  count: l.muscles.length,
+                })}
               />
             ))
           ) : (

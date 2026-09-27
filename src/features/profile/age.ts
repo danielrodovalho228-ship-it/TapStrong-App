@@ -60,7 +60,7 @@ export function birthYearOptions(today: YearMonth = currentYearMonth()): number[
   return years;
 }
 
-/** Recovery window in hours before a muscle returns to neutral (SPEC §4). */
+/** Hours before a muscle's dots turn white again (recovered, SPEC §4). */
 export function recoveryHoursFor(mode: AppMode): number {
   return mode === 'senior' ? 96 : 72;
 }

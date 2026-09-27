@@ -158,6 +158,9 @@ export default function ShareScreen() {
             {names('recovering') ? (
               <LegendRow color={STATE_COLOR.recovering} label={names('recovering')} />
             ) : null}
+            {/* White and grey dots explained too (QA R3), like Home and Done. */}
+            <LegendRow label={t('home.recovery.ready')} />
+            <LegendRow color={STATE_COLOR.neglected} label={t('workout.legend.notYet')} />
           </View>
           <View style={styles.stats}>
             <AppText variant="bodyStrong">{t('share.workouts', { count: stats.workouts })}</AppText>

@@ -179,6 +179,7 @@ function ViewToggle({ value, onChange }: { value: BodyView; onChange: (v: BodyVi
             // "Back view", not a second "Back" next to the header's back button (QA round 2).
             accessibilityLabel={t(`bodyMap.${v}View`)}
             accessibilityState={{ checked: on }}
+            aria-checked={on}
             onPress={() => onChange(v)}
             style={[styles.toggleItem, on && styles.toggleOn]}
           >

@@ -35,6 +35,8 @@ export function SegmentedControl<T extends string>({
             accessibilityRole="radio"
             accessibilityLabel={option.accessibilityLabel ?? option.label}
             accessibilityState={{ checked: selected }}
+            // Web reads aria-checked, not accessibilityState (QA R3: it was null).
+            aria-checked={selected}
             onPress={() => onChange(option.value)}
             style={[styles.segment, selected && styles.selected]}
           >

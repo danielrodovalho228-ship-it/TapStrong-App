@@ -41,7 +41,8 @@ export function PlanPicker({ plan, period, onPlan, onPeriod, showFree = true }: 
             <Pressable
               key={p}
               accessibilityRole="radio"
-              accessibilityState={{ selected }}
+              accessibilityState={{ checked: selected }}
+              aria-checked={selected}
               accessibilityLabel={`${t(`billing.plans.${p}.name`)}, ${price}`}
               onPress={() => onPlan(p)}
               style={[styles.card, selected && styles.cardOn]}
