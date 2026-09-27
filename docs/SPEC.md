@@ -93,7 +93,8 @@ Files: `C:\Users\danie\OneDrive\Daniel\Aplicativo\App Gym Flex\Imagens\body-<ban
 | elder  | 75+   | elder  |
 
 - The sex is `m` or `f`; the view is `front` or `back` (28 images).
-- The band is computed from birth month + year. The user can switch body or age model anytime.
+- The band is computed from birth month + year. The user can switch body or age model anytime, within the profile's age group: adult profiles see 18+ models only, and kid or teen profiles see kid and teen models only (Daniel, QA round 1, Sep 2026). Safety mode always comes from the birth date, never from the chosen image.
+- Under 13, the body choice reads "Boy / Girl" (also for teens), and the goals "Look better", "Grow" and "Firm" are not offered (QA round 1).
 - Height and weight (optional) are used only for a later "build" variant.
 - **Clothing rules for any new media:**
   - men 18+: athletic shorts only;
@@ -348,6 +349,8 @@ Physical therapists map the **movement**, not only the place ("which movement hu
 | `/paywall`                  | **NEW**             | Free-limit reached                                                                                                       |
 | `/billing`                  | 14 Honest billing   | Trial end, cancel steps                                                                                                  |
 | `/restrictions`             | 12 Restrictions     | List and manage                                                                                                          |
+| `/settings`                 | **NEW**             | Account, plan and billing, restrictions, Delete account (linked from Family and Progress; QA round 1)                    |
+| `/r/[code]`                 | **NEW**             | Referral landing: confirms the invite, keeps the code until the account is saved                                         |
 | `/movement-pain` (+ `/[id]`, `/check`, `/retest`) | **NEW** (Phase 9) | Movement that hurts: report, recovery plan, traffic-light check, weekly retest (§8) |
 | `/senior` (mode)            | 15 60+ home         | Larger UI; links stay inside senior screens                                                                              |
 

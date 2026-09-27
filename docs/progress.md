@@ -725,3 +725,155 @@ Decisões aplicadas: a Aba Coach fica para a primeira atualização e o ícone e
 - **Manguito rotador:** entrou no banco de músculos (`rotatorCuff`, sem ponto no mapa do corpo), com texto nos 3 idiomas. Aplicado no Supabase. Agora é o foco do ombro nas fases 1 e 2 e o músculo principal das contrações de rotação e da rotação externa com elástico.
 - **Manhã seguinte:** vermelho quando a nota sobe 2 pontos ou mais em relação à anterior **ou** quando a nota da manhã passa de 5. Há teste para os dois casos.
 - **Planilha do revisor:** gerada de novo com o manguito rotador.
+
+## Fase 10 — QA rodada 1 (20 personas)
+
+O relatório de QA está em `docs/qa-round-1.md`. Corrigi na ordem pedida: seção 0 (seus pedidos), P0, P1 e P2. Cada grupo tem seu commit:
+
+| Grupo | Commit |
+| --- | --- |
+| Relatório de QA | `f34d9fc` |
+| P0 — segurança e crianças | `6524be8` |
+| O-1 e O-2 — mapa de recuperação e demo em tudo | `e153699` |
+| P1 — lógica e UX | `4a4a569` |
+| O-3 — biblioteca maior | `782ac5e` |
+| Decisão extra — menores só veem corpos infantil/adolescente | `1b8516e` |
+| P2 — acabamento | `c042cd6` |
+
+### Feito
+
+**Seção 0 (seus pedidos)**
+
+- **O-1:** Home, Fim de treino e Compartilhar usam os mesmos pontinhos do mapa do corpo, pintados com a cor da recuperação. Há alternância frente/costas (o cartão de compartilhar mostra as duas).
+- **O-2:** aquecimento e desaquecimento têm miniatura na lista e demo no player, como os exercícios principais.
+- **O-3:** a biblioteca passou de 82 para **536 exercícios**, todos `draft`, com movimentos articulares, contraindicações, nomes e dicas em 3 idiomas. A planilha do revisor foi gerada de novo. Um teste de cobertura falha se faltar:
+  - 5 opções por músculo em cada nível de equipamento;
+  - 5 opções para quem treina sentado ou com apoio;
+  - 10 aquecimentos por região;
+  - 3 alongamentos por grupo;
+  - 10 de equilíbrio;
+  - aquecimentos em forma de jogo para crianças;
+  - 3 isometrias por movimento articular;
+  - manguito rotador.
+
+**P0 — segurança (cada um com teste)**
+
+- **B-01:** perfil de criança não muda de idade. A data de nascimento fica travada e só um responsável altera, passando pelo "portão dos pais". O banco também barra, com o trigger `guard_child_age` (aplicado no Supabase).
+- **B-02:** "finalizador cardio" no lugar de "queima-gordura", nos 3 idiomas. Um teste confere que nenhum texto visto por menores fala em gordura.
+- **C-01:** depois de uma dor aguda, a tela final é calma, sem "Adicionar 10 min", e a área fica de fora de qualquer treino novo naquele dia.
+- **C-02:** um sinal de alerta tira todo exercício que movimenta a articulação, não só os contraindicados. A restrição aparece como "Médico primeiro" e pede confirmação antes de "Marcar como curado".
+- **A-01 / C-04:** treinos salvos são conferidos de novo quando muda uma restrição, um relato de dor ou um dado de saúde. O treino planejado é refeito. No treino em andamento, o que falta é trocado ou pulado.
+- **C-03:** 60+ sentado em casa sem equipamento recebe treino. Quando não há treino possível, a tela diz o motivo real e oferece "Mudar meu plano".
+
+**P1**
+
+- **60+:**
+  - vai para a home 60+;
+  - equilíbrio vira sustentação de 20–40 s, e há sempre equilíbrio para 60+ e para quem caiu;
+  - dica de "segure numa cadeira" para quem treina com apoio;
+  - quem tem pressão alta ou problema cardíaco recebe carga moderada, sem séries pesadas nem de aproximação, e a dica "respire, não force".
+- **Família:**
+  - telas de dono (planos, cobrança, excluir conta, adicionar membro, consentimento, conta) exigem o portão dos pais;
+  - a tela de consentimento confere tudo de novo e não troca de perfil se falhar;
+  - "Meu filho" com menos de 13 anos agora tem um caminho claro;
+  - o seletor na web não esconde mais opções.
+- **Movimento que dói:**
+  - a fase 1 tem só sustentações (~15 min);
+  - o check da manhã ganhou botão no app e compara com a nota anterior;
+  - a troca por dor fraca é sempre segura;
+  - o peso do corpo nunca aparece como "carga pesada".
+- **Gerador e home:**
+  - o card "Hoje" bate com o treino gerado;
+  - o limite de "2 dias seguidos" conta o músculo inteiro (peito, não só a parte de cima);
+  - os músculos escolhidos entram em rodízio;
+  - "séries de cada" é respeitado;
+  - o finalizador cardio prometido aparece;
+  - a troca de aquecimento e desaquecimento fica na mesma região.
+- **Outros:**
+  - "Molestia sorda / incomodidad" em espanhol;
+  - a aba Família não dá mais erro;
+  - os pontos do mapa têm 44 px.
+
+**P2 (acabamento)**
+
+- **Textos:**
+  - plurais corrigidos;
+  - "Bom dia", "hoje" e "ontem" certos;
+  - "opções com apoio" para quem usa apoio;
+  - mensagem neutra quando não há troca;
+  - erro de rede na conversa não culpa mais a pessoa;
+  - "primeiro treino" aparece só uma vez;
+  - "Nenhuma", "Adulta" e "avó".
+- **Tempos:**
+  - lista e player mostram o mesmo tempo;
+  - o total do aquecimento é a soma dos itens;
+  - aviso de "libera na metade";
+  - série de aproximação antes do primeiro exercício com carga;
+  - a troca no player limpa a carga antiga;
+  - troca e "Sinto dor" também nos passos com tempo.
+- **Recuperação e sequência:**
+  - faixas da legenda corrigidas;
+  - músculo nunca treinado aparece separado;
+  - proteções de sequência aparecem na home;
+  - o dia de descanso usado numa quebra não pode ser usado de novo na mesma semana.
+- **Recursos:**
+  - "Só 15 min" mantém as trocas e tem "Voltar ao treino completo";
+  - a nota "Adicionei empurrar/pernas" só aparece se o exercício continuou no treino;
+  - o desaquecimento alonga os músculos treinados;
+  - o check-in compara com os últimos valores reais e não perde o peso;
+  - "Compartilhar minhas 4 semanas" mostra as 4 semanas;
+  - o cartão lista os músculos mais treinados.
+- **Planos:**
+  - Premium já vem marcado;
+  - assinante pode trocar de plano;
+  - depois da compra o app volta ao treino;
+  - o paywall mostra a data em que o teste grátis termina.
+- **Conta:**
+  - tela nova de **Configurações**, com Excluir conta, acessível pela Família e pelo Progresso;
+  - o link de convite mostra uma confirmação.
+- **Web:**
+  - compartilhar cai para texto quando não dá para enviar imagem;
+  - fotos mostram um aviso de que só funcionam no app do celular.
+- **Acessibilidade:**
+  - legendas do mapa não se sobrepõem;
+  - arrastar com zoom na web;
+  - pontos repetidos fora da navegação por teclado;
+  - "Editar" e o "x" dos chips com 44 px, e "Editar" como botão;
+  - rótulos das abas cabem;
+  - cada opção de movimento tem nome próprio para leitor de tela.
+- **Conteúdo:**
+  - crianças não veem "Ficar mais bonito / Crescer / Definir" e veem "Menino / Menina";
+  - gravidez não aparece para 60+;
+  - o resumo do perfil mostra saúde e posição;
+  - o aviso de gordura só aparece para "perder peso" ou "definir".
+
+**Decisão extra:** perfis de criança e adolescente (inclusive o responsável que gerencia um) só veem os corpos infantil e adolescente. Um corpo adulto escolhido antes volta para a faixa do próprio perfil. Está na SPEC §5.
+
+### Verificações
+
+- `npm run check`: lint, typecheck, funções e **484 testes** passando.
+- Testes novos por grupo:
+  - `qa1-safety.test.tsx` (P0);
+  - `qa1-owner.test.tsx` (O-1 e O-2);
+  - `qa1-p1.test.tsx` (P1);
+  - `coverage.test.ts` (O-3);
+  - `qa1-p2.test.tsx` (P2 e a decisão sobre corpos para menores).
+- `npm run db:test` (com `guard_child_age` e o valor 'doctor') e `npm run bundle:check`: limpos.
+
+### Como testar (build de desenvolvimento)
+
+1. **Criança:** crie um perfil de criança e tente mudar a data de nascimento. Aparece o portão dos pais. No mapa, o seletor de idade mostra só "9–12" e "13–17". Em Objetivos não há "Crescer" nem "Definir".
+2. **Dor aguda:** no treino, "Sinto dor" → aguda → parar. A tela final fica calma e o próximo treino do dia não usa a área.
+3. **Sinal de alerta:** em "Movimento que dói", marque um sinal de alerta no ombro. A restrição "Médico primeiro" aparece e nenhum exercício de ombro entra nos treinos.
+4. **60+ sentado em casa:** o treino é gerado, com equilíbrio.
+5. **Só 15 min:** use "Só 15 min" e depois "Voltar ao treino completo". As trocas continuam.
+6. **Compartilhar 4 semanas:** no check-in, "Compartilhar minhas 4 semanas" mostra "Minhas 4 semanas".
+7. **Planos:** Planos abre com Premium marcado. Pelo paywall, a compra simulada volta para o treino.
+8. **Configurações:** Família ou Progresso → Configurações → Excluir conta.
+
+### Perguntas em aberto
+
+1. **Plano grátis e marco de 7 dias:** com 3 treinos por semana, quem está no grátis nunca chega a 7 dias seguidos. Sessões de mobilidade grátis (sem limite) devem contar como dia ativo? Minha sugestão é sim, com uma sessão curta de mobilidade liberada nos outros dias.
+2. **Repair, fases 2 e 3:** a fase 1 tem 3 ou mais isometrias por movimento articular. A fase 2 tem pelo menos 2 exercícios de amplitude curta por articulação, não 3 por movimento. A fase 3 usa a biblioteca geral com carga progressiva. Quer que eu complete 3 por movimento nas fases 2 e 3 antes da revisão?
+3. **Revisor:** os 536 exercícios são `draft` e dependem da revisão (planilha gerada de novo). Também dependem dele as regras de pressão alta/cardíaco (carga moderada) e as sustentações de equilíbrio.
+4. **Pagamentos:** as mudanças em Planos e no paywall são só de tela e navegação (Premium marcado, troca de plano, voltar ao treino, data do teste), feitas porque estavam no relatório. Nada mudou em preços, produtos ou RevenueCat.

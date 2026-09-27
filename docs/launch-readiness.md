@@ -46,6 +46,8 @@ Situação no fim da Fase 9 (27/09/2026). O código das Fases 0 a 9 está comple
 - **Aba Coach (SPEC §9 e §11.4):** fica para a primeira atualização (decisão sua). O botão "Falar com meu coach" da tela 60+ entra junto.
 - **Login com Apple e Google:** escondidos até existirem as contas de desenvolvedor.
 - **Depois do lançamento:** registro das séries por voz e o contorno de pose na câmera.
+- **Plano grátis e marco de 7 dias (QA rodada 1):** com 3 treinos por semana, quem está no grátis nunca chega ao marco de 7 dias. Falta decidir se sessões de mobilidade grátis contam como dia ativo.
+- **QA rodada 1:** seção 0, P0, P1 e P2 corrigidos (ver `docs/qa-round-1.md` e o relatório da Fase 10 em `docs/progress.md`). Vale uma segunda rodada de QA no build de desenvolvimento.
 
 ## Como verificar
 
