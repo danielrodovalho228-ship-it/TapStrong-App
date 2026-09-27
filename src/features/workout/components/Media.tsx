@@ -11,7 +11,7 @@ import { colors, fonts, radius, spacing } from '@/theme';
  */
 export function ExerciseThumb({ size = 56 }: { size?: number }) {
   return (
-    <View style={[styles.thumb, { width: size, height: size }]} aria-hidden>
+    <View testID="exercise-thumb" style={[styles.thumb, { width: size, height: size }]} aria-hidden>
       <Icon name="play" size={size * 0.34} color={colors.muted} />
     </View>
   );

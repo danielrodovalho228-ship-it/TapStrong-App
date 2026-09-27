@@ -143,6 +143,8 @@ export default function WorkoutScreen() {
         const e = byId.get(item.exerciseId);
         return (
           <View key={item.id} style={styles.phaseRow}>
+            {/* Every item has a demo, warm-up and cool-down too (QA O-2). */}
+            <ExerciseThumb size={44} />
             <View style={styles.rowText}>
               <AppText variant="bodyStrong">{exerciseName(t, e, item.exerciseId)}</AppText>
               <AppText variant="caption" color={colors.mutedStrong}>
