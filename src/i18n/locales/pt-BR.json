@@ -4514,5 +4514,21 @@
   "ageBlock": {
     "title": "O TapStrong é para quem tem 13 anos ou mais",
     "body": "Obrigado pela visita. Você pode voltar quando fizer 13."
+  },
+  "pinReset": {
+    "forgot": "Esqueceu o PIN?",
+    "title": "Redefinir o PIN dos pais",
+    "body": "Vamos enviar um código de acesso para o e-mail do titular da conta ({{email}}). Depois crie um PIN novo.",
+    "send": "Enviar o código",
+    "sent": "Digite o código que enviamos para {{email}}.",
+    "code": "Código do e-mail",
+    "verify": "Confirmar o código",
+    "errors": {
+      "no_account": "Só o titular da conta pode redefinir o PIN, com o e-mail de uma conta salva.",
+      "offline": "Não conseguimos falar com o TapStrong agora. Verifique a conexão e tente de novo.",
+      "rate_limited": "Muitos códigos em pouco tempo. Espere alguns minutos e tente de novo.",
+      "wrong_code": "Esse código não funcionou. Veja o e-mail mais recente e tente de novo.",
+      "error": "Algo deu errado. Tente de novo."
+    }
   }
 }

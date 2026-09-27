@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet } from 'react-native';
 
-import { AppText, Button, Card, Notice, TextField } from '@/components/ui';
+import { AppText, Button, Card, Notice, TextField, TextLink } from '@/components/ui';
+import { getSupabase } from '@/lib/supabase';
 import { colors, spacing } from '@/theme';
 
 import {
@@ -14,6 +15,7 @@ import {
   setParentPin,
   useParentPinStore,
 } from './parentPin';
+import { maskEmail, ownerEmail, sendPinResetCode, verifyPinResetCode } from './pinReset';
 import { activeProfile, useFamilyStore } from './store';
 
 /**
@@ -29,6 +31,11 @@ export function ParentGate({ onPass, onCancel }: { onPass: () => void; onCancel?
   const owner = !active || active.kind === 'self';
   const [value, setValue] = useState('');
   const [message, setMessage] = useState<string | null>(null);
+  const [resetting, setResetting] = useState(false);
+
+  // Forgotten PIN: the owner proves it with an email code (Phase 12).
+  if (hasPin && resetting)
+    return <ParentPinReset onDone={onPass} onCancel={() => setResetting(false)} />;
 
   if (!hasPin) {
     return owner ? (
@@ -77,6 +84,7 @@ export function ParentGate({ onPass, onCancel }: { onPass: () => void; onCancel?
         disabled={locked || !isValidPin(value.trim())}
         onPress={check}
       />
+      <TextLink tone="accent" label={t('pinReset.forgot')} onPress={() => setResetting(true)} />
       {onCancel ? <Button variant="ghost" label={t('common.back')} onPress={onCancel} /> : null}
     </Card>
   );
@@ -135,6 +143,81 @@ export function ParentPinSetup({
         onPress={save}
       />
       {onCancel ? <Button variant="ghost" label={t('common.back')} onPress={onCancel} /> : null}
+    </Card>
+  );
+}
+
+/**
+ * Forgotten PIN (Phase 12): a code to the account owner's email signs them in
+ * again, then they set a new PIN. A child can't pass it without the owner's
+ * inbox.
+ */
+export function ParentPinReset({ onDone, onCancel }: { onDone: () => void; onCancel: () => void }) {
+  const { t } = useTranslation();
+  const [step, setStep] = useState<'intro' | 'code' | 'new'>('intro');
+  const [code, setCode] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const email = ownerEmail();
+
+  if (step === 'new') return <ParentPinSetup onDone={onDone} onCancel={onCancel} />;
+
+  const send = async () => {
+    setBusy(true);
+    setMessage(null);
+    const result = await sendPinResetCode(getSupabase());
+    setBusy(false);
+    if (result === 'sent') setStep('code');
+    else setMessage(t(`pinReset.errors.${result}`));
+  };
+
+  const verify = async () => {
+    setBusy(true);
+    setMessage(null);
+    const result = await verifyPinResetCode(getSupabase(), code);
+    setBusy(false);
+    if (result === 'ok') setStep('new');
+    else setMessage(t(`pinReset.errors.${result}`));
+  };
+
+  return (
+    <Card style={styles.card}>
+      <AppText variant="h3">{t('pinReset.title')}</AppText>
+      {!email ? (
+        <Notice>{t('pinReset.errors.no_account')}</Notice>
+      ) : step === 'intro' ? (
+        <>
+          <AppText color={colors.mutedStrong}>
+            {t('pinReset.body', { email: maskEmail(email) })}
+          </AppText>
+          <Button label={t('pinReset.send')} loading={busy} onPress={send} />
+        </>
+      ) : (
+        <>
+          <AppText color={colors.mutedStrong}>
+            {t('pinReset.sent', { email: maskEmail(email) })}
+          </AppText>
+          <TextField
+            label={t('pinReset.code')}
+            value={code}
+            onChangeText={setCode}
+            keyboardType="number-pad"
+            maxLength={10}
+          />
+          <Button
+            label={t('pinReset.verify')}
+            loading={busy}
+            disabled={code.trim().length < 6}
+            onPress={verify}
+          />
+        </>
+      )}
+      {message ? (
+        <AppText variant="caption" color={colors.accent}>
+          {message}
+        </AppText>
+      ) : null}
+      <Button variant="ghost" label={t('common.back')} onPress={onCancel} />
     </Card>
   );
 }

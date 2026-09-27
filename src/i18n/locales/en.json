@@ -4514,5 +4514,21 @@
   "ageBlock": {
     "title": "TapStrong is for ages 13 and up",
     "body": "Thanks for stopping by. You can come back when you turn 13."
+  },
+  "pinReset": {
+    "forgot": "Forgot the PIN?",
+    "title": "Reset the parent PIN",
+    "body": "We’ll send a sign-in code to the account owner’s email ({{email}}). Then set a new PIN.",
+    "send": "Send the code",
+    "sent": "Enter the code we sent to {{email}}.",
+    "code": "Code from the email",
+    "verify": "Confirm the code",
+    "errors": {
+      "no_account": "Only the account owner can reset the PIN, with the email of a saved account.",
+      "offline": "Can’t reach TapStrong right now. Check your connection and try again.",
+      "rate_limited": "Too many codes in a short time. Wait a few minutes and try again.",
+      "wrong_code": "That code didn’t work. Check the latest email and try again.",
+      "error": "Something went wrong. Try again."
+    }
   }
 }
