@@ -6,6 +6,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import { AppText, Button, Card, Icon, Screen, type IconName } from '@/components/ui';
 import { currentPlan } from '@/features/billing/rules';
+import { MOBILITY_MINUTES } from '@/features/generator';
 import { useBillingStore } from '@/features/billing/store';
 import { activeProfile, useFamilyStore } from '@/features/family/store';
 import { useOnboardingStore } from '@/features/onboarding/store';
@@ -22,7 +23,22 @@ import { dayPart, lastWorkout, relativeDay } from './summary';
  * summary of the last workout. Links stay inside the simple screens
  * (SPEC §11.10): no body-map or camera entry points from here.
  */
-export function SeniorHome({ onStart, targets }: { onStart: () => void; targets: string[] }) {
+export function SeniorHome({
+  onStart,
+  onMobility,
+  onBalance,
+  targets,
+  minutes,
+  allRecovering = false,
+}: {
+  onStart: () => void;
+  onMobility: () => void;
+  onBalance: () => void;
+  targets: string[];
+  /** The session's own length, not the profile setting (QA R3-06). */
+  minutes: number;
+  allRecovering?: boolean;
+}) {
   const { t, i18n } = useTranslation();
   const profile = useOnboardingStore();
   const { workouts } = useWorkoutStore();
@@ -34,10 +50,10 @@ export function SeniorHome({ onStart, targets }: { onStart: () => void; targets:
     clock.now(),
   );
   const [speaking, setSpeaking] = useState(false);
+  const [resting, setResting] = useState(false);
   const now = clock.now();
   const active = workouts.find((w) => w.status === 'active');
   const last = lastWorkout(workouts);
-  const minutes = profile.minutes ?? 15;
   const goals = targets;
   const managed = !!member && member.kind !== 'self';
 
@@ -102,18 +118,49 @@ export function SeniorHome({ onStart, targets }: { onStart: () => void; targets:
         )}
       </View>
 
-      <Card style={styles.today}>
-        <AppText color={colors.mutedStrong}>{meta}</AppText>
-        <AppText variant="h1">
-          {goals.length ? goals.join(' & ') : t('home.senior.balance')}
-        </AppText>
-        <AppText>{t('home.withWarmup', { minutes })}</AppText>
-        <Button
-          variant="teal"
-          label={active ? t('home.continue') : t('home.senior.start')}
-          onPress={onStart}
+      {allRecovering && !active ? (
+        // Everything is still recovering (QA R3-03): mobility, balance or rest.
+        <Card style={styles.today}>
+          <AppText variant="h1" accessibilityRole="header">
+            {t('home.recoveringTitle')}
+          </AppText>
+          <AppText>{t('home.recoveringBody')}</AppText>
+          <Button
+            variant="teal"
+            label={t('home.balance', { minutes: MOBILITY_MINUTES })}
+            onPress={onBalance}
+          />
+          <Button
+            variant="secondary"
+            label={t('home.mobility', { minutes: MOBILITY_MINUTES })}
+            onPress={onMobility}
+          />
+          <Button variant="ghost" label={t('home.rest')} onPress={() => setResting(true)} />
+          {resting ? <AppText color={colors.mutedStrong}>{t('home.restNote')}</AppText> : null}
+        </Card>
+      ) : (
+        <Card style={styles.today}>
+          <AppText color={colors.mutedStrong}>{meta}</AppText>
+          <AppText variant="h1">
+            {goals.length ? goals.join(' & ') : t('home.senior.balance')}
+          </AppText>
+          <AppText>{t('home.withWarmup', { minutes })}</AppText>
+          <Button
+            variant="teal"
+            label={active ? t('home.continue') : t('home.senior.start')}
+            onPress={onStart}
+          />
+        </Card>
+      )}
+
+      {/* Short mobility for 60+ too (QA R3-06): free, counts for the streak. */}
+      {!active && !allRecovering ? (
+        <BigLink
+          icon="body"
+          label={t('home.mobility', { minutes: MOBILITY_MINUTES })}
+          onPress={onMobility}
         />
-      </Card>
+      ) : null}
 
       {checkinDue(workouts, checkins, now) ? (
         <BigLink

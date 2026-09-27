@@ -1,4 +1,5 @@
 import { Redirect, router } from 'expo-router';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
@@ -18,6 +19,7 @@ import { MOBILITY_MINUTES } from '@/features/generator';
 import { morningCheckOpen, pendingMorningChecks } from '@/features/movement/progress';
 import { useMovementPainStore } from '@/features/movement/store';
 import {
+  createBalanceWorkout,
   createMobilityWorkout,
   createWorkoutFrom,
   refreshWorkout,
@@ -26,7 +28,7 @@ import {
   useGeneratorInput,
 } from '@/features/workout/hooks';
 import type { RecoveryState } from '@/features/workout/recovery';
-import { previewSession, sessionTargets } from '@/features/workout/plan';
+import { sessionTargets, todaySession } from '@/features/workout/plan';
 import { useWorkoutStore } from '@/features/workout/store';
 import { streakToday } from '@/features/workout/streak';
 import { track } from '@/lib/analytics';
@@ -48,6 +50,7 @@ export default function HomeScreen() {
   const member = useFamilyStore(activeProfile);
   const checkins = useProgressStore((st) => st.checkins);
   const painReports = useMovementPainStore((st) => st.reports);
+  const [resting, setResting] = useState(false);
   if (!profile.onboardingComplete || !derived) return <Redirect href="/welcome" />;
 
   const now = clock.now();
@@ -57,12 +60,20 @@ export default function HomeScreen() {
   // The card names what today's workout really trains (QA D-01): the stored
   // one, or a preview of the one "Start" will build (the generator is
   // deterministic, so it is the same session).
-  const preview = (active ?? planned)?.session ?? previewSession(input, library, nextFocus);
+  const built = active || planned ? null : todaySession(input, library, nextFocus);
+  const preview = (active ?? planned)?.session ?? (built && !built.error ? built : null);
+  // Everything picked is still recovering: say so, and offer mobility, balance
+  // or rest instead of a workout Start can't build (QA R3-03).
+  const allRecovering = built?.error === 'all_recovering';
   const goals = (preview ? sessionTargets(preview) : []).map((m) => muscleLabel(t, m));
   // The session's own length, not the profile setting (QA round 2).
   const cardMinutes = preview?.estimatedMinutes || profile.minutes || 30;
   const openMobility = () => {
     const id = createMobilityWorkout(input);
+    router.push({ pathname: '/workout/[id]', params: { id: id ?? 'unavailable' } });
+  };
+  const openBalance = () => {
+    const id = createBalanceWorkout(input);
     router.push({ pathname: '/workout/[id]', params: { id: id ?? 'unavailable' } });
   };
   const band = displayBand(profile.bodyModel.band, derived.band, derived.mode);
@@ -106,7 +117,17 @@ export default function HomeScreen() {
   ].filter((l) => l.muscles);
   const trainedAny = legend.some((l) => l.state !== 'neglected');
 
-  if (derived.mode === 'senior') return <SeniorHome onStart={openWorkout} targets={goals} />;
+  if (derived.mode === 'senior')
+    return (
+      <SeniorHome
+        onStart={openWorkout}
+        onMobility={openMobility}
+        onBalance={openBalance}
+        targets={goals}
+        minutes={cardMinutes}
+        allRecovering={allRecovering}
+      />
+    );
 
   return (
     <Screen>
@@ -137,24 +158,58 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      <Card tone="dark" style={styles.today}>
-        <AppText variant="caption" color={colors.dark.accentSoft} style={styles.caps}>
-          {active ? t('home.inProgress') : t('home.picked')}
-        </AppText>
-        <AppText variant="h1" color={colors.dark.text}>
-          {goals.length ? goals.join(' & ') : t('home.fullBody')}
-        </AppText>
-        <AppText color={colors.dark.text}>{t('home.withWarmup', { minutes: cardMinutes })}</AppText>
-        <Button
-          variant="accent"
-          label={active ? t('home.continue') : t('home.start', { minutes: cardMinutes })}
-          onPress={openWorkout}
-        />
-        <Button variant="onDark" label={t('home.pickElse')} onPress={() => router.push('/body')} />
-      </Card>
+      {allRecovering ? (
+        <Card tone="dark" style={styles.today}>
+          <AppText variant="caption" color={colors.dark.accentSoft} style={styles.caps}>
+            {t('home.picked')}
+          </AppText>
+          <AppText variant="h1" color={colors.dark.text} accessibilityRole="header">
+            {t('home.recoveringTitle')}
+          </AppText>
+          <AppText color={colors.dark.text}>{t('home.recoveringBody')}</AppText>
+          <Button
+            variant="accent"
+            label={t('home.mobility', { minutes: MOBILITY_MINUTES })}
+            onPress={openMobility}
+          />
+          <Button
+            variant="onDark"
+            label={t('home.balance', { minutes: MOBILITY_MINUTES })}
+            onPress={openBalance}
+          />
+          <Button variant="onDark" label={t('home.rest')} onPress={() => setResting(true)} />
+          {resting ? (
+            <AppText variant="caption" color={colors.dark.text}>
+              {t('home.restNote')}
+            </AppText>
+          ) : null}
+        </Card>
+      ) : (
+        <Card tone="dark" style={styles.today}>
+          <AppText variant="caption" color={colors.dark.accentSoft} style={styles.caps}>
+            {active ? t('home.inProgress') : t('home.picked')}
+          </AppText>
+          <AppText variant="h1" color={colors.dark.text}>
+            {goals.length ? goals.join(' & ') : t('home.fullBody')}
+          </AppText>
+          <AppText color={colors.dark.text}>
+            {t('home.withWarmup', { minutes: cardMinutes })}
+          </AppText>
+          <Button
+            variant="accent"
+            label={active ? t('home.continue') : t('home.start', { minutes: cardMinutes })}
+            onPress={openWorkout}
+          />
+          <Button
+            variant="onDark"
+            label={t('home.pickElse')}
+            onPress={() => router.push('/body')}
+          />
+        </Card>
+      )}
 
       {/* Short mobility (decision 1, QA round 2): always free, counts for the streak. */}
-      {!active ? (
+      {!active && !allRecovering ? (
         <View style={styles.mobility}>
           <Button
             variant="secondary"

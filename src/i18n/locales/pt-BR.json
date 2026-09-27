@@ -3515,7 +3515,12 @@
     "morningCheck": "Dê nota à dor desta manhã",
     "morningCheckBody": "Um toque: seu plano de recuperação avança ou fica mais leve.",
     "dayStreak_one": "Dia seguido",
-    "dayStreak_other": "Dias seguidos"
+    "dayStreak_other": "Dias seguidos",
+    "recoveringTitle": "Tudo está se recuperando",
+    "recoveringBody": "Seus músculos precisam de um pouco mais de tempo. Hoje é um bom dia para uma mobilidade curta, alguns exercícios de equilíbrio ou descanso.",
+    "balance": "Equilíbrio curto · {{minutes}} min",
+    "rest": "Descansar hoje",
+    "restNote": "Descanso também é treino. Seu próximo treino estará pronto quando seus músculos estiverem."
   },
   "workout": {
     "title": "Seu treino",
@@ -3668,7 +3673,9 @@
       "stoppedTitle": "Fez bem em parar",
       "stoppedBody": "Dor aguda pede descanso hoje. Os treinos de hoje deixam esta área de fora. Se a dor for forte, voltar ou não passar, procure um médico ou fisioterapeuta.",
       "mobilityEyebrow": "Mobilidade curta · concluída",
-      "mobilityTitle": "Mobilidade feita!"
+      "mobilityTitle": "Mobilidade feita!",
+      "balanceEyebrow": "Equilíbrio curto · concluído",
+      "balanceTitle": "Equilíbrio feito!"
     },
     "legend": {
       "main": "Alvo principal hoje",

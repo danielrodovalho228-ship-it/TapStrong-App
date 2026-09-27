@@ -109,6 +109,8 @@ export type GeneratedSession = {
   cooldownMinutes: number;
   estimatedMinutes: number;
   notes: GeneratorNote[];
+  /** A short mobility or balance session instead of a workout (QA R3-03, R3-05). */
+  focus?: 'mobility' | 'balance';
   /** Set when no safe session can be built. */
   error?: 'no_library' | 'no_warmup' | 'no_cooldown' | 'no_main' | 'all_recovering';
 };

@@ -3515,7 +3515,12 @@
     "morningCheck": "Rate your pain this morning",
     "morningCheckBody": "One tap: it moves your recovery plan on or eases it back.",
     "dayStreak_one": "Day streak",
-    "dayStreak_other": "Day streak"
+    "dayStreak_other": "Day streak",
+    "recoveringTitle": "Everything is recovering",
+    "recoveringBody": "Your muscles need a little more time. Today is good for short mobility, a few balance holds or a rest day.",
+    "balance": "Short balance · {{minutes}} min",
+    "rest": "Rest today",
+    "restNote": "Rest is part of training. Your next workout will be ready when your muscles are."
   },
   "workout": {
     "title": "Your workout",
@@ -3668,7 +3673,9 @@
       "stoppedTitle": "Good call to stop",
       "stoppedBody": "Sharp pain means rest for today. Today's workouts leave this area out. If the pain is strong, keeps coming back or lasts, see a doctor or physical therapist.",
       "mobilityEyebrow": "Short mobility · complete",
-      "mobilityTitle": "Mobility done!"
+      "mobilityTitle": "Mobility done!",
+      "balanceEyebrow": "Short balance · complete",
+      "balanceTitle": "Balance done!"
     },
     "legend": {
       "main": "Main target today",

@@ -46,6 +46,7 @@ export default function DoneScreen() {
   const stopped = stoppedForPain(workout);
   // Short mobility is not "Workout n" (QA R3-05).
   const mobility = workout.kind === 'mobility';
+  const balance = workout.session.focus === 'balance';
   const finished = workouts.filter(
     (w) => (w.status === 'done' || w.status === 'partial') && w.kind !== 'mobility',
   );
@@ -146,14 +147,14 @@ export default function DoneScreen() {
             {stopped
               ? t('workout.done.stoppedEyebrow')
               : mobility
-                ? t('workout.done.mobilityEyebrow')
+                ? t(balance ? 'workout.done.balanceEyebrow' : 'workout.done.mobilityEyebrow')
                 : t('workout.done.eyebrow', { n: number })}
           </AppText>
           <AppText variant="h1" accessibilityRole="header">
             {stopped
               ? t('workout.done.stoppedTitle')
               : mobility
-                ? t('workout.done.mobilityTitle')
+                ? t(balance ? 'workout.done.balanceTitle' : 'workout.done.mobilityTitle')
                 : number === 1
                   ? t('workout.done.firstTitle')
                   : t('workout.done.title')}

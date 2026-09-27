@@ -2,6 +2,7 @@ export { getAlternatives, MAX_ALTERNATIVES, swapItem } from './alternatives';
 export { doseFor, estimateSeconds } from './dosage';
 export { blockReason, safePool } from './filters';
 export {
+  generateBalanceSession,
   generateMobilitySession,
   generateSession,
   mainWorkMuscles,

@@ -9,7 +9,7 @@ import { syncNow } from '../account/cloud';
 import { useAccountStore } from '../account/store';
 import { devLibrary } from '../exercises/library';
 import type { Exercise } from '../exercises/types';
-import { generateMobilitySession, generateSession } from '../generator';
+import { generateBalanceSession, generateMobilitySession, generateSession } from '../generator';
 import { inputFromProfile } from '../generator/fromProfile';
 import type { GeneratorInput } from '../generator/types';
 import { limitFrom } from '../movement/progress';
@@ -118,6 +118,14 @@ export function createWorkoutFrom(input: GeneratorInput | null, library: Exercis
 export function createMobilityWorkout(input: GeneratorInput | null) {
   if (!input) return null;
   const session = generateMobilitySession(input);
+  if (session.error) return null;
+  return useWorkoutStore.getState().create(session, 'mobility');
+}
+
+/** A short balance session for an all-recovering day (QA R3-03); same rules as mobility. */
+export function createBalanceWorkout(input: GeneratorInput | null) {
+  if (!input) return null;
+  const session = generateBalanceSession(input);
   if (session.error) return null;
   return useWorkoutStore.getState().create(session, 'mobility');
 }

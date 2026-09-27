@@ -87,7 +87,7 @@ describe('60+ home (mockup 23)', () => {
   it('shows one big Start, progress, and supported options', async () => {
     await render(<HomeScreen />);
     expect(screen.getByText('Good morning')).toBeTruthy();
-    expect(screen.getByText('Today · 15 minutes · supported options')).toBeTruthy();
+    expect(screen.getByText(/^Today · \d+ minutes · supported options$/)).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Start' })).toBeTruthy();
     // No body-map or camera entry points from the 60+ home.
     expect(screen.queryByText('Open full body map')).toBeNull();

@@ -119,7 +119,16 @@ export function previewSession(
   library: Exercise[],
   nextFocus: NextFocus,
 ): GeneratedSession | null {
+  const s = todaySession(input, library, nextFocus);
+  return s && !s.error ? s : null;
+}
+
+/** Same, errors included: Home shows the all-recovering day honestly (QA R3-03). */
+export function todaySession(
+  input: GeneratorInput | null,
+  library: Exercise[],
+  nextFocus: NextFocus,
+): GeneratedSession | null {
   if (!input) return null;
-  const s = generateSession(withFocus(input, nextFocus, library));
-  return s.error ? null : s;
+  return generateSession(withFocus(input, nextFocus, library));
 }

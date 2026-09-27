@@ -776,7 +776,7 @@ export function generateMobilitySession(
   const day = input.today ? Math.floor(Date.parse(input.today) / 86_400_000) : 0;
   const start = ((day % MOBILITY_FOCUS.length) + MOBILITY_FOCUS.length) % MOBILITY_FOCUS.length;
   const focus = [...MOBILITY_FOCUS.slice(start), ...MOBILITY_FOCUS.slice(0, start)].slice(0, 3);
-  return generateSession({
+  const session = generateSession({
     ...input,
     minutes,
     mobilityOnly: true,
@@ -785,6 +785,31 @@ export function generateMobilitySession(
     exercisesPerSession: 3,
     setsPerExercise: 1,
   });
+  return { ...session, focus: 'mobility' };
+}
+
+/**
+ * A short balance session for a day when everything is still recovering
+ * (QA R3-03): warm-up, 3 balance holds, cool-down. Balance work needs no
+ * recovered muscles and never turns one red.
+ */
+export function generateBalanceSession(
+  input: GeneratorInput,
+  minutes = MOBILITY_MINUTES,
+): GeneratedSession {
+  const session = generateSession({
+    ...input,
+    minutes,
+    mobilityOnly: true,
+    mainGoals: ['balance'],
+    muscleGoals: ['calves', 'abs', 'glutes'].map((muscleKey) => ({
+      muscleKey,
+      goal: 'balance' as const,
+    })),
+    exercisesPerSession: 3,
+    setsPerExercise: 1,
+  });
+  return { ...session, focus: 'balance' };
 }
 
 /** "Only 15 min today" re-runs the generator with 15 minutes (SPEC §8). */
