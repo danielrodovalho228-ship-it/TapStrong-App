@@ -157,14 +157,15 @@
     "errors": {
       "too_young": "O TapStrong é para quem tem 9 anos ou mais.",
       "ask_parent": "Menores de 13 precisam que um pai, mãe ou responsável configure o TapStrong. Peça ajuda a um adulto.",
-      "guardian_consent": "Menores de 13 precisam primeiro do consentimento dos pais. Perfis de crianças são criados pelo plano Família, que chega numa próxima atualização.",
+      "guardian_consent": "Menores de 13 precisam do consentimento dos pais. Primeiro crie o seu próprio perfil e depois adicione a criança em Família (plano Família).",
       "child_too_old": "Esta opção é para menores de 18. Adultos podem criar o próprio perfil.",
       "parent_too_young": "Confira o ano de nascimento. Esta opção é para pais e avós.",
       "child_locked": "Um perfil infantil fica no modo criança até os 13 anos. Para mudar, fale com o suporte."
     },
     "footnote": "Usamos sua idade só para manter o treino seguro para você.",
     "locked": "Só o pai, a mãe ou o responsável pode mudar a data de nascimento num perfil infantil.",
-    "changeParent": "Mudar (adulto)"
+    "changeParent": "Mudar (adulto)",
+    "parentFirst": "Criar meu perfil primeiro"
   },
   "mainGoals": {
     "look": "Ficar com um visual melhor",
@@ -991,6 +992,10 @@
       "no_cooldown": "Nenhum desaquecimento seguro combina com hoje. Tente outra posição ou acrescente equipamento.",
       "editPlan": "Mudar meu plano",
       "gone": "Este treino não está mais disponível. Volte ao início para montar o de hoje."
+    },
+    "cues": {
+      "support": "Segure numa cadeira ou bancada para ter equilíbrio o tempo todo.",
+      "breathe": "Solte o ar no esforço e nunca prenda a respiração. Pare se sentir tontura ou falta de ar; a orientação do seu médico vem primeiro."
     }
   },
   "account": {
@@ -1213,7 +1218,15 @@
       "errors": {
         "not_charged": "Ainda não conseguimos confirmar um plano Família pago. Pode levar alguns minutos depois do primeiro pagamento.",
         "offline": "Não foi possível falar com o TapStrong agora. Confira sua conexão e tente de novo.",
-        "error": "Algo deu errado. Tente de novo."
+        "error": "Algo deu errado. Tente de novo.",
+        "full": "Sua família já tem 5 perfis."
+      },
+      "blockers": {
+        "bad_params": "Este link não é válido. Comece de novo em Família → Adicionar.",
+        "not_child": "A etapa de consentimento é só para crianças com menos de 13 anos.",
+        "full": "Sua família já tem 5 perfis.",
+        "need_family": "Crianças precisam do plano Família.",
+        "not_charged": "Perfis infantis abrem depois da primeira cobrança do plano Família. O teste grátis não é consentimento dos pais."
       }
     },
     "dashboard": {
@@ -1506,7 +1519,8 @@
       "seePT": "Procure um fisioterapeuta",
       "seePTBody": "Sua dor não melhorou em 3 semanas, ou piorou. Um fisioterapeuta pode descobrir a causa; o TapStrong pode apoiar o plano que ele passar.",
       "better": "Não dói mais",
-      "chart": "Dor em cada reteste (0–10)"
+      "chart": "Dor em cada reteste (0–10)",
+      "morningCheck": "Check da manhã: dê nota agora"
     },
     "check": {
       "after": "{{area}}: como está agora?",
@@ -1744,5 +1758,9 @@
       "8": "oito",
       "9": "nove"
     }
+  },
+  "ownerOnly": {
+    "title": "Para o titular da conta",
+    "managed": "O titular da conta cuida do plano e da família no próprio perfil."
   }
 }

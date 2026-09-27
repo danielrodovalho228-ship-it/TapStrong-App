@@ -146,6 +146,19 @@ export default function WhoScreen() {
           {t(`who.errors.${result.status}`)}
         </Notice>
       ) : null}
+      {result?.status === 'guardian_consent' ? (
+        // Not a dead end: the parent sets up their own profile first, then adds
+        // the child from Family (QA B-05).
+        <Button
+          variant="secondary"
+          label={t('who.parentFirst')}
+          onPress={() => {
+            setWho('me');
+            setMonth(undefined);
+            setYear(undefined);
+          }}
+        />
+      ) : null}
     </Screen>
   );
 }

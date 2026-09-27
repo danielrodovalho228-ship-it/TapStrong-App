@@ -19,7 +19,7 @@ import { useOnboardingStore } from '../onboarding/store';
 import { activeAreas, doctorFirstAreas, useRestrictionsStore } from '../restrictions/store';
 
 import { withFocus, recentSessions } from './plan';
-import { safetyKey, safetyRefresh, sharpStopAreasToday } from './safety';
+import { dullPainAreasToday, safetyKey, safetyRefresh, sharpStopAreasToday } from './safety';
 import { bodyStates, muscleActivity } from './recovery';
 import { findWorkout, useWorkoutStore } from './store';
 
@@ -44,6 +44,7 @@ export function useGeneratorInput(library: Exercise[]): GeneratorInput | null {
       ...new Set([...activeAreas(restrictions), ...sharpStopAreasToday(workouts, today)]),
     ],
     hardRestrictions: doctorFirstAreas(restrictions),
+    painToday: dullPainAreasToday(workouts, today),
     movementLimits: activeReports(reports).map(limitFrom),
     recentSessions: recentSessions(workouts, library),
     today: localDate(clock.now()),

@@ -94,7 +94,18 @@ export const useOnboardingStore = create<OnboardingData & Actions>()(
     (set, get) => ({
       ...initialOnboarding(),
 
-      update: (patch) => set(patch),
+      // Pregnancy is hidden for the male body: drop it if the body changes (QA C-10).
+      update: (patch) =>
+        set(
+          patch.sex === 'm' && get().conditions.includes('pregnant_postpartum')
+            ? {
+                ...patch,
+                conditions: (patch.conditions ?? get().conditions).filter(
+                  (c) => c !== 'pregnant_postpartum',
+                ),
+              }
+            : patch,
+        ),
 
       applyAnswer: (step, a) => {
         const s = get();
@@ -129,6 +140,9 @@ export const useOnboardingStore = create<OnboardingData & Actions>()(
                 : {}),
               heightCm: a.heightCm ?? s.heightCm,
               weightKg: a.weightKg ?? s.weightKg,
+              ...(a.sex === 'm'
+                ? { conditions: s.conditions.filter((c) => c !== 'pregnant_postpartum') }
+                : {}),
             });
             break;
         }

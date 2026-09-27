@@ -3,7 +3,7 @@ import { muscleByKey, muscleFamily, type MovementGroup } from '../muscles';
 import { defaultMuscleGoal, type MuscleGoal } from '../onboarding/options';
 import type { AppMode } from '../profile/age';
 
-import { doseFor, estimateSeconds } from './dosage';
+import { doseFor, estimateSeconds, needsCaution } from './dosage';
 import { emphasisOn, rangeFor, safePool, userLevel } from './filters';
 import type {
   GeneratedSession,
@@ -83,6 +83,8 @@ export function rankForTarget(pool: Exercise[], target: Target, mode: AppMode): 
     )
     .map((e) => ({
       e,
+      // Balance goal: balance work first (QA B-08).
+      balance: target.goal === 'balance' && e.pattern === 'balance' ? 1 : 0,
       emphasis:
         Math.round(emphasisOn(e, target.family, 'primary') * 10) +
         (minor && !e.loaded ? MINOR_UNLOADED_BONUS : 0),
@@ -91,6 +93,7 @@ export function rankForTarget(pool: Exercise[], target: Target, mode: AppMode): 
     }))
     .sort(
       (a, b) =>
+        b.balance - a.balance ||
         b.emphasis - a.emphasis ||
         b.fit - a.fit ||
         a.distance - b.distance ||
@@ -203,9 +206,13 @@ function timedItem(
 export function mainItem(
   e: Exercise,
   target: Target,
-  input: Pick<GeneratorInput, 'mode' | 'setsPerExercise'>,
+  input: Pick<GeneratorInput, 'mode' | 'setsPerExercise'> &
+    Partial<Pick<GeneratorInput, 'conditions' | 'rehab'>>,
 ): SessionItem {
-  const dose = doseFor(target.goal, input.mode, e, input.setsPerExercise);
+  const dose = doseFor(target.goal, input.mode, e, input.setsPerExercise, {
+    caution: needsCaution(input.conditions ?? []),
+    rehab: input.rehab,
+  });
   return {
     id: '',
     role: 'main',
@@ -281,6 +288,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   });
 
   if (!pool.length) return fail('no_library');
+  const byIdAll = new Map(pool.map((e) => [e.id, e]));
 
   // --- Main work -----------------------------------------------------------
   const recent = input.recentSessions ?? [];
@@ -290,10 +298,28 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     family: muscleFamily(g.muscleKey),
     goal: g.goal,
   }));
-  const rested = allTargets.filter((t) => hitIn(recent[0], t.family) && hitIn(recent[1], t.family));
+  // "Max 2 days in a row" counts the parent muscle: upper, middle and lower
+  // chest are all chest (QA D-03).
+  const root = (t: Target) => muscleFamily(muscleByKey(t.muscle)?.parentKey ?? t.muscle);
+  const rested = allTargets.filter((t) => hitIn(recent[0], root(t)) && hitIn(recent[1], root(t)));
   if (rested.length)
     notes.push({ key: 'generator.notes.rested', muscles: rested.map((t) => t.muscle) });
-  const targets = allTargets.filter((t) => !rested.includes(t));
+  // Trained earlier today: let it recover when anything else is on the list (QA D-01).
+  const today = input.today;
+  const trainedToday = (t: Target) =>
+    !!today && recent[0]?.date === today && hitIn(recent[0], root(t));
+  const fresh = allTargets.filter((t) => !rested.includes(t));
+  const notToday = fresh.filter((t) => !trainedToday(t));
+  // Every chosen muscle takes its turn through the week: least recently
+  // trained first, then the user's priority (QA D-04).
+  const lastHit = (t: Target) => {
+    const i = recent.findIndex((s) => hitIn(s, root(t)));
+    return i < 0 ? Number.MAX_SAFE_INTEGER : i;
+  };
+  const targets = (notToday.length ? notToday : fresh)
+    .map((t, priority) => ({ t, priority, last: lastHit(t) }))
+    .sort((a, b) => b.last - a.last || a.priority - b.priority)
+    .map((x) => x.t);
 
   const slots = Math.max(1, Math.min(10, Math.round(input.exercisesPerSession)));
   const selectedGroups = new Set(targets.map((t) => groupOf(t.muscle)).filter(Boolean));
@@ -348,8 +374,42 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   }
   if (!main.length) return fail('no_main');
 
+  // 60+, a fall in the last year, or a balance goal: always some balance or
+  // fall-prevention work (QA B-08, C-06).
+  const needsBalance =
+    input.mode === 'senior' ||
+    input.conditions.includes('fell_last_year') ||
+    input.mainGoals.includes('balance');
+  if (needsBalance && !main.some((i) => byIdAll.get(i.exerciseId)?.pattern === 'balance')) {
+    const pick = pool
+      .filter((e) => e.pattern === 'balance' && e.parts.includes('main') && !used.has(e.id))
+      .sort(
+        (a, b) =>
+          supportedFirst(b) - supportedFirst(a) || a.level - b.level || byText(a.slug, b.slug),
+      )[0];
+    if (pick) {
+      const item = mainItem(
+        pick,
+        { muscle: topPrimary(pick)!, family: [], goal: 'balance' },
+        input,
+      );
+      if (main.length >= slots && main.length > 1) used.delete(main.pop()!.exerciseId);
+      used.add(pick.id);
+      main.push(item);
+    }
+  }
+
   // --- Finisher (optional) ---------------------------------------------------
+  // The profile promises adults who want a leaner look a cardio finisher
+  // (summary note "bodyFat"): keep that promise (QA A-07).
+  const adultMode = input.mode === 'adult' || input.mode === 'senior';
+  const promisedCardio =
+    adultMode &&
+    (input.mainGoals.includes('look') ||
+      input.mainGoals.includes('lose_weight') ||
+      input.muscleGoals.some((g) => g.goal === 'firm'));
   const wantsCardio =
+    promisedCardio ||
     input.mainGoals.includes('lose_weight') ||
     input.mainGoals.includes('fitness') ||
     input.muscleGoals.some((g) => g.goal === 'firm');
@@ -380,7 +440,10 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     fixed + main.reduce((s, i) => s + i.estSeconds, 0) + (finisher?.estSeconds ?? 0);
   let dropped = 0;
   while (total() > budget) {
-    if (finisher) {
+    if (finisher && promisedCardio && main.length > 2) {
+      used.delete(main.pop()!.exerciseId);
+      dropped++;
+    } else if (finisher) {
       used.delete(finisher.exerciseId);
       finisher = null;
     } else if (main.length > 1) {
@@ -413,7 +476,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   const first = mainExercises[0];
   let rampSeconds = 0;
   let ramp: SessionItem | null = null;
-  if (first?.loaded && input.mode !== 'child') {
+  if (first?.loaded && input.mode !== 'child' && !needsCaution(input.conditions)) {
     const sets = input.mode === 'teen' || warmup <= MIN_WARMUP ? 1 : 2;
     rampSeconds = sets * 60;
     ramp = {

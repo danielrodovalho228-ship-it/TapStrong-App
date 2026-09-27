@@ -25,11 +25,12 @@ import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
 import { getSupabase } from '@/lib/supabase';
 import { colors, fonts, spacing } from '@/theme';
+import { OwnerOnly } from '@/features/family/OwnerOnly';
 
 type Step = 'start' | 'code';
 
 /** Mockup 16 — save progress after the first workout (SPEC §8, §9 /account). */
-export default function AccountScreen() {
+function AccountScreenInner() {
   const { t, i18n } = useTranslation();
   const { from } = useLocalSearchParams<{ from?: string }>();
   const account = useAccountStore();
@@ -217,3 +218,12 @@ const styles = StyleSheet.create({
   center: { textAlign: 'center' },
   links: { alignItems: 'center', gap: spacing.sm },
 });
+
+/** Owner-only: a child profile needs the parent gate (QA B-03). */
+export default function AccountScreen() {
+  return (
+    <OwnerOnly>
+      <AccountScreenInner />
+    </OwnerOnly>
+  );
+}

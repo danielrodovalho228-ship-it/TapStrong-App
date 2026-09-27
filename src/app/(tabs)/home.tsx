@@ -22,6 +22,7 @@ import {
   useGeneratorInput,
 } from '@/features/workout/hooks';
 import type { RecoveryState } from '@/features/workout/recovery';
+import { previewSession, sessionTargets } from '@/features/workout/plan';
 import { useWorkoutStore } from '@/features/workout/store';
 import { streakToday } from '@/features/workout/streak';
 import { track } from '@/lib/analytics';
@@ -38,7 +39,7 @@ export default function HomeScreen() {
   const derived = derive(profile);
   const library = useExerciseLibrary();
   const input = useGeneratorInput(library);
-  const { workouts, streak } = useWorkoutStore();
+  const { workouts, streak, nextFocus } = useWorkoutStore();
   const { states } = useBodyStates();
   const member = useFamilyStore(activeProfile);
   const checkins = useProgressStore((st) => st.checkins);
@@ -47,7 +48,11 @@ export default function HomeScreen() {
   const now = clock.now();
   const active = workouts.find((w) => w.status === 'active');
   const planned = workouts.find((w) => w.status === 'planned');
-  const goals = profile.muscleGoals.slice(0, 2).map((g) => muscleLabel(t, g.muscleKey));
+  // The card names what today's workout really trains (QA D-01): the stored
+  // one, or a preview of the one "Start" will build (the generator is
+  // deterministic, so it is the same session).
+  const preview = (active ?? planned)?.session ?? previewSession(input, library, nextFocus);
+  const goals = (preview ? sessionTargets(preview) : []).map((m) => muscleLabel(t, m));
   const band = displayBand(profile.bodyModel.band, derived.band, derived.mode);
   const sex: BodySex = profile.bodyModel.sex ?? (profile.sex === 'f' ? 'f' : 'm');
 
@@ -71,7 +76,7 @@ export default function HomeScreen() {
       .join(', ');
   const legend = LEGEND.map((s) => ({ state: s, muscles: byState(s) })).filter((l) => l.muscles);
 
-  if (derived.mode === 'senior') return <SeniorHome onStart={openWorkout} />;
+  if (derived.mode === 'senior') return <SeniorHome onStart={openWorkout} targets={goals} />;
 
   return (
     <Screen>

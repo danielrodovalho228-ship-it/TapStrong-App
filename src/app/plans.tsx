@@ -12,9 +12,10 @@ import { useBillingStore } from '@/features/billing/store';
 import { FamilyStrip } from '@/features/family/components/FamilyStrip';
 import { clock } from '@/lib/clock';
 import { colors, fonts, spacing } from '@/theme';
+import { OwnerOnly } from '@/features/family/OwnerOnly';
 
 /** Mockup 19 — plans and family (SPEC §9 /plans). */
-export default function PlansScreen() {
+function PlansScreenInner() {
   const { t } = useTranslation();
   const entitlement = useBillingStore((s) => s.entitlement);
   const current = currentPlan(entitlement, clock.now());
@@ -71,3 +72,12 @@ const styles = StyleSheet.create({
   caps: { textTransform: 'uppercase', letterSpacing: 1.2, fontFamily: fonts.heading },
   dev: { gap: spacing.sm },
 });
+
+/** Owner-only: a child profile needs the parent gate (QA B-03). */
+export default function PlansScreen() {
+  return (
+    <OwnerOnly>
+      <PlansScreenInner />
+    </OwnerOnly>
+  );
+}

@@ -32,11 +32,12 @@ export function blockReason(e: Exercise, input: GeneratorInput): string | null {
   if (e.rehab && !input.rehab) return 'rehab_only';
   // Areas with a "Movement that hurts" report are judged movement by movement.
   const byMovement = limitAreas(input.movementLimits);
-  const risks = new Set(
-    [...input.painAreas, ...input.conditions, ...input.restrictions].filter(
+  const risks = new Set([
+    ...[...input.painAreas, ...input.conditions, ...input.restrictions].filter(
       (r) => !byMovement.has(r),
     ),
-  );
+    ...(input.painToday ?? []),
+  ]);
   if (e.contraindications.some((c) => risks.has(c))) return 'contraindication';
   const hard = input.hardRestrictions ?? [];
   if (

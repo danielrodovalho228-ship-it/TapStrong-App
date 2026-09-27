@@ -1,4 +1,5 @@
 import { router } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
@@ -7,7 +8,10 @@ import { currentPlan } from '@/features/billing/rules';
 import { useBillingStore } from '@/features/billing/store';
 import { FamilyStrip } from '@/features/family/components/FamilyStrip';
 import { activitySummary, summarize } from '@/features/family/profiles';
-import { useFamilyStore } from '@/features/family/store';
+import { useOwnerAccess } from '@/features/family/OwnerOnly';
+import { ParentGate } from '@/features/family/ParentGate';
+import { useFamilyStore, type LocalProfile } from '@/features/family/store';
+import { useAccountStore } from '@/features/account/store';
 import { ensureSelfProfile, switchProfile } from '@/features/family/switch';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { clock } from '@/lib/clock';
@@ -22,7 +26,16 @@ export default function FamilyScreen() {
   const { profiles, activeId } = useFamilyStore();
   const entitlement = useBillingStore((s) => s.entitlement);
   const plan = currentPlan(entitlement, clock.now());
-  const list = profiles.length ? profiles : [ensureSelfProfile()];
+  const access = useOwnerAccess();
+  const [gateFor, setGateFor] = useState<string | null>(null);
+  // Registering the owner's profile writes to a store: never during render (QA A-10).
+  useEffect(() => {
+    if (!profiles.length) ensureSelfProfile();
+  }, [profiles.length]);
+  const selfId = useAccountStore((st) => st.profileId);
+  const list: LocalProfile[] = profiles.length
+    ? profiles
+    : [{ id: selfId, kind: 'self', createdAt: '' }];
   // The owner's view: only from the account holder's own profile.
   const ownerView = (activeId ?? list[0].id) === list.find((p) => p.kind === 'self')?.id;
   const members = list
@@ -33,6 +46,12 @@ export default function FamilyScreen() {
     }));
 
   const open = (id: string) => {
+    // A child or teen profile can't switch to other profiles without a parent (QA B-03).
+    if (access === 'gate' && gateFor !== id) {
+      setGateFor(id);
+      return;
+    }
+    setGateFor(null);
     switchProfile(id);
     const done = useOnboardingStore.getState().onboardingComplete;
     router.replace(done ? '/home' : '/onboarding/who');
@@ -44,6 +63,18 @@ export default function FamilyScreen() {
         {t('family.title')}
       </AppText>
       <FamilyStrip />
+      {gateFor ? (
+        <ParentGate
+          onPass={() => {
+            const id = gateFor;
+            switchProfile(id);
+            setGateFor(null);
+            const done = useOnboardingStore.getState().onboardingComplete;
+            router.replace(done ? '/home' : '/onboarding/who');
+          }}
+          onCancel={() => setGateFor(null)}
+        />
+      ) : null}
       <Card style={styles.list}>
         {list.map((p, i) => {
           const s = summarize(p, activeId, live, kvStorage.getItem);
@@ -112,11 +143,17 @@ export default function FamilyScreen() {
       <AppText color={colors.mutedStrong}>
         {plan === 'family' ? t('family.planOn') : t('family.planOff')}
       </AppText>
-      <Button
-        variant={plan === 'free' ? 'accent' : 'secondary'}
-        label={plan === 'free' ? t('family.seePlans') : t('family.manage')}
-        onPress={() => router.push(plan === 'free' ? '/plans' : '/billing')}
-      />
+      {access === 'managed' ? (
+        <AppText variant="caption" color={colors.muted}>
+          {t('ownerOnly.managed')}
+        </AppText>
+      ) : (
+        <Button
+          variant={plan === 'free' ? 'accent' : 'secondary'}
+          label={plan === 'free' ? t('family.seePlans') : t('family.manage')}
+          onPress={() => router.push(plan === 'free' ? '/plans' : '/billing')}
+        />
+      )}
     </Screen>
   );
 }

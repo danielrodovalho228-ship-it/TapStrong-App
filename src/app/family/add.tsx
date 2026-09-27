@@ -13,6 +13,7 @@ import { birthYearOptions } from '@/features/profile/age';
 import { clock } from '@/lib/clock';
 import { uuid } from '@/lib/uuid';
 import { spacing } from '@/theme';
+import { OwnerOnly } from '@/features/family/OwnerOnly';
 
 type Kind = 'child' | 'parent';
 const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1);
@@ -21,7 +22,7 @@ const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1);
  * Add a family member (SPEC §11.7): a child or teen managed by the parent,
  * or a parent/grandparent managed by an adult child. Family plan only.
  */
-export default function AddMemberScreen() {
+function AddMemberScreenInner() {
   const { t } = useTranslation();
   const { profiles, add } = useFamilyStore();
   const entitlement = useBillingStore((s) => s.entitlement);
@@ -119,3 +120,12 @@ const styles = StyleSheet.create({
   options: { gap: spacing.md },
   row: { flexDirection: 'row', gap: spacing.md },
 });
+
+/** Owner-only: a child profile needs the parent gate (QA B-03). */
+export default function AddMemberScreen() {
+  return (
+    <OwnerOnly>
+      <AddMemberScreenInner />
+    </OwnerOnly>
+  );
+}

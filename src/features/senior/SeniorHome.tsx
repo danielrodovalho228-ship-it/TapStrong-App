@@ -9,7 +9,6 @@ import { currentPlan } from '@/features/billing/rules';
 import { useBillingStore } from '@/features/billing/store';
 import { activeProfile, useFamilyStore } from '@/features/family/store';
 import { useOnboardingStore } from '@/features/onboarding/store';
-import { muscleLabel } from '@/features/onboarding/summaries';
 import { checkinDue } from '@/features/progress/checkin';
 import { useProgressStore } from '@/features/progress/store';
 import { useWorkoutStore } from '@/features/workout/store';
@@ -23,7 +22,7 @@ import { dayPart, lastWorkout } from './summary';
  * summary of the last workout. Links stay inside the simple screens
  * (SPEC §11.10): no body-map or camera entry points from here.
  */
-export function SeniorHome({ onStart }: { onStart: () => void }) {
+export function SeniorHome({ onStart, targets }: { onStart: () => void; targets: string[] }) {
   const { t, i18n } = useTranslation();
   const profile = useOnboardingStore();
   const { workouts } = useWorkoutStore();
@@ -39,7 +38,7 @@ export function SeniorHome({ onStart }: { onStart: () => void }) {
   const active = workouts.find((w) => w.status === 'active');
   const last = lastWorkout(workouts);
   const minutes = profile.minutes ?? 15;
-  const goals = profile.muscleGoals.slice(0, 2).map((g) => muscleLabel(t, g.muscleKey));
+  const goals = targets;
   const managed = !!member && member.kind !== 'self';
 
   const meta = [

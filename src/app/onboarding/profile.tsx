@@ -74,7 +74,8 @@ export default function ProfileScreen() {
 
   const finish = () => {
     s.update({ onboardingComplete: true });
-    router.replace('/body');
+    // 60+ lands on the simple home, never on adult screens (QA B-07).
+    router.replace(derived.mode === 'senior' ? '/home' : '/body');
   };
 
   return (

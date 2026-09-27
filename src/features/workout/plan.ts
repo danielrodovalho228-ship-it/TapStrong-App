@@ -3,10 +3,11 @@ import { localDate } from '@/lib/dates';
 import type { Exercise } from '../exercises/types';
 import type { GeneratedSession, GeneratorInput, RecentSession } from '../generator/types';
 import type { MovementGroup } from '../muscles';
+import { generateSession } from '../generator/generate';
 import { defaultMuscleGoal } from '../onboarding/options';
 
 import { groupMuscles } from './recovery';
-import type { WorkoutRecord } from './types';
+import type { NextFocus, WorkoutRecord } from './types';
 
 /** Finished workouts as balance-pass input, most recent first (SPEC §8). */
 export function recentSessions(history: WorkoutRecord[], library: Exercise[]): RecentSession[] {
@@ -96,4 +97,26 @@ export function repairInput(
     // Corrective work: no cardio finisher.
     mainGoals: input.mainGoals.filter((g) => g !== 'lose_weight' && g !== 'fitness'),
   };
+}
+
+/** Muscles a session's main work is built for, in order (for the Home card, QA D-01). */
+export function sessionTargets(session: GeneratedSession, max = 2): string[] {
+  return [
+    ...new Set(
+      session.items
+        .filter((i) => i.role === 'main' && i.targetMuscle)
+        .map((i) => i.targetMuscle as string),
+    ),
+  ].slice(0, max);
+}
+
+/** The session "Start" would build right now, without storing it. */
+export function previewSession(
+  input: GeneratorInput | null,
+  library: Exercise[],
+  nextFocus: NextFocus,
+): GeneratedSession | null {
+  if (!input) return null;
+  const s = generateSession(withFocus(input, nextFocus, library));
+  return s.error ? null : s;
 }

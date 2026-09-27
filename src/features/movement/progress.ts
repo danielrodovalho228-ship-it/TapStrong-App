@@ -59,7 +59,9 @@ export function lightHistory(report: MovementPain): LightStep[] {
   order.forEach((id, i) => {
     const { after, morning } = byWorkout.get(id)!;
     const last = i === order.length - 1;
-    const light = workoutLight(after?.score, morning?.score, baseline);
+    // "Worse the next morning" compares with the rating just before it: the
+    // check right after that workout when there is one (QA A-04).
+    const light = workoutLight(after?.score, morning?.score, after?.score ?? baseline);
     if (last && !morning && light !== 'red') return;
     steps.push({ workoutId: id, light, at: (morning ?? after)!.at });
     if (morning) baseline = morning.score;
@@ -157,9 +159,20 @@ export function recoveryInput(
     ...(input.movementLimits ?? []).filter((l) => l.area !== report.area),
     limitFrom(report),
   ];
+  // Phase 1: holds without moving first; pain-free unloaded moves only when
+  // there are too few holds for the joint (QA A-03).
+  const holds = input.library.filter(
+    (e) =>
+      e.parts.includes('main') &&
+      e.joints.some((j) => report.joints.includes(j.joint) && j.range === 'isometric'),
+  );
   const library =
     phase === 1
-      ? input.library.filter((e) => !e.parts.includes('main') || phaseOneMain(e, report))
+      ? input.library.filter(
+          (e) =>
+            !e.parts.includes('main') ||
+            (holds.length >= 2 ? holds.includes(e) : phaseOneMain(e, report) && !e.loaded),
+        )
       : input.library;
   return {
     ...input,
@@ -168,7 +181,7 @@ export function recoveryInput(
     rehab: true,
     movementLimits: limits,
     allowReducedRange: phase === 3,
-    exercisesPerSession: 3,
+    exercisesPerSession: phase === 1 ? 4 : 3,
     setsPerExercise: phase === 3 ? 3 : 2,
     muscleGoals: focus.map((muscleKey) => ({ muscleKey, goal: 'strengthen' as const })),
     mainGoals: input.mainGoals.filter((g) => g !== 'lose_weight' && g !== 'fitness'),
@@ -197,4 +210,12 @@ export function pendingMorningChecks(reports: MovementPain[]) {
         ? []
         : [{ reportId: r.id, area: r.area, workoutId: after.workoutId, afterAt: after.at }];
     });
+}
+
+/** The morning check can be answered in the app from 5:00 the day after the workout. */
+export function morningCheckOpen(afterAt: string, now: Date): boolean {
+  const open = new Date(afterAt);
+  open.setDate(open.getDate() + 1);
+  open.setHours(5, 0, 0, 0);
+  return now >= open;
 }

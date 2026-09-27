@@ -10,9 +10,10 @@ import { currentPlan, manageSubscriptionUrl } from '@/features/billing/rules';
 import { useBillingStore } from '@/features/billing/store';
 import { clock } from '@/lib/clock';
 import { colors, spacing } from '@/theme';
+import { OwnerOnly } from '@/features/family/OwnerOnly';
 
 /** Delete account (App Store rule; Daniel, Sep 2026). */
-export default function DeleteAccountScreen() {
+function DeleteAccountScreenInner() {
   const { t } = useTranslation();
   const saved = useAccountStore((s) => s.saved);
   const entitlement = useBillingStore((s) => s.entitlement);
@@ -73,3 +74,12 @@ export default function DeleteAccountScreen() {
 }
 
 const styles = StyleSheet.create({ field: { gap: spacing.sm } });
+
+/** Owner-only: a child profile needs the parent gate (QA B-03). */
+export default function DeleteAccountScreen() {
+  return (
+    <OwnerOnly>
+      <DeleteAccountScreenInner />
+    </OwnerOnly>
+  );
+}

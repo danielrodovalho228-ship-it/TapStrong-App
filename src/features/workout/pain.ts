@@ -30,8 +30,15 @@ export const planFor = (type: PainType): PainPlan =>
 
 /** Generator input with the painful area added as a restriction. */
 export function withRestriction(input: GeneratorInput, area: PainReportArea): GeneratorInput {
-  if (area === 'other' || input.restrictions.includes(area)) return input;
-  return { ...input, restrictions: [...input.restrictions, area] };
+  if (area === 'other') return input;
+  return {
+    ...input,
+    restrictions: input.restrictions.includes(area)
+      ? input.restrictions
+      : [...input.restrictions, area],
+    // Pain right now beats a movement report's pain-free list (QA A-05).
+    painToday: [...new Set([...(input.painToday ?? []), area])],
+  };
 }
 
 /** The safest swap for the item that hurt: same muscle, spares the area. */

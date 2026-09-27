@@ -9,6 +9,8 @@ import { movementCatalog } from '@/features/movement/catalog';
 import {
   levelFor,
   lightHistory,
+  morningCheckOpen,
+  pendingMorningChecks,
   phaseFor,
   recoveryInput,
   retestDue,
@@ -49,6 +51,7 @@ export default function MovementPlanScreen() {
     i18n.language,
     { month: 'short', day: 'numeric' },
   );
+  const morning = pendingMorningChecks([report]).find((c) => morningCheckOpen(c.afterAt, now));
   const list = (keys: typeof report.painful) => keys.map((k) => movementName(t, k)).join(', ');
 
   const start = () => {
@@ -97,6 +100,18 @@ export default function MovementPlanScreen() {
         ) : null}
       </Card>
 
+      {morning ? (
+        <Button
+          variant="secondary"
+          label={t('movementPain.plan.morningCheck')}
+          onPress={() =>
+            router.push({
+              pathname: '/movement-pain/check',
+              params: { id: report.id, kind: 'morning', workout: morning.workoutId },
+            })
+          }
+        />
+      ) : null}
       {seeTherapist(report, now) ? (
         <Notice tone="warning" title={t('movementPain.plan.seePT')}>
           {t('movementPain.plan.seePTBody')}

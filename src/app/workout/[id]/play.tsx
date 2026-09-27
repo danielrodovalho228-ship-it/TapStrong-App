@@ -11,6 +11,7 @@ import type { SessionItem } from '@/features/generator/types';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { RangeNote } from '@/features/movement/RangeNote';
 import { DemoLoop } from '@/features/workout/components/Media';
+import { SafetyCues } from '@/features/workout/components/SafetyCues';
 import { SwapSheet, type SwapReasonUi } from '@/features/workout/components/SwapSheet';
 import { useNow } from '@/features/workout/components/TimerRing';
 import { UndoBar } from '@/features/workout/components/UndoBar';
@@ -123,6 +124,7 @@ export default function PlayerScreen() {
         </AppText>
         <AppText color={colors.mutedStrong}>{exerciseCues(t, exercise)}</AppText>
         <RangeNote exercise={exercise} />
+        <SafetyCues exercise={exercise} />
       </View>
 
       {stepKind(step.item) === 'timed' ? (

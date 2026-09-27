@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { FlatList, Modal, Pressable, StyleSheet, View } from 'react-native';
+import { useRef, useState } from 'react';
+import { FlatList, Modal, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -29,6 +29,11 @@ export function Select<T extends string | number>({
 }: SelectProps<T>) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
+  const listRef = useRef<FlatList<SelectOption<T>>>(null);
+  const selectedIndex = Math.max(
+    0,
+    options.findIndex((o) => o.value === value),
+  );
   const current = options.find((o) => o.value === value);
 
   return (
@@ -65,10 +70,14 @@ export function Select<T extends string | number>({
           <FlatList
             data={options}
             keyExtractor={(o) => String(o.value)}
-            initialScrollIndex={Math.max(
-              0,
-              options.findIndex((o) => o.value === value),
-            )}
+            ref={listRef}
+            // Web (react-native-web) skips the rows above initialScrollIndex, so
+            // there the list scrolls after layout instead (QA B-04).
+            initialScrollIndex={Platform.OS === 'web' ? undefined : selectedIndex}
+            onLayout={() => {
+              if (Platform.OS === 'web' && selectedIndex > 0)
+                listRef.current?.scrollToOffset({ offset: selectedIndex * ROW, animated: false });
+            }}
             getItemLayout={(_, index) => ({ length: ROW, offset: ROW * index, index })}
             renderItem={({ item }) => {
               const selected = item.value === value;

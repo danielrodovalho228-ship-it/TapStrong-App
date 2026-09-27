@@ -38,6 +38,11 @@ export type GeneratorInput = {
    */
   hardRestrictions?: string[];
   /**
+   * Areas with dull pain reported today: ruled out as a whole, even where a
+   * "Movement that hurts" report would allow pain-free moves (QA A-05).
+   */
+  painToday?: string[];
+  /**
    * "Movement that hurts" reports (SPEC §8): these areas are filtered movement
    * by movement instead of as a whole.
    */

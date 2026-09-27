@@ -1,8 +1,8 @@
 import type { Exercise, SessionPart } from '../exercises/types';
-import { muscleFamily } from '../muscles';
+import { muscleByKey, muscleFamily } from '../muscles';
 import { defaultMuscleGoal } from '../onboarding/options';
 
-import { doseFor, estimateSeconds } from './dosage';
+import { doseFor, estimateSeconds, needsCaution } from './dosage';
 import { emphasisOn, isMachine, safePool } from './filters';
 import type {
   GeneratedSession,
@@ -13,6 +13,22 @@ import type {
 } from './types';
 
 export const MAX_ALTERNATIVES = 5;
+
+/** Body regions of an exercise's primary muscles (upper, core, lower). */
+const regionsOf = (e: Exercise | undefined) =>
+  new Set(
+    (e?.muscles ?? [])
+      .filter((m) => m.role === 'primary')
+      .map((m) => muscleByKey(m.muscleKey)?.region)
+      .filter(Boolean),
+  );
+
+/** Same region, or either is whole-body cardio / breathing (no single region). */
+function sameRegion(e: Exercise, current: Exercise | undefined): boolean {
+  if (!current || current.pattern === 'cardio' || current.pattern === 'breathing') return true;
+  const a = regionsOf(current);
+  return [...regionsOf(e)].some((r) => a.has(r));
+}
 
 const MOBILITY_PARTS: SessionPart[] = ['finisher_mobility', 'cooldown_stretch', 'warmup_mobility'];
 const byText = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
@@ -53,7 +69,9 @@ export function getAlternatives(
   return safePool(input)
     .filter((e) => !inSession.has(e.id))
     .filter((e) => {
-      if (item.role !== 'main') return e.parts.includes(item.part as SessionPart);
+      // Warm-up and cool-down swaps stay in the same part AND body region (QA A-11).
+      if (item.role !== 'main')
+        return e.parts.includes(item.part as SessionPart) && sameRegion(e, current);
       const sameSlot =
         item.goal === 'mobility'
           ? e.parts.some((p) => MOBILITY_PARTS.includes(p))
@@ -102,6 +120,10 @@ export function swapItem(
       input.mode,
       next,
       old.sets,
+      {
+        caution: needsCaution(input.conditions),
+        rehab: input.rehab,
+      },
     );
     const kept = { ...dose, sets: old.sets };
     updated = {

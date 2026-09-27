@@ -16,9 +16,10 @@ import {
 import { useBillingStore } from '@/features/billing/store';
 import { clock } from '@/lib/clock';
 import { colors, fonts, spacing } from '@/theme';
+import { OwnerOnly } from '@/features/family/OwnerOnly';
 
 /** Mockup 22 — honest billing: trial end, first charge, cancel in 2 taps. */
-export default function BillingScreen() {
+function BillingScreenInner() {
   const { t, i18n } = useTranslation();
   const { entitlement, prices } = useBillingStore();
   const [message, setMessage] = useState<string | null>(null);
@@ -172,3 +173,12 @@ const styles = StyleSheet.create({
   center: { textAlign: 'center' },
   links: { alignItems: 'center', gap: spacing.sm },
 });
+
+/** Owner-only: a child profile needs the parent gate (QA B-03). */
+export default function BillingScreen() {
+  return (
+    <OwnerOnly>
+      <BillingScreenInner />
+    </OwnerOnly>
+  );
+}

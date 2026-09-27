@@ -253,8 +253,35 @@ describe('Family members', () => {
     );
   });
 
+  const CHILD_ID = '0f1e2d3c-4b5a-4968-8776-655443322110';
+  const chargedFamily = () =>
+    act(() =>
+      useBillingStore.getState().set({
+        entitlement: {
+          ...FREE,
+          plan: 'family',
+          status: 'active',
+          expiresAt: '2026-12-01T00:00:00Z',
+          firstChargedAt: '2026-09-20T00:00:00Z',
+        },
+      }),
+    );
+
+  it('the consent screen re-checks its URL: age, plan and id (QA B-06)', async () => {
+    mockParams = { id: CHILD_ID, name: 'Mia', month: '5', year: '2010' };
+    await chargedFamily();
+    await render(<ParentConsentScreen />);
+    expect(screen.getByText('The consent step is only for children under 13.')).toBeTruthy();
+    await fireEvent.press(
+      screen.getByRole('checkbox', { name: 'I am the parent or legal guardian and I agree' }),
+    );
+    expect(screen.getByRole('button', { name: 'Create the profile' })).toBeDisabled();
+    expect(useFamilyStore.getState().profiles.some((p) => p.id === CHILD_ID)).toBe(false);
+  });
+
   it('the parent notice must be accepted, then the child profile opens its onboarding', async () => {
-    mockParams = { id: 'c-1', name: 'Mia', month: '5', year: '2016' };
+    mockParams = { id: CHILD_ID, name: 'Mia', month: '5', year: '2016' };
+    await chargedFamily();
     await render(<ParentConsentScreen />);
     expect(screen.getByText(/No photos, no body measurements/)).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Create the profile' })).toBeDisabled();
@@ -262,10 +289,10 @@ describe('Family members', () => {
       screen.getByRole('checkbox', { name: 'I am the parent or legal guardian and I agree' }),
     );
     await fireEvent.press(screen.getByRole('button', { name: 'Create the profile' }));
-    const child = useFamilyStore.getState().profiles.find((p) => p.id === 'c-1')!;
+    const child = useFamilyStore.getState().profiles.find((p) => p.id === CHILD_ID)!;
     expect(child).toMatchObject({ kind: 'child', name: 'Mia' });
     expect(child.consentAt).toBeTruthy();
-    expect(useFamilyStore.getState().activeId).toBe('c-1');
+    expect(useFamilyStore.getState().activeId).toBe(CHILD_ID);
     expect(useOnboardingStore.getState()).toMatchObject({ who: 'child', birthYear: 2016 });
     expect(mockRouter.replace).toHaveBeenCalledWith('/onboarding/who');
   });

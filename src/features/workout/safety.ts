@@ -85,6 +85,17 @@ export const safetyKey = (input: GeneratorInput | null) =>
         input.position,
         input.restrictions,
         input.hardRestrictions ?? [],
+        input.painToday ?? [],
         input.movementLimits ?? [],
       ])
     : '';
+
+/** Areas with dull pain reported today (swapped or skipped): ruled out whole today. */
+export function dullPainAreasToday(workouts: WorkoutRecord[], today: string): string[] {
+  const areas = new Set<string>();
+  for (const w of workouts)
+    for (const p of w.pains)
+      if (p.type === 'dull' && p.area !== 'other' && localDay(p.reportedAt) === today)
+        areas.add(p.area);
+  return [...areas];
+}

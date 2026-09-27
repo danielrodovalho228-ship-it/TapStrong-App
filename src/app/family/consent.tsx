@@ -4,11 +4,14 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText, Button, Checkbox, Header, Icon, Notice, Screen } from '@/components/ui';
+import { useBillingStore } from '@/features/billing/store';
 import { createChildProfileRemote } from '@/features/family/remote';
+import { childConsentBlocker } from '@/features/family/rules';
 import { useFamilyStore } from '@/features/family/store';
 import { ensureSelfProfile, switchProfile } from '@/features/family/switch';
 import { clock } from '@/lib/clock';
 import { colors, spacing } from '@/theme';
+import { OwnerOnly } from '@/features/family/OwnerOnly';
 
 const POINTS = ['collect', 'use', 'never', 'rights'] as const;
 
@@ -17,19 +20,29 @@ const POINTS = ['collect', 'use', 'never', 'rights'] as const;
  * verification is the charged Family subscription (Daniel, Sep 2026); the
  * database refuses the profile without it. To be reviewed by a lawyer.
  */
-export default function ParentConsentScreen() {
+function ParentConsentScreenInner() {
   const { t } = useTranslation();
   const params = useLocalSearchParams<{ id: string; name?: string; month: string; year: string }>();
-  const add = useFamilyStore((s) => s.add);
+  const { add, profiles } = useFamilyStore();
+  const entitlement = useBillingStore((s) => s.entitlement);
+  const birthMonth = Number(params.month);
+  const birthYear = Number(params.year);
+  // Never trust the URL: re-check id, age, room and the charged plan (QA B-06).
+  const blocker = childConsentBlocker({
+    id: params.id,
+    birth: { month: birthMonth, year: birthYear },
+    profiles,
+    entitlement,
+    now: clock.now(),
+  });
   const [agreed, setAgreed] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const create = async () => {
+    if (blocker) return;
     setBusy(true);
     setError(null);
-    const birthMonth = Number(params.month);
-    const birthYear = Number(params.year);
     const result = await createChildProfileRemote({
       id: params.id,
       birthMonth,
@@ -43,12 +56,17 @@ export default function ParentConsentScreen() {
       return;
     }
     ensureSelfProfile();
-    add({
+    const added = add({
       id: params.id,
       kind: 'child',
       name: params.name || undefined,
       consentAt: clock.now().toISOString(),
     });
+    // Never switch to a profile that wasn't added (QA B-06).
+    if (!added) {
+      setError(t('family.consent.errors.full'));
+      return;
+    }
     switchProfile(params.id, { who: 'child', birthMonth, birthYear });
     router.replace('/onboarding/who');
   };
@@ -59,7 +77,7 @@ export default function ParentConsentScreen() {
       footer={
         <Button
           label={t('family.consent.create')}
-          disabled={!agreed}
+          disabled={!agreed || !!blocker}
           loading={busy}
           onPress={create}
         />
@@ -78,6 +96,7 @@ export default function ParentConsentScreen() {
       </View>
       <Notice>{t('family.consent.verification')}</Notice>
       <Checkbox label={t('family.consent.agree')} checked={agreed} onChange={setAgreed} />
+      {blocker ? <Notice tone="warning">{t(`family.consent.blockers.${blocker}`)}</Notice> : null}
       {error ? <Notice tone="warning">{error}</Notice> : null}
     </Screen>
   );
@@ -88,3 +107,12 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', gap: spacing.md, alignItems: 'flex-start' },
   flex: { flex: 1 },
 });
+
+/** Owner-only: a child profile needs the parent gate (QA B-03). */
+export default function ParentConsentScreen() {
+  return (
+    <OwnerOnly>
+      <ParentConsentScreenInner />
+    </OwnerOnly>
+  );
+}

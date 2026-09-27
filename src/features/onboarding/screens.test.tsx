@@ -61,8 +61,12 @@ describe('Who screen (mockup 02)', () => {
     await act(() => store().update({ birthMonth: 5, birthYear: 2015 }));
     await render(<WhoScreen />);
     await fireEvent.press(screen.getByRole('radio', { name: 'My child (under 18)' }));
-    expect(screen.getByText(/need a parent's consent first/)).toBeTruthy();
+    expect(screen.getByText(/need a parent's consent/)).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled();
+    // Not a dead end (QA B-05): the parent sets up their own profile first.
+    await fireEvent.press(screen.getByRole('button', { name: 'Set up my profile first' }));
+    expect(screen.getByRole('radio', { name: 'Me' })).toBeChecked();
+    expect(screen.queryByText(/need a parent's consent/)).toBeNull();
   });
 });
 

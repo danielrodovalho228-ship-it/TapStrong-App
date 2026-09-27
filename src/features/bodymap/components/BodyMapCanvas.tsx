@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 
 import { IconButton } from '@/components/ui/IconButton';
-import { colors, radius, spacing } from '@/theme';
+import { colors, radius, sizes, spacing } from '@/theme';
 
 import { muscleByKey } from '../../muscles';
 import type { BodyBand } from '../../profile/age';
@@ -22,8 +22,9 @@ import { bodyImage, type BodySex, type BodyView } from '../images';
 const DOT = 18;
 const HALO = 30;
 const RECOVERY = 40;
-// Dot hit area; taps between dots go to the nearest one via the image press.
-const HIT = 22;
+// Dot hit area: the 44 px minimum touch target (QA D-05). Taps between dots
+// still go to the nearest one via the image press.
+const HIT = sizes.touchTarget;
 const MIN_ZOOM = 1;
 const MAX_ZOOM = 3;
 const ZOOM_STEP = 0.75;
@@ -123,8 +124,12 @@ export function BodyMapCanvas({
 
   // Taps between dots go to the nearest dot (small targets on the chest).
   const onPressImage = (e: GestureResponderEvent) => {
-    const { locationX, locationY } = e.nativeEvent;
-    const key = nearestHotspot(hotspots, locationX / scale, locationY / scale, 24);
+    // Web has no locationX on some events; offsetX is the same position (QA D-05).
+    const ev = e.nativeEvent as typeof e.nativeEvent & { offsetX?: number; offsetY?: number };
+    const x = ev.locationX ?? ev.offsetX;
+    const y = ev.locationY ?? ev.offsetY;
+    if (x == null || y == null) return;
+    const key = nearestHotspot(hotspots, x / scale, y / scale, 24);
     if (key) onToggle(key);
   };
 

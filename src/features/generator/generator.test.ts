@@ -232,8 +232,10 @@ describe('main work and dosage', () => {
       reps: [8, 12],
       restSeconds: 75,
     });
-    expect(doseFor('grow', 'adult', press, 6).sets).toBe(4);
-    expect(doseFor('firm', 'adult', press, 4)).toMatchObject({ sets: 3, reps: [12, 15] });
+    // "Sets each" is honored as chosen, up to 5 for adults (QA D-02).
+    expect(doseFor('grow', 'adult', press, 6).sets).toBe(5);
+    expect(doseFor('grow', 'adult', press, 2).sets).toBe(2);
+    expect(doseFor('firm', 'adult', press, 4)).toMatchObject({ sets: 4, reps: [12, 15] });
     expect(doseFor('strengthen', 'adult', press, 3)).toMatchObject({
       reps: [4, 8],
       loadHint: 'heavy',
@@ -245,10 +247,11 @@ describe('main work and dosage', () => {
     });
     expect(doseFor('balance', 'adult', ex('single_leg_balance'), 3)).toMatchObject({
       holdSeconds: [20, 40],
-      perSide: true,
+      perSide: true, // one leg at a time
     });
+    expect(doseFor('balance', 'adult', ex('band_row'), 3).perSide).toBe(false);
     expect(doseFor('mobility', 'adult', ex('cat_cow'), 4)).toMatchObject({
-      sets: 2,
+      sets: 3,
       holdSeconds: [30, 45],
     });
     expect(doseFor('grow', 'adult', ex('push_up'), 3).loadHint).toBe('bodyweight');
