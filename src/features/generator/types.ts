@@ -45,6 +45,8 @@ export type GeneratorInput = {
    */
   painToday?: string[];
   /** Areas where a sharp pain stopped a workout today: no exercise moving that joint today (QA R2-02). */
+  /** A short mobility session (~10 min): mobility moves only, no recovery rule (QA round 2, decision 1). */
+  mobilityOnly?: boolean;
   /** Now (ISO time): recovery hours for the targets (QA R2-08). */
   now?: string;
   stoppedToday?: string[];

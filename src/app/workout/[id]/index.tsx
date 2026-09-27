@@ -7,7 +7,7 @@ import { AppText, Button, Card, Icon, IconButton, Notice, Screen } from '@/compo
 import { canStartWorkout, currentPlan } from '@/features/billing/rules';
 import { useBillingStore } from '@/features/billing/store';
 import type { Exercise } from '@/features/exercises/types';
-import { generateSession, swapItem } from '@/features/generator';
+import { generateSession, MOBILITY_MINUTES, swapItem } from '@/features/generator';
 import type { GeneratorNote, SessionItem } from '@/features/generator/types';
 import { muscleLabel } from '@/features/onboarding/summaries';
 import { RangeNote } from '@/features/movement/RangeNote';
@@ -25,7 +25,7 @@ import {
   exerciseName,
   targetText,
 } from '@/features/workout/format';
-import { useSafetyRefresh, useWorkout } from '@/features/workout/hooks';
+import { createMobilityWorkout, useSafetyRefresh, useWorkout } from '@/features/workout/hooks';
 import { isReviewed } from '@/features/workout/plan';
 import { useWorkoutStore } from '@/features/workout/store';
 import { track } from '@/lib/analytics';
@@ -60,14 +60,28 @@ export default function WorkoutScreen() {
       <Screen
         footer={
           <>
-            {reason !== 'no_library' ? (
+            {reason === 'all_recovering' ? (
+              // Everything is recovering: a short mobility session or a rest day (QA R2-08).
+              <Button
+                variant="accent"
+                label={t('home.mobility', { minutes: MOBILITY_MINUTES })}
+                onPress={() => {
+                  const next = createMobilityWorkout(input);
+                  if (next) router.replace({ pathname: '/workout/[id]', params: { id: next } });
+                }}
+              />
+            ) : reason !== 'no_library' ? (
               <Button
                 variant="secondary"
                 label={t('workout.unavailable.editPlan')}
                 onPress={() => router.push('/onboarding/profile')}
               />
             ) : null}
-            <Button label={t('workout.backHome')} onPress={() => router.replace('/home')} />
+            <Button
+              variant={reason === 'all_recovering' ? 'secondary' : 'primary'}
+              label={reason === 'all_recovering' ? t('workout.restDay') : t('workout.backHome')}
+              onPress={() => router.replace('/home')}
+            />
           </>
         }
       >

@@ -2643,7 +2643,9 @@
       "supported": "opções com apoio"
     },
     "freezes_one": "{{count}} proteção de sequência guardada",
-    "freezes_other": "{{count}} proteções de sequência guardadas"
+    "freezes_other": "{{count}} proteções de sequência guardadas",
+    "mobility": "Mobilidade curta · {{minutes}} min",
+    "mobilityNote": "Conta para a sua sequência. Sempre grátis, quantas vezes quiser."
   },
   "workout": {
     "title": "Seu treino",
@@ -2843,7 +2845,8 @@
     "rampUp_one": "{{count}} série leve de aproximação",
     "rampUp_other": "{{count}} séries leves de aproximação",
     "minSec": "{{minutes}} min {{seconds}} s",
-    "backToFull": "Voltar ao treino completo"
+    "backToFull": "Voltar ao treino completo",
+    "restDay": "Tirar um dia de descanso"
   },
   "account": {
     "eyebrow": "Sua conta",

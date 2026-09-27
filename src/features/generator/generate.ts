@@ -331,7 +331,11 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   // Rules count the parent muscle: upper, middle and lower chest are all chest (QA D-03).
   const parentOf = (muscle: string) => muscleByKey(muscle)?.parentKey ?? muscle;
   const root = (t: Target) => muscleFamily(parentOf(t.muscle));
-  const rested = allTargets.filter((t) => hitIn(recent[0], root(t)) && hitIn(recent[1], root(t)));
+  // A Repair recovery session or a short mobility session stays on its focus.
+  const focused = !!input.rehab || !!input.mobilityOnly;
+  const rested = input.mobilityOnly
+    ? []
+    : allTargets.filter((t) => hitIn(recent[0], root(t)) && hitIn(recent[1], root(t)));
   if (rested.length)
     notes.push({ key: 'generator.notes.rested', muscles: rested.map((t) => t.muscle) });
 
@@ -349,7 +353,8 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     return (nowMs - sessionMs(hit)) / 3_600_000;
   };
   const readyAfter = READY_HOURS[input.mode];
-  const isReady = (family: string[]) => hoursSince(family) >= readyAfter;
+  // Mobility work does not need recovered muscles.
+  const isReady = (family: string[]) => !!input.mobilityOnly || hoursSince(family) >= readyAfter;
   const fresh = allTargets.filter((t) => !rested.includes(t));
   const recovering = fresh.filter((t) => !isReady(root(t)));
   if (recovering.length)
@@ -400,7 +405,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   });
   // A recovery session stays on its joint: more holds for the same focus
   // until its 4 slots are full (QA round 2: it had 3).
-  for (let pass = 0; input.rehab && main.length < slots && pass < 3; pass++) {
+  for (let pass = 0; focused && main.length < slots && pass < 3; pass++) {
     for (const target of targets) {
       if (main.length >= slots) break;
       const pick = rankForTarget(pool, target, input.mode).find((e) => !used.has(e.id));
@@ -408,7 +413,8 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     }
   }
   // A chosen muscle with no safe option is never dropped silently (QA R2-10).
-  if (unavailable.length) notes.push({ key: 'generator.notes.unavailable', muscles: unavailable });
+  if (unavailable.length && !input.mobilityOnly)
+    notes.push({ key: 'generator.notes.unavailable', muscles: unavailable });
 
   // The rest of the session keeps push / pull / legs balanced over the week:
   // groups trained least this week first, only recovered ones, never a
@@ -427,7 +433,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     rankForGroup(pool, g, defaultGoal, input.mode).find(
       (e) => !used.has(e.id) && !usedParents.has(parentOf(topPrimary(e)!)),
     );
-  while (!input.rehab && main.length < slots) {
+  while (!focused && main.length < slots) {
     const options = fill
       // Core once per session; the big groups share the rest.
       .filter((g) => g !== 'core' || sessionCount('core') === 0)
@@ -444,7 +450,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     add(pick, { muscle, family: [muscle], goal: defaultGoal });
     added.set(pick.id, g);
   }
-  if (!main.length && allTargets.length && !readyTargets.length && !input.rehab) {
+  if (!main.length && allTargets.length && !readyTargets.length && !focused) {
     // Everything chosen is still recovering and nothing else is ready:
     // mobility, balance, a walk or a rest day instead (QA R2-08).
     return fail('all_recovering');
@@ -466,7 +472,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   const protectedIds = new Set<string>();
   const balanceItem = main.find((i) => byIdAll.get(i.exerciseId)?.pattern === 'balance');
   if (balanceItem) protectedIds.add(balanceItem.exerciseId);
-  if (needsBalance && !balanceItem && !input.rehab) {
+  if (needsBalance && !balanceItem && !focused) {
     const pick = pool
       .filter((e) => e.pattern === 'balance' && e.parts.includes('main') && !used.has(e.id))
       .sort(
@@ -507,7 +513,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   const wantsMobility = input.mainGoals.includes('mobility') || input.mainGoals.includes('balance');
   let finisher: SessionItem | null = null;
   const young = input.mode === 'child' || input.mode === 'teen';
-  if (wantsCardio || wantsMobility) {
+  if ((wantsCardio || wantsMobility) && !focused) {
     const part: SessionPart = wantsCardio ? 'finisher_cardio' : 'finisher_mobility';
     const pick = pool
       .filter((e) => e.parts.includes(part) && !used.has(e.id))
@@ -547,7 +553,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
       finisher = null;
     } else if (main.length <= 1 || !dropOne()) break;
   }
-  if (dropped && !input.rehab) notes.push({ key: 'generator.notes.trimmed', count: dropped });
+  if (dropped && !focused) notes.push({ key: 'generator.notes.trimmed', count: dropped });
   // "Added push / legs for balance" only names work that survived the time fit (QA round 1).
   const chosenGroups = new Set(allTargets.map((t) => groupOf(t.muscle)));
   const kept = [
@@ -558,7 +564,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
       }),
     ),
   ];
-  if (allTargets.length && kept.length && !input.rehab)
+  if (allTargets.length && kept.length && !focused)
     notes.push({ key: 'generator.notes.balance', groups: kept });
 
   // The first loaded lift leads, so its ramp-up sits right before it (QA round 2).
@@ -733,6 +739,29 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     },
   );
   return { ...base, items, estimatedMinutes: Math.round(total() / 60) };
+}
+
+export const MOBILITY_MINUTES = 10;
+const MOBILITY_FOCUS = ['hips', 'upperBack', 'hamstrings', 'shoulders'];
+
+/**
+ * A short mobility session (~10 min, decision 1 of QA round 2): warm-up,
+ * 3 mobility moves, cool-down. It counts as an active day for the streak,
+ * with no limit on the free plan.
+ */
+export function generateMobilitySession(
+  input: GeneratorInput,
+  minutes = MOBILITY_MINUTES,
+): GeneratedSession {
+  return generateSession({
+    ...input,
+    minutes,
+    mobilityOnly: true,
+    mainGoals: ['mobility'],
+    muscleGoals: MOBILITY_FOCUS.map((muscleKey) => ({ muscleKey, goal: 'mobility' as const })),
+    exercisesPerSession: 3,
+    setsPerExercise: 2,
+  });
 }
 
 /** "Only 15 min today" re-runs the generator with 15 minutes (SPEC §8). */

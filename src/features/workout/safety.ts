@@ -43,7 +43,7 @@ export function safetyRefresh(w: WorkoutRecord, input: GeneratorInput): SafetyRe
   if (!unsafe.length) return { kind: 'ok' };
   // A planned regular workout is rebuilt; recovery sessions are patched (their
   // input comes from the recovery plan, not from here).
-  if (w.status === 'planned' && w.kind !== 'repair') return { kind: 'regenerate' };
+  if (w.status === 'planned' && w.kind === 'regular') return { kind: 'regenerate' };
 
   let session = w.session;
   const skip: string[] = [];

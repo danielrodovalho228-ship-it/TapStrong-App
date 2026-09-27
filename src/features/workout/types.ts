@@ -39,7 +39,8 @@ export type PainReport = {
 
 export type StoredSwap = SwapRecord & { at: string };
 
-export type WorkoutKind = 'regular' | 'finisher' | 'repair';
+/** 'mobility': the short mobility session — an active day, never counted in the free limit. */
+export type WorkoutKind = 'regular' | 'finisher' | 'repair' | 'mobility';
 
 export type WorkoutRecord = {
   id: string;

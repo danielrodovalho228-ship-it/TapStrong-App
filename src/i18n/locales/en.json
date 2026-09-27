@@ -2643,7 +2643,9 @@
       "supported": "supported options"
     },
     "freezes_one": "{{count}} streak freeze saved",
-    "freezes_other": "{{count}} streak freezes saved"
+    "freezes_other": "{{count}} streak freezes saved",
+    "mobility": "Short mobility · {{minutes}} min",
+    "mobilityNote": "Counts for your streak. Always free, as often as you like."
   },
   "workout": {
     "title": "Your workout",
@@ -2843,7 +2845,8 @@
     "rampUp_one": "{{count}} light ramp-up set",
     "rampUp_other": "{{count}} light ramp-up sets",
     "minSec": "{{minutes}} min {{seconds}} s",
-    "backToFull": "Back to the full workout"
+    "backToFull": "Back to the full workout",
+    "restDay": "Take a rest day"
   },
   "account": {
     "eyebrow": "Your account",

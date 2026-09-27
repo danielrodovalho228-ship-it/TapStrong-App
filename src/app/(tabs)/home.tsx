@@ -14,7 +14,9 @@ import { useProgressStore } from '@/features/progress/store';
 import { SeniorHome } from '@/features/senior/SeniorHome';
 import { muscleLabel } from '@/features/onboarding/summaries';
 import { LegendRow, RecoveryBody, STATE_COLOR } from '@/features/workout/components/RecoveryBody';
+import { MOBILITY_MINUTES } from '@/features/generator';
 import {
+  createMobilityWorkout,
   createWorkoutFrom,
   refreshWorkout,
   useBodyStates,
@@ -47,12 +49,18 @@ export default function HomeScreen() {
 
   const now = clock.now();
   const active = workouts.find((w) => w.status === 'active');
-  const planned = workouts.find((w) => w.status === 'planned');
+  const planned = workouts.find((w) => w.status === 'planned' && w.kind === 'regular');
   // The card names what today's workout really trains (QA D-01): the stored
   // one, or a preview of the one "Start" will build (the generator is
   // deterministic, so it is the same session).
   const preview = (active ?? planned)?.session ?? previewSession(input, library, nextFocus);
   const goals = (preview ? sessionTargets(preview) : []).map((m) => muscleLabel(t, m));
+  // The session's own length, not the profile setting (QA round 2).
+  const cardMinutes = preview?.estimatedMinutes || profile.minutes || 30;
+  const openMobility = () => {
+    const id = createMobilityWorkout(input);
+    router.push({ pathname: '/workout/[id]', params: { id: id ?? 'unavailable' } });
+  };
   const band = displayBand(profile.bodyModel.band, derived.band, derived.mode);
   const sex: BodySex = profile.bodyModel.sex ?? (profile.sex === 'f' ? 'f' : 'm');
 
@@ -132,16 +140,28 @@ export default function HomeScreen() {
         <AppText variant="h1" color={colors.dark.text}>
           {goals.length ? goals.join(' & ') : t('home.fullBody')}
         </AppText>
-        <AppText color={colors.dark.text}>
-          {t('home.withWarmup', { minutes: profile.minutes ?? 30 })}
-        </AppText>
+        <AppText color={colors.dark.text}>{t('home.withWarmup', { minutes: cardMinutes })}</AppText>
         <Button
           variant="accent"
-          label={active ? t('home.continue') : t('home.start', { minutes: profile.minutes ?? 30 })}
+          label={active ? t('home.continue') : t('home.start', { minutes: cardMinutes })}
           onPress={openWorkout}
         />
         <Button variant="onDark" label={t('home.pickElse')} onPress={() => router.push('/body')} />
       </Card>
+
+      {/* Short mobility (decision 1, QA round 2): always free, counts for the streak. */}
+      {!active ? (
+        <View style={styles.mobility}>
+          <Button
+            variant="secondary"
+            label={t('home.mobility', { minutes: MOBILITY_MINUTES })}
+            onPress={openMobility}
+          />
+          <AppText variant="caption" color={colors.mutedStrong} style={styles.center}>
+            {t('home.mobilityNote')}
+          </AppText>
+        </View>
+      ) : null}
 
       {checkinDue(workouts, checkins, now) ? (
         <Pressable
@@ -197,6 +217,8 @@ const styles = StyleSheet.create({
   today: { gap: spacing.md, padding: spacing.xl },
   recovery: { gap: spacing.md },
   legend: { gap: spacing.sm },
+  mobility: { gap: spacing.xs },
+  center: { textAlign: 'center' },
   checkin: {
     flexDirection: 'row',
     alignItems: 'center',

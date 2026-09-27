@@ -2643,7 +2643,9 @@
       "supported": "opciones con apoyo"
     },
     "freezes_one": "{{count}} protección de racha guardada",
-    "freezes_other": "{{count}} protecciones de racha guardadas"
+    "freezes_other": "{{count}} protecciones de racha guardadas",
+    "mobility": "Movilidad corta · {{minutes}} min",
+    "mobilityNote": "Cuenta para tu racha. Siempre gratis, cuantas veces quieras."
   },
   "workout": {
     "title": "Tu entrenamiento",
@@ -2843,7 +2845,8 @@
     "rampUp_one": "{{count}} serie ligera de aproximación",
     "rampUp_other": "{{count}} series ligeras de aproximación",
     "minSec": "{{minutes}} min {{seconds}} s",
-    "backToFull": "Volver al entrenamiento completo"
+    "backToFull": "Volver al entrenamiento completo",
+    "restDay": "Tomar un día de descanso"
   },
   "account": {
     "eyebrow": "Tu cuenta",
