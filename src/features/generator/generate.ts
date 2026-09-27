@@ -4,7 +4,7 @@ import { defaultMuscleGoal, type MuscleGoal } from '../onboarding/options';
 import type { AppMode } from '../profile/age';
 
 import { doseFor, estimateSeconds } from './dosage';
-import { emphasisOn, safePool, userLevel } from './filters';
+import { emphasisOn, rangeFor, safePool, userLevel } from './filters';
 import type {
   GeneratedSession,
   GeneratorInput,
@@ -502,8 +502,17 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   if (!coolItems.length) return fail('no_cooldown');
 
   // --- Assemble, always in SPEC order --------------------------------------
+  const exerciseById = new Map(input.library.map((e) => [e.id, e]));
   const items = [...warmItems, ...main, ...(finisher ? [finisher] : []), ...coolItems].map(
-    (item, i) => ({ ...item, id: `i${i}` }),
+    (item, i) => {
+      const e = exerciseById.get(item.exerciseId);
+      const range = e ? rangeFor(e, input) : 'ok';
+      return {
+        ...item,
+        id: `i${i}`,
+        ...(range === 'reduced' || range === 'isometric' ? { range } : {}),
+      };
+    },
   );
   return { ...base, items, estimatedMinutes: Math.round(total() / 60) };
 }

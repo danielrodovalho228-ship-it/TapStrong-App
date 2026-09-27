@@ -1,7 +1,8 @@
 """Builds docs/review/exercise-review.xlsx for the certified reviewer (SPEC §2.1).
 
 Source: supabase/seed/exercises.json (the draft library),
-supabase/seed/repair_tests.json (the draft Repair check tests) and the English
+supabase/seed/repair_tests.json (the draft Repair check tests),
+supabase/seed/joint_movements.json (the draft movement catalog) and the English
 strings in src/i18n/locales/en.json. Re-run after any library change:
 
     python3 scripts/build-review-sheet.py
@@ -18,6 +19,7 @@ from openpyxl.worksheet.datavalidation import DataValidation
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 seed = json.load(open(os.path.join(ROOT, 'supabase/seed/exercises.json')))['exercises']
 repair = json.load(open(os.path.join(ROOT, 'supabase/seed/repair_tests.json')))['tests']
+catalog = json.load(open(os.path.join(ROOT, 'supabase/seed/joint_movements.json')))
 en = json.load(open(os.path.join(ROOT, 'src/i18n/locales/en.json')))
 
 FONT = 'Arial'
@@ -66,11 +68,23 @@ COLUMNS = [
     ('Contraindications', 34),
     ('Cues', 48),
     ('Used as', 26),
+    ('Joint movements (range)', 40),
+    ('Shorter range allowed', 26),
     ('Approve / Fix (Aprovado/Corrigir)', 18),
     ('Comment (Comentário)', 44),
 ]
-DECISION_COL = 11
-COMMENT_COL = 12
+DECISION_COL = 13
+COMMENT_COL = 14
+MP = en['movementPain']
+RANGES = {'full': 'full', 'partial': 'partial', 'isometric': 'hold, no movement'}
+
+
+def movement_text(joint, movement):
+    return f"{MP['joints'][joint]}: {MP['movements'][joint][movement]['name']}"
+
+
+def joints_text(joints):
+    return '\n'.join(f'{movement_text(j, m)} ({RANGES[r]})' for j, m, r in joints) or '—'
 
 
 def muscles_text(entry):
@@ -91,7 +105,10 @@ def row_for(entry):
         ', '.join(POSITIONS[p] for p in entry['positions']),
         ', '.join(RISK[c] for c in entry['contraindications']) or 'None',
         en['exercises'][entry['slug']]['cues'],
-        ', '.join(PARTS[p] for p in entry['parts']),
+        ', '.join(PARTS[p] for p in entry['parts'])
+        + (' · recovery plan only' if entry.get('rehab') else ''),
+        joints_text(entry.get('joints', [])),
+        '\n'.join(movement_text(*k.split('.')) for k in entry.get('rangeLimit', [])) or '—',
         None,
         None,
     ]
@@ -136,6 +153,9 @@ lines = [
     ('3. Cues: is the one-line cue correct and safe?', False),
     ('4. Repair tests (tab "Repair tests"): are the protocol, the "good" target per age mode, the '
      'contraindications and the muscles each weak result sends to the 6-week plan right?', False),
+    ('5. Joint movements: does each exercise and test list every joint movement it needs, with the '
+     'right range? Is a shorter range really safe where it is allowed? Tab "Movements": are the '
+     'movement list, the everyday examples, the red flags and the recovery phases right?', False),
     ('', False),
     ('How to fill it in', True),
     ('Only the two yellow columns on the "Exercises" tab: "Approve / Fix" (pick from the list) and '
@@ -157,6 +177,7 @@ example = [
     'Quads (Quadriceps): primary, 1.0\nGlutes (Gluteus maximus and medius): secondary, 0.7',
     'Bodyweight', 1, '9+ (kids)', 'Standing, With support', 'Knee',
     'Sit back and down, knees over toes, then stand.', 'Main work',
+    'Knee: Bend the knee deep (full)\nHip: Deep squat (full)', 'Knee: Bend the knee deep',
     'Fix', 'Add adductors as secondary, 0.3. Cue: keep heels down.',
 ]
 for col, value in enumerate(example, start=1):
@@ -167,13 +188,14 @@ summary_row = example_header + 3
 guide.cell(row=summary_row, column=1, value='Progress (updates as you fill in the Exercises tab)').font = Font(
     name=FONT, bold=True
 )
-count_range = f'Exercises!$K$2:$K${len(seed) + 1}'
+count_range = f'Exercises!$M$2:$M${len(seed) + 1}'
 summary = [
     ('Exercises', f'=COUNTA(Exercises!$A$2:$A${len(seed) + 1})'),
     ('Approved', f'=COUNTIF({count_range},"Approve")'),
     ('To fix', f'=COUNTIF({count_range},"Fix")'),
     ('Not reviewed yet', f'=B{summary_row + 1}-B{summary_row + 2}-B{summary_row + 3}'),
-    ('Repair tests approved', f"=COUNTIF('Repair tests'!$I$2:$I${len(repair) + 1},\"Approve\")"),
+    ('Repair tests approved', f"=COUNTIF('Repair tests'!$J$2:$J${len(repair) + 1},\"Approve\")"),
+    ('Movement rows approved', f"=COUNTIF(Movements!$E$2:$E$200,\"Approve\")"),
 ]
 for i, (label, formula) in enumerate(summary, start=1):
     guide.cell(row=summary_row + i, column=1, value=label).font = Font(name=FONT)
@@ -203,10 +225,10 @@ decision = DataValidation(type='list', formula1='"Approve,Fix"', allow_blank=Tru
 decision.error = 'Choose Approve or Fix.'
 decision.prompt = 'Approve, or Fix and explain in Comment.'
 ws.add_data_validation(decision)
-decision.add(f'K2:K{len(seed) + 1}')
+decision.add(f'M2:M{len(seed) + 1}')
 guide_decision = DataValidation(type='list', formula1='"Approve,Fix"', allow_blank=True)
 guide.add_data_validation(guide_decision)
-guide_decision.add(f'K{example_header + 1}')
+guide_decision.add(f'M{example_header + 1}')
 
 # --- Repair tests ----------------------------------------------------------------
 REPAIR_COLUMNS = [
@@ -218,6 +240,7 @@ REPAIR_COLUMNS = [
     ('Contraindications', 30),
     ('"Good" target by mode (kids / teens / adults / 60+)', 30),
     ('Weak result → plan focus', 40),
+    ('Joint movements (range)', 36),
     ('Approve / Fix (Aprovado/Corrigir)', 18),
     ('Comment (Comentário)', 44),
 ]
@@ -247,6 +270,7 @@ def repair_row(t):
         ', '.join(RISK[c] for c in t['contraindications']) or 'None',
         target,
         focus,
+        joints_text(t.get('joints', [])),
         None,
         None,
     ]
@@ -272,7 +296,57 @@ rt.freeze_panes = 'C2'
 rt.row_dimensions[1].height = 32
 repair_decision = DataValidation(type='list', formula1='"Approve,Fix"', allow_blank=True)
 rt.add_data_validation(repair_decision)
-repair_decision.add(f'I2:I{len(repair) + 1}')
+repair_decision.add(f'J2:J{len(repair) + 1}')
+
+# --- Movements (catalog) -------------------------------------------------------
+mv = wb.create_sheet('Movements')
+MV_COLUMNS = [
+    ('Joint', 16),
+    ('Movement (key)', 26),
+    ('Shown to the user', 30),
+    ('Everyday example', 50),
+    ('Approve / Fix (Aprovado/Corrigir)', 18),
+    ('Comment (Comentário)', 44),
+]
+for col, (title, width) in enumerate(MV_COLUMNS, start=1):
+    cell = mv.cell(row=1, column=col, value=title)
+    cell.font = Font(name=FONT, bold=True, color='FFFFFF')
+    cell.fill = HEADER_FILL
+    cell.alignment = Alignment(wrap_text=True, vertical='center')
+    cell.border = BORDER
+    mv.column_dimensions[get_column_letter(col)].width = width
+rows = []
+for joint, entry in catalog['joints'].items():
+    for m in entry['movements']:
+        rows.append([MP['joints'][joint], f'{joint}.{m}', MP['movements'][joint][m]['name'],
+                     MP['movements'][joint][m]['example'], None, None])
+rows.append(['Red flags', '—', 'No plan, see a doctor, if any applies:',
+             '\n'.join(MP['redFlags'][f] for f in catalog['redFlags']), None, None])
+for phase in ('1', '2', '3'):
+    focus = '; '.join(
+        f"{MP['joints'][j]}: " + ', '.join(MUSCLE[m] for m in e['focus'][phase])
+        for j, e in catalog['joints'].items()
+    )
+    rows.append([f'Recovery phase {phase}', '—', MP['plan']['phases'][phase], focus, None, None])
+rows.append(['Traffic light', '—', MP['plan']['lightRule'],
+             'Levels 1–6: green +1, yellow hold, red −1. Phase 1 = levels 1–2, 2 = 3–4, 3 = 5–6. '
+             'Pain 7+ leaves the whole joint out; holds and shorter range only at pain 5 or less.',
+             None, None])
+rows.append(['Physical therapist', '—', MP['plan']['seePT'],
+             'Recommended when the weekly retest is worse than at the start, or no better after 3 weeks.',
+             None, None])
+for r, values in enumerate(rows, start=2):
+    for col, value in enumerate(values, start=1):
+        cell = mv.cell(row=r, column=col, value=value)
+        cell.font = Font(name=FONT)
+        cell.alignment = Alignment(wrap_text=True, vertical='top')
+        cell.border = BORDER
+        if col >= len(MV_COLUMNS) - 1:
+            cell.fill = INPUT_FILL
+mv.freeze_panes = 'C2'
+mv_decision = DataValidation(type='list', formula1='"Approve,Fix"', allow_blank=True)
+mv.add_data_validation(mv_decision)
+mv_decision.add(f'E2:E{len(rows) + 1}')
 
 # The progress counters are recalculated by Excel / Google Sheets on open.
 wb.calculation.fullCalcOnLoad = True
@@ -280,4 +354,4 @@ wb.calculation.fullCalcOnLoad = True
 out = os.path.join(ROOT, 'docs/review/exercise-review.xlsx')
 os.makedirs(os.path.dirname(out), exist_ok=True)
 wb.save(out)
-print(f'wrote {len(seed)} exercises and {len(repair)} Repair tests to {os.path.relpath(out, ROOT)}')
+print(f'wrote {len(seed)} exercises, {len(repair)} Repair tests and the movement catalog to {os.path.relpath(out, ROOT)}')

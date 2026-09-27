@@ -648,3 +648,74 @@ Suas decisões aplicadas:
 1. **Aba Coach:** o chat contínuo (SPEC §9 e §11.4) não entrou em nenhuma fase e não foi construído. Faço antes do lançamento?
 2. **Ícone:** aprova o novo ou prefere um designer?
 3. Os demais itens estão em `docs/launch-readiness.md`.
+
+## Fase 9 — "Movimento que dói"
+
+Decisões aplicadas: a Aba Coach fica para a primeira atualização e o ícone está aprovado para os testes.
+
+### O que foi feito
+
+- **Catálogo de movimentos (rascunho):** 8 articulações e 41 movimentos, cada um com exemplo do dia a dia em EN, ES e PT-BR (`supabase/seed/joint_movements.json`).
+  - Ombro: levantar à frente, levantar de lado, levar a mão às costas, girar para fora, girar para dentro, acima da cabeça, empurrar, puxar, carregar.
+  - Também cotovelo, punho, pescoço, lombar, quadril, joelho e tornozelo.
+  - Como os exercícios, só existe no build de desenvolvimento até o revisor aprovar. O `bundle:check` confere.
+- **Relato de dor** (Restrições, Repair e Progresso → "Quais movimentos doem?"):
+  - área e lado;
+  - triagem de alerta vermelho;
+  - cada movimento marcado como "Dói", "Sem dor" ou "Não testei";
+  - nota de 0 a 10 e há quanto tempo dói.
+    Criança só passa com a confirmação de que o responsável está junto.
+- **Alerta vermelho** (queda ou pancada, dor forte à noite, formigamento, fraqueza, inchaço ou calor, febre): mensagem "procure um médico primeiro". O app não monta plano e deixa a área inteira fora dos treinos.
+- **Etiquetas:** os 74 exercícios e os 5 testes Repair ganharam as articulações, os movimentos e a amplitude que usam (completa, parcial ou contração sem mover), além do campo `range_limit` (onde a amplitude curta é permitida).
+- **8 exercícios de recuperação em rascunho**, que só aparecem no plano de recuperação, nunca no treino comum:
+  - contrações na parede para o ombro, nas 4 direções;
+  - rotação externa com elástico;
+  - contração da coxa;
+  - recolher o queixo;
+  - contração do punho.
+- **Gerador:** para uma área com relato, a restrição da área inteira é trocada pelas regras por movimento, nesta ordem:
+  1. tira os exercícios que usam um movimento que dói ("Não testei" conta como dor, por segurança);
+  2. mantém os que só usam movimentos sem dor;
+  3. usa amplitude curta quando o exercício permite, com o aviso "Amplitude curta: pare antes de doer".
+     Duas regras extras:
+  - contração sem mover na direção que dói é permitida com dor até 5;
+  - dor 7 ou mais tira a articulação inteira.
+    O aquecimento e o desaquecimento continuam sempre.
+- **Plano de recuperação** (dentro do Repair, sessões de 15 min):
+  - fase 1: contrações leves e amplitude sem dor;
+  - fase 2: fortalecimento sem dor;
+  - fase 3: amplitude curta dos movimentos doloridos e mais séries.
+- **Semáforo:**
+  - um botão "Dê nota à dor" no fim de cada treino e um aviso às 8h30 da manhã seguinte;
+  - 0–3 verde (sobe um passo), 4–5 amarelo (mantém), acima de 5 vermelho (desce um passo);
+  - são 6 passos, dois por fase.
+- **Reteste semanal:** os movimentos doloridos recebem nota de novo, com gráfico no Progresso. Se piorar, ou se não melhorar em 3 semanas, o app recomenda fisioterapeuta.
+- **Regras fixas:**
+  - nunca diagnostica;
+  - nada de dor vai para o analytics (há teste que confere);
+  - os dados de dor sincronizam com o Supabase (tabela `movement_pains`, com RLS) e são apagados junto com a conta.
+- **Banco (aplicado no Supabase):** colunas novas em `exercises` e a tabela `movement_pains`.
+- **Planilha do revisor:** colunas "Joint movements" e "Shorter range allowed" nos exercícios e nos testes Repair, e a aba nova "Movements" com o catálogo, os alertas, as fases e o semáforo.
+
+### Verificações
+
+- `npm run check`: lint, typecheck, funções e **416 testes** passando. Entram 37 testes novos, entre eles:
+  - cada regra do gerador;
+  - o caso do ombro: levantar e baixar sem dor, lateral e rotação doendo;
+  - semáforo, fases, reteste e fisioterapeuta;
+  - aviso da manhã, sincronização e telas.
+- `npm run db:test` (com o teste de `movement_pains`) e `npm run bundle:check`: limpos.
+
+### Como testar (build de desenvolvimento)
+
+1. Restrições → "Quais movimentos doem?" → Ombro, Direito, "Nenhum destes". Marque "Levantar o braço de lado" e "Girar o braço para fora" como Dói e "Levantar o braço à frente" como Sem dor, nota 4, "2 a 6 semanas".
+2. No plano, "Começar uma sessão de recuperação de 15 min": na fase 1 aparecem contrações na parede e exercícios sem dor.
+3. Num treino comum, exercícios de peito e ombro aparecem com "Amplitude curta" quando permitido. Desenvolvimento com halteres e face pull ficam de fora.
+4. No fim do treino, "Dê nota à dor". Na manhã seguinte chega o aviso das 8h30.
+5. Teste o alerta vermelho: marque "Começou depois de uma queda" e veja a mensagem sem plano.
+
+### Perguntas em aberto
+
+1. **Manguito rotador:** o banco de músculos não tem "manguito rotador". Usei deltoides, deltoide posterior e parte alta das costas. Quer que eu acrescente o músculo "manguito rotador" ao banco (migração e texto em 3 idiomas), para o revisor mapear direito?
+2. **"Pior na manhã seguinte":** considerei vermelho quando a nota da manhã fica 2 ou mais pontos acima da anterior. Com 1 ponto, qualquer oscilação faria o plano recuar. O revisor pode ajustar esse valor.
+3. **Revisor:** o catálogo, as etiquetas dos 82 exercícios e os 5 testes Repair, as regras (dor 5 e dor 7) e as 3 fases estão na planilha, na aba "Movements".

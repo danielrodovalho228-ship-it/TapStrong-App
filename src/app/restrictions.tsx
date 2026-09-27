@@ -14,6 +14,7 @@ import {
   Screen,
   TextLink,
 } from '@/components/ui';
+import { MovementPainEntry } from '@/features/movement/Entry';
 import { PAIN_AREAS, type PainArea } from '@/features/onboarding/options';
 import { restrictionAreas } from '@/features/onboarding/safety';
 import { useOnboardingStore } from '@/features/onboarding/store';
@@ -78,6 +79,7 @@ export default function RestrictionsScreen() {
       }
       footer={<Button label={t('restrictions.done')} onPress={() => router.back()} />}
     >
+      <MovementPainEntry />
       {active.map((r) => {
         const swaps = painSwaps(workouts, r.area);
         return (

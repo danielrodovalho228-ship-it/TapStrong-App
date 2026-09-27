@@ -698,6 +698,38 @@
     "short_range_incline_push_up": {
       "name": "Flexión inclinada de recorrido corto",
       "cues": "Manos en un banco, cuerpo recto; baja solo hasta la mitad y vuelve a subir."
+    },
+    "iso_shoulder_external_rotation": {
+      "name": "Presión en la pared, brazo hacia afuera",
+      "cues": "Codo doblado al costado, dorso de la mano contra la pared. Empuja suave hacia afuera sin moverte. Mantén 20–30 s."
+    },
+    "iso_shoulder_internal_rotation": {
+      "name": "Presión en el marco, brazo hacia adentro",
+      "cues": "Codo doblado al costado, palma contra el marco de la puerta. Empuja suave hacia adentro sin moverte. Mantén 20–30 s."
+    },
+    "iso_shoulder_abduction": {
+      "name": "Presión en la pared, brazo al lado",
+      "cues": "De lado a la pared, codo doblado apoyado por fuera. Empuja suave hacia afuera sin moverte. Mantén 20–30 s."
+    },
+    "iso_shoulder_flexion": {
+      "name": "Presión en la pared, brazo al frente",
+      "cues": "De frente a la pared, codo doblado, puño apoyado. Empuja suave hacia adelante sin moverte. Mantén 20–30 s."
+    },
+    "band_external_rotation": {
+      "name": "Rotación externa con banda",
+      "cues": "Codo doblado al costado, banda en la mano. Gira el antebrazo hacia afuera despacio, solo en el rango sin dolor."
+    },
+    "quad_set": {
+      "name": "Contracción del muslo",
+      "cues": "Sentado con la pierna estirada. Aprieta la parte de adelante del muslo, empujando la rodilla hacia abajo. Mantén 10 s y relaja."
+    },
+    "chin_tuck": {
+      "name": "Retracción de mentón",
+      "cues": "Siéntate erguido. Lleva el mentón hacia atrás, haciendo papada, sin inclinar. Mantén 5 s."
+    },
+    "iso_wrist_extension": {
+      "name": "Presión de muñeca, dorso",
+      "cues": "Antebrazo en la mesa, palma abajo. Empuja el dorso de la mano hacia arriba contra la otra mano sin moverte. Mantén 20–30 s."
     }
   },
   "generator": {
@@ -938,7 +970,11 @@
       }
     },
     "restFor": "descanso {{seconds}} s",
-    "demoPrototype": "Demo de prototipo · solo desarrollo"
+    "demoPrototype": "Demo de prototipo · solo desarrollo",
+    "range": {
+      "reduced": "Rango corto: para antes de que duela",
+      "isometric": "Contracción suave: empuja sin moverte, sin dolor"
+    }
   },
   "account": {
     "eyebrow": "Tu cuenta",
@@ -1023,6 +1059,10 @@
     "trial": {
       "title": "Tu prueba gratis termina en {{count}} días",
       "body": "Se te cobrará el {{date}} si no cancelas. Cancela cuando quieras en las suscripciones de tu tienda."
+    },
+    "movementCheck": {
+      "title": "{{area}}: ¿cómo está esta mañana?",
+      "body": "Califícalo en 5 segundos. Define tu próximo entrenamiento."
     }
   },
   "billing": {
@@ -1382,5 +1422,292 @@
     "reactivate": "Volver a activar",
     "disclaimer": "TapStrong adapta el entrenamiento, no diagnostica. ¿Dolor agudo o que no se va? Consulta a un médico o fisioterapeuta.",
     "done": "Listo"
+  },
+  "movementPain": {
+    "eyebrow": "Movimiento que duele",
+    "title": "¿Qué movimientos duelen?",
+    "intro": "No diagnosticamos. Mapeamos qué movimientos duelen para que tus entrenamientos mantengan los que no.",
+    "childGate": "Hazlo con tu padre, madre o tutor.",
+    "childConfirm": "Mi padre, madre o tutor está conmigo",
+    "areaTitle": "¿Dónde duele?",
+    "sideTitle": "¿De qué lado?",
+    "redFlagsTitle": "Primero, unas preguntas de seguridad",
+    "redFlagsBody": "Marca lo que aplique.",
+    "noneApply": "Nada de esto",
+    "stopTitle": "Consulta primero a un médico",
+    "stopBody": "Lo que marcaste debe revisarlo un médico o fisioterapeuta antes de entrenar esta zona. No armaremos un plan, y tus entrenamientos dejan fuera esta zona por ahora.",
+    "stopDone": "Volver a mis restricciones",
+    "moveTitle": "¿Cómo se siente cada movimiento?",
+    "moveBody": "Prueba cada uno con suavidad, solo si te parece seguro. Deja \"Sin probar\" si no estás seguro.",
+    "states": {
+      "hurts": "Duele",
+      "fine": "Sin dolor",
+      "untried": "Sin probar"
+    },
+    "moveA11y": "{{movement}}: {{state}}",
+    "untriedNote": "Los movimientos sin probar se tratan como dolorosos, por seguridad.",
+    "needPainful": "Marca al menos un movimiento que duela.",
+    "scoreTitle": "¿Qué tan fuerte es el dolor, en su peor momento?",
+    "scoreLabel": "Dolor",
+    "scoreValue": "{{score}} de 10",
+    "scoreLow": "0 = sin dolor",
+    "scoreHigh": "10 = el peor imaginable",
+    "durationTitle": "¿Desde cuándo duele?",
+    "next": "Siguiente",
+    "save": "Armar mi plan de recuperación",
+    "disclaimer": "TapStrong adapta el entrenamiento, no diagnostica. ¿Dolor agudo o que no se va? Consulta a un médico o fisioterapeuta.",
+    "underReview": "Un entrenador certificado está revisando esta función. Aparecerá aquí pronto.",
+    "devOnly": "Versión de desarrollo: lista de movimientos en borrador, sin revisar. Nunca llega a los usuarios.",
+    "plan": {
+      "phase": "Fase {{phase}} de 3",
+      "phases": {
+        "1": "Calmar: contracciones suaves sin moverte y rango sin dolor.",
+        "2": "Fortalecer: ganar fuerza en el rango sin dolor.",
+        "3": "Progresar: más rango y carga, paso a paso."
+      },
+      "level": "Paso {{level}} de 6",
+      "hurts": "Duele: {{list}}",
+      "fine": "Sin dolor: {{list}}",
+      "start": "Empezar una sesión de recuperación de {{minutes}} min",
+      "lightTitle": "Semáforo del dolor",
+      "lightRule": "0–3 verde: avanzas. 4–5 amarillo: te mantienes. Más de 5, o claramente peor a la mañana siguiente: rojo, un paso atrás.",
+      "lights": {
+        "green": "Verde",
+        "yellow": "Amarillo",
+        "red": "Rojo"
+      },
+      "noLights": "Califica el dolor después de cada entrenamiento y a la mañana siguiente.",
+      "rateNow": "Calificar ahora",
+      "retest": "Reprueba semanal",
+      "retestDue": "Es hora de la reprueba de esta semana",
+      "retestNext": "Próxima reprueba: {{date}}",
+      "seePT": "Consulta a un fisioterapeuta",
+      "seePTBody": "Tu dolor no mejoró en 3 semanas, o empeoró. Un fisioterapeuta puede encontrar la causa; TapStrong puede apoyar el plan que te dé.",
+      "better": "Ya no duele",
+      "chart": "Dolor en cada reprueba (0–10)"
+    },
+    "check": {
+      "after": "{{area}}: ¿cómo se siente ahora?",
+      "morning": "{{area}}: ¿cómo se siente esta mañana?",
+      "save": "Guardar",
+      "saved": "Guardado: {{light}}."
+    },
+    "retest": {
+      "title": "Reprueba semanal",
+      "body": "Haz cada movimiento con suavidad, solo hasta donde sea cómodo, y califica el dolor.",
+      "save": "Guardar reprueba"
+    },
+    "entry": {
+      "cta": "¿Qué movimientos duelen?",
+      "body": "Arma un plan de recuperación alrededor de los movimientos que duelen, y sigue entrenando lo demás.",
+      "open": "Plan de recuperación: {{area}}"
+    },
+    "rateAfter": "Califica el dolor: {{area}}",
+    "joints": {
+      "shoulder": "Hombro",
+      "elbow": "Codo",
+      "wrist": "Muñeca",
+      "neck": "Cuello",
+      "lower_back": "Zona lumbar",
+      "hip": "Cadera",
+      "knee": "Rodilla",
+      "ankle": "Tobillo"
+    },
+    "movements": {
+      "shoulder": {
+        "flexion": {
+          "name": "Levantar el brazo al frente",
+          "example": "Alcanzar un estante alto frente a ti"
+        },
+        "abduction": {
+          "name": "Levantar el brazo de lado",
+          "example": "Alcanzar algo de lado en la encimera"
+        },
+        "reach_behind": {
+          "name": "Llevar la mano a la espalda",
+          "example": "Meter la camisa, abrocharte el sostén"
+        },
+        "external_rotation": {
+          "name": "Girar el brazo hacia afuera",
+          "example": "Peinarte, lanzar una pelota"
+        },
+        "internal_rotation": {
+          "name": "Girar el brazo hacia adentro",
+          "example": "Alcanzar el bolsillo trasero"
+        },
+        "overhead": {
+          "name": "Brazo por encima de la cabeza",
+          "example": "Poner una caja arriba, lavarte el pelo"
+        },
+        "push": {
+          "name": "Empujar",
+          "example": "Empujar una puerta pesada, levantarte de la silla con los brazos"
+        },
+        "pull": {
+          "name": "Tirar",
+          "example": "Abrir una puerta pesada, tirar de una maleta"
+        },
+        "carry": {
+          "name": "Cargar peso",
+          "example": "Llevar las bolsas del supermercado"
+        }
+      },
+      "elbow": {
+        "flexion": {
+          "name": "Doblar el codo con peso",
+          "example": "Levantar una olla"
+        },
+        "extension": {
+          "name": "Estirar el codo con peso",
+          "example": "Apoyarte para levantarte de la silla, empujar un carrito"
+        }
+      },
+      "wrist": {
+        "extension_load": {
+          "name": "Peso sobre las manos",
+          "example": "Apoyarte en el suelo para levantarte"
+        },
+        "flexion": {
+          "name": "Doblar la muñeca hacia abajo",
+          "example": "Servir de una jarra"
+        },
+        "grip": {
+          "name": "Apretar con la mano",
+          "example": "Abrir un frasco, sostener una bolsa pesada"
+        },
+        "rotation": {
+          "name": "Girar el antebrazo",
+          "example": "Girar una llave o el pomo de la puerta"
+        }
+      },
+      "neck": {
+        "flexion": {
+          "name": "Mirar hacia abajo",
+          "example": "Leer el celular en el regazo"
+        },
+        "extension": {
+          "name": "Mirar hacia arriba",
+          "example": "Mirar un estante alto o el techo"
+        },
+        "rotation": {
+          "name": "Girar la cabeza",
+          "example": "Mirar el punto ciego al manejar"
+        },
+        "side_bend": {
+          "name": "Inclinar la cabeza de lado",
+          "example": "Sostener el teléfono entre la oreja y el hombro"
+        }
+      },
+      "lower_back": {
+        "flexion": {
+          "name": "Inclinarte hacia adelante",
+          "example": "Ponerte los calcetines, cargar el lavavajillas"
+        },
+        "extension": {
+          "name": "Arquear la espalda",
+          "example": "Estirarte para alcanzar algo arriba"
+        },
+        "rotation": {
+          "name": "Girar el tronco",
+          "example": "Tomar algo del asiento de atrás"
+        },
+        "side_bend": {
+          "name": "Inclinarte de lado",
+          "example": "Recoger una bolsa a tu lado"
+        },
+        "lift": {
+          "name": "Levantar del suelo",
+          "example": "Levantar la canasta de ropa o a un niño"
+        }
+      },
+      "hip": {
+        "flexion": {
+          "name": "Rodilla hacia el pecho",
+          "example": "Ponerte los zapatos, subir al coche"
+        },
+        "extension": {
+          "name": "Pierna hacia atrás",
+          "example": "Pasos largos, subir una cuesta"
+        },
+        "abduction": {
+          "name": "Pierna hacia el lado",
+          "example": "Bajar del coche, dar pasos laterales"
+        },
+        "adduction": {
+          "name": "Cruzar la pierna",
+          "example": "Cruzar las piernas"
+        },
+        "rotation": {
+          "name": "Girar la cadera",
+          "example": "Sentarte con las piernas cruzadas, girar sobre un pie"
+        },
+        "deep_squat": {
+          "name": "Sentadilla profunda",
+          "example": "Recoger algo del suelo, una silla baja"
+        },
+        "single_leg": {
+          "name": "Apoyarte en una pierna",
+          "example": "Ponerte el pantalón de pie, escaleras"
+        }
+      },
+      "knee": {
+        "deep_bend": {
+          "name": "Doblar mucho la rodilla",
+          "example": "Agacharte, sentarte en un sofá bajo"
+        },
+        "kneel": {
+          "name": "Arrodillarte",
+          "example": "Arrodillarte para limpiar o en el jardín"
+        },
+        "straighten_load": {
+          "name": "Estirar con esfuerzo",
+          "example": "Patear una pelota, levantarte de la silla"
+        },
+        "stairs": {
+          "name": "Escaleras",
+          "example": "Subir o bajar escaleras"
+        },
+        "pivot": {
+          "name": "Girar sobre la rodilla",
+          "example": "Girar rápido con el pie apoyado"
+        },
+        "impact": {
+          "name": "Saltar o correr",
+          "example": "Trotar, saltar"
+        }
+      },
+      "ankle": {
+        "dorsiflexion": {
+          "name": "Rodilla sobre la punta del pie",
+          "example": "Agacharte, bajar una cuesta"
+        },
+        "plantarflexion": {
+          "name": "Ponerte de puntillas",
+          "example": "Alcanzar algo de puntillas"
+        },
+        "balance": {
+          "name": "Equilibrio y terreno irregular",
+          "example": "Caminar sobre césped o empedrado"
+        },
+        "impact": {
+          "name": "Saltar o correr",
+          "example": "Trotar, saltar"
+        }
+      }
+    },
+    "redFlags": {
+      "trauma": "Empezó después de una caída, un golpe o un accidente",
+      "night_pain": "Dolor fuerte por la noche que te despierta",
+      "numbness": "Hormigueo o adormecimiento",
+      "weakness": "Debilidad: no puedes levantar el brazo o la pierna falla",
+      "swelling": "Hinchazón, enrojecimiento o calor",
+      "fever": "Fiebre o malestar general"
+    },
+    "durations": {
+      "under_2_weeks": "Menos de 2 semanas",
+      "2_6_weeks": "2 a 6 semanas",
+      "6_12_weeks": "6 a 12 semanas",
+      "over_3_months": "Más de 3 meses"
+    }
   }
 }

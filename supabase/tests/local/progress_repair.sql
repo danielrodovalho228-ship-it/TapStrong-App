@@ -77,3 +77,35 @@ end $$;
 reset role;
 
 \echo progress_repair: all assertions passed
+
+-- Phase 9: movement pain reports follow the same profile rules.
+do $$ begin
+  perform pg_temp.act_as('00000000-0000-0000-0000-0000000000a1');
+  insert into public.movement_pains (id, profile_id, area, side, painful, pain_free, score, duration)
+  values ('30000000-0000-0000-0000-0000000000a1', '10000000-0000-0000-0000-0000000000a1', 'shoulder', 'right',
+          array['shoulder.abduction'], array['shoulder.flexion'], 4, '2_6_weeks');
+  begin
+    insert into public.movement_pains (id, profile_id, area, painful, score, duration)
+    values (gen_random_uuid(), '10000000-0000-0000-0000-0000000000a1', 'shoulder', '{}', 4, '2_6_weeks');
+    raise exception 'report without a painful movement accepted';
+  exception when check_violation then null;
+  end;
+  begin
+    insert into public.movement_pains (id, profile_id, area, painful, score, duration)
+    values (gen_random_uuid(), '10000000-0000-0000-0000-0000000000a1', 'shoulder', array['shoulder.abduction'], 11, '2_6_weeks');
+    raise exception 'pain score 11 accepted';
+  exception when check_violation then null;
+  end;
+
+  perform pg_temp.act_as('00000000-0000-0000-0000-0000000000a3');
+  assert (select count(*) from public.movement_pains) = 0, 'stranger sees no movement pain';
+  begin
+    insert into public.movement_pains (id, profile_id, area, painful, score, duration)
+    values (gen_random_uuid(), '10000000-0000-0000-0000-0000000000a1', 'knee', array['knee.stairs'], 3, 'under_2_weeks');
+    raise exception 'stranger wrote a movement pain report';
+  exception when insufficient_privilege then null;
+  end;
+end $$;
+
+reset role;
+\echo movement_pain: all assertions passed

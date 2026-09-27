@@ -1,4 +1,5 @@
 import type { Exercise } from '../exercises/types';
+import { limitAreas, movementVerdict } from '../movement/rules';
 import type { AppMode, BodyBand } from '../profile/age';
 
 import type { GeneratorInput } from './types';
@@ -27,12 +28,28 @@ export function blockReason(e: Exercise, input: GeneratorInput): string | null {
   if (!e.equipment.every((q) => input.equipment.includes(q))) return 'equipment';
   if (bandRank(input.band) < bandRank(e.minAgeBand)) return 'age';
   if (!e.positions.includes(input.position)) return 'position';
-  const risks = new Set([...input.painAreas, ...input.conditions, ...input.restrictions]);
+  if (e.rehab && !input.rehab) return 'rehab_only';
+  // Areas with a "Movement that hurts" report are judged movement by movement.
+  const byMovement = limitAreas(input.movementLimits);
+  const risks = new Set(
+    [...input.painAreas, ...input.conditions, ...input.restrictions].filter(
+      (r) => !byMovement.has(r),
+    ),
+  );
   if (e.contraindications.some((c) => risks.has(c))) return 'contraindication';
+  if (rangeFor(e, input) === 'blocked') return 'painful_movement';
   if (input.mode === 'senior' && e.impact >= 2) return 'impact';
   if (input.conditions.some((c) => LOW_IMPACT_ONLY.includes(c)) && e.impact > 0) return 'impact';
   if (e.level > userLevel(input.mode) + 2) return 'level';
   return null;
+}
+
+/** How an exercise must be done given the movement limits (SPEC §8 "Movement that hurts"). */
+export function rangeFor(e: Exercise, input: GeneratorInput) {
+  if (!input.movementLimits?.length) return 'ok' as const;
+  return movementVerdict(e, input.movementLimits, {
+    allowReducedRange: input.allowReducedRange ?? true,
+  });
 }
 
 export function safePool(input: GeneratorInput): Exercise[] {

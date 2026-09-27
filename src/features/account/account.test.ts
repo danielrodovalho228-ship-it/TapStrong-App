@@ -198,6 +198,37 @@ describe('sync plan', () => {
     expect(again.repairResults[0].id).toBe(adult.repairResults[0].id);
   });
 
+  it('copies movement pain reports, with the recovery level', () => {
+    const plan = buildSyncPlan(
+      input({
+        movementPain: [
+          {
+            id: uuid(),
+            area: 'shoulder',
+            joints: ['shoulder'],
+            side: 'right',
+            painful: ['shoulder.abduction'],
+            painFree: ['shoulder.flexion'],
+            score: 4,
+            duration: '2_6_weeks',
+            active: true,
+            createdAt: '2026-09-20T10:00:00.000Z',
+            checks: [],
+            retests: [],
+          },
+        ],
+      }),
+    );
+    if (typeof plan === 'string') throw new Error(plan);
+    expect(plan.movementPains[0]).toMatchObject({
+      area: 'shoulder',
+      side: 'right',
+      painful: ['shoulder.abduction'],
+      pain_free: ['shoulder.flexion'],
+      level: 1,
+    });
+  });
+
   it('keeps single-row ids stable per profile', () => {
     const id = uuid();
     expect(stableId(id, 'health')).toBe(stableId(id, 'health'));

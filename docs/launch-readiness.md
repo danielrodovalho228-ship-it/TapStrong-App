@@ -1,6 +1,6 @@
 # TapStrong — pronto para lançar?
 
-Situação no fim da Fase 8 (26/09/2026). O código das Fases 0 a 8 está completo e testado. O que falta para publicar depende de contas, contratos e revisões do seu lado, listados abaixo na ordem em que destravam o lançamento.
+Situação no fim da Fase 9 (27/09/2026). O código das Fases 0 a 9 está completo e testado. O que falta para publicar depende de contas, contratos e revisões do seu lado, listados abaixo na ordem em que destravam o lançamento.
 
 ## Pronto no código
 
@@ -12,6 +12,7 @@ Situação no fim da Fase 8 (26/09/2026). O código das Fases 0 a 8 está comple
 - Pagamentos: RevenueCat no código, plano grátis com 3 treinos por semana, Premium e Família, lembrete 3 dias antes da cobrança e cobrança honesta.
 - Família: até 5 perfis, criança só com consentimento (compra na loja + aviso aos pais) e painel do dono do plano.
 - Progresso, check-in (medidas só para adultos), fotos no celular, Repair e restrições.
+- "Movimento que dói": relato por movimento, triagem de alerta vermelho, gerador que respeita os movimentos, plano de recuperação em 3 fases, semáforo da dor e reteste semanal.
 - Modo 60+ com tela inicial própria, letra maior, "Ler para mim" e sem câmera por padrão.
 - Sincronização com o Supabase, incluindo check-ins e Repair. Fotos nunca sobem.
 - Acessibilidade e contraste conferidos por testes automáticos; textos em EN, ES e PT-BR.
@@ -21,7 +22,7 @@ Situação no fim da Fase 8 (26/09/2026). O código das Fases 0 a 8 está comple
 ## Depende de você (bloqueia o lançamento)
 
 1. **Contas de desenvolvedor:** Apple Developer (US$ 99/ano) e Google Play Console (US$ 25, uma vez). Sem elas não há build nas lojas, RevenueCat nem login com Apple/Google.
-2. **Revisor certificado** (NSCA-CSCS ou ACSM): aprovar os 74 exercícios e os 5 testes Repair na planilha `docs/review/exercise-review.xlsx`. Até a aprovação, a versão de loja mostra "em revisão" no lugar dos treinos.
+2. **Revisor certificado** (NSCA-CSCS ou ACSM): aprovar os 82 exercícios (74 + 8 de recuperação), os 5 testes Repair, as etiquetas de movimento e o catálogo de movimentos (aba "Movements") na planilha `docs/review/exercise-review.xlsx`. Até a aprovação, a versão de loja mostra "em revisão" no lugar dos treinos.
 3. **Biblioteca de exercícios licenciada (3D):** licença e preço. Os vídeos `ex-*.mp4` atuais são só protótipos e não vão para a loja.
 4. **Advogado:** revisar o fluxo COPPA, o aviso aos pais (`parent-notice-v1`), a política de privacidade, os termos e os avisos de saúde. O inventário de dados para ele está em `docs/store/privacy-labels.md`.
 5. **Páginas web:** política de privacidade e termos publicados numa URL (exigência das duas lojas), de preferência em `tapstrong.app`.
@@ -34,7 +35,7 @@ Situação no fim da Fase 8 (26/09/2026). O código das Fases 0 a 8 está comple
 9. **SMTP com Resend:** passo a passo em `docs/store/smtp-resend.md`. A chave vai direto no painel do Supabase, não no chat.
 10. **PostHog e Sentry:** criar as contas (plano grátis) e pôr as chaves **públicas** no `.env` e nas variáveis do EAS (`EXPO_PUBLIC_POSTHOG_KEY`, `EXPO_PUBLIC_SENTRY_DSN`). Para o Sentry mostrar o código nos erros, `SENTRY_AUTH_TOKEN` entra como segredo no EAS e tira-se o `SENTRY_DISABLE_AUTO_UPLOAD` do `eas.json`.
 11. **Tradução profissional** de ES e PT-BR, dos textos do app e das lojas.
-12. **Ícone:** aprovar ou trocar o ícone novo (T branco com o ponto laranja do mapa, sem gradiente). Para gerar de novo: `python3 scripts/build-icons.py`.
+12. **Ícone:** aprovado para os testes. Um designer refina depois, junto com a marca (`python3 scripts/build-icons.py` gera de novo).
 13. **Capturas de tela** para as lojas: a ordem sugerida está em `docs/store/listing.md`. Nunca usar perfil de criança nem foto de antes e depois.
 14. **Marca e domínio:** busca e registro de "TapStrong" no USPTO; domínio `tapstrong.app`.
 15. **Supabase de produção:** decidir se o projeto atual vira o de produção ou se cria outro (a SPEC §13 pede projetos de produção).
@@ -42,13 +43,13 @@ Situação no fim da Fase 8 (26/09/2026). O código das Fases 0 a 8 está comple
 
 ## Lacunas do produto para decidir
 
-- **Aba Coach (SPEC §9 e §11.4):** o chat contínuo com o coach não foi construído; nenhuma fase o incluía. A tela 60+ do mockup tem "Falar com meu coach", que deixei de fora até a aba existir. Faço antes do lançamento ou na primeira atualização?
+- **Aba Coach (SPEC §9 e §11.4):** fica para a primeira atualização (decisão sua). O botão "Falar com meu coach" da tela 60+ entra junto.
 - **Login com Apple e Google:** escondidos até existirem as contas de desenvolvedor.
 - **Depois do lançamento:** registro das séries por voz e o contorno de pose na câmera.
 
 ## Como verificar
 
-- `npm run check`: lint, typecheck, funções e 379 testes.
+- `npm run check`: lint, typecheck, funções e todos os testes.
 - `npm run db:test`: migrações e testes de RLS e de dados de crianças.
 - `npm run bundle:check`: confirma que rascunhos, vídeos de protótipo e o simulador de compra não vão para a loja.
 - Maestro (num simulador, com o build de preview): `maestro test .maestro/`.

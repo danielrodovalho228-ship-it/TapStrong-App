@@ -10,6 +10,7 @@ import type { Exercise } from '@/features/exercises/types';
 import { generateSession } from '@/features/generator';
 import type { GeneratorNote, SessionItem } from '@/features/generator/types';
 import { muscleLabel } from '@/features/onboarding/summaries';
+import { RangeNote } from '@/features/movement/RangeNote';
 import { ExerciseThumb, Tag } from '@/features/workout/components/Media';
 import {
   machineItems,
@@ -130,6 +131,7 @@ export default function WorkoutScreen() {
                     ? durationText(t, item.durationSeconds)
                     : doseLine(t, item)}
               </AppText>
+              <RangeNote exercise={e} />
             </View>
             {swapButton(item, e)}
           </View>
@@ -191,6 +193,7 @@ export default function WorkoutScreen() {
               <AppText variant="caption" color={colors.mutedStrong}>
                 {skipped ? t('workout.skipped') : doseLine(t, item)}
               </AppText>
+              <RangeNote exercise={e} />
               <Tag
                 label={targetText(t, item, e)}
                 tone={item.role === 'finisher' ? 'teal' : 'accent'}

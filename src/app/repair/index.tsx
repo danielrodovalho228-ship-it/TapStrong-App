@@ -5,6 +5,7 @@ import { Pressable, StyleSheet } from 'react-native';
 import { AppText, Button, Card, Header, Notice, Screen } from '@/components/ui';
 import { currentPlan } from '@/features/billing/rules';
 import { useBillingStore } from '@/features/billing/store';
+import { MovementPainEntry } from '@/features/movement/Entry';
 import { useProgressStore } from '@/features/progress/store';
 import { buildRepairPlan, grade } from '@/features/repair/tests';
 import { useRepair } from '@/features/repair/useRepair';
@@ -72,6 +73,7 @@ export default function RepairScreen() {
       }
     >
       {__DEV__ ? <Notice tone="warning">{t('repair.devOnly')}</Notice> : null}
+      <MovementPainEntry />
       <AppText color={colors.mutedStrong}>{t('repair.intro')}</AppText>
       <Card style={styles.list}>
         {tests.map((test, i) => {

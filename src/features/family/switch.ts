@@ -1,6 +1,7 @@
 import { kvStorage } from '@/lib/storage';
 
 import { useAccountStore } from '../account/store';
+import { useMovementPainStore, type MovementPain } from '../movement/store';
 import { initialOnboarding, useOnboardingStore, type OnboardingData } from '../onboarding/store';
 import { initialProgress, useProgressStore, type ProgressData } from '../progress/store';
 import { useRestrictionsStore, type Restriction } from '../restrictions/store';
@@ -17,6 +18,7 @@ type Snapshot = {
   nextFocus: NextFocus;
   restrictions: Restriction[];
   progress?: ProgressData;
+  movementPain?: MovementPain[];
 };
 
 const key = (id: string) => `profile-snapshot:${id}`;
@@ -38,6 +40,7 @@ function capture(): Snapshot {
       repairPlan,
       seniorPhotos,
     }))(useProgressStore.getState()),
+    movementPain: useMovementPainStore.getState().reports,
   };
 }
 
@@ -53,6 +56,7 @@ function load(snapshot: Snapshot | null, seed: Partial<OnboardingData>) {
   });
   useRestrictionsStore.setState({ items: snapshot?.restrictions ?? [] });
   useProgressStore.setState({ ...initialProgress(), ...snapshot?.progress });
+  useMovementPainStore.setState({ reports: snapshot?.movementPain ?? [] });
 }
 
 /** The owner's own profile, registered the first time the family is used. */

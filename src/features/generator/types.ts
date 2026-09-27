@@ -1,5 +1,6 @@
 import type { Equipment, Location } from '../../../supabase/functions/_shared/interview';
 import type { Exercise, SessionPart } from '../exercises/types';
+import type { MovementLimit } from '../movement/rules';
 import type { MovementGroup } from '../muscles';
 import type { MainGoal, MuscleGoal, MuscleGoalEntry, Position } from '../onboarding/options';
 import type { AppMode, BodyBand } from '../profile/age';
@@ -31,6 +32,15 @@ export type GeneratorInput = {
   conditions: string[];
   /** Areas from the restrictions list (manual, pain reports, repair). */
   restrictions: string[];
+  /**
+   * "Movement that hurts" reports (SPEC §8): these areas are filtered movement
+   * by movement instead of as a whole.
+   */
+  movementLimits?: MovementLimit[];
+  /** Shorter pain-free range allowed (default true; recovery phases 1–2 set false). */
+  allowReducedRange?: boolean;
+  /** A Repair recovery session: recovery-only exercises may be used. */
+  rehab?: boolean;
   /** Most recent first. Used by the balance pass. */
   recentSessions?: RecentSession[];
   /** "Today" for the weekly window; defaults to the latest recent session. */
@@ -57,6 +67,8 @@ export type SessionItem = {
   perSide: boolean;
   loadHint: LoadHint;
   estSeconds: number;
+  /** Movement that hurts: a shorter pain-free range, or a gentle hold without moving. */
+  range?: 'reduced' | 'isometric';
   /** Sets already done with earlier exercises before a swap. */
   replaced?: { exerciseId: string; setsDone: number }[];
 };

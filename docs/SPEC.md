@@ -153,6 +153,8 @@ Verify every point on every one of the 28 images; bodies differ.
 - **`checkins`** (Phase 7): `profile_id`, `taken_at`, `strength` (json), `waist_cm`, `weight_kg`, `whtr`, `bmi`. Body fields are refused by a trigger unless the profile is adult or 60+.
 - **`repair_results`** (Phase 7): `profile_id`, `test_key`, `value` or `left_value` + `right_value` (seconds / reps) or `pass_left` + `pass_right`, `tested_at`. The test catalog (`supabase/seed/repair_tests.json`) is a draft until the certified reviewer signs it off, like exercises: development builds only.
 - **`repair_plans`** (Phase 7): `profile_id`, `weeks`, `sessions_per_week`, `focus` (json: muscle + goal), `retest_at`, `ended_at`. Repair sessions use `session_kind = 'repair'`.
+- **`exercises`** also carries (Phase 9) `joint_movements` (json: joint, movement, range `full` / `partial` / `isometric`), `range_limit` (movements it can do in a shorter range) and `rehab` (recovery-plan only). Reviewed with the muscle mapping.
+- **`movement_pains`** (Phase 9): `profile_id`, `area`, `side`, `painful[]`, `pain_free[]`, `score` 0–10, `duration`, `level` 1–6, `active`, `checks` (json traffic-light checks), `retests` (json weekly retests).
 - Before/after photos are never stored on the server: files stay on the phone.
 - **`family_members`**: `owner_id`, `member_profile_id`, `role` (child / parent / partner), `consent_record_id?`
 - **`subscriptions`** (Phase 6): `user_id`, `plan` (free / premium / family), `status` (trial / active / grace / expired), `product_id`, `store`, `trial_ends_at`, `expires_at`, `will_renew`, `first_charged_at`, `last_transaction_id`. Written only by the RevenueCat webhook Edge Function.
@@ -275,6 +277,23 @@ Rules:
   - 1 rest day per calendar week does not break it.
   - At 7 days the user earns 1 streak freeze (max 2 banked).
 
+### Movement that hurts (Phase 9)
+
+Physical therapists map the **movement**, not only the place ("which movement hurts?"). TapStrong never diagnoses; it plans around the movements that hurt, in any joint.
+
+- **Catalog** (`supabase/seed/joint_movements.json`, draft until the reviewer signs it off; development builds only): movements per joint with everyday examples in EN/ES/PT-BR. Shoulder: raise in front, raise to the side, reach behind the back, turn out, turn in, overhead, push, pull, carry. Also elbow, wrist, neck, lower back, hip, knee, ankle.
+- **Report:** area and side → red-flag screening → each movement rated "Hurts" / "No pain" / "Not tried" → worst pain 0–10 → how long. Children only with a parent or guardian present.
+- **Red flags** (fall or blow, strong night pain, tingling or numbness, weakness, swelling/redness/heat, fever): any one → "see a doctor first", no plan, and the whole area is left out of workouts.
+- **Generator** (for an area with a report, instead of the whole-area restriction), in this order:
+  1. leaves out exercises that need a painful movement (movements not tried count as painful);
+  2. keeps exercises that only use pain-free movements;
+  3. uses a shorter range when the exercise allows it for that movement (`range_limit`), shown as "Shorter range: stop before it hurts".
+  A hold without moving (isometric) in the painful direction is allowed while pain is 5 or less. Pain 7+ leaves every movement of the joint out. Recovery-only exercises never appear in regular workouts.
+- **Recovery plan** (inside Repair; 15-min sessions, always with warm-up and cool-down): phase 1 gentle holds and pain-free range; phase 2 strengthening in pain-free range (shoulder: rotator cuff and shoulder-blade muscles, mapped to the existing muscle keys); phase 3 shorter range of the painful movements allowed and more sets.
+- **Traffic light** after each workout and the next morning (local notification at 8:30): 0–3 green (one step up), 4–5 yellow (hold), over 5 or 2+ points worse the next morning red (one step back). Six steps: phase 1 = steps 1–2, phase 2 = 3–4, phase 3 = 5–6.
+- **Weekly retest** of the painful movements, charted in Progress. Worse than at the start, or no better after 3 weeks → recommend a physical therapist.
+- **Rules:** never diagnose; pain data never goes to analytics; everything stays draft until the certified reviewer approves the catalog and the tags.
+
 ### Measurements
 
 - Adults only.
@@ -329,6 +348,7 @@ Rules:
 | `/paywall`                  | **NEW**             | Free-limit reached                                                                                                       |
 | `/billing`                  | 14 Honest billing   | Trial end, cancel steps                                                                                                  |
 | `/restrictions`             | 12 Restrictions     | List and manage                                                                                                          |
+| `/movement-pain` (+ `/[id]`, `/check`, `/retest`) | **NEW** (Phase 9) | Movement that hurts: report, recovery plan, traffic-light check, weekly retest (§8) |
 | `/senior` (mode)            | 15 60+ home         | Larger UI; links stay inside senior screens                                                                              |
 
 ## 10. Analytics events
@@ -340,7 +360,7 @@ Rules:
 - **Growth:** `share_card_shared` (target), `account_created` (method), `paywall_viewed`, `trial_started`, `subscription_started`, `subscription_cancelled`
 - **Retention:** `streak_milestone`, `checkin_completed`, `repair_test_completed`
 
-Never send health details or photos to analytics.
+Never send health details, pain data or photos to analytics.
 
 ## 11. Remaining product items (build them, no mockup needed)
 
@@ -377,6 +397,8 @@ Never send health details or photos to analytics.
 - **Phase 7 — Progress & Repair**
   - Progress, Check-in, Before/After (on-device), Repair tests + plan, Restrictions.
   - Family dashboard for the Family plan owner: each member's workouts, minutes, last workout and streak this week. Never health answers, pain reports or photos.
+- **Phase 9 — Movement that hurts** (before launch; Daniel, Sep 2026)
+  - Movement catalog, pain report, red-flag screening, movement tags on every exercise and Repair test, generator rules, recovery plan in Repair, traffic light with a morning check, weekly retest with a chart. See §8.
 - **Phase 8 — Polish & launch prep**
   - Senior mode pass, accessibility, ES/PT-BR, Maestro E2E, Sentry/PostHog, app icons/splash.
   - Store listings, privacy labels, TestFlight / internal testing.

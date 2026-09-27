@@ -24,6 +24,10 @@ if grep -rl 'Repair check tests (SPEC' "$OUT" >/dev/null; then
   echo "FAIL: a release bundle contains the draft Repair tests" >&2
   exit 1
 fi
+if grep -rl 'Joint movement catalog (SPEC' "$OUT" >/dev/null; then
+  echo "FAIL: a release bundle contains the draft joint movement catalog" >&2
+  exit 1
+fi
 if grep -rl 'simulateFirstCharge' "$OUT" >/dev/null; then
   echo "FAIL: a release bundle contains the development purchase simulator" >&2
   exit 1
@@ -33,4 +37,4 @@ if find "$OUT" -iname '*.mp4' | grep -q .; then
   find "$OUT" -iname '*.mp4' >&2
   exit 1
 fi
-echo "OK: no draft exercises, draft Repair tests, prototype videos or purchase simulator in release bundles"
+echo "OK: no draft exercises, draft Repair tests, the draft movement catalog, prototype videos or purchase simulator in release bundles"

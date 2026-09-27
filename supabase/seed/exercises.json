@@ -19,7 +19,9 @@
         ["quads", "primary", 0.6],
         ["hips", "secondary", 0.4],
         ["calves", "secondary", 0.3]
-      ]
+      ],
+      "joints": [["hip", "flexion", "partial"]],
+      "rangeLimit": []
     },
     {
       "slug": "seated_march",
@@ -38,7 +40,9 @@
       "muscles": [
         ["hips", "primary", 0.6],
         ["quads", "secondary", 0.3]
-      ]
+      ],
+      "joints": [["hip", "flexion", "partial"]],
+      "rangeLimit": []
     },
     {
       "slug": "jumping_jacks",
@@ -67,7 +71,15 @@
         ["calves", "primary", 0.6],
         ["quads", "secondary", 0.3],
         ["shoulders", "secondary", 0.3]
-      ]
+      ],
+      "joints": [
+        ["shoulder", "abduction", "full"],
+        ["shoulder", "overhead", "full"],
+        ["hip", "abduction", "partial"],
+        ["knee", "impact", "full"],
+        ["ankle", "impact", "full"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "brisk_walk",
@@ -87,7 +99,9 @@
         ["quads", "primary", 0.6],
         ["calves", "secondary", 0.5],
         ["glutes", "secondary", 0.4]
-      ]
+      ],
+      "joints": [],
+      "rangeLimit": []
     },
     {
       "slug": "stationary_bike",
@@ -107,7 +121,12 @@
         ["quads", "primary", 0.7],
         ["glutes", "secondary", 0.3],
         ["calves", "secondary", 0.3]
-      ]
+      ],
+      "joints": [
+        ["hip", "flexion", "partial"],
+        ["knee", "deep_bend", "partial"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "arm_circles",
@@ -126,7 +145,12 @@
       "muscles": [
         ["shoulders", "primary", 0.6],
         ["rearDelts", "secondary", 0.4]
-      ]
+      ],
+      "joints": [
+        ["shoulder", "abduction", "full"],
+        ["shoulder", "flexion", "full"]
+      ],
+      "rangeLimit": ["shoulder.abduction", "shoulder.flexion"]
     },
     {
       "slug": "band_pull_apart",
@@ -145,7 +169,13 @@
       "muscles": [
         ["rearDelts", "primary", 0.8],
         ["upperBack", "secondary", 0.6]
-      ]
+      ],
+      "joints": [
+        ["shoulder", "pull", "full"],
+        ["shoulder", "flexion", "partial"],
+        ["wrist", "grip", "partial"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "leg_swings",
@@ -164,7 +194,13 @@
       "muscles": [
         ["hips", "primary", 0.6],
         ["hamstrings", "secondary", 0.5]
-      ]
+      ],
+      "joints": [
+        ["hip", "flexion", "full"],
+        ["hip", "extension", "full"],
+        ["ankle", "balance", "partial"]
+      ],
+      "rangeLimit": ["hip.flexion", "hip.extension"]
     },
     {
       "slug": "hip_circles",
@@ -183,7 +219,12 @@
       "muscles": [
         ["hips", "primary", 0.6],
         ["glutes", "secondary", 0.3]
-      ]
+      ],
+      "joints": [
+        ["hip", "rotation", "full"],
+        ["hip", "abduction", "partial"]
+      ],
+      "rangeLimit": ["hip.rotation", "hip.abduction"]
     },
     {
       "slug": "cat_cow",
@@ -202,7 +243,14 @@
       "muscles": [
         ["lowerBack", "primary", 0.6],
         ["upperBack", "secondary", 0.4]
-      ]
+      ],
+      "joints": [
+        ["lower_back", "flexion", "full"],
+        ["lower_back", "extension", "full"],
+        ["wrist", "extension_load", "partial"],
+        ["knee", "kneel", "full"]
+      ],
+      "rangeLimit": ["lower_back.flexion", "lower_back.extension"]
     },
     {
       "slug": "torso_twist",
@@ -221,7 +269,9 @@
       "muscles": [
         ["obliques", "primary", 0.6],
         ["lowerBack", "secondary", 0.3]
-      ]
+      ],
+      "joints": [["lower_back", "rotation", "full"]],
+      "rangeLimit": ["lower_back.rotation"]
     },
     {
       "slug": "push_up",
@@ -242,7 +292,13 @@
         ["triceps", "secondary", 0.5],
         ["shoulders", "secondary", 0.4],
         ["upperAbs", "stabilizer", 0.2]
-      ]
+      ],
+      "joints": [
+        ["shoulder", "push", "full"],
+        ["elbow", "extension", "full"],
+        ["wrist", "extension_load", "full"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "wall_push_up",
@@ -262,7 +318,13 @@
         ["midChest", "primary", 0.7],
         ["triceps", "secondary", 0.3],
         ["shoulders", "secondary", 0.3]
-      ]
+      ],
+      "joints": [
+        ["shoulder", "push", "full"],
+        ["elbow", "extension", "full"],
+        ["wrist", "extension_load", "partial"]
+      ],
+      "rangeLimit": ["shoulder.push"]
     },
     {
       "slug": "feet_elevated_push_up",
@@ -282,7 +344,13 @@
         ["upperChest", "primary", 1.0],
         ["shoulders", "secondary", 0.6],
         ["triceps", "secondary", 0.5]
-      ]
+      ],
+      "joints": [
+        ["shoulder", "push", "full"],
+        ["elbow", "extension", "full"],
+        ["wrist", "extension_load", "full"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "incline_dumbbell_press",
@@ -302,7 +370,14 @@
         ["upperChest", "primary", 1.0],
         ["shoulders", "secondary", 0.6],
         ["triceps", "secondary", 0.4]
-      ]
+      ],
+      "joints": [
+        ["shoulder", "push", "full"],
+        ["shoulder", "flexion", "partial"],
+        ["elbow", "extension", "full"],
+        ["wrist", "grip", "partial"]
+      ],
+      "rangeLimit": ["shoulder.push"]
     },
     {
       "slug": "flat_dumbbell_press",
@@ -322,7 +397,13 @@
         ["midChest", "primary", 1.0],
         ["triceps", "secondary", 0.5],
         ["shoulders", "secondary", 0.4]
-      ]
+      ],
+      "joints": [
+        ["shoulder", "push", "full"],
+        ["elbow", "extension", "full"],
+        ["wrist", "grip", "partial"]
+      ],
+      "rangeLimit": ["shoulder.push"]
     },
     {
       "slug": "low_to_high_cable_fly",
@@ -341,7 +422,13 @@
       "muscles": [
         ["upperChest", "primary", 1.0],
         ["shoulders", "secondary", 0.4]
-      ]
+      ],
+      "joints": [
+        ["shoulder", "flexion", "full"],
+        ["shoulder", "push", "partial"],
+        ["wrist", "grip", "partial"]
+      ],
+      "rangeLimit": ["shoulder.flexion"]
     },
     {
       "slug": "high_to_low_cable_fly",
@@ -360,7 +447,12 @@
       "muscles": [
         ["lowerChest", "primary", 1.0],
         ["midChest", "secondary", 0.5]
-      ]
+      ],
+      "joints": [
+        ["shoulder", "push", "full"],
+        ["wrist", "grip", "partial"]
+      ],
+      "rangeLimit": ["shoulder.push"]
     },
     {
       "slug": "seated_chest_press_machine",
@@ -380,7 +472,13 @@
         ["midChest", "primary", 1.0],
         ["triceps", "secondary", 0.5],
         ["shoulders", "secondary", 0.4]
-      ]
+      ],
+      "joints": [
+        ["shoulder", "push", "full"],
+        ["elbow", "extension", "full"],
+        ["wrist", "grip", "partial"]
+      ],
+      "rangeLimit": ["shoulder.push"]
     },
     {
       "slug": "neutral_grip_floor_press",
@@ -400,7 +498,13 @@
         ["midChest", "primary", 0.9],
         ["triceps", "secondary", 0.6],
         ["shoulders", "secondary", 0.2]
-      ]
+      ],
+      "joints": [
+        ["shoulder", "push", "partial"],
+        ["elbow", "extension", "full"],
+        ["wrist", "grip", "partial"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "neutral_grip_machine_chest_press",
@@ -420,7 +524,13 @@
         ["midChest", "primary", 1.0],
         ["triceps", "secondary", 0.5],
         ["shoulders", "secondary", 0.3]
-      ]
+      ],
+      "joints": [
+        ["shoulder", "push", "full"],
+        ["elbow", "extension", "full"],
+        ["wrist", "grip", "partial"]
+      ],
+      "rangeLimit": ["shoulder.push"]
     },
     {
       "slug": "short_range_incline_push_up",
@@ -441,7 +551,13 @@
         ["lowerChest", "secondary", 0.4],
         ["triceps", "secondary", 0.4],
         ["shoulders", "secondary", 0.2]
-      ]
+      ],
+      "joints": [
+        ["shoulder", "push", "partial"],
+        ["elbow", "extension", "partial"],
+        ["wrist", "extension_load", "full"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "dumbbell_shoulder_press",
@@ -461,7 +577,15 @@
         ["shoulders", "primary", 1.0],
         ["triceps", "secondary", 0.5],
         ["traps", "secondary", 0.3]
-      ]
+      ],
+      "joints": [
+        ["shoulder", "overhead", "full"],
+        ["shoulder", "abduction", "full"],
+        ["shoulder", "push", "full"],
+        ["elbow", "extension", "full"],
+        ["wrist", "grip", "partial"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "band_front_raise",
@@ -477,7 +601,12 @@
       "loaded": false,
       "unilateral": false,
       "impact": 0,
-      "muscles": [["shoulders", "primary", 0.9]]
+      "muscles": [["shoulders", "primary", 0.9]],
+      "joints": [
+        ["shoulder", "flexion", "full"],
+        ["wrist", "grip", "partial"]
+      ],
+      "rangeLimit": ["shoulder.flexion"]
     },
     {
       "slug": "band_face_pull",
@@ -497,7 +626,15 @@
         ["rearDelts", "primary", 1.0],
         ["upperBack", "secondary", 0.6],
         ["traps", "secondary", 0.3]
-      ]
+      ],
+      "joints": [
+        ["shoulder", "pull", "full"],
+        ["shoulder", "external_rotation", "full"],
+        ["shoulder", "abduction", "partial"],
+        ["elbow", "flexion", "full"],
+        ["wrist", "grip", "partial"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "one_arm_dumbbell_row",
@@ -518,7 +655,13 @@
         ["lats", "primary", 0.8],
         ["biceps", "secondary", 0.4],
         ["rearDelts", "secondary", 0.4]
-      ]
+      ],
+      "joints": [
+        ["shoulder", "pull", "full"],
+        ["elbow", "flexion", "full"],
+        ["wrist", "grip", "full"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "band_row",
@@ -538,7 +681,13 @@
         ["upperBack", "primary", 1.0],
         ["lats", "secondary", 0.5],
         ["biceps", "secondary", 0.4]
-      ]
+      ],
+      "joints": [
+        ["shoulder", "pull", "full"],
+        ["elbow", "flexion", "full"],
+        ["wrist", "grip", "partial"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "lat_pulldown",
@@ -558,7 +707,14 @@
         ["lats", "primary", 1.0],
         ["biceps", "secondary", 0.5],
         ["upperBack", "secondary", 0.4]
-      ]
+      ],
+      "joints": [
+        ["shoulder", "overhead", "full"],
+        ["shoulder", "pull", "full"],
+        ["elbow", "flexion", "full"],
+        ["wrist", "grip", "full"]
+      ],
+      "rangeLimit": ["shoulder.overhead"]
     },
     {
       "slug": "seated_cable_row",
@@ -578,7 +734,13 @@
         ["upperBack", "primary", 1.0],
         ["lats", "secondary", 0.6],
         ["biceps", "secondary", 0.4]
-      ]
+      ],
+      "joints": [
+        ["shoulder", "pull", "full"],
+        ["elbow", "flexion", "full"],
+        ["wrist", "grip", "full"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "dumbbell_shrug",
@@ -597,7 +759,12 @@
       "muscles": [
         ["traps", "primary", 1.0],
         ["forearms", "stabilizer", 0.3]
-      ]
+      ],
+      "joints": [
+        ["shoulder", "carry", "full"],
+        ["wrist", "grip", "full"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "superman",
@@ -616,7 +783,13 @@
       "muscles": [
         ["lowerBack", "primary", 1.0],
         ["glutes", "secondary", 0.5]
-      ]
+      ],
+      "joints": [
+        ["lower_back", "extension", "full"],
+        ["shoulder", "overhead", "partial"],
+        ["hip", "extension", "partial"]
+      ],
+      "rangeLimit": ["lower_back.extension"]
     },
     {
       "slug": "bird_dog",
@@ -636,7 +809,14 @@
         ["lowerBack", "primary", 0.8],
         ["glutes", "secondary", 0.5],
         ["lowerAbs", "stabilizer", 0.4]
-      ]
+      ],
+      "joints": [
+        ["shoulder", "overhead", "partial"],
+        ["hip", "extension", "partial"],
+        ["wrist", "extension_load", "partial"],
+        ["knee", "kneel", "full"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "dumbbell_curl",
@@ -655,7 +835,12 @@
       "muscles": [
         ["biceps", "primary", 1.0],
         ["forearms", "secondary", 0.3]
-      ]
+      ],
+      "joints": [
+        ["elbow", "flexion", "full"],
+        ["wrist", "grip", "full"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "band_curl",
@@ -674,7 +859,12 @@
       "muscles": [
         ["biceps", "primary", 0.9],
         ["forearms", "secondary", 0.3]
-      ]
+      ],
+      "joints": [
+        ["elbow", "flexion", "full"],
+        ["wrist", "grip", "partial"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "overhead_dumbbell_triceps_extension",
@@ -690,7 +880,14 @@
       "loaded": true,
       "unilateral": false,
       "impact": 0,
-      "muscles": [["triceps", "primary", 1.0]]
+      "muscles": [["triceps", "primary", 1.0]],
+      "joints": [
+        ["shoulder", "overhead", "full"],
+        ["elbow", "extension", "full"],
+        ["elbow", "flexion", "full"],
+        ["wrist", "grip", "full"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "bench_dip",
@@ -710,7 +907,14 @@
         ["triceps", "primary", 1.0],
         ["lowerChest", "secondary", 0.4],
         ["shoulders", "secondary", 0.3]
-      ]
+      ],
+      "joints": [
+        ["shoulder", "reach_behind", "full"],
+        ["shoulder", "push", "full"],
+        ["elbow", "extension", "full"],
+        ["wrist", "extension_load", "full"]
+      ],
+      "rangeLimit": ["shoulder.reach_behind"]
     },
     {
       "slug": "band_triceps_pushdown",
@@ -726,7 +930,12 @@
       "loaded": false,
       "unilateral": false,
       "impact": 0,
-      "muscles": [["triceps", "primary", 0.9]]
+      "muscles": [["triceps", "primary", 0.9]],
+      "joints": [
+        ["elbow", "extension", "full"],
+        ["wrist", "grip", "partial"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "dumbbell_wrist_curl",
@@ -742,7 +951,12 @@
       "loaded": true,
       "unilateral": false,
       "impact": 0,
-      "muscles": [["forearms", "primary", 1.0]]
+      "muscles": [["forearms", "primary", 1.0]],
+      "joints": [
+        ["wrist", "flexion", "full"],
+        ["wrist", "grip", "full"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "plank",
@@ -763,7 +977,12 @@
         ["lowerAbs", "primary", 0.7],
         ["obliques", "secondary", 0.5],
         ["shoulders", "stabilizer", 0.3]
-      ]
+      ],
+      "joints": [
+        ["shoulder", "push", "isometric"],
+        ["wrist", "extension_load", "partial"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "dead_bug",
@@ -782,7 +1001,12 @@
       "muscles": [
         ["lowerAbs", "primary", 1.0],
         ["upperAbs", "secondary", 0.5]
-      ]
+      ],
+      "joints": [
+        ["shoulder", "overhead", "partial"],
+        ["hip", "flexion", "full"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "crunch",
@@ -801,7 +1025,12 @@
       "muscles": [
         ["upperAbs", "primary", 1.0],
         ["lowerAbs", "secondary", 0.4]
-      ]
+      ],
+      "joints": [
+        ["neck", "flexion", "partial"],
+        ["lower_back", "flexion", "partial"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "reverse_crunch",
@@ -820,7 +1049,12 @@
       "muscles": [
         ["lowerAbs", "primary", 1.0],
         ["upperAbs", "secondary", 0.3]
-      ]
+      ],
+      "joints": [
+        ["lower_back", "flexion", "full"],
+        ["hip", "flexion", "full"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "side_plank",
@@ -840,7 +1074,12 @@
         ["obliques", "primary", 1.0],
         ["lowerAbs", "secondary", 0.3],
         ["hips", "secondary", 0.3]
-      ]
+      ],
+      "joints": [
+        ["shoulder", "push", "isometric"],
+        ["hip", "abduction", "isometric"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "band_pallof_press",
@@ -859,7 +1098,12 @@
       "muscles": [
         ["obliques", "primary", 1.0],
         ["lowerAbs", "secondary", 0.4]
-      ]
+      ],
+      "joints": [
+        ["shoulder", "push", "partial"],
+        ["lower_back", "rotation", "isometric"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "bodyweight_squat",
@@ -879,7 +1123,13 @@
         ["quads", "primary", 1.0],
         ["glutes", "secondary", 0.7],
         ["adductors", "secondary", 0.3]
-      ]
+      ],
+      "joints": [
+        ["knee", "deep_bend", "full"],
+        ["hip", "deep_squat", "full"],
+        ["ankle", "dorsiflexion", "full"]
+      ],
+      "rangeLimit": ["knee.deep_bend", "hip.deep_squat"]
     },
     {
       "slug": "goblet_squat",
@@ -899,7 +1149,14 @@
         ["quads", "primary", 1.0],
         ["glutes", "secondary", 0.7],
         ["upperAbs", "stabilizer", 0.3]
-      ]
+      ],
+      "joints": [
+        ["knee", "deep_bend", "full"],
+        ["hip", "deep_squat", "full"],
+        ["ankle", "dorsiflexion", "full"],
+        ["wrist", "grip", "full"]
+      ],
+      "rangeLimit": ["knee.deep_bend", "hip.deep_squat"]
     },
     {
       "slug": "sit_to_stand",
@@ -918,7 +1175,12 @@
       "muscles": [
         ["quads", "primary", 0.9],
         ["glutes", "secondary", 0.7]
-      ]
+      ],
+      "joints": [
+        ["knee", "deep_bend", "partial"],
+        ["hip", "flexion", "partial"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "reverse_lunge",
@@ -938,7 +1200,15 @@
         ["quads", "primary", 0.8],
         ["glutes", "primary", 0.8],
         ["adductors", "secondary", 0.3]
-      ]
+      ],
+      "joints": [
+        ["knee", "deep_bend", "full"],
+        ["hip", "extension", "full"],
+        ["hip", "single_leg", "partial"],
+        ["ankle", "dorsiflexion", "full"],
+        ["ankle", "balance", "partial"]
+      ],
+      "rangeLimit": ["knee.deep_bend"]
     },
     {
       "slug": "leg_press",
@@ -957,7 +1227,12 @@
       "muscles": [
         ["quads", "primary", 1.0],
         ["glutes", "secondary", 0.6]
-      ]
+      ],
+      "joints": [
+        ["knee", "deep_bend", "full"],
+        ["hip", "deep_squat", "full"]
+      ],
+      "rangeLimit": ["knee.deep_bend", "hip.deep_squat"]
     },
     {
       "slug": "glute_bridge",
@@ -977,7 +1252,12 @@
         ["glutes", "primary", 1.0],
         ["hamstrings", "secondary", 0.5],
         ["lowerBack", "stabilizer", 0.2]
-      ]
+      ],
+      "joints": [
+        ["hip", "extension", "full"],
+        ["lower_back", "extension", "partial"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "dumbbell_romanian_deadlift",
@@ -997,7 +1277,13 @@
         ["hamstrings", "primary", 1.0],
         ["glutes", "primary", 0.8],
         ["lowerBack", "secondary", 0.5]
-      ]
+      ],
+      "joints": [
+        ["hip", "flexion", "full"],
+        ["lower_back", "lift", "full"],
+        ["wrist", "grip", "full"]
+      ],
+      "rangeLimit": ["hip.flexion"]
     },
     {
       "slug": "lying_hamstring_curl_machine",
@@ -1016,7 +1302,9 @@
       "muscles": [
         ["hamstrings", "primary", 1.0],
         ["calves", "secondary", 0.3]
-      ]
+      ],
+      "joints": [["knee", "deep_bend", "full"]],
+      "rangeLimit": ["knee.deep_bend"]
     },
     {
       "slug": "standing_calf_raise",
@@ -1032,7 +1320,12 @@
       "loaded": false,
       "unilateral": false,
       "impact": 0,
-      "muscles": [["calves", "primary", 1.0]]
+      "muscles": [["calves", "primary", 1.0]],
+      "joints": [
+        ["ankle", "plantarflexion", "full"],
+        ["ankle", "balance", "partial"]
+      ],
+      "rangeLimit": ["ankle.plantarflexion"]
     },
     {
       "slug": "seated_knee_raise",
@@ -1051,7 +1344,9 @@
       "muscles": [
         ["hips", "primary", 1.0],
         ["lowerAbs", "secondary", 0.4]
-      ]
+      ],
+      "joints": [["hip", "flexion", "full"]],
+      "rangeLimit": ["hip.flexion"]
     },
     {
       "slug": "side_lying_adductor_raise",
@@ -1067,7 +1362,9 @@
       "loaded": false,
       "unilateral": true,
       "impact": 0,
-      "muscles": [["adductors", "primary", 1.0]]
+      "muscles": [["adductors", "primary", 1.0]],
+      "joints": [["hip", "adduction", "full"]],
+      "rangeLimit": []
     },
     {
       "slug": "wall_tibialis_raise",
@@ -1083,7 +1380,9 @@
       "loaded": false,
       "unilateral": false,
       "impact": 0,
-      "muscles": [["shins", "primary", 1.0]]
+      "muscles": [["shins", "primary", 1.0]],
+      "joints": [["ankle", "dorsiflexion", "full"]],
+      "rangeLimit": ["ankle.dorsiflexion"]
     },
     {
       "slug": "band_terminal_knee_extension",
@@ -1102,7 +1401,9 @@
       "muscles": [
         ["knees", "primary", 0.8],
         ["quads", "primary", 0.7]
-      ]
+      ],
+      "joints": [["knee", "straighten_load", "partial"]],
+      "rangeLimit": []
     },
     {
       "slug": "step_up",
@@ -1121,7 +1422,13 @@
       "muscles": [
         ["quads", "primary", 0.9],
         ["glutes", "primary", 0.7]
-      ]
+      ],
+      "joints": [
+        ["knee", "stairs", "full"],
+        ["hip", "flexion", "partial"],
+        ["ankle", "balance", "partial"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "single_leg_balance",
@@ -1141,7 +1448,12 @@
         ["calves", "primary", 0.6],
         ["glutes", "secondary", 0.5],
         ["shins", "secondary", 0.4]
-      ]
+      ],
+      "joints": [
+        ["ankle", "balance", "full"],
+        ["hip", "single_leg", "full"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "mountain_climber",
@@ -1168,7 +1480,13 @@
         ["lowerAbs", "primary", 0.6],
         ["hips", "secondary", 0.5],
         ["shoulders", "stabilizer", 0.4]
-      ]
+      ],
+      "joints": [
+        ["shoulder", "push", "full"],
+        ["wrist", "extension_load", "full"],
+        ["hip", "flexion", "full"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "doorway_chest_stretch",
@@ -1189,7 +1507,12 @@
         ["upperChest", "secondary", 0.6],
         ["lowerChest", "secondary", 0.5],
         ["shoulders", "secondary", 0.4]
-      ]
+      ],
+      "joints": [
+        ["shoulder", "external_rotation", "full"],
+        ["shoulder", "abduction", "full"]
+      ],
+      "rangeLimit": ["shoulder.external_rotation", "shoulder.abduction"]
     },
     {
       "slug": "cross_body_shoulder_stretch",
@@ -1208,7 +1531,9 @@
       "muscles": [
         ["rearDelts", "primary", 0.8],
         ["shoulders", "secondary", 0.4]
-      ]
+      ],
+      "joints": [["shoulder", "flexion", "partial"]],
+      "rangeLimit": ["shoulder.flexion"]
     },
     {
       "slug": "overhead_triceps_stretch",
@@ -1227,7 +1552,12 @@
       "muscles": [
         ["triceps", "primary", 0.8],
         ["lats", "secondary", 0.3]
-      ]
+      ],
+      "joints": [
+        ["shoulder", "overhead", "full"],
+        ["elbow", "flexion", "full"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "standing_quad_stretch",
@@ -1247,7 +1577,13 @@
         ["quads", "primary", 0.9],
         ["hips", "secondary", 0.4],
         ["knees", "secondary", 0.3]
-      ]
+      ],
+      "joints": [
+        ["knee", "deep_bend", "full"],
+        ["hip", "extension", "partial"],
+        ["ankle", "balance", "partial"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "seated_hamstring_stretch",
@@ -1266,7 +1602,12 @@
       "muscles": [
         ["hamstrings", "primary", 0.9],
         ["calves", "secondary", 0.3]
-      ]
+      ],
+      "joints": [
+        ["hip", "flexion", "full"],
+        ["lower_back", "flexion", "partial"]
+      ],
+      "rangeLimit": ["hip.flexion"]
     },
     {
       "slug": "seated_figure_four_stretch",
@@ -1285,7 +1626,12 @@
       "muscles": [
         ["glutes", "primary", 0.9],
         ["hips", "secondary", 0.4]
-      ]
+      ],
+      "joints": [
+        ["hip", "rotation", "full"],
+        ["knee", "deep_bend", "partial"]
+      ],
+      "rangeLimit": ["hip.rotation"]
     },
     {
       "slug": "wall_calf_stretch",
@@ -1304,7 +1650,9 @@
       "muscles": [
         ["calves", "primary", 0.9],
         ["shins", "secondary", 0.3]
-      ]
+      ],
+      "joints": [["ankle", "dorsiflexion", "full"]],
+      "rangeLimit": ["ankle.dorsiflexion"]
     },
     {
       "slug": "childs_pose",
@@ -1324,7 +1672,15 @@
         ["lats", "primary", 0.7],
         ["lowerBack", "primary", 0.6],
         ["upperBack", "secondary", 0.4]
-      ]
+      ],
+      "joints": [
+        ["knee", "kneel", "full"],
+        ["knee", "deep_bend", "full"],
+        ["hip", "deep_squat", "full"],
+        ["lower_back", "flexion", "partial"],
+        ["shoulder", "overhead", "partial"]
+      ],
+      "rangeLimit": []
     },
     {
       "slug": "kneeling_hip_flexor_stretch",
@@ -1343,7 +1699,12 @@
       "muscles": [
         ["hips", "primary", 0.9],
         ["quads", "secondary", 0.4]
-      ]
+      ],
+      "joints": [
+        ["knee", "kneel", "full"],
+        ["hip", "extension", "full"]
+      ],
+      "rangeLimit": ["hip.extension"]
     },
     {
       "slug": "upper_trap_stretch",
@@ -1359,7 +1720,9 @@
       "loaded": false,
       "unilateral": true,
       "impact": 0,
-      "muscles": [["traps", "primary", 0.8]]
+      "muscles": [["traps", "primary", 0.8]],
+      "joints": [["neck", "side_bend", "full"]],
+      "rangeLimit": ["neck.side_bend"]
     },
     {
       "slug": "standing_side_stretch",
@@ -1378,7 +1741,12 @@
       "muscles": [
         ["obliques", "primary", 0.8],
         ["lats", "secondary", 0.5]
-      ]
+      ],
+      "joints": [
+        ["lower_back", "side_bend", "full"],
+        ["shoulder", "overhead", "full"]
+      ],
+      "rangeLimit": ["lower_back.side_bend"]
     },
     {
       "slug": "hug_upper_back_stretch",
@@ -1397,7 +1765,9 @@
       "muscles": [
         ["upperBack", "primary", 0.8],
         ["rearDelts", "secondary", 0.4]
-      ]
+      ],
+      "joints": [["shoulder", "flexion", "partial"]],
+      "rangeLimit": []
     },
     {
       "slug": "biceps_wall_stretch",
@@ -1416,7 +1786,12 @@
       "muscles": [
         ["biceps", "primary", 0.8],
         ["forearms", "secondary", 0.5]
-      ]
+      ],
+      "joints": [
+        ["shoulder", "reach_behind", "full"],
+        ["elbow", "extension", "full"]
+      ],
+      "rangeLimit": ["shoulder.reach_behind"]
     },
     {
       "slug": "box_breathing",
@@ -1432,7 +1807,179 @@
       "loaded": false,
       "unilateral": false,
       "impact": 0,
-      "muscles": []
+      "muscles": [],
+      "joints": [],
+      "rangeLimit": []
+    },
+    {
+      "slug": "iso_shoulder_external_rotation",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "teen",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": ["recent_surgery"],
+      "pattern": "shoulder_isolation",
+      "parts": ["main"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["rearDelts", "primary", 0.6],
+        ["shoulders", "secondary", 0.4]
+      ],
+      "joints": [["shoulder", "external_rotation", "isometric"]],
+      "rangeLimit": [],
+      "rehab": true
+    },
+    {
+      "slug": "iso_shoulder_internal_rotation",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "teen",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": ["recent_surgery"],
+      "pattern": "shoulder_isolation",
+      "parts": ["main"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["shoulders", "primary", 0.5],
+        ["chest", "secondary", 0.3]
+      ],
+      "joints": [["shoulder", "internal_rotation", "isometric"]],
+      "rangeLimit": [],
+      "rehab": true
+    },
+    {
+      "slug": "iso_shoulder_abduction",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "teen",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": ["recent_surgery"],
+      "pattern": "shoulder_isolation",
+      "parts": ["main"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [["shoulders", "primary", 0.6]],
+      "joints": [["shoulder", "abduction", "isometric"]],
+      "rangeLimit": [],
+      "rehab": true
+    },
+    {
+      "slug": "iso_shoulder_flexion",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "teen",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": ["recent_surgery"],
+      "pattern": "shoulder_isolation",
+      "parts": ["main"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [["shoulders", "primary", 0.6]],
+      "joints": [["shoulder", "flexion", "isometric"]],
+      "rangeLimit": [],
+      "rehab": true
+    },
+    {
+      "slug": "band_external_rotation",
+      "equipment": ["bands"],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "teen",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": ["recent_surgery"],
+      "pattern": "shoulder_isolation",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["rearDelts", "primary", 0.6],
+        ["upperBack", "secondary", 0.3]
+      ],
+      "joints": [
+        ["shoulder", "external_rotation", "partial"],
+        ["wrist", "grip", "partial"]
+      ],
+      "rangeLimit": ["shoulder.external_rotation"],
+      "rehab": true
+    },
+    {
+      "slug": "quad_set",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": ["recent_surgery"],
+      "pattern": "knee_extension",
+      "parts": ["main"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["quads", "primary", 0.6],
+        ["knees", "secondary", 0.4]
+      ],
+      "joints": [["knee", "straighten_load", "isometric"]],
+      "rangeLimit": [],
+      "rehab": true
+    },
+    {
+      "slug": "chin_tuck",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": ["recent_surgery"],
+      "pattern": "mobility",
+      "parts": ["main", "warmup_mobility"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["traps", "primary", 0.5],
+        ["upperBack", "secondary", 0.3]
+      ],
+      "joints": [["neck", "flexion", "isometric"]],
+      "rangeLimit": [],
+      "rehab": true
+    },
+    {
+      "slug": "iso_wrist_extension",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "kid",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": ["recent_surgery"],
+      "pattern": "wrist",
+      "parts": ["main"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [["forearms", "primary", 0.7]],
+      "joints": [["wrist", "extension_load", "isometric"]],
+      "rangeLimit": [],
+      "rehab": true
     }
   ]
 }

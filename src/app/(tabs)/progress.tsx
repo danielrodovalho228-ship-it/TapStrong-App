@@ -13,6 +13,7 @@ import {
   ToggleRow,
   type IconName,
 } from '@/components/ui';
+import { MovementPainEntry } from '@/features/movement/Entry';
 import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { muscleLabel } from '@/features/onboarding/summaries';
@@ -118,6 +119,8 @@ export default function ProgressScreen() {
           </AppText>
         )}
       </Card>
+
+      <MovementPainEntry chart />
 
       <View style={styles.links}>
         <LinkRow

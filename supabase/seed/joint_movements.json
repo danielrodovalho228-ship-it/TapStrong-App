@@ -1,0 +1,101 @@
+{
+  "_note": "Joint movement catalog (SPEC §8 \"Movement that hurts\"). DRAFT: the movement list, everyday examples, red flags, recovery phases and every exercise tag follow common physical-therapy practice (painful arc, directional preference, pain-monitoring model) but have NOT been signed off by the certified reviewer. Development builds only, like the exercise drafts.",
+  "joints": {
+    "shoulder": {
+      "area": "shoulder",
+      "sided": true,
+      "movements": [
+        "flexion",
+        "abduction",
+        "reach_behind",
+        "external_rotation",
+        "internal_rotation",
+        "overhead",
+        "push",
+        "pull",
+        "carry"
+      ],
+      "focus": {
+        "1": ["shoulders", "rearDelts"],
+        "2": ["rearDelts", "upperBack", "shoulders"],
+        "3": ["shoulders", "upperBack", "chest", "lats"]
+      }
+    },
+    "elbow": {
+      "area": "elbow_wrist",
+      "sided": true,
+      "movements": ["flexion", "extension"],
+      "focus": {
+        "1": ["forearms"],
+        "2": ["forearms", "biceps", "triceps"],
+        "3": ["biceps", "triceps", "forearms"]
+      }
+    },
+    "wrist": {
+      "area": "elbow_wrist",
+      "sided": true,
+      "movements": ["extension_load", "flexion", "grip", "rotation"],
+      "focus": { "1": ["forearms"], "2": ["forearms"], "3": ["forearms", "biceps"] }
+    },
+    "neck": {
+      "area": "neck",
+      "sided": false,
+      "movements": ["flexion", "extension", "rotation", "side_bend"],
+      "focus": {
+        "1": ["traps", "upperBack"],
+        "2": ["upperBack", "traps", "rearDelts"],
+        "3": ["upperBack", "traps", "shoulders"]
+      }
+    },
+    "lower_back": {
+      "area": "lower_back",
+      "sided": false,
+      "movements": ["flexion", "extension", "rotation", "side_bend", "lift"],
+      "focus": {
+        "1": ["abs", "glutes"],
+        "2": ["glutes", "obliques", "lowerBack"],
+        "3": ["lowerBack", "glutes", "hamstrings"]
+      }
+    },
+    "hip": {
+      "area": "hip",
+      "sided": true,
+      "movements": [
+        "flexion",
+        "extension",
+        "abduction",
+        "adduction",
+        "rotation",
+        "deep_squat",
+        "single_leg"
+      ],
+      "focus": {
+        "1": ["glutes", "hips"],
+        "2": ["glutes", "hips", "adductors"],
+        "3": ["glutes", "quads", "hamstrings"]
+      }
+    },
+    "knee": {
+      "area": "knee",
+      "sided": true,
+      "movements": ["deep_bend", "kneel", "straighten_load", "stairs", "pivot", "impact"],
+      "focus": {
+        "1": ["quads"],
+        "2": ["quads", "glutes", "hamstrings"],
+        "3": ["quads", "glutes", "calves"]
+      }
+    },
+    "ankle": {
+      "area": "ankle_foot",
+      "sided": true,
+      "movements": ["dorsiflexion", "plantarflexion", "balance", "impact"],
+      "focus": {
+        "1": ["calves", "shins"],
+        "2": ["calves", "shins"],
+        "3": ["calves", "shins", "quads"]
+      }
+    }
+  },
+  "redFlags": ["trauma", "night_pain", "numbness", "weakness", "swelling", "fever"],
+  "durations": ["under_2_weeks", "2_6_weeks", "6_12_weeks", "over_3_months"]
+}

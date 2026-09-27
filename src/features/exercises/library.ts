@@ -1,4 +1,5 @@
 import type { Equipment, Location } from '../../../supabase/functions/_shared/interview';
+import type { JointKey, JointMovementTag, MovementKey, MovementRange } from '../movement/catalog';
 import type { Position } from '../onboarding/options';
 import type { BodyBand } from '../profile/age';
 
@@ -27,7 +28,17 @@ export type SeedExercise = {
   unilateral: boolean;
   impact: number;
   muscles: [string, string, number][];
+  joints: [string, string, string][];
+  rangeLimit: string[];
+  rehab?: boolean;
 };
+
+const tags = (joints: [string, string, string][]): JointMovementTag[] =>
+  joints.map(([joint, movement, range]) => ({
+    joint: joint as JointKey,
+    movement,
+    range: range as MovementRange,
+  }));
 
 export function fromSeed(entry: SeedExercise): Exercise {
   return {
@@ -54,6 +65,9 @@ export function fromSeed(entry: SeedExercise): Exercise {
       role: role as MuscleRole,
       emphasis,
     })),
+    joints: tags(entry.joints),
+    rangeLimit: entry.rangeLimit as MovementKey[],
+    rehab: entry.rehab ?? false,
     media: { video: null, poster: null, provider: 'prototype' },
   };
 }
@@ -80,6 +94,9 @@ export type ExerciseRow = {
   media_video: string | null;
   media_poster: string | null;
   media_provider: string | null;
+  joint_movements?: [string, string, string][] | null;
+  range_limit?: string[] | null;
+  rehab?: boolean | null;
   exercise_muscles: { muscle_key: string; role: string; emphasis: number }[];
 };
 
@@ -107,6 +124,9 @@ export function fromRow(row: ExerciseRow): Exercise {
       role: m.role as MuscleRole,
       emphasis: Number(m.emphasis),
     })),
+    joints: tags(row.joint_movements ?? []),
+    rangeLimit: (row.range_limit ?? []) as MovementKey[],
+    rehab: row.rehab ?? false,
     media: { video: row.media_video, poster: row.media_poster, provider: row.media_provider },
   };
 }
@@ -146,4 +166,5 @@ export function prototypeVideo(slug: string): number | null {
 export const RELEASED_LIBRARY_SELECT =
   'id, slug, name_i18n_key, cues_i18n_key, equipment, location, level, min_age_band, positions, ' +
   'contraindications, movement_pattern, session_parts, dose_type, loaded, unilateral, impact, ' +
-  'status, media_video, media_poster, media_provider, exercise_muscles (muscle_key, role, emphasis)';
+  'status, media_video, media_poster, media_provider, joint_movements, range_limit, rehab, ' +
+  'exercise_muscles (muscle_key, role, emphasis)';

@@ -10,6 +10,8 @@ export type RepairTest = {
   contraindications: (PainArea | Condition)[];
   good?: Record<AppMode, number>;
   focus: { goal: 'strengthen' | 'balance' | 'mobility'; muscles: string[] };
+  /** Joint movements the test needs (reviewed with the catalog, SPEC §8). */
+  joints?: [string, string, string][];
 };
 
 /**

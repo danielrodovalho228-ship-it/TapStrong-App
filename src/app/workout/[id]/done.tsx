@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText, Button, Card, Icon, Screen } from '@/components/ui';
+import { RatePainButtons } from '@/features/movement/Entry';
 import type { BodySex } from '@/features/bodymap/images';
 import { displayBand } from '@/features/bodymap/selection';
 import { useAccountStore } from '@/features/account/store';
@@ -116,6 +117,7 @@ export default function DoneScreen() {
         </>
       }
     >
+      <RatePainButtons workoutId={workout.id} />
       {account.milestone?.workoutId === workout.id ? (
         <Card tone="dark" style={styles.finish}>
           <AppText variant="caption" color={colors.dark.accentSoft} style={styles.caps}>

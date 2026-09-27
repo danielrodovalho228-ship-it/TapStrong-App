@@ -9,6 +9,8 @@ import { derive } from '../onboarding/derived';
 import { hasRedFlag } from '../onboarding/safety';
 import type { OnboardingData } from '../onboarding/store';
 import { measurementsAllowed } from '../progress/checkin';
+import { levelFor } from '../movement/progress';
+import type { MovementPain } from '../movement/store';
 import type { ProgressData } from '../progress/store';
 import type { Restriction } from '../restrictions/store';
 import type { BadgeKey } from '../workout/badges';
@@ -32,6 +34,8 @@ export type SyncInput = {
   library: Exercise[];
   /** Check-ins and Repair (Phase 8). Photos never leave the phone. */
   progress?: Pick<ProgressData, 'checkins' | 'repairResults' | 'repairPlan'>;
+  /** "Movement that hurts" reports (Phase 9). */
+  movementPain?: MovementPain[];
   /**
    * A family member the account holder manages on this phone (Phase 6):
    * the row has no login of its own and the account is its guardian.
@@ -63,6 +67,7 @@ export type SyncPlan = {
   checkins: Row[];
   repairResults: Row[];
   repairPlans: Row[];
+  movementPains: Row[];
   /** Finished workouts that use exercises the database does not release. */
   skipped: string[];
 };
@@ -284,6 +289,22 @@ export function buildSyncPlan(input: SyncInput): SyncPlan | PlanError {
       ]
     : [];
 
+  const movementPains = (input.movementPain ?? []).map((r) => ({
+    id: r.id,
+    profile_id: profileId,
+    area: r.area,
+    side: r.side ?? null,
+    painful: r.painful,
+    pain_free: r.painFree,
+    score: r.score,
+    duration: r.duration,
+    level: levelFor(r),
+    active: r.active,
+    checks: r.checks,
+    retests: r.retests,
+    created_at: r.createdAt,
+  }));
+
   return {
     profile,
     profileWrite: !input.managed ? 'upsert' : child ? 'child' : 'managed',
@@ -298,6 +319,7 @@ export function buildSyncPlan(input: SyncInput): SyncPlan | PlanError {
     checkins,
     repairResults,
     repairPlans,
+    movementPains,
     skipped,
   };
 }
@@ -413,6 +435,7 @@ export async function runSync(
     ['checkins', plan.checkins],
     ['repair_results', plan.repairResults],
     ['repair_plans', plan.repairPlans],
+    ['movement_pains', plan.movementPains],
   ] as const) {
     if (rows2.length) steps.push([table, () => supabase.from(table).upsert(rows2)]);
   }

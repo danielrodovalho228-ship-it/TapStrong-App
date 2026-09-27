@@ -5,6 +5,7 @@ import { refreshBilling } from '../billing/actions';
 import { getBilling } from '../billing/provider';
 import { devLibrary } from '../exercises/library';
 import { activeProfile, useFamilyStore } from '../family/store';
+import { useMovementPainStore } from '../movement/store';
 import { useOnboardingStore } from '../onboarding/store';
 import { useProgressStore } from '../progress/store';
 import { useRestrictionsStore } from '../restrictions/store';
@@ -60,6 +61,7 @@ export function syncNow(): Promise<SyncResult> {
         exerciseIds,
         library,
         progress: useProgressStore.getState(),
+        movementPain: useMovementPainStore.getState().reports,
       });
     },
     slugs,

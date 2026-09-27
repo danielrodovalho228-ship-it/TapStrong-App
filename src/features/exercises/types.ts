@@ -1,4 +1,5 @@
 import type { Equipment, Location } from '../../../supabase/functions/_shared/interview';
+import type { JointMovementTag, MovementKey } from '../movement/catalog';
 import type { Position } from '../onboarding/options';
 import type { BodyBand } from '../profile/age';
 
@@ -71,5 +72,11 @@ export type Exercise = {
   impact: 0 | 1 | 2;
   status: ExerciseStatus;
   muscles: ExerciseMuscle[];
+  /** Joint movements the exercise needs (SPEC §8 "Movement that hurts"). */
+  joints: JointMovementTag[];
+  /** Movements it can do in a shorter, pain-free range. */
+  rangeLimit: MovementKey[];
+  /** Recovery-plan exercise: only in Repair recovery sessions, never in regular workouts. */
+  rehab: boolean;
   media: { video: string | null; poster: string | null; provider: string | null };
 };

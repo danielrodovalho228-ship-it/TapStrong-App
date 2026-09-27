@@ -78,6 +78,18 @@ export async function applyPlan(plan: PlannedNotification[]): Promise<void> {
         },
         trigger: { type: N.SchedulableTriggerInputTypes.DATE, date: p.date },
       });
+    } else if (p.kind === 'movement_check') {
+      await N.scheduleNotificationAsync({
+        identifier: p.id,
+        content: {
+          title: i18n.t('notifications.movementCheck.title', {
+            area: i18n.t(`safety.painAreas.${p.area as 'shoulder'}`),
+          }),
+          body: i18n.t('notifications.movementCheck.body'),
+          data: { url: movementCheckUrl(p.reportId, p.workoutId) },
+        },
+        trigger: { type: N.SchedulableTriggerInputTypes.DATE, date: p.date },
+      });
     } else {
       await N.scheduleNotificationAsync({
         identifier: p.id,
@@ -89,4 +101,19 @@ export async function applyPlan(plan: PlannedNotification[]): Promise<void> {
       });
     }
   }
+}
+
+/** Deep link of the morning check (the notification opens it). */
+export const movementCheckUrl = (reportId: string, workoutId: string) =>
+  `/movement-pain/check?id=${reportId}&kind=morning&workout=${workoutId}`;
+
+/** Opens the screen a tapped notification points to. Returns the unsubscribe. */
+export function onNotificationTap(open: (url: string) => void): () => void {
+  const N = load();
+  if (!N) return () => undefined;
+  const sub = N.addNotificationResponseReceivedListener((response) => {
+    const url = response.notification.request.content.data?.url;
+    if (typeof url === 'string' && url.startsWith('/')) open(url);
+  });
+  return () => sub.remove();
 }

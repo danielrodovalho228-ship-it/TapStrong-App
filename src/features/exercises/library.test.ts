@@ -2,7 +2,10 @@ import { execFileSync } from 'child_process';
 import path from 'path';
 
 import seed from '../../../supabase/seed/exercises.json';
+import catalogJson from '../../../supabase/seed/joint_movements.json';
 import { resources, SUPPORTED_LOCALES } from '../../i18n';
+
+import type { MovementCatalog } from '../movement/catalog';
 
 import { autoCheck } from './autoCheck';
 import { devLibrary, fromRow, fromSeed, type SeedExercise } from './library';
@@ -12,7 +15,26 @@ const one = (slug: string) => LIBRARY.find((e) => e.slug === slug)!;
 
 describe('prototype library (SPEC §12 Phase 3)', () => {
   it('passes the automated rule check, every exercise', () => {
-    expect(LIBRARY.flatMap(autoCheck)).toEqual([]);
+    expect(LIBRARY.flatMap((e) => autoCheck(e))).toEqual([]);
+  });
+
+  it('tags joint movements with catalog keys (SPEC §8 "Movement that hurts")', () => {
+    const catalog = catalogJson as unknown as MovementCatalog;
+    expect(LIBRARY.flatMap((e) => autoCheck(e, catalog))).toEqual([]);
+    // Every exercise that loads a joint says how; breathing and walking may have none.
+    const untagged = LIBRARY.filter(
+      (e) => !e.joints.length && !['breathing', 'cardio'].includes(e.pattern),
+    ).map((e) => e.slug);
+    expect(untagged).toEqual([]);
+    expect(
+      autoCheck(
+        { ...one('push_up'), joints: [{ joint: 'shoulder', movement: 'fly', range: 'full' }] },
+        catalog,
+      ),
+    ).toContain('push_up: unknown movement shoulder.fly');
+    expect(autoCheck({ ...one('push_up'), rangeLimit: ['knee.deep_bend'] }, catalog)).toContain(
+      'push_up: range limit on a movement it does not use: knee.deep_bend',
+    );
   });
 
   it('is draft only and never carries licensed media', () => {

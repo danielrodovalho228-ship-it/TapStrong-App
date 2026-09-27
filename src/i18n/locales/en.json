@@ -698,6 +698,38 @@
     "short_range_incline_push_up": {
       "name": "Short-range incline push-up",
       "cues": "Hands on a bench, body straight; lower only halfway, then push back up."
+    },
+    "iso_shoulder_external_rotation": {
+      "name": "Wall press, arm turning out",
+      "cues": "Elbow bent at your side, back of the hand against a wall. Press gently outward without moving. Hold 20–30 s."
+    },
+    "iso_shoulder_internal_rotation": {
+      "name": "Doorframe press, arm turning in",
+      "cues": "Elbow bent at your side, palm against a doorframe. Press gently inward without moving. Hold 20–30 s."
+    },
+    "iso_shoulder_abduction": {
+      "name": "Wall press, arm to the side",
+      "cues": "Stand side-on to a wall, elbow bent, outer elbow against it. Press gently out without moving. Hold 20–30 s."
+    },
+    "iso_shoulder_flexion": {
+      "name": "Wall press, arm forward",
+      "cues": "Face a wall, elbow bent, fist against it. Press gently forward without moving. Hold 20–30 s."
+    },
+    "band_external_rotation": {
+      "name": "Band external rotation",
+      "cues": "Elbow bent at your side, band in hand. Turn the forearm out slowly, only in the pain-free range."
+    },
+    "quad_set": {
+      "name": "Thigh squeeze",
+      "cues": "Sit with the leg straight. Tighten the front of the thigh, pressing the knee down. Hold 10 s, relax."
+    },
+    "chin_tuck": {
+      "name": "Chin tuck",
+      "cues": "Sit tall. Slide the chin straight back, making a double chin, without tilting. Hold 5 s."
+    },
+    "iso_wrist_extension": {
+      "name": "Wrist press, back of hand",
+      "cues": "Forearm on a table, palm down. Press the back of the hand up into your other hand without moving. Hold 20–30 s."
     }
   },
   "generator": {
@@ -938,7 +970,11 @@
       }
     },
     "restFor": "rest {{seconds}} s",
-    "demoPrototype": "Prototype demo · dev build only"
+    "demoPrototype": "Prototype demo · dev build only",
+    "range": {
+      "reduced": "Shorter range: stop before it hurts",
+      "isometric": "Gentle hold: push without moving, no pain"
+    }
   },
   "account": {
     "eyebrow": "Your account",
@@ -1023,6 +1059,10 @@
     "trial": {
       "title": "Your free trial ends in {{count}} days",
       "body": "You'll be charged on {{date}} unless you cancel. Cancel anytime in your store subscriptions."
+    },
+    "movementCheck": {
+      "title": "{{area}}: how is it this morning?",
+      "body": "Rate it in 5 seconds. It sets your next workout."
     }
   },
   "billing": {
@@ -1382,5 +1422,292 @@
     "reactivate": "Turn back on",
     "disclaimer": "TapStrong adapts training, it doesn't diagnose. Sharp or lasting pain? See a doctor or physical therapist.",
     "done": "Done"
+  },
+  "movementPain": {
+    "eyebrow": "Movement that hurts",
+    "title": "Which movements hurt?",
+    "intro": "We don't diagnose. We map which movements hurt, so your workouts keep the ones that don't.",
+    "childGate": "Do this with your parent or guardian.",
+    "childConfirm": "A parent or guardian is with me",
+    "areaTitle": "Where does it hurt?",
+    "sideTitle": "Which side?",
+    "redFlagsTitle": "First, a few safety questions",
+    "redFlagsBody": "Tick anything that applies.",
+    "noneApply": "None of these",
+    "stopTitle": "Please see a doctor first",
+    "stopBody": "What you ticked should be checked by a doctor or physical therapist before training this area. We won't build a plan, and your workouts leave this area out for now.",
+    "stopDone": "Back to my restrictions",
+    "moveTitle": "How does each movement feel?",
+    "moveBody": "Try each one gently, only if it feels safe. Leave \"Not tried\" when unsure.",
+    "states": {
+      "hurts": "Hurts",
+      "fine": "No pain",
+      "untried": "Not tried"
+    },
+    "moveA11y": "{{movement}}: {{state}}",
+    "untriedNote": "Movements not tried are treated as painful, to be safe.",
+    "needPainful": "Mark at least one movement that hurts.",
+    "scoreTitle": "How strong is the pain, at its worst?",
+    "scoreLabel": "Pain",
+    "scoreValue": "{{score}} out of 10",
+    "scoreLow": "0 = no pain",
+    "scoreHigh": "10 = worst imaginable",
+    "durationTitle": "How long has it hurt?",
+    "next": "Next",
+    "save": "Build my recovery plan",
+    "disclaimer": "TapStrong adapts training; it doesn't diagnose. Sharp or lasting pain? See a doctor or physical therapist.",
+    "underReview": "This feature is being reviewed by a certified coach. It will appear here soon.",
+    "devOnly": "Development build: draft movement list, not reviewed yet. It never reaches users.",
+    "plan": {
+      "phase": "Phase {{phase}} of 3",
+      "phases": {
+        "1": "Calm it down: gentle holds and pain-free range.",
+        "2": "Strengthen: build strength in the pain-free range.",
+        "3": "Progress: more range and load, step by step."
+      },
+      "level": "Step {{level}} of 6",
+      "hurts": "Hurts: {{list}}",
+      "fine": "No pain: {{list}}",
+      "start": "Start a {{minutes}}-min recovery session",
+      "lightTitle": "Pain traffic light",
+      "lightRule": "0–3 green: moving on. 4–5 yellow: staying. Over 5, or clearly worse the next morning: red, one step back.",
+      "lights": {
+        "green": "Green",
+        "yellow": "Yellow",
+        "red": "Red"
+      },
+      "noLights": "Rate the pain after each workout and the next morning.",
+      "rateNow": "Rate it now",
+      "retest": "Weekly retest",
+      "retestDue": "Time for this week's retest",
+      "retestNext": "Next retest: {{date}}",
+      "seePT": "See a physical therapist",
+      "seePTBody": "Your pain hasn't improved in 3 weeks, or it got worse. A physical therapist can find the cause; TapStrong can support the plan they give you.",
+      "better": "It doesn't hurt anymore",
+      "chart": "Pain at each retest (0–10)"
+    },
+    "check": {
+      "after": "{{area}}: how does it feel now?",
+      "morning": "{{area}}: how does it feel this morning?",
+      "save": "Save",
+      "saved": "Saved: {{light}}."
+    },
+    "retest": {
+      "title": "Weekly retest",
+      "body": "Do each movement gently, only as far as it's comfortable, and rate the pain.",
+      "save": "Save retest"
+    },
+    "entry": {
+      "cta": "Which movements hurt?",
+      "body": "Build a recovery plan around the movements that hurt, and keep training the rest.",
+      "open": "Recovery plan: {{area}}"
+    },
+    "rateAfter": "Rate the pain: {{area}}",
+    "joints": {
+      "shoulder": "Shoulder",
+      "elbow": "Elbow",
+      "wrist": "Wrist",
+      "neck": "Neck",
+      "lower_back": "Lower back",
+      "hip": "Hip",
+      "knee": "Knee",
+      "ankle": "Ankle"
+    },
+    "movements": {
+      "shoulder": {
+        "flexion": {
+          "name": "Raise arm in front",
+          "example": "Reaching a high shelf in front of you"
+        },
+        "abduction": {
+          "name": "Raise arm to the side",
+          "example": "Reaching sideways for something on the counter"
+        },
+        "reach_behind": {
+          "name": "Reach behind your back",
+          "example": "Tucking in a shirt, fastening a bra"
+        },
+        "external_rotation": {
+          "name": "Turn arm outward",
+          "example": "Brushing your hair, throwing a ball"
+        },
+        "internal_rotation": {
+          "name": "Turn arm inward",
+          "example": "Reaching for your back pocket"
+        },
+        "overhead": {
+          "name": "Arm overhead",
+          "example": "Putting a box on a top shelf, washing your hair"
+        },
+        "push": {
+          "name": "Push",
+          "example": "Pushing a heavy door, getting up from a chair with your arms"
+        },
+        "pull": {
+          "name": "Pull",
+          "example": "Opening a heavy door, pulling a suitcase"
+        },
+        "carry": {
+          "name": "Carry weight",
+          "example": "Carrying grocery bags"
+        }
+      },
+      "elbow": {
+        "flexion": {
+          "name": "Bend elbow with weight",
+          "example": "Lifting a pot"
+        },
+        "extension": {
+          "name": "Straighten elbow with weight",
+          "example": "Pushing up from a chair, pushing a cart"
+        }
+      },
+      "wrist": {
+        "extension_load": {
+          "name": "Weight on your hands",
+          "example": "Pushing up from the floor"
+        },
+        "flexion": {
+          "name": "Bend wrist down",
+          "example": "Pouring from a jug"
+        },
+        "grip": {
+          "name": "Grip tight",
+          "example": "Opening a jar, holding a heavy bag"
+        },
+        "rotation": {
+          "name": "Twist the forearm",
+          "example": "Turning a key or a doorknob"
+        }
+      },
+      "neck": {
+        "flexion": {
+          "name": "Look down",
+          "example": "Reading a phone in your lap"
+        },
+        "extension": {
+          "name": "Look up",
+          "example": "Looking at a high shelf or the ceiling"
+        },
+        "rotation": {
+          "name": "Turn your head",
+          "example": "Checking the blind spot when driving"
+        },
+        "side_bend": {
+          "name": "Tilt your head to the side",
+          "example": "Holding a phone between ear and shoulder"
+        }
+      },
+      "lower_back": {
+        "flexion": {
+          "name": "Bend forward",
+          "example": "Putting on socks, loading the dishwasher"
+        },
+        "extension": {
+          "name": "Arch your back",
+          "example": "Reaching up to a high shelf"
+        },
+        "rotation": {
+          "name": "Twist",
+          "example": "Turning to grab something from the back seat"
+        },
+        "side_bend": {
+          "name": "Lean to the side",
+          "example": "Picking up a bag at your side"
+        },
+        "lift": {
+          "name": "Lift from the floor",
+          "example": "Picking up a laundry basket or a child"
+        }
+      },
+      "hip": {
+        "flexion": {
+          "name": "Knee toward chest",
+          "example": "Putting on shoes, getting into a car"
+        },
+        "extension": {
+          "name": "Leg behind you",
+          "example": "Long strides, walking up a hill"
+        },
+        "abduction": {
+          "name": "Leg out to the side",
+          "example": "Getting out of a car, stepping sideways"
+        },
+        "adduction": {
+          "name": "Leg across",
+          "example": "Crossing your legs"
+        },
+        "rotation": {
+          "name": "Turn the hip",
+          "example": "Sitting cross-legged, pivoting on one foot"
+        },
+        "deep_squat": {
+          "name": "Deep squat",
+          "example": "Picking something up from the floor, a low chair"
+        },
+        "single_leg": {
+          "name": "Stand on one leg",
+          "example": "Putting on pants standing, stairs"
+        }
+      },
+      "knee": {
+        "deep_bend": {
+          "name": "Bend the knee deep",
+          "example": "Squatting, sitting on a low sofa"
+        },
+        "kneel": {
+          "name": "Kneel",
+          "example": "Kneeling to clean or garden"
+        },
+        "straighten_load": {
+          "name": "Straighten with effort",
+          "example": "Kicking a ball, standing up from a chair"
+        },
+        "stairs": {
+          "name": "Stairs",
+          "example": "Going up or down stairs"
+        },
+        "pivot": {
+          "name": "Twist on the knee",
+          "example": "Turning quickly with the foot planted"
+        },
+        "impact": {
+          "name": "Jump or run",
+          "example": "Jogging, jumping"
+        }
+      },
+      "ankle": {
+        "dorsiflexion": {
+          "name": "Knee over toes",
+          "example": "Squatting, walking downhill"
+        },
+        "plantarflexion": {
+          "name": "Tiptoe",
+          "example": "Reaching up on your toes"
+        },
+        "balance": {
+          "name": "Balance and uneven ground",
+          "example": "Walking on grass or cobblestones"
+        },
+        "impact": {
+          "name": "Jump or run",
+          "example": "Jogging, jumping"
+        }
+      }
+    },
+    "redFlags": {
+      "trauma": "It started after a fall, a blow or an accident",
+      "night_pain": "Strong pain at night that wakes you up",
+      "numbness": "Tingling, numbness or pins and needles",
+      "weakness": "Weakness: you can't lift the arm, or the leg gives way",
+      "swelling": "Swelling, redness or heat",
+      "fever": "Fever or feeling unwell"
+    },
+    "durations": {
+      "under_2_weeks": "Less than 2 weeks",
+      "2_6_weeks": "2 to 6 weeks",
+      "6_12_weeks": "6 to 12 weeks",
+      "over_3_months": "More than 3 months"
+    }
   }
 }

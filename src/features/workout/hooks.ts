@@ -11,6 +11,8 @@ import type { Exercise } from '../exercises/types';
 import { generateSession } from '../generator';
 import { inputFromProfile } from '../generator/fromProfile';
 import type { GeneratorInput } from '../generator/types';
+import { limitFrom } from '../movement/progress';
+import { activeReports, useMovementPainStore } from '../movement/store';
 import { derive } from '../onboarding/derived';
 import { useOnboardingStore } from '../onboarding/store';
 import { activeAreas, useRestrictionsStore } from '../restrictions/store';
@@ -33,8 +35,10 @@ export function useGeneratorInput(library: Exercise[]): GeneratorInput | null {
   const profile = useOnboardingStore();
   const restrictions = useRestrictionsStore((s) => s.items);
   const workouts = useWorkoutStore((s) => s.workouts);
+  const reports = useMovementPainStore((s) => s.reports);
   return inputFromProfile(profile, library, __DEV__, {
     restrictions: activeAreas(restrictions),
+    movementLimits: activeReports(reports).map(limitFrom),
     recentSessions: recentSessions(workouts, library),
     today: localDate(clock.now()),
   });

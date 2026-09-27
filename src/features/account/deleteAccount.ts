@@ -5,6 +5,7 @@ import { useFamilyStore } from '../family/store';
 import { clearSnapshots } from '../family/switch';
 import { useOnboardingStore } from '../onboarding/store';
 import { deleteAllPhotos } from '../progress/photos';
+import { useMovementPainStore } from '../movement/store';
 import { useProgressStore } from '../progress/store';
 import { useRestrictionsStore } from '../restrictions/store';
 import { useWorkoutStore } from '../workout/store';
@@ -22,6 +23,7 @@ export function wipeLocalData() {
   useRestrictionsStore.getState().reset();
   useBillingStore.getState().reset();
   useProgressStore.getState().reset();
+  useMovementPainStore.getState().reset();
   deleteAllPhotos();
   useAccountStore.getState().reset();
 }

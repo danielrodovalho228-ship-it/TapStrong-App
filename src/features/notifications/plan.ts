@@ -19,7 +19,27 @@ export type PlannedNotification =
     }
   | { id: string; kind: 'streak_saver'; date: Date; streak: number }
   /** Honest billing (SPEC §2.5): a reminder before a trial turns into a charge. */
-  | { id: string; kind: 'trial'; date: Date; chargeOn: string };
+  | { id: string; kind: 'trial'; date: Date; chargeOn: string }
+  /** Pain traffic light (SPEC §8): the morning after a workout, rate the painful area. */
+  | {
+      id: string;
+      kind: 'movement_check';
+      date: Date;
+      reportId: string;
+      area: string;
+      workoutId: string;
+    };
+
+/** A workout rated right after, still waiting for its morning check. */
+export type PendingMorningCheck = {
+  reportId: string;
+  area: string;
+  workoutId: string;
+  afterAt: string;
+};
+
+/** Morning checks go out at 8:30 local time the day after the workout. */
+export const MORNING_CHECK = { hour: 8, minute: 30 };
 
 /** Training days for "N days a week", as JS weekdays (0 = Sunday). */
 export const TRAINING_DAYS: Record<number, number[]> = {
@@ -49,6 +69,7 @@ export function planNotifications(input: {
   now: Date;
   /** Trial end when it will renew into a charge; null otherwise. */
   trialChargeAt?: string | null;
+  morningChecks?: PendingMorningCheck[];
 }): PlannedNotification[] {
   const out: PlannedNotification[] = [];
   const { prefs, now } = input;
@@ -79,6 +100,23 @@ export function planNotifications(input: {
       date: reminder,
       chargeOn: input.trialChargeAt,
     });
+  }
+
+  // Part of a plan the person started, so not tied to the reminder toggles.
+  for (const c of input.morningChecks ?? []) {
+    const date = new Date(c.afterAt);
+    date.setDate(date.getDate() + 1);
+    date.setHours(MORNING_CHECK.hour, MORNING_CHECK.minute, 0, 0);
+    if (date > now) {
+      out.push({
+        id: `movement-check-${c.reportId}`,
+        kind: 'movement_check',
+        date,
+        reportId: c.reportId,
+        area: c.area,
+        workoutId: c.workoutId,
+      });
+    }
   }
   return out;
 }

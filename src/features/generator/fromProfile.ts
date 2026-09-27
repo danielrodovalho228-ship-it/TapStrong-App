@@ -1,4 +1,5 @@
 import type { Exercise } from '../exercises/types';
+import type { MovementLimit } from '../movement/rules';
 import { derive } from '../onboarding/derived';
 import { restrictionAreas } from '../onboarding/safety';
 import type { OnboardingData } from '../onboarding/store';
@@ -10,6 +11,8 @@ export type ProfileExtras = {
   restrictions?: string[];
   recentSessions?: RecentSession[];
   today?: string;
+  /** "Movement that hurts" reports (SPEC §8). */
+  movementLimits?: MovementLimit[];
 };
 
 /** Builds generator input from the local profile (onboarding + body map). */
@@ -38,6 +41,7 @@ export function inputFromProfile(
     painAreas: s.painAreas,
     conditions: s.conditions,
     restrictions: [...new Set([...restrictionAreas(s.painAreas), ...(extras.restrictions ?? [])])],
+    movementLimits: extras.movementLimits,
     recentSessions: extras.recentSessions,
     today: extras.today,
   };

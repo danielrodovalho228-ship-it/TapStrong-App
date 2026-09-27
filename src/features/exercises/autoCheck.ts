@@ -1,4 +1,5 @@
 import { EQUIPMENT, LOCATIONS } from '../../../supabase/functions/_shared/interview';
+import type { MovementCatalog } from '../movement/catalog';
 import { MUSCLE_KEYS } from '../muscles';
 import { CONDITIONS, PAIN_AREAS, POSITIONS } from '../onboarding/options';
 
@@ -9,7 +10,7 @@ import { MOVEMENT_PATTERNS, SESSION_PARTS, type Exercise } from './types';
  * review tooling records its result as an `auto` review; tests run it over
  * the whole seed library. Returns the list of problems (empty = pass).
  */
-export function autoCheck(e: Exercise): string[] {
+export function autoCheck(e: Exercise, catalog?: MovementCatalog): string[] {
   const problems: string[] = [];
   const fail = (msg: string) => problems.push(`${e.slug}: ${msg}`);
   const primaries = e.muscles.filter((m) => m.role === 'primary');
@@ -81,5 +82,25 @@ export function autoCheck(e: Exercise): string[] {
   }
   if (e.pattern === 'stretch' && e.dose !== 'time') fail('stretches are holds');
 
+  // Joint movements (SPEC §8 "Movement that hurts")
+  if (catalog) {
+    const seen = new Set<string>();
+    for (const t of e.joints) {
+      const joint = catalog.joints[t.joint];
+      if (!joint) fail(`unknown joint ${t.joint}`);
+      else if (!joint.movements.includes(t.movement))
+        fail(`unknown movement ${t.joint}.${t.movement}`);
+      if (!['full', 'partial', 'isometric'].includes(t.range)) fail(`bad range ${t.range}`);
+      const key = `${t.joint}.${t.movement}`;
+      if (seen.has(key)) fail(`movement listed twice ${key}`);
+      seen.add(key);
+    }
+    for (const key of e.rangeLimit) {
+      const tag = e.joints.find((t) => `${t.joint}.${t.movement}` === key);
+      if (!tag) fail(`range limit on a movement it does not use: ${key}`);
+      else if (tag.range === 'isometric') fail(`range limit on a hold: ${key}`);
+    }
+  }
+  if (e.rehab && !e.parts.includes('main')) fail('recovery exercise must be main work');
   return problems;
 }
