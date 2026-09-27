@@ -736,6 +736,1822 @@
     "iso_wrist_extension": {
       "name": "Wrist press, back of hand",
       "cues": "Forearm on a table, palm down. Press the back of the hand up into your other hand without moving. Hold 20–30 s."
+    },
+    "knee_push_up": {
+      "name": "Knee push-up",
+      "cues": "Keep a straight line from knees to head and lower your chest between your hands."
+    },
+    "close_grip_push_up": {
+      "name": "Close-grip push-up",
+      "cues": "Hands under your shoulders, elbows close to your ribs; lower with control and push back up."
+    },
+    "close_grip_knee_push_up": {
+      "name": "Close-grip knee push-up",
+      "cues": "On your knees, hands under your shoulders, keep elbows tucked in as you lower and press up."
+    },
+    "close_grip_wall_push_up": {
+      "name": "Close-grip wall push-up",
+      "cues": "Hands on the wall at shoulder height and close together; bend elbows along your sides and push away."
+    },
+    "incline_push_up": {
+      "name": "Counter incline push-up",
+      "cues": "Hands on a sturdy counter or table edge, body straight; lower your chest to the edge and press away."
+    },
+    "wide_incline_push_up": {
+      "name": "Wide incline push-up",
+      "cues": "Hands a little wider than shoulders on a sturdy table; lower slowly and stop before shoulders ache."
+    },
+    "incline_push_up_hold": {
+      "name": "Incline push-up hold",
+      "cues": "Hands on a sturdy counter, lower halfway and hold still with your body straight, breathing steadily."
+    },
+    "step_decline_push_up": {
+      "name": "Step decline push-up",
+      "cues": "Feet on a low stair step, hands on the floor; keep your body straight and lower your chest slowly."
+    },
+    "decline_push_up_hold": {
+      "name": "Decline push-up hold",
+      "cues": "Feet on a low step, lower halfway and hold with a straight body; come down to your knees to rest."
+    },
+    "reverse_grip_wall_push_up": {
+      "name": "Reverse-grip wall push-up",
+      "cues": "Hands low on the wall with fingers pointing down; keep elbows close and press up and away from the wall."
+    },
+    "dive_bomber_push_up": {
+      "name": "Dive-bomber push-up",
+      "cues": "From a hips-high position, swoop your chest low and forward between your hands, then reverse it slowly."
+    },
+    "pike_push_up": {
+      "name": "Pike push-up",
+      "cues": "Hips high in an upside-down V; bend elbows to bring the top of your head toward the floor, then press up."
+    },
+    "airplane_arm_hold": {
+      "name": "Airplane arm hold",
+      "cues": "Lift both arms out to the sides at shoulder height, thumbs up, and hold them still like airplane wings."
+    },
+    "upward_palm_press_hold": {
+      "name": "Upward palm press hold",
+      "cues": "Press palms together in front of your face, angled slightly up, and squeeze hard while you breathe."
+    },
+    "palm_press_hold": {
+      "name": "Chest palm press hold",
+      "cues": "Press palms together in front of your chest, elbows out, and squeeze steadily without holding your breath."
+    },
+    "downward_palm_press_hold": {
+      "name": "Low palm press hold",
+      "cues": "Press palms together at belly height, pointing slightly down, and squeeze while breathing normally."
+    },
+    "seated_push_up": {
+      "name": "Seated chair push-up",
+      "cues": "Sit on a sturdy chair with armrests, press down through your hands and lift your hips slightly, then lower."
+    },
+    "wall_triceps_extension": {
+      "name": "Wall triceps extension",
+      "cues": "Forearms on the wall above your head, lean in, then straighten your elbows to push your body back."
+    },
+    "self_resisted_triceps_press": {
+      "name": "Self-resisted triceps press",
+      "cues": "Push one hand down to straighten the arm while the other hand resists it; go slowly, then switch."
+    },
+    "table_row": {
+      "name": "Under-table row",
+      "cues": "Lie under a sturdy table, grip the edge, keep your body straight and pull your chest up toward it."
+    },
+    "underhand_table_row": {
+      "name": "Underhand table row",
+      "cues": "Under a sturdy table, grip the edge palms facing you and pull your chest up, elbows close to your body."
+    },
+    "doorframe_row": {
+      "name": "Doorframe row",
+      "cues": "Hold both sides of a sturdy doorframe, lean back with straight arms, then pull your chest toward the door."
+    },
+    "single_arm_doorframe_row": {
+      "name": "One-arm doorframe row",
+      "cues": "Hold a sturdy doorframe with one hand, lean back, and pull your elbow toward your hip without twisting."
+    },
+    "towel_lat_pulldown": {
+      "name": "Towel lat pulldown",
+      "cues": "Hold a towel overhead pulled tight, then draw your elbows down to your ribs while keeping it tight."
+    },
+    "prone_lat_pulldown": {
+      "name": "Floor lat pulldown",
+      "cues": "Lie face down, arms overhead just off the floor, and pull your elbows down to your sides, then reach again."
+    },
+    "prone_t_raise": {
+      "name": "Floor T raise",
+      "cues": "Lie face down, arms out in a T with thumbs up, and lift them a little by squeezing your shoulder blades."
+    },
+    "prone_y_raise": {
+      "name": "Floor Y raise",
+      "cues": "Lie face down, arms in a Y shape with thumbs up, and lift them gently while keeping your neck long."
+    },
+    "prone_w_raise": {
+      "name": "Floor W raise",
+      "cues": "Lie face down with elbows bent into a W and lift your arms slightly, pulling shoulder blades together."
+    },
+    "prone_cobra": {
+      "name": "Floor cobra hold",
+      "cues": "Lie face down, arms by your sides, lift your chest a little and draw shoulder blades back and down; hold."
+    },
+    "wall_y_lift_off": {
+      "name": "Wall Y lift-off",
+      "cues": "Face a wall, hands on it in a Y shape, and lift your hands just off the wall using your upper back."
+    },
+    "scapular_squeeze": {
+      "name": "Shoulder blade squeeze",
+      "cues": "Sit or stand tall, squeeze your shoulder blades back and down, hold, then relax without shrugging."
+    },
+    "wall_elbow_press_hold": {
+      "name": "Wall elbow press hold",
+      "cues": "Back to a wall or chair back, elbows bent at your sides; press elbows back into it and hold."
+    },
+    "towel_pull_apart_hold": {
+      "name": "Towel pull-apart hold",
+      "cues": "Hold a towel at chest height with straight arms and try to pull it apart; keep shoulders down."
+    },
+    "doorframe_face_pull": {
+      "name": "Doorframe face pull",
+      "cues": "Hold a sturdy doorframe at face height, lean back, and pull your face toward it with elbows high and wide."
+    },
+    "doorframe_curl": {
+      "name": "Doorframe biceps curl",
+      "cues": "Hold a sturdy doorframe palms up, lean back with straight arms, then curl your body toward the frame."
+    },
+    "towel_curl": {
+      "name": "Towel foot curl",
+      "cues": "Sit, loop a towel under one foot and curl the ends up while that foot presses down to resist."
+    },
+    "self_resisted_curl": {
+      "name": "Self-resisted biceps curl",
+      "cues": "Curl one arm up while the other hand presses down on the wrist to resist; move slowly, then switch."
+    },
+    "under_table_curl_hold": {
+      "name": "Under-table curl hold",
+      "cues": "Sit at a sturdy table, palms up under its edge, elbows bent, and press up steadily without shrugging."
+    },
+    "towel_wring": {
+      "name": "Towel wring",
+      "cues": "Hold a rolled towel with both hands and twist it like wringing out water, then twist the other way."
+    },
+    "self_resisted_wrist_extension": {
+      "name": "Self-resisted wrist lift",
+      "cues": "Forearm on your thigh, palm down; lift the back of the hand while the other hand gently resists."
+    },
+    "self_resisted_wrist_flexion": {
+      "name": "Self-resisted wrist curl",
+      "cues": "Forearm on your thigh, palm up; curl the hand up while the other hand gently presses it down."
+    },
+    "fist_squeeze_hold": {
+      "name": "Fist squeeze hold",
+      "cues": "Make tight fists, or squeeze a rolled sock, and hold the squeeze while breathing steadily."
+    },
+    "chair_pike_push_up": {
+      "name": "Chair pike push-up",
+      "cues": "Hands on a sturdy chair seat, hips high, bend elbows to lower your head toward the seat, then press up."
+    },
+    "front_arm_hold": {
+      "name": "Front arm hold",
+      "cues": "Raise both arms straight in front to shoulder height, thumbs up, and hold them still while breathing."
+    },
+    "seated_scapular_dip": {
+      "name": "Seated shoulder blade dip",
+      "cues": "Hands on sturdy armrests, arms straight; push your shoulders down away from your ears, then let them rise."
+    },
+    "doorframe_grip_hold": {
+      "name": "Doorframe grip hold",
+      "cues": "Grip the edge of a sturdy doorframe with both hands, lean back slightly and hold with a firm grip."
+    },
+    "low_to_high_band_fly": {
+      "name": "Low-to-high band fly",
+      "cues": "Anchor the band low, arms slightly bent, and sweep your hands up and together to eye level."
+    },
+    "seated_low_to_high_band_fly": {
+      "name": "Seated low-to-high band fly",
+      "cues": "Sit tall with the band under the chair legs and sweep your hands up and together in front of your face."
+    },
+    "band_incline_press": {
+      "name": "Band incline press",
+      "cues": "Anchor the band low behind you and press your hands forward and up to eye level, then return slowly."
+    },
+    "seated_band_incline_press": {
+      "name": "Seated band incline press",
+      "cues": "Sit with the band around the chair back and press up and forward at a slight angle, then return."
+    },
+    "single_arm_band_incline_press": {
+      "name": "One-arm band incline press",
+      "cues": "Band anchored low behind you, press one hand up and forward without twisting your trunk, then switch."
+    },
+    "band_chest_press": {
+      "name": "Band chest press",
+      "cues": "Anchor the band behind you at chest height, step forward and press your hands straight out, then return."
+    },
+    "seated_band_chest_press": {
+      "name": "Seated band chest press",
+      "cues": "Sit tall, band wrapped around the chair back, and press both hands forward at chest height."
+    },
+    "band_chest_fly": {
+      "name": "Band chest fly",
+      "cues": "Band anchored behind you, arms softly bent, hug your hands together in front of your chest."
+    },
+    "band_push_up": {
+      "name": "Band push-up",
+      "cues": "Band across your upper back, ends under your hands; do a push-up, keeping your body in a straight line."
+    },
+    "band_close_grip_press": {
+      "name": "Band close-grip press",
+      "cues": "Band anchored behind you, hands close together and elbows tucked, press straight out and return slowly."
+    },
+    "high_to_low_band_fly": {
+      "name": "High-to-low band fly",
+      "cues": "Anchor the band high, arms softly bent, and sweep your hands down and together toward your hips."
+    },
+    "seated_high_to_low_band_fly": {
+      "name": "Seated high-to-low band fly",
+      "cues": "Sit with the band anchored high behind you and sweep your hands down and together over your lap."
+    },
+    "band_decline_press": {
+      "name": "Band decline press",
+      "cues": "Anchor the band high behind you and press your hands forward and down to belly height, then return."
+    },
+    "seated_band_decline_press": {
+      "name": "Seated band decline press",
+      "cues": "Sit tall with the band anchored high behind you and press down and forward toward your knees."
+    },
+    "single_arm_high_to_low_band_fly": {
+      "name": "One-arm high-to-low band fly",
+      "cues": "Band anchored high to one side, sweep that hand down across your body to the opposite hip, then switch."
+    },
+    "band_lateral_raise": {
+      "name": "Band lateral raise",
+      "cues": "Stand on the band, elbows soft, and raise your arms out to the sides up to shoulder height, no higher."
+    },
+    "seated_band_lateral_raise": {
+      "name": "Seated band lateral raise",
+      "cues": "Sit on the band's middle or loop it under your feet and raise your arms out to shoulder height."
+    },
+    "band_overhead_press": {
+      "name": "Band overhead press",
+      "cues": "Stand or sit on the band, hands at shoulders, and press straight up without arching your lower back."
+    },
+    "band_high_pull": {
+      "name": "Band high pull",
+      "cues": "Stand on the band, wide grip, and pull your elbows out and up only to chest height, then lower slowly."
+    },
+    "band_reverse_fly": {
+      "name": "Band reverse fly",
+      "cues": "Hold the band anchored in front at chest height and open your arms wide, squeezing shoulder blades."
+    },
+    "band_wide_row": {
+      "name": "Band wide row",
+      "cues": "Band anchored at chest height, pull with elbows wide and high until your hands reach your chest."
+    },
+    "band_diagonal_pull_apart": {
+      "name": "Band diagonal pull-apart",
+      "cues": "Hold the band in front, then pull one hand up and out and the other down and out; alternate diagonals."
+    },
+    "band_shrug": {
+      "name": "Band shrug",
+      "cues": "Stand or sit on the band, arms straight, and lift your shoulders toward your ears, then lower slowly."
+    },
+    "band_y_raise": {
+      "name": "Band Y raise",
+      "cues": "Stand on the band, thumbs up, and raise your arms forward and out into a Y, stopping before any pinch."
+    },
+    "band_scapular_row": {
+      "name": "Band shoulder blade row",
+      "cues": "Hold the band in front with straight arms and pull only by squeezing shoulder blades back, then release."
+    },
+    "seated_band_row": {
+      "name": "Seated band row",
+      "cues": "Sit tall with the band around your feet and pull the handles to your ribs, shoulder blades together."
+    },
+    "single_arm_band_row": {
+      "name": "One-arm band row",
+      "cues": "Band anchored in front, pull one elbow back past your ribs without twisting, then switch arms."
+    },
+    "band_bent_over_row": {
+      "name": "Band bent-over row",
+      "cues": "Stand on the band, hinge forward with a flat back, and pull your hands toward your lower ribs."
+    },
+    "band_lat_pulldown": {
+      "name": "Band lat pulldown",
+      "cues": "Anchor the band high, kneel or stand, and pull your elbows down to your sides toward your back pockets."
+    },
+    "seated_band_pulldown": {
+      "name": "Seated band pulldown",
+      "cues": "Sit tall, hold the band overhead with hands wide, and pull it apart and down behind your head to your neck."
+    },
+    "band_straight_arm_pulldown": {
+      "name": "Band straight-arm pulldown",
+      "cues": "Band anchored high, arms straight, sweep your hands down to your thighs while ribs stay down."
+    },
+    "band_hammer_curl": {
+      "name": "Band hammer curl",
+      "cues": "Stand on the band, palms facing each other, and curl up keeping elbows at your sides."
+    },
+    "seated_band_curl": {
+      "name": "Seated band curl",
+      "cues": "Sit tall with the band under your feet and curl your hands to your shoulders, elbows still."
+    },
+    "band_concentration_curl": {
+      "name": "Band concentration curl",
+      "cues": "Sit, band under one foot, elbow resting inside that thigh, and curl slowly up and down; switch sides."
+    },
+    "band_reverse_curl": {
+      "name": "Band reverse curl",
+      "cues": "Stand on the band, palms down, and curl up with straight wrists, keeping elbows by your sides."
+    },
+    "band_overhead_triceps_extension": {
+      "name": "Band overhead triceps extension",
+      "cues": "Band under your back foot or chair, hands behind your head; straighten elbows upward, elbows near ears."
+    },
+    "band_triceps_kickback": {
+      "name": "Band triceps kickback",
+      "cues": "Lean forward slightly, elbow tucked at your side, and straighten your arm back against the band."
+    },
+    "single_arm_band_pushdown": {
+      "name": "One-arm band pushdown",
+      "cues": "Band anchored high, elbow pinned to your side, push your hand down until the arm is straight; switch."
+    },
+    "band_wrist_extension": {
+      "name": "Band wrist extension",
+      "cues": "Forearm on your thigh, palm down, band under your foot; lift the back of your hand slowly and lower."
+    },
+    "band_wrist_curl": {
+      "name": "Band wrist curl",
+      "cues": "Forearm on your thigh, palm up, band under your foot; curl your hand up slowly and lower."
+    },
+    "band_wrist_rotation": {
+      "name": "Band wrist rotation",
+      "cues": "Elbow bent at your side, hold the band anchored beside you and turn your palm up and down slowly."
+    },
+    "incline_dumbbell_fly": {
+      "name": "Incline dumbbell fly",
+      "cues": "On an incline bench, elbows softly bent, open your arms until you feel a stretch, then hug them up."
+    },
+    "incline_dumbbell_squeeze_press": {
+      "name": "Incline squeeze press",
+      "cues": "On an incline bench, press the dumbbells together over your chest and keep squeezing as you press up."
+    },
+    "single_arm_incline_dumbbell_press": {
+      "name": "One-arm incline dumbbell press",
+      "cues": "On an incline bench, press one dumbbell up while your body stays still, then switch arms."
+    },
+    "reverse_grip_dumbbell_press": {
+      "name": "Reverse-grip dumbbell press",
+      "cues": "Lying on a bench, palms facing your face, press the dumbbells up over your chest with elbows tucked."
+    },
+    "dumbbell_fly": {
+      "name": "Dumbbell fly",
+      "cues": "Lying on a bench, elbows softly bent, lower the dumbbells out wide to chest level and hug them back up."
+    },
+    "dumbbell_squeeze_press": {
+      "name": "Dumbbell squeeze press",
+      "cues": "Lying on a bench, press the dumbbells firmly together and keep them touching as you press up."
+    },
+    "dumbbell_floor_fly": {
+      "name": "Dumbbell floor fly",
+      "cues": "Lie on the floor, elbows softly bent, lower the dumbbells until your upper arms touch down, then hug up."
+    },
+    "bridge_floor_press": {
+      "name": "Bridge floor press",
+      "cues": "Lie on the floor, lift your hips into a bridge and press the dumbbells up over your lower chest."
+    },
+    "single_arm_bridge_floor_press": {
+      "name": "One-arm bridge floor press",
+      "cues": "Hold a hip bridge and press one dumbbell up over your lower chest without letting your hips tilt."
+    },
+    "bridge_floor_squeeze_press": {
+      "name": "Bridge squeeze press",
+      "cues": "Hold a hip bridge on the floor, press the dumbbells together and push them up over your lower chest."
+    },
+    "decline_dumbbell_press": {
+      "name": "Decline dumbbell press",
+      "cues": "On a decline bench with feet secured, press the dumbbells up over your lower chest, then lower slowly."
+    },
+    "dumbbell_pullover": {
+      "name": "Dumbbell pullover",
+      "cues": "Lying on a bench, hold one dumbbell over your chest and lower it behind your head only as far as is comfortable."
+    },
+    "dumbbell_lateral_raise": {
+      "name": "Dumbbell lateral raise",
+      "cues": "Elbows soft, raise the dumbbells out to your sides up to shoulder height, then lower slowly."
+    },
+    "seated_dumbbell_lateral_raise": {
+      "name": "Seated lateral raise",
+      "cues": "Sit tall on a chair, arms at your sides, and raise the dumbbells out to shoulder height."
+    },
+    "leaning_lateral_raise": {
+      "name": "Supported leaning lateral raise",
+      "cues": "Hold a sturdy post with one hand, lean away slightly, and raise the dumbbell out to shoulder height."
+    },
+    "dumbbell_front_raise": {
+      "name": "Dumbbell front raise",
+      "cues": "Raise the dumbbells in front of you to shoulder height with soft elbows, then lower with control."
+    },
+    "seated_neutral_dumbbell_press": {
+      "name": "Seated neutral-grip press",
+      "cues": "Sit with back support, palms facing each other, and press the dumbbells up without arching your back."
+    },
+    "dumbbell_high_pull": {
+      "name": "Dumbbell high pull",
+      "cues": "Pull the dumbbells up with elbows out, stopping at chest height so elbows never go above shoulders."
+    },
+    "dumbbell_reverse_fly": {
+      "name": "Bent-over dumbbell reverse fly",
+      "cues": "Hinge forward with a flat back and raise light dumbbells out to the sides, squeezing shoulder blades."
+    },
+    "chest_supported_reverse_fly": {
+      "name": "Chest-supported reverse fly",
+      "cues": "Lie chest-down on an incline bench and raise the dumbbells out to the sides without shrugging."
+    },
+    "seated_reverse_fly": {
+      "name": "Seated bent-over reverse fly",
+      "cues": "Sit at the chair edge, lean your chest toward your thighs, and raise the dumbbells out to the sides."
+    },
+    "side_lying_rear_delt_raise": {
+      "name": "Side-lying rear delt raise",
+      "cues": "Lie on your side, top arm straight in front, and lift the light dumbbell up toward the ceiling slowly."
+    },
+    "dumbbell_rear_delt_row": {
+      "name": "Dumbbell rear delt row",
+      "cues": "Chest on an incline bench, row the dumbbells up with elbows flared wide until they line up with shoulders."
+    },
+    "dumbbell_farmer_hold": {
+      "name": "Dumbbell farmer hold",
+      "cues": "Stand tall holding heavy dumbbells at your sides, shoulders down, and breathe steadily for the hold."
+    },
+    "dumbbell_farmer_walk": {
+      "name": "Dumbbell farmer walk",
+      "cues": "Hold dumbbells at your sides and walk slowly in a clear space, standing tall with shoulders down."
+    },
+    "incline_prone_y_raise": {
+      "name": "Incline dumbbell Y raise",
+      "cues": "Chest-down on an incline bench, thumbs up, raise very light dumbbells into a Y without shrugging."
+    },
+    "chest_supported_dumbbell_row": {
+      "name": "Chest-supported dumbbell row",
+      "cues": "Lie chest-down on an incline bench and row the dumbbells to your ribs, squeezing shoulder blades."
+    },
+    "bent_over_dumbbell_row": {
+      "name": "Bent-over dumbbell row",
+      "cues": "Hinge forward with a flat back, knees soft, and row both dumbbells to your lower ribs."
+    },
+    "seated_dumbbell_row": {
+      "name": "Seated bent-over dumbbell row",
+      "cues": "Sit at the chair edge, lean forward with a long back, and row the dumbbells up beside your knees."
+    },
+    "staggered_stance_dumbbell_row": {
+      "name": "Supported one-arm lat row",
+      "cues": "One hand on a sturdy chair, lean forward and pull the dumbbell back toward your hip, elbow close."
+    },
+    "dumbbell_hammer_curl": {
+      "name": "Dumbbell hammer curl",
+      "cues": "Palms facing each other, curl the dumbbells up with elbows by your sides, then lower slowly."
+    },
+    "dumbbell_concentration_curl": {
+      "name": "Concentration curl",
+      "cues": "Sit, elbow resting inside your thigh, and curl the dumbbell up slowly, then lower all the way."
+    },
+    "incline_dumbbell_curl": {
+      "name": "Incline dumbbell curl",
+      "cues": "Sit back on an incline bench, arms hanging, and curl up without letting elbows swing forward."
+    },
+    "cross_body_hammer_curl": {
+      "name": "Cross-body hammer curl",
+      "cues": "Palm facing in, curl one dumbbell across your body toward the opposite shoulder; alternate arms."
+    },
+    "dumbbell_kickback": {
+      "name": "Dumbbell triceps kickback",
+      "cues": "One hand on the bench, upper arm along your side, straighten the elbow back and squeeze."
+    },
+    "seated_dumbbell_kickback": {
+      "name": "Seated triceps kickback",
+      "cues": "Sit at the chair edge leaning forward, elbows at your sides, and straighten both arms back."
+    },
+    "lying_dumbbell_triceps_extension": {
+      "name": "Lying dumbbell triceps extension",
+      "cues": "Lying on a bench, arms up, bend only the elbows to lower the dumbbells beside your head, then extend."
+    },
+    "close_grip_dumbbell_floor_press": {
+      "name": "Close-grip floor press",
+      "cues": "Lie on the floor, dumbbells together, elbows tucked; press up and lower until the upper arms touch down."
+    },
+    "dumbbell_wrist_extension": {
+      "name": "Dumbbell wrist extension",
+      "cues": "Forearm on your thigh, palm down, lift a light dumbbell with the back of your hand, then lower."
+    },
+    "dumbbell_reverse_curl": {
+      "name": "Dumbbell reverse curl",
+      "cues": "Palms down and wrists straight, curl the dumbbells up with elbows by your sides, then lower."
+    },
+    "dumbbell_wrist_rotation": {
+      "name": "Dumbbell wrist rotation",
+      "cues": "Forearm on your thigh, hold a light dumbbell at one end and slowly turn your palm up and down."
+    },
+    "incline_machine_press": {
+      "name": "Incline machine press",
+      "cues": "Set the seat so handles start at upper-chest height and press up and forward without locking elbows."
+    },
+    "incline_barbell_bench_press": {
+      "name": "Incline barbell press",
+      "cues": "With safety pins or a spotter, lower the bar to your upper chest and press it back up over your shoulders."
+    },
+    "incline_cable_fly": {
+      "name": "Incline cable fly",
+      "cues": "On an incline bench between low pulleys, elbows soft, bring the handles up and together over your chest."
+    },
+    "cable_incline_press": {
+      "name": "Standing cable incline press",
+      "cues": "Pulleys set low behind you, staggered stance, press the handles up and forward to eye level."
+    },
+    "barbell_bench_press": {
+      "name": "Barbell bench press",
+      "cues": "With safety pins or a spotter, lower the bar to mid-chest with elbows angled in and press back up."
+    },
+    "machine_chest_fly": {
+      "name": "Machine chest fly",
+      "cues": "Sit tall with handles at chest height and bring them together in front of you, then open slowly."
+    },
+    "cable_chest_fly": {
+      "name": "Cable chest fly",
+      "cues": "Pulleys at shoulder height, staggered stance, hug the handles together in front of your chest."
+    },
+    "assisted_dip_machine": {
+      "name": "Assisted dip machine",
+      "cues": "Kneel on the pad, lean slightly forward, and lower only until shoulders feel comfortable, then press up."
+    },
+    "parallel_bar_dip": {
+      "name": "Parallel bar dip",
+      "cues": "On a dip station, lean slightly forward and lower until elbows reach about 90 degrees, then press up."
+    },
+    "decline_barbell_bench_press": {
+      "name": "Decline barbell press",
+      "cues": "With a spotter, feet secured on the decline bench, lower the bar to your lower chest and press up."
+    },
+    "single_arm_high_to_low_cable_fly": {
+      "name": "One-arm high-to-low cable fly",
+      "cues": "Pulley set high to one side, sweep the handle down across your body to the opposite hip; switch."
+    },
+    "machine_shoulder_press": {
+      "name": "Machine shoulder press",
+      "cues": "Back against the pad, press the handles overhead without locking elbows, then lower to shoulder level."
+    },
+    "cable_lateral_raise": {
+      "name": "Cable lateral raise",
+      "cues": "Low pulley at your side, raise the handle out across and up to shoulder height, then lower slowly."
+    },
+    "machine_lateral_raise": {
+      "name": "Machine lateral raise",
+      "cues": "Sit with arms against the pads and raise them out to shoulder height, then lower with control."
+    },
+    "cable_front_raise": {
+      "name": "Cable front raise",
+      "cues": "Facing away from a low pulley, raise the handle in front of you to shoulder height with soft elbows."
+    },
+    "cable_high_pull": {
+      "name": "Cable high pull",
+      "cues": "Wide grip on a bar at a low pulley, pull elbows out and up only to chest height, then lower slowly."
+    },
+    "machine_reverse_fly": {
+      "name": "Machine reverse fly",
+      "cues": "Sit facing the pad, arms straight at shoulder height, and open them wide squeezing shoulder blades."
+    },
+    "cable_face_pull": {
+      "name": "Cable face pull",
+      "cues": "Rope at face height, pull it toward your eyes with elbows high, turning your hands back at the end."
+    },
+    "cable_reverse_fly": {
+      "name": "Cable reverse fly",
+      "cues": "Cross the cables from two high-ish pulleys and open your arms wide at shoulder height, then return."
+    },
+    "single_arm_cable_reverse_fly": {
+      "name": "One-arm cable reverse fly",
+      "cues": "Pulley at shoulder height, grab it with the far hand and sweep your arm out wide; switch sides."
+    },
+    "wide_grip_cable_row": {
+      "name": "Wide-grip cable row",
+      "cues": "Sit tall, wide grip on the bar, and row to your chest with elbows high and out, then release slowly."
+    },
+    "cable_shrug": {
+      "name": "Cable shrug",
+      "cues": "Hold the bar from a low pulley, arms straight, and lift your shoulders to your ears, then lower."
+    },
+    "barbell_shrug": {
+      "name": "Barbell shrug",
+      "cues": "Hold the bar in front of your thighs, stand tall, and lift your shoulders straight up without rolling."
+    },
+    "cable_y_raise": {
+      "name": "Cable Y raise",
+      "cues": "Cross two low cables and raise your arms up and out into a Y, thumbs up, stopping before any pinch."
+    },
+    "machine_row": {
+      "name": "Chest-supported machine row",
+      "cues": "Chest against the pad, pull the handles to your ribs and squeeze your shoulder blades together."
+    },
+    "barbell_bent_over_row": {
+      "name": "Barbell bent-over row",
+      "cues": "Hinge forward with a flat back and soft knees, and row the bar to your lower ribs without jerking."
+    },
+    "single_arm_cable_row": {
+      "name": "One-arm cable row",
+      "cues": "Pulley at chest height, pull one handle back to your ribs without twisting, then switch arms."
+    },
+    "inverted_bar_row": {
+      "name": "Inverted bar row",
+      "cues": "Set a bar in a rack at waist height, hang under it with a straight body, and pull your chest to the bar."
+    },
+    "pull_up": {
+      "name": "Pull-up",
+      "cues": "Hang with hands shoulder-width, palms away, and pull your chest toward the bar, then lower fully."
+    },
+    "chin_up": {
+      "name": "Chin-up",
+      "cues": "Hang with palms facing you and pull until your chin clears the bar, then lower with control."
+    },
+    "assisted_pull_up_machine": {
+      "name": "Assisted pull-up machine",
+      "cues": "Kneel on the pad, grip the handles, and pull your chest up toward them, then lower slowly."
+    },
+    "straight_arm_cable_pulldown": {
+      "name": "Straight-arm cable pulldown",
+      "cues": "Facing a high pulley, arms straight, sweep the bar down to your thighs while keeping ribs down."
+    },
+    "single_arm_cable_pulldown": {
+      "name": "One-arm cable pulldown",
+      "cues": "Seated or kneeling below a high pulley, pull one elbow down toward your hip, then reach up; switch."
+    },
+    "cable_curl": {
+      "name": "Cable curl",
+      "cues": "Facing a low pulley, elbows at your sides, curl the bar up to your chest and lower slowly."
+    },
+    "barbell_curl": {
+      "name": "Barbell curl",
+      "cues": "Stand tall, palms up, and curl the bar up without leaning back, keeping elbows at your sides."
+    },
+    "machine_preacher_curl": {
+      "name": "Machine preacher curl",
+      "cues": "Upper arms on the pad, curl the handles up, then lower slowly, stopping just short of locking out."
+    },
+    "cable_hammer_curl": {
+      "name": "Cable rope hammer curl",
+      "cues": "Rope on a low pulley, palms facing each other, curl up with elbows at your sides and lower slowly."
+    },
+    "cable_rope_pushdown": {
+      "name": "Cable rope pushdown",
+      "cues": "Elbows pinned to your sides, push the rope down and spread the ends at the bottom, then return."
+    },
+    "overhead_cable_triceps_extension": {
+      "name": "Overhead cable triceps extension",
+      "cues": "Facing away from the pulley, rope behind your head, straighten your elbows forward and up."
+    },
+    "close_grip_bench_press": {
+      "name": "Close-grip bench press",
+      "cues": "With a spotter, hands shoulder-width, lower the bar to your lower chest with elbows tucked and press."
+    },
+    "cable_kickback": {
+      "name": "Cable triceps kickback",
+      "cues": "Hinge slightly, upper arm along your side, and straighten your elbow back against the low cable."
+    },
+    "cable_reverse_curl": {
+      "name": "Cable reverse curl",
+      "cues": "Palms down on a low-pulley bar, wrists straight, curl up with elbows at your sides and lower slowly."
+    },
+    "barbell_reverse_curl": {
+      "name": "Barbell reverse curl",
+      "cues": "Palms down on the bar, wrists straight, curl up with elbows at your sides, then lower slowly."
+    },
+    "barbell_wrist_curl": {
+      "name": "Seated barbell wrist curl",
+      "cues": "Sit with forearms on your thighs, palms up, and curl a light bar up with your wrists only."
+    },
+    "dead_hang": {
+      "name": "Dead hang",
+      "cues": "Grip the bar and hang with feet just off a step, shoulders gently engaged; step down before grip fails."
+    },
+    "single_leg_glute_bridge": {
+      "name": "Single-leg glute bridge",
+      "cues": "Lie on your back, one foot planted, other leg up; lift hips level without arching."
+    },
+    "heel_dig_bridge": {
+      "name": "Heel-dig bridge",
+      "cues": "Feet farther out, toes up; dig heels down and lift hips a little, then lower slowly."
+    },
+    "clamshell": {
+      "name": "Side-lying clamshell",
+      "cues": "Lie on your side, knees bent, feet together; open the top knee without rolling back."
+    },
+    "side_lying_leg_raise": {
+      "name": "Side-lying leg raise",
+      "cues": "Lie on your side, bottom knee bent; lift the straight top leg slightly back, then lower slowly."
+    },
+    "supported_hip_abduction": {
+      "name": "Supported side leg raise",
+      "cues": "Hold a chair, stand tall; lift one leg out to the side, toes forward, and lower with control."
+    },
+    "supported_hip_extension": {
+      "name": "Supported leg kickback",
+      "cues": "Hold a chair; move one straight leg back a little, squeeze your glute, keep your back still."
+    },
+    "supported_hamstring_curl": {
+      "name": "Supported hamstring curl",
+      "cues": "Hold a chair, knees side by side; bend one knee to bring the heel up, then lower slowly."
+    },
+    "supported_single_leg_rdl": {
+      "name": "Supported single-leg hinge",
+      "cues": "Hold a chair, soft knee; hinge forward as the free leg goes back, back flat, then stand up."
+    },
+    "bodyweight_good_morning": {
+      "name": "Bodyweight good morning",
+      "cues": "Hands on chest, soft knees; push hips back with a flat back until you feel a stretch, then stand."
+    },
+    "chair_supported_squat": {
+      "name": "Chair-supported squat",
+      "cues": "Hold a chair back; sit hips back and down only as far as comfortable, then push up tall."
+    },
+    "supported_split_squat": {
+      "name": "Supported split squat",
+      "cues": "Hold a chair, one foot forward and one back; lower straight down a little, then rise."
+    },
+    "partial_wall_sit": {
+      "name": "Partial wall sit",
+      "cues": "Back on a wall, slide down a little, knees over ankles; hold and keep breathing."
+    },
+    "low_step_up": {
+      "name": "Low step-up",
+      "cues": "Hold a rail, step onto a low stair with the whole foot, stand tall, step down with control."
+    },
+    "sumo_squat": {
+      "name": "Sumo squat",
+      "cues": "Wide stance, toes slightly out; sit down with knees tracking over toes, then stand up."
+    },
+    "seated_pillow_squeeze": {
+      "name": "Seated pillow squeeze",
+      "cues": "Sit tall with a pillow or ball between your knees; squeeze for a few seconds, then relax."
+    },
+    "bridge_pillow_squeeze": {
+      "name": "Bridge with pillow squeeze",
+      "cues": "Pillow between knees; squeeze it and lift hips a little, hold a breath, then lower slowly."
+    },
+    "short_lever_copenhagen": {
+      "name": "Short Copenhagen plank",
+      "cues": "Side plank on your elbow, top knee on a chair seat; lift your hips in line and hold."
+    },
+    "seated_knee_extension": {
+      "name": "Seated knee extension",
+      "cues": "Sit tall, hold the seat; straighten one knee, pause, then lower slowly."
+    },
+    "seated_march_hold": {
+      "name": "Seated march with hold",
+      "cues": "Sit tall without leaning back; lift one knee, hold 3 seconds, lower, switch sides."
+    },
+    "straight_leg_raise": {
+      "name": "Straight-leg raise",
+      "cues": "Lie on your back, one knee bent; tighten the other thigh and lift the straight leg to knee height."
+    },
+    "short_arc_quad": {
+      "name": "Short-arc knee straighten",
+      "cues": "Lie back with a rolled towel under one knee; straighten the knee to lift the heel, hold, lower."
+    },
+    "door_frame_squat_hold": {
+      "name": "Door-frame squat hold",
+      "cues": "Hold a door frame, lean back with arms straight, shins upright; sit into a small squat and hold."
+    },
+    "partial_sit_to_stand": {
+      "name": "High-chair sit-to-stand",
+      "cues": "From a high seat, hands on armrests if needed; lean forward, stand up, then sit down slowly."
+    },
+    "supported_single_leg_calf_raise": {
+      "name": "Supported single-leg calf raise",
+      "cues": "Hold a counter, stand on one foot; rise onto the ball of the foot, then lower slowly."
+    },
+    "seated_heel_raise": {
+      "name": "Seated heel raise",
+      "cues": "Sit tall, feet flat; lift both heels as high as you can, pause, lower slowly."
+    },
+    "seated_toe_raise": {
+      "name": "Seated toe raise",
+      "cues": "Sit tall, heels on the floor; lift your toes and forefoot up, pause, lower slowly."
+    },
+    "seated_heel_toe_rock": {
+      "name": "Seated heel-toe rock",
+      "cues": "Sit tall, feet flat; rock up onto your toes, then back onto your heels, slow and steady."
+    },
+    "supported_toe_raise": {
+      "name": "Supported toe raise",
+      "cues": "Hold a counter, stand tall; lift your toes off the floor without leaning back, then lower."
+    },
+    "heel_walk": {
+      "name": "Heel walk",
+      "cues": "Lift your toes and walk slowly on your heels, standing tall, near a wall for safety."
+    },
+    "seated_crunch_brace": {
+      "name": "Seated crunch",
+      "cues": "Sit near the front of a chair; brace, curl your ribs toward your hips a little, then sit tall."
+    },
+    "seated_side_bend": {
+      "name": "Seated side bend",
+      "cues": "Sit tall, hands by your sides; slide one hand toward the floor, then pull yourself upright."
+    },
+    "seated_lean_back_hold": {
+      "name": "Seated lean-back hold",
+      "cues": "Sit near the front of a chair, arms crossed; lean back a little with a long spine and hold."
+    },
+    "standing_oblique_crunch": {
+      "name": "Standing side crunch",
+      "cues": "Hold a chair with one hand; lift the outside knee as the same elbow comes down to meet it."
+    },
+    "standing_supported_bird_dog": {
+      "name": "Standing bird dog",
+      "cues": "One hand on a wall; reach the other arm forward as the opposite leg goes back, hold, switch."
+    },
+    "incline_plank": {
+      "name": "Incline plank",
+      "cues": "Hands on a counter or sturdy table, body in a straight line; brace and hold, breathing."
+    },
+    "dead_bug_heel_tap": {
+      "name": "Dead bug heel tap",
+      "cues": "On your back, knees up at 90 degrees, back flat; lower one heel to tap the floor, return, switch."
+    },
+    "kneeling_side_plank": {
+      "name": "Kneeling side plank",
+      "cues": "On your side, elbow under shoulder, knees bent; lift hips in line with your body and hold."
+    },
+    "bicycle_crunch": {
+      "name": "Bicycle crunch",
+      "cues": "On your back, hands by ears; bring one elbow toward the opposite knee slowly, without pulling your neck."
+    },
+    "prone_back_extension": {
+      "name": "Prone back extension",
+      "cues": "Lie face down, hands by your hips; lift your chest a little, eyes down, then lower slowly."
+    },
+    "band_seated_leg_extension": {
+      "name": "Band seated leg extension",
+      "cues": "Band around a chair leg and your ankle; straighten the knee against it, then bend slowly."
+    },
+    "band_seated_leg_press": {
+      "name": "Band seated leg press",
+      "cues": "Sit tall, band under one foot, ends in hands; push the foot forward until the leg is straight, return."
+    },
+    "band_seated_hip_abduction": {
+      "name": "Band seated hip abduction",
+      "cues": "Sit tall, band above your knees; press knees apart, pause, then bring them back slowly."
+    },
+    "band_seated_trunk_rotation": {
+      "name": "Band seated trunk rotation",
+      "cues": "Band anchored to one side at chest height; sit tall and turn your chest away a little, return slowly."
+    },
+    "band_seated_hamstring_curl": {
+      "name": "Band seated hamstring curl",
+      "cues": "Band anchored in front around your ankle; pull the heel back under the chair, then return slowly."
+    },
+    "band_seated_calf_press": {
+      "name": "Band seated calf press",
+      "cues": "Sit with one leg straight, band around the ball of the foot; point your toes, then return slowly."
+    },
+    "band_seated_dorsiflexion": {
+      "name": "Band seated toe pull",
+      "cues": "Band anchored in front over your forefoot; pull your toes toward you, then return slowly."
+    },
+    "band_glute_bridge": {
+      "name": "Band glute bridge",
+      "cues": "Band above your knees; push knees out gently and lift hips, squeeze, then lower slowly."
+    },
+    "band_lateral_walk": {
+      "name": "Band side step",
+      "cues": "Band above your knees, slight squat; step sideways along a counter, keeping tension, then return."
+    },
+    "band_standing_kickback": {
+      "name": "Band standing kickback",
+      "cues": "Band around both ankles, hold a chair; press one leg back a little without arching, return slowly."
+    },
+    "band_good_morning": {
+      "name": "Band good morning",
+      "cues": "Band under feet and behind your neck base; hinge at hips with a flat back, then stand tall."
+    },
+    "band_squat": {
+      "name": "Band squat",
+      "cues": "Stand on the band, hands at shoulders; sit down as far as comfortable, then push up tall."
+    },
+    "band_woodchop": {
+      "name": "Band woodchop",
+      "cues": "Band anchored high to one side; pull diagonally down across your body, turning from the trunk."
+    },
+    "band_dead_bug": {
+      "name": "Band dead bug",
+      "cues": "Band anchored behind your head, arms straight; keep it tight and lower one leg at a time, back flat."
+    },
+    "band_standing_hip_adduction": {
+      "name": "Band standing hip adduction",
+      "cues": "Band anchored to one side at ankle height; hold a chair and pull the leg across your body, return."
+    },
+    "dumbbell_split_squat": {
+      "name": "Dumbbell split squat",
+      "cues": "Dumbbells at your sides, one foot forward; lower straight down with a tall chest, then rise."
+    },
+    "dumbbell_box_squat": {
+      "name": "Dumbbell box squat",
+      "cues": "Hold a dumbbell at your chest; sit back to lightly touch the bench, then stand up tall."
+    },
+    "dumbbell_hip_thrust": {
+      "name": "Dumbbell hip thrust",
+      "cues": "Upper back on a bench, dumbbell on hips; drive hips up until level, chin tucked, lower slowly."
+    },
+    "dumbbell_sumo_squat": {
+      "name": "Dumbbell sumo squat",
+      "cues": "Wide stance, one dumbbell hanging between your legs; sit down with knees out, then stand."
+    },
+    "dumbbell_single_leg_rdl": {
+      "name": "Dumbbell single-leg deadlift",
+      "cues": "Dumbbell in one hand, other hand on a wall; hinge on one leg with a flat back, then stand up."
+    },
+    "dumbbell_seated_calf_raise": {
+      "name": "Dumbbell seated calf raise",
+      "cues": "Sit tall, dumbbells resting on your thighs near the knees; lift your heels high, lower slowly."
+    },
+    "dumbbell_suitcase_carry": {
+      "name": "Suitcase carry",
+      "cues": "Hold one dumbbell at your side and walk slowly, standing tall without leaning; switch hands."
+    },
+    "dumbbell_dead_bug": {
+      "name": "Dumbbell dead bug",
+      "cues": "On your back, hold a light dumbbell above your chest; lower one leg at a time, back flat."
+    },
+    "machine_leg_extension": {
+      "name": "Machine leg extension",
+      "cues": "Pad on your lower shins, back against the seat; straighten your knees smoothly, lower slowly."
+    },
+    "seated_leg_curl_machine": {
+      "name": "Seated leg curl",
+      "cues": "Pad above your heels, thigh pad snug; bend your knees to pull the pad down, return slowly."
+    },
+    "hip_abduction_machine": {
+      "name": "Hip abduction machine",
+      "cues": "Sit tall, pads outside your knees; press your legs apart, pause, then close slowly."
+    },
+    "hip_adduction_machine": {
+      "name": "Hip adduction machine",
+      "cues": "Sit tall, pads inside your knees; squeeze your legs together, then open slowly to a comfy width."
+    },
+    "barbell_back_squat": {
+      "name": "Barbell back squat",
+      "cues": "Bar on upper back in a rack with safeties; brace, sit down to a depth you control, drive up."
+    },
+    "barbell_hip_thrust": {
+      "name": "Barbell hip thrust",
+      "cues": "Upper back on a bench, padded bar on hips; drive hips up until level, pause, lower slowly."
+    },
+    "cable_pull_through": {
+      "name": "Cable pull-through",
+      "cues": "Face away from a low cable, rope between legs; hinge back, then drive hips forward to stand."
+    },
+    "seated_calf_raise_machine": {
+      "name": "Seated calf raise machine",
+      "cues": "Pad on your thighs, balls of feet on the step; lift heels high, lower slowly to a gentle stretch."
+    },
+    "cable_woodchop": {
+      "name": "Cable woodchop",
+      "cues": "Cable set high, feet wide; pull the handle down across your body, turning chest and hips together."
+    },
+    "cable_kneeling_crunch": {
+      "name": "Cable kneeling crunch",
+      "cues": "Kneel facing a high cable, rope by your head; curl ribs toward hips without sitting back, return."
+    },
+    "back_extension_bench": {
+      "name": "45-degree back extension",
+      "cues": "Hips on the pad, arms crossed; lower with a long spine, then rise until your body is in line."
+    },
+    "cable_terminal_knee_extension": {
+      "name": "Cable terminal knee extension",
+      "cues": "Strap behind one knee, facing a low cable; start slightly bent, then press the knee fully straight."
+    },
+    "machine_ab_crunch": {
+      "name": "Machine ab crunch",
+      "cues": "Sit tall, set a light weight; curl your chest toward your hips with your abs, return slowly."
+    },
+    "cable_pallof_press": {
+      "name": "Cable Pallof press",
+      "cues": "Stand side-on to a chest-high cable; press the handle straight out without turning, hold, return."
+    },
+    "wu_seated_shoulder_rolls": {
+      "name": "Seated shoulder rolls",
+      "cues": "Sit tall and roll your shoulders up, back and down in slow circles."
+    },
+    "wu_seated_reach_ups": {
+      "name": "Seated reach-ups",
+      "cues": "Sit tall and reach one arm, then the other, up toward the ceiling without shrugging."
+    },
+    "wu_seated_punches": {
+      "name": "Seated forward punches",
+      "cues": "Sit tall and punch forward one arm at a time at an easy pace, keeping elbows soft."
+    },
+    "wu_seated_wrist_circles": {
+      "name": "Seated wrist circles",
+      "cues": "Hold your arms in front and circle your wrists slowly both ways, then open and close your hands."
+    },
+    "wu_seated_elbow_openers": {
+      "name": "Seated elbow openers",
+      "cues": "With fingertips on your shoulders, bring elbows together in front, then open them wide."
+    },
+    "wu_seated_side_bends": {
+      "name": "Seated side bends",
+      "cues": "Sit tall with feet flat and slide one hand toward the floor, then the other, in a slow rhythm."
+    },
+    "wu_seated_march_arm_swing": {
+      "name": "Seated march with arm swing",
+      "cues": "Sit tall, lift your knees in turn and swing your arms as if walking, at a comfortable pace."
+    },
+    "wu_seated_ankle_circles": {
+      "name": "Seated ankle circles",
+      "cues": "Lift one foot slightly and draw slow circles with your toes both ways, then switch feet."
+    },
+    "wu_seated_knee_extensions": {
+      "name": "Seated leg kicks",
+      "cues": "Sit tall and slowly straighten one knee, then lower it; alternate legs with control."
+    },
+    "wu_seated_heel_toe_taps": {
+      "name": "Seated heel-toe taps",
+      "cues": "Keep your feet on the floor and rock from heels to toes at an easy, steady rhythm."
+    },
+    "wu_wall_slides": {
+      "name": "Wall slides",
+      "cues": "Stand with your back and forearms on a wall and slide your arms up and down slowly without pain."
+    },
+    "wu_arm_hug_swings": {
+      "name": "Open-and-hug arm swings",
+      "cues": "Swing your arms wide open, then across your chest in a gentle hug, at a relaxed pace."
+    },
+    "wu_standing_t_rotations": {
+      "name": "Standing T rotations",
+      "cues": "Stand with arms out in a T and turn your upper body side to side, letting your gaze follow a hand."
+    },
+    "wu_lateral_leg_swings": {
+      "name": "Side-to-side leg swings",
+      "cues": "Hold a wall or chair and swing one leg gently across your body and out to the side."
+    },
+    "wu_hip_gate_openers": {
+      "name": "Hip gate openers",
+      "cues": "Lift one knee in front, turn it out to the side and lower it; hold support if you need it."
+    },
+    "wu_ankle_rocks": {
+      "name": "Knee-to-wall ankle rocks",
+      "cues": "Face a wall with one foot forward and gently drive the knee toward the wall, keeping the heel down."
+    },
+    "wu_heel_toe_rocks": {
+      "name": "Standing heel-toe rocks",
+      "cues": "Hold support and rock slowly up onto your toes, then back onto your heels."
+    },
+    "wu_mini_squats": {
+      "name": "Warm-up mini squats",
+      "cues": "Hold support, bend your knees a little and stand back up in an easy, smooth rhythm."
+    },
+    "wu_step_touch": {
+      "name": "Step touch",
+      "cues": "Step to the side, bring the other foot in to tap, and repeat side to side with relaxed arms."
+    },
+    "wu_step_jacks": {
+      "name": "Low-impact step jacks",
+      "cues": "Step one foot out as your arms rise, step back in, then switch sides; no jumping."
+    },
+    "wu_march_overhead_reach": {
+      "name": "March with overhead reach",
+      "cues": "March in place and reach both arms up on every fourth step, breathing easily."
+    },
+    "wu_side_step_reach": {
+      "name": "Side step with reach",
+      "cues": "Step wide to one side and reach the opposite arm over your head, then switch sides."
+    },
+    "wu_inchworm_lite": {
+      "name": "Inchworm lite",
+      "cues": "Bend your knees, walk your hands out to a high plank, walk them back and roll up slowly."
+    },
+    "kid_bear_crawl": {
+      "name": "Animal walk: bear crawl",
+      "cues": "On hands and feet with hips up, walk like a bear slowly; keep fingers spread and stop if wrists hurt."
+    },
+    "kid_crab_walk": {
+      "name": "Animal walk: crab walk",
+      "cues": "Sit, place hands behind you, lift your hips and walk like a crab; go slow and stop if wrists hurt."
+    },
+    "kid_frog_hops": {
+      "name": "Little frog hops",
+      "cues": "Squat like a frog, hop forward just a little and land softly on bent knees; tiny hops only."
+    },
+    "kid_statue_freeze": {
+      "name": "Statue freeze",
+      "cues": "Walk around, then on 'freeze' stop and hold a statue pose on one foot; touch a wall if you wobble."
+    },
+    "kid_soft_star_jumps": {
+      "name": "Soft star jumps",
+      "cues": "Jump up into a big star shape and land softly on bent knees; rest between jumps."
+    },
+    "kid_reach_for_the_stars": {
+      "name": "Reach for the stars",
+      "cues": "Stretch up tall on your toes and reach for the stars, then crouch softly to pick them up."
+    },
+    "kid_penguin_march": {
+      "name": "Penguin march",
+      "cues": "Keep arms at your sides like flippers and march in place, lifting knees high like a happy penguin."
+    },
+    "st_seated_chest_opener": {
+      "name": "Seated chest opener",
+      "cues": "Sit tall, hold the sides of the chair seat behind your hips and gently lift your chest."
+    },
+    "st_clasped_hands_chest_opener": {
+      "name": "Clasped-hands chest stretch",
+      "cues": "Clasp your hands behind your back, straighten your arms gently and lift your chest."
+    },
+    "st_wall_front_shoulder_stretch": {
+      "name": "Wall front shoulder stretch",
+      "cues": "Place your palm on a wall behind you at shoulder height and turn your body away slowly."
+    },
+    "st_thread_the_needle": {
+      "name": "Thread the needle",
+      "cues": "On hands and knees, slide one arm under your body, resting shoulder and cheek down, and breathe."
+    },
+    "st_wall_lat_stretch": {
+      "name": "Wall lat stretch",
+      "cues": "Put your hands on a wall, step back and hinge at the hips until you feel a stretch along your sides."
+    },
+    "st_seated_forward_reach": {
+      "name": "Seated upper-back reach",
+      "cues": "Sit tall, clasp your hands in front at chest height and round your upper back as you push them away."
+    },
+    "st_seated_neck_stretch": {
+      "name": "Seated neck stretch",
+      "cues": "Sit tall, hold the chair with one hand and tilt your head gently to the other side; no pulling."
+    },
+    "st_neck_diagonal_stretch": {
+      "name": "Diagonal neck stretch",
+      "cues": "Turn your head slightly to one side and lower your chin toward that armpit; breathe and relax."
+    },
+    "st_table_biceps_stretch": {
+      "name": "Table biceps stretch",
+      "cues": "Stand with your back to a table, rest your palms on it with arms straight and bend your knees slightly."
+    },
+    "st_arm_out_biceps_stretch": {
+      "name": "Arm-out biceps stretch",
+      "cues": "Hold one arm out to the side, thumb pointing down, and gently move it back until you feel a stretch."
+    },
+    "st_wall_triceps_stretch": {
+      "name": "Wall triceps stretch",
+      "cues": "Bend one elbow overhead, rest it on a wall and lean in gently until the back of the arm stretches."
+    },
+    "st_bent_arm_cross_triceps": {
+      "name": "Bent-arm cross-body stretch",
+      "cues": "Bend one elbow, hand toward the opposite shoulder, and gently press the elbow across with your other hand."
+    },
+    "st_wrist_flexor_stretch": {
+      "name": "Wrist flexor stretch",
+      "cues": "Hold one arm out, palm up, and gently pull the fingers down and back with your other hand."
+    },
+    "st_wrist_extensor_stretch": {
+      "name": "Wrist extensor stretch",
+      "cues": "Hold one arm out, palm down, and gently bend the hand down with your other hand."
+    },
+    "st_prayer_stretch": {
+      "name": "Prayer wrist stretch",
+      "cues": "Press your palms together in front of your chest and slowly lower them until the wrists stretch."
+    },
+    "st_seated_side_reach": {
+      "name": "Seated side reach",
+      "cues": "Sit tall, hold the chair with one hand and reach the other arm up and over to the side."
+    },
+    "st_seated_twist_stretch": {
+      "name": "Seated twist stretch",
+      "cues": "Sit tall, place one hand on the opposite knee and turn gently to look behind you; keep hips facing forward."
+    },
+    "st_cobra_stretch": {
+      "name": "Gentle cobra stretch",
+      "cues": "Lie face down, place hands under your shoulders and lift your chest only as high as feels easy."
+    },
+    "st_knees_to_chest": {
+      "name": "Knees-to-chest stretch",
+      "cues": "Lie on your back, hug both knees toward your chest and rock gently side to side."
+    },
+    "st_seated_forward_fold": {
+      "name": "Seated forward fold",
+      "cues": "Sit with feet wide and let your chest lower slowly toward your thighs, hands sliding down your legs."
+    },
+    "st_supine_twist": {
+      "name": "Lying knee drop twist",
+      "cues": "Lie on your back with knees bent and let them fall slowly to one side, shoulders staying down."
+    },
+    "st_supine_figure_four": {
+      "name": "Lying figure-four stretch",
+      "cues": "Lie on your back, cross one ankle over the other knee and gently draw the legs toward you."
+    },
+    "st_standing_figure_four": {
+      "name": "Supported standing figure-four",
+      "cues": "Hold a chair, cross one ankle over the other knee and sit back a little until the hip stretches."
+    },
+    "st_standing_hip_flexor_stretch": {
+      "name": "Standing hip flexor stretch",
+      "cues": "Hold support, step one foot back, tuck your tailbone and shift forward until the front of the hip stretches."
+    },
+    "st_seated_hip_flexor_stretch": {
+      "name": "Seated hip flexor stretch",
+      "cues": "Sit sideways on a sturdy chair edge, slide the outside leg back with toes down and sit tall."
+    },
+    "st_butterfly_stretch": {
+      "name": "Butterfly stretch",
+      "cues": "Sit on the floor, bring the soles of your feet together and let your knees drop gently outward."
+    },
+    "st_side_lunge_stretch": {
+      "name": "Side lunge stretch",
+      "cues": "Stand wide, bend one knee and shift your hips toward it, keeping the other leg straight."
+    },
+    "st_seated_wide_leg_stretch": {
+      "name": "Seated wide-leg stretch",
+      "cues": "Sit on a chair with knees wide, hands on inner thighs, and lean forward gently with a long back."
+    },
+    "st_side_lying_quad_stretch": {
+      "name": "Side-lying quad stretch",
+      "cues": "Lie on your side, hold your top ankle and draw the heel toward your seat, knees together."
+    },
+    "st_prone_quad_stretch": {
+      "name": "Face-down quad stretch",
+      "cues": "Lie face down, bend one knee and hold the ankle, easing the heel toward your seat without pain."
+    },
+    "st_standing_hamstring_stretch": {
+      "name": "Heel-on-step hamstring stretch",
+      "cues": "Hold support, rest one heel on a low step with the knee soft and hinge forward with a long back."
+    },
+    "st_supine_hamstring_stretch": {
+      "name": "Lying hamstring stretch",
+      "cues": "Lie on your back, hold behind one thigh and straighten the knee toward the ceiling as far as is easy."
+    },
+    "st_step_calf_stretch": {
+      "name": "Step calf stretch",
+      "cues": "Hold a rail, stand with the ball of one foot on a step and let the heel sink slowly below it."
+    },
+    "st_seated_calf_stretch": {
+      "name": "Seated calf stretch",
+      "cues": "Sit near the chair edge, straighten one leg with the heel down and pull your toes back toward you."
+    },
+    "st_kneeling_shin_stretch": {
+      "name": "Kneeling shin stretch",
+      "cues": "Kneel on a mat with the tops of your feet flat and sit back gently toward your heels."
+    },
+    "st_standing_shin_stretch": {
+      "name": "Standing shin stretch",
+      "cues": "Hold support, place the top of one foot on the floor behind you and gently press the ankle forward."
+    },
+    "st_seated_shin_stretch": {
+      "name": "Seated shin stretch",
+      "cues": "Sit near the chair edge, tuck one foot back under the seat with the top of the toes on the floor."
+    },
+    "bal_seated_weight_shifts": {
+      "name": "Seated weight shifts",
+      "cues": "Sit tall without leaning back and shift your weight slowly to one hip, then the other."
+    },
+    "bal_seated_reach_outs": {
+      "name": "Seated reach-outs",
+      "cues": "Sit tall with feet flat and reach forward and to the sides as far as you can stay steady."
+    },
+    "bal_seated_trunk_control": {
+      "name": "Seated trunk control",
+      "cues": "Sit away from the backrest, cross your arms and lift one foot slightly; hold steady, then switch."
+    },
+    "bal_chair_single_leg_hold": {
+      "name": "Chair-supported knee lift hold",
+      "cues": "Hold the back of a chair with both hands, lift one knee a little and hold, standing tall."
+    },
+    "bal_supported_tandem_stance": {
+      "name": "Supported tandem stance",
+      "cues": "Hold a counter and stand with one foot directly in front of the other, heel to toe; hold, then switch."
+    },
+    "bal_supported_heel_toe_walk": {
+      "name": "Supported heel-to-toe walk",
+      "cues": "With one hand on a counter or wall, walk slowly placing each heel right in front of the other toes."
+    },
+    "bal_supported_side_steps": {
+      "name": "Supported side steps",
+      "cues": "Face a counter with hands on it and take slow side steps, toes forward, then come back."
+    },
+    "bal_sit_to_stand_hold": {
+      "name": "Sit-to-stand balance hold",
+      "cues": "Stand up from a chair using the armrests if needed, pause tall for three breaths, then sit slowly."
+    },
+    "bal_supported_clock_reach": {
+      "name": "Supported clock reach",
+      "cues": "Hold a chair with one hand, stand on the near leg and point the other foot to 12, 3 and 6 o'clock."
+    },
+    "bal_tandem_stance": {
+      "name": "Tandem stance",
+      "cues": "Stand near a wall with one foot right in front of the other, heel to toe, and hold without touching."
+    },
+    "bal_single_leg_reach": {
+      "name": "Single-leg forward reach",
+      "cues": "Stand on one leg, knee soft, and hinge to reach forward with your hands, then return tall."
+    },
+    "rx_iso_er_45_doorframe": {
+      "name": "Door-frame ER hold at 45°",
+      "cues": "Arm out 45°, elbow bent, press the back of your hand gently into a door frame and hold without pain."
+    },
+    "rx_iso_ir_45_doorframe": {
+      "name": "Door-frame IR hold at 45°",
+      "cues": "Arm out 45°, elbow bent, press your palm gently into a door frame as if turning inward, and hold."
+    },
+    "rx_iso_er_90_wall": {
+      "name": "Wall ER hold at 90°",
+      "cues": "Elbow at shoulder height against a wall, forearm up, press the back of the hand lightly into the wall and hold."
+    },
+    "rx_iso_shoulder_extension_wall": {
+      "name": "Wall shoulder extension hold",
+      "cues": "Back to a wall, arm straight at your side, press the back of the arm gently into the wall and hold."
+    },
+    "rx_hand_behind_back_press": {
+      "name": "Hand-behind-back press",
+      "cues": "Rest the back of your hand on your lower back only as far as comfortable, press it gently away and hold."
+    },
+    "rx_prone_arm_lift_hold": {
+      "name": "Face-down arm lift hold",
+      "cues": "Lie face down, arms by your sides, lift the hands a little off the floor, squeeze the shoulder blades and hold."
+    },
+    "rx_iso_overhead_wall_press": {
+      "name": "Wall overhead press hold",
+      "cues": "Face a wall, hands on it as high as is pain-free, press gently into the wall and hold with ribs down."
+    },
+    "rx_wall_y_hold": {
+      "name": "Wall Y lift-off hold",
+      "cues": "Face a wall, arms in a Y as high as comfortable, lift the hands just off the wall and hold."
+    },
+    "rx_scapular_setting_hold": {
+      "name": "Shoulder blade setting hold",
+      "cues": "Sit or stand tall, draw the shoulder blades gently back and down, hold without shrugging."
+    },
+    "rx_band_row_hold": {
+      "name": "Band row hold",
+      "cues": "Pull a light band to your ribs, squeeze the shoulder blades and hold with the neck relaxed."
+    },
+    "rx_wall_push_hold": {
+      "name": "Wall push-up hold",
+      "cues": "Hands on a wall at chest height, lean in to a comfortable bend and hold with a straight body."
+    },
+    "rx_suitcase_hold": {
+      "name": "Suitcase hold",
+      "cues": "Hold one dumbbell at your side, stand tall without leaning, shoulders level, and breathe."
+    },
+    "rx_front_rack_hold": {
+      "name": "Goblet carry hold",
+      "cues": "Hold one dumbbell upright against your chest, elbows in, stand tall and breathe steadily."
+    },
+    "rx_waiter_hold": {
+      "name": "Overhead waiter hold",
+      "cues": "Hold a light dumbbell overhead with a straight arm, ribs down, only if pain-free, and hold."
+    },
+    "rx_band_er_45": {
+      "name": "Band ER at 45°",
+      "cues": "Arm out 45°, elbow bent, rotate the forearm back against a light band only in the pain-free range."
+    },
+    "rx_band_internal_rotation": {
+      "name": "Band internal rotation",
+      "cues": "Elbow at your side, towel under the arm, turn the forearm in against a light band, pain-free range only."
+    },
+    "rx_side_lying_er": {
+      "name": "Side-lying external rotation",
+      "cues": "Lie on your side, elbow on your hip with a towel, lift a very light weight up slowly, pain-free range."
+    },
+    "rx_wall_slide_partial": {
+      "name": "Partial wall slide",
+      "cues": "Forearms on a wall, slide them up only as far as pain-free, then lower slowly."
+    },
+    "rx_wall_push_up_plus": {
+      "name": "Wall push-up plus",
+      "cues": "Hands on a wall, arms straight, let the shoulder blades come together, then push the wall away a bit more."
+    },
+    "rx_dumbbell_scaption": {
+      "name": "Dumbbell scaption raise",
+      "cues": "Thumbs up, raise light dumbbells in a slight V to shoulder height or less, lower slowly."
+    },
+    "rx_iso_curl_hold": {
+      "name": "Isometric curl hold",
+      "cues": "Elbow bent at 90°, press your palm up under a table or into your other hand and hold gently."
+    },
+    "rx_iso_triceps_press_hold": {
+      "name": "Isometric triceps press",
+      "cues": "Elbow bent at 90°, press the side of your fist down into a table and hold without pain."
+    },
+    "rx_chair_press_hold": {
+      "name": "Seated chair press hold",
+      "cues": "Sit on a sturdy chair, hands on the armrests, press down to unload the seat a little and hold."
+    },
+    "rx_band_curl_partial": {
+      "name": "Partial band curl",
+      "cues": "Stand on a light band and curl only through the pain-free part of the movement, lower slowly."
+    },
+    "rx_band_triceps_kickback_partial": {
+      "name": "Partial band kickback",
+      "cues": "Hinge slightly, elbow by your side, straighten the arm back against a light band in the pain-free range."
+    },
+    "rx_iso_wrist_flexion": {
+      "name": "Isometric wrist flexion",
+      "cues": "Forearm on a table, palm up, press the palm up into your other hand and hold without moving."
+    },
+    "rx_iso_wrist_flexion_table": {
+      "name": "Under-table palm lift hold",
+      "cues": "Sit at a table, fingers and palm under the edge, gently lift up with the wrist and hold."
+    },
+    "rx_dumbbell_wrist_hold": {
+      "name": "Palm-up dumbbell hold",
+      "cues": "Forearm on your thigh, palm up, hold a light dumbbell with the wrist level and still."
+    },
+    "rx_towel_grip_squeeze": {
+      "name": "Towel grip squeeze",
+      "cues": "Roll up a towel, squeeze it gently with your whole hand and hold, then relax."
+    },
+    "rx_iso_forearm_supination": {
+      "name": "Isometric palm-up turn",
+      "cues": "Elbow bent at your side, try to turn the palm up while your other hand stops it; hold gently."
+    },
+    "rx_iso_forearm_pronation": {
+      "name": "Isometric palm-down turn",
+      "cues": "Elbow bent at your side, try to turn the palm down while your other hand stops it; hold gently."
+    },
+    "rx_dumbbell_end_hold": {
+      "name": "Upright dumbbell end hold",
+      "cues": "Hold a light dumbbell by one end, forearm on your thigh, and keep it upright without tipping."
+    },
+    "rx_band_wrist_extension": {
+      "name": "Band wrist extension",
+      "cues": "Forearm on your thigh, palm down, lift the back of the hand against a light band in the pain-free range."
+    },
+    "rx_forearm_rotation_partial": {
+      "name": "Dumbbell forearm rotation",
+      "cues": "Forearm on your thigh, hold a light dumbbell by one end and turn palm up and down, pain-free range only."
+    },
+    "rx_iso_neck_flexion": {
+      "name": "Isometric neck flexion",
+      "cues": "Palm on your forehead, gently press the head forward into the hand without moving, and hold."
+    },
+    "rx_iso_neck_extension": {
+      "name": "Isometric neck extension",
+      "cues": "Hands behind your head, chin level, press the head gently back into the hands and hold."
+    },
+    "rx_wall_head_press": {
+      "name": "Wall head press",
+      "cues": "Back to a wall, chin tucked, press the back of your head gently into the wall and hold."
+    },
+    "rx_iso_neck_rotation": {
+      "name": "Isometric neck rotation",
+      "cues": "Hand on the side of your face, try to turn the head gently into the hand without moving, and hold."
+    },
+    "rx_towel_neck_rotation_hold": {
+      "name": "Towel neck turn hold",
+      "cues": "Towel behind your head, hold both ends, try to turn the head while the towel stops it; hold gently."
+    },
+    "rx_iso_neck_side_bend": {
+      "name": "Isometric neck side bend",
+      "cues": "Hand above your ear, gently press the head sideways into the hand without moving, and hold."
+    },
+    "rx_side_lying_head_lift_hold": {
+      "name": "Side-lying head lift hold",
+      "cues": "Lie on your side, lift the head just off the pillow keeping the nose forward, and hold briefly."
+    },
+    "rx_neck_four_way_hold": {
+      "name": "Four-way neck hold",
+      "cues": "Press your head gently into your hand front, back, and each side, holding each without moving."
+    },
+    "rx_chin_tuck_rotation": {
+      "name": "Chin-tuck head turn",
+      "cues": "Tuck the chin slightly and turn the head slowly side to side only within the pain-free range."
+    },
+    "rx_quadruped_neck_extension": {
+      "name": "Hands-and-knees neck lift",
+      "cues": "On hands and knees, chin tucked, look slowly up a little and back down within the pain-free range."
+    },
+    "rx_mcgill_curl_up_hold": {
+      "name": "Curl-up hold",
+      "cues": "Lie down, one knee bent, hands under your low back, lift head and shoulders slightly and hold."
+    },
+    "rx_dead_bug_hold": {
+      "name": "Dead bug hold",
+      "cues": "Lie on your back, knees and hips at 90°, low back gently flat, arms up, and hold while breathing."
+    },
+    "rx_seated_lean_back_hold": {
+      "name": "Seated lean-back hold",
+      "cues": "Sit near the chair edge, arms crossed, lean back a little with a tall spine and hold."
+    },
+    "rx_bird_dog_hold": {
+      "name": "Bird dog hold",
+      "cues": "On hands and knees, reach one arm and the opposite leg out level, keep the back still and hold."
+    },
+    "rx_glute_squeeze_bridge_hold": {
+      "name": "Glute squeeze bridge hold",
+      "cues": "Lie on your back, knees bent, squeeze the glutes and lift the hips a little, hold without arching."
+    },
+    "rx_hip_hinge_hold": {
+      "name": "Small hip hinge hold",
+      "cues": "Soft knees, push the hips back a little with a flat back, hands on thighs, and hold."
+    },
+    "rx_pallof_hold": {
+      "name": "Band anti-rotation hold",
+      "cues": "Band anchored at your side, press it straight out from your chest and hold without letting the body turn."
+    },
+    "rx_seated_rotation_hand_press": {
+      "name": "Seated rotation hand press",
+      "cues": "Sit tall, hand on the outside of the opposite knee, try to turn while the hand stops you; hold."
+    },
+    "rx_side_plank_knees": {
+      "name": "Side plank from knees",
+      "cues": "On your side, elbow under the shoulder, knees bent, lift the hips into a straight line and hold."
+    },
+    "rx_wall_hip_press_hold": {
+      "name": "Wall hip press hold",
+      "cues": "Stand side-on to a wall, lift the near knee and press it into the wall, stand tall and hold."
+    },
+    "rx_prone_press_up_partial": {
+      "name": "Partial prone press-up",
+      "cues": "Lie face down, hands by your shoulders, press the chest up only as far as pain-free, hips down."
+    },
+    "rx_pelvic_tilt": {
+      "name": "Pelvic tilt",
+      "cues": "Lying or sitting, gently flatten the low back by tightening the belly, then relax, pain-free only."
+    },
+    "rx_hip_flexor_march_hold": {
+      "name": "March hold",
+      "cues": "Hold a support, lift one knee to a comfortable height and hold it there, standing tall."
+    },
+    "rx_seated_knee_lift_hold": {
+      "name": "Seated thigh press hold",
+      "cues": "Sit tall, hands on one thigh, press the thigh up into your hands without moving, and hold."
+    },
+    "rx_pillow_squeeze": {
+      "name": "Pillow squeeze",
+      "cues": "Sit or lie with a pillow between your knees, squeeze it gently and hold, then relax."
+    },
+    "rx_bridge_pillow_squeeze_hold": {
+      "name": "Bridge hold with pillow",
+      "cues": "Pillow between the knees, squeeze it, lift the hips a little and hold without arching the back."
+    },
+    "rx_short_copenhagen_hold": {
+      "name": "Short side plank on bench",
+      "cues": "Side plank on your elbow with the top knee on a bench, lift the hips and hold a short time."
+    },
+    "rx_iso_hip_external_rotation": {
+      "name": "Isometric hip turn-out",
+      "cues": "Sit tall, knee bent, press the inside of the ankle into your hand or a chair leg and hold."
+    },
+    "rx_iso_hip_internal_rotation": {
+      "name": "Isometric hip turn-in",
+      "cues": "Sit tall, knee bent, press the outside of the ankle into your hand or a chair leg and hold."
+    },
+    "rx_clamshell_hold": {
+      "name": "Clamshell hold",
+      "cues": "Lie on your side, knees bent, open the top knee a little keeping feet together, and hold."
+    },
+    "rx_band_abduction_hold": {
+      "name": "Seated band knee-out hold",
+      "cues": "Sit with a band around the knees, press them apart a little and hold with feet flat."
+    },
+    "rx_supported_single_leg_stance": {
+      "name": "Supported one-leg stand",
+      "cues": "Lightly hold a counter, lift one foot a little and stand tall on the other leg, then switch."
+    },
+    "rx_band_clamshell": {
+      "name": "Band clamshell",
+      "cues": "Lie on your side with a band above the knees, open the top knee in the pain-free range, lower slowly."
+    },
+    "rx_seated_band_abduction": {
+      "name": "Seated band knee-out",
+      "cues": "Sit with a band around the knees, push them apart in the pain-free range and return slowly."
+    },
+    "rx_high_box_squat": {
+      "name": "High box squat",
+      "cues": "Sit back to a high chair or box, tap it lightly and stand up, depth only as far as pain-free."
+    },
+    "rx_supported_squat_hold": {
+      "name": "Supported squat hold",
+      "cues": "Hold a door frame or counter, sit down into a comfortable squat depth and hold, heels down."
+    },
+    "rx_high_wall_sit": {
+      "name": "High wall sit",
+      "cues": "Back against a wall, slide down only a little to a pain-free bend and hold, knees over feet."
+    },
+    "rx_spanish_squat_hold": {
+      "name": "Band Spanish squat hold",
+      "cues": "Heavy band behind the knees anchored in front, sit back with shins upright to a pain-free depth and hold."
+    },
+    "rx_split_squat_hold": {
+      "name": "Supported split squat hold",
+      "cues": "Hold a support, staggered stance, lower a little to a pain-free bend and hold, front knee over foot."
+    },
+    "rx_terminal_knee_extension_hold": {
+      "name": "Band knee lock-out hold",
+      "cues": "Band behind the knee anchored in front, straighten the knee against it and hold, thigh tight."
+    },
+    "rx_seated_knee_extension_hold": {
+      "name": "Seated leg straight hold",
+      "cues": "Sit tall, straighten one knee as far as comfortable, tighten the thigh and hold, then lower."
+    },
+    "rx_straight_leg_raise": {
+      "name": "Straight leg raise",
+      "cues": "Lie on your back, other knee bent, tighten the thigh and lift the straight leg to knee height, lower slowly."
+    },
+    "rx_short_arc_quad": {
+      "name": "Short arc knee straighten",
+      "cues": "Lie with a rolled towel under the knee, straighten the lower leg fully, hold a second, lower slowly."
+    },
+    "rx_low_step_up": {
+      "name": "Low step-up",
+      "cues": "Hold a rail, step up onto a low step with the whole foot, stand tall, and step down slowly."
+    },
+    "rx_iso_ankle_dorsiflexion": {
+      "name": "Isometric ankle pull-up",
+      "cues": "Seated, put the other heel on top of your foot and try to pull the toes up against it; hold."
+    },
+    "rx_iso_ankle_plantarflexion": {
+      "name": "Isometric ankle push-down",
+      "cues": "Seated, press the ball of your foot into a wall or firm surface without moving, and hold."
+    },
+    "rx_iso_ankle_inversion": {
+      "name": "Isometric ankle turn-in",
+      "cues": "Seated, press the inside of your foot against the other foot or a chair leg and hold gently."
+    },
+    "rx_iso_ankle_eversion": {
+      "name": "Isometric ankle turn-out",
+      "cues": "Seated, press the outside of your foot against a wall or chair leg and hold gently."
+    },
+    "rx_calf_raise_hold": {
+      "name": "Supported calf raise hold",
+      "cues": "Hold a support, rise onto the balls of your feet to a comfortable height and hold."
+    },
+    "rx_seated_calf_press_hold": {
+      "name": "Seated heel lift hold",
+      "cues": "Sit tall, lift both heels with hands pressing down on your knees, and hold."
+    },
+    "rx_band_ankle_dorsiflexion": {
+      "name": "Band ankle pull-up",
+      "cues": "Seated, band anchored in front around the foot, pull the toes up in the pain-free range, return slowly."
+    },
+    "rx_band_ankle_plantarflexion": {
+      "name": "Band ankle push",
+      "cues": "Seated, band around the ball of the foot, push the foot down in the pain-free range, return slowly."
+    },
+    "rx_partial_calf_raise": {
+      "name": "Partial calf raise",
+      "cues": "Hold a support and lift the heels only a little, in the pain-free range, then lower slowly."
+    },
+    "br_belly_breathing": {
+      "name": "Belly breathing",
+      "cues": "Hand on your belly; breathe in through the nose so it rises, and breathe out slowly through the mouth."
+    },
+    "br_long_exhale": {
+      "name": "Long exhale breathing",
+      "cues": "Breathe in for 4 counts and out for 6 to 8 counts, never holding your breath."
+    },
+    "br_side_rib_breathing": {
+      "name": "Rib breathing",
+      "cues": "Hands on your lower ribs; breathe in to widen them sideways, then let them close as you breathe out."
+    },
+    "br_lying_relax": {
+      "name": "Lying calm breathing",
+      "cues": "Lie on your back with knees bent and breathe slowly, letting your shoulders and jaw relax."
+    },
+    "kid_balloon_breathing": {
+      "name": "Balloon breathing",
+      "cues": "Breathe in slowly to fill a big imaginary balloon, then let the air out gently."
+    },
+    "cw_slow_walk_room": {
+      "name": "Slow walk around the room",
+      "cues": "Walk slowly and easily, letting your breathing settle."
+    },
+    "cw_slow_step_touch": {
+      "name": "Slow step touch",
+      "cues": "Step side to side slowly, swinging the arms softly, and breathe easy."
+    },
+    "cw_easy_bike": {
+      "name": "Easy bike spin",
+      "cues": "Pedal with light resistance at an easy pace to bring your heart rate down."
+    },
+    "cw_seated_slow_march": {
+      "name": "Seated slow march",
+      "cues": "Sitting tall, lift one knee a little, then the other, slowly, breathing easy."
+    },
+    "cw_arm_swing_walk": {
+      "name": "Walk with easy arm swings",
+      "cues": "Walk at a relaxed pace and let the arms swing loosely."
+    },
+    "fc_fast_march": {
+      "name": "Fast march",
+      "cues": "March quickly in place, pumping the arms, keeping one foot on the floor."
+    },
+    "fc_shadow_boxing": {
+      "name": "Shadow boxing",
+      "cues": "Stand with soft knees and throw light, quick punches, staying on the balls of your feet."
+    },
+    "fc_low_impact_jacks": {
+      "name": "Low-impact jacks",
+      "cues": "Step one foot out while raising the arms, then step back in, alternating sides quickly."
+    },
+    "fc_step_touch_fast": {
+      "name": "Quick step touch",
+      "cues": "Step side to side at a brisk pace, adding arm reaches."
+    },
+    "fc_skater_steps": {
+      "name": "Skater steps (no jump)",
+      "cues": "Step wide to one side and bring the other foot behind, then switch, swinging the arms."
+    },
+    "fc_seated_punches": {
+      "name": "Seated fast punches",
+      "cues": "Sitting tall, punch forward quickly with alternating arms, breathing steadily."
+    },
+    "fc_seated_fast_march": {
+      "name": "Seated fast march",
+      "cues": "Sitting tall, march your feet quickly and pump the arms."
+    },
+    "fc_seated_jacks": {
+      "name": "Seated jacks",
+      "cues": "Sitting, tap the feet out to the sides while raising the arms, then back in."
+    },
+    "fc_rowing_machine_easy": {
+      "name": "Rowing machine intervals",
+      "cues": "Row with long smooth strokes: 30 s steady, 30 s easy, legs first then arms."
+    },
+    "fc_bike_intervals": {
+      "name": "Bike intervals",
+      "cues": "Pedal 30 s a little harder, then 30 s easy, staying tall on the seat."
+    },
+    "wu_seated_arm_swings": {
+      "name": "Seated arm swings",
+      "cues": "Sitting tall, swing both arms forward and back loosely, getting a little faster."
+    },
+    "wu_seated_step_outs": {
+      "name": "Seated step-outs",
+      "cues": "Sitting, step one foot out to the side and back, then the other, in a steady rhythm."
+    },
+    "wu_seated_heel_toe_taps_rhythm": {
+      "name": "Seated heel-toe taps",
+      "cues": "Sitting, tap heels then toes quickly on the floor, adding arm swings."
+    },
+    "seated_palm_press": {
+      "name": "Seated palm press",
+      "cues": "Sit tall, press your palms together in front of your chest for 5 s, then relax; repeat."
+    },
+    "seated_high_palm_press": {
+      "name": "Seated high palm press",
+      "cues": "Sitting, press the palms together at eye level, elbows soft, for 5 s; repeat."
+    },
+    "seated_low_palm_press": {
+      "name": "Seated low palm press",
+      "cues": "Sitting, press the palms together low in front of your belly for 5 s; repeat."
+    },
+    "seated_hug_squeeze": {
+      "name": "Seated big hug",
+      "cues": "Sitting, round the arms as if hugging a big ball and squeeze for 10 s."
+    },
+    "seated_towel_press_up": {
+      "name": "Seated towel press, angled up",
+      "cues": "Hold a towel stretched between both hands at chest height, angled up, and pull it apart-hard while pressing forward."
+    },
+    "seated_elbow_drive": {
+      "name": "Seated elbow drive",
+      "cues": "Sitting tall, pull the elbows back and squeeze the shoulder blades for 3 s; repeat."
+    },
+    "seated_w_squeeze": {
+      "name": "Seated W squeeze",
+      "cues": "Sitting, arms in a W beside you, press the elbows down and back and hold 5 s."
+    },
+    "seated_towel_row_hold": {
+      "name": "Seated towel row hold",
+      "cues": "Loop a towel around your feet, sit tall and pull it toward you, squeezing the back for 10 s."
+    },
+    "seated_arms_back_lift": {
+      "name": "Seated reverse fly (no weight)",
+      "cues": "Lean forward slightly, arms hanging, lift them out to the sides to shoulder height, and lower slowly."
+    },
+    "cw_seated_arm_float": {
+      "name": "Seated slow arm float",
+      "cues": "Sitting, float the arms up in front to shoulder height and down, slowly, with calm breathing."
+    },
+    "cw_seated_ankle_pumps": {
+      "name": "Seated easy ankle pumps",
+      "cues": "Sitting, slowly point and flex both feet while your breathing settles."
+    },
+    "cw_seated_shoulder_circles_slow": {
+      "name": "Seated slow shoulder circles",
+      "cues": "Sitting tall, roll the shoulders slowly backward in big circles."
+    },
+    "fc_seated_twist_taps": {
+      "name": "Seated twist taps",
+      "cues": "Sitting tall, twist and tap the opposite knee with each hand, quickly and steadily."
+    },
+    "fc_seated_heel_drums": {
+      "name": "Seated heel drums",
+      "cues": "Sitting, drum the heels quickly on the floor while pumping the arms."
+    },
+    "fc_seated_reach_ups": {
+      "name": "Seated fast reach-ups",
+      "cues": "Sitting, reach up with alternating arms at a steady, quick pace."
+    },
+    "seated_incline_towel_squeeze": {
+      "name": "Seated towel squeeze, arms high",
+      "cues": "Hold a rolled towel between the palms at eye level and squeeze it for 10 s."
+    },
+    "seated_diagonal_press": {
+      "name": "Seated diagonal press",
+      "cues": "Sitting, press one palm up and across against the other hand for 5 s; switch sides."
     }
   },
   "generator": {

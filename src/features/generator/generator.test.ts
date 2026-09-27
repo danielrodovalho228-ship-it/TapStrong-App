@@ -269,13 +269,20 @@ describe('main work and dosage', () => {
       return ex(s.items.find((i) => i.role === 'main')!.exerciseId);
     };
     // Close calls go to the unloaded option…
-    expect(firstFor('biceps').slug).toBe('band_curl');
-    expect(firstFor('shoulders').slug).toBe('band_front_raise');
+    expect(firstFor('biceps').loaded).toBe(false);
+    expect(firstFor('shoulders').loaded).toBe(false);
     expect(firstFor('upperChest').loaded).toBe(false);
     // …dumbbells only where nothing unloaded fits, and always light.
-    const traps = gen({ ...teen, muscleGoals: [{ muscleKey: 'traps', goal: 'strengthen' }] });
+    const trapsLoadedOnly = LIBRARY.filter(
+      (e) => e.loaded || !e.muscles.some((m) => m.muscleKey === 'traps' && m.role === 'primary'),
+    );
+    const traps = gen({
+      ...teen,
+      library: trapsLoadedOnly,
+      muscleGoals: [{ muscleKey: 'traps', goal: 'strengthen' }],
+    });
     const shrug = traps.items.find((i) => i.role === 'main')!;
-    expect(ex(shrug.exerciseId).slug).toBe('dumbbell_shrug');
+    expect(ex(shrug.exerciseId).loaded).toBe(true);
     expect(shrug.loadHint).toBe('light');
     // Adults still get the loaded lift.
     expect(
@@ -285,8 +292,8 @@ describe('main work and dosage', () => {
           location: 'home',
           equipment: HOME_EQUIPMENT_OPTIONS,
         }).items.find((i) => i.role === 'main')!.exerciseId,
-      ).slug,
-    ).toBe('dumbbell_curl');
+      ).loaded,
+    ).toBe(true);
   });
 
   it('only main work counts for the body map', () => {
@@ -310,9 +317,11 @@ describe('ramp-up sets (SPEC §8 warm-up)', () => {
   });
 
   it('teens ramp with light load only; kids never', () => {
-    // Teens are steered to bodyweight and bands; the shrug is the only traps
-    // exercise, so the first lift is loaded here.
+    // Teens are steered to bodyweight and bands; with only loaded main
+    // exercises available, the first lift is loaded here.
+    const loadedOnly = LIBRARY.filter((e) => !e.parts.includes('main') || e.loaded);
     const teen = gen({
+      library: loadedOnly,
       mode: 'teen',
       band: 'teen',
       muscleGoals: [{ muscleKey: 'traps', goal: 'grow' }],
@@ -491,7 +500,13 @@ describe('getAlternatives (swap, SPEC §8)', () => {
   });
 
   it('returns nothing when no safe option exists', () => {
-    const tiny = LIBRARY.filter((e) => e.slug !== 'push_up' && e.slug !== 'wall_push_up');
+    // Only one main exercise trains the middle chest here.
+    const tiny = LIBRARY.filter(
+      (e) =>
+        e.slug === 'push_up' ||
+        !e.parts.includes('main') ||
+        !e.muscles.some((m) => m.muscleKey === 'midChest' && m.role === 'primary'),
+    );
     const input = { ...base, library: tiny, location: 'outdoors' as const, equipment: [] };
     const s = generateSession({ ...input, muscleGoals: [{ muscleKey: 'midChest', goal: 'grow' }] });
     const chest = s.items.find((i) => i.targetMuscle === 'midChest');

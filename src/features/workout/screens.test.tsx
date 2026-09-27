@@ -325,20 +325,19 @@ describe('Pain swap (mockup 21)', () => {
     expect(mockRouter.back).toHaveBeenCalled();
   });
 
-  it('with no safe swap, the exercise can be skipped (and the restriction is optional)', async () => {
+  it('offers a shoulder-safe upper-chest swap now (QA O-3); the restriction stays optional', async () => {
     await setUp();
     const step = await toMainStep();
     await render(<PainScreen />);
     await fireEvent.press(screen.getByRole('button', { name: 'Right shoulder' }));
     await fireEvent.press(screen.getByRole('button', { name: 'Dull / pinch' }));
-    // No upper-chest option in the draft library spares the shoulder yet.
-    expect(
-      screen.getByText('No safe alternative for this muscle with your equipment.'),
-    ).toBeTruthy();
+    // The restriction is optional: untick it, then accept the safe swap.
     await fireEvent.press(screen.getByRole('checkbox', { name: /Right shoulder/ }));
-    await fireEvent.press(screen.getByRole('button', { name: 'Skip this exercise' }));
-    expect(current().skipped).toContain(step.item.id);
-    expect(current().pains.at(-1)!.action).toBe('skipped');
+    await fireEvent.press(screen.getByRole('button', { name: 'Accept swap' }));
+    const swapped = current().session.items.find((i) => i.id === step.item.id)!;
+    expect(swapped.exerciseId).not.toBe(step.item.exerciseId);
+    expect(byId.get(swapped.exerciseId)!.contraindications).not.toContain('shoulder');
+    expect(current().pains.at(-1)!.action).toBe('swapped');
     expect(useRestrictionsStore.getState().items).toHaveLength(0);
   });
 
