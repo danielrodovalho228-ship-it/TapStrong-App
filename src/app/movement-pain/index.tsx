@@ -22,6 +22,8 @@ import {
   movementKey,
   type MovementKey,
 } from '@/features/movement/catalog';
+import { useOwnerAccess } from '@/features/family/OwnerOnly';
+import { ParentGate } from '@/features/family/ParentGate';
 import { useMovementPainStore, type PainDuration } from '@/features/movement/store';
 import { areaName, movementExample, movementName, ScoreChips } from '@/features/movement/ui';
 import { derive } from '@/features/onboarding/derived';
@@ -47,6 +49,11 @@ export default function MovementPainScreen() {
   const catalog = useMemo(() => movementCatalog(), []);
   const mode = derive(useOnboardingStore())?.mode;
   const addReport = useMovementPainStore((s) => s.add);
+  const reports = useMovementPainStore((s) => s.reports);
+  // A managed teen's new report would replace the active recovery plan for
+  // that area and side: that needs a parent, like ending it (QA R6-04).
+  const access = useOwnerAccess();
+  const [pinGate, setPinGate] = useState(false);
   const addRestriction = useRestrictionsStore((s) => s.add);
 
   const areas = catalog ? catalogAreas(catalog) : [];
@@ -101,14 +108,22 @@ export default function MovementPainScreen() {
     else if (step === 'duration') save();
   };
 
+  const reportSide = side === 'left' || side === 'right' ? side : undefined;
+  const replacesPlan = reports.some((r) => r.active && r.area === area && r.side === reportSide);
+  const minorGated = access === 'gate' && (mode === 'teen' || mode === 'child');
   const save = () => {
+    if (!area || score == null || !duration) return;
+    if (replacesPlan && minorGated && !pinGate) return setPinGate(true);
+    commit();
+  };
+  const commit = () => {
     if (!area || score == null || !duration) return;
     const id = uuid();
     addReport({
       id,
       area,
       joints,
-      side: side === 'left' || side === 'right' ? side : undefined,
+      side: reportSide,
       painful,
       painFree: keys.filter((k) => ratings[k] === 'fine'),
       score,
@@ -163,6 +178,7 @@ export default function MovementPainScreen() {
       }
     >
       {__DEV__ ? <Notice tone="warning">{t('movementPain.devOnly')}</Notice> : null}
+      {pinGate ? <ParentGate onPass={commit} onCancel={() => setPinGate(false)} /> : null}
 
       {step === 'gate' ? (
         <Card style={styles.card}>

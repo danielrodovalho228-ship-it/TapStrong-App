@@ -32,7 +32,10 @@ export default function SafetyScreen() {
   }));
   const [gate, setGate] = useState(false);
   if (!derived) return <Redirect href="/onboarding/who" />;
-  const staged = !!edit;
+  // Once the check is done, every visit is an edit on a draft, whatever the
+  // route (Restrictions, a deep link): a teen's removals always meet the PIN
+  // (QA R6-04).
+  const staged = !!edit || store.safetyDone;
   const s = staged
     ? {
         ...store,

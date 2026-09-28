@@ -333,7 +333,7 @@ describe('D4 preferences', () => {
 describe('profile-kind protection (QA round 3, with Phase 14)', () => {
   it('trusts a "self" profile only when its id matches the secure record', () => {
     const self = { id: 'a', kind: 'self' } as Parameters<typeof isOwnerProfile>[0];
-    expect(isOwnerProfile(self, 'a')).toBe(true);
+    expect(isOwnerProfile(self, { ownerId: 'a', activeId: 'a' })).toBe(true);
     expect(isOwnerProfile(self, 'b')).toBe(false);
     expect(isOwnerProfile(self, null)).toBe(true);
   });

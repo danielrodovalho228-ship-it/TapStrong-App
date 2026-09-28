@@ -43,9 +43,18 @@ export function ParentGate({ onPass, onCancel }: { onPass: () => void; onCancel?
     if (hasPin) void pullPinLock(getSupabase()).then(() => setSynced((n) => n + 1));
   }, [hasPin]);
 
+  // A correct PIN proves the owner's profile is really the active one: an
+  // upgraded phone with no secure active id records it here (QA R6-05).
+  const pass = () => {
+    const identity = useOwnerIdentityStore.getState();
+    if (!identity.activeId && active && active.id === identity.ownerId && active.kind === 'self')
+      identity.setActive(active.id);
+    onPass();
+  };
+
   // Forgotten PIN: the owner proves it with an email code (Phase 12).
   if (hasPin && resetting)
-    return <ParentPinReset onDone={onPass} onCancel={() => setResetting(false)} />;
+    return <ParentPinReset onDone={pass} onCancel={() => setResetting(false)} />;
 
   if (!hasPin) {
     return owner ? (
@@ -63,7 +72,7 @@ export function ParentGate({ onPass, onCancel }: { onPass: () => void; onCancel?
     const result = checkParentPin(value.trim());
     setValue('');
     void reportPinCheck(getSupabase(), result);
-    if (result === 'ok') return onPass();
+    if (result === 'ok') return pass();
     if (result === 'locked') setMessage(t('parentGate.locked', { count: lockMinutesLeft() }));
     else
       setMessage(

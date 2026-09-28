@@ -50,7 +50,9 @@ export default function MovementPlanScreen() {
   if (!report || !catalog) return <Redirect href="/restrictions" />;
   const end = () => {
     setActive(report.id, false);
-    router.back();
+    // Opened from a link, there is no screen to go back to (QA R6 P2).
+    if (router.canGoBack()) router.back();
+    else router.replace('/restrictions');
   };
 
   const now = clock.now();

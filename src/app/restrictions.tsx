@@ -190,7 +190,7 @@ export default function RestrictionsScreen() {
           </View>
           <TextLink
             label={t('restrictions.editHealth')}
-            onPress={() => router.push('/onboarding/safety')}
+            onPress={() => router.push({ pathname: '/onboarding/safety', params: { edit: '1' } })}
           />
         </Card>
       ))}

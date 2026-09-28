@@ -54,22 +54,30 @@ export const useOwnerIdentityStore = create<State>()(
       storage: createJSONStorage(() => secureStorage),
       partialize: ({ ownerId, activeId, minors }) => ({ ownerId, activeId, minors }),
       migrate: (persisted) => ({ activeId: null, minors: {}, ...(persisted as object) }),
-      // v1 data had no active id or minors: seed them once from the family
-      // list so the checks never trust an empty record (QA R5 P2).
-      onRehydrateStorage: () => (state) => {
-        if (!state?.ownerId || state.activeId) return;
-        // Required here, not imported: the family store imports this file.
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
-        const { useFamilyStore } = require('./store') as typeof import('./store');
-        const family = useFamilyStore.getState();
-        const minors: Record<string, MinorLock> = { ...state.minors };
-        for (const p of family.profiles)
-          if (p.kind === 'child' && !minors[p.id]) minors[p.id] = p.consentAt ? 'under13' : 'teen';
-        useOwnerIdentityStore.setState({ activeId: family.activeId ?? state.ownerId, minors });
-      },
     },
   ),
 );
+
+/**
+ * v1 records had an owner id but no active id or minors (QA R6-05). Once
+ * both this record and the family list are loaded (family/store.ts calls
+ * this), minors are seeded from the list: that only adds locks. The active
+ * id is never taken from the plain family list, which could be edited:
+ * - no minors on the phone: nobody to protect from, the owner is active;
+ * - minors: it stays unproven, so the parent PIN is asked until the owner
+ *   proves it (ParentGate records the owner as active on a correct PIN).
+ */
+export function seedOwnerIdentity(profiles: Pick<LocalProfile, 'id' | 'kind' | 'consentAt'>[]) {
+  const s = useOwnerIdentityStore.getState();
+  if (!s.ownerId || s.activeId) return;
+  const minors: Record<string, MinorLock> = { ...s.minors };
+  for (const p of profiles)
+    if (p.kind === 'child' && !minors[p.id]) minors[p.id] = p.consentAt ? 'under13' : 'teen';
+  useOwnerIdentityStore.setState({
+    minors,
+    activeId: Object.keys(minors).length ? null : s.ownerId,
+  });
+}
 
 type Identity = Pick<State, 'ownerId' | 'activeId'>;
 
@@ -90,7 +98,8 @@ export function isOwnerProfile(
   if (!p) return !ownerId;
   if (p.kind !== 'self') return false;
   if (!ownerId) return true;
-  return p.id === ownerId && (!activeId || activeId === p.id);
+  // An owner id with no secure active id is unproven (QA R6-05).
+  return p.id === ownerId && activeId === p.id;
 }
 
 /** The birth-date lock for a profile: from the secure record first, then its kind. */

@@ -5,7 +5,7 @@ import { clock } from '@/lib/clock';
 import { kvStorage } from '@/lib/storage';
 
 import { FAMILY_MAX_PROFILES } from '../billing/rules';
-import { useOwnerIdentityStore } from './ownerIdentity';
+import { seedOwnerIdentity, useOwnerIdentityStore } from './ownerIdentity';
 
 /**
  * Profiles on this phone (SPEC §7: the account owner plus family members
@@ -76,6 +76,15 @@ export const useFamilyStore = create<State>()(
     },
   ),
 );
+
+// v1 → v2 owner record: seeded once both stores have loaded (QA R6-05).
+function seedWhenLoaded() {
+  if (useOwnerIdentityStore.persist.hasHydrated() && useFamilyStore.persist.hasHydrated())
+    seedOwnerIdentity(useFamilyStore.getState().profiles);
+}
+useOwnerIdentityStore.persist.onFinishHydration(seedWhenLoaded);
+useFamilyStore.persist.onFinishHydration(seedWhenLoaded);
+seedWhenLoaded();
 
 export const activeProfile = (s: Pick<State, 'profiles' | 'activeId'>) =>
   s.profiles.find((p) => p.id === s.activeId) ?? null;
