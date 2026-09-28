@@ -4785,7 +4785,8 @@
     "easy": "Easy",
     "solid": "Solid",
     "hard": "Very hard",
-    "repsUpBodyweight": "Aim for {{reps}} reps this time."
+    "repsUpBodyweight": "Aim for {{reps}} reps this time.",
+    "harder": "Top of the range 4 sessions in a row: time for a harder version. Tap Swap to pick one."
   },
   "plans": {
     "title": "Ready-made plans",

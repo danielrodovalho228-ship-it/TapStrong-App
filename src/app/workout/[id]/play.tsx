@@ -440,6 +440,10 @@ function SetStep({
           <AppText variant="caption" color={colors.teal}>
             {t('load.first')}
           </AppText>
+        ) : advice?.kind === 'reps' && advice.harder ? (
+          <AppText variant="caption" color={colors.teal}>
+            {t('load.harder')}
+          </AppText>
         ) : advice?.kind === 'reps' && advice.change === 'up' ? (
           <AppText variant="caption" color={colors.teal}>
             {advice.load

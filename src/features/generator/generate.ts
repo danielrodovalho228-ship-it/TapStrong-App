@@ -442,15 +442,19 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     const key = parentOf(t.muscle);
     byParent.set(key, [...(byParent.get(key) ?? []), { t, priority }]);
   });
-  const targets = [...byParent.values()]
-    .map((group) => {
-      const pick = [...group].sort(
-        (a, b) => lastHit(b.t.family) - lastHit(a.t.family) || a.priority - b.priority,
-      )[0];
-      return { ...pick, last: lastHit(root(pick.t)) };
-    })
-    .sort((a, b) => b.last - a.last || a.priority - b.priority)
-    .map((x) => x.t);
+  // A Single workout covers each picked sub-region (upper, mid and lower
+  // chest all count), in the order picked (QA R6 P2: 2 upper-chest moves).
+  const targets = input.targetsOnly
+    ? readyTargets
+    : [...byParent.values()]
+        .map((group) => {
+          const pick = [...group].sort(
+            (a, b) => lastHit(b.t.family) - lastHit(a.t.family) || a.priority - b.priority,
+          )[0];
+          return { ...pick, last: lastHit(root(pick.t)) };
+        })
+        .sort((a, b) => b.last - a.last || a.priority - b.priority)
+        .map((x) => x.t);
 
   const slots = Math.max(1, Math.min(10, Math.round(input.exercisesPerSession)));
   const used = new Set<string>();
@@ -470,6 +474,17 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   const day = input.today ? Math.floor(Date.parse(input.today) / 86_400_000) : 0;
   const strengthGym =
     input.location === 'gym' && input.mainGoals.includes('strength') && input.mode === 'adult';
+  // Gym "Get stronger" or "Build muscle": holds (dead hang, carries, planks)
+  // are never main work when a moving option exists (QA R6 P2).
+  const gymBuild =
+    input.location === 'gym' &&
+    input.mode === 'adult' &&
+    (input.mainGoals.includes('strength') || input.mainGoals.includes('look'));
+  const moving = (list: Exercise[]) => {
+    if (!gymBuild) return list;
+    const kept = list.filter((e) => e.dose !== 'time');
+    return kept.length ? kept : list;
+  };
   // Variety (QA R4 P2): moves from the last two sessions step aside when
   // another good option exists, so a day doesn't repeat three days later.
   const recentIds = new Set(recent.slice(0, 2).flatMap((r) => r.exerciseIds ?? []));
@@ -502,7 +517,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     const options = rankForTarget(pool, target, input.mode, input.favourites).filter(
       (e) => !used.has(e.id),
     );
-    const pick = input.rehab ? options[0] : rotate(options, i);
+    const pick = input.rehab ? options[0] : rotate(moving(options), i);
     if (pick) add(pick, target);
     else unavailable.push(target.muscle);
   });
@@ -520,7 +535,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
         (e) => !used.has(e.id),
       );
       const equipped = strengthGym ? options.filter((e) => e.equipment.length > 0) : [];
-      const pick = (equipped.length ? equipped : options)[0];
+      const pick = (equipped.length ? equipped : moving(options))[0];
       if (pick) add(pick, target);
     }
   }
@@ -584,15 +599,29 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   }
   // Vertical pulls were rare (QA R5 P2: lats once in 4 weeks): when none was
   // done in this or the last two sessions, a pull filler is a vertical pull.
+  // For a gym user a vertical pull is a real one: lats first, a pulldown,
+  // pull-up or row-down, never a scapular dip (QA R6 P2).
+  const realVertical = (e: Exercise | undefined) =>
+    !!e &&
+    e.pattern === 'vertical_pull' &&
+    (input.location !== 'gym' || topPrimary(e) === 'lats') &&
+    e.dose !== 'time';
   const recentPatterns = new Set(
     recent
       .slice(0, 2)
       .flatMap((r) => r.exerciseIds ?? [])
-      .map((id) => byIdAll.get(id)?.pattern),
+      .filter((id) => realVertical(byIdAll.get(id)))
+      .map(() => 'vertical_pull'),
+  );
+  // And at least one in any 7 days.
+  const verticalThisWeek = recent.some(
+    (r) =>
+      (nowMsEarly === undefined || nowMsEarly - sessionMsEarly(r) <= 7 * 24 * 3600 * 1000) &&
+      (r.exerciseIds ?? []).some((id) => realVertical(byIdAll.get(id))),
   );
   const needVertical = () =>
-    !recentPatterns.has('vertical_pull') &&
-    !main.some((i) => byIdAll.get(i.exerciseId)?.pattern === 'vertical_pull');
+    !main.some((i) => realVertical(byIdAll.get(i.exerciseId))) &&
+    (!recentPatterns.has('vertical_pull') || !verticalThisWeek);
   const nextFor = (g: MovementGroup) => {
     const list = rankForGroup(pool, g, defaultGoal, input.mode, input.favourites).filter(
       (e) =>
@@ -605,9 +634,8 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
         primariesReady(e) &&
         !e.muscles.some((m) => m.role === 'primary' && restedKeys.has(m.muscleKey)),
     );
-    const vertical =
-      g === 'pull' && needVertical() ? list.filter((e) => e.pattern === 'vertical_pull') : [];
-    return rotate(vertical.length ? vertical : list, main.length + 11);
+    const vertical = g === 'pull' && needVertical() ? list.filter(realVertical) : [];
+    return rotate(vertical.length ? vertical : moving(list), main.length + 11);
   };
   while (!onlyTargets && main.length < slots) {
     const options = fill
@@ -641,6 +669,31 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     const muscle = topPrimary(pick)!;
     add(pick, { muscle, family: [muscle], goal: defaultGoal });
     added.set(pick.id, g);
+  }
+  // Chosen push muscles filled the session: while pull trails push over the
+  // last 7 days (under 90%), or no real vertical pull is in the week, the
+  // last push target gives its slot to a pull (QA R6 P2). A push goal
+  // always keeps at least one move.
+  const pushNow = () => main.filter((i) => groupOf(i.targetMuscle ?? '') === 'push').length;
+  const pullNow = () => main.filter((i) => groupOf(i.targetMuscle ?? '') === 'pull').length;
+  const pullShortNow = () =>
+    weekMoves.pull + pullNow() < Math.ceil(0.9 * (weekMoves.push + pushNow()));
+  const verticalDue = () =>
+    !verticalThisWeek && !main.some((i) => realVertical(byIdAll.get(i.exerciseId)));
+  for (let swaps = 0; swaps < slots; swaps++) {
+    if (onlyTargets || input.dayGroups?.length || pushNow() < 2) break;
+    if (!pullShortNow() && !(verticalDue() && swaps === 0)) break;
+    const at = main.map((i) => groupOf(i.targetMuscle ?? '')).lastIndexOf('push');
+    const [gone] = main.splice(at, 1);
+    used.delete(gone.exerciseId);
+    const pick = nextFor('pull');
+    if (!pick) {
+      main.splice(at, 0, gone);
+      used.add(gone.exerciseId);
+      break;
+    }
+    add(pick, { muscle: topPrimary(pick)!, family: [topPrimary(pick)!], goal: defaultGoal });
+    added.set(pick.id, 'pull');
   }
   if (!main.length && allTargets.length && !readyTargets.length && !focused) {
     // Everything chosen is still recovering and nothing else is ready:

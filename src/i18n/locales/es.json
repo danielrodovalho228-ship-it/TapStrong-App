@@ -4785,7 +4785,8 @@
     "easy": "Fácil",
     "solid": "Exigente",
     "hard": "Muy dura",
-    "repsUpBodyweight": "Intenta {{reps}} repeticiones esta vez."
+    "repsUpBodyweight": "Intenta {{reps}} repeticiones esta vez.",
+    "harder": "En lo más alto del rango 4 sesiones seguidas: toca una versión más difícil. Pulsa Cambiar para elegirla."
   },
   "plans": {
     "title": "Planes listos",

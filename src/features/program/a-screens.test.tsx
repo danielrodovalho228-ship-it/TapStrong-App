@@ -96,6 +96,33 @@ describe('Home (A1–A3)', () => {
 });
 
 describe('day view (A1)', () => {
+  it('after a sharp stop today: the take-it-easy options, no workout preview (QA R6 P2)', async () => {
+    await adult();
+    const input = inputFromProfile(useOnboardingStore.getState(), LIBRARY, true)!;
+    const id = useWorkoutStore.getState().create(generateSession(input));
+    await act(() => {
+      const s = useWorkoutStore.getState();
+      s.start(id);
+      const item = s.workouts
+        .find((w) => w.id === id)!
+        .session.items.find((i) => i.role === 'main')!;
+      s.addPain(id, {
+        itemId: item.id,
+        exerciseId: item.exerciseId,
+        area: 'knee',
+        type: 'sharp',
+        action: 'stopped',
+      });
+      s.finish(id, 'partial');
+    });
+    mockParams = { date: '2026-09-30' };
+    await render(<DayScreen />);
+    expect(screen.getByText('Take it easy today')).toBeTruthy();
+    expect(screen.queryByText('Preview')).toBeNull();
+    expect(screen.queryByRole('button', { name: "Start today's workout" })).toBeNull();
+    expect(screen.getByRole('button', { name: /Short mobility/ })).toBeTruthy();
+  });
+
   it('a future day previews the session, no Start', async () => {
     await adult();
     mockParams = { date: '2026-10-02' };

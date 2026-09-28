@@ -64,9 +64,10 @@ export function useGeneratorInput(
   const experience = usePrefsStore((s) => s.experience);
   const today = localDate(clock.now());
   const base = inputFromProfile(profile, library, __DEV__, {
-    restrictions: [
-      ...new Set([...activeAreas(restrictions), ...sharpStopAreasToday(workouts, today)]),
-    ],
+    // A sharp stop today is its own reason (stoppedToday rules the joint out
+    // on its own), never a saved restriction: the Library says "left out
+    // today", not "ruled out by a restriction" (QA R6 P2).
+    restrictions: activeAreas(restrictions),
     hardRestrictions: doctorFirstAreas(restrictions),
     painToday: dullPainAreasToday(workouts, today),
     stoppedToday: sharpStopAreasToday(workouts, today),

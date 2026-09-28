@@ -82,10 +82,13 @@ export function blockReason(e: Exercise, input: GeneratorInput): string | null {
  */
 export function needsJointCare(
   e: Pick<Exercise, 'joints'>,
-  input: Partial<Pick<GeneratorInput, 'restrictions' | 'painAreas' | 'movementLimits'>>,
+  input: Partial<
+    Pick<GeneratorInput, 'restrictions' | 'painAreas' | 'movementLimits' | 'stoppedToday'>
+  >,
 ): boolean {
   const areas = new Set([
     ...(input.restrictions ?? []),
+    ...(input.stoppedToday ?? []),
     ...(input.painAreas ?? []),
     ...(input.movementLimits ?? []).map((l) => l.area),
   ]);

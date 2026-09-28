@@ -101,9 +101,10 @@ describe('suggested load (A4)', () => {
       unit: 'lb',
     });
     const beaten = [s([13, 13, 13], 20), s([12, 12, 12], 20)];
+    // 60+: the smaller of +5 lb and ~10% (QA R6 P2): 20 → 22.5.
     expect(advice(beaten, bench, { mode: 'senior' })).toEqual({
       kind: 'load',
-      load: 25,
+      load: 22.5,
       unit: 'lb',
       change: 'up',
     });

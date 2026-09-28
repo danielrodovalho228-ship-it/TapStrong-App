@@ -14,7 +14,12 @@ import type { LoadUnit, SetLog, WorkoutRecord } from './types';
  * - every set at the top of the range with effort (RPE) 8 or less in the last
  *   2 sessions → more: +5 lb / +2.5 kg upper body, +10 lb / +5 kg lower body,
  *   or +1 rep for bodyweight and bands;
- * - joint care and 60+ progress more slowly: +1 rep before any load;
+ * - both of those sessions at the current load: one step, then two more
+ *   sessions before the next (QA R6 P2: it went up twice in a row);
+ * - joint care and 60+ progress more slowly: +1 rep before any load; 60+ and
+ *   heart or blood-pressure conditions then take the smaller of +5 lb /
+ *   +2.5 kg and ~10% (QA R6 P2: 25 → 35 lb was +40%);
+ * - bodyweight at the top of the range for 4 sessions: try a harder version;
  * - reps missed in the last 2 sessions → keep; missed in the last 3 → lower
  *   one step;
  * - a deload week keeps the load (the volume drops instead).
@@ -25,12 +30,24 @@ export type LoadAdvice =
   | { kind: 'first' }
   | { kind: 'load'; load: number; unit: LoadUnit; change: 'up' | 'same' | 'down' }
   /** More reps; a loaded move keeps its last load (QA R4-10). */
-  | { kind: 'reps'; reps: number; change: 'up' | 'same'; load?: number; unit?: LoadUnit }
+  | {
+      kind: 'reps';
+      reps: number;
+      change: 'up' | 'same';
+      load?: number;
+      unit?: LoadUnit;
+      /** Bodyweight at the top of the range for 4 sessions: a harder version next. */
+      harder?: boolean;
+    }
   | null;
 
 export const UPPER_STEP: Record<LoadUnit, number> = { lb: 5, kg: 2.5 };
 export const LOWER_STEP: Record<LoadUnit, number> = { lb: 10, kg: 5 };
 const MAX_EASY_RPE = 8;
+/** Sessions at the top of the range before a harder bodyweight version. */
+export const HARDER_AFTER = 4;
+/** Smallest load step shown for the gentle ~10% rule. */
+const FINE_STEP: Record<LoadUnit, number> = { lb: 2.5, kg: 1 };
 
 const LOWER_PATTERNS = [
   'squat',
@@ -77,6 +94,8 @@ export function loadAdvice(input: {
   unit: LoadUnit;
   mode: AppMode;
   jointCare?: boolean;
+  /** Heart condition or high blood pressure: gentle load steps. */
+  cardio?: boolean;
   deload?: boolean;
 }): LoadAdvice {
   const { sessions, range, exercise, unit } = input;
@@ -87,7 +106,16 @@ export function loadAdvice(input: {
   if (loadedMove && !lastLoaded) return { kind: 'first' };
 
   const lastTwo = sessions.slice(0, 2);
-  const upDue = lastTwo.length === 2 && lastTwo.every((s) => allTop(s, top)) && !input.deload;
+  // Both sessions must be at the load shown now: a step counts only after two
+  // sessions at that load (QA R6 P2).
+  const loadOf = (s: Session) => {
+    const l = s.logs.filter((x) => x.load != null && x.load > 0).at(-1);
+    return l ? toUnit(l.load!, l.unit ?? unit, unit) : null;
+  };
+  const sameLoad =
+    !loadedMove || (lastTwo.length === 2 && loadOf(lastTwo[0]) === loadOf(lastTwo[1]));
+  const upDue =
+    lastTwo.length === 2 && lastTwo.every((s) => allTop(s, top)) && sameLoad && !input.deload;
   const missedTwo = lastTwo.length === 2 && lastTwo.every((s) => missed(s, bottom));
   const missedThree = sessions.length >= 3 && sessions.slice(0, 3).every((s) => missed(s, bottom));
   const slow = input.mode === 'senior' || !!input.jointCare;
@@ -96,6 +124,10 @@ export function loadAdvice(input: {
   if (!loadedMove) {
     const best = Math.max(0, ...(sessions[0]?.logs.map(done) ?? [0]));
     if (!sessions.length) return null;
+    // At the top of the range for 4 sessions: a harder version (QA R6 P2).
+    const lastFour = sessions.slice(0, HARDER_AFTER);
+    if (lastFour.length === HARDER_AFTER && lastFour.every((s) => allTop(s, top)) && !input.deload)
+      return { kind: 'reps', reps: top, change: 'same', harder: true };
     // Never past the top of the range (QA R5-02: 16 for a 10–15 target).
     return upDue && best < top
       ? { kind: 'reps', reps: best + 1, change: 'up' }
@@ -103,7 +135,14 @@ export function loadAdvice(input: {
   }
 
   const load = toUnit(lastLoaded!.load!, lastLoaded!.unit ?? unit, unit);
-  const step = (isLowerBody(exercise) && !minor ? LOWER_STEP : UPPER_STEP)[unit];
+  const baseStep = (isLowerBody(exercise) && !minor ? LOWER_STEP : UPPER_STEP)[unit];
+  // 60+ and heart / blood pressure: the smaller of +5 lb (+2.5 kg) and ~10%.
+  const gentle = input.mode === 'senior' || !!input.cardio;
+  const tenth = Math.max(
+    FINE_STEP[unit],
+    Math.round((load * 0.1) / FINE_STEP[unit]) * FINE_STEP[unit],
+  );
+  const step = gentle ? Math.min(UPPER_STEP[unit], tenth, baseStep) : baseStep;
   if (upDue) {
     if (slow) {
       // +1 rep before any load: once the last session already beat the top
@@ -137,6 +176,8 @@ export function adviceForItem(input: {
   unit: LoadUnit;
   generator: Pick<GeneratorInput, 'mode' | 'restrictions' | 'painAreas' | 'movementLimits'> & {
     deload?: boolean;
+    stoppedToday?: GeneratorInput['stoppedToday'];
+    conditions?: GeneratorInput['conditions'];
   };
 }): LoadAdvice {
   const { item, exercise } = input;
@@ -150,6 +191,9 @@ export function adviceForItem(input: {
     unit: input.unit,
     mode: input.generator.mode,
     jointCare: needsJointCare(exercise, input.generator),
+    cardio: !!input.generator.conditions?.some(
+      (c) => c === 'heart_condition' || c === 'high_blood_pressure',
+    ),
     deload: input.generator.deload,
   });
 }

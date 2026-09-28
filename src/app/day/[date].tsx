@@ -3,12 +3,18 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText, Button, Card, Header, Notice, Screen } from '@/components/ui';
-import { generateSession } from '@/features/generator';
+import { generateBalanceSession, generateSession, MOBILITY_MINUTES } from '@/features/generator';
 import { dayName } from '@/features/program/block';
 import { useTrainingDaysPerWeek } from '@/features/program/useTrainingDays';
 import { plannedDaysBetween, workoutsOn } from '@/features/program/week';
 import { doseLine, exerciseName } from '@/features/workout/format';
-import { createWorkoutFrom, useExerciseLibrary, useGeneratorInput } from '@/features/workout/hooks';
+import {
+  createBalanceWorkout,
+  createMobilityWorkout,
+  createWorkoutFrom,
+  useExerciseLibrary,
+  useGeneratorInput,
+} from '@/features/workout/hooks';
 import { useWorkoutStore } from '@/features/workout/store';
 import type { WorkoutRecord } from '@/features/workout/types';
 import { restFor, usePrefsStore } from '@/features/settings/store';
@@ -59,10 +65,17 @@ export default function DayScreen() {
   const restDay =
     date > today &&
     plannedDaysBetween(date, addDays(date, 1), deviceWeekStart(), daysPerWeek).length === 0;
+  // Stopped for sharp pain today: the same "take it easy" options as Home,
+  // never a full workout preview (QA R6 P2).
+  const easyDay = date === today && !!input?.stoppedToday?.length;
+  const balanceOk = easyDay && !!input && !generateBalanceSession(input).error;
   const preview =
-    !past && !restDay && input
+    !past && !restDay && !easyDay && input
       ? generateSession({ ...input, today: date, now: `${date}T12:00:00` })
       : null;
+
+  const open = (id: string | null) =>
+    router.push({ pathname: '/workout/[id]', params: { id: id ?? 'unavailable' } });
 
   const start = () => {
     const id = createWorkoutFrom(input, library);
@@ -113,6 +126,24 @@ export default function DayScreen() {
         <Card style={styles.card}>
           <AppText variant="h3">{t('day.restTitle')}</AppText>
           <AppText color={colors.mutedStrong}>{t('day.restBody')}</AppText>
+        </Card>
+      ) : null}
+      {easyDay ? (
+        <Card style={styles.card}>
+          <AppText variant="h3">{t('home.stoppedTitle')}</AppText>
+          <AppText color={colors.mutedStrong}>{t('home.stoppedBody')}</AppText>
+          <Button
+            variant="secondary"
+            label={t('home.mobility', { minutes: MOBILITY_MINUTES })}
+            onPress={() => open(createMobilityWorkout(input))}
+          />
+          {balanceOk ? (
+            <Button
+              variant="secondary"
+              label={t('home.balance', { minutes: MOBILITY_MINUTES })}
+              onPress={() => open(createBalanceWorkout(input))}
+            />
+          ) : null}
         </Card>
       ) : null}
       {!past && preview ? (
