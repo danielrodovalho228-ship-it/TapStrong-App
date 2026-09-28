@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 
 import { IconButton } from '@/components/ui/IconButton';
-import { colors, radius, sizes, spacing } from '@/theme';
+import { bodyMapColors, colors, dotColors, makeStyles, radius, sizes, spacing } from '@/theme';
 
 import { muscleByKey } from '../../muscles';
 import type { BodyBand } from '../../profile/age';
@@ -200,7 +200,7 @@ export function BodyMapCanvas({
       on
         ? styles.dotOn
         : color
-          ? { backgroundColor: color, borderColor: colors.surface }
+          ? { backgroundColor: color, borderColor: dotColors.untrained }
           : styles.dotOff,
     ];
   };
@@ -338,10 +338,10 @@ export function BodyMapCanvas({
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   canvas: {
     backgroundColor: colors.bodyCanvas,
-    borderRadius: radius.card,
+    borderRadius: radius.bodyCard,
     alignItems: 'center',
     overflow: 'hidden',
   },
@@ -360,7 +360,7 @@ const styles = StyleSheet.create({
   },
   abs: { position: 'absolute' },
   // Same soft halo as a selected dot on the body map.
-  haloOn: { backgroundColor: 'rgba(194, 62, 23, 0.25)' },
-  dotOn: { backgroundColor: colors.accent, borderColor: colors.surface },
-  dotOff: { backgroundColor: colors.surface, borderColor: colors.ink },
-});
+  haloOn: { backgroundColor: bodyMapColors.selectedHalo },
+  dotOn: { backgroundColor: bodyMapColors.selected, borderColor: dotColors.untrained },
+  dotOff: { backgroundColor: dotColors.untrained, borderColor: dotColors.ring },
+}));

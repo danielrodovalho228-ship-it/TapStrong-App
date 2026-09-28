@@ -1,11 +1,11 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 
 import { AppText, Card, Chip } from '@/components/ui';
 import type { AppMode } from '@/features/profile/age';
-import { colors, fonts, radius, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, spacing } from '@/theme';
 
 import {
   findPlans,
@@ -173,7 +173,7 @@ export function PlansBrowser({ mode }: { mode: AppMode }) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   wrap: { gap: spacing.sm },
   card: {
     gap: spacing.xs,
@@ -187,4 +187,4 @@ const styles = StyleSheet.create({
   caps: { textTransform: 'uppercase', letterSpacing: 1.2, fontFamily: fonts.headingSemi },
   chips: { gap: spacing.sm },
   wrapChips: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
-});
+}));

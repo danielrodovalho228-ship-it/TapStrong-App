@@ -3,7 +3,7 @@ import { FlatList, Modal, Platform, Pressable, StyleSheet, View } from 'react-na
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { colors, radius, sizes, spacing } from '@/theme';
+import { colors, makeStyles, radius, sizes, spacing } from '@/theme';
 
 import { AppText } from './AppText';
 import { Icon } from './Icon';
@@ -93,7 +93,7 @@ export function Select<T extends string | number>({
                   style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}
                 >
                   <AppText variant={selected ? 'bodyStrong' : 'body'}>{item.label}</AppText>
-                  {selected ? <Icon name="check" color={colors.accent} /> : null}
+                  {selected ? <Icon name="check" color={colors.accentText} /> : null}
                 </Pressable>
               );
             }}
@@ -106,7 +106,7 @@ export function Select<T extends string | number>({
 
 const ROW = 56;
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   field: {
     flex: 1,
     minHeight: sizes.primaryButtonHeight - 6,
@@ -141,4 +141,4 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.line,
   },
   rowPressed: { backgroundColor: colors.line },
-});
+}));

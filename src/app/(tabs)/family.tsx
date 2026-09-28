@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import { AppText, Button, Card, Notice, Screen, ToggleRow } from '@/components/ui';
 import { currentPlan } from '@/features/billing/rules';
@@ -22,7 +22,7 @@ import { useOnboardingStore } from '@/features/onboarding/store';
 import { clock } from '@/lib/clock';
 import { deviceWeekStart } from '@/lib/dates';
 import { kvStorage } from '@/lib/storage';
-import { colors, fonts, spacing } from '@/theme';
+import { colors, fonts, makeStyles, spacing } from '@/theme';
 
 /** Family tab (SPEC §9 /(tabs)/family, mockup 19): who trains on this phone. */
 export default function FamilyScreen() {
@@ -222,7 +222,7 @@ export default function FamilyScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   list: { gap: 0, paddingVertical: spacing.xs },
   row: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: spacing.sm },
   divider: { borderTopWidth: 1, borderTopColor: colors.line },
@@ -231,4 +231,4 @@ const styles = StyleSheet.create({
   dashboard: { gap: spacing.sm },
   memberCard: { gap: spacing.xs },
   remove: { gap: spacing.sm },
-});
+}));

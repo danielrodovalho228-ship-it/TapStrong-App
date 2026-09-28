@@ -1,6 +1,6 @@
-import { Pressable, StyleSheet, type PressableProps } from 'react-native';
+import { Pressable, type PressableProps } from 'react-native';
 
-import { colors, radius, sizes } from '@/theme';
+import { colors, makeStyles, radius, sizes } from '@/theme';
 
 import { Icon, type IconName } from './Icon';
 
@@ -33,7 +33,7 @@ export function IconButton({ icon, variant = 'plain', color, disabled, ...rest }
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   base: {
     width: sizes.touchTarget,
     height: sizes.touchTarget,
@@ -44,4 +44,4 @@ const styles = StyleSheet.create({
   outlined: { borderWidth: 1.5, borderColor: colors.line, backgroundColor: colors.surface },
   pressed: { backgroundColor: colors.line },
   disabled: { opacity: 0.45 },
-});
+}));

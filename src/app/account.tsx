@@ -1,7 +1,7 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import {
   AppText,
@@ -26,7 +26,7 @@ import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
 import { deviceWeekStart } from '@/lib/dates';
 import { getSupabase } from '@/lib/supabase';
-import { colors, fonts, spacing } from '@/theme';
+import { colors, fonts, makeStyles, spacing } from '@/theme';
 import { OwnerOnly } from '@/features/family/OwnerOnly';
 import { useWorkoutStore } from '@/features/workout/store';
 
@@ -105,7 +105,7 @@ function AccountScreenInner() {
   return (
     <Screen header={<Header onBack={close} />}>
       <View style={styles.head}>
-        <AppText variant="caption" color={colors.accent} style={styles.caps}>
+        <AppText variant="caption" color={colors.accentText} style={styles.caps}>
           {from === 'done' && firstDone ? t('account.eyebrowDone') : t('account.eyebrow')}
         </AppText>
         <AppText variant="h1" accessibilityRole="header">
@@ -218,7 +218,7 @@ function AccountScreenInner() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   head: { gap: spacing.sm },
   caps: { textTransform: 'uppercase', letterSpacing: 1.2, fontFamily: fonts.headingSemi },
   actions: { gap: spacing.md },
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
   divider: { height: 1, backgroundColor: colors.line },
   center: { textAlign: 'center' },
   links: { alignItems: 'center', gap: spacing.sm },
-});
+}));
 
 /** Owner-only: a child profile needs the parent gate (QA B-03). */
 export default function AccountScreen() {

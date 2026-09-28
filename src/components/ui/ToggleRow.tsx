@@ -1,6 +1,6 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
-import { colors, sizes, spacing } from '@/theme';
+import { colors, makeStyles, sizes, spacing } from '@/theme';
 
 import { AppText } from './AppText';
 
@@ -42,7 +42,7 @@ export function ToggleRow({ label, detail, value, onChange }: ToggleRowProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -58,4 +58,4 @@ const styles = StyleSheet.create({
   thumb: { width: 22, height: 22, borderRadius: 11, backgroundColor: colors.surface },
   thumbOn: { alignSelf: 'flex-end' },
   thumbOff: { alignSelf: 'flex-start' },
-});
+}));

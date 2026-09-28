@@ -1,7 +1,7 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import { AppText, Icon } from '@/components/ui';
-import { colors, radius, sizes, spacing } from '@/theme';
+import { colors, makeStyles, radius, sizes, spacing } from '@/theme';
 
 export type AreaChipProps = {
   muscle: string;
@@ -32,7 +32,7 @@ export function AreaChip({
         onPress={onPress}
         style={styles.main}
       >
-        <AppText variant="button" color={colors.onAccent}>
+        <AppText variant="button" color={colors.dark.text}>
           {muscle}
           {separator}
           <AppText variant="button" color={colors.dark.accentSoft}>
@@ -46,17 +46,18 @@ export function AreaChip({
         onPress={onRemove}
         style={styles.remove}
       >
-        <Icon name="close" size={16} color={colors.onAccent} />
+        <Icon name="close" size={16} color={colors.dark.text} />
       </Pressable>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   chip: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.ink,
+    // Always dark, like the hero cards, so the coral goal reads in both modes.
+    backgroundColor: colors.dark.background,
     borderRadius: radius.chip,
     minHeight: sizes.touchTarget + 4,
     paddingLeft: spacing.md,
@@ -69,8 +70,8 @@ const styles = StyleSheet.create({
     height: sizes.touchTarget,
     margin: 2,
     borderRadius: radius.chip,
-    backgroundColor: '#2A2A2A',
+    backgroundColor: colors.dark.muted,
     alignItems: 'center',
     justifyContent: 'center',
   },
-});
+}));

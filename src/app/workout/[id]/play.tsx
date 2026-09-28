@@ -1,7 +1,7 @@
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import { AppText, Button, Card, Chip, IconButton, Screen } from '@/components/ui';
 import { adviceForItem, adviceLoad } from '@/features/workout/loads';
@@ -35,7 +35,7 @@ import { useWorkoutStore } from '@/features/workout/store';
 import type { LoadUnit, WorkoutRecord } from '@/features/workout/types';
 import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
-import { colors, fonts, radius, sizes, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, sizes, spacing } from '@/theme';
 
 /** Mockup 11 — the player: warm-up → exercises → cool-down, in order. */
 export default function PlayerScreen() {
@@ -522,7 +522,7 @@ function Counter({
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   setStack: { flexDirection: 'column-reverse', gap: spacing.lg },
   effort: { gap: spacing.xs },
   effortRow: { flexDirection: 'row', gap: spacing.sm, flexWrap: 'wrap' },
@@ -554,4 +554,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: radius.button,
   },
-});
+}));

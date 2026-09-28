@@ -1,7 +1,7 @@
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import { AppText, Button, Card, Header, IconButton, Notice, Screen } from '@/components/ui';
 import { useProgressStore, type RepairResult } from '@/features/progress/store';
@@ -10,7 +10,7 @@ import { useNow } from '@/features/workout/components/TimerRing';
 import { clockText } from '@/features/workout/format';
 import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
-import { colors, fonts, sizes, spacing } from '@/theme';
+import { colors, fonts, makeStyles, sizes, spacing } from '@/theme';
 
 /** Guided Repair test (SPEC §9 /repair/test/[key]): timer, left/right. */
 export default function RepairTestScreen() {
@@ -216,7 +216,7 @@ function Counter({
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   card: { gap: spacing.md },
   timer: { gap: spacing.sm, alignItems: 'stretch' },
   caps: {
@@ -234,4 +234,4 @@ const styles = StyleSheet.create({
   value: { minWidth: 64, alignItems: 'center' },
   passRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   flex: { flex: 1 },
-});
+}));

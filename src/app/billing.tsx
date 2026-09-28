@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Linking, Platform, StyleSheet, View } from 'react-native';
+import { Linking, Platform, View } from 'react-native';
 
 import { AppText, Button, Card, Header, Notice, Screen, TextLink } from '@/components/ui';
 import { refreshBilling, restore } from '@/features/billing/actions';
@@ -15,7 +15,7 @@ import {
 } from '@/features/billing/rules';
 import { useBillingStore } from '@/features/billing/store';
 import { clock } from '@/lib/clock';
-import { colors, fonts, spacing } from '@/theme';
+import { colors, fonts, makeStyles, spacing } from '@/theme';
 import { OwnerOnly } from '@/features/family/OwnerOnly';
 
 /** Mockup 22 — honest billing: trial end, first charge, cancel in 2 taps. */
@@ -148,7 +148,7 @@ function Row({ label, value }: { label: string; value: string }) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   rows: { gap: 0, paddingVertical: spacing.xs },
   row: {
     flexDirection: 'row',
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   center: { textAlign: 'center' },
   links: { alignItems: 'center', gap: spacing.sm },
-});
+}));
 
 /** Owner-only: a child profile needs the parent gate (QA B-03). */
 export default function BillingScreen() {

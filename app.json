@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "tapstrong",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "ios": {
       "bundleIdentifier": "app.tapstrong",
       "supportsTablet": false,
@@ -33,9 +33,13 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#F3F1ED",
+          "backgroundColor": "#FAF7F4",
           "image": "./assets/images/splash-icon.png",
-          "imageWidth": 220
+          "imageWidth": 220,
+          "dark": {
+            "backgroundColor": "#15171B",
+            "image": "./assets/images/splash-icon.png"
+          }
         }
       ],
       "expo-localization",

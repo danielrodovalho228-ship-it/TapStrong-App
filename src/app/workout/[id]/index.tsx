@@ -1,7 +1,7 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import { AppText, Button, Card, Chip, Icon, IconButton, Notice, Screen } from '@/components/ui';
 import { canStartWorkout, currentPlan } from '@/features/billing/rules';
@@ -45,7 +45,7 @@ import { track } from '@/lib/analytics';
 import { restFor, usePrefsStore } from '@/features/settings/store';
 import { clock } from '@/lib/clock';
 import { deviceWeekStart } from '@/lib/dates';
-import { colors, fonts, radius, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, spacing } from '@/theme';
 
 const SHORT_MINUTES = 15;
 
@@ -403,10 +403,10 @@ export default function WorkoutScreen() {
       </View>
 
       <View style={styles.badge}>
-        <Icon name="shield" size={20} color={reviewed ? colors.teal : colors.accent} />
+        <Icon name="shield" size={20} color={reviewed ? colors.teal : colors.accentText} />
         <AppText
           variant="caption"
-          color={reviewed ? colors.teal : colors.accent}
+          color={reviewed ? colors.teal : colors.accentText}
           style={styles.rowText}
         >
           {reviewed ? t('workout.reviewed') : t('workout.draftBadge')}
@@ -433,7 +433,7 @@ export default function WorkoutScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   places: { gap: spacing.xs },
   placeChips: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   spare: { gap: spacing.sm },
@@ -464,4 +464,4 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     borderRadius: radius.card,
   },
-});
+}));

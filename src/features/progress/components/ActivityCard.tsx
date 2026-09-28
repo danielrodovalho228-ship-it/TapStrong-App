@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
 import { AppText, Card, Chip, IconButton, TextField } from '@/components/ui';
 import type { AppMode } from '@/features/profile/age';
@@ -10,7 +10,7 @@ import { useWorkoutStore } from '@/features/workout/store';
 import { useLibraryStore } from '@/features/library/store';
 import { clock } from '@/lib/clock';
 import { deviceWeekStart, localDate } from '@/lib/dates';
-import { colors, fonts, radius, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, spacing } from '@/theme';
 
 import {
   activityTotals,
@@ -298,7 +298,7 @@ function ExerciseGraph({
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   card: { gap: spacing.md },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   row: { flexDirection: 'row', gap: spacing.sm },
@@ -338,4 +338,4 @@ const styles = StyleSheet.create({
     borderStyle: 'dashed',
     borderColor: colors.teal,
   },
-});
+}));

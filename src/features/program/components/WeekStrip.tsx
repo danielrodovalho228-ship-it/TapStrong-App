@@ -1,12 +1,12 @@
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import { AppText } from '@/components/ui';
 import { useWorkoutStore } from '@/features/workout/store';
 import { clock } from '@/lib/clock';
 import { deviceWeekStart, localDate } from '@/lib/dates';
-import { colors, fonts, radius, sizes, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, sizes, spacing } from '@/theme';
 
 import { useTrainingDaysPerWeek } from '../useTrainingDays';
 import { weekStrip, type WeekDay } from '../week';
@@ -66,7 +66,7 @@ export function WeekStrip({ large = false }: { large?: boolean }) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   row: { flexDirection: 'row', gap: spacing.xs },
   day: {
     flex: 1,
@@ -85,4 +85,4 @@ const styles = StyleSheet.create({
   dot: { width: 8, height: 8, borderRadius: 4 },
   trained: { backgroundColor: colors.accent },
   planned: { borderWidth: 1.5, borderColor: colors.accent },
-});
+}));

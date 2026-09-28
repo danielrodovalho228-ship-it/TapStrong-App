@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText, Button, Card, Chip, Header, IconButton } from '@/components/ui';
 import { SUPPORTED_LOCALES, type SupportedLocale } from '@/i18n';
-import { colors, SENIOR_TYPE_BOOST, spacing } from '@/theme';
+import { colors, makeStyles, SENIOR_TYPE_BOOST, spacing } from '@/theme';
 
 const GOALS = ['grow', 'firm', 'strengthen', 'balance', 'mobility'] as const;
 
@@ -105,9 +105,9 @@ export default function ComponentGallery() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   safe: { flex: 1, backgroundColor: colors.background },
   content: { padding: spacing.lg, gap: spacing.xxl, paddingBottom: spacing.xxxl },
   section: { gap: spacing.md },
   row: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
-});
+}));

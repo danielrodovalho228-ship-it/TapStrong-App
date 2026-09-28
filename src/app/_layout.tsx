@@ -9,12 +9,12 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { AppState, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { ThemedScreen, ThemeGate, useScheme } from '@/features/appearance/ThemeGate';
 import { refreshBilling } from '@/features/billing/actions';
 import { useNotificationSync } from '@/features/notifications/useNotificationSync';
 import { useSyncProfileSettings } from '@/features/onboarding/sync';
@@ -66,37 +66,48 @@ export default function RootLayout() {
     <GestureHandlerRootView style={styles.root}>
       <QueryClientProvider client={queryClient}>
         <SafeAreaProvider>
-          <StatusBar style="dark" />
-          <Stack
-            screenOptions={{
-              headerShown: false,
-              contentStyle: { backgroundColor: colors.background },
-            }}
-          >
-            {/* Goals opens as a sheet over the body map (mockup 09). */}
-            <Stack.Screen
-              name="goals"
-              options={{
-                presentation: 'formSheet',
-                sheetGrabberVisible: true,
-                sheetAllowedDetents: [0.92],
-              }}
-            />
-            <Stack.Screen
-              name="share"
-              options={{ contentStyle: { backgroundColor: colors.dark.background } }}
-            />
-            <Stack.Screen
-              name="milestone"
-              options={{
-                animation: 'fade',
-                contentStyle: { backgroundColor: colors.dark.background },
-              }}
-            />
-          </Stack>
+          <ThemeGate>
+            <AppStack />
+          </ThemeGate>
         </SafeAreaProvider>
       </QueryClientProvider>
     </GestureHandlerRootView>
+  );
+}
+
+/** Rendered inside ThemeGate, so its colors come from the active palette. */
+function AppStack() {
+  // Subscribing re-renders the navigator options with the new palette.
+  useScheme();
+  return (
+    <Stack
+      screenLayout={({ children }) => <ThemedScreen>{children}</ThemedScreen>}
+      screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: colors.background },
+      }}
+    >
+      {/* Goals opens as a sheet over the body map (mockup 09). */}
+      <Stack.Screen
+        name="goals"
+        options={{
+          presentation: 'formSheet',
+          sheetGrabberVisible: true,
+          sheetAllowedDetents: [0.92],
+        }}
+      />
+      <Stack.Screen
+        name="share"
+        options={{ contentStyle: { backgroundColor: colors.dark.background } }}
+      />
+      <Stack.Screen
+        name="milestone"
+        options={{
+          animation: 'fade',
+          contentStyle: { backgroundColor: colors.dark.background },
+        }}
+      />
+    </Stack>
   );
 }
 

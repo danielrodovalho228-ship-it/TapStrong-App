@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Alert, StyleSheet, View } from 'react-native';
+import { Alert, View } from 'react-native';
 
 import { AppText, Button, Screen, SegmentedControl, TextLink } from '@/components/ui';
 import { bodyImage } from '@/features/bodymap/images';
@@ -9,7 +9,7 @@ import { useOnboardingStore } from '@/features/onboarding/store';
 import { SUPPORTED_LOCALES, type SupportedLocale } from '@/i18n';
 import { track } from '@/lib/analytics';
 import { kidsUnder13Enabled } from '@/lib/features';
-import { colors, fonts, radius, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, spacing } from '@/theme';
 
 // Kids under 13 off for launch (Phase 12): the fourth tile shows teens 13+.
 const models = () => [
@@ -85,7 +85,7 @@ export default function Welcome() {
 
       <AppText variant="display" accessibilityRole="header">
         {t('welcome.tap')} {t('welcome.talk')}{' '}
-        <AppText variant="display" color={colors.accent}>
+        <AppText variant="display" color={colors.accentText}>
           {t('welcome.train')}
         </AppText>
       </AppText>
@@ -104,7 +104,7 @@ export default function Welcome() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   brandRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -122,4 +122,4 @@ const styles = StyleSheet.create({
     backgroundColor: colors.bodyCanvas,
   },
   modelLabel: { textTransform: 'uppercase', letterSpacing: 1.5, fontFamily: fonts.headingSemi },
-});
+}));

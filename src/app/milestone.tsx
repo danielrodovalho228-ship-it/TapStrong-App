@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText, Button, Icon, type IconName } from '@/components/ui';
@@ -16,7 +16,7 @@ import { MAX_FREEZES } from '@/features/workout/streak';
 import { useWorkoutStore } from '@/features/workout/store';
 import { clock } from '@/lib/clock';
 import { addDays, deviceWeekStart, localDate } from '@/lib/dates';
-import { colors, fonts, radius, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, spacing } from '@/theme';
 
 const BADGE_ICON: Record<BadgeKey, IconName> = {
   first_workout: 'check',
@@ -117,7 +117,7 @@ export default function MilestoneScreen() {
                       }),
                     })}
                   >
-                    <AppText variant="button" color={colors.onAccent}>
+                    <AppText variant="button" color={on ? colors.onAccent : colors.dark.text}>
                       {label}
                     </AppText>
                   </View>
@@ -185,7 +185,7 @@ export default function MilestoneScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   safe: { flex: 1, backgroundColor: colors.dark.background },
   content: { padding: spacing.xl, gap: spacing.lg },
   center: { alignItems: 'center', gap: spacing.sm },
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
   },
   day: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center' },
   dayOn: { backgroundColor: colors.accent },
-  dayOff: { backgroundColor: colors.mutedStrong },
+  dayOff: { backgroundColor: colors.dark.muted },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   badge: {
     flexBasis: '31%',
@@ -237,4 +237,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-});
+}));

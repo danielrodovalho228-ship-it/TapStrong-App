@@ -1,6 +1,6 @@
-import { Platform, Pressable, StyleSheet, type PressableProps } from 'react-native';
+import { Platform, Pressable, type PressableProps } from 'react-native';
 
-import { colors, radius, sizes, spacing } from '@/theme';
+import { colors, makeStyles, radius, sizes, spacing } from '@/theme';
 
 import { AppText } from './AppText';
 
@@ -26,14 +26,14 @@ export function Chip({ label, selected = false, disabled, ...rest }: ChipProps) 
       ]}
       {...rest}
     >
-      <AppText variant="label" color={selected ? colors.onAccent : colors.ink}>
+      <AppText variant="label" color={colors.ink}>
         {label}
       </AppText>
     </Pressable>
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   base: {
     minHeight: sizes.touchTarget,
     minWidth: sizes.touchTarget,
@@ -44,7 +44,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   idle: { backgroundColor: colors.surface, borderColor: colors.line },
-  selected: { backgroundColor: colors.ink, borderColor: colors.ink },
+  // Theme v2: selected chips are soft coral with a coral edge; the text stays ink.
+  selected: { backgroundColor: colors.primarySoft, borderColor: colors.accent },
   pressed: { borderColor: colors.ink },
   disabled: { opacity: 0.45 },
-});
+}));

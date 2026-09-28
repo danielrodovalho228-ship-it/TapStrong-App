@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import { AppText } from '@/components/ui';
-import { colors, radius, sizes, spacing } from '@/theme';
+import { colors, makeStyles, radius, sizes, spacing } from '@/theme';
 
 import { UNDO_MS, useWorkoutStore } from '../store';
 
@@ -41,7 +41,7 @@ export function UndoBar({ message, onDone }: { message: string | null; onDone: (
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   bar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -57,4 +57,4 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     justifyContent: 'center',
   },
-});
+}));

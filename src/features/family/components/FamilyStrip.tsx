@@ -1,13 +1,13 @@
 import { router } from 'expo-router';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 
 import { AppText, Icon } from '@/components/ui';
 import { useAccountStore } from '@/features/account/store';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { kvStorage } from '@/lib/storage';
-import { colors, fonts, radius, sizes, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, sizes, spacing } from '@/theme';
 
 import { FAMILY_MAX_PROFILES } from '../../billing/rules';
 import { summarize } from '../profiles';
@@ -41,7 +41,9 @@ export function FamilyStrip() {
         return (
           <View key={p.id} style={styles.card}>
             <View style={styles.avatar}>
-              <AppText variant="h2">{name.slice(0, 1).toUpperCase()}</AppText>
+              <AppText variant="h2" color={colors.onCanvas}>
+                {name.slice(0, 1).toUpperCase()}
+              </AppText>
             </View>
             <AppText variant="bodyStrong" numberOfLines={1}>
               {s.age != null && p.kind !== 'self' ? `${name}, ${s.age}` : name}
@@ -72,7 +74,7 @@ export function FamilyStrip() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   row: { gap: spacing.md },
   card: { width: 88, gap: spacing.xs, minHeight: sizes.touchTarget },
   avatar: {
@@ -90,4 +92,4 @@ const styles = StyleSheet.create({
     borderColor: colors.muted,
   },
   caps: { textTransform: 'uppercase', letterSpacing: 0.8, fontFamily: fonts.headingSemi },
-});
+}));

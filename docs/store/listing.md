@@ -172,3 +172,10 @@ Six per platform, from the preview build, in this order: body map with goals
 (mockup 08), generated workout with warm-up and cool-down (10), player (11),
 done with the red body (14), 60+ home (23), progress (18). Never show a child
 profile or a before/after photo in the screenshots.
+
+**Theme v2 (Coral suave):** the listing uses the **Light** screenshots first,
+in the order above. **Dark** versions go after them as extras (where the store
+allows more than six), never mixed into the first six. Reference renders of
+every screen in both modes are in `docs/screenshots/theme/light/` and
+`docs/screenshots/theme/dark/` (`npm run theme:check` regenerates them); the
+final store images still come from the preview build on a phone.

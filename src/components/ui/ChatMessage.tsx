@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
-import { colors, radius, spacing } from '@/theme';
+import { colors, makeStyles, radius, spacing } from '@/theme';
 
 import { AppText } from './AppText';
 
@@ -20,13 +20,13 @@ export function UserMessage({ text }: { text: string }) {
   return (
     <View style={styles.userWrap}>
       <View style={styles.user}>
-        <AppText color={colors.onAccent}>{text}</AppText>
+        <AppText color={colors.onInk}>{text}</AppText>
       </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   coach: {
     borderLeftWidth: 3,
     borderLeftColor: colors.ink,
@@ -41,4 +41,4 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
   },
-});
+}));

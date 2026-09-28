@@ -1,6 +1,6 @@
 import { Redirect, router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import { AppText, Button, Card, Header, Notice, Screen } from '@/components/ui';
 import { generateSession } from '@/features/generator';
@@ -12,7 +12,7 @@ import { repairInput } from '@/features/workout/plan';
 import { useWorkoutStore } from '@/features/workout/store';
 import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
-import { colors, fonts, spacing } from '@/theme';
+import { colors, fonts, makeStyles, spacing } from '@/theme';
 
 /** The 6-week Repair plan built from the check (SPEC §9 /repair/plan). */
 export default function RepairPlanScreen() {
@@ -106,7 +106,7 @@ export default function RepairPlanScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   card: { gap: spacing.sm },
   caps: {
     textTransform: 'uppercase',
@@ -116,4 +116,4 @@ const styles = StyleSheet.create({
   },
   row: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   flex: { flex: 1 },
-});
+}));

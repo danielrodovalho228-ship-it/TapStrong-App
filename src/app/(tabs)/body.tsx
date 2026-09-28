@@ -1,7 +1,7 @@
 import { Redirect, router } from 'expo-router';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Pressable, useWindowDimensions, View } from 'react-native';
 
 import { AppText, Button, Chip, Header, Screen, Select } from '@/components/ui';
 import { AreaChip } from '@/features/bodymap/components/AreaChip';
@@ -21,7 +21,7 @@ import { muscleLabel } from '@/features/onboarding/summaries';
 import { recoveryFills } from '@/features/workout/components/RecoveryBody';
 import { useBodyStates } from '@/features/workout/hooks';
 import { track } from '@/lib/analytics';
-import { colors, fonts, radius, sizes, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, sizes, spacing } from '@/theme';
 
 /** Mockup 08 — Body map (SPEC §9 /(tabs)/body). */
 export default function BodyMapScreen() {
@@ -119,10 +119,10 @@ export default function BodyMapScreen() {
         <ViewToggle value={s.bodyView} onChange={(bodyView) => s.update({ bodyView })} />
         {/* One stacked column so the two captions never overlap (QA round 1). */}
         <View style={styles.hints} pointerEvents="none">
-          <AppText variant="caption" color={colors.mutedStrong}>
+          <AppText variant="caption" color={colors.onCanvasMuted}>
             {t('bodyMap.hint')}
           </AppText>
-          <AppText variant="caption" color={colors.mutedStrong}>
+          <AppText variant="caption" color={colors.onCanvasMuted}>
             {t('bodyMap.zoomHint')}
           </AppText>
         </View>
@@ -183,7 +183,7 @@ function ViewToggle({ value, onChange }: { value: BodyView; onChange: (v: BodyVi
             onPress={() => onChange(v)}
             style={[styles.toggleItem, on && styles.toggleOn]}
           >
-            <AppText variant="button" color={on ? colors.onAccent : colors.mutedStrong}>
+            <AppText variant="button" color={on ? colors.onInk : colors.mutedStrong}>
               {t(`bodyMap.${v}`)}
             </AppText>
           </Pressable>
@@ -193,7 +193,7 @@ function ViewToggle({ value, onChange }: { value: BodyView; onChange: (v: BodyVi
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   header: { gap: 0 },
   subtitle: {
     marginLeft: sizes.touchTarget + spacing.lg + spacing.md,
@@ -236,4 +236,4 @@ const styles = StyleSheet.create({
   },
   count: { textTransform: 'uppercase', letterSpacing: 1.5, fontFamily: fonts.heading },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
-});
+}));

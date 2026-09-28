@@ -5,7 +5,7 @@ import { PanResponder, StyleSheet, View } from 'react-native';
 import { SegmentedControl } from '@/components/ui';
 import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
-import { spacing } from '@/theme';
+import { bodyMapColors, spacing } from '@/theme';
 
 import { muscleFamily } from '../../muscles';
 
@@ -60,7 +60,7 @@ export function BodyPicker({
     }),
   );
   const { main, halo } = workedDots(selected, outlined);
-  const recovery = Object.fromEntries(halo.map((k) => [k, 'rgba(194,62,23,0.35)']));
+  const recovery = Object.fromEntries(halo.map((k) => [k, bodyMapColors.workedHalo]));
 
   return (
     <View style={styles.wrap}>

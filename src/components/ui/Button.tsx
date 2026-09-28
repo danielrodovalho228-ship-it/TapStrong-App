@@ -1,6 +1,6 @@
-import { ActivityIndicator, Pressable, StyleSheet, View, type PressableProps } from 'react-native';
+import { ActivityIndicator, Pressable, View, type PressableProps } from 'react-native';
 
-import { colors, radius, sizes, spacing } from '@/theme';
+import { colors, makeStyles, radius, sizes, spacing } from '@/theme';
 
 import { AppText } from './AppText';
 
@@ -39,14 +39,17 @@ export function Button({
   ...rest
 }: ButtonProps) {
   const isDisabled = disabled || loading;
-  const filled = variant === 'primary' || variant === 'accent' || variant === 'teal';
-  const textColor = filled
-    ? colors.onAccent
-    : variant === 'danger' || variant === 'dangerText'
-      ? colors.accent
-      : variant === 'onDark'
-        ? colors.dark.text
-        : colors.ink;
+  // Theme v2: primary actions are coral; teal stays the 60+ Start.
+  const textColor =
+    variant === 'primary' || variant === 'accent'
+      ? colors.onAccent
+      : variant === 'teal'
+        ? colors.onTeal
+        : variant === 'danger' || variant === 'dangerText'
+          ? colors.danger
+          : variant === 'onDark'
+            ? colors.dark.text
+            : colors.ink;
 
   return (
     <Pressable
@@ -58,11 +61,10 @@ export function Button({
       style={({ pressed }) => [
         styles.base,
         fullWidth && styles.fullWidth,
-        variant === 'primary' && { backgroundColor: pressed ? colors.mutedStrong : colors.ink },
-        variant === 'accent' && {
+        (variant === 'primary' || variant === 'accent') && {
           backgroundColor: pressed ? colors.accentPressed : colors.accent,
         },
-        variant === 'teal' && { backgroundColor: pressed ? colors.ink : colors.teal },
+        variant === 'teal' && { backgroundColor: colors.teal, opacity: pressed ? 0.85 : 1 },
         variant === 'secondary' && [styles.secondary, pressed && styles.secondaryPressed],
         variant === 'ghost' && [styles.ghost, pressed && styles.ghostPressed],
         variant === 'danger' && [styles.danger, pressed && styles.ghostPressed],
@@ -85,7 +87,7 @@ export function Button({
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   base: {
     minHeight: sizes.primaryButtonHeight,
     borderRadius: radius.button,
@@ -103,8 +105,8 @@ const styles = StyleSheet.create({
   secondaryPressed: { backgroundColor: colors.line },
   ghost: { backgroundColor: 'transparent', minHeight: sizes.touchTarget },
   ghostPressed: { backgroundColor: colors.line },
-  danger: { backgroundColor: colors.surface, borderWidth: 1.5, borderColor: colors.accent },
-  onDark: { backgroundColor: 'transparent', borderWidth: 1.5, borderColor: colors.mutedStrong },
+  danger: { backgroundColor: colors.surface, borderWidth: 1.5, borderColor: colors.danger },
+  onDark: { backgroundColor: 'transparent', borderWidth: 1.5, borderColor: colors.dark.muted },
   onDarkPressed: { borderColor: colors.dark.text },
   disabled: { opacity: 0.45 },
-});
+}));

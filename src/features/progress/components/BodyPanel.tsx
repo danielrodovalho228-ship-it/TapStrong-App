@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import { AppText, Button, Card, TextField, TextLink } from '@/components/ui';
 import { latest, TAPE, useBodyStore, whtr, type BodyEntry } from '@/features/body/store';
@@ -9,7 +9,7 @@ import { useOnboardingStore } from '@/features/onboarding/store';
 import { lbToKg } from '@/features/profile/units';
 import { clock } from '@/lib/clock';
 import { localDate } from '@/lib/dates';
-import { colors, spacing } from '@/theme';
+import { colors, makeStyles, spacing } from '@/theme';
 
 import { formatLength, formatWeight, inchesToCm } from '../format';
 import { useProgressStore } from '../store';
@@ -159,7 +159,7 @@ export function BodyPanel() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   card: { gap: spacing.sm },
   line: {
     flexDirection: 'row',
@@ -170,4 +170,4 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   fields: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   field: { flexBasis: '47%', flexGrow: 1 },
-});
+}));

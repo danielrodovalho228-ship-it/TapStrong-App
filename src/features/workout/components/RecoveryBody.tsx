@@ -6,7 +6,7 @@ import { AppText, SegmentedControl } from '@/components/ui';
 import { BodyMapCanvas } from '@/features/bodymap/components/BodyMapCanvas';
 import type { BodySex, BodyView } from '@/features/bodymap/images';
 import type { BodyBand } from '@/features/profile/age';
-import { colors, recoveryColors, spacing } from '@/theme';
+import { dotColors, recoveryColors, spacing } from '@/theme';
 
 import type { RecoveryState } from '../recovery';
 
@@ -96,8 +96,8 @@ export function LegendRow({ color, label }: { color?: string; label: string }) {
         style={[
           styles.swatch,
           color
-            ? { backgroundColor: color, borderColor: colors.surface }
-            : { backgroundColor: colors.surface, borderColor: colors.ink },
+            ? { backgroundColor: color, borderColor: dotColors.untrained }
+            : { backgroundColor: dotColors.untrained, borderColor: dotColors.ring },
         ]}
       />
       <AppText style={styles.legendText}>{label}</AppText>

@@ -82,7 +82,8 @@
     "seed:build": "node scripts/build-seed.mjs",
     "bundle:check": "bash scripts/check-release-bundle.sh",
     "prototype:videos": "node scripts/build-prototype-videos.mjs",
-    "tabs:check": "node scripts/check-tab-labels.mjs"
+    "tabs:check": "node scripts/check-tab-labels.mjs",
+    "theme:check": "node scripts/check-theme-screens.mjs"
   },
   "private": true
 }

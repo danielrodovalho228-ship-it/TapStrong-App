@@ -1,6 +1,6 @@
-import { StyleSheet, View, type ViewProps } from 'react-native';
+import { View, type ViewProps } from 'react-native';
 
-import { colors, radius, spacing } from '@/theme';
+import { colors, makeStyles, radius, spacing } from '@/theme';
 
 export type CardTone = 'default' | 'safety' | 'dark';
 
@@ -12,7 +12,7 @@ export function Card({ tone = 'default', style, ...rest }: CardProps) {
   return <View style={[styles.base, styles[tone], style]} {...rest} />;
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   base: {
     borderRadius: radius.card,
     padding: spacing.lg,
@@ -21,4 +21,4 @@ const styles = StyleSheet.create({
   default: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.line },
   safety: { backgroundColor: colors.tealTint },
   dark: { backgroundColor: colors.dark.background },
-});
+}));

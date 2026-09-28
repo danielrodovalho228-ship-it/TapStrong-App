@@ -1,7 +1,7 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import {
   AppText,
@@ -30,7 +30,7 @@ import { useOnboardingStore } from '@/features/onboarding/store';
 import { useRestrictionsStore } from '@/features/restrictions/store';
 import { clock } from '@/lib/clock';
 import { uuid } from '@/lib/uuid';
-import { colors, fonts, spacing } from '@/theme';
+import { colors, fonts, makeStyles, spacing } from '@/theme';
 
 type Step = 'gate' | 'area' | 'side' | 'flags' | 'stop' | 'moves' | 'score' | 'duration';
 type Rating = 'hurts' | 'fine' | 'untried';
@@ -306,7 +306,7 @@ export default function MovementPainScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   card: { gap: spacing.sm },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   group: { gap: spacing.sm },
@@ -316,4 +316,4 @@ const styles = StyleSheet.create({
     fontFamily: fonts.headingSemi,
     color: colors.muted,
   },
-});
+}));

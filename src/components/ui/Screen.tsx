@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { colors, spacing } from '@/theme';
+import { colors, makeStyles, spacing } from '@/theme';
 
 export type ScreenProps = {
   header?: ReactNode;
@@ -36,9 +36,9 @@ export function Screen({ header, children, footer, scroll = true }: ScreenProps)
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   safe: { flex: 1, backgroundColor: colors.background },
   fill: { flex: 1 },
   content: { paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, gap: spacing.lg },
   footer: { paddingHorizontal: spacing.xl, paddingBottom: spacing.md, gap: spacing.sm },
-});
+}));

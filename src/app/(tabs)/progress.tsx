@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import {
   AppText,
@@ -30,7 +30,7 @@ import { streakToday } from '@/features/workout/streak';
 import { useWorkoutStore } from '@/features/workout/store';
 import { clock } from '@/lib/clock';
 import { deviceWeekStart, localDate } from '@/lib/dates';
-import { colors, fonts, radius, sizes, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, sizes, spacing } from '@/theme';
 
 /** Mockup 18 — progress (SPEC §9 /(tabs)/progress). */
 export default function ProgressScreen() {
@@ -233,7 +233,7 @@ function LinkRow({ icon, label, onPress }: { icon: IconName; label: string; onPr
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   stats: { flexDirection: 'row', gap: spacing.sm },
   stat: {
     flex: 1,
@@ -262,4 +262,4 @@ const styles = StyleSheet.create({
     borderColor: colors.line,
     borderRadius: radius.card,
   },
-});
+}));

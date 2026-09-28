@@ -67,6 +67,11 @@ export default function SettingsScreen() {
         />
         <Button
           variant="secondary"
+          label={t('settings.appearance')}
+          onPress={() => router.push('/settings/appearance')}
+        />
+        <Button
+          variant="secondary"
           label={t('settings.reminders')}
           onPress={() => router.push('/settings/reminders')}
         />

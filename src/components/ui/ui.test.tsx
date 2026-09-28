@@ -43,14 +43,14 @@ describe('Button variants', () => {
       ...[screen.getByRole('button', { name: label }).props.style].flat(Infinity).filter(Boolean),
     ).backgroundColor;
 
-  it('primary is black and accent is orange', async () => {
+  it('primary and accent are coral (theme v2)', async () => {
     await render(
       <>
         <Button label="Continue" />
         <Button label="Generate" variant="accent" />
       </>,
     );
-    expect(bg('Continue')).toBe(colors.ink);
+    expect(bg('Continue')).toBe(colors.accent);
     expect(bg('Generate')).toBe(colors.accent);
   });
 });

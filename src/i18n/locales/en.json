@@ -4707,7 +4707,8 @@
     "demoModel": "Body model",
     "help": "Help and support",
     "helpSubject": "TapStrong help",
-    "shareFriends": "Share TapStrong with friends"
+    "shareFriends": "Share TapStrong with friends",
+    "appearance": "Appearance"
   },
   "referral": {
     "eyebrow": "Invite received",
@@ -5067,5 +5068,19 @@
     "daysAuto": "My plan's days",
     "dayLabel": "{{day}}, reminder",
     "motivation": "Motivation"
+  },
+  "appearance": {
+    "title": "Appearance",
+    "options": {
+      "auto": "Automatic",
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "detail": {
+      "auto": "Follows your phone's setting",
+      "light": "Always the light theme",
+      "dark": "Always the dark theme"
+    },
+    "note": "Saved on this phone. It changes right away."
   }
 }

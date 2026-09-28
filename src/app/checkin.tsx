@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import { AppText, Button, Card, Header, Notice, Screen, TextField } from '@/components/ui';
 import { derive } from '@/features/onboarding/derived';
@@ -24,7 +24,7 @@ import { useWorkoutStore } from '@/features/workout/store';
 import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
 import { uuid } from '@/lib/uuid';
-import { colors, fonts, radius, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, spacing } from '@/theme';
 
 /** Mockup 25 — the 4-week check-in (SPEC §8 "Measurements"). */
 export default function CheckinScreen() {
@@ -272,7 +272,7 @@ export default function CheckinScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   card: { gap: spacing.sm },
   caps: {
     textTransform: 'uppercase',
@@ -307,4 +307,4 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     backgroundColor: colors.ink,
   },
-});
+}));

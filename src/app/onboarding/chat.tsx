@@ -1,7 +1,7 @@
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { ActivityIndicator, ScrollView, TextInput, View } from 'react-native';
 
 import {
   AppText,
@@ -29,7 +29,7 @@ import { answerSummary, coachAck } from '@/features/onboarding/summaries';
 import { visibleMainGoals } from '@/features/onboarding/visible';
 import { SUPPORTED_LOCALES, type SupportedLocale } from '@/i18n';
 import { track } from '@/lib/analytics';
-import { colors, fonts, radius, sizes, spacing } from '@/theme';
+import { colors, currentScheme, fonts, makeStyles, radius, sizes, spacing } from '@/theme';
 
 function isInterviewStep(value: unknown): value is InterviewStep {
   return typeof value === 'string' && (INTERVIEW_STEPS as readonly string[]).includes(value);
@@ -151,6 +151,8 @@ export default function ChatScreen() {
                 accessibilityLabel={t('chat.inputLabel')}
                 placeholder={t('chat.inputPlaceholder')}
                 placeholderTextColor={colors.muted}
+                // The keyboard follows the theme (theme v2).
+                keyboardAppearance={currentScheme()}
                 value={draft}
                 onChangeText={setDraft}
                 maxLength={MAX_USER_TEXT}
@@ -220,7 +222,7 @@ export default function ChatScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   headerWrap: { gap: spacing.sm },
   progress: { paddingHorizontal: spacing.xl },
   thread: { gap: spacing.xl, paddingBottom: spacing.lg, paddingTop: spacing.sm },
@@ -247,4 +249,4 @@ const styles = StyleSheet.create({
     color: colors.ink,
   },
   center: { textAlign: 'center' },
-});
+}));

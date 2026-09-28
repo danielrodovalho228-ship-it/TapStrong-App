@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText, Chip } from '@/components/ui';
-import { colors, spacing } from '@/theme';
+import { colors, makeStyles, spacing } from '@/theme';
 
 import type { MovementKey } from './catalog';
 import type { Light } from './progress';
@@ -32,11 +32,9 @@ export const reportTitle = (t: TFunction, r: Pick<MovementPain, 'area' | 'side'>
       })
     : areaName(t, r.area);
 
-export const LIGHT_COLOR: Record<Light, string> = {
-  green: colors.teal,
-  yellow: colors.mutedStrong,
-  red: colors.accent,
-};
+/** Traffic-light text color, read at render so it follows the theme. */
+export const lightColor = (l: Light): string =>
+  l === 'green' ? colors.teal : l === 'yellow' ? colors.mutedStrong : colors.accentText;
 
 /** Pain 0–10 as a row of chips (large targets, one tap). */
 export function ScoreChips({
@@ -99,11 +97,11 @@ export function PainBars({ points }: { points: number[] }) {
   );
 }
 
-const barStyles = StyleSheet.create({
+const barStyles = makeStyles(() => ({
   bars: { flexDirection: 'row', alignItems: 'flex-end', gap: spacing.md, minHeight: 110 },
   barCol: { alignItems: 'center', gap: spacing.xxs },
   bar: { width: 24, borderRadius: 4, backgroundColor: colors.ink },
-});
+}));
 
 const styles = StyleSheet.create({
   wrap: { gap: spacing.xs },

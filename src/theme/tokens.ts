@@ -1,42 +1,82 @@
+import { StyleSheet } from 'react-native';
+
+import { PALETTES, type Palette, type Scheme } from './palettes';
+
 /**
- * Brand tokens — SPEC §2.6 and §4. Do not add colors outside this file.
- * No gradients, no emoji.
+ * Brand tokens — SPEC §2.6 and §4, theme v2. Colors live only here and in
+ * palettes.ts (a test fails on color literals anywhere else). No gradients,
+ * no emoji.
  */
 
-export const colors = {
-  background: '#F3F1ED',
-  ink: '#121212',
-  muted: '#5E6168',
-  mutedStrong: '#45484F',
-  line: '#DDD8D0',
-  accent: '#C23E17',
-  accentPressed: '#A3340F',
-  teal: '#1F5F5B',
-  /** Light teal fill behind safety notes (mockups 1b, 2b, 3, 12). */
-  tealTint: '#E3ECEA',
-  surface: '#FFFFFF',
-  onAccent: '#FFFFFF',
-  bodyCanvas: '#E9E5DE',
-  dark: {
-    background: '#121212',
-    accent: '#E8663F',
-    accentSoft: '#EDA487',
-    text: '#F3F1ED',
-  },
-} as const;
+/**
+ * The active palette (theme v2, docs/theme-v2.md). Screens read `colors.x`
+ * at render; `applyScheme` swaps the values and the root remounts, so every
+ * screen follows Light / Dark without a restart.
+ */
+export const colors: Palette = clonePalette(PALETTES.light);
 
-/** Body-map recovery colors — SPEC §4. */
+let scheme: Scheme = 'light';
+export const currentScheme = () => scheme;
+
+function clonePalette(p: Palette): Palette {
+  return { ...p, dark: { ...p.dark } };
+}
+
+/** Makes `next` the active palette. Call before rendering (ThemeGate). */
+export function applyScheme(next: Scheme) {
+  if (next === scheme) return;
+  scheme = next;
+  const p = PALETTES[next];
+  Object.assign(colors, p, { dark: { ...p.dark } });
+}
+
+/**
+ * `StyleSheet.create` for styles that use `colors`: built on first use for
+ * each scheme, so a module-level style follows the active theme.
+ */
+export function makeStyles<T extends StyleSheet.NamedStyles<T>>(factory: () => T): T {
+  const cache: Partial<Record<Scheme, T>> = {};
+  const get = () => (cache[scheme] ??= StyleSheet.create(factory()));
+  return new Proxy({} as T, {
+    get: (_, key) => get()[key as keyof T],
+    ownKeys: () => Reflect.ownKeys(get()),
+    getOwnPropertyDescriptor: (_, key) => ({
+      configurable: true,
+      enumerable: true,
+      value: get()[key as keyof T],
+    }),
+  });
+}
+
+/**
+ * Body-map recovery colors — SPEC §4, theme v2: the same in both modes.
+ * `untrained` dots are white with a dark ring.
+ */
 export const recoveryColors = {
-  fresh: '#C23E17', // 0–24 h
-  recovering: '#E8663F', // 24–48 h
-  almost: '#EDA487', // 48–72 h
-  neglected: '#7F93A8', // not trained in 5+ days
+  fresh: '#C43E1C', // 0–24 h
+  recovering: '#EF6B4A', // 24–48 h
+  almost: '#F6B195', // 48–72 h
+  neglected: '#8FA3B8', // not trained in 5+ days
+} as const;
+export const dotColors = { untrained: '#FFFFFF', ring: '#333333' } as const;
+/**
+ * The body map sits on its own light card in both modes (theme v2), so its
+ * marks never follow the palette: a selected dot is the "fresh" red with a
+ * white ring, halos are that red at low opacity.
+ */
+export const bodyMapColors = {
+  selected: recoveryColors.fresh,
+  selectedHalo: 'rgba(196, 62, 28, 0.25)',
+  workedHalo: 'rgba(196, 62, 28, 0.35)',
+  highlight: 'rgba(196, 62, 28, 0.45)',
 } as const;
 
 export const radius = {
   button: 10,
   card: 12,
   chip: 6,
+  /** The light card around the body map (theme v2). */
+  bodyCard: 16,
 } as const;
 
 export const spacing = {

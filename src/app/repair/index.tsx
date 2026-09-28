@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet } from 'react-native';
+import { Pressable } from 'react-native';
 
 import { AppText, Button, Card, Header, Notice, Screen } from '@/components/ui';
 import { currentPlan } from '@/features/billing/rules';
@@ -10,15 +10,11 @@ import { useProgressStore } from '@/features/progress/store';
 import { buildRepairPlan, grade } from '@/features/repair/tests';
 import { useRepair } from '@/features/repair/useRepair';
 import { clock } from '@/lib/clock';
-import { colors, fonts, sizes, spacing } from '@/theme';
+import { colors, fonts, makeStyles, sizes, spacing } from '@/theme';
 
-const GRADE_COLOR = {
-  good: colors.teal,
-  uneven: colors.accent,
-  low: colors.accent,
-  limited: colors.accent,
-  todo: colors.accent,
-} as const;
+/** Read at render: the colors follow the active theme. */
+const gradeColor = (g: 'good' | 'uneven' | 'low' | 'limited' | 'todo') =>
+  g === 'good' ? colors.teal : colors.accentText;
 
 /** Mockup 17 — Repair check: find weak spots (SPEC §9 /repair). */
 export default function RepairScreen() {
@@ -99,7 +95,7 @@ export default function RepairScreen() {
               </AppText>
               <AppText
                 variant="caption"
-                color={GRADE_COLOR[g]}
+                color={gradeColor(g)}
                 style={[styles.caps, g === 'todo' && styles.underline]}
               >
                 {t(`repair.grades.${g}`)}
@@ -137,7 +133,7 @@ export default function RepairScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   list: { gap: 0, paddingVertical: spacing.xs },
   row: {
     flexDirection: 'row',
@@ -150,4 +146,4 @@ const styles = StyleSheet.create({
   caps: { textTransform: 'uppercase', letterSpacing: 1, fontFamily: fonts.heading },
   underline: { textDecorationLine: 'underline' },
   found: { gap: spacing.sm },
-});
+}));

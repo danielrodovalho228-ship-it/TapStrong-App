@@ -1,7 +1,7 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import {
   AppText,
@@ -27,7 +27,7 @@ import { exerciseCues, exerciseName } from '@/features/workout/format';
 import { useExerciseLibrary, useGeneratorInput } from '@/features/workout/hooks';
 import { useWorkoutStore } from '@/features/workout/store';
 import type { LoadUnit } from '@/features/workout/types';
-import { colors, radius, spacing } from '@/theme';
+import { colors, makeStyles, radius, spacing } from '@/theme';
 
 /**
  * Exercise page (improvements v1, B3; mockups 11 + 18): Guidance (demo, cues,
@@ -232,7 +232,7 @@ export default function ExerciseScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   card: { gap: spacing.sm },
   tiles: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   tile: { flexGrow: 1, flexBasis: '30%', gap: spacing.xs },
@@ -240,4 +240,4 @@ const styles = StyleSheet.create({
   bar: { flex: 1, backgroundColor: colors.accent, borderRadius: radius.chip },
   row: { flexDirection: 'row', gap: spacing.sm, alignItems: 'center' },
   flex: { flex: 1 },
-});
+}));

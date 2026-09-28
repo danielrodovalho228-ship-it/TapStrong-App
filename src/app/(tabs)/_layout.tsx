@@ -18,9 +18,10 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: colors.ink,
+        // Theme v2: the active tab is coral (the AA text coral for the label).
+        tabBarActiveTintColor: colors.accentText,
         tabBarInactiveTintColor: colors.muted,
-        tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.line },
+        tabBarStyle: { backgroundColor: colors.tabBar, borderTopColor: colors.line },
         // Five tabs at 390 px: no side padding so "BIBLIOTECA" / "PROGRESSO"
         // get the whole item width (QA R4 P2).
         tabBarItemStyle: { paddingHorizontal: 0 },

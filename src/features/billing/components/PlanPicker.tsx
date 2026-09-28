@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import { AppText, SegmentedControl } from '@/components/ui';
 import { kidsUnder13Enabled } from '@/lib/features';
-import { colors, fonts, radius, sizes, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, sizes, spacing } from '@/theme';
 
 import { priceLabel, type Period, type Plan } from '../rules';
 import { useBillingStore } from '../store';
@@ -85,7 +85,7 @@ export function PlanPicker({ plan, period, onPlan, onPeriod, showFree = true }: 
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   wrap: { gap: spacing.md },
   list: { gap: spacing.sm },
   card: {
@@ -120,4 +120,4 @@ const styles = StyleSheet.create({
   },
   badgeText: { fontFamily: fonts.headingSemi, textTransform: 'uppercase', letterSpacing: 0.8 },
   price: { alignItems: 'flex-end' },
-});
+}));

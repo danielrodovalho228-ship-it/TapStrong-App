@@ -21,7 +21,7 @@ import {
 import { useWorkoutStore } from '@/features/workout/store';
 import type { PainAction, PainType } from '@/features/workout/types';
 import { track } from '@/lib/analytics';
-import { colors, fonts, radius, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, spacing } from '@/theme';
 
 /** Mockup 21 — pain during a set (SPEC §2.2, §9 /workout/[id]/pain). */
 export default function PainScreen() {
@@ -99,7 +99,7 @@ export default function PainScreen() {
       <View style={styles.backdrop} />
       <View style={[styles.sheet, { paddingBottom: insets.bottom + spacing.lg }]}>
         <ScrollView contentContainerStyle={styles.content}>
-          <AppText variant="caption" color={colors.accent} style={styles.caps}>
+          <AppText variant="caption" color={colors.accentText} style={styles.caps}>
             {t('workout.pain.eyebrow')}
           </AppText>
           <AppText variant="h1" accessibilityRole="header">
@@ -203,7 +203,7 @@ export default function PainScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   overlay: { flex: 1, justifyContent: 'flex-end' },
   backdrop: { ...StyleSheet.absoluteFill, backgroundColor: colors.ink, opacity: 0.5 },
   sheet: {
@@ -218,4 +218,4 @@ const styles = StyleSheet.create({
   swapCard: { flexDirection: 'row', gap: spacing.md, borderWidth: 2, borderColor: colors.ink },
   flex: { flex: 1, gap: spacing.xxs },
   footer: { flexDirection: 'row', gap: spacing.sm, paddingHorizontal: spacing.xl },
-});
+}));

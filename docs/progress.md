@@ -1525,3 +1525,74 @@ Texto da QA em `docs/qa-round-5.md` (`5157a76`). Commits por grupo: P1 (`4ec6700
 
 1. **Biblioteca virtualizada:** usei páginas de 60 em vez de uma lista virtualizada (FlashList), porque a lista fica dentro da tela que já rola. O travamento some; se ainda parecer lento no aparelho, troco pela lista virtualizada.
 2. **Abas em PT/ES:** o `tabs:check` mede a versão em inglês, que é a que o servidor renderiza. "BIBLIOTECA" e "PROGRESSO" têm folga pelas medidas, mas vale olhar no aparelho em português.
+
+---
+
+## Fase 17 — Tema v2 "Coral suave" (modo dia e noite)
+
+Especificação: `docs/theme-v2.md`.
+
+### O que foi feito
+
+- **Configurações → Aparência:**
+  - opções Automático (padrão, segue o celular), Claro e Escuro;
+  - fica salvo neste aparelho e muda na hora, sem reiniciar;
+  - a navegação não volta ao início quando o tema muda.
+- **Sistema acompanha o tema:**
+  - barra de status e fundo do sistema no Android (barra de navegação, edge-to-edge);
+  - teclado (`keyboardAppearance`);
+  - splash: claro #FAF7F4, escuro #15171B (`userInterfaceStyle: automatic` no `app.json`).
+- **Tokens:**
+  - duas paletas em `src/theme/palettes.ts`;
+  - as telas leem as cores ativas (`makeStyles` refaz os estilos por modo);
+  - ~60 arquivos passaram para esse formato.
+- **Cor primária (coral) só em:**
+  - botões principais;
+  - aba ativa;
+  - "hoje";
+  - marcas de progresso.
+  As etiquetas de músculo viraram um tom suave.
+- **Mapa do corpo:**
+  - cartão claro #E9E5DE com cantos de 16 px nos dois modos, nunca invertido;
+  - cores de recuperação, ponto branco e anel #333 iguais nos dois modos;
+  - textos sobre o cartão usam tokens próprios, que também não mudam.
+- **Web:**
+  - a página vem pré-renderizada no tema claro;
+  - o tema escuro entra logo depois de carregar, porque o React manteria os estilos do servidor.
+
+### Testes
+
+- **Contraste WCAG AA:**
+  - todo par texto/fundo nos dois modos, mínimo 4,5:1 (`src/theme/contrast.test.ts`);
+  - marcas e anéis, mínimo 3:1.
+- **Cores soltas:** um teste falha se houver hex, `rgb()` ou `hsl()` fora de `tokens.ts` e `palettes.ts` (`no-color-literals.test.ts`).
+- **Troca de tema:**
+  - `scheme.test.ts` e `appearance.test.tsx`;
+  - Automático segue o celular, a escolha fixa vence, e a troca é instantânea.
+- **Capturas por modo:** `npm run theme:check` (Chromium).
+  - Abre 22 telas no claro e no escuro: boas-vindas, conversa do onboarding, mapa do corpo, objetivos, Home adulto e 60+, lista do treino, troca, player, descanso, fim, Biblioteca, página do exercício, Progresso (Atividade e Corpo), Planos, Equipamentos, Configurações, Aparência, Família, paywall, PIN dos pais.
+  - Confere o fundo de cada modo e se a tela não redirecionou.
+  - Salva 44 imagens em `docs/screenshots/theme/`.
+- Lint e typecheck limpos; **888 testes** passando (73 suítes).
+- `db:test`, `functions:check`, `bundle:check`, `tabs:check` e `theme:check` limpos.
+- Nenhuma dependência nativa nova (`expo-system-ui` e `expo-status-bar` já estavam no projeto).
+
+### Como testar
+
+1. Configurações → **Aparência** → Escuro: o app muda na hora e continua na mesma tela.
+2. Automático: troque o modo escuro do celular; o app acompanha.
+3. Mapa do corpo no escuro: o corpo continua num cartão claro, com as mesmas cores de recuperação.
+4. Treino, player, descanso e fim nos dois modos: botões principais em coral, texto legível.
+5. `npm run theme:check` refaz as capturas.
+
+### Perguntas em aberto
+
+1. **Cores ajustadas para passar no AA.** Algumas cores da tabela ficavam abaixo de 4,5:1, então ajustei o mínimo:
+   - cinza secundário claro: #6F6861 (a tabela dava 4,42:1);
+   - texto sobre o botão coral: escuro #1A0F0C nos dois modos (branco sobre coral dava 3,58:1);
+   - coral usado como texto no claro: #BF3721 (`accentText`); o botão continua #E8573F;
+   - vermelho de erro no claro: #C73E3E (a tabela dava 4,38:1).
+
+   Prefere manter o branco no botão coral (fora do AA) ou fica assim?
+2. **Capturas das lojas:** a ordem ficou em `docs/store/listing.md`: claras primeiro, escuras como extras. As imagens finais saem do build de preview no celular. As de `docs/screenshots/theme/` são referência da web e usam a biblioteca de exemplo (versão de desenvolvimento). A tela de descanso aparece com um aviso de desenvolvimento, porque foi aberta direto pelo endereço.
+3. **Biblioteca de vídeos (Gym Animations ou outra):** é serviço pago, então a decisão é sua (e do advogado, pela licença). Não mexi em nada disso.

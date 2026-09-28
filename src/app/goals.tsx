@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import { AppText, Button, Card, IconButton, RadioCard, Screen, Stepper } from '@/components/ui';
 import { hotspotsFor, FRAME } from '@/features/bodymap/hotspots';
@@ -21,7 +21,7 @@ import { muscleLabel } from '@/features/onboarding/summaries';
 import { muscleByKey } from '@/features/muscles';
 import { createWorkoutFrom, useExerciseLibrary, useGeneratorInput } from '@/features/workout/hooks';
 import { track } from '@/lib/analytics';
-import { colors, fonts, radius, spacing } from '@/theme';
+import { bodyMapColors, colors, fonts, makeStyles, radius, spacing } from '@/theme';
 
 const THUMB = 64;
 const ZOOM = 0.8; // thumbnail points per frame unit
@@ -157,7 +157,7 @@ export default function GoalsSheet() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   header: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   thumb: {
     width: THUMB,
@@ -171,11 +171,11 @@ const styles = StyleSheet.create({
     width: HIGHLIGHT,
     height: HIGHLIGHT,
     borderRadius: HIGHLIGHT / 2,
-    backgroundColor: 'rgba(194, 62, 23, 0.45)',
+    backgroundColor: bodyMapColors.highlight,
   },
   titles: { flex: 1, gap: spacing.xxs },
   section: { textTransform: 'uppercase', letterSpacing: 1.5, fontFamily: fonts.heading },
   goals: { gap: spacing.sm },
   quantities: { paddingVertical: spacing.xs, gap: 0 },
   divider: { height: 1, backgroundColor: colors.line },
-});
+}));

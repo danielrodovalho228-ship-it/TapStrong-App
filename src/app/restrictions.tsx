@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import {
   AppText,
@@ -26,7 +26,7 @@ import { useRestrictionsStore, type Restriction } from '@/features/restrictions/
 import { useExerciseLibrary } from '@/features/workout/hooks';
 import { useWorkoutStore } from '@/features/workout/store';
 import type { Side } from '@/features/workout/types';
-import { colors, fonts, radius, sizes, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, sizes, spacing } from '@/theme';
 
 const AREAS = PAIN_AREAS.filter((a) => a !== 'recent_surgery');
 const SIDED: PainArea[] = ['shoulder', 'elbow_wrist', 'hip', 'knee', 'ankle_foot'];
@@ -129,7 +129,7 @@ export default function RestrictionsScreen() {
               </View>
             </View>
             <View style={styles.rule}>
-              <Icon name="close" color={colors.accent} size={18} />
+              <Icon name="close" color={colors.accentText} size={18} />
               <AppText style={styles.flex}>{impact(r.area)}</AppText>
             </View>
             {swaps ? (
@@ -183,7 +183,7 @@ export default function RestrictionsScreen() {
             </View>
           </View>
           <View style={styles.rule}>
-            <Icon name="close" color={colors.accent} size={18} />
+            <Icon name="close" color={colors.accentText} size={18} />
             <AppText style={styles.flex}>{impact(a)}</AppText>
           </View>
           <TextLink
@@ -260,7 +260,7 @@ export default function RestrictionsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   card: { gap: spacing.sm },
   row: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   flex: { flex: 1 },
@@ -288,4 +288,4 @@ const styles = StyleSheet.create({
     borderColor: colors.muted,
   },
   healed: { gap: spacing.xs },
-});
+}));

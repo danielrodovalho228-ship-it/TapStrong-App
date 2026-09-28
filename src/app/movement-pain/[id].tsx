@@ -1,7 +1,7 @@
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import { AppText, Button, Card, Header, Notice, Screen, TextLink } from '@/components/ui';
 import { useOwnerAccess } from '@/features/family/OwnerOnly';
@@ -21,12 +21,12 @@ import {
   seeTherapist,
 } from '@/features/movement/progress';
 import { useMovementPainStore } from '@/features/movement/store';
-import { LIGHT_COLOR, movementName, PainBars, reportTitle } from '@/features/movement/ui';
+import { lightColor, movementName, PainBars, reportTitle } from '@/features/movement/ui';
 import { useExerciseLibrary, useGeneratorInput } from '@/features/workout/hooks';
 import { useWorkoutStore } from '@/features/workout/store';
 import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
-import { colors, fonts, radius, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, spacing } from '@/theme';
 
 const SESSION_MINUTES = 15;
 const DAY = 86_400_000;
@@ -100,7 +100,7 @@ export default function MovementPlanScreen() {
         <AppText variant="caption" color={colors.mutedStrong}>
           {t('movementPain.plan.level', { level })}
         </AppText>
-        <AppText color={colors.accent}>
+        <AppText color={colors.accentText}>
           {t('movementPain.plan.hurts', { list: list(report.painful) })}
         </AppText>
         {report.painFree.length ? (
@@ -135,11 +135,11 @@ export default function MovementPlanScreen() {
             {lights.map((l) => (
               <View
                 key={l.workoutId}
-                style={[styles.light, { borderColor: LIGHT_COLOR[l.light] }]}
+                style={[styles.light, { borderColor: lightColor(l.light) }]}
                 accessible
                 accessibilityLabel={t(`movementPain.plan.lights.${l.light}`)}
               >
-                <AppText variant="caption" color={LIGHT_COLOR[l.light]}>
+                <AppText variant="caption" color={lightColor(l.light)}>
                   {t(`movementPain.plan.lights.${l.light}`)}
                 </AppText>
               </View>
@@ -186,7 +186,7 @@ export default function MovementPlanScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   card: { gap: spacing.sm },
   caps: {
     textTransform: 'uppercase',
@@ -201,4 +201,4 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xxs,
   },
-});
+}));

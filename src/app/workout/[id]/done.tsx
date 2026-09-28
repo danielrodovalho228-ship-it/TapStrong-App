@@ -1,7 +1,7 @@
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import { AppText, Button, Card, Icon, Notice, Screen } from '@/components/ui';
 import { RatePainButtons } from '@/features/movement/Entry';
@@ -28,7 +28,7 @@ import { useWorkoutStore } from '@/features/workout/store';
 import { streakToday } from '@/features/workout/streak';
 import { clock } from '@/lib/clock';
 import { deviceWeekStart, localDate } from '@/lib/dates';
-import { colors, fonts, radius, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, spacing } from '@/theme';
 
 /** Mockup 14 — done: the body turns red, stats, a finisher suggestion. */
 export default function DoneScreen() {
@@ -153,7 +153,7 @@ export default function DoneScreen() {
       ) : null}
       <View style={styles.head}>
         <View style={styles.flex}>
-          <AppText variant="caption" color={colors.accent} style={styles.caps}>
+          <AppText variant="caption" color={colors.accentText} style={styles.caps}>
             {stopped
               ? t('workout.done.stoppedEyebrow')
               : mobility
@@ -174,7 +174,7 @@ export default function DoneScreen() {
           <View style={styles.flame}>
             <Icon name="flame" size={18} color={colors.onAccent} />
           </View>
-          <AppText variant="button" color={colors.onAccent}>
+          <AppText variant="button" color={colors.onInk}>
             {t('workout.done.streak', {
               count: streakToday(streak, localDate(now), deviceWeekStart()),
             })}
@@ -256,7 +256,7 @@ function Stat({ value, label }: { value: string; label: string }) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   head: { flexDirection: 'row', alignItems: 'flex-end', gap: spacing.md },
   flex: { flex: 1 },
   caps: { textTransform: 'uppercase', letterSpacing: 1.2, fontFamily: fonts.headingSemi },
@@ -291,4 +291,4 @@ const styles = StyleSheet.create({
   },
   finish: { gap: spacing.md },
   row: { flexDirection: 'row', gap: spacing.sm },
-});
+}));

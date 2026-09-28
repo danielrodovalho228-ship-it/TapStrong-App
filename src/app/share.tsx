@@ -1,7 +1,7 @@
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Share, StyleSheet, View } from 'react-native';
+import { Share, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText, Button, IconButton } from '@/components/ui';
@@ -24,7 +24,7 @@ import { streakToday } from '@/features/workout/streak';
 import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
 import { deviceWeekStart, localDate } from '@/lib/dates';
-import { colors, fonts, radius, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, spacing } from '@/theme';
 
 /**
  * Mockup 15 — share card: today's muscle map, streak and an invite link.
@@ -144,7 +144,7 @@ export default function ShareScreen() {
               </AppText>
             </View>
             <View style={styles.streak}>
-              <AppText variant="h1" color={colors.accent}>
+              <AppText variant="h1" color={colors.accentText}>
                 {streakToday(streak, localDate(now), deviceWeekStart())}
               </AppText>
               <AppText variant="caption" color={colors.muted} style={styles.caps}>
@@ -195,7 +195,7 @@ export default function ShareScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   safe: { flex: 1, backgroundColor: colors.dark.background },
   top: {
     flexDirection: 'row',
@@ -225,4 +225,4 @@ const styles = StyleSheet.create({
   },
   brand: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   centerText: { textAlign: 'center' },
-});
+}));

@@ -4707,7 +4707,8 @@
     "demoModel": "Modelo corporal",
     "help": "Ayuda y soporte",
     "helpSubject": "Ayuda de TapStrong",
-    "shareFriends": "Comparte TapStrong con amigos"
+    "shareFriends": "Comparte TapStrong con amigos",
+    "appearance": "Apariencia"
   },
   "referral": {
     "eyebrow": "Invitación recibida",
@@ -5067,5 +5068,19 @@
     "daysAuto": "Los días de mi plan",
     "dayLabel": "{{day}}, recordatorio",
     "motivation": "Motivación"
+  },
+  "appearance": {
+    "title": "Apariencia",
+    "options": {
+      "auto": "Automático",
+      "light": "Claro",
+      "dark": "Oscuro"
+    },
+    "detail": {
+      "auto": "Sigue el ajuste de tu teléfono",
+      "light": "Siempre el tema claro",
+      "dark": "Siempre el tema oscuro"
+    },
+    "note": "Se guarda en este teléfono. Cambia al momento."
   }
 }

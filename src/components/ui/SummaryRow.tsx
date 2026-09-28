@@ -1,6 +1,6 @@
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
-import { colors, fonts, spacing } from '@/theme';
+import { colors, fonts, makeStyles, spacing } from '@/theme';
 
 import { AppText } from './AppText';
 import { TextLink } from './TextLink';
@@ -37,7 +37,7 @@ export function SummaryRow({ label, value, editLabel, onEdit, last }: SummaryRow
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -51,4 +51,4 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     fontFamily: fonts.headingSemi,
   },
-});
+}));

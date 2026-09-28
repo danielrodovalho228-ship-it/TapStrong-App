@@ -21,7 +21,7 @@ export function TextLink({ label, tone = 'ink', ...rest }: TextLinkProps) {
     >
       <AppText
         variant="bodyStrong"
-        color={tone === 'accent' ? colors.accent : colors.ink}
+        color={tone === 'accent' ? colors.accentText : colors.ink}
         style={styles.text}
       >
         {label}

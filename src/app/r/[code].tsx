@@ -28,7 +28,7 @@ export default function ReferralLink() {
   return (
     <Screen footer={<Button label={t('referral.continue')} onPress={() => router.replace('/')} />}>
       <View style={styles.body}>
-        <AppText variant="caption" color={colors.accent} style={styles.caps}>
+        <AppText variant="caption" color={colors.accentText} style={styles.caps}>
           {t('referral.eyebrow')}
         </AppText>
         <AppText variant="h1" accessibilityRole="header">

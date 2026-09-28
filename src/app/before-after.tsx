@@ -19,7 +19,7 @@ import { useOnboardingStore } from '@/features/onboarding/store';
 import { photosAllowed } from '@/features/progress/checkin';
 import { deletePhotoFile, takePhoto } from '@/features/progress/photos';
 import { useProgressStore, type Pose, type ProgressPhoto } from '@/features/progress/store';
-import { colors, radius, spacing } from '@/theme';
+import { colors, makeStyles, radius, spacing } from '@/theme';
 
 /**
  * Mockup 26 — before & after. Adults only (SPEC §2.3–2.4: never for minors);
@@ -65,7 +65,7 @@ export default function BeforeAfterScreen() {
             alt=""
           />
           <View style={styles.slotLabel}>
-            <AppText variant="caption" color={colors.onAccent}>
+            <AppText variant="caption" color={colors.onInk}>
               {t('photos.slotLabel', { label, date: date(photo.takenAt) })}
             </AppText>
           </View>
@@ -75,14 +75,16 @@ export default function BeforeAfterScreen() {
             onPress={() => remove(photo)}
             style={styles.delete}
           >
-            <Icon name="close" color={colors.onAccent} size={18} />
+            <Icon name="close" color={colors.onInk} size={18} />
           </Pressable>
         </>
       ) : (
         <View style={styles.empty}>
-          <Icon name="body" color={colors.mutedStrong} size={32} />
-          <AppText variant="bodyStrong">{label}</AppText>
-          <AppText variant="caption" color={colors.mutedStrong} style={styles.center}>
+          <Icon name="body" color={colors.onCanvasMuted} size={32} />
+          <AppText variant="bodyStrong" color={colors.onCanvas}>
+            {label}
+          </AppText>
+          <AppText variant="caption" color={colors.onCanvasMuted} style={styles.center}>
             {empty}
           </AppText>
         </View>
@@ -149,7 +151,7 @@ export default function BeforeAfterScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   pair: { flexDirection: 'row', gap: spacing.md },
   slot: {
     flex: 1,
@@ -192,4 +194,4 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', gap: spacing.md, alignItems: 'center' },
   flex: { flex: 1 },
   center: { textAlign: 'center' },
-});
+}));

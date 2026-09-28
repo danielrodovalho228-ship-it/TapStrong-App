@@ -1,6 +1,6 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
-import { colors, radius, sizes, spacing } from '@/theme';
+import { colors, makeStyles, radius, sizes, spacing } from '@/theme';
 
 import { AppText } from './AppText';
 
@@ -42,7 +42,7 @@ export function SegmentedControl<T extends string>({
           >
             <AppText
               variant="label"
-              color={selected ? colors.onAccent : colors.mutedStrong}
+              color={selected ? colors.onInk : colors.mutedStrong}
               style={styles.text}
             >
               {option.label}
@@ -54,7 +54,7 @@ export function SegmentedControl<T extends string>({
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   row: {
     flexDirection: 'row',
     padding: spacing.xs,
@@ -74,4 +74,4 @@ const styles = StyleSheet.create({
   },
   selected: { backgroundColor: colors.ink },
   text: { textAlign: 'center' },
-});
+}));

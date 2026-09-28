@@ -85,7 +85,7 @@ export function ParentGate({ onPass, onCancel }: { onPass: () => void; onCancel?
         editable={!locked}
       />
       {message || locked ? (
-        <AppText variant="caption" color={colors.accent}>
+        <AppText variant="caption" color={colors.accentText}>
           {locked ? t('parentGate.locked', { count: lockMinutesLeft() }) : message}
         </AppText>
       ) : null}
@@ -143,7 +143,7 @@ export function ParentPinSetup({
         maxLength={PIN_LENGTH}
       />
       {error ? (
-        <AppText variant="caption" color={colors.accent}>
+        <AppText variant="caption" color={colors.accentText}>
           {t('parentGate.mismatch')}
         </AppText>
       ) : null}
@@ -232,7 +232,7 @@ export function ParentPinReset({ onDone, onCancel }: { onDone: () => void; onCan
         </>
       )}
       {message ? (
-        <AppText variant="caption" color={colors.accent}>
+        <AppText variant="caption" color={colors.accentText}>
           {message}
         </AppText>
       ) : null}

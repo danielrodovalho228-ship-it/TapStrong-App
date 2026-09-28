@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import { AppText } from '@/components/ui';
-import { colors, spacing } from '@/theme';
+import { colors, makeStyles, spacing } from '@/theme';
 
 import type { WeekBar } from '../stats';
 
@@ -39,7 +39,7 @@ export function WeekChart({ bars }: { bars: WeekBar[] }) {
           <AppText
             key={b.weekStart}
             variant="caption"
-            color={i === bars.length - 1 ? colors.accent : colors.muted}
+            color={i === bars.length - 1 ? colors.accentText : colors.muted}
             style={styles.label}
           >
             {t('progress.chart.week', { n: i + 1, count: b.sets })}
@@ -50,7 +50,7 @@ export function WeekChart({ bars }: { bars: WeekBar[] }) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   plot: { height: HEIGHT, flexDirection: 'row', alignItems: 'flex-end', gap: spacing.lg },
   col: { flex: 1, alignItems: 'center', justifyContent: 'flex-end' },
   bar: { width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 },
@@ -59,4 +59,4 @@ const styles = StyleSheet.create({
   axis: { height: 1.5, backgroundColor: colors.ink },
   labels: { flexDirection: 'row', gap: spacing.lg, marginTop: spacing.xs },
   label: { flex: 1, textAlign: 'center' },
-});
+}));

@@ -2,7 +2,7 @@ import * as Speech from 'expo-speech';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import { AppText, Button, Card, Icon, Screen, type IconName } from '@/components/ui';
 import { currentPlan } from '@/features/billing/rules';
@@ -15,7 +15,7 @@ import { checkinDue } from '@/features/progress/checkin';
 import { useProgressStore } from '@/features/progress/store';
 import { useWorkoutStore } from '@/features/workout/store';
 import { clock } from '@/lib/clock';
-import { colors, fonts, radius, sizes, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, sizes, spacing } from '@/theme';
 import { listText } from '@/lib/listText';
 
 import { dayPart, lastWorkout, relativeDay } from './summary';
@@ -232,7 +232,7 @@ function BigLink({ icon, label, onPress }: { icon: IconName; label: string; onPr
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   today: {
     gap: spacing.md,
     padding: spacing.xl,
@@ -270,4 +270,4 @@ const styles = StyleSheet.create({
     borderColor: colors.teal,
   },
   center: { textAlign: 'center' },
-});
+}));

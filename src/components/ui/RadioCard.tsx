@@ -1,6 +1,6 @@
-import { Pressable, StyleSheet, View, type PressableProps } from 'react-native';
+import { Pressable, View, type PressableProps } from 'react-native';
 
-import { colors, radius, sizes, spacing } from '@/theme';
+import { colors, makeStyles, radius, sizes, spacing } from '@/theme';
 
 import { AppText } from './AppText';
 
@@ -42,7 +42,7 @@ export function RadioCard({ label, description, selected, ...rest }: RadioCardPr
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   card: {
     minHeight: sizes.primaryButtonHeight,
     borderRadius: radius.card,
@@ -67,4 +67,4 @@ const styles = StyleSheet.create({
   },
   dotSelected: { borderColor: colors.ink, backgroundColor: colors.ink },
   dotInner: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.surface },
-});
+}));

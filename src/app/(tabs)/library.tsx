@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 
 import {
   AppText,
@@ -27,7 +27,7 @@ import { PlansBrowser } from '@/features/program/components/PlansBrowser';
 import { exerciseName } from '@/features/workout/format';
 import { useExerciseLibrary, useGeneratorInput } from '@/features/workout/hooks';
 import { ExerciseThumb } from '@/features/workout/components/Media';
-import { colors, fonts, radius, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, spacing } from '@/theme';
 
 /** Cards shown before "Show all". */
 const PAGE = 60;
@@ -292,7 +292,7 @@ export default function LibraryScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   caps: { textTransform: 'uppercase', letterSpacing: 1.2, fontFamily: fonts.headingSemi },
   chips: { gap: spacing.sm },
   wrapChips: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
@@ -312,4 +312,4 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   out: { gap: spacing.sm },
   outRow: { flexDirection: 'row', gap: spacing.sm, alignItems: 'center' },
-});
+}));

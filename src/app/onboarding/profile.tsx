@@ -2,7 +2,7 @@ import { Image } from 'expo-image';
 import { defaultEquipment, normalizeEquipment, presetOf } from '@/features/equipment/catalog';
 import { Redirect, router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import { AppText, Button, Card, Header, Notice, Screen, SummaryRow } from '@/components/ui';
 import { bodyImage } from '@/features/bodymap/images';
@@ -11,7 +11,7 @@ import { restrictionAreas } from '@/features/onboarding/safety';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { sexLabelKey } from '@/features/onboarding/visible';
 import { measurementText, musclePairs } from '@/features/onboarding/summaries';
-import { colors, fonts, radius, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, spacing } from '@/theme';
 
 /** Mockup 05 — Profile summary (step 7 of 7). */
 export default function ProfileScreen() {
@@ -109,7 +109,7 @@ export default function ProfileScreen() {
     >
       <View style={styles.hero}>
         <View style={styles.heroText}>
-          <AppText variant="label" color={colors.accent} style={styles.eyebrow}>
+          <AppText variant="label" color={colors.accentText} style={styles.eyebrow}>
             {t('profile.eyebrow')}
           </AppText>
           <AppText variant="h1" accessibilityRole="header">
@@ -145,7 +145,7 @@ export default function ProfileScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   hero: { flexDirection: 'row', alignItems: 'flex-end', gap: spacing.lg },
   heroText: { flex: 1, gap: spacing.sm },
   eyebrow: { textTransform: 'uppercase', letterSpacing: 1.5, fontFamily: fonts.heading },
@@ -158,4 +158,4 @@ const styles = StyleSheet.create({
   },
   previewImage: { width: '100%', height: '100%' },
   card: { paddingVertical: spacing.xs, gap: 0 },
-});
+}));

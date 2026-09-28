@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Modal, Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppText, Button, Card, IconButton, Notice, TextLink } from '@/components/ui';
@@ -9,7 +9,7 @@ import { getAlternatives, missingEquipmentOptions, swapItem } from '@/features/g
 import { isMachine } from '@/features/generator/filters';
 import type { GeneratorInput, SessionItem } from '@/features/generator/types';
 import { track } from '@/lib/analytics';
-import { colors, radius, spacing } from '@/theme';
+import { colors, makeStyles, radius, spacing } from '@/theme';
 
 import { setsLogged } from '../flow';
 import { exerciseCues, exerciseName } from '../format';
@@ -93,7 +93,7 @@ export function SwapSheet({
       <View style={[styles.sheet, { paddingBottom: insets.bottom + spacing.lg }]}>
         <View style={styles.head}>
           <View style={styles.headText}>
-            <AppText variant="caption" color={colors.accent} style={styles.eyebrow}>
+            <AppText variant="caption" color={colors.accentText} style={styles.eyebrow}>
               {t(
                 reason === 'machine_taken' ? 'workout.swap.machineEyebrow' : 'workout.swap.eyebrow',
               )}
@@ -170,7 +170,7 @@ export function SwapSheet({
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   missing: { gap: spacing.xs, paddingTop: spacing.sm },
   backdrop: { flex: 1, backgroundColor: colors.ink, opacity: 0.4 },
   sheet: {
@@ -193,4 +193,4 @@ const styles = StyleSheet.create({
   option: { gap: spacing.md },
   optionRow: { flexDirection: 'row', gap: spacing.md },
   optionText: { flex: 1, gap: spacing.xxs },
-});
+}));

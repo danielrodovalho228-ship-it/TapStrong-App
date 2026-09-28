@@ -1,7 +1,7 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText, Button } from '@/components/ui';
@@ -17,7 +17,7 @@ import { playTimerEnd } from '@/features/workout/sound';
 import { useWorkoutStore } from '@/features/workout/store';
 import type { SetLog } from '@/features/workout/types';
 import { clock } from '@/lib/clock';
-import { colors, fonts, radius, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, spacing } from '@/theme';
 
 const EXTRA_SECONDS = 30;
 
@@ -181,7 +181,7 @@ export default function RestScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   safe: { flex: 1, backgroundColor: colors.dark.background },
   content: { flex: 1, padding: spacing.xl, gap: spacing.lg },
   caps: { textTransform: 'uppercase', letterSpacing: 1.2, fontFamily: fonts.headingSemi },
@@ -195,4 +195,4 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     gap: spacing.xs,
   },
-});
+}));

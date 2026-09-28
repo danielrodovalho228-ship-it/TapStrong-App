@@ -1,7 +1,7 @@
 import { Redirect, router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import { AppText, Button, Card, Icon, Screen, TextLink } from '@/components/ui';
 import type { BodySex } from '@/features/bodymap/images';
@@ -43,7 +43,7 @@ import { useBillingStore } from '@/features/billing/store';
 import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
 import { addDays, deviceWeekStart, localDate } from '@/lib/dates';
-import { colors, fonts, spacing } from '@/theme';
+import { colors, fonts, makeStyles, spacing } from '@/theme';
 import { listText } from '@/lib/listText';
 
 const LEGEND: Exclude<RecoveryState, 'neutral'>[] = ['fresh', 'recovering', 'almost', 'neglected'];
@@ -403,7 +403,7 @@ export default function HomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   head: { flexDirection: 'row', alignItems: 'flex-end', gap: spacing.md },
   flex: { flex: 1 },
   caps: { textTransform: 'uppercase', letterSpacing: 1.2, fontFamily: fonts.headingSemi },
@@ -421,4 +421,4 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: colors.tealTint,
   },
-});
+}));

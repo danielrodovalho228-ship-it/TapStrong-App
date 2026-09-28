@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
-import { colors, fonts, radius, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, spacing } from '@/theme';
 
 import { AppText } from './AppText';
 import { Icon } from './Icon';
@@ -16,7 +16,7 @@ export type NoticeProps = {
 
 export function Notice({ title, children, tone = 'safety', icon = false }: NoticeProps) {
   const warning = tone === 'warning';
-  const color = warning ? colors.accent : colors.teal;
+  const color = warning ? colors.accentText : colors.teal;
   return (
     <View
       accessibilityRole={warning ? 'alert' : undefined}
@@ -27,7 +27,7 @@ export function Notice({ title, children, tone = 'safety', icon = false }: Notic
         {title ? (
           <AppText
             variant="label"
-            color={warning ? colors.accent : colors.teal}
+            color={warning ? colors.accentText : colors.teal}
             style={styles.title}
           >
             {title}
@@ -43,7 +43,7 @@ export function Notice({ title, children, tone = 'safety', icon = false }: Notic
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   box: {
     flexDirection: 'row',
     gap: spacing.md,
@@ -54,4 +54,4 @@ const styles = StyleSheet.create({
   warning: { backgroundColor: colors.surface, borderWidth: 1.5, borderColor: colors.accent },
   text: { flex: 1, gap: spacing.xs },
   title: { textTransform: 'uppercase', letterSpacing: 1, fontFamily: fonts.heading },
-});
+}));

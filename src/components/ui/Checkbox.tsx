@@ -1,6 +1,6 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
-import { colors, sizes, spacing } from '@/theme';
+import { colors, makeStyles, sizes, spacing } from '@/theme';
 
 import { AppText } from './AppText';
 import { Icon } from './Icon';
@@ -21,14 +21,14 @@ export function Checkbox({ label, checked, onChange }: CheckboxProps) {
       style={styles.row}
     >
       <View style={[styles.box, checked && styles.boxOn]}>
-        {checked ? <Icon name="check" size={18} color={colors.onAccent} strokeWidth={2.5} /> : null}
+        {checked ? <Icon name="check" size={18} color={colors.onInk} strokeWidth={2.5} /> : null}
       </View>
       <AppText style={styles.label}>{label}</AppText>
     </Pressable>
   );
 }
 
-const styles = StyleSheet.create({
+const styles = makeStyles(() => ({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -47,4 +47,4 @@ const styles = StyleSheet.create({
   },
   boxOn: { backgroundColor: colors.ink, borderColor: colors.ink },
   label: { flex: 1 },
-});
+}));
