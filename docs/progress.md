@@ -1206,3 +1206,91 @@ O relatório completo está em `docs/qa-round-3.md`. Todos os P1 e P2 foram corr
 ### Fase 14
 
 Recebi o texto das melhorias v1 (pacotes A–D). Como você pediu, só começo depois de aprovar a Fase 13.
+
+## Fase 14 — Melhorias v1 (pacotes A–D)
+
+Base: `docs/improvements-v1.md`; mapa de telas × mockups em `docs/phase14-screens.md`. Um commit por pacote: `803fdeb` (A), `7931fb3` (B), `7f490ed` (C), `2ff161d` (D). Antes disso, as sugestões aprovadas da Fase 13: e-mail de suporte `danielrodovalho228@gmail.com` e o gerador respeitando o número de exercícios escolhido, com a oferta "adicionar 1 exercício?" quando sobra tempo.
+
+### Feito
+
+**A — Semana, programa e cargas**
+- Faixa da semana na Home, na Home 60+ e na lista de treinos (hoje contornado, ponto cheio = treinou, vazado = planejado); tocar num dia abre o registro ou a prévia.
+- Blocos de programa de 4 a 6 semanas, com a última semana de deload (40% menos séries). Cada treino tem nome do dia (Push, Pull, Pernas, Superior…) e o resumo "N exercícios · N min", com kcal só para adultos e 60+.
+- Carga sugerida e progressão determinística:
+  - +5/+10 lb (2,5/5 kg) no topo da faixa com esforço ≤ 8;
+  - +1 repetição no peso corporal;
+  - 60+ e articulação em cuidado: repetição antes de carga;
+  - mantém após 2 falhas e reduz após 3;
+  - chips de esforço 6/8/10.
+- Planos prontos por dias, objetivo e divisão (adolescentes sem planos de emagrecimento). O plano define alvos; o gerador continua escolhendo só exercícios seguros.
+- Modos de treino: Meu plano, Treino avulso (mapa do corpo), Personalizado (aquecimento e desaquecimento sempre incluídos).
+- Adolescente gerenciado só compartilha se o responsável ligar.
+
+**B — Biblioteca**
+- Nova aba Biblioteca com os mesmos pontos do BodyMapCanvas (frente/costas), busca e filtros. Só aparecem exercícios seguros; o resto fica em "Não é para você agora", com o motivo.
+- Página do exercício:
+  - orientação: demo, dicas, erros comuns, músculos;
+  - desempenho: maior carga, 1RM, volume e nota;
+  - adolescentes sem 1RM e volume; 60+ só a maior carga.
+- Favoritos, preferidos pelo gerador e pela troca (que continua com no máximo 5 opções).
+- Criar exercício (só adultos): nunca entra no plano automático, só no Personalizado, e passa pelas mesmas checagens de restrição e dor. Aparece como "Não revisado por treinador".
+
+**C — Equipamentos**
+- ~60 itens em grupos, com liga/desliga em Configurações → Equipamentos.
+- Predefinições: Academia completa, Academia pequena, Casa, Só peso corporal, Hotel.
+- Locais salvos (ex.: Academia e Casa), trocáveis no topo do treino; o treino é refeito para o local.
+- Seed mapeado item a item; gerador, troca e biblioteca filtram pela lista exata.
+- Teste de cobertura: cada predefinição mantém 5+ opções por músculo × posição.
+
+**D — Atividade, conquistas, corpo, configurações**
+- **Progresso → Atividade:**
+  - período (7 dias a tudo), treinos, horas, volume e mobilidade;
+  - calendário do mês;
+  - gráfico da melhor carga por exercício com meta.
+  - Adolescentes: sem volume. 60+: só treinos, horas e calendário.
+- **Progresso → Corpo (só adultos):**
+  - relação cintura-altura primeiro;
+  - tendência do peso;
+  - medidas de fita (cintura, peito, quadril, braço, coxa, panturrilha), guardadas no celular.
+- **Conquistas novas:**
+  - semanas seguidas (4/12/26/52);
+  - volume em 3 níveis (lb ou kg);
+  - fase do Repair concluída;
+  - 30 dias de equilíbrio;
+  - 100 treinos.
+  - Adolescentes não veem as de volume. Migração `badges_v2` aplicada no Supabase.
+- **Configurações:**
+  - Preferências de treino: unidades, descanso padrão (60+ só 90/120 s), avisos por voz, aquecimento curto e nível de experiência.
+    - O aquecimento curto encurta, nunca remove, o aquecimento e o desaquecimento.
+    - "Começando a treinar" limita o nível dos exercícios.
+  - Lembretes: horário, dias e "salvar a sequência".
+  - Modelo do corpo, Ajuda (e-mail de suporte) e Compartilhar com amigos.
+- **Dica na Home** no dia seguinte a um treino: "10 minutos de mobilidade mantêm sua sequência".
+- **Proteção do tipo de perfil** (sugestão 3 da Fase 13):
+  - o id do perfil dono fica no Keychain/Keystore;
+  - um perfil editado para "self" cai no PIN dos pais;
+  - preferências e medidas ficam separadas por perfil.
+
+### Verificações
+
+- Lint, typecheck e **731 testes** passando (64 suítes).
+- `npm run db:test`, `functions:check` e `bundle:check` limpos.
+- Testes novos: `program`, `a-screens`, `loads`, `library`, `equipment`, cobertura por predefinição e `d-package`. O `d-package` cobre atividade, conquistas com filtro de adolescente, corpo, descanso, aquecimento curto, experiência, lembretes, dica de sequência e proteção do perfil.
+
+### Como testar (QA rodada 4)
+
+1. **Home:** faixa da semana; toque em ontem (registro) e amanhã (prévia). Nome do dia e "N exercícios · N min".
+2. **Treino:** registre carga e esforço 8 no topo da faixa → no próximo treino a sugestão sobe 5 lb.
+3. **Biblioteca:** toque num ponto, favorite um exercício, crie um exercício próprio (adulto) e use-o em Personalizado.
+4. **Equipamentos:** escolha "Hotel", crie o local "Casa" e troque de local no topo do treino.
+5. **Progresso:** Atividade (troque o período e o mês; defina uma meta de carga) e Corpo (adicione cintura → a relação aparece).
+6. **Configurações → Preferências:** descanso de 90 s (o timer começa em 1:30), voz ligada, aquecimento curto.
+7. **Adolescente e 60+:** confira que não aparecem volume, Corpo ou kcal para o adolescente, e que a tela 60+ fica simples.
+
+### Perguntas em aberto
+
+1. **Sincronização com Apple Saúde / Health Connect:** não construí. Precisa de biblioteca nativa nova e de um novo build, então aguardo seu OK.
+2. **Som ao fim do timer:** a preferência existe, mas o som em si precisa de um arquivo de áudio e de `expo-audio`. Por enquanto só há avisos por voz. Posso adicionar?
+3. **"Falta equipamento" na troca:** itens indisponíveis aparecem só em "Não é para você agora" na Biblioteca; na troca de exercício eles não aparecem desativados. Quer esse detalhe também na troca?
+4. **Avaliar o app:** fica para depois do lançamento, quando as contas das lojas existirem.
+5. **Velocidade do PIN:** continua como combinado; você testa no Expo Go e, se passar de 1 s, falamos da biblioteca nativa.
