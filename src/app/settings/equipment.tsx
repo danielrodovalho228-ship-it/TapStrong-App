@@ -15,6 +15,7 @@ import {
 } from '@/features/equipment/catalog';
 import { usePlacesStore } from '@/features/equipment/store';
 import { useOnboardingStore } from '@/features/onboarding/store';
+import { discardPlannedWorkouts } from '@/features/workout/hooks';
 import { uuid } from '@/lib/uuid';
 import { colors, spacing } from '@/theme';
 
@@ -31,7 +32,15 @@ export default function EquipmentScreen() {
   const preset = presetOf(items, location);
   const [placeName, setPlaceName] = useState('');
 
-  const setItems = (next: EquipmentItem[]) => s.update({ equipment: next });
+  const { syncActive } = usePlacesStore();
+  // Any change rebuilds today's planned workout and drops a place that no
+  // longer matches (QA R4-09).
+  const apply = (patch: { location?: typeof location; equipment: EquipmentItem[] }) => {
+    s.update(patch);
+    syncActive(patch.location ?? location, patch.equipment);
+    discardPlannedWorkouts();
+  };
+  const setItems = (next: EquipmentItem[]) => apply({ equipment: next });
   const toggle = (item: EquipmentItem, on: boolean) =>
     setItems(on ? [...new Set([...items, item])] : items.filter((i) => i !== item));
 
@@ -46,7 +55,7 @@ export default function EquipmentScreen() {
             key={k}
             label={t(`equipmentSettings.presetNames.${k}`)}
             selected={preset === k}
-            onPress={() => s.update({ location: PRESETS[k].location, equipment: PRESETS[k].items })}
+            onPress={() => apply({ location: PRESETS[k].location, equipment: PRESETS[k].items })}
           />
         ))}
       </View>
@@ -54,7 +63,15 @@ export default function EquipmentScreen() {
       <AppText variant="label">{t('equipmentSettings.profiles')}</AppText>
       <View style={styles.chips}>
         {places.map((p) => (
-          <Chip key={p.id} label={p.name} selected={activeId === p.id} onPress={() => use(p.id)} />
+          <Chip
+            key={p.id}
+            label={p.name}
+            selected={activeId === p.id}
+            onPress={() => {
+              use(p.id);
+              discardPlannedWorkouts();
+            }}
+          />
         ))}
       </View>
       <View style={styles.row}>

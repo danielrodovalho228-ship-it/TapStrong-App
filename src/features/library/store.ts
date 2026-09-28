@@ -3,6 +3,8 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { kvStorage } from '@/lib/storage';
 
+import { customEquipment } from './custom';
+
 import type { JointKey } from '../movement/catalog';
 import type { Position } from '../onboarding/options';
 
@@ -71,7 +73,18 @@ export const useLibraryStore = create<State>()(
     }),
     {
       name: 'library',
-      version: 1,
+      version: 2,
+      // v2 (QA R4-07): custom exercises move from the old coarse keys to items.
+      migrate: (persisted) => {
+        const data = persisted as Partial<LibraryData>;
+        return {
+          ...data,
+          custom: (data.custom ?? []).map((c) => ({
+            ...c,
+            equipment: customEquipment(c.equipment),
+          })),
+        } as LibraryData;
+      },
       storage: createJSONStorage(() => kvStorage),
       partialize: ({ favourites, notes, goals, custom }) => ({ favourites, notes, goals, custom }),
     },

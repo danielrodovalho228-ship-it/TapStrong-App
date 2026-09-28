@@ -3,12 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/components/ui';
-import { useOnboardingStore } from '@/features/onboarding/store';
 import { useWorkoutStore } from '@/features/workout/store';
 import { clock } from '@/lib/clock';
 import { deviceWeekStart, localDate } from '@/lib/dates';
 import { colors, fonts, radius, sizes, spacing } from '@/theme';
 
+import { useTrainingDaysPerWeek } from '../useTrainingDays';
 import { weekStrip, type WeekDay } from '../week';
 
 /**
@@ -19,7 +19,7 @@ import { weekStrip, type WeekDay } from '../week';
 export function WeekStrip({ large = false }: { large?: boolean }) {
   const { t, i18n } = useTranslation();
   const workouts = useWorkoutStore((s) => s.workouts);
-  const daysPerWeek = useOnboardingStore((s) => s.daysPerWeek ?? 3);
+  const daysPerWeek = useTrainingDaysPerWeek();
   const today = localDate(clock.now());
   const days = weekStrip({
     today,

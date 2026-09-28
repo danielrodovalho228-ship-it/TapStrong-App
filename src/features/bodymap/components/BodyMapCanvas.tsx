@@ -173,7 +173,8 @@ export function BodyMapCanvas({
   // Soft halos: recovery color (or the accent when selected), visual only.
   const halos = hotspots.flatMap((h) => {
     const color = recovery[h.key];
-    const on = !readOnly && selected.includes(h.key);
+    // Read-only maps draw `selected` too ("Muscles worked", QA R4-06).
+    const on = selected.includes(h.key);
     if (!color && !on) return [];
     return h.points.map(([x, y], i) => (
       <View
@@ -190,13 +191,13 @@ export function BodyMapCanvas({
 
   const dotStyle = (key: string) => {
     const color = readOnly ? recovery[key] : undefined;
-    const on = !readOnly && selected.includes(key);
+    const on = selected.includes(key);
     return [
       { borderWidth: geo.ring },
-      color
-        ? { backgroundColor: color, borderColor: colors.surface }
-        : on
-          ? styles.dotOn
+      on
+        ? styles.dotOn
+        : color
+          ? { backgroundColor: color, borderColor: colors.surface }
           : styles.dotOff,
     ];
   };

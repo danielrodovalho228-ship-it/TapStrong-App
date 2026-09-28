@@ -15,6 +15,9 @@ const SAFETY_REASONS = new Set([
   'position',
   'age',
   'impact',
+  // Equipment or place changed in Settings (QA R4-09).
+  'equipment',
+  'location',
 ]);
 
 export type SafetyRefresh =
@@ -101,6 +104,8 @@ export const safetyKey = (input: GeneratorInput | null) =>
         input.painToday ?? [],
         input.stoppedToday ?? [],
         input.movementLimits ?? [],
+        input.location,
+        [...input.equipment].sort(),
       ])
     : '';
 

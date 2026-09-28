@@ -7,10 +7,22 @@ import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { spacing } from '@/theme';
 
+import { muscleFamily } from '../../muscles';
+
 import type { BodySex, BodyView } from '../images';
 import { displayBand } from '../selection';
 
 import { BodyMapCanvas } from './BodyMapCanvas';
+
+/**
+ * "Muscles worked" dots (QA R4-06): main muscles filled, secondary as a
+ * light halo. Parent keys ("chest") light their child dots.
+ */
+export function workedDots(primary: string[], secondary: string[]) {
+  const main = [...new Set(primary.flatMap(muscleFamily))];
+  const halo = [...new Set(secondary.flatMap(muscleFamily))].filter((k) => !main.includes(k));
+  return { main, halo };
+}
 
 /**
  * The body map with its dots, a Front/Back switch and a sideways swipe that
@@ -47,8 +59,8 @@ export function BodyPicker({
       },
     }),
   );
-  // Secondary muscles show as a light recovery-style halo around the dot.
-  const recovery = Object.fromEntries(outlined.map((k) => [k, 'rgba(194,62,23,0.35)']));
+  const { main, halo } = workedDots(selected, outlined);
+  const recovery = Object.fromEntries(halo.map((k) => [k, 'rgba(194,62,23,0.35)']));
 
   return (
     <View style={styles.wrap}>
@@ -57,7 +69,7 @@ export function BodyPicker({
           band={band}
           sex={sex}
           view={view}
-          selected={selected}
+          selected={readOnly ? main : selected}
           recovery={recovery}
           onToggle={onToggle}
           readOnly={readOnly}

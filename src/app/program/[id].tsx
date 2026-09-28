@@ -8,6 +8,7 @@ import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { planAllowed, planById } from '@/features/program/plans';
 import { useProgramStore } from '@/features/program/store';
+import { discardPlannedWorkouts } from '@/features/workout/hooks';
 import { clock } from '@/lib/clock';
 import { localDate } from '@/lib/dates';
 import { colors, spacing } from '@/theme';
@@ -32,6 +33,8 @@ export default function ProgramScreen() {
   const use = () => {
     if (blocked) return;
     choosePlan(mine ? null : plan!.id, localDate(clock.now()));
+    // Today's planned workout follows the new plan (QA R4-08).
+    discardPlannedWorkouts();
     setSaved(true);
   };
 

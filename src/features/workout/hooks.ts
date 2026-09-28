@@ -49,7 +49,11 @@ export function useExerciseLibrary(): Exercise[] {
 }
 
 /** Generator input from the profile, saved restrictions and workout history. */
-export function useGeneratorInput(library: Exercise[]): GeneratorInput | null {
+export function useGeneratorInput(
+  library: Exercise[],
+  /** A future day's preview: that day's date and plan days ahead (QA R4-08). */
+  ahead?: { date: string; days: number },
+): GeneratorInput | null {
   const profile = useOnboardingStore();
   const restrictions = useRestrictionsStore((s) => s.items);
   const workouts = useWorkoutStore((s) => s.workouts);
@@ -81,7 +85,7 @@ export function useGeneratorInput(library: Exercise[]): GeneratorInput | null {
   // Starred exercises are preferred when safe (B4).
   return base
     ? {
-        ...withProgram(base, library, workouts, program, today),
+        ...withProgram(base, library, workouts, program, ahead?.date ?? today, ahead?.days ?? 0),
         favourites,
         shortWarmup,
         experience,
@@ -131,6 +135,17 @@ export function useSafetyRefresh(
     // Re-run only when the safety side of the input changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, key]);
+}
+
+/**
+ * Throws away today's planned regular workout that hasn't started, so the
+ * next open builds it again: after a plan change or an equipment change
+ * (QA R4-08, R4-09). A started workout is never touched.
+ */
+export function discardPlannedWorkouts() {
+  const store = useWorkoutStore.getState();
+  for (const w of store.workouts)
+    if (w.status === 'planned' && w.kind === 'regular' && !w.logs.length) store.discard(w.id);
 }
 
 /** Builds today's workout and stores it. Returns its id, or null when none is safe. */

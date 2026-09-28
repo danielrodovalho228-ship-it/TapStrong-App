@@ -1,4 +1,4 @@
-import { EQUIPMENT_GROUPS } from '../equipment/catalog';
+import { EQUIPMENT_GROUPS, isEquipmentItem, type EquipmentItem } from '../equipment/catalog';
 import type { Exercise } from '../exercises/types';
 import { JOINT_AREA, type JointKey } from '../movement/catalog';
 import type { Position } from '../onboarding/options';
@@ -39,6 +39,31 @@ export const MUSCLE_JOINTS: Record<string, JointKey[]> = {
   shins: ['ankle'],
 };
 
+/**
+ * Custom exercises made before the detailed list saved the old coarse keys
+ * (QA R4-07). Each becomes the one item it most likely meant; "machines"
+ * can't be guessed, so it no longer hides the exercise.
+ */
+const COARSE_TO_ONE: Record<string, EquipmentItem | null> = {
+  dumbbells: 'dumbbells',
+  kettlebell: 'kettlebells',
+  barbell: 'barbell',
+  bench: 'flat_bench',
+  bands: 'long_bands',
+  machines: null,
+  cables: 'cable_station',
+  pull_up_bar: 'pull_up_bar',
+  mat: 'mat',
+};
+export function customEquipment(list: readonly string[]): EquipmentItem[] {
+  const out = new Set<EquipmentItem>();
+  for (const q of list) {
+    if (isEquipmentItem(q)) out.add(q);
+    else if (COARSE_TO_ONE[q]) out.add(COARSE_TO_ONE[q]!);
+  }
+  return [...out];
+}
+
 /** Free weights are held in both hands unless proven otherwise: no "with support" (R3-09). */
 const FREE_WEIGHTS: readonly string[] = EQUIPMENT_GROUPS.freeWeights;
 export const usesFreeWeights = (equipment: readonly string[]) =>
@@ -66,7 +91,8 @@ export function customPositions(
  * programmed on its own (`custom`).
  */
 export function customToExercise(c: CustomExerciseData): Exercise {
-  const loaded = c.equipment.some((q) => q !== 'bands' && q !== 'mat' && !q.includes('band'));
+  const equipment = customEquipment(c.equipment);
+  const loaded = equipment.some((q) => q !== 'mat' && !q.includes('band'));
   const joints = customJoints(c);
   return {
     id: c.id,
@@ -75,11 +101,11 @@ export function customToExercise(c: CustomExerciseData): Exercise {
     cuesKey: '',
     customName: c.name,
     custom: true,
-    equipment: c.equipment as Exercise['equipment'],
+    equipment,
     location: ['home', 'gym', 'outdoors'],
     level: 2,
     minAgeBand: 'young',
-    positions: customPositions(c),
+    positions: customPositions({ ...c, equipment }),
     contraindications: [...new Set(joints.map((j) => JOINT_AREA[j]))],
     pattern: 'core_stability',
     parts: ['main'],

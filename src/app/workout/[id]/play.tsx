@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText, Button, Card, Chip, IconButton, Screen } from '@/components/ui';
-import { adviceForItem } from '@/features/workout/loads';
+import { adviceForItem, adviceLoad } from '@/features/workout/loads';
 import { usePrefsStore } from '@/features/settings/store';
 import * as Speech from 'expo-speech';
 import { prototypeVideo } from '@/features/exercises/library';
@@ -324,7 +324,8 @@ function SetStep({
   const earlier = workout.logs
     .filter((l) => l.itemId === item.id && l.exerciseId === item.exerciseId && l.load != null)
     .pop();
-  const initialLoad = earlier?.load ?? (advice?.kind === 'load' ? advice.load : null) ?? 0;
+  // A "+1 rep" day keeps the last load (QA R4-10).
+  const initialLoad = earlier?.load ?? adviceLoad(advice) ?? 0;
 
   const [value, setValue] = useState(range[0]);
   const [load, setLoad] = useState(initialLoad);
@@ -390,7 +391,9 @@ function SetStep({
           </AppText>
         ) : advice?.kind === 'reps' && advice.change === 'up' ? (
           <AppText variant="caption" color={colors.teal}>
-            {t('load.repsUp', { reps: advice.reps })}
+            {advice.load
+              ? t('load.repsUp', { reps: advice.reps })
+              : t('load.repsUpBodyweight', { reps: advice.reps })}
           </AppText>
         ) : advice?.kind === 'load' && advice.change !== 'same' ? (
           <AppText

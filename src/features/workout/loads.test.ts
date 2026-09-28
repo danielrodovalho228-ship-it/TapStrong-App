@@ -87,11 +87,17 @@ describe('suggested load (A4)', () => {
       kind: 'reps',
       reps: 13,
       change: 'up',
+      // The load stays at 20 lb on a "+1 rep" day (QA R4-10).
+      load: 20,
+      unit: 'lb',
     });
     expect(advice(top, bench, { jointCare: true })).toEqual({
       kind: 'reps',
       reps: 13,
       change: 'up',
+      // The load stays at 20 lb on a "+1 rep" day (QA R4-10).
+      load: 20,
+      unit: 'lb',
     });
     const beaten = [s([13, 13, 13], 20), s([12, 12, 12], 20)];
     expect(advice(beaten, bench, { mode: 'senior' })).toEqual({

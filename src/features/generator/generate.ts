@@ -485,9 +485,10 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   // whole group, only the moves that train it.
   const primariesReady = (e: Exercise) =>
     e.muscles.filter((m) => m.role === 'primary').every((m) => isReady(rootOf(m.muscleKey)));
-  const fill: MovementGroup[] = (['push', 'pull', 'legs', 'core'] as MovementGroup[]).sort(
-    (a, b) => weekCount[a] - weekCount[b] || GROUP_ORDER[a] - GROUP_ORDER[b],
-  );
+  // A split plan's day fills only its own groups (QA R4-08).
+  const fill: MovementGroup[] = (['push', 'pull', 'legs', 'core'] as MovementGroup[])
+    .filter((g) => !input.dayGroups?.length || input.dayGroups.includes(g))
+    .sort((a, b) => weekCount[a] - weekCount[b] || GROUP_ORDER[a] - GROUP_ORDER[b]);
   const added = new Map<string, MovementGroup>();
   // Each open slot goes to the group with the fewest sessions this week plus
   // exercises today, so a chest goal does not make the week push-heavy.

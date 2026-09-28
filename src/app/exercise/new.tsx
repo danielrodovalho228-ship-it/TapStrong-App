@@ -15,6 +15,11 @@ import {
 } from '@/components/ui';
 import { BodyPicker } from '@/features/bodymap/components/BodyPicker';
 import {
+  EQUIPMENT_GROUPS,
+  type EquipmentGroup,
+  type EquipmentItem,
+} from '@/features/equipment/catalog';
+import {
   canCreateExercise,
   customJoints,
   customPositions,
@@ -25,7 +30,6 @@ import { JOINTS, type JointKey } from '@/features/movement/catalog';
 import { derive } from '@/features/onboarding/derived';
 import type { Position } from '@/features/onboarding/options';
 import { useOnboardingStore } from '@/features/onboarding/store';
-import { EQUIPMENT } from '../../../supabase/functions/_shared/interview';
 import { clock } from '@/lib/clock';
 import { uuid } from '@/lib/uuid';
 import { colors, spacing } from '@/theme';
@@ -110,16 +114,24 @@ export default function CreateExerciseScreen() {
       </AppText>
       <BodyPicker selected={primary} outlined={secondary} onToggle={toggle} maxHeight={360} />
       <AppText variant="label">{t('createExercise.equipment')}</AppText>
-      <View style={styles.chips}>
-        {EQUIPMENT.map((q) => (
-          <Chip
-            key={q}
-            label={t(`equipment.${q}`)}
-            selected={equipment.includes(q)}
-            onPress={() => setEquipment((l) => flip(l, q))}
-          />
-        ))}
-      </View>
+      {/* The same detailed list the filters use (QA R4-07). */}
+      {(Object.keys(EQUIPMENT_GROUPS) as EquipmentGroup[]).map((g) => (
+        <View key={g} style={styles.group}>
+          <AppText variant="caption" color={colors.mutedStrong}>
+            {t(`equipmentSettings.groups.${g}`)}
+          </AppText>
+          <View style={styles.chips}>
+            {(EQUIPMENT_GROUPS[g] as readonly EquipmentItem[]).map((q) => (
+              <Chip
+                key={q}
+                label={t(`equipment.${q}`)}
+                selected={equipment.includes(q)}
+                onPress={() => setEquipment((l) => flip(l, q))}
+              />
+            ))}
+          </View>
+        </View>
+      ))}
       <AppText variant="label">{t('createExercise.joints')}</AppText>
       <AppText variant="caption" color={colors.mutedStrong}>
         {t('createExercise.jointsFromMuscles')}
@@ -167,4 +179,5 @@ export default function CreateExerciseScreen() {
 
 const styles = StyleSheet.create({
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  group: { gap: spacing.xs },
 });

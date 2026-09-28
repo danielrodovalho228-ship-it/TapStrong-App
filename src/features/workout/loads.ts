@@ -24,7 +24,8 @@ export type Session = { endedAt: string; logs: SetLog[] };
 export type LoadAdvice =
   | { kind: 'first' }
   | { kind: 'load'; load: number; unit: LoadUnit; change: 'up' | 'same' | 'down' }
-  | { kind: 'reps'; reps: number; change: 'up' | 'same' }
+  /** More reps; a loaded move keeps its last load (QA R4-10). */
+  | { kind: 'reps'; reps: number; change: 'up' | 'same'; load?: number; unit?: LoadUnit }
   | null;
 
 export const UPPER_STEP: Record<LoadUnit, number> = { lb: 5, kg: 2.5 };
@@ -101,7 +102,7 @@ export function loadAdvice(input: {
       // +1 rep before any load: once the last session already beat the top
       // of the range by a rep, the load goes up one step.
       const beatTop = sessions[0].logs.every((l) => done(l) > top);
-      if (!beatTop) return { kind: 'reps', reps: top + 1, change: 'up' };
+      if (!beatTop) return { kind: 'reps', reps: top + 1, change: 'up', load, unit };
     }
     return { kind: 'load', load: load + step, unit, change: 'up' };
   }
@@ -112,8 +113,13 @@ export function loadAdvice(input: {
 
 /** "3 × 10–12 · 25 lb" (A4): the dose line with the suggested load. */
 export function loadText(advice: LoadAdvice, unitLabel: string): string | null {
-  return advice?.kind === 'load' && advice.load > 0 ? `${advice.load} ${unitLabel}` : null;
+  const load = adviceLoad(advice);
+  return load ? `${load} ${unitLabel}` : null;
 }
+
+/** The load to start from: the suggested one, or the last one on a "+1 rep" day. */
+export const adviceLoad = (advice: LoadAdvice): number | null =>
+  advice?.kind === 'load' || advice?.kind === 'reps' ? (advice.load ?? null) || null : null;
 
 /** The advice for one item of a stored workout, from the person's history. */
 export function adviceForItem(input: {

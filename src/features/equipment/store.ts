@@ -15,12 +15,25 @@ import type { EquipmentItem } from './catalog';
  */
 export type Place = { id: string; name: string; location: Location; items: EquipmentItem[] };
 
+/** The place's list is exactly what is in use now. */
+export const matchesPlace = (
+  place: Place | undefined,
+  location: Location | null | undefined,
+  items: readonly string[],
+) =>
+  !!place &&
+  place.location === location &&
+  place.items.length === items.length &&
+  place.items.every((i) => items.includes(i));
+
 type State = {
   places: Place[];
   activeId: string | null;
   save: (place: Place) => void;
   remove: (id: string) => void;
   use: (id: string) => void;
+  /** Clears the active place when the list in use no longer matches it (QA R4-09). */
+  syncActive: (location: Location | null | undefined, items: readonly string[]) => void;
   reset: () => void;
 };
 
@@ -43,6 +56,18 @@ export const usePlacesStore = create<State>()(
         if (!place) return;
         set({ activeId: id });
         useOnboardingStore.getState().update({ location: place.location, equipment: place.items });
+      },
+      syncActive: (location, items) => {
+        const { activeId, places } = get();
+        if (
+          activeId &&
+          !matchesPlace(
+            places.find((p) => p.id === activeId),
+            location,
+            items,
+          )
+        )
+          set({ activeId: null });
       },
       reset: () => set({ places: [], activeId: null }),
     }),

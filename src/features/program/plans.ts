@@ -28,6 +28,8 @@ export type ReadyPlan = {
   /** Age modes the plan is offered in. */
   modes: AppMode[];
   blockWeeks: number;
+  /** Strength and muscle plans work best with weights (A5 equipment filter). */
+  equipment: 'weights' | 'any';
 };
 
 const FULL: PlanDay = { name: 'fullBody', groups: ['push', 'pull', 'legs'] };
@@ -77,6 +79,7 @@ function build(): ReadyPlan[] {
                 ? ['teen', 'adult']
                 : ALL,
           blockWeeks: goal === 'strength' ? 6 : goal === 'muscle' ? 5 : 4,
+          equipment: goal === 'strength' || goal === 'muscle' ? 'weights' : 'any',
         });
       }
     }
@@ -91,6 +94,7 @@ function build(): ReadyPlan[] {
       days: Array.from({ length: days }, (_, i) => (i % 2 ? FULL : MOBILITY)),
       modes: ALL,
       blockWeeks: 4,
+      equipment: 'any',
     });
   }
   for (const days of [2, 3, 4]) {
@@ -103,6 +107,7 @@ function build(): ReadyPlan[] {
       days: splitDays('fullBody', days),
       modes: ['senior'],
       blockWeeks: 4,
+      equipment: 'any',
     });
   }
   return out;
@@ -127,6 +132,8 @@ export type PlanFilter = {
   split?: PlanSplit;
   maxMinutes?: number;
   muscleGroup?: MovementGroup;
+  /** Only plans that work without weights. */
+  noWeights?: boolean;
 };
 
 /** Plans for this age mode, filtered. 60+ sees the steadier plans first. */
@@ -139,7 +146,8 @@ export function findPlans(mode: AppMode, filter: PlanFilter = {}): ReadyPlan[] {
       (!filter.goal || p.goal === filter.goal) &&
       (!filter.split || p.split === filter.split) &&
       (!filter.maxMinutes || p.minutes <= filter.maxMinutes) &&
-      (!filter.muscleGroup || p.days.some((d) => d.groups.includes(filter.muscleGroup!))),
+      (!filter.muscleGroup || p.days.some((d) => d.groups.includes(filter.muscleGroup!))) &&
+      (!filter.noWeights || p.equipment === 'any'),
   ).sort(
     (a, b) =>
       (mode === 'senior'
@@ -188,10 +196,13 @@ export function planDayInput(
           .slice(0, 2)
           .map((muscleKey) => ({ muscleKey, goal })),
   );
+  const dayGroups = day.groups.filter((g): g is MovementGroup => g !== 'mobility');
   return {
     ...input,
     mainGoals: MAIN_GOALS[plan.goal],
     muscleGoals,
     minutes: plan.minutes,
+    // A split day fills only its own groups; full-body days keep the balance.
+    ...(dayGroups.length && dayGroups.length < 3 ? { dayGroups } : {}),
   };
 }

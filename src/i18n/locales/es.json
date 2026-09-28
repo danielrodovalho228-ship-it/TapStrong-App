@@ -4768,7 +4768,8 @@
     "effort": "¿Qué tan dura fue la serie?",
     "easy": "Fácil",
     "solid": "Firme",
-    "hard": "Muy dura"
+    "hard": "Muy dura",
+    "repsUpBodyweight": "Intenta {{reps}} repeticiones esta vez."
   },
   "plans": {
     "title": "Planes listos",
@@ -4788,7 +4789,10 @@
       "any": "Cualquiera",
       "short": "30 min o menos",
       "daysValue_one": "{{count}} día",
-      "daysValue_other": "{{count}} días"
+      "daysValue_other": "{{count}} días",
+      "equipment": "Equipo",
+      "noWeights": "Sin pesas",
+      "muscles": "Músculos"
     },
     "goals": {
       "shape": "Ponerse en forma",
@@ -4804,7 +4808,13 @@
       "ppl": "Empuje / tirón / piernas"
     },
     "schedule": "Organización de la semana",
-    "notForYou": "Este plan no está disponible para tu perfil. Elige uno en Planes."
+    "notForYou": "Este plan no está disponible para tu perfil. Elige uno en Planes.",
+    "groups": {
+      "push": "Pecho, hombros, tríceps",
+      "pull": "Espalda, bíceps",
+      "legs": "Piernas, glúteos",
+      "core": "Core"
+    }
   },
   "modes": {
     "title": "¿Qué quieres hacer?",

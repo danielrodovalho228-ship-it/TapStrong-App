@@ -140,6 +140,30 @@ export function PlansBrowser({ mode }: { mode: AppMode }) {
         </>
       ) : null}
 
+      <AppText variant="label" style={styles.caps}>
+        {t('plans.filters.equipment')}
+      </AppText>
+      <View style={styles.wrapChips}>
+        <Chip
+          label={t('plans.filters.noWeights')}
+          selected={!!filter.noWeights}
+          onPress={() => toggle('noWeights', true)}
+        />
+      </View>
+      <AppText variant="label" style={styles.caps}>
+        {t('plans.filters.muscles')}
+      </AppText>
+      <View style={styles.wrapChips}>
+        {(['push', 'pull', 'legs', 'core'] as const).map((g) => (
+          <Chip
+            key={g}
+            label={t(`plans.groups.${g}`)}
+            selected={filter.muscleGroup === g}
+            onPress={() => toggle('muscleGroup', g)}
+          />
+        ))}
+      </View>
+
       {plans.length ? (
         plans.map(card)
       ) : (

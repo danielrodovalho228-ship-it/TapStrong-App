@@ -27,6 +27,8 @@ export function programStatus(
   workouts: WorkoutRecord[],
   today: LocalDate,
   mode?: AppMode,
+  /** Planned days ahead of today, for a future day's preview (QA R4-08). */
+  daysAhead = 0,
 ): { plan: ReadyPlan | undefined; block: BlockWeek; dayIndex: number } {
   // A plan for another age mode (a deep link, a birthday edit) is ignored (R4-04).
   const plan = allowedPlan(program.planId, mode);
@@ -38,7 +40,7 @@ export function programStatus(
   return {
     plan,
     block: blockWeek(start, today, plan?.blockWeeks ?? DEFAULT_BLOCK_WEEKS),
-    dayIndex: planDayIndex(workouts, program.startedAt),
+    dayIndex: planDayIndex(workouts, program.startedAt) + daysAhead,
   };
 }
 
@@ -53,8 +55,9 @@ export function withProgram(
   workouts: WorkoutRecord[],
   program: ProgramState,
   today: LocalDate,
+  daysAhead = 0,
 ): GeneratorInput {
-  const { plan, block, dayIndex } = programStatus(program, workouts, today, input.mode);
+  const { plan, block, dayIndex } = programStatus(program, workouts, today, input.mode, daysAhead);
   const planned = plan ? planDayInput(input, plan, dayIndex, library) : input;
   return block.phase === 'deload' ? { ...planned, deload: true } : planned;
 }

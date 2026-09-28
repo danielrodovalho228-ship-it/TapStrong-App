@@ -61,3 +61,24 @@ export function workoutsOn(
 ): WorkoutRecord[] {
   return workouts.filter((w) => finishedOn(w, date, toLocal));
 }
+
+/**
+ * Planned days from `from` (included) to `to` (excluded), for a future day's
+ * preview (QA R4-08): each one moves the plan on by a day.
+ */
+export function plannedDaysBetween(
+  from: LocalDate,
+  to: LocalDate,
+  startsOn: WeekStartDay,
+  daysPerWeek: number,
+): LocalDate[] {
+  const offsets = new Set(plannedOffsets(daysPerWeek));
+  const out: LocalDate[] = [];
+  for (let d = from; d < to; d = addDays(d, 1)) {
+    const first = weekStart(d, startsOn);
+    let i = 0;
+    while (addDays(first, i) !== d) i++;
+    if (offsets.has(i)) out.push(d);
+  }
+  return out;
+}

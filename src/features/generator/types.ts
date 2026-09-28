@@ -57,6 +57,11 @@ export type GeneratorInput = {
   experience?: 'new' | 'some' | 'experienced';
   /** A short mobility session (~10 min): mobility moves only, no recovery rule (QA round 2, decision 1). */
   mobilityOnly?: boolean;
+  /**
+   * A split plan's day (QA R4-08): the filler only adds these groups, so a
+   * Push day stays push. Unset = balance push / pull / legs over the week.
+   */
+  dayGroups?: MovementGroup[];
   /** Now (ISO time): recovery hours for the targets (QA R2-08). */
   now?: string;
   stoppedToday?: string[];

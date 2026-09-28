@@ -5,13 +5,14 @@ import { StyleSheet, View } from 'react-native';
 import { AppText, Button, Card, Header, Notice, Screen } from '@/components/ui';
 import { generateSession } from '@/features/generator';
 import { dayName } from '@/features/program/block';
-import { workoutsOn } from '@/features/program/week';
+import { useTrainingDaysPerWeek } from '@/features/program/useTrainingDays';
+import { plannedDaysBetween, workoutsOn } from '@/features/program/week';
 import { doseLine, exerciseName } from '@/features/workout/format';
 import { createWorkoutFrom, useExerciseLibrary, useGeneratorInput } from '@/features/workout/hooks';
 import { useWorkoutStore } from '@/features/workout/store';
 import type { WorkoutRecord } from '@/features/workout/types';
 import { clock } from '@/lib/clock';
-import { localDate } from '@/lib/dates';
+import { addDays, deviceWeekStart, localDate } from '@/lib/dates';
 import { colors, spacing } from '@/theme';
 
 /**
@@ -23,10 +24,25 @@ export default function DayScreen() {
   const { t, i18n } = useTranslation();
   const { date } = useLocalSearchParams<{ date: string }>();
   const library = useExerciseLibrary();
-  const input = useGeneratorInput(library);
   const workouts = useWorkoutStore((s) => s.workouts);
-  const byId = new Map(library.map((e) => [e.id, e]));
   const today = localDate(clock.now());
+  const daysPerWeek = useTrainingDaysPerWeek();
+  // A future day previews the plan day it will be (QA R4-08): every planned
+  // day before it moves the plan on, today's too unless already trained.
+  const trainedToday = workoutsOn(workouts, today, (iso) => localDate(new Date(iso))).some(
+    (w) => w.kind === 'regular',
+  );
+  const ahead =
+    date > today
+      ? plannedDaysBetween(
+          trainedToday ? addDays(today, 1) : today,
+          date,
+          deviceWeekStart(),
+          daysPerWeek,
+        ).length
+      : 0;
+  const input = useGeneratorInput(library, date > today ? { date, days: ahead } : undefined);
+  const byId = new Map(library.map((e) => [e.id, e]));
   const past = date < today;
   const logged = workoutsOn(workouts, date, (iso) => localDate(new Date(iso)));
   const title = new Date(`${date}T12:00:00`).toLocaleDateString(i18n.language, {
