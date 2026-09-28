@@ -1596,3 +1596,107 @@ Especificação: `docs/theme-v2.md`.
    Prefere manter o branco no botão coral (fora do AA) ou fica assim?
 2. **Capturas das lojas:** a ordem ficou em `docs/store/listing.md`: claras primeiro, escuras como extras. As imagens finais saem do build de preview no celular. As de `docs/screenshots/theme/` são referência da web e usam a biblioteca de exemplo (versão de desenvolvimento). A tela de descanso aparece com um aviso de desenvolvimento, porque foi aberta direto pelo endereço.
 3. **Biblioteca de vídeos (Gym Animations ou outra):** é serviço pago, então a decisão é sua (e do advogado, pela licença). Não mexi em nada disso.
+
+---
+
+## Fase 18 — Correções da rodada 6 de QA (tema claro e escuro)
+
+Lista do QA: `docs/qa-round-6.md`. Commits separados: um por grupo de P1 e dois de P2 (gerador/lógica e interface).
+
+### P1 — o que foi corrigido
+
+- **R6-01 Troca de tema zerava a navegação.**
+  - Agora o tema muda sem remontar nada: cada componente lê as cores por hook (`useColors`), e os estilos também viram hook (`makeStyles`).
+  - Um treino em andamento continua na mesma tela, com as repetições digitadas e o timer.
+  - A Biblioteca e a lista do treino não voltam mais para a Home.
+  - Um teste garante que nenhuma tela volte a ler as cores "fixas".
+  - No navegador, o `theme:check` abre o player no claro, muda o sistema para escuro e confere que a rota e o passo não mudam.
+- **R6-02 Barra "Desfazer" ilegível no escuro:** novos tokens de painel elevado (`surfaceRaised`, `onSurfaceRaised`, `accentOnRaised`).
+- **R6-03 Etiquetas das restrições ilegíveis no escuro:** usam o tom suave com texto escuro.
+  - O `theme:check` agora mede o contraste de **todo texto visível** contra o que está pintado atrás dele, nas 24 telas e nos dois modos.
+  - Com o código antigo, ele reproduziu exatamente os números do QA (1,00:1, 2,21:1 e 1,48:1). Agora passa.
+- **R6-04 Adolescente apagando respostas sem PIN:**
+  - Restrições → "Alterar na checagem" abre em modo edição.
+  - Depois que a checagem está feita, qualquer caminho (inclusive link direto) edita um rascunho, e remover algo pede o PIN.
+  - Um relato novo de dor que substituiria o plano ativo da mesma área também pede o PIN.
+- **R6-05 Atualização antiga (registro v1 do dono):**
+  - Os menores são semeados depois que os dois stores carregam.
+  - O "perfil ativo" nunca vem da lista comum, que pode ser editada. Se ele não está comprovado, o app pede o PIN.
+  - O PIN correto registra o dono como ativo.
+  - Se não houver menores no celular, o dono fica ativo direto.
+- **R6-06 Link de plano inexistente:** mostra "Plano não encontrado" e um botão Voltar, sem travar.
+- **R6-07 "Equilíbrio curto" sem saída:**
+  - A causa: os exercícios de equilíbrio sentados são marcados no músculo "pai" (abdômen), e a busca só olhava os subgrupos.
+  - Agora quem treina só sentado, ou teve dor aguda no joelho, recebe exercícios de equilíbrio sentados.
+  - Se mesmo assim não houver sessão possível, o botão some.
+- **R6-08 Joelho:** 14 exercícios sentados que levantam ou dobram o joelho (e o "cable woodchop", pelo giro do pé) ganharam a marca de joelho. Uma auditoria nova cobre os sentados, com as exceções revisadas.
+
+### P2 — o que foi corrigido
+
+- **Puxar x empurrar** (sua pergunta), com a simulação de 5 semanas:
+  - Quando os objetivos de empurrar ocupam todos os espaços e puxar fica abaixo de 90% nos últimos 7 dias, um alvo de empurrar cede lugar a um de puxar. O objetivo escolhido sempre mantém pelo menos 1 exercício.
+  - A puxada vertical, para quem treina na academia, tem que ser de verdade: dorsal em primeiro (puxador, barra fixa, remada de cima para baixo). O "scapular dip" não conta mais.
+  - Uma puxada vertical entra toda semana.
+  - Resultado na cadeia do Ken: **toda semana puxar ≥ 90% do empurrar** e com puxada vertical real.
+  - Exercícios de sustentação (dead hang, carregamentos) não entram como treino principal de força ou músculo na academia.
+- **Progressão de carga:**
+  - A carga só sobe depois de 2 sessões na carga atual (antes subia duas vezes seguidas).
+  - 60+ e quem tem problema cardíaco ou pressão alta sobem o menor entre +5 lb (+2,5 kg) e cerca de 10%. Exemplos: 25 → 27,5 lb, e não 35.
+  - Com o peso do corpo, no topo da faixa por 4 sessões: sugere uma versão mais difícil.
+- **Depois de dor aguda:**
+  - A Biblioteca diz "fora hoje" em vez de "restrição".
+  - A página do dia mostra as opções "Pegue leve" em vez de um treino completo.
+- **Treino avulso com peito superior, médio e inferior:** cobre as três regiões e completa a quantidade (5 exercícios, cerca de 38 min).
+- **Fundo escurecido dos painéis:** token `scrim` (preto a 50% nos dois modos).
+- **Web:**
+  - `+html.tsx` com `theme-color` para os dois modos, `color-scheme` e o fundo certo antes de carregar, respeitando a escolha em Aparência.
+  - O ícone adaptável do Android usa o fundo novo.
+- **Switch:**
+  - O Espaço alterna na web (conferido no navegador: alterna uma vez só).
+  - O estado desligado tem contorno e bolinha escura.
+- **Mapa do corpo:** as áreas de toque são redondas e não se sobrepõem mais.
+- **Coral só onde deve:**
+  - Os títulos pequenos (eyebrows) ficaram cinza.
+  - O chip selecionado tem borda escura.
+  - Os links ficaram escuros, incluindo "Cancele quando quiser".
+- **Layout:**
+  - O título "WORKOUT DONE!" no modo 60+ não quebra mais no meio da palavra.
+  - "10 min" e "0 dias" não quebram mais.
+  - O bloco de Progresso em espanhol virou "Sesiones", que cabe.
+  - A barra de abas tem altura própria e espaço embaixo (o `tabs:check` confere que a página não passa da janela).
+  - O avatar da Família usa o tom suave de cada modo.
+- **Troca do alongamento de tríceps (60+, sentado):** novo rascunho "Alongamento de tríceps sentado atrás das costas", com textos nos 3 idiomas. Agora são 3 opções.
+- **Plural em português:** "0 dias", e não "0 dia" (formas `_zero`).
+- **Aviso "component name 'o'":** confirmado que só existe no modo de desenvolvimento. O `bundle:check` agora prova que ele nunca vai para o build final. Tirei a correção antiga, que não fazia efeito.
+- **Encerrar plano de recuperação aberto por link:** volta para Restrições.
+- **`tabs:check`:** agora roda em inglês, português e espanhol, no claro e no escuro.
+
+### Verificações
+
+- Lint e typecheck limpos; **931 testes** passando.
+- `db:test`, `functions:check` e `bundle:check` limpos.
+- `tabs:check` limpo nas 6 combinações.
+- `theme:check` limpo: 24 telas × 2 modos, contraste de todos os textos e troca ao vivo.
+- Testes novos:
+  - `r6-safety` (adolescente e registro v1);
+  - `r6-p1` (equilíbrio sentado e joelho);
+  - `r6-p2` (puxar/empurrar em 5 semanas, carga, versão mais difícil, Biblioteca, treino avulso);
+  - `theme-route`, `theme-hooks` (tema sem remontar);
+  - `r6-swap`;
+  - testes da página do dia e do plano inexistente.
+
+### Como testar
+
+1. Comece um treino, digite repetições, e troque o modo do celular (ou vá em Aparência). Você continua no mesmo passo, com os números.
+2. No escuro, troque um exercício: a barra "Desfazer" fica legível. As etiquetas em Restrições também.
+3. Adolescente: Restrições → "Alterar na checagem" → tire uma dor → pede o PIN. Pelo link direto também.
+4. Joe (só sentado): Home → "Equilíbrio curto" abre uma sessão sentada.
+5. Abra `/program/nao-existe`: aparece "Plano não encontrado".
+
+### Perguntas em aberto
+
+1. **Puxar x empurrar:** quando só há objetivos de empurrar, o app troca alguns deles por puxar, mantendo pelo menos 1 do objetivo. Concorda, ou prefere só uma nota sugerindo?
+2. **Carga no 60+:** a regra "o menor entre +5 lb e cerca de 10%" vale para todo exercício com carga no 60+ (por exemplo, 20 → 22,5 lb no supino). Isso pede halteres de 2,5 em 2,5 lb. Fica assim?
+3. **Exercício novo em rascunho:** o "Alongamento de tríceps sentado atrás das costas" precisa da revisão do especialista antes de ser liberado.
+4. **Espanhol:** o bloco "Entrenamientos" virou "Sesiones" para caber no Progresso.
+5. **Continua em aberto da Fase 17:** as cores ajustadas para passar no AA (texto escuro no botão coral e as outras três).
