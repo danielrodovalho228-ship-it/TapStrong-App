@@ -141,6 +141,117 @@ async function pixel(page, x, y) {
   return `rgb(${r}, ${g}, ${b})`;
 }
 
+/**
+ * Every visible text on the page against the background it sits on
+ * (semi-transparent layers composited). WCAG AA: 4.5:1, or 3:1 for large
+ * text (24 px, or 18.66 px bold). Disabled or faded parts (opacity < 1) are
+ * exempt, as are texts over images.
+ */
+async function contrastAudit(page) {
+  return page.evaluate(() => {
+    const parse = (c) => {
+      const m = c.match(/rgba?\(([^)]+)\)/);
+      if (!m) return null;
+      const [r, g, b, a = '1'] = m[1].split(/[ ,/]+/).filter(Boolean);
+      return [Number(r), Number(g), Number(b), Number(a)];
+    };
+    const lum = ([r, g, b]) => {
+      const f = (v) => {
+        const c = v / 255;
+        return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+      };
+      return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+    };
+    const ratio = (a, b) => {
+      const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p);
+      return (x + 0.05) / (y + 0.05);
+    };
+    const over = (top, under) => {
+      const a = top[3];
+      return [0, 1, 2].map((i) => top[i] * a + under[i] * (1 - a)).concat(1);
+    };
+    const fails = [];
+    const seen = new Set();
+    for (const el of document.querySelectorAll('body *')) {
+      const own = [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim());
+      if (!own) continue;
+      if (
+        el.checkVisibility &&
+        !el.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true })
+      )
+        continue;
+      const box = el.getBoundingClientRect();
+      if (box.width < 1 || box.height < 1) continue;
+      let faded = false;
+      for (let p = el; p; p = p.parentElement)
+        if (Number(getComputedStyle(p).opacity) < 1) faded = true;
+      // What is painted under the text's middle, top to bottom: siblings
+      // drawn behind it count too (captions over the body card).
+      let image = false;
+      const layers = [];
+      const cx = Math.min(Math.max(box.left + box.width / 2, 0), innerWidth - 1);
+      const cy = Math.min(Math.max(box.top + box.height / 2, 0), innerHeight - 1);
+      const inView = box.bottom > 0 && box.top < innerHeight;
+      const stack = inView ? document.elementsFromPoint(cx, cy) : [];
+      const opaque = (p) => {
+        const cs = getComputedStyle(p);
+        const bg = parse(cs.backgroundColor);
+        return p.tagName === 'IMG' || cs.backgroundImage !== 'none' || (bg && bg[3] >= 1);
+      };
+      let chain;
+      const at = stack.indexOf(el);
+      if (!inView) {
+        chain = [];
+        for (let p = el.parentElement; p; p = p.parentElement) chain.push(p);
+      } else if (at >= 0) {
+        // Something opaque painted over the text hides it (a sheet, a footer).
+        const above = stack.slice(0, at).filter((p) => !el.contains(p));
+        if (above.some(opaque)) continue;
+        chain = stack.slice(at + 1);
+      } else if (getComputedStyle(el).pointerEvents === 'none') {
+        chain = stack.filter((p) => !el.contains(p));
+      } else {
+        continue;
+      }
+      const ownBg = parse(getComputedStyle(el).backgroundColor);
+      if (ownBg && ownBg[3] > 0) chain.unshift(el);
+      for (const p of chain) {
+        const cs = getComputedStyle(p);
+        if (p.tagName === 'IMG' || cs.backgroundImage !== 'none') {
+          image = true;
+          break;
+        }
+        const bg = parse(cs.backgroundColor);
+        if (bg && bg[3] > 0) {
+          layers.push(bg);
+          if (bg[3] >= 1) break;
+        }
+      }
+      if (faded || image) continue;
+      let bg = [255, 255, 255, 1];
+      for (const layer of layers.reverse()) bg = over(layer, bg);
+      const cs = getComputedStyle(el);
+      let fg = parse(cs.color);
+      if (!fg) continue;
+      if (fg[3] < 1) fg = over(fg, bg);
+      const size = parseFloat(cs.fontSize);
+      const bold = Number(cs.fontWeight) >= 700 || /Bold|SemiBold|Condensed/.test(cs.fontFamily);
+      const large = size >= 24 || (size >= 18.66 && bold);
+      const need = large ? 3 : 4.5;
+      const r = ratio(fg, bg);
+      const text = el.textContent.trim().slice(0, 30);
+      const key = `${text}|${cs.color}|${bg.join(',')}`;
+      if (r + 0.01 < need && !seen.has(key)) {
+        seen.add(key);
+        fails.push(
+          `"${text}" ${r.toFixed(2)}:1 (${cs.color} on rgb(${bg.slice(0, 3).map(Math.round).join(', ')}))`,
+        );
+      }
+    }
+    return fails;
+  });
+}
+
 const button = (page, name) => page.getByRole('button', { name }).first();
 
 /**
@@ -217,6 +328,46 @@ const SCREENS = [
     },
     lands: /\/done$/,
   },
+  {
+    name: 'swap-undo',
+    year: ADULT,
+    path: '/home',
+    steps: async (page) => {
+      await button(page, /^Start · /).click();
+      await page.waitForURL(/\/workout\/[^/]+$/);
+      await button(page, /^Swap /).click();
+      await page.waitForTimeout(400);
+      await button(page, /^Replace/).click();
+      await page.getByRole('button', { name: 'Undo' }).waitFor();
+    },
+    lands: /^\/workout\/[^/]+$/,
+  },
+  {
+    name: 'restrictions',
+    year: ADULT,
+    path: '/restrictions',
+    seed: {
+      restrictions: {
+        items: [
+          {
+            id: 'r1',
+            area: 'knee',
+            side: 'left',
+            source: 'pain_report',
+            active: true,
+            createdAt: '2026-09-20T12:00:00Z',
+          },
+          {
+            id: 'r2',
+            area: 'lower_back',
+            source: 'manual',
+            active: true,
+            createdAt: '2026-09-21T12:00:00Z',
+          },
+        ],
+      },
+    },
+  },
   { name: 'library', year: ADULT, path: '/library' },
   {
     name: 'exercise',
@@ -272,13 +423,16 @@ try {
         deviceScaleFactor: 1,
       });
       if (year) {
-        const value = JSON.stringify(profile(year, screen.complete ?? true));
-        await context.addInitScript((v) => {
+        const seed = { onboarding: JSON.stringify(profile(year, screen.complete ?? true)) };
+        for (const [key, state] of Object.entries(screen.seed ?? {}))
+          seed[key] = JSON.stringify({ state, version: 2 });
+        await context.addInitScript((entries) => {
           if (!sessionStorage.getItem('seeded')) {
-            localStorage.setItem('tapstrong\\onboarding', v);
+            for (const [key, v] of Object.entries(entries))
+              localStorage.setItem(`tapstrong\\${key}`, v);
             sessionStorage.setItem('seeded', '1');
           }
-        }, value);
+        }, seed);
       }
       const page = await context.newPage();
       try {
@@ -300,6 +454,7 @@ try {
         const seen = await pixel(page, 2, 422);
         if (want && seen !== want[scheme])
           failed.push(`${scheme} ${name}: background ${seen}, expected ${want[scheme]}`);
+        for (const f of await contrastAudit(page)) failed.push(`${scheme} ${name}: contrast ${f}`);
         await page.screenshot({
           path: join(shots, scheme, `${name}.jpg`),
           type: 'jpeg',

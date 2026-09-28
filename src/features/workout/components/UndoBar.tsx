@@ -23,7 +23,7 @@ export function UndoBar({ message, onDone }: { message: string | null; onDone: (
   if (!message) return null;
   return (
     <View style={styles.bar} accessibilityLiveRegion="polite">
-      <AppText color={colors.dark.text} style={styles.text}>
+      <AppText color={colors.onSurfaceRaised} style={styles.text}>
         {message}
       </AppText>
       <Pressable
@@ -35,7 +35,7 @@ export function UndoBar({ message, onDone }: { message: string | null; onDone: (
         }}
         style={styles.undo}
       >
-        <AppText variant="button" color={colors.dark.accent}>
+        <AppText variant="button" color={colors.accentOnRaised}>
           {t('workout.swap.undo')}
         </AppText>
       </Pressable>
@@ -48,7 +48,7 @@ const useStyles = makeStyles(() => ({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
-    backgroundColor: colors.ink,
+    backgroundColor: colors.surfaceRaised,
     borderRadius: radius.button,
     paddingLeft: spacing.lg,
   },

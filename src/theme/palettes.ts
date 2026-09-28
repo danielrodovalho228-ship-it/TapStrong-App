@@ -42,6 +42,10 @@ export type Palette = {
   /** Text on `teal` fills (60+ Start). */
   onTeal: string;
   tabBar: string;
+  /** Snackbars and toasts (swap Undo): a raised panel with its own text. */
+  surfaceRaised: string;
+  onSurfaceRaised: string;
+  accentOnRaised: string;
   success: string;
   warning: string;
   danger: string;
@@ -79,6 +83,9 @@ export const PALETTES: Record<Scheme, Palette> = {
     tealTint: '#E3F0EA',
     onTeal: '#FFFFFF',
     tabBar: '#FFFFFF',
+    surfaceRaised: '#2A2623',
+    onSurfaceRaised: '#FFFFFF',
+    accentOnRaised: '#FF7A63',
     success: '#2E9E6B',
     warning: '#E0A100',
     danger: '#C73E3E',
@@ -110,6 +117,9 @@ export const PALETTES: Record<Scheme, Palette> = {
     tealTint: '#1D2C27',
     onTeal: '#0E1A15',
     tabBar: '#1B1D22',
+    surfaceRaised: '#353A42',
+    onSurfaceRaised: '#F1EEEA',
+    accentOnRaised: '#FF947F',
     success: '#4CC38A',
     warning: '#F2C94C',
     danger: '#FF6B6B',

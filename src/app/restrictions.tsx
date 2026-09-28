@@ -268,7 +268,7 @@ const useStyles = makeStyles(() => ({
   flex: { flex: 1 },
   confirm: { gap: spacing.sm },
   badge: { borderRadius: radius.chip, paddingHorizontal: spacing.sm, paddingVertical: spacing.xxs },
-  badgeAccent: { backgroundColor: colors.dark.accentSoft },
+  badgeAccent: { backgroundColor: colors.primarySoft },
   badgeMuted: { backgroundColor: colors.line },
   caps: {
     textTransform: 'uppercase',
