@@ -50,7 +50,10 @@ export function blockReason(e: Exercise, input: GeneratorInput): string | null {
   if (
     hard.length &&
     (e.contraindications.some((c) => hard.includes(c)) ||
-      e.joints.some((j) => hard.includes(JOINT_AREA[j.joint])))
+      e.joints.some((j) => hard.includes(JOINT_AREA[j.joint])) ||
+      // A standing single-leg stance loads the knee too (QA R5-01).
+      (hard.includes('knee') &&
+        e.joints.some((j) => j.joint === 'ankle' && j.movement === 'balance')))
   ) {
     return 'contraindication';
   }
@@ -63,6 +66,9 @@ export function blockReason(e: Exercise, input: GeneratorInput): string | null {
   }
   if (rangeFor(e, input) === 'blocked') return 'painful_movement';
   if (input.mode === 'senior' && e.impact >= 2) return 'impact';
+  // Kneeling (getting down to the floor and back up) is not a 60+ default (QA R5-01).
+  if (input.mode === 'senior' && e.joints.some((j) => j.joint === 'knee' && j.movement === 'kneel'))
+    return 'position';
   if (input.conditions.some((c) => LOW_IMPACT_ONLY.includes(c)) && e.impact > 0) return 'impact';
   // Experience (Settings, D4): new people stay closer to their level.
   const reach = input.experience === 'new' ? 1 : input.experience === 'experienced' ? 3 : 2;

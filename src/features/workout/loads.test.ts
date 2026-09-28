@@ -73,10 +73,11 @@ describe('suggested load (A4)', () => {
   });
 
   it('bodyweight and bands: +1 rep instead of load', () => {
+    // Never past the top of the range (QA R5-02): at the top, keep it.
     expect(advice([s([12, 12]), s([12, 12])], pushUp)).toEqual({
       kind: 'reps',
-      reps: 13,
-      change: 'up',
+      reps: 12,
+      change: 'same',
     });
     expect(advice([], pushUp)).toBeNull();
   });

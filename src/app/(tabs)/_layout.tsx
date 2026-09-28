@@ -1,5 +1,6 @@
 import { Tabs } from 'expo-router/js-tabs';
 import { useTranslation } from 'react-i18next';
+import { StyleSheet, Text } from 'react-native';
 
 import { Icon } from '@/components/ui';
 import { derive } from '@/features/onboarding/derived';
@@ -20,21 +21,20 @@ export default function TabsLayout() {
         tabBarActiveTintColor: colors.ink,
         tabBarInactiveTintColor: colors.muted,
         tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.line },
-        // Tighter tracking so "PROGRESSO" / "FAMILIA" fit at 60+ size (QA round 1).
-        // Five tabs at 390 px: "BIBLIOTECA" / "PROGRESSO" need the whole item
-        // width, so no side padding and no extra tracking (QA R4 P2).
+        // Five tabs at 390 px: no side padding so "BIBLIOTECA" / "PROGRESSO"
+        // get the whole item width (QA R4 P2).
         tabBarItemStyle: { paddingHorizontal: 0 },
-        tabBarLabelStyle: {
-          fontFamily: fonts.headingSemi,
-          fontSize: senior ? 13 : 11,
-          // Room for the full line so labels are never clipped (QA round 2):
-          // an explicit height too, or web renders a 10 px box (QA R3).
-          lineHeight: senior ? 18 : 16,
-          height: senior ? 18 : 16,
-          includeFontPadding: false,
-          letterSpacing: 0,
-          textTransform: 'uppercase',
-        },
+        // Our own label text (QA R5-07, 4th round): the navigator's web label
+        // box was 10 px high with overflow hidden whatever style we passed.
+        tabBarLabel: ({ color, children }) => (
+          <Text
+            numberOfLines={1}
+            style={[styles.label, senior && styles.labelSenior, { color }]}
+            testID="tab-label"
+          >
+            {children}
+          </Text>
+        ),
         sceneStyle: { backgroundColor: colors.background },
       }}
     >
@@ -77,3 +77,18 @@ export default function TabsLayout() {
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  label: {
+    fontFamily: fonts.headingSemi,
+    fontSize: 13,
+    lineHeight: 17,
+    minHeight: 17,
+    letterSpacing: 0,
+    textTransform: 'uppercase',
+    textAlign: 'center',
+    overflow: 'visible',
+    includeFontPadding: false,
+  },
+  labelSenior: { fontSize: 14, lineHeight: 18, minHeight: 18 },
+});

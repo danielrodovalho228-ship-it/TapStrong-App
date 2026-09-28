@@ -106,6 +106,8 @@ export const safetyKey = (input: GeneratorInput | null) =>
         input.movementLimits ?? [],
         input.location,
         [...input.equipment].sort(),
+        // A new day re-checks too (QA R5-03).
+        input.today,
       ])
     : '';
 

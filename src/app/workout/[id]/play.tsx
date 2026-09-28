@@ -333,7 +333,9 @@ function SetStep({
   // A "+1 rep" day keeps the last load (QA R4-10).
   const initialLoad = earlier?.load ?? adviceLoad(advice) ?? 0;
 
-  const [value, setValue] = useState(range[0]);
+  // The stepper starts at the day's target (QA R5-02): the advised reps on a
+  // "+1 rep" day, else the bottom of the range.
+  const [value, setValue] = useState(!hold && advice?.kind === 'reps' ? advice.reps : range[0]);
   const [load, setLoad] = useState(initialLoad);
   // How hard the set felt (A4): Easy 6, Solid 8, Very hard 10.
   const [rpe, setRpe] = useState<number | undefined>(undefined);

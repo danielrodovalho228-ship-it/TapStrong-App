@@ -3,6 +3,7 @@ import type { GeneratorInput } from '../generator/types';
 import type { MovementGroup } from '../muscles';
 import type { MainGoal, MuscleGoal } from '../onboarding/options';
 import type { AppMode } from '../profile/age';
+import { muscleFamily } from '../muscles';
 import { groupMuscles } from '../workout/recovery';
 
 /**
@@ -177,6 +178,29 @@ const MUSCLE_GOAL: Record<PlanGoal, MuscleGoal> = {
 const MOBILITY_AREAS = ['hips', 'upperBack', 'shoulders'];
 
 /**
+ * The muscles a plan day aims at (QA R5-05): the big movers first, not the
+ * JSON order (legs gave "hips & inner thighs", pull "traps & biceps"). A
+ * split day takes the whole list, a full-body day the first two.
+ */
+const DAY_TARGETS: Record<MovementGroup, string[]> = {
+  legs: ['quads', 'hamstrings', 'glutes'],
+  pull: ['lats', 'upperBack'],
+  push: ['midChest', 'shoulders'],
+  core: ['abs', 'obliques'],
+};
+export function dayTargets(group: MovementGroup, library: Exercise[], split: boolean): string[] {
+  const trained = (key: string) =>
+    library.some(
+      (e) =>
+        e.parts.includes('main') &&
+        e.muscles.some((m) => m.role === 'primary' && muscleFamily(key).includes(m.muscleKey)),
+    );
+  const preferred = DAY_TARGETS[group].filter(trained);
+  const list = preferred.length ? preferred : groupMuscles(group, library);
+  return list.slice(0, split ? 3 : 2);
+}
+
+/**
  * The generator input for day N of a plan: the day's groups become the
  * targets (2 muscles per group), the plan sets goals and minutes. Safety
  * input (restrictions, pain, age, position, equipment) is untouched.
@@ -189,12 +213,11 @@ export function planDayInput(
 ): GeneratorInput {
   const day = plan.days[((dayIndex % plan.days.length) + plan.days.length) % plan.days.length];
   const goal = MUSCLE_GOAL[plan.goal];
+  const split = day.groups.filter((g) => g !== 'mobility').length === 1;
   const muscleGoals = day.groups.flatMap((g) =>
     g === 'mobility'
       ? MOBILITY_AREAS.map((muscleKey) => ({ muscleKey, goal: 'mobility' as const }))
-      : groupMuscles(g, library)
-          .slice(0, 2)
-          .map((muscleKey) => ({ muscleKey, goal })),
+      : dayTargets(g, library, split).map((muscleKey) => ({ muscleKey, goal })),
   );
   const dayGroups = day.groups.filter((g): g is MovementGroup => g !== 'mobility');
   return {

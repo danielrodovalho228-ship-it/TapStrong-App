@@ -96,9 +96,10 @@ export function loadAdvice(input: {
   if (!loadedMove) {
     const best = Math.max(0, ...(sessions[0]?.logs.map(done) ?? [0]));
     if (!sessions.length) return null;
-    return upDue
+    // Never past the top of the range (QA R5-02: 16 for a 10–15 target).
+    return upDue && best < top
       ? { kind: 'reps', reps: best + 1, change: 'up' }
-      : { kind: 'reps', reps: Math.max(bottom, best), change: 'same' };
+      : { kind: 'reps', reps: Math.min(top, Math.max(bottom, best)), change: 'same' };
   }
 
   const load = toUnit(lastLoaded!.load!, lastLoaded!.unit ?? unit, unit);

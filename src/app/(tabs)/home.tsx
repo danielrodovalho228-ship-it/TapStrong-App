@@ -67,8 +67,14 @@ export default function HomeScreen() {
     plannedDaysBetween(localDate(now), addDays(localDate(now), 1), deviceWeekStart(), trainingDays)
       .length > 0;
   const morning = pendingMorningChecks(painReports).find((c) => morningCheckOpen(c.afterAt, now));
-  const active = workouts.find((w) => w.status === 'active');
-  const planned = workouts.find((w) => w.status === 'planned' && w.kind === 'regular');
+  // Only today's workouts (QA R5-03); older ones are closed on launch.
+  const today = localDate(now);
+  const sameDay = (w: (typeof workouts)[number]) =>
+    localDate(new Date(w.logs.at(-1)?.loggedAt ?? w.startedAt ?? w.createdAt)) === today;
+  const active = workouts.find((w) => w.status === 'active' && sameDay(w));
+  const planned = workouts.find(
+    (w) => w.status === 'planned' && w.kind === 'regular' && sameDay(w),
+  );
   // The card names what today's workout really trains (QA D-01): the stored
   // one, or a preview of the one "Start" will build (the generator is
   // deterministic, so it is the same session).

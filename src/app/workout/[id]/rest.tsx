@@ -11,8 +11,8 @@ import { TimerRing, useNow } from '@/features/workout/components/TimerRing';
 import { currentStep, mainItems } from '@/features/workout/flow';
 import { clockText, exerciseName } from '@/features/workout/format';
 import { useWorkout } from '@/features/workout/hooks';
-import { convertLoad, isLowerBody, LOWER_STEP, UPPER_STEP } from '@/features/workout/loads';
-import { pastSessions, progressionFor, targetRange } from '@/features/workout/progression';
+import { adviceForItem, convertLoad } from '@/features/workout/loads';
+import { pastSessions } from '@/features/workout/progression';
 import { playTimerEnd } from '@/features/workout/sound';
 import { useWorkoutStore } from '@/features/workout/store';
 import type { SetLog } from '@/features/workout/types';
@@ -23,13 +23,12 @@ const EXTRA_SECONDS = 30;
 
 /** Mockup 12 — rest between sets: timer, +30 s, skip, last-time comparison. */
 export default function RestScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string; manual?: string }>();
   const { workout, byId, input } = useWorkout(id);
   const workouts = useWorkoutStore((s) => s.workouts);
   const units = useOnboardingStore((s) => s.units);
   const unit = units === 'imperial' ? 'lb' : 'kg';
-  const mode = input?.mode;
   const [startedAt] = useState(() => clock.now().getTime());
   const [extra, setExtra] = useState(0);
   const now = useNow(250);
@@ -69,15 +68,31 @@ export default function RestScreen() {
       .join(' · ');
 
   const lastTime = last ? pastSessions(workouts, last.exerciseId, workout.id)[0] : undefined;
+  const lastLoadOf = (exerciseId: string) => {
+    const l = pastSessions(workouts, exerciseId, workout.id)[0]
+      ?.logs.filter((x) => x.load)
+      .at(-1);
+    return l?.load ? convertLoad(l.load, l.unit ?? 'lb', unit) : null;
+  };
   const lastTimeLog = lastTime?.logs.find((l) => l.setNo === last?.setNo) ?? lastTime?.logs.at(-1);
   const nextExercise = next ? byId.get(next.item.exerciseId) : undefined;
-  const nextProgression =
-    next && next.item.role === 'main'
-      ? progressionFor(
-          pastSessions(workouts, next.item.exerciseId, workout.id),
-          targetRange(next.item),
-        )
+  // The same advice as the player (QA R5-02): one source, and only before
+  // the exercise's first set, so a session never gets a second increase.
+  const nextAdvice =
+    next && next.setNo === 1 && input
+      ? adviceForItem({
+          workouts,
+          workoutId: workout.id,
+          item: next.item,
+          exercise: nextExercise,
+          unit,
+          generator: { ...input, deload: workout.session.deload },
+        })
       : null;
+  const upStep =
+    nextAdvice?.kind === 'load' && nextAdvice.change === 'up'
+      ? nextAdvice.load - (lastLoadOf(next!.item.exerciseId) ?? nextAdvice.load)
+      : 0;
 
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
@@ -152,18 +167,10 @@ export default function RestScreen() {
                 ? ` · ${t('workout.player.setOf', { n: next.setNo, total: next.item.sets })}`
                 : ''}
             </AppText>
-            {nextProgression === 'increase' ? (
+            {upStep > 0 ? (
               <AppText variant="caption" color={colors.dark.accentSoft}>
                 {t('workout.rest.progressUp', {
-                  // The real step for this lift and unit (QA R4 P2).
-                  step: `${
-                    (nextExercise &&
-                    isLowerBody(nextExercise) &&
-                    mode !== 'teen' &&
-                    mode !== 'child'
-                      ? LOWER_STEP
-                      : UPPER_STEP)[unit]
-                  } ${t(`workout.units.${unit}`)}`,
+                  step: `${upStep.toLocaleString(i18n.language)} ${t(`workout.units.${unit}`)}`,
                 })}
               </AppText>
             ) : null}

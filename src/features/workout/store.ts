@@ -54,6 +54,11 @@ type Actions = {
     status: Extract<WorkoutStatus, 'done' | 'partial'>,
   ) => { milestone: boolean };
   discard: (id: string) => void;
+  /**
+   * QA R5-03: a planned workout expires at the end of its day; a started one
+   * left unfinished is closed as partial on the day of its last set.
+   */
+  closeStale: (today: string) => void;
   setNextFocus: (focus: NextFocus) => void;
   markSynced: (ids: string[], at: string) => void;
   reset: () => void;
@@ -173,6 +178,25 @@ export const useWorkoutStore = create<Data & Actions>()(
         },
 
         discard: (id) => set({ workouts: get().workouts.filter((w) => w.id !== id), undo: null }),
+
+        closeStale: (today) => {
+          const dayOf = (iso: string) => localDate(new Date(iso));
+          let streak = get().streak;
+          let changed = false;
+          const workouts = get().workouts.flatMap((w) => {
+            if (w.status !== 'planned' && w.status !== 'active') return [w];
+            const lastLog = w.logs.at(-1)?.loggedAt;
+            const day = dayOf(lastLog ?? w.startedAt ?? w.createdAt);
+            if (day >= today) return [w];
+            changed = true;
+            if (!w.logs.length) return [];
+            // Its sets still count, on the day they were done.
+            if (!streak.lastActive || day > streak.lastActive)
+              streak = recordActiveDay(streak, day, deviceWeekStart()).state;
+            return [{ ...w, status: 'partial' as const, endedAt: lastLog }];
+          });
+          if (changed) set({ workouts, streak });
+        },
 
         setNextFocus: (nextFocus) => set({ nextFocus }),
 

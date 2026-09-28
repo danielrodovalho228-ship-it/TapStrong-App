@@ -1,8 +1,11 @@
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText, Button, Chip, Header, Notice, Screen } from '@/components/ui';
+import { useOwnerAccess } from '@/features/family/OwnerOnly';
+import { ParentGate } from '@/features/family/ParentGate';
 import { derive } from '@/features/onboarding/derived';
 import { PAIN_AREAS, POSITIONS, STEP_NUMBER, TOTAL_STEPS } from '@/features/onboarding/options';
 import { hasRedFlag, toggleInList, visibleConditions } from '@/features/onboarding/safety';
@@ -14,9 +17,29 @@ import { colors, fonts, spacing } from '@/theme';
 export default function SafetyScreen() {
   const { t } = useTranslation();
   const { edit } = useLocalSearchParams<{ edit?: string }>();
-  const s = useOnboardingStore();
-  const derived = derive(s);
+  const store = useOnboardingStore();
+  const derived = derive(store);
+  // Editing later works on a draft saved with Continue. A managed teen who
+  // removes an answer or changes position needs the parent PIN; adding is
+  // always allowed (QA R5-04).
+  const access = useOwnerAccess();
+  const [draft, setDraft] = useState(() => ({
+    painAreas: store.painAreas,
+    conditions: store.conditions,
+    position: store.position,
+    redFlagAcknowledged: store.redFlagAcknowledged,
+  }));
+  const [gate, setGate] = useState(false);
   if (!derived) return <Redirect href="/onboarding/who" />;
+  const staged = !!edit;
+  const s = staged
+    ? {
+        ...store,
+        ...draft,
+        update: (patch: Partial<typeof draft>) => setDraft((d) => ({ ...d, ...patch })),
+      }
+    : store;
+  const minorGated = access === 'gate' && (derived.mode === 'teen' || derived.mode === 'child');
 
   const conditions = visibleConditions(derived.mode, s.sex);
   // Drop answers that no longer apply (e.g. body model changed to male).
@@ -24,14 +47,25 @@ export default function SafetyScreen() {
   const redFlag = hasRedFlag(s.painAreas, selectedConditions);
   const canContinue = !redFlag || s.redFlagAcknowledged;
 
-  const onContinue = () => {
-    s.update({ conditions: selectedConditions, safetyDone: true });
+  const removesSomething =
+    store.painAreas.some((a) => !s.painAreas.includes(a)) ||
+    store.conditions.some((c) => !selectedConditions.includes(c)) ||
+    store.position !== s.position;
+  const save = () => {
     // Only the fact that a red flag exists; never which one (SPEC §10).
+    store.update({
+      ...(staged ? draft : {}),
+      conditions: selectedConditions,
+      safetyDone: true,
+    });
     if (redFlag) track('safety_red_flag');
     if (edit) router.back();
     else router.push('/onboarding/profile');
   };
-
+  const onContinue = () => {
+    if (staged && minorGated && removesSomething) return setGate(true);
+    save();
+  };
   const eyebrow = t('onboarding.stepNamed', {
     current: STEP_NUMBER.safety,
     total: TOTAL_STEPS,
@@ -121,6 +155,15 @@ export default function SafetyScreen() {
       </Section>
 
       {redFlag ? null : <Notice>{t('safety.noteOk')}</Notice>}
+      {gate ? (
+        <ParentGate
+          onPass={() => {
+            setGate(false);
+            save();
+          }}
+          onCancel={() => setGate(false)}
+        />
+      ) : null}
     </Screen>
   );
 }

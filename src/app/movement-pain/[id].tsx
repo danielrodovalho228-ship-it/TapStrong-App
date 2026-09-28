@@ -1,9 +1,11 @@
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText, Button, Card, Header, Notice, Screen, TextLink } from '@/components/ui';
+import { useOwnerAccess } from '@/features/family/OwnerOnly';
+import { ParentGate } from '@/features/family/ParentGate';
 import { generateSession } from '@/features/generator';
 import { movementCatalog } from '@/features/movement/catalog';
 import {
@@ -39,7 +41,15 @@ export default function MovementPlanScreen() {
   const library = useExerciseLibrary();
   const input = useGeneratorInput(library);
   const create = useWorkoutStore((s) => s.create);
+  // A managed teen ending a recovery plan needs a parent (QA R5-04).
+  const access = useOwnerAccess();
+  const minor = ['teen', 'child'].includes(input?.mode ?? 'adult');
+  const [gate, setGate] = useState(false);
   if (!report || !catalog) return <Redirect href="/restrictions" />;
+  const end = () => {
+    setActive(report.id, false);
+    router.back();
+  };
 
   const now = clock.now();
   const level = levelFor(report);
@@ -166,11 +176,9 @@ export default function MovementPlanScreen() {
 
       <TextLink
         label={t('movementPain.plan.better')}
-        onPress={() => {
-          setActive(report.id, false);
-          router.back();
-        }}
+        onPress={() => (access === 'gate' && minor ? setGate(true) : end())}
       />
+      {gate ? <ParentGate onPass={end} onCancel={() => setGate(false)} /> : null}
       <AppText variant="caption" color={colors.muted}>
         {t('movementPain.disclaimer')}
       </AppText>

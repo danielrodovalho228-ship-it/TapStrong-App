@@ -446,6 +446,12 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   const slots = Math.max(1, Math.min(10, Math.round(input.exercisesPerSession)));
   const used = new Set<string>();
   const usedParents = new Set<string>();
+  // Split days (one or two groups) may use a parent muscle twice, from a
+  // different angle, to reach the chosen count (QA R5-06: Push had 3).
+  const parentUses = new Map<
+    string,
+    { count: number; muscles: Set<string>; patterns: Set<string> }
+  >();
   const main: SessionItem[] = [];
   const unavailable: string[] = [];
   // Variety (QA round 2, R3 P2): the pick rotates among the best 3 options,
@@ -474,7 +480,13 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   };
   const add = (pick: Exercise, target: Target) => {
     used.add(pick.id);
-    usedParents.add(parentOf(topPrimary(pick) ?? target.muscle));
+    const parent = parentOf(topPrimary(pick) ?? target.muscle);
+    usedParents.add(parent);
+    const u = parentUses.get(parent) ?? { count: 0, muscles: new Set(), patterns: new Set() };
+    u.count++;
+    u.muscles.add(topPrimary(pick) ?? target.muscle);
+    u.patterns.add(pick.pattern);
+    parentUses.set(parent, u);
     main.push(mainItem(pick, target, input));
   };
   targets.slice(0, slots).forEach((target, i) => {
@@ -533,6 +545,13 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     main.filter((i) => groupOf(i.targetMuscle ?? '') === g).length;
   // Muscles with a "rest today" note stay out of the filler too (QA R3 P2).
   const restedKeys = new Set(rested.flatMap((t) => root(t)));
+  const parentOpen = (e: Exercise) => {
+    const parent = parentOf(topPrimary(e)!);
+    if (!usedParents.has(parent)) return true;
+    if (!input.dayGroups?.length) return false;
+    const u = parentUses.get(parent)!;
+    return u.count < 2 && (!u.muscles.has(topPrimary(e)!) || !u.patterns.has(e.pattern));
+  };
   const nextFor = (g: MovementGroup) =>
     rotate(
       rankForGroup(pool, g, defaultGoal, input.mode, input.favourites).filter(
@@ -540,7 +559,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
           !used.has(e.id) &&
           // Fillers are real main work: no toe pulls or hangs (QA R4 P2).
           !MINOR_FILLER_PATTERNS.includes(e.pattern) &&
-          !usedParents.has(parentOf(topPrimary(e)!)) &&
+          parentOpen(e) &&
           primariesReady(e) &&
           !e.muscles.some((m) => m.role === 'primary' && restedKeys.has(m.muscleKey)),
       ),

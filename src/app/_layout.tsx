@@ -11,13 +11,16 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { AppState, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { refreshBilling } from '@/features/billing/actions';
 import { useNotificationSync } from '@/features/notifications/useNotificationSync';
 import { useSyncProfileSettings } from '@/features/onboarding/sync';
+import { useWorkoutStore } from '@/features/workout/store';
+import { clock } from '@/lib/clock';
+import { localDate } from '@/lib/dates';
 import { startMonitoring } from '@/lib/monitoring';
 import { colors } from '@/theme';
 
@@ -40,6 +43,17 @@ export default function RootLayout() {
   useEffect(() => {
     if (ready) void SplashScreen.hideAsync();
   }, [ready]);
+
+  // Yesterday's planned or unfinished workouts never come back (QA R5-03):
+  // on launch and whenever the app returns to the foreground.
+  useEffect(() => {
+    const close = () => useWorkoutStore.getState().closeStale(localDate(clock.now()));
+    close();
+    const sub = AppState.addEventListener('change', (state) => {
+      if (state === 'active') close();
+    });
+    return () => sub.remove();
+  }, []);
 
   // Latest subscription state from the store (best effort, offline is fine).
   useEffect(() => {

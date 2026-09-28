@@ -44,7 +44,10 @@
         ["hips", "primary", 0.6],
         ["quads", "secondary", 0.3]
       ],
-      "joints": [["hip", "flexion", "partial"]],
+      "joints": [
+        ["hip", "flexion", "partial"],
+        ["knee", "deep_bend", "isometric"]
+      ],
       "rangeLimit": []
     },
     {
@@ -206,7 +209,8 @@
       "joints": [
         ["hip", "flexion", "full"],
         ["hip", "extension", "full"],
-        ["ankle", "balance", "partial"]
+        ["ankle", "balance", "partial"],
+        ["knee", "pivot", "partial"]
       ],
       "rangeLimit": ["hip.flexion", "hip.extension"]
     },
@@ -773,7 +777,8 @@
       ],
       "joints": [
         ["shoulder", "carry", "full"],
-        ["wrist", "grip", "full"]
+        ["wrist", "grip", "full"],
+        ["knee", "straighten_load", "isometric"]
       ],
       "rangeLimit": []
     },
@@ -1362,7 +1367,10 @@
         ["hips", "primary", 1.0],
         ["lowerAbs", "secondary", 0.4]
       ],
-      "joints": [["hip", "flexion", "full"]],
+      "joints": [
+        ["hip", "flexion", "full"],
+        ["knee", "deep_bend", "isometric"]
+      ],
       "rangeLimit": ["hip.flexion"]
     },
     {
@@ -1627,7 +1635,8 @@
       ],
       "joints": [
         ["hip", "flexion", "full"],
-        ["lower_back", "flexion", "partial"]
+        ["lower_back", "flexion", "partial"],
+        ["knee", "straighten_load", "isometric"]
       ],
       "rangeLimit": ["hip.flexion"]
     },
@@ -1673,7 +1682,10 @@
         ["calves", "primary", 0.9],
         ["shins", "secondary", 0.3]
       ],
-      "joints": [["ankle", "dorsiflexion", "full"]],
+      "joints": [
+        ["ankle", "dorsiflexion", "full"],
+        ["knee", "straighten_load", "isometric"]
+      ],
       "rangeLimit": ["ankle.dorsiflexion"]
     },
     {
@@ -3754,7 +3766,8 @@
       ],
       "joints": [
         ["shoulder", "carry", "full"],
-        ["wrist", "grip", "partial"]
+        ["wrist", "grip", "partial"],
+        ["knee", "straighten_load", "isometric"]
       ],
       "rangeLimit": []
     },
@@ -4409,7 +4422,8 @@
         ["shoulder", "push", "full"],
         ["elbow", "extension", "full"],
         ["wrist", "grip", "partial"],
-        ["hip", "extension", "isometric"]
+        ["hip", "extension", "isometric"],
+        ["knee", "deep_bend", "isometric"]
       ],
       "rangeLimit": []
     },
@@ -4437,7 +4451,8 @@
         ["shoulder", "push", "full"],
         ["elbow", "extension", "full"],
         ["wrist", "grip", "partial"],
-        ["hip", "extension", "isometric"]
+        ["hip", "extension", "isometric"],
+        ["knee", "deep_bend", "isometric"]
       ],
       "rangeLimit": []
     },
@@ -4464,7 +4479,8 @@
         ["shoulder", "push", "partial"],
         ["elbow", "extension", "full"],
         ["wrist", "grip", "full"],
-        ["hip", "extension", "isometric"]
+        ["hip", "extension", "isometric"],
+        ["knee", "deep_bend", "isometric"]
       ],
       "rangeLimit": []
     },
@@ -5825,7 +5841,8 @@
       ],
       "joints": [
         ["shoulder", "carry", "full"],
-        ["wrist", "grip", "full"]
+        ["wrist", "grip", "full"],
+        ["knee", "straighten_load", "isometric"]
       ],
       "rangeLimit": []
     },
@@ -5849,7 +5866,8 @@
       ],
       "joints": [
         ["shoulder", "carry", "full"],
-        ["wrist", "grip", "full"]
+        ["wrist", "grip", "full"],
+        ["knee", "straighten_load", "isometric"]
       ],
       "rangeLimit": []
     },
@@ -6814,7 +6832,7 @@
       "level": 3,
       "minAgeBand": "teen",
       "positions": ["standing"],
-      "contraindications": ["hip", "shoulder", "pregnant_postpartum", "recent_surgery"],
+      "contraindications": ["hip", "shoulder", "pregnant_postpartum", "recent_surgery", "knee"],
       "pattern": "hip_isolation",
       "parts": ["main"],
       "dose": "time",
@@ -6829,7 +6847,8 @@
       "joints": [
         ["hip", "adduction", "isometric"],
         ["shoulder", "push", "isometric"],
-        ["lower_back", "side_bend", "isometric"]
+        ["lower_back", "side_bend", "isometric"],
+        ["knee", "kneel", "isometric"]
       ],
       "rangeLimit": []
     },
@@ -6873,7 +6892,10 @@
         ["lowerAbs", "primary", 0.5],
         ["quads", "secondary", 0.3]
       ],
-      "joints": [["hip", "flexion", "partial"]],
+      "joints": [
+        ["hip", "flexion", "partial"],
+        ["knee", "deep_bend", "isometric"]
+      ],
       "rangeLimit": []
     },
     {
@@ -7839,7 +7861,10 @@
       "unilateral": false,
       "impact": 0,
       "muscles": [["calves", "primary", 0.8]],
-      "joints": [["ankle", "plantarflexion", "full"]],
+      "joints": [
+        ["ankle", "plantarflexion", "full"],
+        ["knee", "deep_bend", "isometric"]
+      ],
       "rangeLimit": []
     },
     {
@@ -8076,7 +8101,8 @@
       "muscles": [["calves", "primary", 0.9]],
       "joints": [
         ["ankle", "plantarflexion", "full"],
-        ["ankle", "dorsiflexion", "partial"]
+        ["ankle", "dorsiflexion", "partial"],
+        ["knee", "deep_bend", "isometric"]
       ],
       "rangeLimit": ["ankle.dorsiflexion"]
     },
@@ -8394,7 +8420,10 @@
         ["shoulders", "secondary", 0.3],
         ["quads", "secondary", 0.3]
       ],
-      "joints": [["hip", "flexion", "partial"]],
+      "joints": [
+        ["hip", "flexion", "partial"],
+        ["knee", "deep_bend", "isometric"]
+      ],
       "rangeLimit": []
     },
     {
@@ -8484,7 +8513,10 @@
         ["hips", "primary", 0.5],
         ["quads", "secondary", 0.3]
       ],
-      "joints": [["hip", "flexion", "partial"]],
+      "joints": [
+        ["hip", "flexion", "partial"],
+        ["knee", "deep_bend", "isometric"]
+      ],
       "rangeLimit": []
     },
     {
@@ -8634,7 +8666,8 @@
       "joints": [
         ["hip", "abduction", "full"],
         ["hip", "adduction", "full"],
-        ["ankle", "balance", "partial"]
+        ["ankle", "balance", "partial"],
+        ["knee", "pivot", "partial"]
       ],
       "rangeLimit": ["hip.abduction", "hip.adduction"]
     },
@@ -9211,7 +9244,8 @@
       ],
       "joints": [
         ["shoulder", "overhead", "partial"],
-        ["hip", "flexion", "partial"]
+        ["hip", "flexion", "partial"],
+        ["knee", "straighten_load", "isometric"]
       ],
       "rangeLimit": ["shoulder.overhead"]
     },
@@ -9572,7 +9606,8 @@
       ],
       "joints": [
         ["lower_back", "flexion", "full"],
-        ["hip", "flexion", "full"]
+        ["hip", "flexion", "full"],
+        ["knee", "straighten_load", "isometric"]
       ],
       "rangeLimit": ["lower_back.flexion"]
     },
@@ -9843,7 +9878,8 @@
       "joints": [
         ["hip", "flexion", "full"],
         ["hip", "single_leg", "partial"],
-        ["ankle", "balance", "partial"]
+        ["ankle", "balance", "partial"],
+        ["knee", "straighten_load", "isometric"]
       ],
       "rangeLimit": ["hip.flexion"]
     },
@@ -9888,7 +9924,8 @@
       "muscles": [["calves", "primary", 0.9]],
       "joints": [
         ["ankle", "dorsiflexion", "full"],
-        ["ankle", "balance", "partial"]
+        ["ankle", "balance", "partial"],
+        ["knee", "straighten_load", "isometric"]
       ],
       "rangeLimit": ["ankle.dorsiflexion"]
     },
@@ -10095,7 +10132,10 @@
         ["hips", "secondary", 0.4],
         ["obliques", "secondary", 0.3]
       ],
-      "joints": [["hip", "flexion", "partial"]],
+      "joints": [
+        ["hip", "flexion", "partial"],
+        ["knee", "deep_bend", "isometric"]
+      ],
       "rangeLimit": []
     },
     {
@@ -11538,7 +11578,8 @@
       ],
       "joints": [
         ["lower_back", "extension", "isometric"],
-        ["hip", "extension", "isometric"]
+        ["hip", "extension", "isometric"],
+        ["knee", "straighten_load", "isometric"]
       ],
       "rangeLimit": [],
       "rehab": true
@@ -11738,7 +11779,10 @@
         ["hips", "primary", 0.7],
         ["quads", "secondary", 0.3]
       ],
-      "joints": [["hip", "flexion", "isometric"]],
+      "joints": [
+        ["hip", "flexion", "isometric"],
+        ["knee", "deep_bend", "isometric"]
+      ],
       "rangeLimit": [],
       "rehab": true
     },
@@ -11795,7 +11839,7 @@
       "level": 3,
       "minAgeBand": "young",
       "positions": ["standing"],
-      "contraindications": ["recent_surgery", "pregnant_postpartum"],
+      "contraindications": ["recent_surgery", "pregnant_postpartum", "knee"],
       "pattern": "hip_isolation",
       "parts": ["main"],
       "dose": "time",
@@ -11809,7 +11853,8 @@
       "joints": [
         ["hip", "adduction", "isometric"],
         ["shoulder", "push", "isometric"],
-        ["lower_back", "side_bend", "isometric"]
+        ["lower_back", "side_bend", "isometric"],
+        ["knee", "kneel", "isometric"]
       ],
       "rangeLimit": []
     },
@@ -12609,7 +12654,10 @@
         ["hips", "primary", 0.5],
         ["quads", "secondary", 0.3]
       ],
-      "joints": [["hip", "flexion", "partial"]],
+      "joints": [
+        ["hip", "flexion", "partial"],
+        ["knee", "deep_bend", "isometric"]
+      ],
       "rangeLimit": []
     },
     {
@@ -12811,7 +12859,10 @@
         ["hips", "primary", 0.6],
         ["quads", "secondary", 0.3]
       ],
-      "joints": [["hip", "flexion", "partial"]],
+      "joints": [
+        ["hip", "flexion", "partial"],
+        ["knee", "deep_bend", "isometric"]
+      ],
       "rangeLimit": []
     },
     {
@@ -13269,7 +13320,10 @@
         ["quads", "primary", 0.5],
         ["hips", "secondary", 0.4]
       ],
-      "joints": [["hip", "flexion", "partial"]],
+      "joints": [
+        ["hip", "flexion", "partial"],
+        ["knee", "deep_bend", "isometric"]
+      ],
       "rangeLimit": []
     },
     {
@@ -14287,7 +14341,8 @@
       ],
       "joints": [
         ["hip", "flexion", "partial"],
-        ["hip", "rotation", "partial"]
+        ["hip", "rotation", "partial"],
+        ["knee", "deep_bend", "isometric"]
       ],
       "rangeLimit": []
     },
@@ -14666,7 +14721,10 @@
       "unilateral": true,
       "impact": 0,
       "muscles": [["calves", "primary", 0.8]],
-      "joints": [["ankle", "plantarflexion", "full"]],
+      "joints": [
+        ["ankle", "plantarflexion", "full"],
+        ["knee", "deep_bend", "isometric"]
+      ],
       "rangeLimit": []
     },
     {
@@ -14793,7 +14851,10 @@
         ["lowerBack", "primary", 0.6],
         ["glutes", "secondary", 0.3]
       ],
-      "joints": [["lower_back", "extension", "partial"]],
+      "joints": [
+        ["lower_back", "extension", "partial"],
+        ["knee", "straighten_load", "isometric"]
+      ],
       "rangeLimit": ["lower_back.extension"]
     },
     {
@@ -14817,7 +14878,8 @@
       ],
       "joints": [
         ["hip", "flexion", "partial"],
-        ["lower_back", "extension", "isometric"]
+        ["lower_back", "extension", "isometric"],
+        ["knee", "straighten_load", "isometric"]
       ],
       "rangeLimit": ["hip.flexion"]
     },
@@ -15937,7 +15999,8 @@
       ],
       "joints": [
         ["hip", "flexion", "full"],
-        ["lower_back", "flexion", "partial"]
+        ["lower_back", "flexion", "partial"],
+        ["knee", "straighten_load", "isometric"]
       ],
       "rangeLimit": ["hip.flexion"]
     },
@@ -16233,7 +16296,8 @@
       ],
       "joints": [
         ["hip", "flexion", "partial"],
-        ["ankle", "dorsiflexion", "partial"]
+        ["ankle", "dorsiflexion", "partial"],
+        ["knee", "deep_bend", "partial"]
       ],
       "rangeLimit": []
     },
