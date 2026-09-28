@@ -5,7 +5,9 @@ import type { GeneratorInput } from '../generator/types';
 import type { WorkoutRecord } from '../workout/types';
 
 import { blockWeek, DEFAULT_BLOCK_WEEKS, type BlockWeek } from './block';
-import { planById, planDayInput, type ReadyPlan } from './plans';
+import type { AppMode } from '../profile/age';
+
+import { allowedPlan, planDayInput, type ReadyPlan } from './plans';
 
 export type ProgramState = { planId: string | null; startedAt: LocalDate | null };
 
@@ -24,8 +26,10 @@ export function programStatus(
   program: ProgramState,
   workouts: WorkoutRecord[],
   today: LocalDate,
+  mode?: AppMode,
 ): { plan: ReadyPlan | undefined; block: BlockWeek; dayIndex: number } {
-  const plan = planById(program.planId);
+  // A plan for another age mode (a deep link, a birthday edit) is ignored (R4-04).
+  const plan = allowedPlan(program.planId, mode);
   const firstWorkout = workouts
     .filter((w) => w.status === 'done' || w.status === 'partial')
     .map((w) => localDate(new Date(w.endedAt ?? w.createdAt)))
@@ -50,7 +54,7 @@ export function withProgram(
   program: ProgramState,
   today: LocalDate,
 ): GeneratorInput {
-  const { plan, block, dayIndex } = programStatus(program, workouts, today);
+  const { plan, block, dayIndex } = programStatus(program, workouts, today, input.mode);
   const planned = plan ? planDayInput(input, plan, dayIndex, library) : input;
   return block.phase === 'deload' ? { ...planned, deload: true } : planned;
 }

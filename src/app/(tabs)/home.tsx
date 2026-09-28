@@ -73,7 +73,7 @@ export default function HomeScreen() {
   const goals = (preview ? sessionTargets(preview) : []).map((m) => muscleLabel(t, m));
   // The session's own length, not the profile setting (QA round 2).
   const cardMinutes = preview?.estimatedMinutes || profile.minutes || 30;
-  const program = programStatus(programState, workouts, localDate(now));
+  const program = programStatus(programState, workouts, localDate(now), derived.mode);
   const summary = preview ? sessionSummary(preview, derived.mode, profile.weightKg) : null;
   const openMobility = () => {
     const id = createMobilityWorkout(input);

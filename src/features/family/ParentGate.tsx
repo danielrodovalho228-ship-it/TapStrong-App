@@ -31,7 +31,8 @@ export function ParentGate({ onPass, onCancel }: { onPass: () => void; onCancel?
   const hasPin = useParentPinStore((s) => !!s.hash);
   const active = useFamilyStore(activeProfile);
   const ownerId = useOwnerIdentityStore((s) => s.ownerId);
-  const owner = isOwnerProfile(active, ownerId);
+  const activeId = useOwnerIdentityStore((s) => s.activeId);
+  const owner = isOwnerProfile(active, { ownerId, activeId });
   const [value, setValue] = useState('');
   const [message, setMessage] = useState<string | null>(null);
   const [resetting, setResetting] = useState(false);

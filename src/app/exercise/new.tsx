@@ -14,10 +14,16 @@ import {
   TextField,
 } from '@/components/ui';
 import { BodyPicker } from '@/features/bodymap/components/BodyPicker';
-import { canCreateExercise } from '@/features/library/custom';
+import {
+  canCreateExercise,
+  customJoints,
+  customPositions,
+  usesFreeWeights,
+} from '@/features/library/custom';
 import { useLibraryStore } from '@/features/library/store';
 import { JOINTS, type JointKey } from '@/features/movement/catalog';
 import { derive } from '@/features/onboarding/derived';
+import type { Position } from '@/features/onboarding/options';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { EQUIPMENT } from '../../../supabase/functions/_shared/interview';
 import { clock } from '@/lib/clock';
@@ -39,6 +45,7 @@ export default function CreateExerciseScreen() {
   const [secondary, setSecondary] = useState<string[]>([]);
   const [equipment, setEquipment] = useState<string[]>([]);
   const [joints, setJoints] = useState<JointKey[]>([]);
+  const [positions, setPositions] = useState<Position[]>(['standing']);
   const [error, setError] = useState(false);
   const flip = <T,>(list: T[], v: T) =>
     list.includes(v) ? list.filter((x) => x !== v) : [...list, v];
@@ -71,6 +78,7 @@ export default function CreateExerciseScreen() {
       secondary,
       equipment,
       joints,
+      positions: customPositions({ positions, equipment }),
       createdAt: clock.now().toISOString(),
     });
     router.replace({ pathname: '/exercise/[id]', params: { id } });
@@ -113,16 +121,45 @@ export default function CreateExerciseScreen() {
         ))}
       </View>
       <AppText variant="label">{t('createExercise.joints')}</AppText>
+      <AppText variant="caption" color={colors.mutedStrong}>
+        {t('createExercise.jointsFromMuscles')}
+      </AppText>
       <View style={styles.chips}>
-        {JOINTS.map((j) => (
-          <Chip
-            key={j}
-            label={t(`createExercise.jointNames.${j}`)}
-            selected={joints.includes(j)}
-            onPress={() => setJoints((l) => flip(l, j))}
-          />
-        ))}
+        {JOINTS.map((j) => {
+          const fromMuscles = customJoints({ primary, joints: [] }).includes(j);
+          return (
+            <Chip
+              key={j}
+              label={t(`createExercise.jointNames.${j}`)}
+              selected={fromMuscles || joints.includes(j)}
+              disabled={fromMuscles}
+              onPress={() => setJoints((l) => flip(l, j))}
+            />
+          );
+        })}
       </View>
+      <AppText variant="label">{t('createExercise.positions')}</AppText>
+      <View style={styles.chips}>
+        {(['standing', 'with_support', 'seated_only'] as const).map((p) => {
+          const blocked = p === 'with_support' && usesFreeWeights(equipment);
+          return (
+            <Chip
+              key={p}
+              label={t(`safety.positions.${p}`)}
+              selected={!blocked && positions.includes(p)}
+              disabled={blocked}
+              onPress={() =>
+                setPositions((l) => (l.includes(p) && l.length === 1 ? l : flip(l, p)))
+              }
+            />
+          );
+        })}
+      </View>
+      {usesFreeWeights(equipment) ? (
+        <AppText variant="caption" color={colors.mutedStrong}>
+          {t('createExercise.noSupportWithWeights')}
+        </AppText>
+      ) : null}
       {error ? <Notice tone="warning">{t('createExercise.needName')}</Notice> : null}
     </Screen>
   );

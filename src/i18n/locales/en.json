@@ -4803,7 +4803,8 @@
       "upperLower": "Upper / lower",
       "ppl": "Push / pull / legs"
     },
-    "schedule": "Week layout"
+    "schedule": "Week layout",
+    "notForYou": "This plan isn't available for your profile. Pick one from Plans."
   },
   "modes": {
     "title": "What do you want to do?",
@@ -4946,7 +4947,7 @@
     "equipment": "Equipment",
     "joints": "Joints it moves",
     "save": "Save exercise",
-    "note": "Your own exercise is never put into workouts for you. Use it in a Custom workout. It gets the same pain and restriction checks through the joints you tag.",
+    "note": "Your own exercise is never put into workouts for you. Use it in a Custom workout. It gets the same pain and restriction checks as any exercise, through the joints its main muscles move.",
     "needName": "Give it a name and at least one main muscle.",
     "adultsOnly": "Only adults can create exercises.",
     "jointNames": {
@@ -4958,7 +4959,10 @@
       "hip": "Hip",
       "knee": "Knee",
       "ankle": "Ankle"
-    }
+    },
+    "jointsFromMuscles": "Joints moved by the main muscles are always included. Add any other joint it moves.",
+    "positions": "How you do it",
+    "noSupportWithWeights": "With free weights in your hands, it can't be marked \"With support\"."
   },
   "equipmentSettings": {
     "title": "Equipment",

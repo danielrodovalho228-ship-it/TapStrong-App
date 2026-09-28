@@ -4803,7 +4803,8 @@
       "upperLower": "Cima / baixo",
       "ppl": "Empurrar / puxar / pernas"
     },
-    "schedule": "Organização da semana"
+    "schedule": "Organização da semana",
+    "notForYou": "Este plano não está disponível para o seu perfil. Escolha um em Planos."
   },
   "modes": {
     "title": "O que você quer fazer?",
@@ -4946,7 +4947,7 @@
     "equipment": "Equipamento",
     "joints": "Articulações que ele move",
     "save": "Salvar exercício",
-    "note": "Seu próprio exercício nunca entra sozinho nos seus treinos. Use num treino personalizado. Ele passa pelas mesmas checagens de dor e restrição pelas articulações que você marcar.",
+    "note": "Seu próprio exercício nunca entra nos treinos automaticamente. Use-o num treino personalizado. Ele passa pelas mesmas checagens de dor e restrição de qualquer exercício, pelas articulações que os músculos principais movem.",
     "needName": "Dê um nome e pelo menos um músculo principal.",
     "adultsOnly": "Só adultos podem criar exercícios.",
     "jointNames": {
@@ -4958,7 +4959,10 @@
       "hip": "Quadril",
       "knee": "Joelho",
       "ankle": "Tornozelo"
-    }
+    },
+    "jointsFromMuscles": "As articulações movidas pelos músculos principais sempre entram. Adicione qualquer outra que ele mova.",
+    "positions": "Como você faz",
+    "noSupportWithWeights": "Com pesos livres nas mãos, não dá para marcar \"Com apoio\"."
   },
   "equipmentSettings": {
     "title": "Equipamentos",

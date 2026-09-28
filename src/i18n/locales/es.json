@@ -4803,7 +4803,8 @@
       "upperLower": "Superior / inferior",
       "ppl": "Empuje / tirón / piernas"
     },
-    "schedule": "Organización de la semana"
+    "schedule": "Organización de la semana",
+    "notForYou": "Este plan no está disponible para tu perfil. Elige uno en Planes."
   },
   "modes": {
     "title": "¿Qué quieres hacer?",
@@ -4946,7 +4947,7 @@
     "equipment": "Equipo",
     "joints": "Articulaciones que mueve",
     "save": "Guardar ejercicio",
-    "note": "Tu propio ejercicio nunca se añade solo a tus entrenamientos. Úsalo en un entrenamiento a medida. Pasa los mismos controles de dolor y restricciones según las articulaciones que marques.",
+    "note": "Tu propio ejercicio nunca se pone en tus entrenamientos automáticamente. Úsalo en un entrenamiento personalizado. Pasa por los mismos controles de dolor y restricciones que cualquier ejercicio, según las articulaciones que mueven sus músculos principales.",
     "needName": "Ponle un nombre y al menos un músculo principal.",
     "adultsOnly": "Solo los adultos pueden crear ejercicios.",
     "jointNames": {
@@ -4958,7 +4959,10 @@
       "hip": "Cadera",
       "knee": "Rodilla",
       "ankle": "Tobillo"
-    }
+    },
+    "jointsFromMuscles": "Las articulaciones que mueven los músculos principales siempre se incluyen. Añade cualquier otra que mueva.",
+    "positions": "Cómo lo haces",
+    "noSupportWithWeights": "Con pesas libres en las manos no se puede marcar \"Con apoyo\"."
   },
   "equipmentSettings": {
     "title": "Equipo",

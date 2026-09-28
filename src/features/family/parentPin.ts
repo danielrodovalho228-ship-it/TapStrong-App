@@ -55,35 +55,19 @@ export const useParentPinStore = create<State>()(
         failures,
         lockedUntil,
       }),
-      // A PIN set before the secure store keeps working once, then is rehashed.
-      onRehydrateStorage: () => (state) => {
-        if (state?.hash) return;
-        const legacy = readLegacy();
-        if (legacy) useParentPinStore.setState(legacy);
+      // A plain-storage PIN is never imported: anyone with file access could
+      // plant one before the owner set theirs (QA R4-05). The stale copy from
+      // dev builds before round 3 is just deleted.
+      onRehydrateStorage: () => () => {
+        try {
+          kvStorage.removeItem('parent-pin');
+        } catch {
+          // Nothing to clean up.
+        }
       },
     },
   ),
 );
-
-/** The old plain-storage PIN (Phase 11), moved into the secure store and deleted. */
-function readLegacy(): Partial<State> | null {
-  try {
-    const raw = kvStorage.getItem('parent-pin');
-    if (typeof raw !== 'string') return null;
-    kvStorage.removeItem('parent-pin');
-    const { state } = JSON.parse(raw) as { state?: Partial<State> };
-    if (!state?.hash || !state.salt) return null;
-    return {
-      hash: state.hash,
-      salt: state.salt,
-      algo: 'fnv',
-      failures: state.failures ?? 0,
-      lockedUntil: state.lockedUntil ?? null,
-    };
-  } catch {
-    return null;
-  }
-}
 
 /** Slow key derivation: guessing all 10,000 PINs takes real time, not a second. */
 export function derivePin(pin: string, salt: string): string {

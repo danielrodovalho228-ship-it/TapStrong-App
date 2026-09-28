@@ -45,9 +45,15 @@ export const useFamilyStore = create<State>()(
         if (profiles.some((x) => x.id === p.id)) return true;
         if (profiles.length >= FAMILY_MAX_PROFILES) return false;
         set({ profiles: [...profiles, { ...p, createdAt: clock.now().toISOString() }] });
+        // Minors are recorded in the secure store too, so an edited kind can't lift the lock.
+        if (p.kind === 'child')
+          useOwnerIdentityStore.getState().addMinor(p.id, p.consentAt ? 'under13' : 'teen');
         return true;
       },
-      setActive: (activeId) => set({ activeId }),
+      setActive: (activeId) => {
+        useOwnerIdentityStore.getState().setActive(activeId);
+        set({ activeId });
+      },
       remove: (id) =>
         set({
           profiles: get().profiles.filter((p) => p.id !== id || p.kind === 'self'),

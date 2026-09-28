@@ -57,7 +57,7 @@ describe('PIN key derivation and storage', () => {
     expect(kvStorage.getItem('parent-pin')).toBeFalsy();
   });
 
-  it('an old PIN from plain storage works once, is rehashed, and the old copy is deleted', async () => {
+  it('a PIN planted in plain storage is ignored and deleted (QA R4-05)', async () => {
     const salt = 'old-salt';
     kvStorage.setItem(
       'parent-pin',
@@ -66,13 +66,11 @@ describe('PIN key derivation and storage', () => {
       }),
     );
     await SecureStore.deleteItemAsync('parent-pin-secure');
+    useParentPinStore.setState({ hash: null, salt: null });
     await useParentPinStore.persist.rehydrate();
-    expect(useParentPinStore.getState().algo).toBe('fnv');
     expect(kvStorage.getItem('parent-pin')).toBeFalsy();
-    expect(checkParentPin('0000', NOW)).toBe('wrong');
-    expect(checkParentPin('1357', NOW)).toBe('ok');
-    expect(useParentPinStore.getState().algo).toBe('pbkdf2');
-    expect(checkParentPin('1357', NOW)).toBe('ok');
+    expect(useParentPinStore.getState().hash).toBeFalsy();
+    expect(checkParentPin('1357', NOW)).toBe('no_pin');
   });
 });
 

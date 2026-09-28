@@ -4,6 +4,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import { kvStorage } from '@/lib/storage';
 
 import type { JointKey } from '../movement/catalog';
+import type { Position } from '../onboarding/options';
 
 /**
  * The person's library (improvements v1, B): starred exercises, private
@@ -17,6 +18,8 @@ export type CustomExerciseData = {
   secondary: string[];
   equipment: string[];
   joints: JointKey[];
+  /** Positions the person picked; unset = standing only (QA R4-03). */
+  positions?: Position[];
   createdAt: string;
 };
 

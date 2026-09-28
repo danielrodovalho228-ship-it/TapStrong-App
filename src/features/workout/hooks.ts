@@ -21,6 +21,7 @@ import { activeAreas, doctorFirstAreas, useRestrictionsStore } from '../restrict
 import { customToExercise } from '../library/custom';
 import { useLibraryStore } from '../library/store';
 import { withProgram } from '../program/apply';
+import { allowedPlan } from '../program/plans';
 import { usePrefsStore } from '../settings/store';
 import { useProgramStore } from '../program/store';
 
@@ -70,6 +71,12 @@ export function useGeneratorInput(library: Exercise[]): GeneratorInput | null {
     today: localDate(clock.now()),
     now: clock.now().toISOString(),
   });
+  // A plan for another age mode is cleared, not just ignored (QA R4-04).
+  const mode = base?.mode;
+  const invalidPlan = !!program.planId && !!mode && !allowedPlan(program.planId, mode);
+  useEffect(() => {
+    if (invalidPlan) useProgramStore.getState().choosePlan(null, localDate(clock.now()));
+  }, [invalidPlan]);
   // A ready-made plan and the deload week apply on top (improvements v1, A2/A5).
   // Starred exercises are preferred when safe (B4).
   return base

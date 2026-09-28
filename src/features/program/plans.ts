@@ -111,6 +111,16 @@ function build(): ReadyPlan[] {
 export const READY_PLANS: ReadyPlan[] = build();
 export const planById = (id: string | null | undefined) => READY_PLANS.find((p) => p.id === id);
 
+/** A plan is only for the age modes it lists (QA R4-04: no adult plans by deep link). */
+export const planAllowed = (plan: ReadyPlan | undefined, mode: AppMode | undefined) =>
+  !!plan && mode !== 'child' && (!mode || plan.modes.includes(mode));
+
+/** The plan this profile may follow: an id for another age mode counts as none. */
+export const allowedPlan = (id: string | null | undefined, mode: AppMode | undefined) => {
+  const plan = planById(id);
+  return plan && planAllowed(plan, mode) ? plan : undefined;
+};
+
 export type PlanFilter = {
   days?: number;
   goal?: PlanGoal;

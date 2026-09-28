@@ -4,7 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText, Button, Card, Header, Notice, Screen } from '@/components/ui';
-import { planById } from '@/features/program/plans';
+import { derive } from '@/features/onboarding/derived';
+import { useOnboardingStore } from '@/features/onboarding/store';
+import { planAllowed, planById } from '@/features/program/plans';
 import { useProgramStore } from '@/features/program/store';
 import { clock } from '@/lib/clock';
 import { localDate } from '@/lib/dates';
@@ -20,11 +22,15 @@ export default function ProgramScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { planId, choosePlan } = useProgramStore();
   const [saved, setSaved] = useState(false);
+  const mode = derive(useOnboardingStore())?.mode;
   const plan = planById(id);
   const mine = id === 'mine' || !plan;
-  const active = mine ? !planId : planId === plan?.id;
+  // Plans are offered per age mode; a deep link can't switch one on (QA R4-04).
+  const blocked = !mine && !planAllowed(plan, mode);
+  const active = mine ? !planId : planId === plan?.id && !blocked;
 
   const use = () => {
+    if (blocked) return;
     choosePlan(mine ? null : plan!.id, localDate(clock.now()));
     setSaved(true);
   };
@@ -38,12 +44,14 @@ export default function ProgramScreen() {
         />
       }
       footer={
-        active ? undefined : (
+        active || blocked ? undefined : (
           <Button label={mine ? t('plans.useMine') : t('plans.use')} onPress={use} />
         )
       }
     >
-      {mine ? (
+      {blocked ? (
+        <Notice tone="warning">{t('plans.notForYou')}</Notice>
+      ) : mine ? (
         <AppText color={colors.mutedStrong}>{t('plans.myPlanBody')}</AppText>
       ) : (
         <>
