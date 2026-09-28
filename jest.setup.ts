@@ -1,3 +1,6 @@
+// Public config a store build must set (scripts/check-env.mjs); tests use test values.
+process.env.EXPO_PUBLIC_SUPPORT_EMAIL ??= 'support@example.test';
+
 // Native gesture module mocks.
 import 'react-native-gesture-handler/jestSetup';
 

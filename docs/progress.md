@@ -1733,3 +1733,86 @@ Lista do QA: `docs/qa-round-6.md`. Commits separados: um por grupo de P1 e dois 
 ### Perguntas em aberto
 
 1. **Placa da pilha:** usei 10 lb (5 kg) para máquinas e cabos. Se alguma academia usar pilhas de 5 lb, dá para ajustar por equipamento mais tarde.
+
+---
+
+## Fase 19 — Correções da rodada 7 de QA
+
+Lista do QA: `docs/qa-round-7.md`. Commits separados: um por grupo de P1 e quatro de P2 (gerador/lógica, segurança, telas e lançamento).
+
+### P1 — o que foi corrigido
+
+- **R7-01 Joelho:** marcados mais 13 exercícios. Entram os que levantam o pé (Seated trunk control, círculos de tornozelo sentado) e a família do dead bug. Também o reverse crunch e o bicycle crunch, os seated jacks e step-outs, as quedas de joelho e o cable woodchop (giro do pé). A auditoria agora lê as instruções de **todos** os exercícios ("levante um pé", "abaixe uma perna", "joelhos em direção a", "bicicleta", "pise para fora", "gire"). O equilíbrio curto continua saindo depois de dor no joelho, sentado, adulto ou adolescente.
+- **R7-02 Adolescente e modelo de corpo:** num perfil de menor travado, trocar o corpo não apaga mais "Grávida/pós-parto". A resposta fica guardada, só escondida, e continua valendo nos filtros. Na checagem de segurança, ela nunca conta como "removida".
+- **R7-03 Ano de nascimento editado:** o modo agora tem teto no registro seguro. Um adolescente travado continua no modo adolescente mesmo com o ano editado no armazenamento, e remover respostas continua pedindo o PIN. O dono nunca é limitado.
+- **R7-04 Termos e Privacidade:** links no paywall e em Planos (com "Restaurar compras"), em Conta, em Cobrança e em Configurações → Sobre. Os endereços vêm de `EXPO_PUBLIC_TERMS_URL` e `EXPO_PUBLIC_PRIVACY_URL`.
+- **R7-05 Tela branca na web:** no escuro, a página pré-renderizada (clara) fica escondida sobre o fundo escuro até o app montar. Um teste trava o `output: "static"`, e todas as exportações usam `--clear`. O `theme:check` agora confere o HTML servido e o primeiro quadro no escuro, sem JavaScript: sai escuro.
+- **R7-06 Biblioteca:** uma coluna no celular (duas só a partir de 600 px), com a estrela de 44 px mantida. O `theme:check` fotografa a lista e falha se os cartões ficarem estreitos.
+- **R7-07 "0 DIA SEGUIDO":** todas as chaves de plural do português ganharam a forma do zero. Um teste confere, nos três idiomas, que o 0 usa o plural.
+- **R7-08 Planilha do revisor:** reconstruída (754 exercícios, com as marcas de joelho novas e o alongamento de tríceps). O `launch-readiness.md` foi atualizado: Fase 19, 754 exercícios, numeração corrigida e tabela de variáveis do EAS.
+
+### P2 — o que foi corrigido
+
+- **Sua decisão sobre o segundo treino:** depois do treino do dia, a Home mostra "O treino de hoje está feito" com mobilidade, equilíbrio ou descanso. Adultos também veem "Treino extra", que primeiro mostra um aviso e só depois começa. No 60+ não há segundo treino.
+- **Carga:**
+  - cardíaco/pressão alta também sobem as repetições antes do peso;
+  - quem registrou em lb e passou para kg cai num tamanho real (nunca "14,5 kg");
+  - o kettlebell vai de 16 para 20 kg;
+  - a carga nunca fica abaixo do menor peso real; nesse caso sugere uma versão mais fácil;
+  - a lista e o player mostram a meta sugerida ("3 × 16") em vez da faixa.
+- **Puxar × empurrar:** a janela de 7 dias é checada em todo treino, com a meta puxar ≥ empurrar, e os dias de tronco superior dos planos divididos entram também. Nos planos "Ganhar músculo" de 3 e 4 dias, toda semana ficou ≥ 90%, com puxada vertical.
+- **Sustentação (holds):** fora do treino principal de academia também em "Entrar em forma" e "Perder peso" (a recomendação do QA), e também no treino avulso de força.
+- **Outros ajustes de treino:**
+  - side plank fica fora para quem tem pressão alta;
+  - a prévia de dias futuros não herda mais a dor de hoje.
+- **Legado e PIN:**
+  - registros v1 semeiam menores também pela data de nascimento de cada perfil;
+  - um dono sem PIN num registro não comprovado cria o PIN pelo código de e-mail;
+  - o PIN aparece no rodapé fixo, sempre visível;
+  - a checagem aberta por link volta para Restrições.
+- **Rotas e telas:**
+  - tela "Página não encontrada";
+  - `/dev/components` vai para a Home no build final;
+  - descanso de treino inexistente vai para a Home;
+  - "Exercício não encontrado";
+  - `/day/<não é data>` mostra "não encontrado".
+- **Tema e acessibilidade:**
+  - o tema da navegação usa os nossos tokens;
+  - os pontos do mapa não roubam mais o toque;
+  - checkbox com `aria-checked`;
+  - o rodapé da tela final empilha em 320 px e no 60+.
+- **Coral e textos:**
+  - eyebrows da Home, passos de Cobrança e "MELHOR VALOR" ficaram neutros;
+  - sem aviso de menores de 13 (recurso desligado);
+  - "do seu adolescente" e "adolescentes de 13 a 17 anos";
+  - adolescente sozinho não vê promoção do plano Família.
+- **Lançamento:**
+  - o e-mail pessoal de reserva saiu do app. Ajuda e contato aparecem só com `EXPO_PUBLIC_SUPPORT_EMAIL`, e o `bundle:check` falha se achar um endereço pessoal;
+  - `npm run env:check`, mais um gancho no EAS que para o build de produção se faltar alguma variável obrigatória;
+  - iOS com `usesNonExemptEncryption: false`;
+  - permissões de armazenamento e sobreposição bloqueadas no Android;
+  - o ícone adaptável usa a cor de fundo (#121212, sem imagem);
+  - canais de atualização removidos (o `expo-updates` não está instalado);
+  - subtítulo em inglês com 27 caracteres.
+
+### Verificações
+
+- Lint e typecheck limpos; **986 testes** passando.
+- `db:test`, `functions:check` e `bundle:check` limpos.
+- `tabs:check` limpo nas 6 combinações.
+- `theme:check` limpo: 26 telas × 2 modos, contraste de todos os textos, troca ao vivo e primeiro quadro no escuro.
+
+### Como testar
+
+1. Termine um treino → a Home mostra "O treino de hoje está feito". Adulto: "Treino extra" → aviso → começar. 60+: sem segundo treino.
+2. Adolescente (menina) → Configurações → Modelo do corpo → Menino → a condição continua guardada.
+3. Configurações → Sobre: os links de Termos e Privacidade (ativos quando as variáveis existirem no EAS).
+4. Web no modo escuro: abre sem piscar branco.
+5. Biblioteca no celular: os nomes aparecem inteiros.
+
+### Perguntas em aberto
+
+1. **Treino mais curto que o tempo escolhido** (60 min → cerca de 38 min + "Adicionar 1 exercício?"): o QA pediu para completar até cerca de 90% do tempo. Isso contraria a sua decisão da Fase 13 (manter a quantidade de exercícios escolhida e oferecer +1). Não mudei. Prefere completar com séries ou exercícios automaticamente?
+2. **Puxar × empurrar com 3 exercícios e academia pequena:** algumas semanas de calendário oscilam entre 80% e 125%, porque não há um terceiro exercício de puxar disponível. Na janela móvel de 7 dias fica equilibrado.
+3. **Aviso React #418 na web** (diferença na hidratação da versão estática): a web não é alvo das lojas. O tema já não causa mais esse aviso. O que sobra vem de telas que dependem de dados salvos no aparelho, e fica anotado.
+4. **Planilha do revisor:** as fórmulas do resumo calculam quando a planilha é aberta no Excel ou no Google Sheets (o LibreOffice não roda neste ambiente).
