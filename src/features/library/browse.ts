@@ -21,7 +21,7 @@ export type LibraryFilter = {
   position?: Position;
   role?: LibraryRole;
 };
-export type NotForYouReason = 'restriction' | 'pain' | 'age';
+export type NotForYouReason = 'restriction' | 'pain' | 'age' | 'painToday';
 export type LibraryView = {
   safe: Exercise[];
   notForYou: { exercise: Exercise; reason: NotForYouReason }[];
@@ -79,7 +79,14 @@ export function libraryView(
   for (const e of matches) {
     const why = blockReason(e, viewer);
     if (why === null) safe.push(e);
-    else if (REASON[why]) notForYou.push({ exercise: e, reason: REASON[why]! });
+    else if (REASON[why]) {
+      // Out only because of pain reported today: say so (QA R5 P2).
+      const painToday =
+        why === 'contraindication' &&
+        !!(input.stoppedToday?.length || input.painToday?.length) &&
+        blockReason(e, { ...viewer, stoppedToday: [], painToday: [] }) === null;
+      notForYou.push({ exercise: e, reason: painToday ? 'painToday' : REASON[why]! });
+    }
     // Drafts, location, equipment, level and kid-only moves are simply not listed.
   }
   const byName = (a: Exercise, b: Exercise) => name(a).localeCompare(name(b));

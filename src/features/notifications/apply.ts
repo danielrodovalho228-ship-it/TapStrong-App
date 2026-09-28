@@ -55,8 +55,12 @@ export async function applyPlan(plan: PlannedNotification[]): Promise<void> {
       await N.scheduleNotificationAsync({
         identifier: p.id,
         content: {
-          title: i18n.t('notifications.reminder.title'),
-          body: i18n.t('notifications.reminder.body'),
+          title: i18n.t(
+            p.mobility ? 'notifications.reminder.mobilityTitle' : 'notifications.reminder.title',
+          ),
+          body: i18n.t(
+            p.mobility ? 'notifications.reminder.mobilityBody' : 'notifications.reminder.body',
+          ),
         },
         trigger: {
           type: N.SchedulableTriggerInputTypes.WEEKLY,

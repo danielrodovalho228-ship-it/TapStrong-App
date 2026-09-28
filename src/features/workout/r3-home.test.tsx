@@ -24,6 +24,9 @@ jest.mock('expo-router', () => ({
 }));
 const { router } = jest.requireMock('expo-router') as { router: Record<string, jest.Mock> };
 
+// Hundreds of logged sets per render: room for slow, parallel runs.
+jest.setTimeout(30_000);
+
 const NOW = '2026-09-28T09:00:00';
 
 /** Yesterday's session that trained every muscle in the library. */

@@ -36,7 +36,10 @@ import {
 import type { RecoveryState } from '@/features/workout/recovery';
 import { sessionTargets, todaySession } from '@/features/workout/plan';
 import { useWorkoutStore } from '@/features/workout/store';
+import { sharpStopAreasToday } from '@/features/workout/safety';
 import { showStreakHint, streakToday } from '@/features/workout/streak';
+import { canStartWorkout, currentPlan, FREE_WORKOUTS_PER_WEEK } from '@/features/billing/rules';
+import { useBillingStore } from '@/features/billing/store';
 import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
 import { addDays, deviceWeekStart, localDate } from '@/lib/dates';
@@ -60,6 +63,7 @@ export default function HomeScreen() {
   const [resting, setResting] = useState(false);
   const programState = useProgramStore();
   const trainingDays = useTrainingDaysPerWeek();
+  const entitlement = useBillingStore((st) => st.entitlement);
   if (!profile.onboardingComplete || !derived) return <Redirect href="/welcome" />;
 
   const now = clock.now();
@@ -82,7 +86,22 @@ export default function HomeScreen() {
   const preview = (active ?? planned)?.session ?? (built && !built.error ? built : null);
   // Everything picked is still recovering: say so, and offer mobility, balance
   // or rest instead of a workout Start can't build (QA R3-03).
-  const allRecovering = built?.error === 'all_recovering';
+  // After a sharp pain stop today, only mobility, balance or rest for the
+  // rest of the day, never a second full workout (QA R5 P2).
+  const stoppedToday = !active && sharpStopAreasToday(workouts, today).length > 0;
+  const allRecovering = built?.error === 'all_recovering' || stoppedToday;
+  // Free plan, weekly workouts used (Daniel, Phase 16): suggest the free short
+  // mobility and mention Premium once, instead of a paywall on Start.
+  const freeDone =
+    !active &&
+    !allRecovering &&
+    currentPlan(entitlement, now) === 'free' &&
+    !canStartWorkout('free', workouts, now, deviceWeekStart()).allowed;
+  // Short balance next to short mobility for 60+, a balance goal or a fall (QA R5 P2).
+  const balanceUser =
+    derived.mode === 'senior' ||
+    profile.conditions.includes('fell_last_year') ||
+    profile.mainGoals.includes('balance');
   const goals = (preview ? sessionTargets(preview) : []).map((m) => muscleLabel(t, m));
   // The session's own length, not the profile setting (QA round 2).
   const cardMinutes = preview?.estimatedMinutes || profile.minutes || 30;
@@ -164,6 +183,7 @@ export default function HomeScreen() {
         targets={goals}
         minutes={cardMinutes}
         allRecovering={allRecovering}
+        stoppedToday={stoppedToday}
       />
     );
 
@@ -203,9 +223,11 @@ export default function HomeScreen() {
             {t('home.picked')}
           </AppText>
           <AppText variant="h1" color={colors.dark.text} accessibilityRole="header">
-            {t('home.recoveringTitle')}
+            {t(stoppedToday ? 'home.stoppedTitle' : 'home.recoveringTitle')}
           </AppText>
-          <AppText color={colors.dark.text}>{t('home.recoveringBody')}</AppText>
+          <AppText color={colors.dark.text}>
+            {t(stoppedToday ? 'home.stoppedBody' : 'home.recoveringBody')}
+          </AppText>
           <Button
             variant="accent"
             label={t('home.mobility', { minutes: MOBILITY_MINUTES })}
@@ -222,6 +244,23 @@ export default function HomeScreen() {
               {t('home.restNote')}
             </AppText>
           ) : null}
+        </Card>
+      ) : freeDone ? (
+        <Card tone="dark" style={styles.today} testID="free-done">
+          <AppText variant="h1" color={colors.dark.text} accessibilityRole="header">
+            {t('home.freeDoneTitle', { count: FREE_WORKOUTS_PER_WEEK })}
+          </AppText>
+          <AppText color={colors.dark.text}>{t('home.freeDoneBody')}</AppText>
+          <Button
+            variant="accent"
+            label={t('home.mobility', { minutes: MOBILITY_MINUTES })}
+            onPress={openMobility}
+          />
+          <Button
+            variant="onDark"
+            label={t('home.freeDonePremium')}
+            onPress={() => router.push('/plans')}
+          />
         </Card>
       ) : (
         <Card tone="dark" style={styles.today}>
@@ -266,13 +305,20 @@ export default function HomeScreen() {
       )}
 
       {/* Short mobility (decision 1, QA round 2): always free, counts for the streak. */}
-      {!active && !allRecovering ? (
+      {!active && !allRecovering && !freeDone ? (
         <View style={styles.mobility}>
           <Button
             variant="secondary"
             label={t('home.mobility', { minutes: MOBILITY_MINUTES })}
             onPress={openMobility}
           />
+          {balanceUser ? (
+            <Button
+              variant="secondary"
+              label={t('home.balance', { minutes: MOBILITY_MINUTES })}
+              onPress={openBalance}
+            />
+          ) : null}
           {showStreakHint(streak, localDate(now), plannedToday) ? (
             <AppText color={colors.teal} style={styles.center} testID="streak-hint">
               {t('home.streakHint')}

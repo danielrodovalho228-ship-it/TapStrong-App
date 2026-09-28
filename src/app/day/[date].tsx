@@ -54,8 +54,14 @@ export default function DayScreen() {
     month: 'long',
     day: 'numeric',
   });
+  // A future day the plan keeps free is a rest day, not a workout (QA R5 P2).
+  const restDay =
+    date > today &&
+    plannedDaysBetween(date, addDays(date, 1), deviceWeekStart(), daysPerWeek).length === 0;
   const preview =
-    !past && input ? generateSession({ ...input, today: date, now: `${date}T12:00:00` }) : null;
+    !past && !restDay && input
+      ? generateSession({ ...input, today: date, now: `${date}T12:00:00` })
+      : null;
 
   const start = () => {
     const id = createWorkoutFrom(input, library);
@@ -102,6 +108,12 @@ export default function DayScreen() {
     >
       {logged.map(loggedCard)}
       {past && !logged.length ? <Notice>{t('day.nothing')}</Notice> : null}
+      {restDay ? (
+        <Card style={styles.card}>
+          <AppText variant="h3">{t('day.restTitle')}</AppText>
+          <AppText color={colors.mutedStrong}>{t('day.restBody')}</AppText>
+        </Card>
+      ) : null}
       {!past && preview ? (
         preview.error ? (
           <Notice>

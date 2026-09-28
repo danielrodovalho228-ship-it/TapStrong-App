@@ -370,8 +370,45 @@ function SetStep({
     .filter(Boolean)
     .join(' · ');
 
+  // Keyboard and switch users reach "Done with set" first (QA R5 P2: it took
+  // 12–14 tabs): it comes first in the tree and the column is reversed, so
+  // it still sits at the bottom of the screen.
   return (
-    <>
+    <View style={styles.setStack}>
+      <Button label={t('workout.player.doneSet')} onPress={done} />
+      {onMachineTaken ? (
+        <Button variant="ghost" label={t('workout.machineTaken')} onPress={onMachineTaken} />
+      ) : null}
+      <View style={styles.row}>
+        {item.part !== 'ramp_up' ? (
+          <View style={styles.flex}>
+            <Button variant="secondary" label={t('workout.player.swap')} onPress={onSwap} />
+          </View>
+        ) : null}
+        {item.restSeconds > 0 && item.role === 'main' ? (
+          <View style={styles.flex}>
+            <Button
+              variant="secondary"
+              label={t('workout.player.restButton', { seconds: restFor(item, prefs) })}
+              onPress={() =>
+                router.push({
+                  pathname: '/workout/[id]/rest',
+                  params: { id: workout.id, manual: '1' },
+                })
+              }
+            />
+          </View>
+        ) : null}
+        <View style={styles.flex}>
+          <Button
+            variant="danger"
+            label={t('workout.player.pain')}
+            onPress={() =>
+              router.push({ pathname: '/workout/[id]/pain', params: { id: workout.id } })
+            }
+          />
+        </View>
+      </View>
       <Card style={styles.setCard}>
         <AppText variant="h3">
           {t('workout.player.setOf', { n: step.setNo, total: item.sets })}
@@ -445,42 +482,7 @@ function SetStep({
           </View>
         ) : null}
       </Card>
-
-      <View style={styles.row}>
-        {item.part !== 'ramp_up' ? (
-          <View style={styles.flex}>
-            <Button variant="secondary" label={t('workout.player.swap')} onPress={onSwap} />
-          </View>
-        ) : null}
-        {item.restSeconds > 0 && item.role === 'main' ? (
-          <View style={styles.flex}>
-            <Button
-              variant="secondary"
-              label={t('workout.player.restButton', { seconds: restFor(item, prefs) })}
-              onPress={() =>
-                router.push({
-                  pathname: '/workout/[id]/rest',
-                  params: { id: workout.id, manual: '1' },
-                })
-              }
-            />
-          </View>
-        ) : null}
-        <View style={styles.flex}>
-          <Button
-            variant="danger"
-            label={t('workout.player.pain')}
-            onPress={() =>
-              router.push({ pathname: '/workout/[id]/pain', params: { id: workout.id } })
-            }
-          />
-        </View>
-      </View>
-      {onMachineTaken ? (
-        <Button variant="ghost" label={t('workout.machineTaken')} onPress={onMachineTaken} />
-      ) : null}
-      <Button label={t('workout.player.doneSet')} onPress={done} />
-    </>
+    </View>
   );
 }
 
@@ -521,6 +523,7 @@ function Counter({
 }
 
 const styles = StyleSheet.create({
+  setStack: { flexDirection: 'column-reverse', gap: spacing.lg },
   effort: { gap: spacing.xs },
   effortRow: { flexDirection: 'row', gap: spacing.sm, flexWrap: 'wrap' },
   top: {

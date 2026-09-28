@@ -1431,3 +1431,97 @@ Texto da QA salvo em `docs/qa-round-4.md` (`d766a9b`). Três commits, um por gru
 1. **Aviso "component name 'o'" do React:** não reproduziu nos testes nem no build local. Se aparecer de novo, me mande a tela em que surgiu.
 2. **"Puxar atrás do empurrar":** a variedade nova e a regra de equilíbrio devem aproximar os dois, mas não mexi no peso de cada grupo. Vale medir de novo na rodada 5.
 3. **Teste de captura das abas:** é um fluxo Maestro (roda num aparelho ou emulador) que salva a imagem para conferir a olho; não é uma comparação automática de pixels.
+
+## Fase 16 — QA rodada 5 (P1 e P2)
+
+Texto da QA em `docs/qa-round-5.md` (`5157a76`). Commits por grupo: P1 (`4ec6700`) e P2 com este relatório (último commit desta fase). Daniel confirmou a regra do plano grátis para quem escolhe 4 ou mais dias.
+
+### P1
+
+- **R5-01 Joelho:**
+  - 36 exercícios a mais ganharam a etiqueta de joelho: balanço de perna (frontal e lateral), alongamentos de panturrilha e posterior em pé, panturrilha sentada com halter ou máquina (carga sobre as coxas), marchas e elevação de joelho sentado, encolhimento em pé, "hinge" em pé, Copenhagen e o supino no chão em ponte;
+  - regra no código: depois de uma dor aguda no joelho, qualquer exercício de equilíbrio num pé também sai;
+  - exercícios ajoelhados não entram mais por padrão para 60+ (inclui o alongamento de flexor do quadril ajoelhado);
+  - auditoria: equilíbrio num pé, encolhimento em pé e "hinge" em pé precisam da etiqueta de joelho;
+  - `seed.sql` e a planilha de revisão foram regenerados.
+- **R5-02 Descanso:** a tela de descanso usa a mesma recomendação do player. Assim:
+  - nada de "+5 lb" em dia de "+1 repetição", no peso corporal ou em elástico;
+  - nunca uma segunda subida no mesmo treino;
+  - a meta do peso corporal para no topo da faixa (15 em 10–15, não 16);
+  - o contador de repetições começa na meta.
+- **R5-03 Treino velho:**
+  - o treino planejado vence no fim do dia;
+  - um treino começado e não terminado é fechado como parcial, no dia da última série (conta para a sequência nesse dia);
+  - isso roda ao abrir o app e ao voltar para ele;
+  - a Home só oferece treinos de hoje, e a chave de revisão inclui a data.
+- **R5-04 Adolescente:** para um adolescente gerenciado, pedem o PIN dos pais:
+  - tirar dores ou condições da checagem de segurança;
+  - mudar a posição;
+  - encerrar um plano de recuperação.
+
+  Adicionar continua livre. A edição agora é um rascunho, salvo em "Continuar".
+- **R5-05 Alvos do plano:** pernas → quadríceps, posterior e glúteos; puxar → dorsais e costas; empurrar → peito e ombros.
+- **R5-06 Push com 5 exercícios:** nos dias divididos, o mesmo músculo pode aparecer duas vezes, de outro ângulo.
+- **R5-07 Abas:**
+  - o nome das abas agora é um texto nosso (13 px, a regra mínima de fonte do projeto) e não é mais cortado;
+  - novo `npm run tabs:check`: exporta a versão web, abre no Chromium (Playwright) a 390×844, mede cada rótulo (altura e largura do texto, nada cortando) e salva a imagem em `docs/tab-labels.png`.
+
+### P2
+
+- **Puxar x empurrar:** o preenchimento coloca puxada até ela chegar a 90% do empurrar, contando os últimos 7 dias. Quando faltou recentemente, a puxada escolhida é vertical. Numa simulação de 4 semanas com metas de peito e ombro, puxar ficou ≥ 90% e houve puxada vertical toda semana (antes: 50% e 3 vezes).
+- **Preenchimento para "Ganhar força" na academia:** sem isometrias, elásticos ou exercícios de reabilitação.
+- **Nomes do dia:** só pernas = "Pernas"; só core = "Core"; remada + prancha = "Parte de cima".
+- **Prévia de dia fora do plano:** mostra "Dia de descanso".
+- **Planos:**
+  - o filtro de músculo só traz planos com um dia para aquele grupo;
+  - um id desconhecido mostra "não encontrado";
+  - 60+ não recebe PPL de 5 ou 6 dias.
+- **Treino avulso:** no máximo 2 exercícios por músculo, com peso primeiro para quem treina força na academia.
+- **Equilíbrio curto:**
+  - aparece na Home para 60+, para quem tem meta de equilíbrio e para quem caiu no último ano;
+  - depois de uma parada por dor aguda, o resto do dia só oferece mobilidade, equilíbrio ou descanso (Home normal e 60+).
+- **Joe (72):** sem séries de aquecimento com carga para 60+ e descanso de pelo menos 60 s nas séries de força.
+- **Motivo na Biblioteca:** "Fora hoje por causa da dor que você informou".
+- **Família:**
+  - a visão do dono e o botão de compartilhar seguem a checagem segura;
+  - `canShare` usa o registro seguro de menores;
+  - a migração v1→v2 do registro seguro agora preenche o perfil ativo e os menores a partir da lista da família.
+- **Dono de 17 anos sozinho:** não recebe mais pedido de PIN. O texto do PIN diz "mudar a assinatura", não "mudar o plano".
+- **Plano grátis com 4+ dias** (confirmado por você):
+  - depois dos 3 treinos grátis da semana, a Home mostra "seus treinos grátis desta semana já foram", com a mobilidade curta em destaque e uma menção ao Premium, em vez do paywall ao tocar em Começar;
+  - os lembretes dos dias extras sugerem a mobilidade curta.
+- **Biblioteca:** carrega de 60 em 60 ("Ver mais 60 (de 715)") em vez de desenhar tudo de uma vez.
+- **Link de convite:** `EXPO_PUBLIC_SHARE_BASE_URL` entrou como obrigatório em `docs/launch-readiness.md` (item 15).
+- **Acessibilidade:**
+  - cada interruptor agora é uma linha inteira, com um só ponto de foco, nome, `aria-checked` e 60 px de altura (conferido no DOM do web);
+  - os pontos do corpo não têm mais área de toque sobreposta (sem tamanho mínimo; toque entre pontos vai para o mais próximo);
+  - "Não é para você" aberto diz "Esconder os exercícios que não são para você";
+  - no treino, "Terminei a série" é o primeiro foco do teclado.
+- **Aviso do React "component name 'o'":** o layout raiz agora tem nome fixo.
+- **i18n:**
+  - ES "Elevación lateral inclinada";
+  - as formas `_many` do plural ficam anotadas para depois: por enquanto ES e PT não precisam delas.
+
+### Verificações
+
+- Lint e typecheck limpos; **827 testes** passando (70 suítes).
+- `db:test`, `functions:check`, `bundle:check` e `tabs:check` limpos.
+- Testes novos:
+  - `r5-p1`: joelho, auditorias, recomendação única, treino velho, PIN do adolescente, alvos e Push com 5;
+  - `r5-p2`: simulação de 4 semanas puxar/empurrar, preenchimento, nomes, planos, avulso, 60+, motivo na Biblioteca, compartilhar, lembretes do plano grátis.
+- Novo pacote de desenvolvimento, gratuito: `playwright-core`, usando o Chromium já instalado.
+
+### Como testar
+
+1. **Dave:** pare com dor aguda no joelho → no mesmo dia, nada de balanço de perna, alongamento de panturrilha em pé ou panturrilha sentada com halter.
+2. **Tom (60+):** no dia de +1 repetição, a tela de descanso não diz "+5 lb".
+3. **Treino velho:** abra um treino e não faça; no dia seguinte a Home mostra um treino novo.
+4. **Adolescente:** Restrições → "Mudança na checagem" → tire uma dor → "Continuar" pede o PIN.
+5. **Plano PPL:** o dia de pernas mira quadríceps e posterior; o dia de empurrar tem 5 exercícios.
+6. **Abas:** confira os nomes inteiros; ou rode `npm run tabs:check`.
+7. **Jess (grátis, 4 dias):** depois do 3º treino da semana, a Home sugere a mobilidade curta, sem paywall.
+
+### Perguntas em aberto
+
+1. **Biblioteca virtualizada:** usei páginas de 60 em vez de uma lista virtualizada (FlashList), porque a lista fica dentro da tela que já rola. O travamento some; se ainda parecer lento no aparelho, troco pela lista virtualizada.
+2. **Abas em PT/ES:** o `tabs:check` mede a versão em inglês, que é a que o servidor renderiza. "BIBLIOTECA" e "PROGRESSO" têm folga pelas medidas, mas vale olhar no aparelho em português.

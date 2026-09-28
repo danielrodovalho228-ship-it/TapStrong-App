@@ -175,6 +175,8 @@ export const rampable = (e: Pick<Exercise, 'loaded' | 'isolation' | 'pattern'>) 
 export function rampAllowed(e: Exercise, input: GeneratorInput): boolean {
   return (
     rampable(e) &&
+    // No ramp-up sets at 60+: the general warm-up is enough (QA R5 P2).
+    input.mode !== 'senior' &&
     input.mode !== 'child' &&
     !needsCaution(input.conditions) &&
     !needsJointCare(e, input)

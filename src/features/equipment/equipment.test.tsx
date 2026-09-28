@@ -139,7 +139,7 @@ describe('saved places and the settings screen (C2, C4)', () => {
     await render(<EquipmentScreen />);
     await fireEvent.press(screen.getByRole('button', { name: 'Home gym' }));
     expect(useOnboardingStore.getState().equipment).toEqual(PRESETS.homeGym.items);
-    await fireEvent(screen.getByLabelText('Dumbbells'), 'valueChange', false);
+    await fireEvent.press(screen.getByRole('switch', { name: 'Dumbbells' }));
     expect(useOnboardingStore.getState().equipment).not.toContain('dumbbells');
     await fireEvent.changeText(screen.getByLabelText('Place name'), 'Home');
     await fireEvent.press(screen.getByRole('button', { name: 'Save as a place' }));

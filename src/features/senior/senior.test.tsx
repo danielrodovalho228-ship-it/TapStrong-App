@@ -117,7 +117,7 @@ describe('60+ before & after photos', () => {
     expect(screen.getByText('redirect:/progress')).toBeTruthy();
 
     await render(<ProgressScreen />);
-    await fireEvent(screen.getByLabelText('Before & after photos'), 'valueChange', true);
+    await fireEvent.press(screen.getByRole('switch', { name: 'Before & after photos' }));
     expect(useProgressStore.getState().seniorPhotos).toBe(true);
     expect(screen.getByRole('button', { name: 'Before & after photos' })).toBeTruthy();
     await render(<BeforeAfterScreen />);

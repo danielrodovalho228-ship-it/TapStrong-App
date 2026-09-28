@@ -3602,7 +3602,13 @@
     "balance": "Equilíbrio curto · {{minutes}} min",
     "rest": "Descansar hoje",
     "restNote": "Descanso também é treino. Seu próximo treino estará pronto quando seus músculos estiverem.",
-    "streakHint": "Dia de descanso? 10 minutos de mobilidade mantêm sua sequência."
+    "streakHint": "Dia de descanso? 10 minutos de mobilidade mantêm sua sequência.",
+    "stoppedTitle": "Hoje, vá com calma",
+    "stoppedBody": "Você parou um treino por dor hoje. No resto do dia: mobilidade leve, equilíbrio ou descanso.",
+    "freeDoneTitle_one": "Seu treino grátis desta semana já foi",
+    "freeDoneTitle_other": "Seus {{count}} treinos grátis desta semana já foram",
+    "freeDoneBody": "Continue se mexendo com uma mobilidade curta: é grátis e conta para a sua sequência. Seus treinos voltam na próxima semana.",
+    "freeDonePremium": "Premium: treinos todos os dias"
   },
   "workout": {
     "title": "Seu treino",
@@ -3906,7 +3912,9 @@
   "notifications": {
     "reminder": {
       "title": "Hora de treinar",
-      "body": "Seu treino está pronto: aquecimento, parte principal e desaquecimento."
+      "body": "Seu treino está pronto: aquecimento, parte principal e desaquecimento.",
+      "mobilityTitle": "Mobilidade curta hoje",
+      "mobilityBody": "10 minutos, grátis, e sua sequência continua."
     },
     "streakSaver": {
       "title_one": "Mantenha sua sequência de {{count}} dia",
@@ -4672,7 +4680,7 @@
     "locked_other": "Tentativas demais. Tente de novo em {{count}} minutos.",
     "noPin": "Primeiro o pai ou a mãe precisa criar um PIN dos pais no próprio perfil (Configurações).",
     "setupTitle": "Crie um PIN dos pais",
-    "setupBody": "4 dígitos. Adolescentes neste celular precisam dele para trocar de perfil, mudar o plano, tirar uma restrição ou mudar o nível de treino. Não compartilhe.",
+    "setupBody": "4 dígitos. Adolescentes neste celular precisam dele para trocar de perfil, mudar a assinatura, tirar uma restrição ou uma resposta de segurança, ou mudar o nível de treino. Não compartilhe.",
     "newPin": "PIN novo",
     "repeatPin": "Repita o PIN",
     "mismatch": "Os PINs não conferem. Tente de novo.",
@@ -4742,7 +4750,9 @@
     "start": "Começar o treino de hoje",
     "nothing": "Nenhum treino registrado neste dia.",
     "preview": "Prévia",
-    "noPreview": "Ainda não dá para montar uma sessão para este dia."
+    "noPreview": "Ainda não dá para montar uma sessão para este dia.",
+    "restTitle": "Dia de descanso",
+    "restBody": "Seu plano deixa este dia livre. Uma sessão curta de mobilidade ainda conta para a sua sequência."
   },
   "program": {
     "day": {
@@ -4754,7 +4764,8 @@
       "fullBody": "Corpo inteiro",
       "mobility": "Mobilidade",
       "repair": "Reparo",
-      "balance": "Equilíbrio"
+      "balance": "Equilíbrio",
+      "core": "Core"
     },
     "block": {
       "build": "Semana {{week}} de {{of}} · Evolução",
@@ -4818,7 +4829,8 @@
       "pull": "Costas, bíceps",
       "legs": "Pernas, glúteos",
       "core": "Core"
-    }
+    },
+    "notFound": "Não encontramos este plano. Escolha um em Planos."
   },
   "modes": {
     "title": "O que você quer fazer?",
@@ -4887,7 +4899,8 @@
     "reasons": {
       "restriction": "Descartado por uma restrição",
       "pain": "Um movimento que dói",
-      "age": "Não é para a sua idade"
+      "age": "Não é para a sua idade",
+      "painToday": "Fora hoje por causa da dor que você informou"
     },
     "favourite": "Marcar {{name}}",
     "unfavourite": "Tirar a marca de {{name}}",
@@ -4903,7 +4916,9 @@
     "create": "Criar exercício",
     "empty": "Nenhum exercício combina com estes filtros.",
     "showAll": "Ver todos os {{count}}",
-    "notReviewed": "Não revisado por treinador"
+    "notReviewed": "Não revisado por treinador",
+    "hideNotForYou": "Esconder os exercícios que não são para você",
+    "showMore": "Ver mais {{count}} (de {{total}})"
   },
   "exercise": {
     "guidance": "Orientação",

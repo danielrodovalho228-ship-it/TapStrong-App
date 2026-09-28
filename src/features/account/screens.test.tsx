@@ -112,10 +112,10 @@ describe('Save progress (mockup 16)', () => {
   it('turning on reminders asks for permission and keeps them off if denied', async () => {
     await render(<AccountScreen />);
     expect(screen.getByText(/at 6:30/)).toBeTruthy();
-    await fireEvent(screen.getByLabelText('Workout reminders'), 'valueChange', true);
+    await fireEvent.press(screen.getByRole('switch', { name: 'Workout reminders' }));
     expect(useAccountStore.getState().notifications.reminders).toBe(true);
     mockPermission.mockImplementationOnce(async () => false);
-    await fireEvent(screen.getByLabelText('Streak saver'), 'valueChange', true);
+    await fireEvent.press(screen.getByRole('switch', { name: 'Streak saver' }));
     expect(useAccountStore.getState().notifications.streakSaver).toBe(false);
     expect(screen.getByText(/Turn them on in your phone's settings/)).toBeTruthy();
   });

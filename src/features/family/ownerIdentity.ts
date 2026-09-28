@@ -54,6 +54,19 @@ export const useOwnerIdentityStore = create<State>()(
       storage: createJSONStorage(() => secureStorage),
       partialize: ({ ownerId, activeId, minors }) => ({ ownerId, activeId, minors }),
       migrate: (persisted) => ({ activeId: null, minors: {}, ...(persisted as object) }),
+      // v1 data had no active id or minors: seed them once from the family
+      // list so the checks never trust an empty record (QA R5 P2).
+      onRehydrateStorage: () => (state) => {
+        if (!state?.ownerId || state.activeId) return;
+        // Required here, not imported: the family store imports this file.
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const { useFamilyStore } = require('./store') as typeof import('./store');
+        const family = useFamilyStore.getState();
+        const minors: Record<string, MinorLock> = { ...state.minors };
+        for (const p of family.profiles)
+          if (p.kind === 'child' && !minors[p.id]) minors[p.id] = p.consentAt ? 'under13' : 'teen';
+        useOwnerIdentityStore.setState({ activeId: family.activeId ?? state.ownerId, minors });
+      },
     },
   ),
 );

@@ -3602,7 +3602,13 @@
     "balance": "Short balance · {{minutes}} min",
     "rest": "Rest today",
     "restNote": "Rest is part of training. Your next workout will be ready when your muscles are.",
-    "streakHint": "Rest day? A 10-minute mobility session keeps your streak going."
+    "streakHint": "Rest day? A 10-minute mobility session keeps your streak going.",
+    "stoppedTitle": "Take it easy today",
+    "stoppedBody": "You stopped a workout for pain today. For the rest of the day: gentle mobility, balance, or rest.",
+    "freeDoneTitle_one": "Your free workout this week is done",
+    "freeDoneTitle_other": "Your {{count}} free workouts this week are done",
+    "freeDoneBody": "Keep moving with a short mobility session: it's free and counts for your streak. Your workouts open again next week.",
+    "freeDonePremium": "Premium: workouts every day"
   },
   "workout": {
     "title": "Your workout",
@@ -3906,7 +3912,9 @@
   "notifications": {
     "reminder": {
       "title": "Time to train",
-      "body": "Your workout is ready: warm-up, main work, cool-down."
+      "body": "Your workout is ready: warm-up, main work, cool-down.",
+      "mobilityTitle": "Short mobility today",
+      "mobilityBody": "10 minutes, free, and it keeps your streak going."
     },
     "streakSaver": {
       "title_one": "Keep your {{count}}-day streak",
@@ -4672,7 +4680,7 @@
     "locked_other": "Too many tries. Try again in {{count}} minutes.",
     "noPin": "A parent needs to create a parent PIN first, from their own profile (Settings).",
     "setupTitle": "Create a parent PIN",
-    "setupBody": "4 digits. Teens on this phone need it to switch profiles, change plans, remove a restriction or change their training level. Keep it to yourself.",
+    "setupBody": "4 digits. Teens on this phone need it to switch profiles, change the subscription, remove a restriction or a safety answer, or change their training level. Keep it to yourself.",
     "newPin": "New PIN",
     "repeatPin": "Repeat the PIN",
     "mismatch": "The PINs don’t match. Try again.",
@@ -4742,7 +4750,9 @@
     "start": "Start today's workout",
     "nothing": "No workout logged this day.",
     "preview": "Preview",
-    "noPreview": "No session can be built for this day yet."
+    "noPreview": "No session can be built for this day yet.",
+    "restTitle": "Rest day",
+    "restBody": "Your plan keeps this day free. A short mobility session still counts for your streak."
   },
   "program": {
     "day": {
@@ -4754,7 +4764,8 @@
       "fullBody": "Full body",
       "mobility": "Mobility",
       "repair": "Repair",
-      "balance": "Balance"
+      "balance": "Balance",
+      "core": "Core"
     },
     "block": {
       "build": "Week {{week}} of {{of}} · Build",
@@ -4818,7 +4829,8 @@
       "pull": "Back, biceps",
       "legs": "Legs, glutes",
       "core": "Core"
-    }
+    },
+    "notFound": "We couldn't find this plan. Pick one from Plans."
   },
   "modes": {
     "title": "What do you want to do?",
@@ -4887,7 +4899,8 @@
     "reasons": {
       "restriction": "Ruled out by a restriction",
       "pain": "A movement that hurts",
-      "age": "Not for your age"
+      "age": "Not for your age",
+      "painToday": "Left out today after the pain you reported"
     },
     "favourite": "Star {{name}}",
     "unfavourite": "Remove star from {{name}}",
@@ -4903,7 +4916,9 @@
     "create": "Create exercise",
     "empty": "No exercise matches these filters.",
     "showAll": "Show all {{count}}",
-    "notReviewed": "Not reviewed by a coach"
+    "notReviewed": "Not reviewed by a coach",
+    "hideNotForYou": "Hide exercises not for you",
+    "showMore": "Show {{count}} more (of {{total}})"
   },
   "exercise": {
     "guidance": "Guidance",

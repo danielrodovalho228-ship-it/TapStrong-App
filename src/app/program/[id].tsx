@@ -25,13 +25,15 @@ export default function ProgramScreen() {
   const [saved, setSaved] = useState(false);
   const mode = derive(useOnboardingStore())?.mode;
   const plan = planById(id);
-  const mine = id === 'mine' || !plan;
+  // An id that is neither "mine" nor a plan is "not found", never "Plan set" (QA R5 P2).
+  const unknown = id !== 'mine' && !plan;
+  const mine = id === 'mine';
   // Plans are offered per age mode; a deep link can't switch one on (QA R4-04).
-  const blocked = !mine && !planAllowed(plan, mode);
+  const blocked = !mine && !unknown && !planAllowed(plan, mode);
   const active = mine ? !planId : planId === plan?.id && !blocked;
 
   const use = () => {
-    if (blocked) return;
+    if (blocked || unknown) return;
     choosePlan(mine ? null : plan!.id, localDate(clock.now()));
     // Today's planned workout follows the new plan (QA R4-08).
     discardPlannedWorkouts();
@@ -47,12 +49,14 @@ export default function ProgramScreen() {
         />
       }
       footer={
-        active || blocked ? undefined : (
+        active || blocked || unknown ? undefined : (
           <Button label={mine ? t('plans.useMine') : t('plans.use')} onPress={use} />
         )
       }
     >
-      {blocked ? (
+      {unknown ? (
+        <Notice tone="warning">{t('plans.notFound')}</Notice>
+      ) : blocked ? (
         <Notice tone="warning">{t('plans.notForYou')}</Notice>
       ) : mine ? (
         <AppText color={colors.mutedStrong}>{t('plans.myPlanBody')}</AppText>
@@ -76,7 +80,7 @@ export default function ProgramScreen() {
           </Card>
         </>
       )}
-      {saved || active ? <Notice>{t('plans.chosen')}</Notice> : null}
+      {!unknown && (saved || active) ? <Notice>{t('plans.chosen')}</Notice> : null}
     </Screen>
   );
 }

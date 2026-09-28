@@ -14,6 +14,7 @@ import {
   Screen,
   TextLink,
 } from '@/components/ui';
+import { useOwnerAccess } from '@/features/family/OwnerOnly';
 import { ParentGate } from '@/features/family/ParentGate';
 import { MovementPainEntry } from '@/features/movement/Entry';
 import { derive } from '@/features/onboarding/derived';
@@ -42,7 +43,10 @@ export default function RestrictionsScreen() {
   const [confirmId, setConfirmId] = useState<string | null>(null);
   const [side, setSide] = useState<Side | 'both' | undefined>();
   // A teen or child removing a restriction needs a parent (QA R4 P2).
-  const minor = ['teen', 'child'].includes(derive(useOnboardingStore())?.mode ?? 'adult');
+  // The account owner (even a solo 17-year-old) is never asked (QA R5 P2).
+  const access = useOwnerAccess();
+  const mode = derive(useOnboardingStore())?.mode ?? 'adult';
+  const minor = access === 'gate' && ['teen', 'child'].includes(mode);
   const [gateFor, setGateFor] = useState<string | null>(null);
   const heal = (id: string) => {
     if (minor && gateFor !== id) return setGateFor(id);

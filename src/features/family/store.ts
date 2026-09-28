@@ -86,6 +86,9 @@ export const activeProfile = (s: Pick<State, 'profiles' | 'activeId'>) =>
  */
 export function canShare(profile: LocalProfile | null, mode: string): boolean {
   if (mode === 'child') return false;
-  if (profile?.kind === 'child') return profile.shareAllowed === true;
+  // A minor by the secure record needs the parent's switch, whatever `kind`
+  // says (QA R5 P2).
+  const minor = !!profile && !!useOwnerIdentityStore.getState().minors[profile.id];
+  if (profile?.kind === 'child' || minor) return profile?.shareAllowed === true;
   return true;
 }

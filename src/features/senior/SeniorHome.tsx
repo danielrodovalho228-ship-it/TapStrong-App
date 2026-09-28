@@ -32,6 +32,7 @@ export function SeniorHome({
   targets,
   minutes,
   allRecovering = false,
+  stoppedToday = false,
 }: {
   onStart: () => void;
   onMobility: () => void;
@@ -40,6 +41,8 @@ export function SeniorHome({
   /** The session's own length, not the profile setting (QA R3-06). */
   minutes: number;
   allRecovering?: boolean;
+  /** Sharp pain stopped a workout today: gentle options only (QA R5 P2). */
+  stoppedToday?: boolean;
 }) {
   const { t, i18n } = useTranslation();
   const profile = useOnboardingStore();
@@ -125,9 +128,9 @@ export function SeniorHome({
         // Everything is still recovering (QA R3-03): mobility, balance or rest.
         <Card style={styles.today}>
           <AppText variant="h1" accessibilityRole="header">
-            {t('home.recoveringTitle')}
+            {t(stoppedToday ? 'home.stoppedTitle' : 'home.recoveringTitle')}
           </AppText>
-          <AppText>{t('home.recoveringBody')}</AppText>
+          <AppText>{t(stoppedToday ? 'home.stoppedBody' : 'home.recoveringBody')}</AppText>
           <Button
             variant="teal"
             label={t('home.balance', { minutes: MOBILITY_MINUTES })}
@@ -158,11 +161,19 @@ export function SeniorHome({
 
       {/* Short mobility for 60+ too (QA R3-06): free, counts for the streak. */}
       {!active && !allRecovering ? (
-        <BigLink
-          icon="body"
-          label={t('home.mobility', { minutes: MOBILITY_MINUTES })}
-          onPress={onMobility}
-        />
+        <>
+          <BigLink
+            icon="body"
+            label={t('home.mobility', { minutes: MOBILITY_MINUTES })}
+            onPress={onMobility}
+          />
+          {/* Short balance always offered at 60+ (QA R5 P2). */}
+          <BigLink
+            icon="shield"
+            label={t('home.balance', { minutes: MOBILITY_MINUTES })}
+            onPress={onBalance}
+          />
+        </>
       ) : null}
 
       {checkinDue(workouts, checkins, now) ? (

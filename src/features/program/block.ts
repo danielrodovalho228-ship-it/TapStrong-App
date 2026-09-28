@@ -33,7 +33,16 @@ export function blockWeek(
 export const deloadSets = (sets: number) => Math.max(1, Math.floor(sets * DELOAD_VOLUME));
 
 export type DayName =
-  'push' | 'pull' | 'legs' | 'upper' | 'lower' | 'fullBody' | 'mobility' | 'repair' | 'balance';
+  | 'push'
+  | 'pull'
+  | 'legs'
+  | 'upper'
+  | 'lower'
+  | 'fullBody'
+  | 'core'
+  | 'mobility'
+  | 'repair'
+  | 'balance';
 
 /** The day's name from what the session trains (A2). */
 export function dayName(
@@ -54,12 +63,17 @@ export function dayName(
     const g = parent ? muscleByKey(parent)?.movementGroup : undefined;
     if (g) groups.add(g);
   }
+  // Named from every group, core included (QA R5 P2: a legs day read "Lower
+  // body", core only "Full body", band row + plank "Pull").
   const has = (g: MovementGroup) => groups.has(g);
-  if (has('push') && !has('pull') && !has('legs')) return 'push';
-  if (has('pull') && !has('push') && !has('legs')) return 'pull';
+  const only = (...gs: MovementGroup[]) =>
+    groups.size === gs.length && gs.every((g) => groups.has(g));
+  if (only('legs')) return 'legs';
+  if (only('push')) return 'push';
+  if (only('pull')) return 'pull';
+  if (only('core')) return 'core';
+  if (!has('legs') && (has('push') || has('pull'))) return 'upper';
   if (has('legs') && !has('push') && !has('pull')) return 'lower';
-  if ((has('push') || has('pull')) && !has('legs')) return 'upper';
-  if (has('legs') && groups.size === 1) return 'legs';
   return 'fullBody';
 }
 

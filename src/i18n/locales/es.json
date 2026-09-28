@@ -1223,7 +1223,7 @@
       "cues": "Sentado erguido en una silla, sube las mancuernas a los lados hasta la altura de los hombros."
     },
     "leaning_lateral_raise": {
-      "name": "Elevación lateral inclinado con apoyo",
+      "name": "Elevación lateral inclinada con apoyo",
       "cues": "Sujétate de un poste firme, inclínate un poco y sube la mancuerna hasta la altura del hombro."
     },
     "dumbbell_front_raise": {
@@ -3602,7 +3602,13 @@
     "balance": "Equilibrio corto · {{minutes}} min",
     "rest": "Descansar hoy",
     "restNote": "Descansar también es entrenar. Tu próximo entrenamiento estará listo cuando tus músculos lo estén.",
-    "streakHint": "¿Día de descanso? 10 minutos de movilidad mantienen tu racha."
+    "streakHint": "¿Día de descanso? 10 minutos de movilidad mantienen tu racha.",
+    "stoppedTitle": "Hoy, con calma",
+    "stoppedBody": "Hoy paraste un entrenamiento por dolor. Por el resto del día: movilidad suave, equilibrio o descanso.",
+    "freeDoneTitle_one": "Ya hiciste tu entrenamiento gratis de esta semana",
+    "freeDoneTitle_other": "Ya hiciste tus {{count}} entrenamientos gratis de esta semana",
+    "freeDoneBody": "Sigue moviéndote con una sesión corta de movilidad: es gratis y cuenta para tu racha. Tus entrenamientos vuelven la próxima semana.",
+    "freeDonePremium": "Premium: entrenar todos los días"
   },
   "workout": {
     "title": "Tu entrenamiento",
@@ -3906,7 +3912,9 @@
   "notifications": {
     "reminder": {
       "title": "Hora de entrenar",
-      "body": "Tu entrenamiento está listo: calentamiento, parte principal y vuelta a la calma."
+      "body": "Tu entrenamiento está listo: calentamiento, parte principal y vuelta a la calma.",
+      "mobilityTitle": "Movilidad corta hoy",
+      "mobilityBody": "10 minutos, gratis, y tu racha sigue."
     },
     "streakSaver": {
       "title_one": "Mantén tu racha de {{count}} día",
@@ -4672,7 +4680,7 @@
     "locked_other": "Demasiados intentos. Prueba de nuevo en {{count}} minutos.",
     "noPin": "Primero un padre o una madre tiene que crear un PIN de padres desde su propio perfil (Ajustes).",
     "setupTitle": "Crea un PIN de padres",
-    "setupBody": "4 dígitos. Los adolescentes de este teléfono lo necesitan para cambiar de perfil, cambiar de plan, quitar una restricción o cambiar su nivel de entrenamiento. No lo compartas.",
+    "setupBody": "4 dígitos. Los adolescentes de este teléfono lo necesitan para cambiar de perfil, cambiar la suscripción, quitar una restricción o una respuesta de seguridad, o cambiar su nivel de entrenamiento. No lo compartas.",
     "newPin": "PIN nuevo",
     "repeatPin": "Repite el PIN",
     "mismatch": "Los PIN no coinciden. Inténtalo de nuevo.",
@@ -4742,7 +4750,9 @@
     "start": "Empezar el entrenamiento de hoy",
     "nothing": "No hay entrenamiento registrado este día.",
     "preview": "Vista previa",
-    "noPreview": "Todavía no se puede preparar una sesión para este día."
+    "noPreview": "Todavía no se puede preparar una sesión para este día.",
+    "restTitle": "Día de descanso",
+    "restBody": "Tu plan deja este día libre. Una sesión corta de movilidad igual cuenta para tu racha."
   },
   "program": {
     "day": {
@@ -4754,7 +4764,8 @@
       "fullBody": "Cuerpo completo",
       "mobility": "Movilidad",
       "repair": "Reparación",
-      "balance": "Equilibrio"
+      "balance": "Equilibrio",
+      "core": "Core"
     },
     "block": {
       "build": "Semana {{week}} de {{of}} · Progreso",
@@ -4818,7 +4829,8 @@
       "pull": "Espalda, bíceps",
       "legs": "Piernas, glúteos",
       "core": "Core"
-    }
+    },
+    "notFound": "No encontramos este plan. Elige uno en Planes."
   },
   "modes": {
     "title": "¿Qué quieres hacer?",
@@ -4887,7 +4899,8 @@
     "reasons": {
       "restriction": "Descartado por una restricción",
       "pain": "Un movimiento que duele",
-      "age": "No es para tu edad"
+      "age": "No es para tu edad",
+      "painToday": "Fuera por hoy por el dolor que indicaste"
     },
     "favourite": "Marcar {{name}}",
     "unfavourite": "Quitar la marca de {{name}}",
@@ -4903,7 +4916,9 @@
     "create": "Crear ejercicio",
     "empty": "Ningún ejercicio coincide con estos filtros.",
     "showAll": "Ver los {{count}}",
-    "notReviewed": "No revisado por un entrenador"
+    "notReviewed": "No revisado por un entrenador",
+    "hideNotForYou": "Ocultar los ejercicios que no son para ti",
+    "showMore": "Ver {{count}} más (de {{total}})"
   },
   "exercise": {
     "guidance": "Guía",

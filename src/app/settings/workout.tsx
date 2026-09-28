@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText, Card, Chip, Header, Screen, ToggleRow } from '@/components/ui';
+import { useOwnerAccess } from '@/features/family/OwnerOnly';
 import { ParentGate } from '@/features/family/ParentGate';
 import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
@@ -25,7 +26,8 @@ export default function WorkoutPrefsScreen() {
   const prefs = usePrefsStore();
   const strength = senior ? REST_PRESETS.seniorStrength : REST_PRESETS.strength;
   // A teen changing the training level needs a parent (QA R4 P2).
-  const minor = mode === 'teen' || mode === 'child';
+  const access = useOwnerAccess();
+  const minor = access === 'gate' && (mode === 'teen' || mode === 'child');
   const [pending, setPending] = useState<Experience | null>(null);
   const setExperience = (e: Experience) => (minor ? setPending(e) : prefs.set({ experience: e }));
 

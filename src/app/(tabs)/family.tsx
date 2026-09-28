@@ -56,7 +56,9 @@ export default function FamilyScreen() {
     ? profiles
     : [{ id: selfId, kind: 'self', createdAt: '' }];
   // The owner's view: only from the account holder's own profile.
-  const ownerView = (activeId ?? list[0].id) === list.find((p) => p.kind === 'self')?.id;
+  // The owner view (dashboard, sharing switches) follows the secure owner
+  // check, not the editable active id (QA R5 P2).
+  const ownerView = access === 'owner';
   const members = list
     .filter((p) => p.kind !== 'self')
     .map((p) => ({

@@ -290,7 +290,7 @@ describe('D4 preferences', () => {
     await fireEvent.press(screen.getByText('90 s'));
     await fireEvent.press(screen.getByText('Short'));
     await fireEvent.press(screen.getByText('New to training'));
-    await fireEvent(screen.getByLabelText('Voice cues'), 'valueChange', true);
+    await fireEvent.press(screen.getByRole('switch', { name: 'Voice cues' }));
     await fireEvent.press(screen.getByText('kg · cm'));
     expect(usePrefsStore.getState()).toMatchObject({
       restStrength: 90,
@@ -311,7 +311,7 @@ describe('D4 preferences', () => {
   it('reminder days chosen in Settings drive the notifications', async () => {
     await adult();
     await render(<RemindersScreen />);
-    await fireEvent(screen.getByLabelText('Workout reminders'), 'valueChange', true);
+    await fireEvent.press(screen.getByRole('switch', { name: 'Workout reminders' }));
     const days = screen.getAllByLabelText(/, reminder$/);
     expect(days).toHaveLength(7);
     await fireEvent.press(days[6]); // Saturday on

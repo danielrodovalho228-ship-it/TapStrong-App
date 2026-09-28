@@ -1,4 +1,4 @@
-import { StyleSheet, Switch, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { colors, sizes, spacing } from '@/theme';
 
@@ -11,10 +11,22 @@ export type ToggleRowProps = {
   onChange: (value: boolean) => void;
 };
 
-/** Setting row with a switch (mockup 16). */
+/**
+ * Setting row with a switch (mockup 16). The whole row is one switch
+ * (QA R5 P2): a single focus stop with its name and state (aria-checked on
+ * web), and a target far bigger than 44 px. The track is drawn, not native.
+ */
 export function ToggleRow({ label, detail, value, onChange }: ToggleRowProps) {
   return (
-    <View style={styles.row}>
+    <Pressable
+      accessibilityRole="switch"
+      accessibilityLabel={label}
+      accessibilityHint={detail}
+      accessibilityState={{ checked: value }}
+      aria-checked={value}
+      onPress={() => onChange(!value)}
+      style={({ pressed }) => [styles.row, pressed && styles.pressed]}
+    >
       <View style={styles.text}>
         <AppText variant="bodyStrong">{label}</AppText>
         {detail ? (
@@ -23,19 +35,10 @@ export function ToggleRow({ label, detail, value, onChange }: ToggleRowProps) {
           </AppText>
         ) : null}
       </View>
-      <Switch
-        accessibilityLabel={label}
-        accessibilityRole="switch"
-        accessibilityState={{ checked: value }}
-        aria-checked={value}
-        // A 44 px target around the switch (QA R4 P2).
-        style={styles.switch}
-        value={value}
-        onValueChange={onChange}
-        trackColor={{ false: colors.line, true: colors.ink }}
-        thumbColor={colors.surface}
-      />
-    </View>
+      <View style={[styles.track, value ? styles.trackOn : styles.trackOff]}>
+        <View style={[styles.thumb, value ? styles.thumbOn : styles.thumbOff]} />
+      </View>
+    </Pressable>
   );
 }
 
@@ -47,6 +50,12 @@ const styles = StyleSheet.create({
     minHeight: sizes.touchTarget + spacing.md,
     paddingVertical: spacing.sm,
   },
+  pressed: { opacity: 0.7 },
   text: { flex: 1, gap: spacing.xxs },
-  switch: { minWidth: sizes.touchTarget, minHeight: sizes.touchTarget },
+  track: { width: 48, height: 28, borderRadius: 14, padding: 3, justifyContent: 'center' },
+  trackOn: { backgroundColor: colors.ink },
+  trackOff: { backgroundColor: colors.line },
+  thumb: { width: 22, height: 22, borderRadius: 11, backgroundColor: colors.surface },
+  thumbOn: { alignSelf: 'flex-end' },
+  thumbOff: { alignSelf: 'flex-start' },
 });

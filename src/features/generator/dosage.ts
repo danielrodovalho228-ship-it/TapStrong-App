@@ -54,6 +54,23 @@ export function doseFor(
   requestedSets: number,
   options: DoseOptions = {},
 ): Dose {
+  const dose = baseDose(goal, mode, exercise, requestedSets, options);
+  // 60+ strength sets rest at least 60 s (QA R5 P2: 30 s on a seated row);
+  // balance holds and mobility keep their own rest.
+  const strength =
+    exercise.pattern !== 'balance' && goal !== 'mobility' && !!dose.reps && dose.restSeconds > 0;
+  return mode === 'senior' && strength
+    ? { ...dose, restSeconds: Math.max(60, dose.restSeconds) }
+    : dose;
+}
+
+function baseDose(
+  goal: MuscleGoal,
+  mode: AppMode,
+  exercise: Exercise,
+  requestedSets: number,
+  options: DoseOptions = {},
+): Dose {
   const minor = mode === 'child' || mode === 'teen';
   const perSide = exercise.unilateral;
   const timed = exercise.dose === 'time';

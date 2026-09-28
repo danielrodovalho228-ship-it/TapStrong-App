@@ -335,6 +335,13 @@ function pickByOverlap(
 // generateSession
 // ---------------------------------------------------------------------------
 
+/** Holds, bands and rehab moves: fine as targets, too light as gym strength fillers. */
+const isLightFiller = (e: Exercise) =>
+  e.dose === 'time' ||
+  !!e.rehab ||
+  e.equipment.some((q) => q.includes('band')) ||
+  e.pattern === 'core_stability';
+
 /** Patterns the balance filler never adds: fine as a chosen target, odd as padding. */
 const MINOR_FILLER_PATTERNS = ['ankle', 'wrist', 'breathing', 'mobility', 'stretch'];
 
@@ -501,12 +508,17 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   // until its 4 slots are full (QA round 2: it had 3).
   // A Single workout does the same: only what was picked (QA R4 P2).
   const onlyTargets = focused || !!input.targetsOnly;
-  for (let pass = 0; onlyTargets && main.length < slots && pass < 3; pass++) {
+  // A Single workout gives each picked muscle at most two moves (QA R5 P2),
+  // weighted moves first for a gym strength user (no bodyweight squat).
+  const passes = focused ? 3 : 1;
+  for (let pass = 0; onlyTargets && main.length < slots && pass < passes; pass++) {
     for (const target of targets) {
       if (main.length >= slots) break;
-      const pick = rankForTarget(pool, target, input.mode, input.favourites).find(
+      const options = rankForTarget(pool, target, input.mode, input.favourites).filter(
         (e) => !used.has(e.id),
       );
+      const equipped = strengthGym ? options.filter((e) => e.equipment.length > 0) : [];
+      const pick = (equipped.length ? equipped : options)[0];
       if (pick) add(pick, target);
     }
   }
@@ -552,19 +564,49 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     const u = parentUses.get(parent)!;
     return u.count < 2 && (!u.muscles.has(topPrimary(e)!) || !u.patterns.has(e.pattern));
   };
-  const nextFor = (g: MovementGroup) =>
-    rotate(
-      rankForGroup(pool, g, defaultGoal, input.mode, input.favourites).filter(
-        (e) =>
-          !used.has(e.id) &&
-          // Fillers are real main work: no toe pulls or hangs (QA R4 P2).
-          !MINOR_FILLER_PATTERNS.includes(e.pattern) &&
-          parentOpen(e) &&
-          primariesReady(e) &&
-          !e.muscles.some((m) => m.role === 'primary' && restedKeys.has(m.muscleKey)),
-      ),
-      main.length + 11,
+  // Push and pull moves in the last 7 days (sets follow moves closely): the
+  // exercises when known, else one per trained parent muscle.
+  const weekMoves = { push: 0, pull: 0 };
+  for (const r of recent) {
+    if (nowMsEarly !== undefined && nowMsEarly - sessionMsEarly(r) > 7 * 24 * 3600 * 1000) continue;
+    const keys = r.exerciseIds?.length
+      ? r.exerciseIds.map((id) => {
+          const e = byIdAll.get(id);
+          return e ? (topPrimary(e) ?? '') : '';
+        })
+      : [...new Set(r.mainMuscles.map(parentOf))];
+    for (const k of keys) {
+      const g = groupOf(k);
+      if (g === 'push' || g === 'pull') weekMoves[g]++;
+    }
+  }
+  // Vertical pulls were rare (QA R5 P2: lats once in 4 weeks): when none was
+  // done in this or the last two sessions, a pull filler is a vertical pull.
+  const recentPatterns = new Set(
+    recent
+      .slice(0, 2)
+      .flatMap((r) => r.exerciseIds ?? [])
+      .map((id) => byIdAll.get(id)?.pattern),
+  );
+  const needVertical = () =>
+    !recentPatterns.has('vertical_pull') &&
+    !main.some((i) => byIdAll.get(i.exerciseId)?.pattern === 'vertical_pull');
+  const nextFor = (g: MovementGroup) => {
+    const list = rankForGroup(pool, g, defaultGoal, input.mode, input.favourites).filter(
+      (e) =>
+        !used.has(e.id) &&
+        // Fillers are real main work: no toe pulls or hangs (QA R4 P2).
+        !MINOR_FILLER_PATTERNS.includes(e.pattern) &&
+        // Gym strength fillers: no holds, bands or rehab moves (QA R5 P2).
+        !(strengthGym && isLightFiller(e)) &&
+        parentOpen(e) &&
+        primariesReady(e) &&
+        !e.muscles.some((m) => m.role === 'primary' && restedKeys.has(m.muscleKey)),
     );
+    const vertical =
+      g === 'pull' && needVertical() ? list.filter((e) => e.pattern === 'vertical_pull') : [];
+    return rotate(vertical.length ? vertical : list, main.length + 11);
+  };
   while (!onlyTargets && main.length < slots) {
     const options = fill
       // Core once per session; the big groups share the rest.
@@ -580,7 +622,14 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     );
     // Ties take turns by date, so one group doesn't always win them (QA R3 P2).
     const turn = (g: MovementGroup) => (GROUP_ORDER[g] + day) % 4;
-    const ranked = (balanced.length ? balanced : options).sort(
+    // Pull keeps up with push: at least 90% as much (QA R5 P2).
+    const pullShort =
+      options.some((o) => o.g === 'pull') &&
+      weekMoves.pull + sessionCount('pull') <
+        Math.ceil(0.9 * (weekMoves.push + sessionCount('push')));
+    const ranked = (
+      pullShort ? options.filter((o) => o.g === 'pull') : balanced.length ? balanced : options
+    ).sort(
       (a, b) =>
         weekCount[a.g] + sessionCount(a.g) - (weekCount[b.g] + sessionCount(b.g)) ||
         turn(a.g) - turn(b.g),

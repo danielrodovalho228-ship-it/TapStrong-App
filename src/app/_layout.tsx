@@ -101,3 +101,8 @@ export default function RootLayout() {
 }
 
 const styles = StyleSheet.create({ root: { flex: 1 } });
+
+// Minified web builds renamed this component "o" and Expo Router warned on
+// every page (QA R5 P2): keep a readable name.
+Object.defineProperty(RootLayout, 'name', { value: 'RootLayout' });
+RootLayout.displayName = 'RootLayout';

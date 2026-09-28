@@ -57,7 +57,9 @@ export default function LibraryScreen() {
   const [segment, setSegment] = useState<'exercises' | 'plans'>('exercises');
   const [filter, setFilter] = useState<LibraryFilter>({});
   const [showOut, setShowOut] = useState(false);
-  const [showAll, setShowAll] = useState(false);
+  // Pages of 60 instead of every card at once (QA R5 P2: 715 cards blocked
+  // the screen for a second).
+  const [shown, setShown] = useState(PAGE);
   // Search waits for typing to settle (QA R4 P2).
   const [query, setQuery] = useState('');
   const deferredQuery = useDeferredValue(query);
@@ -229,14 +231,15 @@ export default function LibraryScreen() {
           </AppText>
           {view.safe.length ? (
             <>
-              <View style={styles.grid}>
-                {(showAll ? view.safe : view.safe.slice(0, PAGE)).map(card)}
-              </View>
-              {!showAll && view.safe.length > PAGE ? (
+              <View style={styles.grid}>{view.safe.slice(0, shown).map(card)}</View>
+              {view.safe.length > shown ? (
                 <Button
                   variant="secondary"
-                  label={t('library.showAll', { count: view.safe.length })}
-                  onPress={() => setShowAll(true)}
+                  label={t('library.showMore', {
+                    count: Math.min(PAGE, view.safe.length - shown),
+                    total: view.safe.length,
+                  })}
+                  onPress={() => setShown((n) => n + PAGE)}
                 />
               ) : null}
             </>
@@ -250,6 +253,11 @@ export default function LibraryScreen() {
                 accessibilityRole="button"
                 accessibilityState={{ expanded: showOut }}
                 aria-expanded={showOut}
+                accessibilityLabel={
+                  showOut
+                    ? t('library.hideNotForYou')
+                    : t('library.notForYou', { count: view.notForYou.length })
+                }
                 onPress={() => setShowOut((v) => !v)}
               >
                 <AppText variant="bodyStrong">

@@ -273,7 +273,10 @@ export function BodyMapCanvas({
                   if (o.key !== h.key)
                     for (const [ox, oy] of o.points)
                       nearest = Math.min(nearest, Math.hypot(ox - x, oy - y) * scale);
-                return Math.max(geo.dot + 4, Math.min(HIT, nearest));
+                // No size floor (QA R5 P2: a 17 px floor made 18 pairs overlap);
+                // a tap between dots still reaches the nearest one through the
+                // image, and zoom makes small dots easy to hit.
+                return Math.min(HIT, nearest);
               };
               const muscle = muscleByKey(h.key);
               const label = muscle ? t(muscle.labelKey as 'muscles.chest') : h.key;

@@ -73,12 +73,13 @@ function build(): ReadyPlan[] {
           minutes: goal === 'weightLoss' ? 40 : goal === 'shape' ? 40 : 50,
           days: splitDays(split, days),
           // Teens: no weight-loss plan (no calorie content for minors).
-          modes:
-            goal === 'weightLoss'
-              ? ['adult', 'senior']
-              : goal === 'strength' || goal === 'muscle'
-                ? ['teen', 'adult']
-                : ALL,
+          // 60+: no push/pull/legs on 5–6 days, the 90 h recovery can't fit (QA R5 P2).
+          modes: (goal === 'weightLoss'
+            ? (['adult', 'senior'] as AppMode[])
+            : goal === 'strength' || goal === 'muscle'
+              ? (['teen', 'adult'] as AppMode[])
+              : ALL
+          ).filter((m) => !(m === 'senior' && split === 'ppl' && days >= 5)),
           blockWeeks: goal === 'strength' ? 6 : goal === 'muscle' ? 5 : 4,
           equipment: goal === 'strength' || goal === 'muscle' ? 'weights' : 'any',
         });
@@ -147,7 +148,9 @@ export function findPlans(mode: AppMode, filter: PlanFilter = {}): ReadyPlan[] {
       (!filter.goal || p.goal === filter.goal) &&
       (!filter.split || p.split === filter.split) &&
       (!filter.maxMinutes || p.minutes <= filter.maxMinutes) &&
-      (!filter.muscleGroup || p.days.some((d) => d.groups.includes(filter.muscleGroup!))) &&
+      // Plans with a day focused on that group, not every full-body plan (QA R5 P2).
+      (!filter.muscleGroup ||
+        p.days.some((d) => d.groups.length <= 2 && d.groups.includes(filter.muscleGroup!))) &&
       (!filter.noWeights || p.equipment === 'any'),
   ).sort(
     (a, b) =>

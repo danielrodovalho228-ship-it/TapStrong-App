@@ -1,7 +1,7 @@
 import { localDate, type WeekStartDay } from '@/lib/dates';
 
 import type { NotificationPrefs } from '../account/store';
-import { trialReminderAt } from '../billing/rules';
+import { FREE_WORKOUTS_PER_WEEK, trialReminderAt } from '../billing/rules';
 import { plannedOffsets } from '../program/week';
 
 /**
@@ -17,6 +17,8 @@ export type PlannedNotification =
       weekday: number;
       hour: number;
       minute: number;
+      /** Free plan, a day past the weekly free workouts: suggest short mobility. */
+      mobility?: boolean;
     }
   | { id: string; kind: 'streak_saver'; date: Date; streak: number }
   /** Honest billing (SPEC §2.5): a reminder before a trial turns into a charge. */
@@ -70,6 +72,8 @@ export function planNotifications(input: {
   daysPerWeek: number | undefined;
   /** The phone's first day of the week, as the week strip uses it. */
   startsOn?: WeekStartDay;
+  /** On the free plan (a weekly workout limit). */
+  freePlan?: boolean;
   /** Streak as it stands today (0 = none to save). */
   streak: number;
   lastActive: string | null;
@@ -87,7 +91,19 @@ export function planNotifications(input: {
       ? prefs.reminderDays
       : trainingWeekdays(input.daysPerWeek, input.startsOn);
     for (const day of days) {
-      out.push({ id: `reminder-${day}`, kind: 'reminder', weekday: day + 1, hour, minute });
+      // Free plan with more days than free workouts (Daniel, Phase 16): the
+      // extra days' reminders suggest the free short mobility, not a paywall.
+      const order = (d: number) => (d - (input.startsOn ?? 0) + 7) % 7;
+      const rank = [...days].sort((a, b) => order(a) - order(b)).indexOf(day);
+      const mobility = !!input.freePlan && rank >= FREE_WORKOUTS_PER_WEEK;
+      out.push({
+        id: `reminder-${day}`,
+        kind: 'reminder',
+        weekday: day + 1,
+        hour,
+        minute,
+        ...(mobility ? { mobility: true } : {}),
+      });
     }
   }
 

@@ -38,6 +38,7 @@ Situação no fim da Fase 9 (27/09/2026). O código das Fases 0 a 9 está comple
 12. **Ícone:** aprovado para os testes. Um designer refina depois, junto com a marca (`python3 scripts/build-icons.py` gera de novo).
 13. **Capturas de tela** para as lojas: a ordem sugerida está em `docs/store/listing.md`. Nunca usar perfil de criança nem foto de antes e depois.
 14. **Marca e domínio:** busca e registro de "TapStrong" no USPTO; domínio `tapstrong.app`.
+15. **Link de convite (obrigatório):** definir `EXPO_PUBLIC_SHARE_BASE_URL` (ex.: `https://tapstrong.app`) no `.env` e nas variáveis do EAS, com uma página https em `/r/<código>` que abre o app ou leva à loja. Sem ela, o convite sai como `tapstrong://r/CÓDIGO`, que só funciona com o app instalado (QA rodada 5).
 15. **Supabase de produção:** decidir se o projeto atual vira o de produção ou se cria outro (a SPEC §13 pede projetos de produção).
 16. **Segurança:** apagar o token do GitHub que ficou exposto.
 

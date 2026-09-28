@@ -5,6 +5,7 @@ import { clock } from '@/lib/clock';
 import { deviceWeekStart, localDate } from '@/lib/dates';
 
 import { useAccountStore } from '../account/store';
+import { currentPlan } from '../billing/rules';
 import { useBillingStore } from '../billing/store';
 import { pendingMorningChecks } from '../movement/progress';
 import { useMovementPainStore } from '../movement/store';
@@ -28,12 +29,15 @@ export function useNotificationSync() {
   const trialChargeAt =
     entitlement.status === 'trial' && entitlement.willRenew ? entitlement.trialEndsAt : null;
 
+  const freePlan = currentPlan(entitlement, clock.now()) === 'free';
+
   useEffect(() => {
     const now = clock.now();
     const plan = planNotifications({
       prefs,
       daysPerWeek,
       startsOn: deviceWeekStart(),
+      freePlan,
       streak: streakToday(streak, localDate(now), deviceWeekStart()),
       lastActive: streak.lastActive,
       now,
@@ -41,7 +45,7 @@ export function useNotificationSync() {
       morningChecks: pendingMorningChecks(reports),
     });
     void applyPlan(plan).catch(() => undefined);
-  }, [prefs, streak, daysPerWeek, locale, trialChargeAt, reports]);
+  }, [prefs, streak, daysPerWeek, locale, trialChargeAt, reports, freePlan]);
 
   useEffect(() => onNotificationTap((url) => router.push(url as Href)), []);
 }
