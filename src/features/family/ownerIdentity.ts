@@ -79,6 +79,15 @@ export function seedOwnerIdentity(profiles: Pick<LocalProfile, 'id' | 'kind' | '
   });
 }
 
+/**
+ * The secure lock of the profile the app itself made active (QA R7-02/03):
+ * the plain onboarding data (birth year, body) can be edited, this can't.
+ */
+export function activeMinorLock(): MinorLock | undefined {
+  const { activeId, minors } = useOwnerIdentityStore.getState();
+  return activeId ? minors[activeId] : undefined;
+}
+
 type Identity = Pick<State, 'ownerId' | 'activeId'>;
 
 /**

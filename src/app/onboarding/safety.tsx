@@ -5,6 +5,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { AppText, Button, Chip, Header, Notice, Screen } from '@/components/ui';
 import { useOwnerAccess } from '@/features/family/OwnerOnly';
+import { activeMinorLock } from '@/features/family/ownerIdentity';
 import { ParentGate } from '@/features/family/ParentGate';
 import { derive } from '@/features/onboarding/derived';
 import { PAIN_AREAS, POSITIONS, STEP_NUMBER, TOTAL_STEPS } from '@/features/onboarding/options';
@@ -48,18 +49,22 @@ export default function SafetyScreen() {
   const conditions = visibleConditions(derived.mode, s.sex);
   // Drop answers that no longer apply (e.g. body model changed to male).
   const selectedConditions = s.conditions.filter((c) => conditions.includes(c));
+  // A locked minor's hidden answers (pregnancy on a boy body model) stay
+  // stored and never count as removed (QA R7-02).
+  const keptHidden = activeMinorLock() ? s.conditions.filter((c) => !conditions.includes(c)) : [];
+  const savedConditions = [...selectedConditions, ...keptHidden];
   const redFlag = hasRedFlag(s.painAreas, selectedConditions);
   const canContinue = !redFlag || s.redFlagAcknowledged;
 
   const removesSomething =
     store.painAreas.some((a) => !s.painAreas.includes(a)) ||
-    store.conditions.some((c) => !selectedConditions.includes(c)) ||
+    store.conditions.some((c) => !savedConditions.includes(c)) ||
     store.position !== s.position;
   const save = () => {
     // Only the fact that a red flag exists; never which one (SPEC §10).
     store.update({
       ...(staged ? draft : {}),
-      conditions: selectedConditions,
+      conditions: savedConditions,
       safetyDone: true,
     });
     if (redFlag) track('safety_red_flag');
@@ -117,7 +122,7 @@ export default function SafetyScreen() {
           label={t('safety.none')}
           accessibilityLabel={t('safety.noConditions')}
           selected={selectedConditions.length === 0}
-          onPress={() => s.update({ conditions: [], redFlagAcknowledged: false })}
+          onPress={() => s.update({ conditions: keptHidden, redFlagAcknowledged: false })}
         />
         {conditions.map((c) => (
           <Chip
@@ -126,7 +131,7 @@ export default function SafetyScreen() {
             selected={selectedConditions.includes(c)}
             onPress={() =>
               s.update({
-                conditions: toggleInList(selectedConditions, c),
+                conditions: [...toggleInList(selectedConditions, c), ...keptHidden],
                 redFlagAcknowledged: false,
               })
             }

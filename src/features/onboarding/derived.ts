@@ -1,5 +1,7 @@
 import { ageFrom, bandForAge, modeForAge, type AppMode, type BodyBand } from '../profile/age';
 
+import { activeMinorLock } from '../family/ownerIdentity';
+
 import { hasRedFlag } from './safety';
 import type { OnboardingData } from './store';
 
@@ -8,6 +10,12 @@ export type Derived = { age: number; mode: AppMode; band: BodyBand } | null;
 export function derive(s: Pick<OnboardingData, 'birthMonth' | 'birthYear'>): Derived {
   if (!s.birthMonth || !s.birthYear) return null;
   const age = ageFrom({ year: s.birthYear, month: s.birthMonth });
+  // A profile the secure record locks as a minor stays in its mode whatever
+  // the stored birth year says: an edited year can't switch a teen to adult
+  // mode (QA R7-03). The lock only ever tightens.
+  const lock = activeMinorLock();
+  if (lock === 'teen' && age >= 18) return { age: 17, mode: 'teen', band: 'teen' };
+  if (lock === 'under13' && age >= 13) return { age: 12, mode: 'child', band: 'kid' };
   const band = bandForAge(age);
   return band ? { age, mode: modeForAge(age), band } : null;
 }

@@ -6,6 +6,7 @@ import type { EquipmentItem } from '../equipment/catalog';
 import { kvStorage } from '@/lib/storage';
 
 import { NEUTRAL_BODY_AVAILABLE, type BodySex, type BodyView } from '../bodymap/images';
+import { activeMinorLock } from '../family/ownerIdentity';
 import type { BodyBand } from '../profile/age';
 import { deviceUnits, type Units } from '../profile/units';
 
@@ -105,7 +106,10 @@ export const useOnboardingStore = create<OnboardingData & Actions>()(
         const next = { ...get(), ...patch };
         const mode = derive(next)?.mode;
         const conditions = patch.conditions ?? get().conditions;
+        // A locked minor keeps the answer (only hidden): removing a safety
+        // answer needs the parent PIN, a body change is no way round it (QA R7-02).
         const hidden =
+          !activeMinorLock() &&
           conditions.includes('pregnant_postpartum') &&
           (next.sex === 'm' ||
             (mode !== undefined &&
@@ -150,7 +154,7 @@ export const useOnboardingStore = create<OnboardingData & Actions>()(
                 : {}),
               heightCm: a.heightCm ?? s.heightCm,
               weightKg: a.weightKg ?? s.weightKg,
-              ...(a.sex === 'm'
+              ...(a.sex === 'm' && !activeMinorLock()
                 ? { conditions: s.conditions.filter((c) => c !== 'pregnant_postpartum') }
                 : {}),
             });
