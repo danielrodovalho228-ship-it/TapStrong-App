@@ -165,7 +165,13 @@ export default function WhoScreen() {
         <AppText variant="label" style={styles.sectionLabel}>
           {/* A teen on their own profile reads "Your birth month" (QA R4 P2). */}
           {t(
-            `who.birth.${lock && !isOwnerProfile(profile, { ownerId, activeId }) ? 'me' : effectiveWho}`,
+            `who.birth.${
+              lock && !isOwnerProfile(profile, { ownerId, activeId })
+                ? 'me'
+                : effectiveWho === 'child' && !kidsUnder13Enabled()
+                  ? 'teen'
+                  : effectiveWho
+            }`,
           )}
         </AppText>
         {locked && !unlocked ? (

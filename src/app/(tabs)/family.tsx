@@ -18,6 +18,7 @@ import {
   usePendingDeletesStore,
 } from '@/features/family/remote';
 import { ensureSelfProfile, removeMember, switchProfile } from '@/features/family/switch';
+import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { clock } from '@/lib/clock';
 import { deviceWeekStart } from '@/lib/dates';
@@ -30,6 +31,7 @@ export default function FamilyScreen() {
   const styles = useStyles();
   const { t, i18n } = useTranslation();
   const live = useOnboardingStore();
+  const minor = ['teen', 'child'].includes(derive(live)?.mode ?? 'adult');
   const { profiles, activeId, setShareAllowed } = useFamilyStore();
   const entitlement = useBillingStore((s) => s.entitlement);
   const plan = currentPlan(entitlement, clock.now());
@@ -205,10 +207,13 @@ export default function FamilyScreen() {
           </AppText>
         </View>
       ) : null}
-      <AppText color={colors.mutedStrong}>
-        {plan === 'family' ? t('family.planOn') : t('family.planOff')}
-      </AppText>
-      {access === 'managed' ? (
+      {/* A teen on their own can't buy the Family plan: no promotion (QA R7 P2). */}
+      {minor ? null : (
+        <AppText color={colors.mutedStrong}>
+          {plan === 'family' ? t('family.planOn') : t('family.planOff')}
+        </AppText>
+      )}
+      {minor ? null : access === 'managed' ? (
         <AppText variant="caption" color={colors.muted}>
           {t('ownerOnly.managed')}
         </AppText>

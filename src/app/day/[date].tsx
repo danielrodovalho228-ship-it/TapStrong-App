@@ -27,13 +27,16 @@ import { spacing, useColors } from '@/theme';
  * day shows what was logged, a future day previews the session the plan
  * would build. Start is offered only today.
  */
+const validDate = (v: string | undefined): v is string =>
+  !!v && /^\d{4}-\d{2}-\d{2}$/.test(v) && !Number.isNaN(Date.parse(`${v}T12:00:00`));
+
 export default function DayScreen() {
   const colors = useColors();
   const { t, i18n } = useTranslation();
   const prefs = usePrefsStore();
   const { date: param } = useLocalSearchParams<{ date: string }>();
   // Anything that isn't a YYYY-MM-DD date reads as today.
-  const date = /^\d{4}-\d{2}-\d{2}$/.test(param ?? '') ? param : localDate(clock.now());
+  const date = validDate(param) ? param : localDate(clock.now());
   const library = useExerciseLibrary();
   const workouts = useWorkoutStore((s) => s.workouts);
   const today = localDate(clock.now());
@@ -110,6 +113,16 @@ export default function DayScreen() {
       </Card>
     );
   };
+
+  // Not a date at all ("/day/not-a-date"): not found (QA R7 P2). The empty
+  // or placeholder param of a pre-rendered page still reads as today.
+  if (param && param !== '[date]' && !validDate(param)) {
+    return (
+      <Screen header={<Header onBack={() => router.back()} title={t('notFound.title')} />}>
+        <Notice>{t('notFound.body')}</Notice>
+      </Screen>
+    );
+  }
 
   return (
     <Screen

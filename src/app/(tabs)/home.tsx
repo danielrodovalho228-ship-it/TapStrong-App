@@ -236,7 +236,7 @@ export default function HomeScreen() {
 
       {easyDay ? (
         <Card tone="dark" style={styles.today} testID={doneToday ? 'done-today' : undefined}>
-          <AppText variant="caption" color={colors.dark.accentSoft} style={styles.caps}>
+          <AppText variant="caption" color={colors.dark.text} style={styles.caps}>
             {t('home.picked')}
           </AppText>
           <AppText variant="h1" color={colors.dark.text} accessibilityRole="header">
@@ -311,7 +311,7 @@ export default function HomeScreen() {
         </Card>
       ) : (
         <Card tone="dark" style={styles.today}>
-          <AppText variant="caption" color={colors.dark.accentSoft} style={styles.caps}>
+          <AppText variant="caption" color={colors.dark.text} style={styles.caps}>
             {active
               ? t('home.inProgress')
               : [

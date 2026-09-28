@@ -14,6 +14,7 @@ import {
   TextLink,
   ToggleRow,
 } from '@/components/ui';
+import { kidsUnder13Enabled } from '@/lib/features';
 import { LegalLinks } from '@/features/legal/LegalLinks';
 import { sendEmailCode, signOut, verifyEmailCode, type EmailMode } from '@/features/account/auth';
 import { afterAccountSaved, syncNow } from '@/features/account/cloud';
@@ -204,7 +205,8 @@ function AccountScreenInner() {
       </Card>
       {permissionDenied ? <Notice tone="warning">{t('account.permissionDenied')}</Notice> : null}
 
-      {mode !== 'child' ? <Notice>{t('account.under13')}</Notice> : null}
+      {/* Under-13 profiles are off at launch: no note about them (QA R7 P2). */}
+      {mode !== 'child' && kidsUnder13Enabled() ? <Notice>{t('account.under13')}</Notice> : null}
 
       <View style={styles.links}>
         <TextLink label={t('account.planBilling')} onPress={() => router.push('/billing')} />

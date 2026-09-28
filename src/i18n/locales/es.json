@@ -140,7 +140,8 @@
     "birth": {
       "me": "Tu mes y año de nacimiento",
       "child": "Mes y año de nacimiento de tu hijo o hija",
-      "parent": "Su mes y año de nacimiento"
+      "parent": "Su mes y año de nacimiento",
+      "teen": "Mes y año de nacimiento de tu adolescente"
     },
     "month": "Mes de nacimiento",
     "year": "Año de nacimiento",
@@ -168,7 +169,8 @@
       "teen_locked": "Un perfil de adolescente se queda entre 13 y 17 años. Un niño menor de 13 necesita su propio perfil con el consentimiento de los padres.",
       "under_min": "TapStrong es para mayores de 13 años.",
       "child_unavailable": "Los perfiles para menores de 13 años todavía no están disponibles. Los adolescentes de 13 a 17 sí pueden unirse.",
-      "teen_lockedTeens": "Un perfil de adolescente se mantiene entre 13 y 17 años."
+      "teen_lockedTeens": "Un perfil de adolescente se mantiene entre 13 y 17 años.",
+      "child_too_oldTeens": "Esta opción es para adolescentes de 13 a 17 años. Los adultos pueden crear su propio perfil."
     },
     "footnote": "Usamos tu edad solo para que entrenes de forma segura.",
     "locked": "Solo un padre o una madre puede cambiar la fecha de nacimiento en un perfil de niño o adolescente.",
@@ -4956,7 +4958,8 @@
     "notePlaceholder": "Solo tú la ves.",
     "notForYou": "Ahora no es para ti: {{reason}}.",
     "delete": "Eliminar este ejercicio",
-    "labelled": "{{label}}: {{list}}"
+    "labelled": "{{label}}: {{list}}",
+    "notFound": "Ejercicio no encontrado. Puede que se haya quitado de la biblioteca."
   },
   "mistakes": {
     "horizontal_push": "Arquear la zona lumbar o dejar caer la cadera. Abrir los codos hacia los lados.",
@@ -5102,5 +5105,10 @@
     "privacy": "Política de privacidad",
     "title": "Acerca de",
     "body": "Cómo TapStrong trata tus datos y tu suscripción."
+  },
+  "notFound": {
+    "title": "Página no encontrada",
+    "body": "Esta página no existe o ya no está disponible.",
+    "home": "Volver al inicio"
   }
 }

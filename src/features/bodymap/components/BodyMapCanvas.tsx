@@ -309,6 +309,10 @@ export function BodyMapCanvas({
                 >
                   <View
                     testID={`dot-${h.key}`}
+                    // The dot is drawing only: taps belong to the round hit
+                    // area, so a dot overlapping a neighbour never steals them
+                    // (QA R7 P2).
+                    pointerEvents="none"
                     style={[
                       { width: geo.dot, height: geo.dot, borderRadius: geo.dot / 2 },
                       ...dotStyle(h.key),

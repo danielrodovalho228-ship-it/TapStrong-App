@@ -72,7 +72,10 @@ export function evaluateAgeGate(
 
 /** The message for a gate result; with kids under 13 off it never mentions them (QA round 3). */
 export function whoErrorKey(status: AgeGateResult['status']) {
-  return status === 'teen_locked' && !kidsUnder13Enabled()
-    ? ('who.errors.teen_lockedTeens' as const)
-    : (`who.errors.${status as 'teen_locked'}` as const);
+  if (status === 'teen_locked' && !kidsUnder13Enabled())
+    return 'who.errors.teen_lockedTeens' as const;
+  // With kids off, "My teen" is for 13–17 (QA R7 P2).
+  if (status === 'child_too_old' && !kidsUnder13Enabled())
+    return 'who.errors.child_too_oldTeens' as const;
+  return `who.errors.${status as 'teen_locked'}` as const;
 }

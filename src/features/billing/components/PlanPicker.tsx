@@ -57,7 +57,7 @@ export function PlanPicker({ plan, period, onPlan, onPeriod, showFree = true }: 
                   <AppText variant="bodyStrong">{t(`billing.plans.${p}.name`)}</AppText>
                   {p === 'family' ? (
                     <View style={styles.badge}>
-                      <AppText variant="caption" color={colors.onAccent} style={styles.badgeText}>
+                      <AppText variant="caption" color={colors.ink} style={styles.badgeText}>
                         {t('billing.bestValue')}
                       </AppText>
                     </View>
@@ -116,7 +116,8 @@ const useStyles = makeStyles(() => ({
   text: { flex: 1, gap: spacing.xxs },
   nameRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   badge: {
-    backgroundColor: colors.accent,
+    // A label, not an action (QA R7 P2).
+    backgroundColor: colors.primarySoft,
     borderRadius: radius.chip,
     paddingHorizontal: spacing.sm,
   },

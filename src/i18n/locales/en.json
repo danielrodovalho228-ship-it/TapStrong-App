@@ -140,7 +140,8 @@
     "birth": {
       "me": "Your birth month and year",
       "child": "Your child's birth month and year",
-      "parent": "Their birth month and year"
+      "parent": "Their birth month and year",
+      "teen": "Your teen's birth month and year"
     },
     "month": "Birth month",
     "year": "Birth year",
@@ -168,7 +169,8 @@
       "teen_locked": "A teen profile stays between 13 and 17. A child under 13 needs its own profile with parental consent.",
       "under_min": "TapStrong is for ages 13 and up.",
       "child_unavailable": "Profiles for children under 13 aren’t available yet. Teens 13–17 can join.",
-      "teen_lockedTeens": "A teen profile stays between 13 and 17."
+      "teen_lockedTeens": "A teen profile stays between 13 and 17.",
+      "child_too_oldTeens": "This option is for teens 13–17. Adults can set up their own profile."
     },
     "footnote": "We use your age only to keep training safe for you.",
     "locked": "Only a parent can change the birth date on a child or teen profile.",
@@ -4956,7 +4958,8 @@
     "notePlaceholder": "Only you see this.",
     "notForYou": "Not for you right now: {{reason}}.",
     "delete": "Delete this exercise",
-    "labelled": "{{label}}: {{list}}"
+    "labelled": "{{label}}: {{list}}",
+    "notFound": "Exercise not found. It may have been removed from the library."
   },
   "mistakes": {
     "horizontal_push": "Letting the lower back arch or the hips sag. Elbows flaring straight out to the sides.",
@@ -5102,5 +5105,10 @@
     "privacy": "Privacy Policy",
     "title": "About",
     "body": "How TapStrong works with your data and your subscription."
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "This page doesn't exist or is no longer available.",
+    "home": "Back to Home"
   }
 }

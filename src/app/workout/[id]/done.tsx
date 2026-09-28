@@ -1,7 +1,7 @@
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
+import { useWindowDimensions, View } from 'react-native';
 
 import { AppText, Button, Card, Icon, Notice, Screen } from '@/components/ui';
 import { RatePainButtons } from '@/features/movement/Entry';
@@ -42,10 +42,13 @@ export default function DoneScreen() {
   const account = useAccountStore();
   const member = useFamilyStore(activeProfile);
   const [focusSaved, setFocusSaved] = useState(false);
+  const { width } = useWindowDimensions();
   const derived = derive(profile);
   if (!workout || !derived) return <Redirect href="/home" />;
 
   const now = clock.now();
+  // Narrow phones and 60+ large type: the footer buttons stack (QA R7 P2).
+  const stackFooter = width < 360 || derived.mode === 'senior';
   // Stopped for sharp pain: calm copy, no finisher, no new workout (QA C-01).
   const stopped = stoppedForPain(workout);
   // Short mobility is not "Workout n" (QA R3-05).
@@ -105,7 +108,7 @@ export default function DoneScreen() {
     <Screen
       footer={
         <>
-          <View style={styles.row}>
+          <View style={[styles.row, stackFooter && styles.column]}>
             {member?.kind === 'child' && !member.shareAllowed && derived.mode !== 'child' ? (
               <AppText variant="caption" color={colors.mutedStrong} style={styles.flex}>
                 {t('share.teenOff')}
@@ -298,4 +301,5 @@ const useStyles = makeStyles(() => ({
   },
   finish: { gap: spacing.md },
   row: { flexDirection: 'row', gap: spacing.sm },
+  column: { flexDirection: 'column' },
 }));

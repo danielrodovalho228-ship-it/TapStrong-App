@@ -85,13 +85,13 @@ function BillingScreenInner() {
       )}
 
       <Card tone="dark" style={styles.promise}>
-        <AppText variant="caption" color={colors.dark.accentSoft} style={styles.caps}>
+        <AppText variant="caption" color={colors.dark.text} style={styles.caps}>
           {t('billing.promise.title')}
         </AppText>
         {(['price', 'reminder', 'cancel'] as const).map((k, i) => (
           <View key={k} style={styles.promiseRow}>
             <View style={styles.num}>
-              <AppText variant="button" color={colors.onAccent}>
+              <AppText variant="button" color={colors.dark.text}>
                 {i + 1}
               </AppText>
             </View>
@@ -170,7 +170,8 @@ const useStyles = makeStyles(() => ({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: colors.accent,
+    // Steps, not actions: neutral on the dark card (QA R7 P2).
+    backgroundColor: colors.dark.muted,
     alignItems: 'center',
     justifyContent: 'center',
   },

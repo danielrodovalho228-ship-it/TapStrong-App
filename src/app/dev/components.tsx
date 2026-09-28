@@ -1,3 +1,4 @@
+import { Redirect } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
@@ -9,8 +10,12 @@ import { colors, makeStyles, SENIOR_TYPE_BOOST, spacing, useColors } from '@/the
 
 const GOALS = ['grow', 'firm', 'strengthen', 'balance', 'mobility'] as const;
 
-/** Phase 0 component gallery. Replaced by /welcome in Phase 1. */
-export default function ComponentGallery() {
+/** Phase 0 component gallery, development only: release builds go Home (QA R7 P2). */
+export default function DevComponents() {
+  return __DEV__ ? <ComponentGallery /> : <Redirect href="/home" />;
+}
+
+function ComponentGallery() {
   const colors = useColors();
   const styles = useStyles();
   const { t, i18n } = useTranslation();

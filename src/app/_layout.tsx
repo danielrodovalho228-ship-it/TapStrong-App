@@ -7,7 +7,7 @@ import {
 } from '@expo-google-fonts/barlow-condensed';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 import { AppState, StyleSheet } from 'react-native';
@@ -22,7 +22,7 @@ import { useWorkoutStore } from '@/features/workout/store';
 import { clock } from '@/lib/clock';
 import { localDate } from '@/lib/dates';
 import { startMonitoring } from '@/lib/monitoring';
-import { useColors } from '@/theme';
+import { useColors, useScheme } from '@/theme';
 
 void SplashScreen.preventAutoHideAsync();
 startMonitoring();
@@ -78,34 +78,52 @@ export default function RootLayout() {
 /** Rendered inside ThemeGate, so its colors come from the active palette. */
 function AppStack() {
   const colors = useColors();
+  const scheme = useScheme();
+  // The navigator's own colors come from our tokens too, so no default grey
+  // shows during native transitions in Dark (QA R7 P2).
+  const base = scheme === 'dark' ? DarkTheme : DefaultTheme;
+  const navTheme = {
+    ...base,
+    colors: {
+      ...base.colors,
+      primary: colors.accentText,
+      background: colors.background,
+      card: colors.surface,
+      text: colors.ink,
+      border: colors.line,
+      notification: colors.accent,
+    },
+  };
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-        contentStyle: { backgroundColor: colors.background },
-      }}
-    >
-      {/* Goals opens as a sheet over the body map (mockup 09). */}
-      <Stack.Screen
-        name="goals"
-        options={{
-          presentation: 'formSheet',
-          sheetGrabberVisible: true,
-          sheetAllowedDetents: [0.92],
+    <ThemeProvider value={navTheme}>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: colors.background },
         }}
-      />
-      <Stack.Screen
-        name="share"
-        options={{ contentStyle: { backgroundColor: colors.dark.background } }}
-      />
-      <Stack.Screen
-        name="milestone"
-        options={{
-          animation: 'fade',
-          contentStyle: { backgroundColor: colors.dark.background },
-        }}
-      />
-    </Stack>
+      >
+        {/* Goals opens as a sheet over the body map (mockup 09). */}
+        <Stack.Screen
+          name="goals"
+          options={{
+            presentation: 'formSheet',
+            sheetGrabberVisible: true,
+            sheetAllowedDetents: [0.92],
+          }}
+        />
+        <Stack.Screen
+          name="share"
+          options={{ contentStyle: { backgroundColor: colors.dark.background } }}
+        />
+        <Stack.Screen
+          name="milestone"
+          options={{
+            animation: 'fade',
+            contentStyle: { backgroundColor: colors.dark.background },
+          }}
+        />
+      </Stack>
+    </ThemeProvider>
   );
 }
 

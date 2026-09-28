@@ -1,4 +1,4 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
@@ -56,7 +56,8 @@ export default function RestScreen() {
     }
   }, [left0]);
 
-  if (!workout) return null;
+  // An unknown workout goes Home, like the player and done screens (QA R7 P2).
+  if (!workout) return <Redirect href="/home" />;
 
   const mains = mainItems(workout);
   const logText = (l: SetLog) =>

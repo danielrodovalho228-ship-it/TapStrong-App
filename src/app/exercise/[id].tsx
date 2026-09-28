@@ -51,7 +51,7 @@ export default function ExerciseScreen() {
   if (!e) {
     return (
       <Screen header={<Header onBack={() => router.back()} />}>
-        <Notice>{t('library.empty')}</Notice>
+        <Notice>{t('exercise.notFound')}</Notice>
       </Screen>
     );
   }

@@ -19,6 +19,8 @@ export function Checkbox({ label, checked, onChange }: CheckboxProps) {
       accessibilityRole="checkbox"
       accessibilityLabel={label}
       accessibilityState={{ checked }}
+      // Web reads aria-checked from here (QA R7 P2).
+      aria-checked={checked}
       onPress={() => onChange(!checked)}
       style={styles.row}
     >
