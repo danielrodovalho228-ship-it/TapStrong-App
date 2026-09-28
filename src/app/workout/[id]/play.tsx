@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import { AppText, Button, Card, Chip, IconButton, Screen } from '@/components/ui';
-import { adviceForItem, adviceLoad } from '@/features/workout/loads';
+import { adviceForItem, adviceLoad, advisedReps } from '@/features/workout/loads';
 import { restFor, usePrefsStore } from '@/features/settings/store';
 import * as Speech from 'expo-speech';
 import { prototypeVideo } from '@/features/exercises/library';
@@ -365,9 +365,12 @@ function SetStep({
     }
   };
 
+  // The advised reps on a "+1 rep" day replace the range (QA R7 P2).
+  const aim = hold ? null : advisedReps(advice);
+  const shown: [number, number] = aim ? [aim, aim] : range;
   const targetLine = [
     t(hold ? 'workout.player.targetHold' : 'workout.player.targetReps', {
-      range: range[0] === range[1] ? `${range[0]}` : `${range[0]}–${range[1]}`,
+      range: shown[0] === shown[1] ? `${shown[0]}` : `${shown[0]}–${shown[1]}`,
     }),
     item.perSide ? t('workout.eachSide') : null,
     loaded && load > 0 ? `${load} ${t(`workout.units.${unit}`)}` : null,
@@ -439,6 +442,10 @@ function SetStep({
         {advice?.kind === 'first' && !earlier ? (
           <AppText variant="caption" color={colors.teal}>
             {t('load.first')}
+          </AppText>
+        ) : advice?.kind === 'load' && advice.easier ? (
+          <AppText variant="caption" color={colors.mutedStrong}>
+            {t('load.easier')}
           </AppText>
         ) : advice?.kind === 'reps' && advice.harder ? (
           <AppText variant="caption" color={colors.teal}>

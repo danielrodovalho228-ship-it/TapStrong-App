@@ -3613,7 +3613,12 @@
     "freeDoneTitle_one": "Your free workout this week is done",
     "freeDoneTitle_other": "Your {{count}} free workouts this week are done",
     "freeDoneBody": "Keep moving with a short mobility session: it's free and counts for your streak. Your workouts open again next week.",
-    "freeDonePremium": "Premium: workouts every day"
+    "freeDonePremium": "Premium: workouts every day",
+    "doneTitle": "Today's workout is done",
+    "doneBody": "Nice work. Your muscles grow while they recover: short mobility, balance or rest for the rest of the day.",
+    "extra": "Extra workout",
+    "extraWarning": "A second full workout today adds load before you recover. Only if you feel fresh, and stop if anything hurts.",
+    "extraStart": "Start extra workout"
   },
   "workout": {
     "title": "Your workout",
@@ -4791,7 +4796,8 @@
     "solid": "Solid",
     "hard": "Very hard",
     "repsUpBodyweight": "Aim for {{reps}} reps this time.",
-    "harder": "Top of the range 4 sessions in a row: time for a harder version. Tap Swap to pick one."
+    "harder": "Top of the range 4 sessions in a row: time for a harder version. Tap Swap to pick one.",
+    "easier": "Reps are hard at the lightest weight: try an easier version. Tap Swap to pick one."
   },
   "plans": {
     "title": "Ready-made plans",

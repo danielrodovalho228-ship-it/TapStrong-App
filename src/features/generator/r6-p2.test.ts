@@ -203,7 +203,8 @@ describe('load progression', () => {
     const mc = { range, exercise: machine, unit: 'lb' as const, mode: 'senior' as const };
     expect(loadAdvice({ ...mc, sessions: at(100, 13) })).toMatchObject({ kind: 'load', load: 110 });
     expect(loadAdvice({ ...mc, sessions: at(60, 13) })).toMatchObject({ kind: 'reps', reps: 14 });
-    // Heart / blood pressure on a barbell: 5 lb on 100 lb is small, straight up.
+    // Heart / blood pressure on a barbell: +1 rep first (QA R7 P2), then the
+    // small real step (5 lb on 100 lb).
     const bb = {
       range,
       exercise: barbell,
@@ -211,7 +212,8 @@ describe('load progression', () => {
       mode: 'adult' as const,
       cardio: true,
     };
-    expect(loadAdvice({ ...bb, sessions: at(100, 12) })).toMatchObject({ kind: 'load', load: 105 });
+    expect(loadAdvice({ ...bb, sessions: at(100, 12) })).toMatchObject({ kind: 'reps', reps: 13 });
+    expect(loadAdvice({ ...bb, sessions: at(100, 13) })).toMatchObject({ kind: 'load', load: 105 });
     // kg: dumbbells step 2 kg.
     expect(loadAdvice({ ...db, unit: 'kg', sessions: [kg(30, 14), kg(30, 14)] })).toMatchObject({
       kind: 'load',
@@ -221,6 +223,45 @@ describe('load progression', () => {
     expect(
       loadAdvice({ range, exercise: squat, unit: 'lb', mode: 'adult', sessions: at(100, 12) }),
     ).toMatchObject({ load: 110 });
+  });
+
+  it('real sizes: lb history in kg, adult kettlebells, never below the lightest load (QA R7 P2)', () => {
+    const range = [10, 12] as [number, number];
+    const dumbbell = LIBRARY.find((e) => e.loaded && e.equipment.includes('dumbbells' as never))!;
+    const kettlebell = LIBRARY.find(
+      (e) =>
+        e.loaded &&
+        e.equipment.includes('kettlebells' as never) &&
+        !e.equipment.includes('dumbbells' as never),
+    )!;
+    // 32 lb logged, now in kg: a real 2 kg-step dumbbell (14 kg), never 14.5.
+    const same = loadAdvice({
+      range,
+      exercise: dumbbell,
+      unit: 'kg',
+      mode: 'adult',
+      sessions: [s(32, 11), s(32, 11)],
+    });
+    expect(same).toMatchObject({ kind: 'load', change: 'same' });
+    expect((same as { load: number }).load % 2).toBe(0);
+    // Adult kettlebell 16 kg: the next bell is 20, not 18.5.
+    expect(
+      loadAdvice({
+        range,
+        exercise: kettlebell,
+        unit: 'kg',
+        mode: 'adult',
+        sessions: [kg(16, 12), kg(16, 12)],
+      }),
+    ).toMatchObject({ kind: 'load', load: 20 });
+    // Reps missed 3 times at 5 lb: stay at 5 lb and try an easier version.
+    const miss = [s(5, 6), s(5, 6), s(5, 6)];
+    expect(
+      loadAdvice({ range, exercise: dumbbell, unit: 'lb', mode: 'adult', sessions: miss }),
+    ).toMatchObject({
+      load: 5,
+      easier: true,
+    });
   });
 
   it('bodyweight at the top of the range for 4 sessions: a harder version', () => {

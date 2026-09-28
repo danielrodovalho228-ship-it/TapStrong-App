@@ -3613,7 +3613,12 @@
     "freeDoneTitle_one": "Ya hiciste tu entrenamiento gratis de esta semana",
     "freeDoneTitle_other": "Ya hiciste tus {{count}} entrenamientos gratis de esta semana",
     "freeDoneBody": "Sigue moviéndote con una sesión corta de movilidad: es gratis y cuenta para tu racha. Tus entrenamientos vuelven la próxima semana.",
-    "freeDonePremium": "Premium: entrenar todos los días"
+    "freeDonePremium": "Premium: entrenar todos los días",
+    "doneTitle": "El entrenamiento de hoy está hecho",
+    "doneBody": "Buen trabajo. Tus músculos crecen mientras se recuperan: movilidad corta, equilibrio o descanso el resto del día.",
+    "extra": "Entrenamiento extra",
+    "extraWarning": "Un segundo entrenamiento completo hoy suma carga antes de recuperarte. Solo si te sientes fresco, y para si algo duele.",
+    "extraStart": "Empezar entrenamiento extra"
   },
   "workout": {
     "title": "Tu entrenamiento",
@@ -4791,7 +4796,8 @@
     "solid": "Exigente",
     "hard": "Muy dura",
     "repsUpBodyweight": "Intenta {{reps}} repeticiones esta vez.",
-    "harder": "En lo más alto del rango 4 sesiones seguidas: toca una versión más difícil. Pulsa Cambiar para elegirla."
+    "harder": "En lo más alto del rango 4 sesiones seguidas: toca una versión más difícil. Pulsa Cambiar para elegirla.",
+    "easier": "Cuesta llegar a las repeticiones con el peso más ligero: prueba una versión más fácil. Pulsa Cambiar para elegirla."
   },
   "plans": {
     "title": "Planes listos",

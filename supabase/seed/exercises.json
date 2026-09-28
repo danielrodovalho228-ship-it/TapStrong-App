@@ -1083,7 +1083,7 @@
       "level": 2,
       "minAgeBand": "kid",
       "positions": ["standing"],
-      "contraindications": ["shoulder", "recent_surgery"],
+      "contraindications": ["shoulder", "recent_surgery", "high_blood_pressure"],
       "pattern": "core_stability",
       "parts": ["main"],
       "dose": "time",

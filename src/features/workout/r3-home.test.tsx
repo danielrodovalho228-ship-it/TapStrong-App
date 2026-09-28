@@ -164,3 +164,41 @@ describe('R3-06 60+ Home', () => {
     expect(screen.getByRole('button', { name: 'Rest today' })).toBeTruthy();
   });
 });
+
+describe("After today's workout (Daniel, Phase 19)", () => {
+  const doneToday = (): WorkoutRecord => {
+    const w = everythingYesterday();
+    const at = '2026-09-28T08:30:00';
+    return {
+      ...w,
+      id: 't1',
+      createdAt: '2026-09-28T08:00:00',
+      startedAt: '2026-09-28T08:00:00',
+      endedAt: '2026-09-28T08:45:00',
+      logs: w.logs.slice(0, 3).map((l) => ({ ...l, loggedAt: at })),
+    };
+  };
+
+  it('an adult gets mobility, balance or rest, and an Extra workout only after a warning', async () => {
+    await profile(1990);
+    await act(() => useWorkoutStore.setState({ workouts: [doneToday()] }));
+    await render(<HomeScreen />);
+    expect(screen.getByRole('header', { name: "Today's workout is done" })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: /^Start ·/ })).toBeNull();
+    expect(screen.getByRole('button', { name: /^Short mobility/ })).toBeTruthy();
+    expect(screen.queryByTestId('extra-warning')).toBeNull();
+    await fireEvent.press(screen.getByRole('button', { name: 'Extra workout' }));
+    expect(screen.getByTestId('extra-warning')).toBeTruthy();
+    await fireEvent.press(screen.getByRole('button', { name: 'Start extra workout' }));
+    expect(router.push).toHaveBeenCalled();
+  });
+
+  it('60+ get only mobility, balance or rest: no second workout', async () => {
+    await profile(1958);
+    await act(() => useWorkoutStore.setState({ workouts: [doneToday()] }));
+    await render(<HomeScreen />);
+    expect(screen.getByRole('header', { name: "Today's workout is done" })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Extra workout' })).toBeNull();
+    expect(screen.queryByRole('button', { name: /^Start/ })).toBeNull();
+  });
+});

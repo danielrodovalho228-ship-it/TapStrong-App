@@ -10,7 +10,7 @@ import type { Exercise } from '@/features/exercises/types';
 import { dayName, sessionSummary } from '@/features/program/block';
 import { WeekStrip } from '@/features/program/components/WeekStrip';
 import { usePlacesStore } from '@/features/equipment/store';
-import { adviceForItem, loadText } from '@/features/workout/loads';
+import { adviceForItem, advisedReps, loadText } from '@/features/workout/loads';
 import type { LoadUnit } from '@/features/workout/types';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import {
@@ -144,18 +144,22 @@ export default function WorkoutScreen() {
 
   // "3 × 10–12 · 25 lb" (A4): the suggested load from the person's history.
   const unit: LoadUnit = units === 'imperial' ? 'lb' : 'kg';
+  const adviceFor = (item: SessionItem, e: Exercise | undefined) =>
+    adviceForItem({
+      workouts: store.workouts,
+      workoutId: workout.id,
+      item,
+      exercise: e,
+      unit,
+      generator: { ...input, deload: session.deload },
+    });
   const loadLabel = (item: SessionItem, e: Exercise | undefined) =>
-    loadText(
-      adviceForItem({
-        workouts: store.workouts,
-        workoutId: workout.id,
-        item,
-        exercise: e,
-        unit,
-        generator: { ...input, deload: session.deload },
-      }),
-      t(`workout.units.${unit}`),
-    );
+    loadText(adviceFor(item, e), t(`workout.units.${unit}`));
+  // "3 × 16" on a "+1 rep" day, not the range (QA R7 P2).
+  const doseFor = (item: SessionItem, e: Exercise | undefined) => {
+    const aim = item.reps ? advisedReps(adviceFor(item, e)) : null;
+    return doseLine(t, aim ? { ...item, reps: [aim, aim] } : item, restFor(item, prefs));
+  };
 
   // Adults and 60+ only; never teens (improvements v1, A3).
   const kcal = sessionSummary(session, mode, weightKg).kcal;
@@ -344,9 +348,7 @@ export default function WorkoutScreen() {
               <AppText variant="caption" color={colors.mutedStrong}>
                 {skipped
                   ? t('workout.skipped')
-                  : [doseLine(t, item, restFor(item, prefs)), loadLabel(item, e)]
-                      .filter(Boolean)
-                      .join(' · ')}
+                  : [doseFor(item, e), loadLabel(item, e)].filter(Boolean).join(' · ')}
               </AppText>
               <RangeNote exercise={e} />
               <Tag

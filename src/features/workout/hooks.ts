@@ -63,14 +63,17 @@ export function useGeneratorInput(
   const shortWarmup = usePrefsStore((s) => s.warmup === 'short');
   const experience = usePrefsStore((s) => s.experience);
   const today = localDate(clock.now());
+  const laterDay = !!ahead && ahead.date > today;
   const base = inputFromProfile(profile, library, __DEV__, {
     // A sharp stop today is its own reason (stoppedToday rules the joint out
     // on its own), never a saved restriction: the Library says "left out
     // today", not "ruled out by a restriction" (QA R6 P2).
     restrictions: activeAreas(restrictions),
     hardRestrictions: doctorFirstAreas(restrictions),
-    painToday: dullPainAreasToday(workouts, today),
-    stoppedToday: sharpStopAreasToday(workouts, today),
+    // Today's pain only rules today: a future day's preview is the real
+    // plan for that day (QA R7 P2).
+    painToday: laterDay ? [] : dullPainAreasToday(workouts, today),
+    stoppedToday: laterDay ? [] : sharpStopAreasToday(workouts, today),
     movementLimits: activeReports(reports).map(limitFrom),
     recentSessions: recentSessions(workouts, library),
     today: localDate(clock.now()),

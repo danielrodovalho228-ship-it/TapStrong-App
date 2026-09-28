@@ -33,6 +33,7 @@ export function SeniorHome({
   minutes,
   allRecovering = false,
   stoppedToday = false,
+  doneToday = false,
 }: {
   onStart: () => void;
   onMobility: () => void;
@@ -44,6 +45,8 @@ export function SeniorHome({
   allRecovering?: boolean;
   /** Sharp pain stopped a workout today: gentle options only (QA R5 P2). */
   stoppedToday?: boolean;
+  /** Today's workout is done: only mobility, balance or rest (Daniel, Phase 19). */
+  doneToday?: boolean;
 }) {
   const colors = useColors();
   const styles = useStyles();
@@ -131,9 +134,23 @@ export function SeniorHome({
         // Everything is still recovering (QA R3-03): mobility, balance or rest.
         <Card style={styles.today}>
           <AppText variant="h1" accessibilityRole="header">
-            {t(stoppedToday ? 'home.stoppedTitle' : 'home.recoveringTitle')}
+            {t(
+              stoppedToday
+                ? 'home.stoppedTitle'
+                : doneToday
+                  ? 'home.doneTitle'
+                  : 'home.recoveringTitle',
+            )}
           </AppText>
-          <AppText>{t(stoppedToday ? 'home.stoppedBody' : 'home.recoveringBody')}</AppText>
+          <AppText>
+            {t(
+              stoppedToday
+                ? 'home.stoppedBody'
+                : doneToday
+                  ? 'home.doneBody'
+                  : 'home.recoveringBody',
+            )}
+          </AppText>
           {onBalance ? (
             <Button
               variant="teal"

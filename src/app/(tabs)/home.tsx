@@ -63,6 +63,7 @@ export default function HomeScreen() {
   const checkins = useProgressStore((st) => st.checkins);
   const painReports = useMovementPainStore((st) => st.reports);
   const [resting, setResting] = useState(false);
+  const [extraAsked, setExtraAsked] = useState(false);
   const programState = useProgramStore();
   const trainingDays = useTrainingDaysPerWeek();
   const entitlement = useBillingStore((st) => st.entitlement);
@@ -92,11 +93,21 @@ export default function HomeScreen() {
   // rest of the day, never a second full workout (QA R5 P2).
   const stoppedToday = !active && sharpStopAreasToday(workouts, today).length > 0;
   const allRecovering = built?.error === 'all_recovering' || stoppedToday;
+  // Today's workout is done (Daniel, Phase 19): mobility, balance or rest; an
+  // adult may still choose an extra workout, after a short warning.
+  const doneToday =
+    !active &&
+    !stoppedToday &&
+    workouts.some(
+      (w) => (w.status === 'done' || w.status === 'partial') && w.kind === 'regular' && sameDay(w),
+    );
+  const easyDay = allRecovering || doneToday;
+  const extraAllowed = doneToday && derived.mode === 'adult';
   // Free plan, weekly workouts used (Daniel, Phase 16): suggest the free short
   // mobility and mention Premium once, instead of a paywall on Start.
   const freeDone =
     !active &&
-    !allRecovering &&
+    !easyDay &&
     currentPlan(entitlement, now) === 'free' &&
     !canStartWorkout('free', workouts, now, deviceWeekStart()).allowed;
   // Short balance next to short mobility for 60+, a balance goal or a fall (QA R5 P2).
@@ -187,8 +198,9 @@ export default function HomeScreen() {
         onBalance={balanceOk ? openBalance : undefined}
         targets={goals}
         minutes={cardMinutes}
-        allRecovering={allRecovering}
+        allRecovering={easyDay}
         stoppedToday={stoppedToday}
+        doneToday={doneToday}
       />
     );
 
@@ -222,16 +234,28 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      {allRecovering ? (
-        <Card tone="dark" style={styles.today}>
+      {easyDay ? (
+        <Card tone="dark" style={styles.today} testID={doneToday ? 'done-today' : undefined}>
           <AppText variant="caption" color={colors.dark.accentSoft} style={styles.caps}>
             {t('home.picked')}
           </AppText>
           <AppText variant="h1" color={colors.dark.text} accessibilityRole="header">
-            {t(stoppedToday ? 'home.stoppedTitle' : 'home.recoveringTitle')}
+            {t(
+              stoppedToday
+                ? 'home.stoppedTitle'
+                : doneToday
+                  ? 'home.doneTitle'
+                  : 'home.recoveringTitle',
+            )}
           </AppText>
           <AppText color={colors.dark.text}>
-            {t(stoppedToday ? 'home.stoppedBody' : 'home.recoveringBody')}
+            {t(
+              stoppedToday
+                ? 'home.stoppedBody'
+                : doneToday
+                  ? 'home.doneBody'
+                  : 'home.recoveringBody',
+            )}
           </AppText>
           <Button
             variant="accent"
@@ -250,6 +274,22 @@ export default function HomeScreen() {
             <AppText variant="caption" color={colors.dark.text}>
               {t('home.restNote')}
             </AppText>
+          ) : null}
+          {extraAllowed ? (
+            extraAsked ? (
+              <>
+                <AppText variant="caption" color={colors.dark.text} testID="extra-warning">
+                  {t('home.extraWarning')}
+                </AppText>
+                <Button variant="onDark" label={t('home.extraStart')} onPress={openWorkout} />
+              </>
+            ) : (
+              <Button
+                variant="onDark"
+                label={t('home.extra')}
+                onPress={() => setExtraAsked(true)}
+              />
+            )
           ) : null}
         </Card>
       ) : freeDone ? (
@@ -312,7 +352,7 @@ export default function HomeScreen() {
       )}
 
       {/* Short mobility (decision 1, QA round 2): always free, counts for the streak. */}
-      {!active && !allRecovering && !freeDone ? (
+      {!active && !easyDay && !freeDone ? (
         <View style={styles.mobility}>
           <Button
             variant="secondary"

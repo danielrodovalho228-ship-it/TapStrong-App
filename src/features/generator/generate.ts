@@ -474,12 +474,13 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   const day = input.today ? Math.floor(Date.parse(input.today) / 86_400_000) : 0;
   const strengthGym =
     input.location === 'gym' && input.mainGoals.includes('strength') && input.mode === 'adult';
-  // Gym "Get stronger" or "Build muscle": holds (dead hang, carries, planks)
+  // Gym "Get stronger", "Build muscle", "Get in shape" or "Lose weight": holds (dead hang, carries, planks)
   // are never main work when a moving option exists (QA R6 P2).
+  // "Get in shape" and "Lose weight" gym plans too (QA R7 P2, recommended).
   const gymBuild =
     input.location === 'gym' &&
     input.mode === 'adult' &&
-    (input.mainGoals.includes('strength') || input.mainGoals.includes('look'));
+    input.mainGoals.some((g) => ['strength', 'look', 'fitness', 'lose_weight'].includes(g));
   const moving = (list: Exercise[]) => {
     if (!gymBuild) return list;
     const kept = list.filter((e) => e.dose !== 'time');
@@ -534,7 +535,8 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
       const options = rankForTarget(pool, target, input.mode, input.favourites).filter(
         (e) => !used.has(e.id),
       );
-      const equipped = strengthGym ? options.filter((e) => e.equipment.length > 0) : [];
+      // Holds stay out here too (QA R7 P2: adductors gave a Copenhagen hold).
+      const equipped = strengthGym ? moving(options).filter((e) => e.equipment.length > 0) : [];
       const pick = (equipped.length ? equipped : moving(options))[0];
       if (pick) add(pick, target);
     }
@@ -676,13 +678,16 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   // always keeps at least one move.
   const pushNow = () => main.filter((i) => groupOf(i.targetMuscle ?? '') === 'push').length;
   const pullNow = () => main.filter((i) => groupOf(i.targetMuscle ?? '') === 'pull').length;
-  const pullShortNow = () =>
-    weekMoves.pull + pullNow() < Math.ceil(0.9 * (weekMoves.push + pushNow()));
+  // Aim for pull ≥ push over the rolling 7 days, checked every session, so
+  // calendar weeks stay at 90% or more (QA R7 P2: 75–78% weeks).
+  const pullShortNow = () => weekMoves.pull + pullNow() < weekMoves.push + pushNow();
   const verticalDue = () =>
     !verticalThisWeek && !main.some((i) => realVertical(byIdAll.get(i.exerciseId)));
   const swappedForPull = new Set<string>();
   for (let swaps = 0; swaps < slots; swaps++) {
-    if (onlyTargets || input.dayGroups?.length || pushNow() < 2) break;
+    // Split days swap only when the day trains pull too (an upper day).
+    const pullDay = !input.dayGroups?.length || input.dayGroups.includes('pull');
+    if (onlyTargets || !pullDay || pushNow() < 2) break;
     if (!pullShortNow() && !(verticalDue() && swaps === 0)) break;
     const at = main.map((i) => groupOf(i.targetMuscle ?? '')).lastIndexOf('push');
     const [gone] = main.splice(at, 1);

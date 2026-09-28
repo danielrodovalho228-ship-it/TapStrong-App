@@ -32,7 +32,14 @@ export type Session = { endedAt: string; logs: SetLog[] };
 
 export type LoadAdvice =
   | { kind: 'first' }
-  | { kind: 'load'; load: number; unit: LoadUnit; change: 'up' | 'same' | 'down' }
+  | {
+      kind: 'load';
+      load: number;
+      unit: LoadUnit;
+      change: 'up' | 'same' | 'down';
+      /** Already at the lightest real load and still missing reps: an easier version. */
+      easier?: boolean;
+    }
   /** More reps; a loaded move keeps its last load (QA R4-10). */
   | {
       kind: 'reps';
@@ -138,7 +145,8 @@ export function loadAdvice(input: {
     lastTwo.length === 2 && lastTwo.every((s) => allTop(s, top)) && sameLoad && !input.deload;
   const missedTwo = lastTwo.length === 2 && lastTwo.every((s) => missed(s, bottom));
   const missedThree = sessions.length >= 3 && sessions.slice(0, 3).every((s) => missed(s, bottom));
-  const slow = input.mode === 'senior' || !!input.jointCare;
+  // Heart / blood pressure also go reps first before any load (QA R7 P2).
+  const slow = input.mode === 'senior' || !!input.jointCare || !!input.cardio;
   const minor = input.mode === 'teen' || input.mode === 'child';
 
   if (!loadedMove) {
@@ -154,12 +162,21 @@ export function loadAdvice(input: {
       : { kind: 'reps', reps: Math.min(top, Math.max(bottom, best)), change: 'same' };
   }
 
-  const load = toUnit(lastLoaded!.load!, lastLoaded!.unit ?? unit, unit);
-  const baseStep = (isLowerBody(exercise) && !minor ? LOWER_STEP : UPPER_STEP)[unit];
-  // 60+ and heart / blood pressure: the equipment's real step, reps first
-  // when that step is more than ~10% of the load (Daniel, Phase 18).
+  const equip = equipmentStep(exercise, unit);
+  const logged = lastLoaded!.unit ?? unit;
+  // A load logged in the other unit lands on a real size of this equipment
+  // (QA R7 P2: 32 lb became a "14.5 kg" dumbbell).
+  const converted = toUnit(lastLoaded!.load!, logged, unit);
+  const load =
+    equip && logged !== unit ? Math.max(equip, Math.round(converted / equip) * equip) : converted;
+  const lower = isLowerBody(exercise) && !minor;
+  const baseStep = (lower ? LOWER_STEP : UPPER_STEP)[unit];
+  // Steps follow the equipment for everyone (QA R7 P2: a 16 kg kettlebell
+  // went to 18.5): the real step, or for adult lower-body lifts the bigger
+  // step rounded up to it. 60+ and heart / blood pressure always take the
+  // real step, reps first when it is more than ~10% of the load (Daniel, Phase 18).
   const gentle = input.mode === 'senior' || !!input.cardio;
-  const step = gentle ? (equipmentStep(exercise, unit) ?? baseStep) : baseStep;
+  const step = !equip ? baseStep : gentle || !lower ? equip : Math.ceil(baseStep / equip) * equip;
   const bigStep = gentle && step > load * GENTLE_SHARE + 1e-9;
   if (upDue) {
     // Reps above the top before any load: +2 when the step is big, +1 for
@@ -176,7 +193,13 @@ export function loadAdvice(input: {
       };
     return { kind: 'load', load: load + step, unit, change: 'up' };
   }
-  if (missedThree) return { kind: 'load', load: Math.max(0, load - step), unit, change: 'down' };
+  if (missedThree) {
+    // Never below the lightest real load (QA R7 P2: 5 lb → 0 lb): at the
+    // lightest, an easier version instead.
+    const lightest = equip ?? UPPER_STEP[unit];
+    if (load - step < lightest) return { kind: 'load', load, unit, change: 'same', easier: true };
+    return { kind: 'load', load: load - step, unit, change: 'down' };
+  }
   if (missedTwo) return { kind: 'load', load, unit, change: 'same' };
   return { kind: 'load', load, unit, change: 'same' };
 }
@@ -186,6 +209,14 @@ export function loadText(advice: LoadAdvice, unitLabel: string): string | null {
   const load = adviceLoad(advice);
   return load ? `${load} ${unitLabel}` : null;
 }
+
+/**
+ * The day's rep target when the advice asks for more reps than the range
+ * shows ("Aim for 16" on a 10–15 range): the dose line and the player show
+ * it, so logging the range's top isn't a trap (QA R7 P2).
+ */
+export const advisedReps = (advice: LoadAdvice): number | null =>
+  advice?.kind === 'reps' && advice.change === 'up' ? advice.reps : null;
 
 /** The load to start from: the suggested one, or the last one on a "+1 rep" day. */
 export const adviceLoad = (advice: LoadAdvice): number | null =>

@@ -33,11 +33,12 @@ describe('locales', () => {
       .map((k) => k.slice(0, -4));
     expect(bases.length).toBeGreaterThan(20);
     const keys = new Set(flattenKeys(resources[locale].translation));
+    const t = i18n.t as unknown as (key: string, options: object) => string;
     // An explicit `_zero` ("None chosen yet") wins; otherwise the plural.
     const wrong = bases.filter(
       (base) =>
-        i18n.t(base, { count: 0 }) !==
-        i18n.t(keys.has(`${base}_zero`) ? `${base}_zero` : `${base}_other`, { count: 0 }),
+        t(base, { count: 0 }) !==
+        t(keys.has(`${base}_zero`) ? `${base}_zero` : `${base}_other`, { count: 0 }),
     );
     expect(wrong).toEqual([]);
   });

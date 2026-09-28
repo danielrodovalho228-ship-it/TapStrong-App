@@ -4,7 +4,7 @@
  */
 import '@/i18n';
 
-import { act, fireEvent, render, screen } from '@testing-library/react-native';
+import { act, fireEvent, render, renderHook, screen } from '@testing-library/react-native';
 
 import HomeScreen from '@/app/(tabs)/home';
 import DayScreen from '@/app/day/[date]';
@@ -17,6 +17,7 @@ import { generateSession } from '@/features/generator';
 import { inputFromProfile } from '@/features/generator/fromProfile';
 import { useFamilyStore } from '@/features/family/store';
 import { useOnboardingStore } from '@/features/onboarding/store';
+import { useGeneratorInput } from '@/features/workout/hooks';
 import { useWorkoutStore } from '@/features/workout/store';
 import { clock } from '@/lib/clock';
 
@@ -121,6 +122,34 @@ describe('day view (A1)', () => {
     expect(screen.queryByText('Preview')).toBeNull();
     expect(screen.queryByRole('button', { name: "Start today's workout" })).toBeNull();
     expect(screen.getByRole('button', { name: /Short mobility/ })).toBeTruthy();
+  });
+
+  it("a future day's preview ignores today's pain stop (QA R7 P2)", async () => {
+    await adult();
+    const input = inputFromProfile(useOnboardingStore.getState(), LIBRARY, true)!;
+    const id = useWorkoutStore.getState().create(generateSession(input));
+    await act(() => {
+      const s = useWorkoutStore.getState();
+      s.start(id);
+      const item = s.workouts
+        .find((w) => w.id === id)!
+        .session.items.find((i) => i.role === 'main')!;
+      s.addPain(id, {
+        itemId: item.id,
+        exerciseId: item.exerciseId,
+        area: 'knee',
+        type: 'sharp',
+        action: 'stopped',
+      });
+      s.finish(id, 'partial');
+    });
+    const today = await renderHook(() => useGeneratorInput(LIBRARY));
+    expect(today.result.current?.stoppedToday).toEqual(['knee']);
+    const later = await renderHook(() =>
+      useGeneratorInput(LIBRARY, { date: '2026-10-02', days: 1 }),
+    );
+    expect(later.result.current?.stoppedToday).toEqual([]);
+    expect(later.result.current?.painToday).toEqual([]);
   });
 
   it('a future day previews the session, no Start', async () => {
