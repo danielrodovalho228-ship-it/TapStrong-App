@@ -101,10 +101,19 @@ describe('suggested load (A4)', () => {
       unit: 'lb',
     });
     const beaten = [s([13, 13, 13], 20), s([12, 12, 12], 20)];
-    // 60+: the smaller of +5 lb and ~10% (QA R6 P2): 20 → 22.5.
+    // 60+: a barbell's real step is 5 lb, 25% of 20 lb: reps go to the top
+    // + 2 first (Daniel, Phase 18), then the load.
     expect(advice(beaten, bench, { mode: 'senior' })).toEqual({
+      kind: 'reps',
+      reps: 14,
+      change: 'up',
+      load: 20,
+      unit: 'lb',
+    });
+    const topPlusTwo = [s([14, 14, 14], 20), s([13, 13, 13], 20)];
+    expect(advice(topPlusTwo, bench, { mode: 'senior' })).toEqual({
       kind: 'load',
-      load: 22.5,
+      load: 25,
       unit: 'lb',
       change: 'up',
     });

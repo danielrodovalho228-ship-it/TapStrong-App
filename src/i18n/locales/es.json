@@ -3524,7 +3524,8 @@
       "unavailable": "Ningún ejercicio seguro para {{muscles}} encaja con tu configuración de hoy (posición, equipo, restricciones). Agrega equipo u otra posición para trabajarlos.",
       "customLeftOut_one": "Se dejó fuera una elección: ahora mismo no es segura para ti.",
       "customLeftOut_other": "Se dejaron fuera {{count}} elecciones: ahora mismo no son seguras para ti.",
-      "painToday": "{{muscles}} fuera por hoy por el dolor que indicaste. Vuelve mañana si te sientes bien."
+      "painToday": "{{muscles}} fuera por hoy por el dolor que indicaste. Vuelve mañana si te sientes bien.",
+      "pullAdded": "Incluimos un ejercicio de tirón para equilibrar."
     }
   },
   "tabs": {

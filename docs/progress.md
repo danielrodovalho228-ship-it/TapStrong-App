@@ -1700,3 +1700,36 @@ Lista do QA: `docs/qa-round-6.md`. Commits separados: um por grupo de P1 e dois 
 3. **Exercício novo em rascunho:** o "Alongamento de tríceps sentado atrás das costas" precisa da revisão do especialista antes de ser liberado.
 4. **Espanhol:** o bloco "Entrenamientos" virou "Sesiones" para caber no Progresso.
 5. **Continua em aberto da Fase 17:** as cores ajustadas para passar no AA (texto escuro no botão coral e as outras três).
+
+---
+
+## Fase 18 — Decisões do Daniel (ajustes finais)
+
+### O que foi feito
+
+1. **Puxar × empurrar:** a troca automática ficou. Quando ela acontece, o treino mostra a nota "Incluímos um exercício de puxar para equilibrar" (en/es/pt-BR), no lugar da nota genérica de equilíbrio.
+2. **Carga no 60+ e cardíaco/pressão alta:** não existe mais +2,5 lb. O degrau é o real do equipamento:
+   - halteres: 5 lb (2 kg);
+   - barra: 5 lb (2,5 kg);
+   - máquina e cabo: uma placa da pilha, que considerei 10 lb (5 kg), como na maioria das pilhas;
+   - kettlebell: 10 lb (4 kg).
+
+   Se esse degrau passar de cerca de 10% da carga atual, primeiro sobem as repetições, até o topo da faixa + 2, e só depois o peso.
+   - Exemplo: halter de 25 lb, faixa 10–12 → 13 → 14 repetições → 30 lb.
+   - O 60+ sem degrau grande mantém o "+1 repetição antes do peso".
+   - Adultos sem condição continuam como antes.
+3. **Alongamento de tríceps sentado:** continua como rascunho até a revisão do especialista.
+4. **"Sesiones":** mantido.
+5. **Cores ajustadas para o AA:** aprovadas. Já estão no app desde a Fase 17.
+
+### Verificações
+
+- Lint e typecheck limpos; **931 testes** passando.
+- Testes novos ou atualizados:
+  - degrau real por equipamento (halter, máquina, barra, kg);
+  - repetições até topo + 2 antes do peso;
+  - a nota do puxar aparece uma vez e substitui a de equilíbrio.
+
+### Perguntas em aberto
+
+1. **Placa da pilha:** usei 10 lb (5 kg) para máquinas e cabos. Se alguma academia usar pilhas de 5 lb, dá para ajustar por equipamento mais tarde.

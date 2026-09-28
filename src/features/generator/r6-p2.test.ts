@@ -119,6 +119,11 @@ describe('pull keeps up with push (Ken, 5 weeks)', () => {
     expect(pull).toBeGreaterThanOrEqual(0.9 * push);
     const one = generateSession({ ...input, today: '2026-09-07' });
     expect(main(one).some((i) => groupOf(i.targetMuscle!) === 'push')).toBe(true);
+    // The person is told why (Daniel, Phase 18), once, not as a generic "balance" note.
+    expect(one.notes.filter((n) => n.key === 'generator.notes.pullAdded')).toHaveLength(1);
+    expect(
+      one.notes.some((n) => n.key === 'generator.notes.balance' && n.groups.includes('pull')),
+    ).toBe(false);
   });
 
   it('PPL Pull day for gym "Build muscle": no dead hang or other hold as main work', () => {
@@ -141,6 +146,10 @@ describe('load progression', () => {
   const s = (load: number, reps = 12): Session => ({
     endedAt: '',
     logs: [1, 2, 3].map(() => ({ reps, load, unit: 'lb', rpe: 7 }) as Session['logs'][number]),
+  });
+  const kg = (load: number, reps = 12): Session => ({
+    endedAt: '',
+    logs: [1, 2, 3].map(() => ({ reps, load, unit: 'kg', rpe: 7 }) as Session['logs'][number]),
   });
 
   it('one step, then two sessions at the new load before the next', () => {
@@ -165,23 +174,53 @@ describe('load progression', () => {
     });
   });
 
-  it('60+ and heart / blood pressure: the smaller of +5 lb and ~10%', () => {
-    const base = { range: [10, 12] as [number, number], exercise: squat, unit: 'lb' as const };
-    // 60+: +1 rep first, then the gentle step (25 → 27.5, never 35).
-    const beat = (load: number) => s(load, 13);
-    expect(loadAdvice({ ...base, mode: 'senior', sessions: [beat(25), beat(25)] })).toMatchObject({
-      load: 27.5,
-      change: 'up',
+  it('60+ and heart / blood pressure: the real equipment step, reps first when it is big', () => {
+    const byEquipment = (item: string, pattern?: string) =>
+      LIBRARY.find(
+        (e) =>
+          e.loaded && e.equipment.includes(item as never) && (!pattern || e.pattern === pattern),
+      )!;
+    const dumbbell = byEquipment('dumbbells');
+    const machine = LIBRARY.find((e) => e.loaded && e.equipment.includes('leg_press' as never))!;
+    const barbell = byEquipment('barbell');
+    const range = [10, 12] as [number, number];
+    const at = (load: number, reps: number) => [s(load, reps), s(load, reps)];
+    // Dumbbells step 5 lb: 20% of 25 lb, so reps first, to 14, then +5 lb.
+    const db = { range, exercise: dumbbell, unit: 'lb' as const, mode: 'senior' as const };
+    expect(loadAdvice({ ...db, sessions: at(25, 12) })).toMatchObject({
+      kind: 'reps',
+      reps: 13,
+      load: 25,
     });
-    expect(
-      loadAdvice({ ...base, mode: 'adult', cardio: true, sessions: [s(100, 12), s(100, 12)] }),
-    ).toMatchObject({ load: 105, change: 'up' });
-    // Without the condition an adult squat keeps the +10 lb step.
-    expect(
-      loadAdvice({ ...base, mode: 'adult', sessions: [s(100, 12), s(100, 12)] }),
-    ).toMatchObject({
-      load: 110,
+    expect(loadAdvice({ ...db, sessions: at(25, 13) })).toMatchObject({
+      kind: 'reps',
+      reps: 14,
+      load: 25,
     });
+    expect(loadAdvice({ ...db, sessions: at(25, 14) })).toMatchObject({ kind: 'load', load: 30 });
+    // Never a 2.5 lb step, never +10 on dumbbells.
+    // A machine stack: one plate (10 lb); 10% of 100 lb is not "big".
+    const mc = { range, exercise: machine, unit: 'lb' as const, mode: 'senior' as const };
+    expect(loadAdvice({ ...mc, sessions: at(100, 13) })).toMatchObject({ kind: 'load', load: 110 });
+    expect(loadAdvice({ ...mc, sessions: at(60, 13) })).toMatchObject({ kind: 'reps', reps: 14 });
+    // Heart / blood pressure on a barbell: 5 lb on 100 lb is small, straight up.
+    const bb = {
+      range,
+      exercise: barbell,
+      unit: 'lb' as const,
+      mode: 'adult' as const,
+      cardio: true,
+    };
+    expect(loadAdvice({ ...bb, sessions: at(100, 12) })).toMatchObject({ kind: 'load', load: 105 });
+    // kg: dumbbells step 2 kg.
+    expect(loadAdvice({ ...db, unit: 'kg', sessions: [kg(30, 14), kg(30, 14)] })).toMatchObject({
+      kind: 'load',
+      load: 32,
+    });
+    // Without a condition an adult squat keeps the +10 lb step.
+    expect(
+      loadAdvice({ range, exercise: squat, unit: 'lb', mode: 'adult', sessions: at(100, 12) }),
+    ).toMatchObject({ load: 110 });
   });
 
   it('bodyweight at the top of the range for 4 sessions: a harder version', () => {

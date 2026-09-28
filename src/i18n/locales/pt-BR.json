@@ -3525,7 +3525,8 @@
       "unavailable": "Nenhum exercício seguro para {{muscles}} cabe na configuração de hoje (posição, equipamento, restrições). Adicione equipamento ou outra posição para trabalhá-los.",
       "customLeftOut_one": "Uma escolha ficou de fora: não é segura para você agora.",
       "customLeftOut_other": "{{count}} escolhas ficaram de fora: não são seguras para você agora.",
-      "painToday": "{{muscles}} fica de fora hoje por causa da dor que você informou. Volta amanhã se estiver tudo bem."
+      "painToday": "{{muscles}} fica de fora hoje por causa da dor que você informou. Volta amanhã se estiver tudo bem.",
+      "pullAdded": "Incluímos um exercício de puxar para equilibrar."
     }
   },
   "tabs": {

@@ -680,6 +680,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     weekMoves.pull + pullNow() < Math.ceil(0.9 * (weekMoves.push + pushNow()));
   const verticalDue = () =>
     !verticalThisWeek && !main.some((i) => realVertical(byIdAll.get(i.exerciseId)));
+  const swappedForPull = new Set<string>();
   for (let swaps = 0; swaps < slots; swaps++) {
     if (onlyTargets || input.dayGroups?.length || pushNow() < 2) break;
     if (!pullShortNow() && !(verticalDue() && swaps === 0)) break;
@@ -694,6 +695,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     }
     add(pick, { muscle: topPrimary(pick)!, family: [topPrimary(pick)!], goal: defaultGoal });
     added.set(pick.id, 'pull');
+    swappedForPull.add(pick.id);
   }
   if (!main.length && allTargets.length && !readyTargets.length && !focused) {
     // Everything chosen is still recovering and nothing else is ready:
@@ -833,8 +835,13 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
       }),
     ),
   ];
-  if (allTargets.length && kept.length && !focused)
-    notes.push({ key: 'generator.notes.balance', groups: kept });
+  // A pull that took a chosen push muscle's slot gets its own note, so the
+  // person knows the goal wasn't ignored (Daniel, Phase 18).
+  const pullSwapKept = main.some((i) => swappedForPull.has(i.exerciseId));
+  const others = pullSwapKept ? kept.filter((g) => g !== 'pull') : kept;
+  if (allTargets.length && others.length && !focused)
+    notes.push({ key: 'generator.notes.balance', groups: others });
+  if (pullSwapKept && !focused) notes.push({ key: 'generator.notes.pullAdded' });
 
   // The first loaded lift leads, so its ramp-up sits right before it (QA round 2).
   const leads = (e: Exercise | undefined) => !!e?.loaded && !e.isolation;

@@ -127,7 +127,9 @@ export type GeneratorNote =
   /** Chosen muscles with no safe exercise for this setup today (QA R2-10). */
   | { key: 'generator.notes.unavailable'; muscles: string[] }
   /** Chosen muscles left out today after pain was reported (QA R4 P2). */
-  | { key: 'generator.notes.painToday'; muscles: string[] };
+  | { key: 'generator.notes.painToday'; muscles: string[] }
+  /** A chosen push muscle gave its slot to a pull move (Daniel, Phase 18). */
+  | { key: 'generator.notes.pullAdded' };
 
 export type GeneratedSession = {
   items: SessionItem[];

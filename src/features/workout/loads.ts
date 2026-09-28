@@ -1,4 +1,5 @@
 import type { Exercise } from '../exercises/types';
+import { isMachineItem } from '../equipment/catalog';
 import { needsJointCare } from '../generator/filters';
 import type { GeneratorInput, SessionItem } from '../generator/types';
 import { muscleByKey } from '../muscles';
@@ -16,9 +17,12 @@ import type { LoadUnit, SetLog, WorkoutRecord } from './types';
  *   or +1 rep for bodyweight and bands;
  * - both of those sessions at the current load: one step, then two more
  *   sessions before the next (QA R6 P2: it went up twice in a row);
- * - joint care and 60+ progress more slowly: +1 rep before any load; 60+ and
- *   heart or blood-pressure conditions then take the smaller of +5 lb /
- *   +2.5 kg and ~10% (QA R6 P2: 25 → 35 lb was +40%);
+ * - joint care and 60+ progress more slowly: +1 rep before any load;
+ * - 60+ and heart or blood-pressure conditions step by what the equipment
+ *   really offers (Daniel, Phase 18: dumbbells and barbells 5 lb, machines
+ *   and cables the next plate of the stack); when that step is more than
+ *   ~10% of the load, reps go up first, to the top of the range + 2, and
+ *   only then the load (QA R6 P2: 25 → 35 lb was +40%);
  * - bodyweight at the top of the range for 4 sessions: try a harder version;
  * - reps missed in the last 2 sessions → keep; missed in the last 3 → lower
  *   one step;
@@ -46,8 +50,24 @@ export const LOWER_STEP: Record<LoadUnit, number> = { lb: 10, kg: 5 };
 const MAX_EASY_RPE = 8;
 /** Sessions at the top of the range before a harder bodyweight version. */
 export const HARDER_AFTER = 4;
-/** Smallest load step shown for the gentle ~10% rule. */
-const FINE_STEP: Record<LoadUnit, number> = { lb: 2.5, kg: 1 };
+/** A step over this share of the load is too big for 60+ and heart / BP. */
+const GENTLE_SHARE = 0.1;
+
+/**
+ * The smallest real load step for the exercise's equipment: dumbbells come
+ * in 5 lb (2 kg) pairs, barbells take 2.5 lb (1.25 kg) a side, and machine
+ * and cable stacks move one plate (10 lb / 5 kg on most stacks). Null for
+ * equipment with no weight steps.
+ */
+export function equipmentStep(e: Pick<Exercise, 'equipment'>, unit: LoadUnit): number | null {
+  const has = (...items: string[]) => e.equipment.some((q) => items.includes(q));
+  if (has('barbell', 'ez_bar', 'trap_bar', 'smith_machine', 'landmine', 'weight_plates'))
+    return { lb: 5, kg: 2.5 }[unit];
+  if (has('dumbbells')) return { lb: 5, kg: 2 }[unit];
+  if (has('kettlebells')) return { lb: 10, kg: 4 }[unit];
+  if (e.equipment.some(isMachineItem)) return { lb: 10, kg: 5 }[unit];
+  return null;
+}
 
 const LOWER_PATTERNS = [
   'squat',
@@ -136,20 +156,24 @@ export function loadAdvice(input: {
 
   const load = toUnit(lastLoaded!.load!, lastLoaded!.unit ?? unit, unit);
   const baseStep = (isLowerBody(exercise) && !minor ? LOWER_STEP : UPPER_STEP)[unit];
-  // 60+ and heart / blood pressure: the smaller of +5 lb (+2.5 kg) and ~10%.
+  // 60+ and heart / blood pressure: the equipment's real step, reps first
+  // when that step is more than ~10% of the load (Daniel, Phase 18).
   const gentle = input.mode === 'senior' || !!input.cardio;
-  const tenth = Math.max(
-    FINE_STEP[unit],
-    Math.round((load * 0.1) / FINE_STEP[unit]) * FINE_STEP[unit],
-  );
-  const step = gentle ? Math.min(UPPER_STEP[unit], tenth, baseStep) : baseStep;
+  const step = gentle ? (equipmentStep(exercise, unit) ?? baseStep) : baseStep;
+  const bigStep = gentle && step > load * GENTLE_SHARE + 1e-9;
   if (upDue) {
-    if (slow) {
-      // +1 rep before any load: once the last session already beat the top
-      // of the range by a rep, the load goes up one step.
-      const beatTop = sessions[0].logs.every((l) => done(l) > top);
-      if (!beatTop) return { kind: 'reps', reps: top + 1, change: 'up', load, unit };
-    }
+    // Reps above the top before any load: +2 when the step is big, +1 for
+    // 60+ and joint care otherwise.
+    const ceiling = bigStep ? top + 2 : slow ? top + 1 : top;
+    const least = Math.min(...sessions[0].logs.map(done));
+    if (least < ceiling)
+      return {
+        kind: 'reps',
+        reps: Math.min(ceiling, Math.max(top + 1, least + 1)),
+        change: 'up',
+        load,
+        unit,
+      };
     return { kind: 'load', load: load + step, unit, change: 'up' };
   }
   if (missedThree) return { kind: 'load', load: Math.max(0, load - step), unit, change: 'down' };

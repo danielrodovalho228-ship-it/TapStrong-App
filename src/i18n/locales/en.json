@@ -3524,7 +3524,8 @@
       "unavailable": "No safe exercise for {{muscles}} fits today’s setup (position, equipment, restrictions). Add equipment or another position to work them.",
       "customLeftOut_one": "One pick was left out: it isn’t safe for you right now.",
       "customLeftOut_other": "{{count}} picks were left out: they aren’t safe for you right now.",
-      "painToday": "{{muscles}} left out today after the pain you reported. Back tomorrow if it feels fine."
+      "painToday": "{{muscles}} left out today after the pain you reported. Back tomorrow if it feels fine.",
+      "pullAdded": "We added a pull exercise to keep things balanced."
     }
   },
   "tabs": {
