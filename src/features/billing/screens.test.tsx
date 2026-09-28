@@ -157,6 +157,35 @@ describe('Paywall', () => {
   });
 });
 
+describe('Terms, Privacy and Restore (QA R7-04)', () => {
+  it.each([
+    ['paywall', PaywallScreen],
+    ['plans', PlansScreen],
+  ])('%s shows Restore purchases, Terms of Use and Privacy Policy', async (_n, Screen) => {
+    mockParams = {};
+    await render(<Screen />);
+    expect(screen.getByRole('link', { name: 'Restore purchases' })).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'Terms of Use' })).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'Privacy Policy' })).toBeTruthy();
+  });
+
+  it('opens the configured addresses', () => {
+    jest.isolateModules(() => {
+      process.env.EXPO_PUBLIC_TERMS_URL = 'https://example.test/terms';
+      process.env.EXPO_PUBLIC_PRIVACY_URL = 'https://example.test/privacy';
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const legal = require('@/lib/legal') as typeof import('@/lib/legal');
+      const open = jest.spyOn(Linking, 'openURL').mockResolvedValue(true);
+      legal.openLegal(legal.TERMS_URL);
+      legal.openLegal(legal.PRIVACY_URL);
+      expect(open).toHaveBeenCalledWith('https://example.test/terms');
+      expect(open).toHaveBeenCalledWith('https://example.test/privacy');
+      delete process.env.EXPO_PUBLIC_TERMS_URL;
+      delete process.env.EXPO_PUBLIC_PRIVACY_URL;
+    });
+  });
+});
+
 describe('Plans (mockup 19)', () => {
   it('starts the Family trial (simulated) once the account is saved', async () => {
     await act(() => useAccountStore.getState().update({ saved: true }));

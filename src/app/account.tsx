@@ -14,6 +14,7 @@ import {
   TextLink,
   ToggleRow,
 } from '@/components/ui';
+import { LegalLinks } from '@/features/legal/LegalLinks';
 import { sendEmailCode, signOut, verifyEmailCode, type EmailMode } from '@/features/account/auth';
 import { afterAccountSaved, syncNow } from '@/features/account/cloud';
 import { useAccountStore } from '@/features/account/store';
@@ -216,6 +217,7 @@ function AccountScreenInner() {
       <AppText variant="caption" color={colors.muted} style={styles.center}>
         {t('account.terms')}
       </AppText>
+      <LegalLinks />
     </Screen>
   );
 }

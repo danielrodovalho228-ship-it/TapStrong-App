@@ -11,6 +11,7 @@ import { useOwnerAccess } from '@/features/family/OwnerOnly';
 import { ParentGate, ParentPinSetup } from '@/features/family/ParentGate';
 import { useParentPinStore } from '@/features/family/parentPin';
 import { activeProfile, canShare, useFamilyStore } from '@/features/family/store';
+import { LegalLinks } from '@/features/legal/LegalLinks';
 import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { clock } from '@/lib/clock';
@@ -129,6 +130,14 @@ export default function SettingsScreen() {
           label={t('settings.delete')}
           onPress={() => router.push('/delete-account')}
         />
+      </View>
+      {/* About: Terms of Use and Privacy Policy (QA R7-04). */}
+      <View style={styles.danger}>
+        <AppText variant="h3">{t('legal.title')}</AppText>
+        <AppText variant="caption" color={colors.mutedStrong}>
+          {t('legal.body')}
+        </AppText>
+        <LegalLinks />
       </View>
     </Screen>
   );

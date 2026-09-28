@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText, Button, Notice, TextLink } from '@/components/ui';
+import { LegalLinks } from '@/features/legal/LegalLinks';
 import { useAccountStore } from '@/features/account/store';
 import { clock } from '@/lib/clock';
 import { spacing, useColors } from '@/theme';
@@ -114,6 +115,8 @@ export function SubscribeFooter({
           onPress={() => router.push('/billing')}
         />
       </View>
+      {/* Paywall and Plans: restore, Terms and Privacy (QA R7-04). */}
+      <LegalLinks withRestore />
     </View>
   );
 }

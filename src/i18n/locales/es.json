@@ -5089,5 +5089,11 @@
       "dark": "Siempre el tema oscuro"
     },
     "note": "Se guarda en este teléfono. Cambia al momento."
+  },
+  "legal": {
+    "terms": "Términos de uso",
+    "privacy": "Política de privacidad",
+    "title": "Acerca de",
+    "body": "Cómo TapStrong trata tus datos y tu suscripción."
   }
 }

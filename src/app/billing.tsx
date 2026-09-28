@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Linking, Platform, View } from 'react-native';
 
 import { AppText, Button, Card, Header, Notice, Screen, TextLink } from '@/components/ui';
+import { LegalLinks } from '@/features/legal/LegalLinks';
 import { refreshBilling, restore } from '@/features/billing/actions';
 import {
   currentPlan,
@@ -137,6 +138,7 @@ function BillingScreenInner() {
           onPress={() => router.push('/delete-account')}
         />
       </View>
+      <LegalLinks />
     </Screen>
   );
 }

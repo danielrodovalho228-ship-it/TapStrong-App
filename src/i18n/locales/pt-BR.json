@@ -5120,5 +5120,11 @@
       "dark": "Sempre o tema escuro"
     },
     "note": "Fica salvo neste celular. Muda na hora."
+  },
+  "legal": {
+    "terms": "Termos de Uso",
+    "privacy": "Política de Privacidade",
+    "title": "Sobre",
+    "body": "Como o TapStrong trata seus dados e sua assinatura."
   }
 }
