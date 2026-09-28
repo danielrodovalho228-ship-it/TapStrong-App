@@ -375,7 +375,9 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   const defaultGoal = defaultMuscleGoal(input.mainGoals);
   const allTargets: Target[] = input.muscleGoals.map((g) => ({
     muscle: g.muscleKey,
-    family: muscleFamily(g.muscleKey),
+    // A parent goal also matches moves tagged with the parent itself: seated
+    // balance holds are tagged "abs", not upper or lower abs (QA R6-07).
+    family: [...new Set([...muscleFamily(g.muscleKey), g.muscleKey])],
     goal: g.goal,
   }));
   // Rules count the parent muscle: upper, middle and lower chest are all chest (QA D-03).
@@ -1000,7 +1002,10 @@ export function generateBalanceSession(
     minutes,
     mobilityOnly: true,
     mainGoals: ['balance'],
-    muscleGoals: ['calves', 'abs', 'glutes'].map((muscleKey) => ({
+    // Standing holds work calves and glutes; seated and supported ones (trunk
+    // control, reach-outs, weight shifts, head turns) work the trunk, so a
+    // seated-only person or a sore knee still has a balance session (QA R6-07).
+    muscleGoals: ['calves', 'abs', 'glutes', 'obliques'].map((muscleKey) => ({
       muscleKey,
       goal: 'balance' as const,
     })),

@@ -36,7 +36,8 @@ export function SeniorHome({
 }: {
   onStart: () => void;
   onMobility: () => void;
-  onBalance: () => void;
+  /** Missing when no balance session can be built today (QA R6-07). */
+  onBalance?: () => void;
   targets: string[];
   /** The session's own length, not the profile setting (QA R3-06). */
   minutes: number;
@@ -133,11 +134,13 @@ export function SeniorHome({
             {t(stoppedToday ? 'home.stoppedTitle' : 'home.recoveringTitle')}
           </AppText>
           <AppText>{t(stoppedToday ? 'home.stoppedBody' : 'home.recoveringBody')}</AppText>
-          <Button
-            variant="teal"
-            label={t('home.balance', { minutes: MOBILITY_MINUTES })}
-            onPress={onBalance}
-          />
+          {onBalance ? (
+            <Button
+              variant="teal"
+              label={t('home.balance', { minutes: MOBILITY_MINUTES })}
+              onPress={onBalance}
+            />
+          ) : null}
           <Button
             variant="secondary"
             label={t('home.mobility', { minutes: MOBILITY_MINUTES })}
@@ -170,11 +173,13 @@ export function SeniorHome({
             onPress={onMobility}
           />
           {/* Short balance always offered at 60+ (QA R5 P2). */}
-          <BigLink
-            icon="shield"
-            label={t('home.balance', { minutes: MOBILITY_MINUTES })}
-            onPress={onBalance}
-          />
+          {onBalance ? (
+            <BigLink
+              icon="shield"
+              label={t('home.balance', { minutes: MOBILITY_MINUTES })}
+              onPress={onBalance}
+            />
+          ) : null}
         </>
       ) : null}
 

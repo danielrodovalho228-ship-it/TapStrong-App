@@ -13676,7 +13676,8 @@
       ],
       "joints": [
         ["elbow", "flexion", "full"],
-        ["wrist", "grip", "partial"]
+        ["wrist", "grip", "partial"],
+        ["knee", "deep_bend", "partial"]
       ],
       "rangeLimit": []
     },
@@ -14181,7 +14182,8 @@
       ],
       "joints": [
         ["hip", "flexion", "partial"],
-        ["lower_back", "flexion", "partial"]
+        ["lower_back", "flexion", "partial"],
+        ["knee", "deep_bend", "partial"]
       ],
       "rangeLimit": []
     },
@@ -14226,7 +14228,8 @@
       ],
       "joints": [
         ["hip", "flexion", "isometric"],
-        ["lower_back", "flexion", "isometric"]
+        ["lower_back", "flexion", "isometric"],
+        ["knee", "deep_bend", "isometric"]
       ],
       "rangeLimit": []
     },
@@ -14272,7 +14275,8 @@
       ],
       "joints": [
         ["lower_back", "rotation", "partial"],
-        ["hip", "flexion", "partial"]
+        ["hip", "flexion", "partial"],
+        ["knee", "deep_bend", "partial"]
       ],
       "rangeLimit": []
     },
@@ -14367,7 +14371,8 @@
       "joints": [
         ["hip", "flexion", "isometric"],
         ["hip", "rotation", "partial"],
-        ["hip", "abduction", "partial"]
+        ["hip", "abduction", "partial"],
+        ["knee", "deep_bend", "isometric"]
       ],
       "rangeLimit": []
     },
@@ -14459,7 +14464,8 @@
       ],
       "joints": [
         ["hip", "adduction", "partial"],
-        ["hip", "flexion", "isometric"]
+        ["hip", "flexion", "isometric"],
+        ["knee", "deep_bend", "isometric"]
       ],
       "rangeLimit": []
     },
@@ -14940,7 +14946,10 @@
         ["glutes", "primary", 0.6],
         ["hamstrings", "secondary", 0.4]
       ],
-      "joints": [["hip", "extension", "isometric"]],
+      "joints": [
+        ["hip", "extension", "isometric"],
+        ["knee", "deep_bend", "isometric"]
+      ],
       "rangeLimit": []
     },
     {
@@ -15009,7 +15018,10 @@
         ["glutes", "primary", 0.7],
         ["hamstrings", "secondary", 0.4]
       ],
-      "joints": [["hip", "extension", "partial"]],
+      "joints": [
+        ["hip", "extension", "partial"],
+        ["knee", "deep_bend", "partial"]
+      ],
       "rangeLimit": []
     },
     {
@@ -16272,7 +16284,8 @@
       ],
       "joints": [
         ["hip", "flexion", "partial"],
-        ["shoulder", "flexion", "partial"]
+        ["shoulder", "flexion", "partial"],
+        ["knee", "deep_bend", "isometric"]
       ],
       "rangeLimit": []
     },
@@ -16348,7 +16361,8 @@
       ],
       "joints": [
         ["hip", "flexion", "partial"],
-        ["lower_back", "rotation", "partial"]
+        ["lower_back", "rotation", "partial"],
+        ["knee", "deep_bend", "partial"]
       ],
       "rangeLimit": ["lower_back.rotation"]
     },
@@ -16374,7 +16388,8 @@
       "joints": [
         ["hip", "flexion", "partial"],
         ["shoulder", "flexion", "partial"],
-        ["ankle", "plantarflexion", "partial"]
+        ["ankle", "plantarflexion", "partial"],
+        ["knee", "deep_bend", "partial"]
       ],
       "rangeLimit": []
     },
@@ -17639,7 +17654,8 @@
       "joints": [
         ["lower_back", "rotation", "full"],
         ["shoulder", "pull", "partial"],
-        ["wrist", "grip", "isometric"]
+        ["wrist", "grip", "isometric"],
+        ["knee", "pivot", "partial"]
       ],
       "rangeLimit": [],
       "rehab": true
@@ -18355,7 +18371,10 @@
         ["glutes", "primary", 0.8],
         ["lowerBack", "secondary", 0.3]
       ],
-      "joints": [["hip", "flexion", "partial"]],
+      "joints": [
+        ["hip", "flexion", "partial"],
+        ["knee", "deep_bend", "partial"]
+      ],
       "rangeLimit": []
     },
     {
@@ -18376,7 +18395,10 @@
         ["glutes", "primary", 0.8],
         ["hips", "secondary", 0.4]
       ],
-      "joints": [["hip", "adduction", "partial"]],
+      "joints": [
+        ["hip", "adduction", "partial"],
+        ["knee", "deep_bend", "partial"]
+      ],
       "rangeLimit": []
     },
     {

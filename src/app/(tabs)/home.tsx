@@ -15,7 +15,7 @@ import { useProgressStore } from '@/features/progress/store';
 import { SeniorHome } from '@/features/senior/SeniorHome';
 import { muscleLabel } from '@/features/onboarding/summaries';
 import { LegendRow, RecoveryBody, STATE_COLOR } from '@/features/workout/components/RecoveryBody';
-import { MOBILITY_MINUTES } from '@/features/generator';
+import { generateBalanceSession, MOBILITY_MINUTES } from '@/features/generator';
 import { programStatus } from '@/features/program/apply';
 import { dayName, sessionSummary } from '@/features/program/block';
 import { WeekStrip } from '@/features/program/components/WeekStrip';
@@ -113,6 +113,9 @@ export default function HomeScreen() {
     const id = createMobilityWorkout(input);
     router.push({ pathname: '/workout/[id]', params: { id: id ?? 'unavailable' } });
   };
+  // Short balance is offered only when one can be built (QA R6-07): never a
+  // button that leads to "unavailable".
+  const balanceOk = !!input && !generateBalanceSession(input).error;
   const openBalance = () => {
     const id = createBalanceWorkout(input);
     router.push({ pathname: '/workout/[id]', params: { id: id ?? 'unavailable' } });
@@ -181,7 +184,7 @@ export default function HomeScreen() {
       <SeniorHome
         onStart={openWorkout}
         onMobility={openMobility}
-        onBalance={openBalance}
+        onBalance={balanceOk ? openBalance : undefined}
         targets={goals}
         minutes={cardMinutes}
         allRecovering={allRecovering}
@@ -235,11 +238,13 @@ export default function HomeScreen() {
             label={t('home.mobility', { minutes: MOBILITY_MINUTES })}
             onPress={openMobility}
           />
-          <Button
-            variant="onDark"
-            label={t('home.balance', { minutes: MOBILITY_MINUTES })}
-            onPress={openBalance}
-          />
+          {balanceOk ? (
+            <Button
+              variant="onDark"
+              label={t('home.balance', { minutes: MOBILITY_MINUTES })}
+              onPress={openBalance}
+            />
+          ) : null}
           <Button variant="onDark" label={t('home.rest')} onPress={() => setResting(true)} />
           {resting ? (
             <AppText variant="caption" color={colors.dark.text}>
@@ -314,7 +319,7 @@ export default function HomeScreen() {
             label={t('home.mobility', { minutes: MOBILITY_MINUTES })}
             onPress={openMobility}
           />
-          {balanceUser ? (
+          {balanceUser && balanceOk ? (
             <Button
               variant="secondary"
               label={t('home.balance', { minutes: MOBILITY_MINUTES })}
