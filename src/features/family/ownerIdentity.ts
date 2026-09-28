@@ -3,6 +3,8 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { secureStorage } from '@/lib/secureStorage';
 
+import { ageFrom } from '../profile/age';
+
 import type { LocalProfile } from './store';
 
 /**
@@ -67,12 +69,28 @@ export const useOwnerIdentityStore = create<State>()(
  * - minors: it stays unproven, so the parent PIN is asked until the owner
  *   proves it (ParentGate records the owner as active on a correct PIN).
  */
-export function seedOwnerIdentity(profiles: Pick<LocalProfile, 'id' | 'kind' | 'consentAt'>[]) {
+export function seedOwnerIdentity(
+  profiles: Pick<LocalProfile, 'id' | 'kind' | 'consentAt'>[],
+  /** Each profile's stored birth date, when known (QA R7 P2: not only `kind`). */
+  birthOf: (id: string) => { year?: number; month?: number } | null = () => null,
+) {
   const s = useOwnerIdentityStore.getState();
   if (!s.ownerId || s.activeId) return;
   const minors: Record<string, MinorLock> = { ...s.minors };
-  for (const p of profiles)
-    if (p.kind === 'child' && !minors[p.id]) minors[p.id] = p.consentAt ? 'under13' : 'teen';
+  for (const p of profiles) {
+    if (minors[p.id]) continue;
+    if (p.kind === 'child') {
+      minors[p.id] = p.consentAt ? 'under13' : 'teen';
+      continue;
+    }
+    // A profile whose kind was edited still shows its age in its own data.
+    const birth = birthOf(p.id);
+    if (p.id !== s.ownerId && birth?.year && birth.month) {
+      const age = ageFrom({ year: birth.year, month: birth.month });
+      if (age < 13) minors[p.id] = 'under13';
+      else if (age < 18) minors[p.id] = 'teen';
+    }
+  }
   useOwnerIdentityStore.setState({
     minors,
     activeId: Object.keys(minors).length ? null : s.ownerId,

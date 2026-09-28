@@ -4695,7 +4695,8 @@
     "repeatPin": "Repeat the PIN",
     "mismatch": "The PINs don’t match. Try again.",
     "savePin": "Save PIN",
-    "continue": "Confirm"
+    "continue": "Confirm",
+    "createWithEmail": "Set a PIN with the account email"
   },
   "ownerOnly": {
     "title": "For the account owner",

@@ -68,8 +68,11 @@ export default function SafetyScreen() {
       safetyDone: true,
     });
     if (redFlag) track('safety_red_flag');
-    if (edit) router.back();
-    else router.push('/onboarding/profile');
+    // Opened from a link, there is no screen to go back to (QA R7 P2).
+    if (edit) {
+      if (router.canGoBack()) router.back();
+      else router.replace('/restrictions');
+    } else router.push('/onboarding/profile');
   };
   const onContinue = () => {
     if (staged && minorGated && removesSomething) return setGate(true);
@@ -85,12 +88,24 @@ export default function SafetyScreen() {
     <Screen
       header={<Header onBack={() => router.back()} eyebrow={eyebrow} />}
       footer={
-        <>
-          <Button label={t('common.continue')} onPress={onContinue} disabled={!canContinue} />
-          <AppText variant="caption" color={colors.muted} style={styles.center}>
-            {t('safety.footnote')}
-          </AppText>
-        </>
+        // The PIN takes the footer, so it is always on screen (QA R7 P2: it
+        // was below the fold).
+        gate ? (
+          <ParentGate
+            onPass={() => {
+              setGate(false);
+              save();
+            }}
+            onCancel={() => setGate(false)}
+          />
+        ) : (
+          <>
+            <Button label={t('common.continue')} onPress={onContinue} disabled={!canContinue} />
+            <AppText variant="caption" color={colors.muted} style={styles.center}>
+              {t('safety.footnote')}
+            </AppText>
+          </>
+        )
       }
     >
       <AppText variant="h1" accessibilityRole="header">
@@ -164,15 +179,6 @@ export default function SafetyScreen() {
       </Section>
 
       {redFlag ? null : <Notice>{t('safety.noteOk')}</Notice>}
-      {gate ? (
-        <ParentGate
-          onPass={() => {
-            setGate(false);
-            save();
-          }}
-          onCancel={() => setGate(false)}
-        />
-      ) : null}
     </Screen>
   );
 }

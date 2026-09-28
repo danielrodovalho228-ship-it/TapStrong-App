@@ -52,9 +52,10 @@ export function ParentGate({ onPass, onCancel }: { onPass: () => void; onCancel?
     onPass();
   };
 
-  // Forgotten PIN: the owner proves it with an email code (Phase 12).
-  if (hasPin && resetting)
-    return <ParentPinReset onDone={pass} onCancel={() => setResetting(false)} />;
+  // Forgotten PIN: the owner proves it with an email code (Phase 12). With no
+  // PIN yet on an unproven profile (an upgraded phone), the same email code
+  // lets the owner create one, so nobody is locked out (QA R7 P2).
+  if (resetting) return <ParentPinReset onDone={pass} onCancel={() => setResetting(false)} />;
 
   if (!hasPin) {
     return owner ? (
@@ -63,6 +64,13 @@ export function ParentGate({ onPass, onCancel }: { onPass: () => void; onCancel?
       <Card style={styles.card}>
         <AppText variant="h3">{t('parentGate.title')}</AppText>
         <Notice>{t('parentGate.noPin')}</Notice>
+        {ownerEmail() ? (
+          <Button
+            variant="secondary"
+            label={t('parentGate.createWithEmail')}
+            onPress={() => setResetting(true)}
+          />
+        ) : null}
         {onCancel ? <Button variant="ghost" label={t('common.back')} onPress={onCancel} /> : null}
       </Card>
     );

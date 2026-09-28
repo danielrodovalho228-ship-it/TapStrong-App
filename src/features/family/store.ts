@@ -77,10 +77,27 @@ export const useFamilyStore = create<State>()(
   ),
 );
 
+/** A profile's birth date from its saved data (the active one: the live store's). */
+function storedBirth(id: string): { year?: number; month?: number } | null {
+  try {
+    const live = id === useFamilyStore.getState().activeId;
+    const raw = kvStorage.getItem(live ? 'onboarding' : `profile-snapshot:${id}`);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as {
+      state?: { birthYear?: number; birthMonth?: number };
+      onboarding?: { birthYear?: number; birthMonth?: number };
+    };
+    const data = live ? parsed.state : parsed.onboarding;
+    return data ? { year: data.birthYear, month: data.birthMonth } : null;
+  } catch {
+    return null;
+  }
+}
+
 // v1 → v2 owner record: seeded once both stores have loaded (QA R6-05).
 function seedWhenLoaded() {
   if (useOwnerIdentityStore.persist.hasHydrated() && useFamilyStore.persist.hasHydrated())
-    seedOwnerIdentity(useFamilyStore.getState().profiles);
+    seedOwnerIdentity(useFamilyStore.getState().profiles, storedBirth);
 }
 useOwnerIdentityStore.persist.onFinishHydration(seedWhenLoaded);
 useFamilyStore.persist.onFinishHydration(seedWhenLoaded);

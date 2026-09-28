@@ -88,12 +88,17 @@ export default function MovementPlanScreen() {
         />
       }
       footer={
-        <Button
-          variant="accent"
-          label={t('movementPain.plan.start', { minutes: SESSION_MINUTES })}
-          onPress={start}
-          disabled={!input}
-        />
+        // The PIN takes the footer, never half under it (QA R7 P2).
+        gate ? (
+          <ParentGate onPass={end} onCancel={() => setGate(false)} />
+        ) : (
+          <Button
+            variant="accent"
+            label={t('movementPain.plan.start', { minutes: SESSION_MINUTES })}
+            onPress={start}
+            disabled={!input}
+          />
+        )
       }
     >
       <Card style={styles.card}>
@@ -182,7 +187,6 @@ export default function MovementPlanScreen() {
         label={t('movementPain.plan.better')}
         onPress={() => (access === 'gate' && minor ? setGate(true) : end())}
       />
-      {gate ? <ParentGate onPass={end} onCancel={() => setGate(false)} /> : null}
       <AppText variant="caption" color={colors.muted}>
         {t('movementPain.disclaimer')}
       </AppText>

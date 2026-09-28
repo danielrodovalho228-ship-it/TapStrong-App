@@ -162,7 +162,9 @@ export default function MovementPainScreen() {
     <Screen
       header={header}
       footer={
-        step === 'stop' ? (
+        pinGate ? (
+          <ParentGate onPass={commit} onCancel={() => setPinGate(false)} />
+        ) : step === 'stop' ? (
           // Straight to the restrictions list, where "Doctor first" now shows (QA round 2).
           <Button
             label={t('movementPain.stopDone')}
@@ -178,7 +180,6 @@ export default function MovementPainScreen() {
       }
     >
       {__DEV__ ? <Notice tone="warning">{t('movementPain.devOnly')}</Notice> : null}
-      {pinGate ? <ParentGate onPass={commit} onCancel={() => setPinGate(false)} /> : null}
 
       {step === 'gate' ? (
         <Card style={styles.card}>

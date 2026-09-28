@@ -4730,7 +4730,8 @@
     "repeatPin": "Repita o PIN",
     "mismatch": "Os PINs não conferem. Tente de novo.",
     "savePin": "Salvar PIN",
-    "continue": "Confirmar"
+    "continue": "Confirmar",
+    "createWithEmail": "Criar um PIN com o e-mail da conta"
   },
   "ownerOnly": {
     "title": "Para o titular da conta",

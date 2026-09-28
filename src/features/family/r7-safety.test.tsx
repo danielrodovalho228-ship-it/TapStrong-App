@@ -12,7 +12,7 @@ import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { clock } from '@/lib/clock';
 
-import { useOwnerIdentityStore } from './ownerIdentity';
+import { seedOwnerIdentity, useOwnerIdentityStore } from './ownerIdentity';
 import { useFamilyStore } from './store';
 import { ensureSelfProfile, switchProfile } from './switch';
 
@@ -127,5 +127,68 @@ describe('R7-03 edited birth year', () => {
     await act(() => ensureSelfProfile());
     await act(() => useOnboardingStore.getState().update({ birthMonth: 3, birthYear: 1990 }));
     expect(derive(useOnboardingStore.getState())?.mode).toBe('adult');
+  });
+});
+
+describe('R7 P2: legacy records and the PIN', () => {
+  it('a v1 record seeds minors from stored birth dates too, not only from `kind`', () => {
+    useOwnerIdentityStore.setState({ ownerId: 'owner', activeId: null, minors: {} });
+    const births: Record<string, { year: number; month: number }> = {
+      owner: { year: 1985, month: 1 },
+      sam: { year: 2011, month: 5 },
+    };
+    seedOwnerIdentity(
+      [
+        { id: 'owner', kind: 'self' },
+        // A teen whose kind was edited to "parent" before the upgrade.
+        { id: 'sam', kind: 'parent' },
+      ],
+      (id) => births[id] ?? null,
+    );
+    expect(useOwnerIdentityStore.getState().minors).toEqual({ sam: 'teen' });
+    expect(useOwnerIdentityStore.getState().activeId).toBeNull();
+  });
+
+  it('no PIN yet on an unproven profile: the owner can create one with the account email', async () => {
+    const { ParentGate } = jest.requireActual('./ParentGate') as typeof import('./ParentGate');
+    const account = jest.requireActual(
+      '@/features/account/store',
+    ) as typeof import('@/features/account/store');
+    await act(() => {
+      useFamilyStore.setState({
+        profiles: [
+          { id: 'owner', kind: 'self', createdAt: '' },
+          { id: 'sam', kind: 'child', createdAt: '' },
+        ],
+        activeId: 'owner',
+      });
+      useOwnerIdentityStore.setState({ ownerId: 'owner', activeId: null, minors: { sam: 'teen' } });
+      account.useAccountStore.getState().update({ saved: true, email: 'owner@example.test' });
+    });
+    await render(<ParentGate onPass={() => undefined} onCancel={() => undefined} />);
+    await fireEvent.press(screen.getByRole('button', { name: 'Set a PIN with the account email' }));
+    expect(screen.getByRole('button', { name: /code/i })).toBeTruthy();
+  });
+
+  it('a directly opened safety edit falls back to Restrictions', async () => {
+    const { router } = jest.requireMock('expo-router') as {
+      router: { canGoBack: () => boolean; replace: jest.Mock };
+    };
+    const canGoBack = router.canGoBack;
+    router.canGoBack = () => false;
+    await act(() => {
+      useFamilyStore.getState().reset();
+      useOnboardingStore.getState().reset();
+    });
+    await act(() => ensureSelfProfile());
+    await act(() =>
+      useOnboardingStore
+        .getState()
+        .update({ birthMonth: 3, birthYear: 1990, safetyDone: true, painAreas: ['knee'] }),
+    );
+    await render(<SafetyScreen />);
+    await fireEvent.press(screen.getByRole('button', { name: 'Continue' }));
+    expect(router.replace).toHaveBeenCalledWith('/restrictions');
+    router.canGoBack = canGoBack;
   });
 });
