@@ -64,7 +64,9 @@ export function blockReason(e: Exercise, input: GeneratorInput): string | null {
   if (rangeFor(e, input) === 'blocked') return 'painful_movement';
   if (input.mode === 'senior' && e.impact >= 2) return 'impact';
   if (input.conditions.some((c) => LOW_IMPACT_ONLY.includes(c)) && e.impact > 0) return 'impact';
-  if (e.level > userLevel(input.mode) + 2) return 'level';
+  // Experience (Settings, D4): new people stay closer to their level.
+  const reach = input.experience === 'new' ? 1 : input.experience === 'experienced' ? 3 : 2;
+  if (e.level > userLevel(input.mode) + reach) return 'level';
   return null;
 }
 

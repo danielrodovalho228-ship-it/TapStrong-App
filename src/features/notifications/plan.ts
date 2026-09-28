@@ -76,7 +76,10 @@ export function planNotifications(input: {
 
   if (prefs.reminders) {
     const { hour, minute } = parseTime(prefs.reminderTime);
-    for (const day of TRAINING_DAYS[input.daysPerWeek ?? 3] ?? TRAINING_DAYS[3]) {
+    const days = prefs.reminderDays?.length
+      ? prefs.reminderDays
+      : (TRAINING_DAYS[input.daysPerWeek ?? 3] ?? TRAINING_DAYS[3]);
+    for (const day of days) {
       out.push({ id: `reminder-${day}`, kind: 'reminder', weekday: day + 1, hour, minute });
     }
   }

@@ -10,6 +10,7 @@ import { ownerOnboarding } from '../family/profiles';
 import { retryPendingDeletes } from '../family/remote';
 import { activeProfile, useFamilyStore } from '../family/store';
 import { derive } from '../onboarding/derived';
+import { repairPhaseDone } from '../movement/progress';
 import { useMovementPainStore } from '../movement/store';
 import { useOnboardingStore } from '../onboarding/store';
 import { useProgressStore } from '../progress/store';
@@ -62,7 +63,11 @@ export function syncNow(): Promise<SyncResult> {
         workouts: workouts.workouts,
         streak: workouts.streak,
         activity: muscleActivity(workouts.workouts, library, now),
-        badges: badgeStatus(workouts.workouts, workouts.streak, library, now)
+        badges: badgeStatus(workouts.workouts, workouts.streak, library, now, {
+          mode: derive(useOnboardingStore.getState())?.mode,
+          unit: useOnboardingStore.getState().units === 'imperial' ? 'lb' : 'kg',
+          repairPhaseDone: repairPhaseDone(useMovementPainStore.getState().reports),
+        })
           .filter((b) => b.earned)
           .map((b) => b.key),
         exerciseIds,

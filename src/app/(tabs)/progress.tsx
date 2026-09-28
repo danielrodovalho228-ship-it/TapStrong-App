@@ -9,6 +9,7 @@ import {
   Chip,
   Icon,
   Screen,
+  SegmentedControl,
   TextLink,
   ToggleRow,
   type IconName,
@@ -17,6 +18,8 @@ import { MovementPainEntry } from '@/features/movement/Entry';
 import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { muscleLabel } from '@/features/onboarding/summaries';
+import { ActivityCard } from '@/features/progress/components/ActivityCard';
+import { BodyPanel } from '@/features/progress/components/BodyPanel';
 import { formatLength, formatWeight } from '@/features/progress/format';
 import { checkinDue, measurementsAllowed, photosAllowed } from '@/features/progress/checkin';
 import { WeekChart } from '@/features/progress/components/WeekChart';
@@ -52,12 +55,11 @@ export default function ProgressScreen() {
     weightKg: [...checkins].reverse().find((c) => c.weightKg)?.weightKg,
   };
   const adult = measurementsAllowed(mode);
+  const [view, setView] = useState<'activity' | 'body'>('activity');
+  const unit = profile.units === 'imperial' ? 'lb' : 'kg';
 
-  return (
-    <Screen>
-      <AppText variant="h1" accessibilityRole="header">
-        {t('progress.title')}
-      </AppText>
+  const activity = (
+    <>
       <View style={styles.stats}>
         <Stat
           label={t('progress.streak')}
@@ -68,6 +70,8 @@ export default function ProgressScreen() {
         <Stat label={t('progress.workouts')} value={String(count)} />
         <Stat label={t('progress.sets')} value={String(sets)} />
       </View>
+
+      <ActivityCard mode={mode} unit={unit} />
 
       <Card style={styles.card}>
         <AppText variant="h3">{t('progress.chart.title')}</AppText>
@@ -128,6 +132,11 @@ export default function ProgressScreen() {
 
       <View style={styles.links}>
         <LinkRow
+          icon="star"
+          label={t('progress.links.badges')}
+          onPress={() => router.push('/milestone')}
+        />
+        <LinkRow
           icon="shield"
           label={t('progress.links.repair')}
           onPress={() => router.push('/repair')}
@@ -160,6 +169,26 @@ export default function ProgressScreen() {
           />
         </Card>
       ) : null}
+    </>
+  );
+
+  return (
+    <Screen>
+      <AppText variant="h1" accessibilityRole="header">
+        {t('progress.title')}
+      </AppText>
+      {adult ? (
+        <SegmentedControl
+          accessibilityLabel={t('progress.segment.label')}
+          value={view}
+          onChange={setView}
+          options={[
+            { value: 'activity', label: t('progress.segment.activity') },
+            { value: 'body', label: t('progress.segment.body') },
+          ]}
+        />
+      ) : null}
+      {adult && view === 'body' ? <BodyPanel /> : activity}
     </Screen>
   );
 }

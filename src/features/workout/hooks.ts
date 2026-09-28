@@ -21,6 +21,7 @@ import { activeAreas, doctorFirstAreas, useRestrictionsStore } from '../restrict
 import { customToExercise } from '../library/custom';
 import { useLibraryStore } from '../library/store';
 import { withProgram } from '../program/apply';
+import { usePrefsStore } from '../settings/store';
 import { useProgramStore } from '../program/store';
 
 import { withFocus, recentSessions } from './plan';
@@ -54,6 +55,8 @@ export function useGeneratorInput(library: Exercise[]): GeneratorInput | null {
   const reports = useMovementPainStore((s) => s.reports);
   const program = useProgramStore();
   const favourites = useLibraryStore((s) => s.favourites);
+  const shortWarmup = usePrefsStore((s) => s.warmup === 'short');
+  const experience = usePrefsStore((s) => s.experience);
   const today = localDate(clock.now());
   const base = inputFromProfile(profile, library, __DEV__, {
     restrictions: [
@@ -69,7 +72,14 @@ export function useGeneratorInput(library: Exercise[]): GeneratorInput | null {
   });
   // A ready-made plan and the deload week apply on top (improvements v1, A2/A5).
   // Starred exercises are preferred when safe (B4).
-  return base ? { ...withProgram(base, library, workouts, program, today), favourites } : null;
+  return base
+    ? {
+        ...withProgram(base, library, workouts, program, today),
+        favourites,
+        shortWarmup,
+        experience,
+      }
+    : null;
 }
 
 /**

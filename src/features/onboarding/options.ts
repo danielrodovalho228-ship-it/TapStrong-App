@@ -1,8 +1,6 @@
-import type {
-  Equipment,
-  MainGoal,
-  MuscleGoal,
-} from '../../../supabase/functions/_shared/interview';
+import type { MainGoal, MuscleGoal } from '../../../supabase/functions/_shared/interview';
+
+import { PRESETS, type EquipmentItem } from '../equipment/catalog';
 
 export {
   EQUIPMENT,
@@ -22,8 +20,6 @@ export type {
   MuscleGoalEntry,
   Sex,
 } from '../../../supabase/functions/_shared/interview';
-
-import { PRESETS, type EquipmentItem } from '../equipment/catalog';
 
 export type Who = 'me' | 'child' | 'parent';
 export const WHO_OPTIONS: Who[] = ['me', 'child', 'parent'];

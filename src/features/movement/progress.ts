@@ -221,3 +221,8 @@ export function morningCheckOpen(afterAt: string, now: Date): boolean {
   open.setHours(5, 0, 0, 0);
   return now >= open;
 }
+
+/** A recovery plan has moved past phase 1 (the "first Repair phase" badge, D2). */
+export function repairPhaseDone(reports: MovementPain[]): boolean {
+  return reports.some((r) => phaseFor(levelFor(r)) >= 2);
+}

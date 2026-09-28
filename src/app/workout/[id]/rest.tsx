@@ -5,6 +5,7 @@ import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText, Button } from '@/components/ui';
+import { restFor, usePrefsStore } from '@/features/settings/store';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { TimerRing, useNow } from '@/features/workout/components/TimerRing';
 import { currentStep, mainItems } from '@/features/workout/flow';
@@ -33,7 +34,9 @@ export default function RestScreen() {
   const lastItem = workout?.session.items.find((i) => i.id === last?.itemId);
   const next = workout ? currentStep(workout) : null;
   const restItem = lastItem?.role === 'main' ? lastItem : next?.item;
-  const total = (restItem?.restSeconds ?? 60) + extra;
+  // The rest default from Settings replaces the timer's starting value (D4).
+  const prefs = usePrefsStore();
+  const total = (restItem ? restFor(restItem, prefs) : 60) + extra;
   const elapsed = (now - startedAt) / 1000;
   const left = total - elapsed;
 

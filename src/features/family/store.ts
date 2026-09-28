@@ -5,6 +5,7 @@ import { clock } from '@/lib/clock';
 import { kvStorage } from '@/lib/storage';
 
 import { FAMILY_MAX_PROFILES } from '../billing/rules';
+import { useOwnerIdentityStore } from './ownerIdentity';
 
 /**
  * Profiles on this phone (SPEC §7: the account owner plus family members
@@ -55,7 +56,11 @@ export const useFamilyStore = create<State>()(
         set({
           profiles: get().profiles.map((p) => (p.id === id ? { ...p, shareAllowed: allowed } : p)),
         }),
-      reset: () => set({ profiles: [], activeId: null }),
+      reset: () => {
+        // A cleared family list (sign-out, deleted account) forgets the owner too.
+        useOwnerIdentityStore.getState().reset();
+        set({ profiles: [], activeId: null });
+      },
     }),
     {
       name: 'family',

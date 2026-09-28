@@ -14,6 +14,8 @@ export type NotificationPrefs = {
   reminders: boolean;
   /** 24 h "HH:MM", local time. */
   reminderTime: string;
+  /** Reminder days as JS weekdays (0 = Sunday); unset = the plan's training days (D4). */
+  reminderDays?: number[];
   streakSaver: boolean;
   streakSaverTime: string;
 };

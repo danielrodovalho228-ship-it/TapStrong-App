@@ -7,12 +7,14 @@ import { AppText, Button, Icon, type IconName } from '@/components/ui';
 import { useAccountStore } from '@/features/account/store';
 import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
-import { badgeStatus, type BadgeKey } from '@/features/workout/badges';
+import { badgeStatus, VOLUME_STEPS, type BadgeKey } from '@/features/workout/badges';
+import { repairPhaseDone } from '@/features/movement/progress';
+import { useMovementPainStore } from '@/features/movement/store';
 import { useExerciseLibrary } from '@/features/workout/hooks';
 import { MAX_FREEZES } from '@/features/workout/streak';
 import { useWorkoutStore } from '@/features/workout/store';
 import { clock } from '@/lib/clock';
-import { addDays, localDate } from '@/lib/dates';
+import { addDays, deviceWeekStart, localDate } from '@/lib/dates';
 import { colors, fonts, radius, spacing } from '@/theme';
 
 const BADGE_ICON: Record<BadgeKey, IconName> = {
@@ -21,6 +23,16 @@ const BADGE_ICON: Record<BadgeKey, IconName> = {
   first_pr: 'arrow-right',
   full_body_week: 'body',
   streak_30: 'flame',
+  streak_weeks_4: 'flame',
+  streak_weeks_12: 'flame',
+  streak_weeks_26: 'flame',
+  streak_weeks_52: 'flame',
+  volume_1: 'progress',
+  volume_2: 'progress',
+  volume_3: 'progress',
+  repair_phase: 'shield',
+  balance_30: 'body',
+  workouts_100: 'check',
 };
 
 /** Mockup 24 — streak milestone and badges. */
@@ -32,7 +44,15 @@ export default function MilestoneScreen() {
   const library = useExerciseLibrary();
   const now = clock.now();
   const days = milestone?.streak ?? streak.current;
-  const badges = badgeStatus(workouts, streak, library, now);
+  const units = useOnboardingStore((s) => s.units);
+  const reports = useMovementPainStore((s) => s.reports);
+  const unit = units === 'imperial' ? 'lb' : 'kg';
+  const badges = badgeStatus(workouts, streak, library, now, {
+    mode,
+    unit,
+    repairPhaseDone: repairPhaseDone(reports),
+    startsOn: deviceWeekStart(),
+  });
 
   // The last 7 calendar days: active, rest (covered) or missed.
   const active = new Set(
@@ -116,7 +136,12 @@ export default function MilestoneScreen() {
                 color={b.earned ? colors.dark.text : colors.dark.accentSoft}
                 style={styles.centerText}
               >
-                {t(`milestone.badge.${b.key}`)}
+                {t(`milestone.badge.${b.key}`, {
+                  amount: b.key.startsWith('volume_')
+                    ? VOLUME_STEPS[unit][Number(b.key.slice(-1)) - 1].toLocaleString(i18n.language)
+                    : '',
+                  unit: t(`workout.units.${unit}`),
+                })}
               </AppText>
               {!b.earned && b.progress ? (
                 <AppText variant="caption" color={colors.dark.accentSoft}>

@@ -39,8 +39,11 @@ const BASE_MINUTES: Record<AppMode, [warmup: number, cooldown: number]> = {
 export const MIN_WARMUP = 3;
 export const MIN_COOLDOWN = 2;
 
-export function warmupCooldownMinutes(mode: AppMode, minutes: number) {
-  const [warmup, cooldown] = BASE_MINUTES[mode];
+export function warmupCooldownMinutes(mode: AppMode, minutes: number, short = false) {
+  const [baseWarmup, baseCooldown] = BASE_MINUTES[mode];
+  // "Shorter warm-up" (Settings) trims them to 60%, never below the minimums.
+  const warmup = short ? Math.max(MIN_WARMUP, Math.round(baseWarmup * 0.6)) : baseWarmup;
+  const cooldown = short ? Math.max(MIN_COOLDOWN, Math.round(baseCooldown * 0.6)) : baseCooldown;
   if (minutes >= 30) return { warmup, cooldown };
   const scale = minutes / 30;
   return {
@@ -344,7 +347,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   }
   const pool = programmablePool(input);
   const minutes = Math.max(10, Math.min(120, Math.round(input.minutes)));
-  const { warmup, cooldown } = warmupCooldownMinutes(input.mode, minutes);
+  const { warmup, cooldown } = warmupCooldownMinutes(input.mode, minutes, input.shortWarmup);
   const notes: GeneratorNote[] = [];
   const base = { minutes, warmupMinutes: warmup, cooldownMinutes: cooldown, notes };
   const fail = (error: GeneratedSession['error']): GeneratedSession => ({

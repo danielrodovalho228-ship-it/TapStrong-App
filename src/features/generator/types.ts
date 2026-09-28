@@ -51,6 +51,10 @@ export type GeneratorInput = {
   deload?: boolean;
   /** Starred exercises: preferred when safe (improvements v1, B4). */
   favourites?: string[];
+  /** Shorter warm-up and cool-down (Settings, D4): shortened, never removed. */
+  shortWarmup?: boolean;
+  /** Experience level (Settings, D4): how far above the usual level a move may be. */
+  experience?: 'new' | 'some' | 'experienced';
   /** A short mobility session (~10 min): mobility moves only, no recovery rule (QA round 2, decision 1). */
   mobilityOnly?: boolean;
   /** Now (ISO time): recovery hours for the targets (QA R2-08). */

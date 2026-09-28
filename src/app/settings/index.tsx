@@ -10,6 +10,7 @@ import { useOwnerAccess } from '@/features/family/OwnerOnly';
 import { ParentGate, ParentPinSetup } from '@/features/family/ParentGate';
 import { useParentPinStore } from '@/features/family/parentPin';
 import { clock } from '@/lib/clock';
+import { contactSupport } from '@/lib/support';
 import { colors, spacing } from '@/theme';
 
 /**
@@ -48,6 +49,23 @@ export default function SettingsScreen() {
         />
         <Button
           variant="secondary"
+          label={t('settings.workout')}
+          onPress={() => router.push('/settings/workout')}
+        />
+        <Button
+          variant="secondary"
+          label={t('settings.reminders')}
+          onPress={() => router.push('/settings/reminders')}
+        />
+        <Button
+          variant="secondary"
+          label={t('settings.demoModel')}
+          onPress={() =>
+            router.push({ pathname: '/onboarding/chat', params: { step: 'body', edit: '1' } })
+          }
+        />
+        <Button
+          variant="secondary"
           label={t('equipmentSettings.title')}
           onPress={() => router.push('/settings/equipment')}
         />
@@ -70,6 +88,16 @@ export default function SettingsScreen() {
         ) : pinStep === 'saved' ? (
           <AppText color={colors.teal}>{t('settings.pinSaved')}</AppText>
         ) : null}
+        <Button
+          variant="secondary"
+          label={t('settings.help')}
+          onPress={() => void contactSupport(t('settings.helpSubject'))}
+        />
+        <Button
+          variant="secondary"
+          label={t('settings.shareFriends')}
+          onPress={() => router.push('/share')}
+        />
       </View>
       <View style={styles.danger}>
         <AppText variant="caption" color={colors.mutedStrong}>

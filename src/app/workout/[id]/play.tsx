@@ -5,6 +5,8 @@ import { StyleSheet, View } from 'react-native';
 
 import { AppText, Button, Card, Chip, IconButton, Screen } from '@/components/ui';
 import { adviceForItem } from '@/features/workout/loads';
+import { usePrefsStore } from '@/features/settings/store';
+import * as Speech from 'expo-speech';
 import { prototypeVideo } from '@/features/exercises/library';
 import type { Exercise } from '@/features/exercises/types';
 import { isMachine } from '@/features/generator/filters';
@@ -36,7 +38,7 @@ import { colors, fonts, radius, sizes, spacing } from '@/theme';
 
 /** Mockup 11 — the player: warm-up → exercises → cool-down, in order. */
 export default function PlayerScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { workout, byId, input, library } = useWorkout(id);
   useSafetyRefresh(workout?.id, input, library);
@@ -54,6 +56,14 @@ export default function PlayerScreen() {
       router.replace({ pathname: '/workout/[id]/done', params: { id: workout.id } });
     }
   }, [finished, workout]);
+
+  // Voice cues (Settings, D4): the exercise name is read out when it starts.
+  const voice = usePrefsStore((st) => st.voice);
+  const stepExercise = step ? byId.get(step.item.exerciseId) : undefined;
+  const spoken = step && voice ? exerciseName(t, stepExercise, step.item.exerciseId) : null;
+  useEffect(() => {
+    if (spoken) Speech.speak(spoken, { language: i18n.language });
+  }, [spoken, i18n.language]);
 
   if (!workout || !input) return <Redirect href="/home" />;
   if (!step) {

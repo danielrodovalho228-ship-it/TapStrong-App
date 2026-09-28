@@ -3598,7 +3598,8 @@
     "recoveringBody": "Tus músculos necesitan un poco más de tiempo. Hoy va bien una movilidad corta, unos ejercicios de equilibrio o un día de descanso.",
     "balance": "Equilibrio corto · {{minutes}} min",
     "rest": "Descansar hoy",
-    "restNote": "Descansar también es entrenar. Tu próximo entrenamiento estará listo cuando tus músculos lo estén."
+    "restNote": "Descansar también es entrenar. Tu próximo entrenamiento estará listo cuando tus músculos lo estén.",
+    "streakHint": "¿Día de descanso? 10 minutos de movilidad mantienen tu racha."
   },
   "workout": {
     "title": "Tu entrenamiento",
@@ -3880,7 +3881,17 @@
       "streak_7": "Racha de 7 días",
       "first_pr": "Primer récord",
       "full_body_week": "Semana de cuerpo completo",
-      "streak_30": "Racha de 30 días"
+      "streak_30": "Racha de 30 días",
+      "streak_weeks_4": "Racha de 4 semanas",
+      "streak_weeks_12": "Racha de 12 semanas",
+      "streak_weeks_26": "Racha de 26 semanas",
+      "streak_weeks_52": "Racha de 52 semanas",
+      "volume_1": "{{amount}} {{unit}} levantados",
+      "volume_2": "{{amount}} {{unit}} levantados",
+      "volume_3": "{{amount}} {{unit}} levantados",
+      "repair_phase": "Primera fase de Reparación completada",
+      "balance_30": "Equilibrio 30 días",
+      "workouts_100": "100 entrenamientos"
     },
     "share": "Compartir mi racha",
     "keepGoing": "Seguir",
@@ -4124,10 +4135,64 @@
     "links": {
       "repair": "Reparación: encuentra puntos débiles",
       "restrictions": "Mis restricciones",
-      "photos": "Fotos de antes y después"
+      "photos": "Fotos de antes y después",
+      "badges": "Insignias"
     },
     "seniorPhotos": "Fotos de antes y después",
-    "seniorPhotosDetail": "Apagadas por defecto. Las fotos se quedan en este teléfono y nunca se comparten."
+    "seniorPhotosDetail": "Apagadas por defecto. Las fotos se quedan en este teléfono y nunca se comparten.",
+    "segment": {
+      "label": "Vista de progreso",
+      "activity": "Actividad",
+      "body": "Cuerpo"
+    },
+    "activity": {
+      "title": "Actividad",
+      "rangeLabel": "Periodo",
+      "range": {
+        "7d": "7 días",
+        "30d": "30 días",
+        "6m": "6 meses",
+        "12m": "12 meses",
+        "all": "Todo"
+      },
+      "workouts": "Entrenos",
+      "hours": "Horas",
+      "volume": "Volumen ({{unit}})",
+      "mobility": "Movilidad",
+      "prevMonth": "Mes anterior",
+      "nextMonth": "Mes siguiente",
+      "dayTrained": "{{date}}, entrenado",
+      "exercise": "Mejor carga",
+      "exerciseEmpty": "Registra una carga para ver aquí tus mejores marcas.",
+      "best": "Mejor: {{value}} {{unit}}",
+      "goal": "Meta ({{unit}})",
+      "goalMet": "¡Meta alcanzada!",
+      "goalLeft": "Faltan {{value}} {{unit}}",
+      "pointLabel": "{{date}}: {{value}} {{unit}}"
+    },
+    "body": {
+      "whtr": "Relación cintura-altura",
+      "whtrNote": "Menos de 0,5 es una meta saludable para la mayoría de los adultos.",
+      "whtrNeedsHeight": "Añade tu altura en tu perfil para verlo.",
+      "whtrNeedsWaist": "Añade tu cintura abajo para verlo.",
+      "weight": "Peso",
+      "weightChange": "{{change}} desde {{date}}",
+      "add": "Añadir medidas",
+      "addNote": "Todo opcional. Se queda en este teléfono.",
+      "field": "{{name}} ({{unit}})",
+      "tape": {
+        "weight": "Peso",
+        "waist": "Cintura",
+        "chest": "Pecho",
+        "hips": "Cadera",
+        "arm": "Brazo",
+        "thigh": "Muslo",
+        "calf": "Pantorrilla"
+      },
+      "save": "Guardar medidas",
+      "saved": "Guardado.",
+      "latest": "Últimas"
+    }
   },
   "checkin": {
     "eyebrow": "Semana 1 → semana 4",
@@ -4622,7 +4687,13 @@
     "delete": "Eliminar cuenta",
     "setPin": "Crear un PIN de padres",
     "changePin": "Cambiar el PIN de padres",
-    "pinSaved": "PIN de padres guardado."
+    "pinSaved": "PIN de padres guardado.",
+    "workout": "Preferencias de entrenamiento",
+    "reminders": "Recordatorios",
+    "demoModel": "Modelo corporal",
+    "help": "Ayuda y soporte",
+    "helpSubject": "Ayuda de TapStrong",
+    "shareFriends": "Comparte TapStrong con amigos"
   },
   "referral": {
     "eyebrow": "Invitación recibida",
@@ -4924,5 +4995,36 @@
       "bodyweight": "Solo peso corporal",
       "hotel": "Hotel"
     }
+  },
+  "prefs": {
+    "title": "Preferencias de entrenamiento",
+    "units": "Unidades",
+    "unitsImperial": "lb · ft",
+    "unitsMetric": "kg · cm",
+    "rest": "Descanso entre series de fuerza",
+    "restAuto": "Auto",
+    "restHold": "Descanso tras isométricos",
+    "seconds": "{{count}} s",
+    "voice": "Avisos de voz",
+    "voiceDetail": "Dice el nombre de cada ejercicio al empezar.",
+    "warmup": "Calentamiento y vuelta a la calma",
+    "warmupStandard": "Estándar",
+    "warmupShort": "Corto",
+    "warmupNote": "Corto mantiene ambos, solo con menos minutos.",
+    "experience": "Experiencia",
+    "experienceLevels": {
+      "new": "Empiezo a entrenar",
+      "some": "Algo de experiencia",
+      "experienced": "Con experiencia"
+    },
+    "experienceNote": "\"Empiezo a entrenar\" usa solo ejercicios para principiantes."
+  },
+  "reminders": {
+    "title": "Recordatorios",
+    "time": "Hora",
+    "days": "Días",
+    "daysAuto": "Los días de mi plan",
+    "dayLabel": "{{day}}, recordatorio",
+    "motivation": "Salvar la racha"
   }
 }

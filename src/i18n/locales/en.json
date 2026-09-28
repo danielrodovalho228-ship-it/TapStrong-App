@@ -3598,7 +3598,8 @@
     "recoveringBody": "Your muscles need a little more time. Today is good for short mobility, a few balance holds or a rest day.",
     "balance": "Short balance · {{minutes}} min",
     "rest": "Rest today",
-    "restNote": "Rest is part of training. Your next workout will be ready when your muscles are."
+    "restNote": "Rest is part of training. Your next workout will be ready when your muscles are.",
+    "streakHint": "Rest day? A 10-minute mobility session keeps your streak going."
   },
   "workout": {
     "title": "Your workout",
@@ -3880,7 +3881,17 @@
       "streak_7": "7-day streak",
       "first_pr": "First PR",
       "full_body_week": "Full-body week",
-      "streak_30": "30-day streak"
+      "streak_30": "30-day streak",
+      "streak_weeks_4": "4-week streak",
+      "streak_weeks_12": "12-week streak",
+      "streak_weeks_26": "26-week streak",
+      "streak_weeks_52": "52-week streak",
+      "volume_1": "{{amount}} {{unit}} lifted",
+      "volume_2": "{{amount}} {{unit}} lifted",
+      "volume_3": "{{amount}} {{unit}} lifted",
+      "repair_phase": "First Repair phase done",
+      "balance_30": "Balance 30 days",
+      "workouts_100": "100 workouts"
     },
     "share": "Share my streak",
     "keepGoing": "Keep going",
@@ -4124,10 +4135,64 @@
     "links": {
       "repair": "Repair check: find weak spots",
       "restrictions": "My restrictions",
-      "photos": "Before & after photos"
+      "photos": "Before & after photos",
+      "badges": "Badges"
     },
     "seniorPhotos": "Before & after photos",
-    "seniorPhotosDetail": "Off by default. Photos stay on this phone and are never shared."
+    "seniorPhotosDetail": "Off by default. Photos stay on this phone and are never shared.",
+    "segment": {
+      "label": "Progress view",
+      "activity": "Activity",
+      "body": "Body"
+    },
+    "activity": {
+      "title": "Activity",
+      "rangeLabel": "Time range",
+      "range": {
+        "7d": "7 days",
+        "30d": "30 days",
+        "6m": "6 months",
+        "12m": "12 months",
+        "all": "All time"
+      },
+      "workouts": "Workouts",
+      "hours": "Hours",
+      "volume": "Volume ({{unit}})",
+      "mobility": "Mobility",
+      "prevMonth": "Previous month",
+      "nextMonth": "Next month",
+      "dayTrained": "{{date}}, trained",
+      "exercise": "Best load",
+      "exerciseEmpty": "Log a load to see your best lifts here.",
+      "best": "Best: {{value}} {{unit}}",
+      "goal": "Goal ({{unit}})",
+      "goalMet": "Goal reached!",
+      "goalLeft": "{{value}} {{unit}} to go",
+      "pointLabel": "{{date}}: {{value}} {{unit}}"
+    },
+    "body": {
+      "whtr": "Waist-to-height ratio",
+      "whtrNote": "Under 0.5 is a healthy target for most adults.",
+      "whtrNeedsHeight": "Add your height in your profile to see this.",
+      "whtrNeedsWaist": "Add your waist below to see this.",
+      "weight": "Weight",
+      "weightChange": "{{change}} since {{date}}",
+      "add": "Add measurements",
+      "addNote": "All optional. Stays on this phone.",
+      "field": "{{name}} ({{unit}})",
+      "tape": {
+        "weight": "Weight",
+        "waist": "Waist",
+        "chest": "Chest",
+        "hips": "Hips",
+        "arm": "Arm",
+        "thigh": "Thigh",
+        "calf": "Calf"
+      },
+      "save": "Save measurements",
+      "saved": "Saved.",
+      "latest": "Latest"
+    }
   },
   "checkin": {
     "eyebrow": "Week 1 → week 4",
@@ -4622,7 +4687,13 @@
     "delete": "Delete account",
     "setPin": "Create a parent PIN",
     "changePin": "Change the parent PIN",
-    "pinSaved": "Parent PIN saved."
+    "pinSaved": "Parent PIN saved.",
+    "workout": "Workout preferences",
+    "reminders": "Reminders",
+    "demoModel": "Body model",
+    "help": "Help and support",
+    "helpSubject": "TapStrong help",
+    "shareFriends": "Share TapStrong with friends"
   },
   "referral": {
     "eyebrow": "Invite received",
@@ -4924,5 +4995,36 @@
       "bodyweight": "Bodyweight only",
       "hotel": "Hotel"
     }
+  },
+  "prefs": {
+    "title": "Workout preferences",
+    "units": "Units",
+    "unitsImperial": "lb · ft",
+    "unitsMetric": "kg · cm",
+    "rest": "Rest between strength sets",
+    "restAuto": "Auto",
+    "restHold": "Rest after holds",
+    "seconds": "{{count}} s",
+    "voice": "Voice cues",
+    "voiceDetail": "Says the name of each exercise as it starts.",
+    "warmup": "Warm-up and cool-down",
+    "warmupStandard": "Standard",
+    "warmupShort": "Short",
+    "warmupNote": "Short keeps both, just fewer minutes.",
+    "experience": "Experience",
+    "experienceLevels": {
+      "new": "New to training",
+      "some": "Some experience",
+      "experienced": "Experienced"
+    },
+    "experienceNote": "\"New to training\" keeps to beginner moves."
+  },
+  "reminders": {
+    "title": "Reminders",
+    "time": "Time",
+    "days": "Days",
+    "daysAuto": "My plan's days",
+    "dayLabel": "{{day}}, reminder",
+    "motivation": "Streak saver"
   }
 }

@@ -17,6 +17,7 @@ import {
 } from './parentPin';
 import { clearPinLock, pullPinLock, reportPinCheck } from './pinLockout';
 import { maskEmail, ownerEmail, sendPinResetCode, verifyPinResetCode } from './pinReset';
+import { isOwnerProfile, useOwnerIdentityStore } from './ownerIdentity';
 import { activeProfile, useFamilyStore } from './store';
 
 /**
@@ -29,7 +30,8 @@ export function ParentGate({ onPass, onCancel }: { onPass: () => void; onCancel?
   const { t } = useTranslation();
   const hasPin = useParentPinStore((s) => !!s.hash);
   const active = useFamilyStore(activeProfile);
-  const owner = !active || active.kind === 'self';
+  const ownerId = useOwnerIdentityStore((s) => s.ownerId);
+  const owner = isOwnerProfile(active, ownerId);
   const [value, setValue] = useState('');
   const [message, setMessage] = useState<string | null>(null);
   const [resetting, setResetting] = useState(false);

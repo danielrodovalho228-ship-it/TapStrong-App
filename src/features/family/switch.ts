@@ -1,6 +1,7 @@
 import { kvStorage } from '@/lib/storage';
 
 import { useAccountStore } from '../account/store';
+import { useBodyStore, type BodyEntry } from '../body/store';
 import { useMovementPainStore, type MovementPain } from '../movement/store';
 import { initialOnboarding, useOnboardingStore, type OnboardingData } from '../onboarding/store';
 import { usePlacesStore, type Place } from '../equipment/store';
@@ -8,10 +9,12 @@ import { initialLibrary, useLibraryStore, type LibraryData } from '../library/st
 import { useProgramStore } from '../program/store';
 import { initialProgress, useProgressStore, type ProgressData } from '../progress/store';
 import { useRestrictionsStore, type Restriction } from '../restrictions/store';
+import { initialPrefs, usePrefsStore, type Prefs } from '../settings/store';
 import { initialStreak, type StreakState } from '../workout/streak';
 import { useWorkoutStore } from '../workout/store';
 import type { NextFocus, WorkoutRecord } from '../workout/types';
 
+import { useOwnerIdentityStore } from './ownerIdentity';
 import { useFamilyStore, type LocalProfile } from './store';
 
 type Snapshot = {
@@ -25,6 +28,8 @@ type Snapshot = {
   program?: { planId: string | null; startedAt: string | null };
   library?: LibraryData;
   places?: { places: Place[]; activeId: string | null };
+  prefs?: Prefs;
+  body?: BodyEntry[];
 };
 
 const key = (id: string) => `profile-snapshot:${id}`;
@@ -52,6 +57,15 @@ function capture(): Snapshot {
       useLibraryStore.getState(),
     ),
     places: (({ places, activeId }) => ({ places, activeId }))(usePlacesStore.getState()),
+    prefs: (({ restStrength, restHold, sounds, voice, warmup, experience }) => ({
+      restStrength,
+      restHold,
+      sounds,
+      voice,
+      warmup,
+      experience,
+    }))(usePrefsStore.getState()),
+    body: useBodyStore.getState().entries,
   };
 }
 
@@ -69,6 +83,8 @@ function load(snapshot: Snapshot | null, seed: Partial<OnboardingData>) {
   useProgressStore.setState({ ...initialProgress(), ...snapshot?.progress });
   useMovementPainStore.setState({ reports: snapshot?.movementPain ?? [] });
   useLibraryStore.setState({ ...initialLibrary(), ...snapshot?.library });
+  usePrefsStore.setState({ ...initialPrefs(), ...snapshot?.prefs });
+  useBodyStore.setState({ entries: snapshot?.body ?? [] });
   usePlacesStore.setState({
     places: snapshot?.places?.places ?? [],
     activeId: snapshot?.places?.activeId ?? null,
@@ -84,8 +100,12 @@ export function ensureSelfProfile(): LocalProfile {
   const family = useFamilyStore.getState();
   const selfId = useAccountStore.getState().profileId;
   const existing = family.profiles.find((p) => p.kind === 'self');
-  if (existing) return existing;
+  if (existing) {
+    useOwnerIdentityStore.getState().remember(existing.id);
+    return existing;
+  }
   family.add({ id: selfId, kind: 'self' });
+  useOwnerIdentityStore.getState().remember(selfId);
   if (!family.activeId) family.setActive(selfId);
   return useFamilyStore.getState().profiles.find((p) => p.kind === 'self')!;
 }

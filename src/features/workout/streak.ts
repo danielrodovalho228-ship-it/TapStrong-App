@@ -98,3 +98,11 @@ export function recordActiveDay(
     milestone,
   };
 }
+
+/**
+ * Home hint the day after a workout (improvements v1, D2): a live streak and
+ * nothing logged today — a short mobility session keeps it going.
+ */
+export function showStreakHint(state: StreakState, today: LocalDate): boolean {
+  return state.current > 0 && state.lastActive === addDays(today, -1);
+}

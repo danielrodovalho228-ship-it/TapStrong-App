@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Button, Header, Notice, Screen } from '@/components/ui';
 
 import { ParentGate } from './ParentGate';
+import { isOwnerProfile, useOwnerIdentityStore } from './ownerIdentity';
 import { activeProfile, useFamilyStore } from './store';
 
 /**
@@ -17,8 +18,11 @@ export type OwnerAccess = 'owner' | 'gate' | 'managed';
 
 export function useOwnerAccess(): OwnerAccess {
   const active = useFamilyStore(activeProfile);
-  if (!active || active.kind === 'self') return 'owner';
-  return active.kind === 'child' ? 'gate' : 'managed';
+  const ownerId = useOwnerIdentityStore((s) => s.ownerId);
+  if (isOwnerProfile(active, ownerId)) return 'owner';
+  // A "self" profile whose id doesn't match the secure record was edited: parent gate.
+  if (active?.kind === 'self') return 'gate';
+  return active?.kind === 'child' ? 'gate' : 'managed';
 }
 
 /** Wraps an owner-only screen. */

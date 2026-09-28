@@ -34,7 +34,7 @@ import {
 import type { RecoveryState } from '@/features/workout/recovery';
 import { sessionTargets, todaySession } from '@/features/workout/plan';
 import { useWorkoutStore } from '@/features/workout/store';
-import { streakToday } from '@/features/workout/streak';
+import { showStreakHint, streakToday } from '@/features/workout/streak';
 import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
 import { deviceWeekStart, localDate } from '@/lib/dates';
@@ -260,9 +260,15 @@ export default function HomeScreen() {
             label={t('home.mobility', { minutes: MOBILITY_MINUTES })}
             onPress={openMobility}
           />
-          <AppText variant="caption" color={colors.mutedStrong} style={styles.center}>
-            {t('home.mobilityNote')}
-          </AppText>
+          {showStreakHint(streak, localDate(now)) ? (
+            <AppText color={colors.teal} style={styles.center} testID="streak-hint">
+              {t('home.streakHint')}
+            </AppText>
+          ) : (
+            <AppText variant="caption" color={colors.mutedStrong} style={styles.center}>
+              {t('home.mobilityNote')}
+            </AppText>
+          )}
         </View>
       ) : null}
 
