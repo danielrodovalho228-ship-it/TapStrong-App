@@ -1,3 +1,4 @@
+import { normalizeEquipment } from '../equipment/catalog';
 /**
  * QA round 1 — P1 logic and UX fixes (docs/qa-round-1.md §2).
  */
@@ -37,7 +38,15 @@ const base: GeneratorInput = {
   band: 'adult',
   position: 'standing',
   location: 'gym',
-  equipment: ['dumbbells', 'bands', 'machines', 'cables', 'bench', 'barbell', 'mat'],
+  equipment: normalizeEquipment([
+    'dumbbells',
+    'bands',
+    'machines',
+    'cables',
+    'bench',
+    'barbell',
+    'mat',
+  ]),
   minutes: 45,
   mainGoals: ['strength'],
   muscleGoals: [{ muscleKey: 'upperChest', goal: 'grow' }],

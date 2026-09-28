@@ -23,6 +23,8 @@ export type {
   Sex,
 } from '../../../supabase/functions/_shared/interview';
 
+import { PRESETS, type EquipmentItem } from '../equipment/catalog';
+
 export type Who = 'me' | 'child' | 'parent';
 export const WHO_OPTIONS: Who[] = ['me', 'child', 'parent'];
 
@@ -73,24 +75,10 @@ export const RED_FLAGS: readonly (PainArea | Condition)[] = [
 export const MINUTES_OPTIONS = [20, 30, 40, 60] as const;
 export const DAYS_OPTIONS = [2, 3, 4, 5, 6] as const;
 
-export const GYM_EQUIPMENT: Equipment[] = ['dumbbells', 'barbell', 'machines', 'cables', 'bench'];
-export const HOME_EQUIPMENT_OPTIONS: Equipment[] = [
-  'dumbbells',
-  'bands',
-  'kettlebell',
-  'bench',
-  'pull_up_bar',
-  'mat',
-];
-export const GYM_EQUIPMENT_OPTIONS: Equipment[] = [
-  'dumbbells',
-  'barbell',
-  'kettlebell',
-  'machines',
-  'cables',
-  'bench',
-  'pull_up_bar',
-];
+/** Starting equipment per place (presets, improvements v1 C2). */
+export const GYM_EQUIPMENT: EquipmentItem[] = PRESETS.fullGym.items;
+export const HOME_EQUIPMENT_OPTIONS: EquipmentItem[] = PRESETS.homeGym.items;
+export const GYM_EQUIPMENT_OPTIONS: EquipmentItem[] = PRESETS.fullGym.items;
 
 /**
  * Default per-muscle goal when the user picks a muscle chip without saying

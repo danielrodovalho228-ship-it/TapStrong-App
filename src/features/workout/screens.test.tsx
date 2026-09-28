@@ -10,6 +10,7 @@ import PainScreen from '@/app/workout/[id]/pain';
 import PlayerScreen from '@/app/workout/[id]/play';
 import RestScreen from '@/app/workout/[id]/rest';
 import { generateSession } from '@/features/generator';
+import { isMachine } from '@/features/generator/filters';
 import { inputFromProfile } from '@/features/generator/fromProfile';
 import { useAccountStore } from '@/features/account/store';
 import { useOnboardingStore } from '@/features/onboarding/store';
@@ -144,11 +145,9 @@ describe('Workout list (mockup 10)', () => {
       await fireEvent.press(first);
     }
     const machineItem = current().session.items.find((i) =>
-      byId.get(i.exerciseId)?.equipment.some((q) => q === 'machines' || q === 'cables'),
+      byId.get(i.exerciseId)?.equipment.some((q) => isMachine(q)),
     )!;
-    const busy: string[] = byId
-      .get(machineItem.exerciseId)!
-      .equipment.filter((q) => q === 'machines' || q === 'cables');
+    const busy: string[] = byId.get(machineItem.exerciseId)!.equipment.filter((q) => isMachine(q));
     for (const b of screen.queryAllByRole('button', { name: /^Replace with / })) {
       const label = String(b.props.accessibilityLabel).replace('Replace with ', '');
       const option = LIBRARY.find((e) => profileName(e.id) === label)!;

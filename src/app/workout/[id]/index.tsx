@@ -3,12 +3,13 @@ import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
-import { AppText, Button, Card, Icon, IconButton, Notice, Screen } from '@/components/ui';
+import { AppText, Button, Card, Chip, Icon, IconButton, Notice, Screen } from '@/components/ui';
 import { canStartWorkout, currentPlan } from '@/features/billing/rules';
 import { useBillingStore } from '@/features/billing/store';
 import type { Exercise } from '@/features/exercises/types';
 import { dayName, sessionSummary } from '@/features/program/block';
 import { WeekStrip } from '@/features/program/components/WeekStrip';
+import { usePlacesStore } from '@/features/equipment/store';
 import { adviceForItem, loadText } from '@/features/workout/loads';
 import type { LoadUnit } from '@/features/workout/types';
 import { useOnboardingStore } from '@/features/onboarding/store';
@@ -57,6 +58,7 @@ export default function WorkoutScreen() {
   const mode = input?.mode ?? 'adult';
   const weightKg = useOnboardingStore((st) => st.weightKg);
   const units = useOnboardingStore((st) => st.units);
+  const { places, activeId: activePlace, use: choosePlace } = usePlacesStore();
   useSafetyRefresh(workout?.id, input, library);
   const store = useWorkoutStore();
   const [sheet, setSheet] = useState<SheetState>(null);
@@ -282,6 +284,32 @@ export default function WorkoutScreen() {
       }
     >
       {workout.kind === 'regular' ? <WeekStrip /> : null}
+      {/* Saved places (improvements v1, C2): switch equipment for a planned workout. */}
+      {planned && workout.kind === 'regular' && places.length > 1 ? (
+        <View style={styles.places}>
+          <AppText variant="caption" color={colors.mutedStrong}>
+            {t('equipmentSettings.switchTitle')}
+          </AppText>
+          <View style={styles.placeChips}>
+            {places.map((p) => (
+              <Chip
+                key={p.id}
+                label={p.name}
+                selected={activePlace === p.id}
+                onPress={() => {
+                  choosePlace(p.id);
+                  const next = generateSession({
+                    ...input,
+                    equipment: p.items,
+                    location: p.location,
+                  });
+                  if (!next.error) store.replaceSession(workout.id, next);
+                }}
+              />
+            ))}
+          </View>
+        </View>
+      ) : null}
       {session.notes.map((n) => (
         <View key={n.key} style={styles.coachNote}>
           <AppText color={colors.mutedStrong}>{note(n)}</AppText>
@@ -391,6 +419,8 @@ export default function WorkoutScreen() {
 }
 
 const styles = StyleSheet.create({
+  places: { gap: spacing.xs },
+  placeChips: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   spare: { gap: spacing.sm },
   header: {
     flexDirection: 'row',

@@ -3,6 +3,7 @@ import { kvStorage } from '@/lib/storage';
 import { useAccountStore } from '../account/store';
 import { useMovementPainStore, type MovementPain } from '../movement/store';
 import { initialOnboarding, useOnboardingStore, type OnboardingData } from '../onboarding/store';
+import { usePlacesStore, type Place } from '../equipment/store';
 import { initialLibrary, useLibraryStore, type LibraryData } from '../library/store';
 import { useProgramStore } from '../program/store';
 import { initialProgress, useProgressStore, type ProgressData } from '../progress/store';
@@ -23,6 +24,7 @@ type Snapshot = {
   movementPain?: MovementPain[];
   program?: { planId: string | null; startedAt: string | null };
   library?: LibraryData;
+  places?: { places: Place[]; activeId: string | null };
 };
 
 const key = (id: string) => `profile-snapshot:${id}`;
@@ -49,6 +51,7 @@ function capture(): Snapshot {
     library: (({ favourites, notes, goals, custom }) => ({ favourites, notes, goals, custom }))(
       useLibraryStore.getState(),
     ),
+    places: (({ places, activeId }) => ({ places, activeId }))(usePlacesStore.getState()),
   };
 }
 
@@ -66,6 +69,10 @@ function load(snapshot: Snapshot | null, seed: Partial<OnboardingData>) {
   useProgressStore.setState({ ...initialProgress(), ...snapshot?.progress });
   useMovementPainStore.setState({ reports: snapshot?.movementPain ?? [] });
   useLibraryStore.setState({ ...initialLibrary(), ...snapshot?.library });
+  usePlacesStore.setState({
+    places: snapshot?.places?.places ?? [],
+    activeId: snapshot?.places?.activeId ?? null,
+  });
   useProgramStore.setState({
     planId: snapshot?.program?.planId ?? null,
     startedAt: snapshot?.program?.startedAt ?? null,

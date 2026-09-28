@@ -1,4 +1,5 @@
-import type { Equipment, Location } from '../../../supabase/functions/_shared/interview';
+import type { Location } from '../../../supabase/functions/_shared/interview';
+import type { EquipmentItem } from '../equipment/catalog';
 import type { JointKey, JointMovementTag, MovementKey, MovementRange } from '../movement/catalog';
 import type { Position } from '../onboarding/options';
 import type { BodyBand } from '../profile/age';
@@ -48,7 +49,7 @@ export function fromSeed(entry: SeedExercise): Exercise {
     slug: entry.slug,
     nameKey: `exercises.${entry.slug}.name`,
     cuesKey: `exercises.${entry.slug}.cues`,
-    equipment: entry.equipment as Equipment[],
+    equipment: entry.equipment as EquipmentItem[],
     location: entry.location as Location[],
     level: entry.level,
     minAgeBand: entry.minAgeBand as BodyBand,
@@ -110,7 +111,7 @@ export function fromRow(row: ExerciseRow): Exercise {
     slug: row.slug,
     nameKey: row.name_i18n_key,
     cuesKey: row.cues_i18n_key,
-    equipment: row.equipment as Equipment[],
+    equipment: row.equipment as EquipmentItem[],
     location: row.location as Location[],
     level: row.level,
     minAgeBand: row.min_age_band as BodyBand,

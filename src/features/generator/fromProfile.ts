@@ -1,3 +1,4 @@
+import { normalizeEquipment } from '../equipment/catalog';
 import type { Exercise } from '../exercises/types';
 import type { MovementLimit } from '../movement/rules';
 import { derive } from '../onboarding/derived';
@@ -41,7 +42,8 @@ export function inputFromProfile(
     band: derived.band,
     position: s.position,
     location: s.location,
-    equipment: s.equipment,
+    // Old coarse answers (and coach replies) become exact items (C).
+    equipment: normalizeEquipment(s.equipment),
     minutes: s.minutes,
     // Goals hidden for this age (e.g. "grow" for kids) are never trained.
     mainGoals: derived.mode === 'child' ? s.mainGoals.filter((g) => g !== 'look') : s.mainGoals,

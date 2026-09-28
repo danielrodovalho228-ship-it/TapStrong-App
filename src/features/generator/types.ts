@@ -1,4 +1,5 @@
-import type { Equipment, Location } from '../../../supabase/functions/_shared/interview';
+import type { Location } from '../../../supabase/functions/_shared/interview';
+import type { EquipmentItem } from '../equipment/catalog';
 import type { Exercise, SessionPart } from '../exercises/types';
 import type { MovementLimit } from '../movement/rules';
 import type { MovementGroup } from '../muscles';
@@ -23,7 +24,8 @@ export type GeneratorInput = {
   band: BodyBand;
   position: Position;
   location: Location;
-  equipment: Equipment[];
+  /** The person's exact equipment items (improvements v1, C). */
+  equipment: EquipmentItem[];
   minutes: number;
   mainGoals: MainGoal[];
   /** In priority order (first = highest). */

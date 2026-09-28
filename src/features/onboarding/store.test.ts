@@ -1,3 +1,4 @@
+import { PRESETS } from '../equipment/catalog';
 import { act } from '@testing-library/react-native';
 
 import { kvStorage } from '@/lib/storage';
@@ -14,7 +15,8 @@ beforeEach(async () => {
 describe('onboarding store', () => {
   it('fills gym equipment when the place is set to gym', async () => {
     await act(() => store().setLocation('gym'));
-    expect(store().equipment).toEqual(['dumbbells', 'barbell', 'machines', 'cables', 'bench']);
+    // A gym starts from the full-gym preset (improvements v1, C).
+    expect(store().equipment).toEqual(PRESETS.fullGym.items);
     await act(() => store().setLocation('outdoors'));
     expect(store().equipment).toEqual([]);
   });

@@ -48,11 +48,8 @@ PARTS = {
     'cooldown_stretch': 'Cool-down: stretch',
     'cooldown_breathing': 'Cool-down: breathing',
 }
-EQUIPMENT = {
-    'dumbbells': 'Dumbbells', 'barbell': 'Barbell', 'kettlebell': 'Kettlebell', 'bands': 'Bands',
-    'machines': 'Machine', 'cables': 'Cable', 'bench': 'Bench', 'pull_up_bar': 'Pull-up bar',
-    'mat': 'Mat',
-}
+# Detailed equipment names (improvements v1, C), from the English locale.
+EQUIPMENT = en['equipment']
 RISK = {**en['safety']['painAreas'], **en['safety']['conditions']}
 MUSCLE = en['muscles']
 ANATOMY = en['muscleAnatomy']

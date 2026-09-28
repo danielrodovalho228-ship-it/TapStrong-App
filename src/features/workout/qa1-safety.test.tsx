@@ -1,3 +1,4 @@
+import { PRESETS } from '../equipment/catalog';
 /**
  * QA round 1 — P0 safety fixes (docs/qa-round-1.md §1). One test per finding.
  */
@@ -63,17 +64,7 @@ beforeEach(async () => {
   mockParams = {};
 });
 
-const ALL_EQUIPMENT = [
-  'dumbbells',
-  'barbell',
-  'kettlebell',
-  'bands',
-  'machines',
-  'cables',
-  'bench',
-  'pull_up_bar',
-  'mat',
-] as GeneratorInput['equipment'];
+const ALL_EQUIPMENT = PRESETS.fullGym.items as GeneratorInput['equipment'];
 
 const input = (patch: Partial<GeneratorInput> = {}): GeneratorInput => ({
   ...inputFromProfile(useOnboardingStore.getState(), LIBRARY, true)!,

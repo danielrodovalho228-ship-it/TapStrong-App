@@ -1,3 +1,4 @@
+import { isMachineItem } from '../equipment/catalog';
 import type { Exercise } from '../exercises/types';
 import { JOINT_AREA } from '../movement/catalog';
 import { limitAreas, movementVerdict } from '../movement/rules';
@@ -113,5 +114,5 @@ export function emphasisOn(e: Exercise, muscles: string[], role?: 'primary'): nu
 }
 
 export function isMachine(equipment: string): boolean {
-  return equipment === 'machines' || equipment === 'cables';
+  return isMachineItem(equipment);
 }

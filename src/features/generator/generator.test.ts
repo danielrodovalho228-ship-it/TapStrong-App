@@ -197,10 +197,10 @@ describe('safety filters (SPEC §2, §8 "Filter")', () => {
   });
 
   it('respects location and equipment', () => {
-    const s = everyItemIsSafe({ ...base, location: 'home', equipment: ['bands'] });
+    const s = everyItemIsSafe({ ...base, location: 'home', equipment: ['long_bands'] });
     for (const e of exercisesOf(s)) {
       expect(e.location).toContain('home');
-      expect(e.equipment.every((q) => q === 'bands')).toBe(true);
+      expect(e.equipment.every((q) => q === 'long_bands')).toBe(true);
     }
   });
 });
@@ -496,18 +496,18 @@ describe('getAlternatives (swap, SPEC §8)', () => {
   it('"machine is taken" drops options on the same machine', () => {
     const cable = gen({
       muscleGoals: [{ muscleKey: 'upperChest', goal: 'grow' }],
-      equipment: ['cables'],
+      equipment: ['cable_station'],
     });
     const item = cable.items.find(
-      (i) => i.role === 'main' && ex(i.exerciseId).equipment.includes('cables'),
+      (i) => i.role === 'main' && ex(i.exerciseId).equipment.includes('cable_station'),
     )!;
     const alts = getAlternatives(
       cable,
       item.id,
-      { ...base, equipment: ['cables'] },
+      { ...base, equipment: ['cable_station'] },
       { reason: 'machine_taken' },
     );
-    for (const a of alts) expect(a.equipment).not.toContain('cables');
+    for (const a of alts) expect(a.equipment).not.toContain('cable_station');
   });
 
   it('warm-up and cool-down swap only within the same kind of move', () => {

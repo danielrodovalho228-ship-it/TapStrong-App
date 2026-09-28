@@ -1,4 +1,5 @@
 import { Image } from 'expo-image';
+import { normalizeEquipment, presetOf } from '@/features/equipment/catalog';
 import { Redirect, router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
@@ -23,9 +24,14 @@ export default function ProfileScreen() {
   const measures = measurementText(t, s);
   const sexLabel = t(sexLabelKey(s.sex, mode));
   const restrictions = restrictionAreas(s.painAreas);
-  const equipment = s.equipment.length
-    ? s.equipment.map((e) => t(`equipment.${e}`)).join(', ')
-    : t('profile.bodyweight');
+  // A preset name, or how many items (improvements v1, C).
+  const items = normalizeEquipment(s.equipment);
+  const preset = presetOf(items, s.location);
+  const equipment = preset
+    ? t(`equipmentSettings.presetNames.${preset}`)
+    : items.length
+      ? t('equipmentSettings.count', { count: items.length })
+      : t('profile.bodyweight');
 
   const rows = [
     {

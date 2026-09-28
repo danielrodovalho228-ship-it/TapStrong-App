@@ -6,6 +6,7 @@
  */
 import catalogJson from '../../../supabase/seed/joint_movements.json';
 
+import { normalizeEquipment, PRESET_KEYS, PRESETS } from '../equipment/catalog';
 import { generateSession, getAlternatives } from '../generator';
 import type { GeneratorInput } from '../generator/types';
 import type { MovementCatalog } from '../movement/catalog';
@@ -19,11 +20,12 @@ const LIBRARY = devLibrary();
 const CATALOG = catalogJson as unknown as MovementCatalog;
 const MIN = 5;
 
+// The old 4 levels, read as exact items (improvements v1, C).
 const LEVELS = {
   none: [] as string[],
-  bands: ['bands'],
-  dumbbells: ['bands', 'dumbbells', 'bench'],
-  gym: [
+  bands: normalizeEquipment(['bands']) as string[],
+  dumbbells: normalizeEquipment(['bands', 'dumbbells', 'bench']) as string[],
+  gym: normalizeEquipment([
     'bands',
     'dumbbells',
     'bench',
@@ -33,7 +35,7 @@ const LEVELS = {
     'cables',
     'pull_up_bar',
     'mat',
-  ],
+  ]) as string[],
 };
 const fits = (e: Exercise, level: keyof typeof LEVELS) =>
   e.equipment.every((q) => LEVELS[level].includes(q)) &&
@@ -70,6 +72,27 @@ describe('library coverage (QA O-3)', () => {
       expect(short).toEqual([]);
     },
   );
+
+  // Improvements v1, C5: every equipment preset still gives ≥ 5 main options
+  // per muscle × position cell (no exemptions needed today).
+  it.each(PRESET_KEYS)('every muscle has ≥ 5 main options with the "%s" preset', (key) => {
+    const preset = PRESETS[key];
+    const short = GOAL_MUSCLES.flatMap((m) =>
+      POSITIONS.map((position) => ({
+        cell: `${m} · ${position}`,
+        n: regular.filter(
+          (e) =>
+            e.parts.includes('main') &&
+            !e.slug.startsWith('kid_') &&
+            primary(e, m) &&
+            e.equipment.every((q) => preset.items.includes(q)) &&
+            e.location.includes(preset.location) &&
+            e.positions.includes(position),
+        ).length,
+      })),
+    ).filter((c) => c.n < MIN);
+    expect(short).toEqual([]);
+  });
 
   const warmups = regular.filter((e) => e.parts.some((p) => p.startsWith('warmup')));
   const regionOf = (e: Exercise) =>
@@ -201,7 +224,10 @@ describe('library coverage (QA O-3)', () => {
           (e) =>
             e.parts.includes('main') &&
             uses(e, joint, movement, 'full') &&
-            (e.loaded || e.equipment.includes('bands') || e.level >= 2),
+            (e.loaded ||
+              e.equipment.includes('long_bands') ||
+              e.equipment.includes('mini_bands') ||
+              e.level >= 2),
         ).length,
       }))
       .filter((c) => c.n < 3);
@@ -236,13 +262,17 @@ describe('library coverage (QA O-3)', () => {
 describe('swap options (QA O-3: arm circles had none)', () => {
   const profiles: Partial<GeneratorInput>[] = [
     { location: 'home', equipment: [], position: 'standing' },
-    { location: 'home', equipment: ['bands'], position: 'with_support' },
+    {
+      location: 'home',
+      equipment: LEVELS.bands as GeneratorInput['equipment'],
+      position: 'with_support',
+    },
     { location: 'home', equipment: [], position: 'seated_only', mode: 'senior', band: 'senior' },
     { location: 'gym', equipment: LEVELS.gym as GeneratorInput['equipment'], position: 'standing' },
     // Seated and supported people (QA round 2: seated knee extension had 0).
     {
       location: 'home',
-      equipment: ['bands'],
+      equipment: LEVELS.bands as GeneratorInput['equipment'],
       position: 'seated_only',
       mode: 'senior',
       band: 'senior',

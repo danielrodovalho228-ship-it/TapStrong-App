@@ -1,4 +1,5 @@
-import type { Equipment, Location } from '../../../supabase/functions/_shared/interview';
+import type { Location } from '../../../supabase/functions/_shared/interview';
+import type { EquipmentItem } from '../equipment/catalog';
 import type { JointMovementTag, MovementKey } from '../movement/catalog';
 import type { Position } from '../onboarding/options';
 import type { BodyBand } from '../profile/age';
@@ -56,7 +57,7 @@ export type Exercise = {
   nameKey: string;
   cuesKey: string;
   /** All required; empty = bodyweight. */
-  equipment: Equipment[];
+  equipment: EquipmentItem[];
   location: Location[];
   level: number;
   minAgeBand: BodyBand;

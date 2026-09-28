@@ -56,7 +56,11 @@ export default function LibraryScreen() {
   const [showOut, setShowOut] = useState(false);
   const name = (e: Exercise) => exerciseName(t, e, e.id);
   const view = input ? libraryView(input, filter, name) : { safe: [], notForYou: [] };
-  const equipment = ['none', ...(input?.equipment ?? [])];
+  // Only items some exercise actually uses (improvements v1, C).
+  const equipment = [
+    'none',
+    ...(input?.equipment ?? []).filter((q) => library.some((e) => e.equipment.includes(q))),
+  ];
   const set = <K extends keyof LibraryFilter>(key: K, value: LibraryFilter[K]) =>
     setFilter((f) => ({ ...f, [key]: f[key] === value ? undefined : value }));
 

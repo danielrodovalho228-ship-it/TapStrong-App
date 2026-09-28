@@ -48,6 +48,11 @@ export default function SettingsScreen() {
         />
         <Button
           variant="secondary"
+          label={t('equipmentSettings.title')}
+          onPress={() => router.push('/settings/equipment')}
+        />
+        <Button
+          variant="secondary"
           label={t('settings.restrictions')}
           onPress={() => router.push('/restrictions')}
         />

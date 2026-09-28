@@ -128,7 +128,7 @@ describe('autoCheck catches bad mappings and unsafe data', () => {
       'outweighs the primary',
     ],
     [{ loaded: true }, 'loaded exercise without weights'],
-    [{ equipment: ['machines'] }, 'kids cannot use barbells or machines'],
+    [{ equipment: ['leg_press'] }, 'kids cannot use barbells or machines'],
     [{ impact: 2 }, 'high impact must rule out knee'],
     [{ positions: ['seated_only'], impact: 1 }, 'seated exercises must be low impact'],
     [{ contraindications: ['bad_knee'] }, 'unknown risk'],

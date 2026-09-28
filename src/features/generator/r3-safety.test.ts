@@ -8,6 +8,7 @@ import { fromSeed, type SeedExercise } from '../exercises/library';
 import type { Exercise } from '../exercises/types';
 import type { MovementKey } from '../movement/catalog';
 import type { MovementLimit } from '../movement/rules';
+import { EQUIPMENT_GROUPS, normalizeEquipment } from '../equipment/catalog';
 import { GYM_EQUIPMENT_OPTIONS } from '../onboarding/options';
 import { workoutInput } from '../workout/safety';
 
@@ -126,6 +127,16 @@ describe('R3-07 swaps get the same dosing as generation', () => {
   });
 });
 
+/** Machines with a seat or pad (not cable stations). */
+const isMachineSeat = (q: string) =>
+  !(EQUIPMENT_GROUPS.cables as readonly string[]).includes(q) &&
+  (Object.entries(EQUIPMENT_GROUPS).some(
+    ([g, items]) => g.startsWith('machines') && (items as readonly string[]).includes(q),
+  ) ||
+    ['assisted_pull_up_machine', 'dip_station', 'roman_chair', 'exercise_bike', 'rower'].includes(
+      q,
+    ));
+
 /** Loaded moves a person who holds a chair can still do: a seat, a pad or a free hand. */
 const SUPPORTED_OR_ONE_HAND = new Set([
   'cable_kickback',
@@ -168,7 +179,7 @@ describe('R3-09 loaded moves that need both hands are not "with support"', () =>
       (e) =>
         e.loaded &&
         e.positions.includes('with_support') &&
-        !e.equipment.includes('machines') &&
+        !e.equipment.some(isMachineSeat) &&
         !SUPPORTED_OR_ONE_HAND.has(e.slug),
     ).map((e) => e.slug);
     expect(offenders).toEqual([]);
@@ -187,7 +198,7 @@ describe('R3-09 loaded moves that need both hands are not "with support"', () =>
         band: 'senior',
         position: 'with_support',
         location: 'home',
-        equipment: ['dumbbells', 'bench', 'mat', 'bands'],
+        equipment: normalizeEquipment(['dumbbells', 'bench', 'mat', 'bands']),
         conditions: ['fell_last_year', 'osteoporosis'],
         mainGoals: ['balance', 'strength'],
         muscleGoals: [
@@ -199,7 +210,7 @@ describe('R3-09 loaded moves that need both hands are not "with support"', () =>
       });
       for (const item of s.items) {
         const e = byId.get(item.exerciseId)!;
-        if (!e.loaded || e.equipment.includes('machines')) continue;
+        if (!e.loaded || e.equipment.some(isMachineSeat)) continue;
         expect(SUPPORTED_OR_ONE_HAND.has(e.slug)).toBe(true);
       }
     }

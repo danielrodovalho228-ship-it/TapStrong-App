@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import type { SupportedLocale } from '@/i18n';
+import type { EquipmentItem } from '../equipment/catalog';
 import { kvStorage } from '@/lib/storage';
 
 import { NEUTRAL_BODY_AVAILABLE, type BodySex, type BodyView } from '../bodymap/images';
@@ -39,7 +40,8 @@ export type OnboardingData = {
   location?: Location;
   minutes?: number;
   daysPerWeek?: number;
-  equipment: Equipment[];
+  /** Equipment items (improvements v1, C); old answers may hold coarse keys, read through normalizeEquipment. */
+  equipment: (Equipment | EquipmentItem)[];
   muscleGoals: MuscleGoalEntry[];
   focusDeferred: boolean;
   /** undefined = not chosen; null = neutral body (SPEC §11.8). */

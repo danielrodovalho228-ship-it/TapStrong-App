@@ -1,4 +1,5 @@
-import { EQUIPMENT, LOCATIONS } from '../../../supabase/functions/_shared/interview';
+import { LOCATIONS } from '../../../supabase/functions/_shared/interview';
+import { EQUIPMENT_GROUPS, isEquipmentItem, isMachineItem } from '../equipment/catalog';
 import type { MovementCatalog } from '../movement/catalog';
 import { MUSCLE_KEYS } from '../muscles';
 import { CONDITIONS, PAIN_AREAS, POSITIONS } from '../onboarding/options';
@@ -36,21 +37,28 @@ export function autoCheck(e: Exercise, catalog?: MovementCatalog): string[] {
   if (!MOVEMENT_PATTERNS.includes(e.pattern)) fail(`unknown pattern ${e.pattern}`);
   if (!e.parts.length || e.parts.some((p) => !SESSION_PARTS.includes(p))) fail('bad session parts');
   if (!e.location.length || e.location.some((l) => !LOCATIONS.includes(l))) fail('bad location');
-  if (e.equipment.some((q) => !EQUIPMENT.includes(q))) fail('unknown equipment');
+  if (e.equipment.some((q) => !isEquipmentItem(q))) fail('unknown equipment');
   if (!e.positions.length || e.positions.some((p) => !POSITIONS.includes(p))) fail('bad positions');
   const knownRisks: string[] = [...PAIN_AREAS, ...CONDITIONS];
   for (const c of e.contraindications) if (!knownRisks.includes(c)) fail(`unknown risk ${c}`);
   if (!(e.level >= 1 && e.level <= 5)) fail('level out of range');
 
   // Safety rules
-  const weights = ['dumbbells', 'barbell', 'kettlebell', 'machines', 'cables'];
-  if (e.loaded && !e.equipment.some((q) => weights.includes(q))) {
+  const weights = [
+    'dumbbells',
+    'barbell',
+    'kettlebells',
+    'ez_bar',
+    'trap_bar',
+    'weight_plates',
+    'medicine_ball',
+    'sandbag',
+  ];
+  const heavyKit = (q: string) => isMachineItem(q) || q === 'barbell';
+  if (e.loaded && !e.equipment.some((q) => weights.includes(q) || isMachineItem(q))) {
     fail('loaded exercise without weights or a machine');
   }
-  if (
-    e.minAgeBand === 'kid' &&
-    e.equipment.some((q) => ['barbell', 'machines', 'cables'].includes(q))
-  ) {
+  if (e.minAgeBand === 'kid' && e.equipment.some(heavyKit)) {
     fail('kids cannot use barbells or machines');
   }
   if (e.minAgeBand === 'kid' && e.loaded) fail('kids get no external load');
@@ -64,7 +72,9 @@ export function autoCheck(e: Exercise, catalog?: MovementCatalog): string[] {
   if (
     e.location.length === 1 &&
     e.location[0] === 'gym' &&
-    !e.equipment.some((q) => ['machines', 'cables', 'barbell'].includes(q))
+    !e.equipment.some(
+      (q) => heavyKit(q) || (EQUIPMENT_GROUPS.cardio as readonly string[]).includes(q),
+    )
   ) {
     fail('gym-only exercise without gym equipment');
   }

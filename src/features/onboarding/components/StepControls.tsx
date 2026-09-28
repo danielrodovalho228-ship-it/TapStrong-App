@@ -17,15 +17,9 @@ import {
   lbToKg,
   WEIGHT_KG_RANGE,
 } from '../../profile/units';
+import { normalizeEquipment, PRESET_KEYS, PRESETS, presetOf } from '../../equipment/catalog';
 import { allowsMeasurements } from '../interview';
-import {
-  DAYS_OPTIONS,
-  GYM_EQUIPMENT_OPTIONS,
-  HOME_EQUIPMENT_OPTIONS,
-  LOCATIONS,
-  MINUTES_OPTIONS,
-  type InterviewStep,
-} from '../options';
+import { DAYS_OPTIONS, LOCATIONS, MINUTES_OPTIONS, type InterviewStep } from '../options';
 import { toggleInList } from '../safety';
 import { useOnboardingStore } from '../store';
 import { sexLabelKey, visibleMainGoals } from '../visible';
@@ -77,12 +71,9 @@ function GoalsControls({ mode }: { mode: AppMode }) {
 function ScheduleControls() {
   const { t } = useTranslation();
   const s = useOnboardingStore();
-  const equipmentOptions =
-    s.location === 'gym'
-      ? GYM_EQUIPMENT_OPTIONS
-      : s.location === 'home'
-        ? HOME_EQUIPMENT_OPTIONS
-        : [];
+  // Presets for the place (improvements v1, C4); the detailed list is in Settings.
+  const presetOptions = PRESET_KEYS.filter((k) => PRESETS[k].location === s.location);
+  const chosenPreset = presetOf(normalizeEquipment(s.equipment), s.location);
   const minuteOptions = [...new Set([...MINUTES_OPTIONS, ...(s.minutes ? [s.minutes] : [])])].sort(
     (a, b) => a - b,
   );
@@ -122,14 +113,14 @@ function ScheduleControls() {
           />
         ))}
       </Group>
-      {equipmentOptions.length ? (
+      {presetOptions.length ? (
         <Group label={t('chat.equipment')}>
-          {equipmentOptions.map((e) => (
+          {presetOptions.map((k) => (
             <Chip
-              key={e}
-              label={t(`equipment.${e}`)}
-              selected={s.equipment.includes(e)}
-              onPress={() => s.update({ equipment: toggleInList(s.equipment, e) })}
+              key={k}
+              label={t(`equipmentSettings.presetNames.${k}`)}
+              selected={chosenPreset === k}
+              onPress={() => s.update({ equipment: PRESETS[k].items })}
             />
           ))}
         </Group>

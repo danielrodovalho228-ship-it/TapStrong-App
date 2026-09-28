@@ -180,7 +180,8 @@ describe('Profile summary (mockup 05)', () => {
     expect(screen.getByText('Man · 5 ft 10 in · 185 lb')).toBeTruthy();
     expect(screen.getByText('Upper chest: Grow · Chest: Firm')).toBeTruthy();
     expect(screen.getByText('40 min · 3 days a week')).toBeTruthy();
-    expect(screen.getByText('Gym · Dumbbells, Cables, Bench')).toBeTruthy();
+    // Old coarse answers read as exact items (improvements v1, C).
+    expect(screen.getByText('Gym · 7 items')).toBeTruthy();
     expect(screen.getByText(/partly body fat/)).toBeTruthy();
   });
 
