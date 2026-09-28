@@ -134,7 +134,18 @@ export function getAlternatives(
     );
   // Wider circles only when the same muscle leaves fewer than 3 options (QA R3 P2).
   const closest = ranked.filter((x) => x.tier === 0);
-  return (closest.length >= MIN_OPTIONS ? closest : ranked).slice(0, limit).map((x) => x.e);
+  const picks = (closest.length >= MIN_OPTIONS ? closest : ranked).map((x) => x.e);
+  // A warm-up move with fewer than 3 same-region options (a seated 60+ at
+  // home, QA R4 P2) also gets other warm-up moves of the same part.
+  if (item.role === 'warmup' && picks.length < MIN_OPTIONS) {
+    const more = programmablePool(input).filter(
+      (e) =>
+        !inSession.has(e.id) && !picks.includes(e) && e.parts.includes(item.part as SessionPart),
+    );
+    more.sort((a, b) => byText(a.slug, b.slug));
+    picks.push(...more);
+  }
+  return picks.slice(0, limit);
 }
 
 /**
@@ -155,11 +166,15 @@ export function missingEquipmentOptions(
   );
 }
 
+/** Core and balance work never gets ramp-up sets, even with a dumbbell (QA R4 P2: dead bug). */
+const NO_RAMP_PATTERNS = ['core_stability', 'core_flexion', 'rotation', 'balance', 'breathing'];
+export const rampable = (e: Pick<Exercise, 'loaded' | 'isolation' | 'pattern'>) =>
+  e.loaded && !e.isolation && !NO_RAMP_PATTERNS.includes(e.pattern);
+
 /** The generator's ramp-up rule (SPEC §8 table, QA R2-07): same check on swap. */
 export function rampAllowed(e: Exercise, input: GeneratorInput): boolean {
   return (
-    e.loaded &&
-    !e.isolation &&
+    rampable(e) &&
     input.mode !== 'child' &&
     !needsCaution(input.conditions) &&
     !needsJointCare(e, input)

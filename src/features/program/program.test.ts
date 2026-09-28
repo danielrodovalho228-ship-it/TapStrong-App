@@ -90,14 +90,15 @@ describe('program blocks and deload (A2)', () => {
   });
 
   it('deload cuts volume by 40%, never below 1 set, same exercises', () => {
-    expect(deloadSets(3)).toBe(2);
+    expect(deloadSets(3)).toBe(1); // at least 40% fewer (QA R4 P2)
+    expect(deloadSets(4)).toBe(2);
     expect(deloadSets(5)).toBe(3);
     expect(deloadSets(1)).toBe(1);
     const normal = generateSession(base);
     const light = generateSession({ ...base, deload: true });
     expect(light.deload).toBe(true);
     expect(main(light).map((i) => i.exerciseId)).toEqual(main(normal).map((i) => i.exerciseId));
-    for (const i of main(light).filter((x) => x.goal !== 'balance')) expect(i.sets).toBe(2);
+    for (const i of main(light).filter((x) => x.goal !== 'balance')) expect(i.sets).toBe(1);
   });
 
   it('withProgram applies the deload week to the generator input', () => {

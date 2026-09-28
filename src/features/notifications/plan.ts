@@ -1,7 +1,8 @@
-import { localDate } from '@/lib/dates';
+import { localDate, type WeekStartDay } from '@/lib/dates';
 
 import type { NotificationPrefs } from '../account/store';
 import { trialReminderAt } from '../billing/rules';
+import { plannedOffsets } from '../program/week';
 
 /**
  * Local notifications (SPEC §3: expo-notifications): workout reminders on
@@ -41,16 +42,20 @@ export type PendingMorningCheck = {
 /** Morning checks go out at 8:30 local time the day after the workout. */
 export const MORNING_CHECK = { hour: 8, minute: 30 };
 
-/** Training days for "N days a week", as JS weekdays (0 = Sunday). */
-export const TRAINING_DAYS: Record<number, number[]> = {
-  1: [3],
-  2: [2, 4],
-  3: [1, 3, 5],
-  4: [1, 2, 4, 5],
-  5: [1, 2, 3, 4, 5],
-  6: [1, 2, 3, 4, 5, 6],
-  7: [0, 1, 2, 3, 4, 5, 6],
-};
+/**
+ * Training days for "N days a week", as JS weekdays (0 = Sunday): the same
+ * days the week strip plans, from the phone's week start (QA R4 P2: one
+ * source of truth).
+ */
+export function trainingWeekdays(daysPerWeek: number | undefined, startsOn: WeekStartDay = 0) {
+  return plannedOffsets(daysPerWeek ?? 3)
+    .map((o) => (startsOn + o) % 7)
+    .sort((x, y) => x - y);
+}
+/** Sunday-start table, kept for callers that don't know the week start. */
+export const TRAINING_DAYS: Record<number, number[]> = Object.fromEntries(
+  [1, 2, 3, 4, 5, 6, 7].map((n) => [n, trainingWeekdays(n, 0)]),
+);
 
 export function parseTime(hhmm: string): { hour: number; minute: number } {
   const [h, m] = hhmm.split(':').map(Number);
@@ -63,6 +68,8 @@ export function parseTime(hhmm: string): { hour: number; minute: number } {
 export function planNotifications(input: {
   prefs: NotificationPrefs;
   daysPerWeek: number | undefined;
+  /** The phone's first day of the week, as the week strip uses it. */
+  startsOn?: WeekStartDay;
   /** Streak as it stands today (0 = none to save). */
   streak: number;
   lastActive: string | null;
@@ -78,7 +85,7 @@ export function planNotifications(input: {
     const { hour, minute } = parseTime(prefs.reminderTime);
     const days = prefs.reminderDays?.length
       ? prefs.reminderDays
-      : (TRAINING_DAYS[input.daysPerWeek ?? 3] ?? TRAINING_DAYS[3]);
+      : trainingWeekdays(input.daysPerWeek, input.startsOn);
     for (const day of days) {
       out.push({ id: `reminder-${day}`, kind: 'reminder', weekday: day + 1, hour, minute });
     }

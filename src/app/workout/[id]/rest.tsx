@@ -11,6 +11,7 @@ import { TimerRing, useNow } from '@/features/workout/components/TimerRing';
 import { currentStep, mainItems } from '@/features/workout/flow';
 import { clockText, exerciseName } from '@/features/workout/format';
 import { useWorkout } from '@/features/workout/hooks';
+import { convertLoad, isLowerBody, LOWER_STEP, UPPER_STEP } from '@/features/workout/loads';
 import { pastSessions, progressionFor, targetRange } from '@/features/workout/progression';
 import { playTimerEnd } from '@/features/workout/sound';
 import { useWorkoutStore } from '@/features/workout/store';
@@ -24,9 +25,11 @@ const EXTRA_SECONDS = 30;
 export default function RestScreen() {
   const { t } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string; manual?: string }>();
-  const { workout, byId } = useWorkout(id);
+  const { workout, byId, input } = useWorkout(id);
   const workouts = useWorkoutStore((s) => s.workouts);
   const units = useOnboardingStore((s) => s.units);
+  const unit = units === 'imperial' ? 'lb' : 'kg';
+  const mode = input?.mode;
   const [startedAt] = useState(() => clock.now().getTime());
   const [extra, setExtra] = useState(0);
   const now = useNow(250);
@@ -59,7 +62,8 @@ export default function RestScreen() {
     [
       l.reps != null ? t('workout.rest.reps', { count: l.reps }) : null,
       l.seconds != null && l.reps == null ? t('workout.seconds', { value: l.seconds }) : null,
-      l.load ? `${l.load} ${t(`workout.units.${l.unit ?? 'lb'}`)}` : null,
+      // Shown in the person's unit, with the one rounding rule (QA R4 P2).
+      l.load ? `${convertLoad(l.load, l.unit ?? 'lb', unit)} ${t(`workout.units.${unit}`)}` : null,
     ]
       .filter(Boolean)
       .join(' · ');
@@ -150,7 +154,17 @@ export default function RestScreen() {
             </AppText>
             {nextProgression === 'increase' ? (
               <AppText variant="caption" color={colors.dark.accentSoft}>
-                {t('workout.rest.progressUp', { step: units === 'imperial' ? '5 lb' : '2.5 kg' })}
+                {t('workout.rest.progressUp', {
+                  // The real step for this lift and unit (QA R4 P2).
+                  step: `${
+                    (nextExercise &&
+                    isLowerBody(nextExercise) &&
+                    mode !== 'teen' &&
+                    mode !== 'child'
+                      ? LOWER_STEP
+                      : UPPER_STEP)[unit]
+                  } ${t(`workout.units.${unit}`)}`,
+                })}
               </AppText>
             ) : null}
           </View>

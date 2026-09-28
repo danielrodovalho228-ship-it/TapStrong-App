@@ -1,8 +1,10 @@
 import { router } from 'expo-router';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText, Card, Chip, Header, Screen, ToggleRow } from '@/components/ui';
+import { ParentGate } from '@/features/family/ParentGate';
 import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { REST_PRESETS, usePrefsStore, type Experience } from '@/features/settings/store';
@@ -18,9 +20,14 @@ const EXPERIENCE: Experience[] = ['new', 'some', 'experienced'];
 export default function WorkoutPrefsScreen() {
   const { t } = useTranslation();
   const profile = useOnboardingStore();
-  const senior = derive(profile)?.mode === 'senior';
+  const mode = derive(profile)?.mode;
+  const senior = mode === 'senior';
   const prefs = usePrefsStore();
   const strength = senior ? REST_PRESETS.seniorStrength : REST_PRESETS.strength;
+  // A teen changing the training level needs a parent (QA R4 P2).
+  const minor = mode === 'teen' || mode === 'child';
+  const [pending, setPending] = useState<Experience | null>(null);
+  const setExperience = (e: Experience) => (minor ? setPending(e) : prefs.set({ experience: e }));
 
   return (
     <Screen header={<Header onBack={() => router.back()} title={t('prefs.title')} />}>
@@ -112,13 +119,22 @@ export default function WorkoutPrefsScreen() {
               key={e}
               label={t(`prefs.experienceLevels.${e}`)}
               selected={prefs.experience === e}
-              onPress={() => prefs.set({ experience: e })}
+              onPress={() => setExperience(e)}
             />
           ))}
         </View>
         <AppText variant="caption" color={colors.mutedStrong}>
           {t('prefs.experienceNote')}
         </AppText>
+        {pending ? (
+          <ParentGate
+            onPass={() => {
+              prefs.set({ experience: pending });
+              setPending(null);
+            }}
+            onCancel={() => setPending(null)}
+          />
+        ) : null}
       </Card>
     </Screen>
   );

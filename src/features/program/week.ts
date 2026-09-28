@@ -66,6 +66,8 @@ export function workoutsOn(
  * Planned days from `from` (included) to `to` (excluded), for a future day's
  * preview (QA R4-08): each one moves the plan on by a day.
  */
+const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
+
 export function plannedDaysBetween(
   from: LocalDate,
   to: LocalDate,
@@ -74,10 +76,13 @@ export function plannedDaysBetween(
 ): LocalDate[] {
   const offsets = new Set(plannedOffsets(daysPerWeek));
   const out: LocalDate[] = [];
-  for (let d = from; d < to; d = addDays(d, 1)) {
+  // Only real dates, and at most a year ahead: a route param like "[date]"
+  // during static rendering must never loop forever.
+  if (!ISO_DAY.test(from) || !ISO_DAY.test(to)) return out;
+  let d = from;
+  for (let n = 0; d < to && n < 366; n++, d = addDays(d, 1)) {
     const first = weekStart(d, startsOn);
-    let i = 0;
-    while (addDays(first, i) !== d) i++;
+    const i = [0, 1, 2, 3, 4, 5, 6].find((k) => addDays(first, k) === d) ?? -1;
     if (offsets.has(i)) out.push(d);
   }
   return out;

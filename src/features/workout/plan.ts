@@ -30,6 +30,10 @@ export function recentSessions(history: WorkoutRecord[], library: Exercise[]): R
         // Recovery counts from the start of the session (QA R3-04).
         at: w.startedAt ?? w.endedAt ?? w.createdAt,
         mainMuscles: [...new Set(muscles)],
+        ...(w.session.custom ? { custom: true } : {}),
+        exerciseIds: [
+          ...new Set(w.logs.filter((l) => main.has(l.itemId)).map((l) => l.exerciseId)),
+        ],
       };
     });
 }

@@ -19,6 +19,8 @@ import { MOBILITY_MINUTES } from '@/features/generator';
 import { programStatus } from '@/features/program/apply';
 import { dayName, sessionSummary } from '@/features/program/block';
 import { WeekStrip } from '@/features/program/components/WeekStrip';
+import { useTrainingDaysPerWeek } from '@/features/program/useTrainingDays';
+import { plannedDaysBetween } from '@/features/program/week';
 import { useProgramStore } from '@/features/program/store';
 import { morningCheckOpen, pendingMorningChecks } from '@/features/movement/progress';
 import { useMovementPainStore } from '@/features/movement/store';
@@ -37,8 +39,9 @@ import { useWorkoutStore } from '@/features/workout/store';
 import { showStreakHint, streakToday } from '@/features/workout/streak';
 import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
-import { deviceWeekStart, localDate } from '@/lib/dates';
+import { addDays, deviceWeekStart, localDate } from '@/lib/dates';
 import { colors, fonts, spacing } from '@/theme';
+import { listText } from '@/lib/listText';
 
 const LEGEND: Exclude<RecoveryState, 'neutral'>[] = ['fresh', 'recovering', 'almost', 'neglected'];
 
@@ -56,9 +59,13 @@ export default function HomeScreen() {
   const painReports = useMovementPainStore((st) => st.reports);
   const [resting, setResting] = useState(false);
   const programState = useProgramStore();
+  const trainingDays = useTrainingDaysPerWeek();
   if (!profile.onboardingComplete || !derived) return <Redirect href="/welcome" />;
 
   const now = clock.now();
+  const plannedToday =
+    plannedDaysBetween(localDate(now), addDays(localDate(now), 1), deviceWeekStart(), trainingDays)
+      .length > 0;
   const morning = pendingMorningChecks(painReports).find((c) => morningCheckOpen(c.afterAt, now));
   const active = workouts.find((w) => w.status === 'active');
   const planned = workouts.find((w) => w.status === 'planned' && w.kind === 'regular');
@@ -226,7 +233,7 @@ export default function HomeScreen() {
                   .join(' · ')}
           </AppText>
           <AppText variant="h1" color={colors.dark.text}>
-            {goals.length ? goals.join(' & ') : t('home.fullBody')}
+            {goals.length ? listText(goals, t('common.and')) : t('home.fullBody')}
           </AppText>
           {/* "6 exercises · 45 min" (+ kcal for adults only, never teens). */}
           <AppText color={colors.dark.text}>
@@ -260,7 +267,7 @@ export default function HomeScreen() {
             label={t('home.mobility', { minutes: MOBILITY_MINUTES })}
             onPress={openMobility}
           />
-          {showStreakHint(streak, localDate(now)) ? (
+          {showStreakHint(streak, localDate(now), plannedToday) ? (
             <AppText color={colors.teal} style={styles.center} testID="streak-hint">
               {t('home.streakHint')}
             </AppText>

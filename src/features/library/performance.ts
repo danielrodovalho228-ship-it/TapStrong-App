@@ -1,4 +1,5 @@
-import type { LoadUnit, WorkoutRecord } from '../workout/types';
+import { convertLoad } from '../workout/loads';
+import type { LoadUnit, SetLog, WorkoutRecord } from '../workout/types';
 
 /**
  * Exercise performance (improvements v1, B3): personal records, a history by
@@ -35,6 +36,7 @@ export function exerciseRecords(
   unit: LoadUnit,
 ): Records {
   let heaviest = 0;
+  let heaviestLog: SetLog | null = null;
   let oneRm = 0;
   let bestSet = 0;
   const sessions: SessionPoint[] = [];
@@ -43,32 +45,41 @@ export function exerciseRecords(
     const logs = w.logs.filter((l) => l.exerciseId === exerciseId);
     if (!logs.length) continue;
     let bestLoad = 0;
+    let bestLog: SetLog | null = null;
     let bestReps = 0;
     let volume = 0;
     for (const l of logs) {
       const kg = l.load ? toKg(l.load, l.unit) : 0;
       const reps = l.reps ?? 0;
-      heaviest = Math.max(heaviest, kg);
+      if (kg > heaviest) {
+        heaviest = kg;
+        heaviestLog = l;
+      }
       if (kg && reps) {
         oneRm = Math.max(oneRm, epley(kg, reps));
         bestSet = Math.max(bestSet, kg * reps);
         volume += kg * reps;
       }
-      bestLoad = Math.max(bestLoad, kg);
+      if (kg > bestLoad) {
+        bestLoad = kg;
+        bestLog = l;
+      }
       bestReps = Math.max(bestReps, reps);
     }
     sessions.push({
       workoutId: w.id,
       date: w.endedAt ?? w.createdAt,
       sets: logs.length,
-      bestLoad: bestLoad ? fromKg(bestLoad, unit) : null,
+      bestLoad: bestLog?.load ? convertLoad(bestLog.load, bestLog.unit ?? 'lb', unit) : null,
       bestReps: bestReps || null,
       volume: Math.round(unit === 'lb' ? volume / LB : volume),
     });
   }
   sessions.sort((a, b) => (a.date < b.date ? -1 : 1));
   return {
-    heaviest: heaviest ? fromKg(heaviest, unit) : null,
+    heaviest: heaviestLog?.load
+      ? convertLoad(heaviestLog.load, heaviestLog.unit ?? 'lb', unit)
+      : null,
     oneRepMax: oneRm ? fromKg(oneRm, unit) : null,
     bestSetVolume: bestSet ? Math.round(unit === 'lb' ? bestSet / LB : bestSet) : null,
     sessions,

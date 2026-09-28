@@ -142,8 +142,8 @@ describe('the filler', () => {
 
   it('respects "rest today": a muscle trained two sessions in a row stays out of the filler', () => {
     const recent: RecentSession[] = [
+      { date: '2026-09-27', at: '2026-09-27T12:00:00Z', mainMuscles: ['chest', 'midChest'] },
       { date: '2026-09-26', at: '2026-09-26T12:00:00Z', mainMuscles: ['chest', 'midChest'] },
-      { date: '2026-09-24', at: '2026-09-24T12:00:00Z', mainMuscles: ['chest', 'midChest'] },
     ];
     const s = generateSession({ ...base, recentSessions: recent });
     expect(s.notes.some((n) => n.key === 'generator.notes.rested')).toBe(true);

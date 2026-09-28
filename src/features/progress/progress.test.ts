@@ -111,9 +111,9 @@ describe('progress stats', () => {
 });
 
 describe('check-in', () => {
-  it('keeps body measurements to adult and 60+ modes (SPEC §2.3)', () => {
+  it('keeps body measurements to adults 18–59 (SPEC §2.3, QA R4)', () => {
     expect(measurementsAllowed('adult')).toBe(true);
-    expect(measurementsAllowed('senior')).toBe(true);
+    expect(measurementsAllowed('senior')).toBe(false); // QA R4 P2: adults 18–59 only
     expect(measurementsAllowed('teen')).toBe(false);
     expect(measurementsAllowed('child')).toBe(false);
   });

@@ -41,11 +41,14 @@ export function blockMinutes(items: SessionItem[]): number {
   return Math.max(1, Math.round(seconds / 60));
 }
 
-/** "3 × 8–10 · rest 90 s" for main items (mockup 10). */
-export function doseLine(t: TFunction, item: SessionItem): string {
+/**
+ * "3 × 8–10 · rest 90 s" for main items (mockup 10). `restSeconds` is what
+ * the timer will run (the Settings default when set, QA R4 P2).
+ */
+export function doseLine(t: TFunction, item: SessionItem, restSeconds = item.restSeconds): string {
   const dose = doseText(t, item);
   return item.role === 'main' && item.sets > 1
-    ? `${dose} · ${t('workout.restFor', { seconds: item.restSeconds })}`
+    ? `${dose} · ${t('workout.restFor', { seconds: restSeconds })}`
     : dose;
 }
 

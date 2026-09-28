@@ -206,3 +206,11 @@ export function presetOf(items: readonly string[], location: string | undefined)
     ) ?? null
   );
 }
+
+/**
+ * The list an onboarding without a preset ends with (QA R4 P2): the preset
+ * matching the place, so Settings → Equipment shows what the profile says.
+ */
+export function defaultEquipment(location: Location | null | undefined): EquipmentItem[] {
+  return location === 'gym' ? PRESETS.fullGym.items : PRESETS.bodyweight.items;
+}

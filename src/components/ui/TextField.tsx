@@ -44,7 +44,8 @@ export const TextField = forwardRef<TextInput, TextFieldProps>(function TextFiel
 });
 
 const styles = StyleSheet.create({
-  wrap: { gap: spacing.xs, flex: 1 },
+  // Grows in a row but never collapses in a column (QA R4 P2: search under the body map).
+  wrap: { gap: spacing.xs, flexGrow: 1, flexShrink: 1 },
   field: {
     minHeight: sizes.primaryButtonHeight - 6,
     borderRadius: radius.button,

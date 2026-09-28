@@ -11,6 +11,7 @@ import { doseLine, exerciseName } from '@/features/workout/format';
 import { createWorkoutFrom, useExerciseLibrary, useGeneratorInput } from '@/features/workout/hooks';
 import { useWorkoutStore } from '@/features/workout/store';
 import type { WorkoutRecord } from '@/features/workout/types';
+import { restFor, usePrefsStore } from '@/features/settings/store';
 import { clock } from '@/lib/clock';
 import { addDays, deviceWeekStart, localDate } from '@/lib/dates';
 import { colors, spacing } from '@/theme';
@@ -22,7 +23,10 @@ import { colors, spacing } from '@/theme';
  */
 export default function DayScreen() {
   const { t, i18n } = useTranslation();
-  const { date } = useLocalSearchParams<{ date: string }>();
+  const prefs = usePrefsStore();
+  const { date: param } = useLocalSearchParams<{ date: string }>();
+  // Anything that isn't a YYYY-MM-DD date reads as today.
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(param ?? '') ? param : localDate(clock.now());
   const library = useExerciseLibrary();
   const workouts = useWorkoutStore((s) => s.workouts);
   const today = localDate(clock.now());
@@ -116,7 +120,7 @@ export default function DayScreen() {
                   <AppText style={styles.flex}>
                     {exerciseName(t, byId.get(i.exerciseId), i.exerciseId)}
                   </AppText>
-                  <AppText color={colors.mutedStrong}>{doseLine(t, i)}</AppText>
+                  <AppText color={colors.mutedStrong}>{doseLine(t, i, restFor(i, prefs))}</AppText>
                 </View>
               ))}
           </Card>

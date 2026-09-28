@@ -162,7 +162,9 @@ export default function ExerciseScreen() {
                       : records.bestSetVolume;
                 return (
                   <Card key={k} style={styles.tile}>
-                    <AppText variant="h2">{value != null ? `${value} ${unitLabel}` : '—'}</AppText>
+                    <AppText variant="h2">
+                      {value != null ? `${value.toLocaleString(i18n.language)} ${unitLabel}` : '—'}
+                    </AppText>
                     <AppText variant="caption" color={colors.mutedStrong}>
                       {t(k === 'bestSetVolume' ? 'exercise.bestSet' : `exercise.${k}`)}
                     </AppText>
@@ -206,7 +208,7 @@ export default function ExerciseScreen() {
                         {t('exercise.sessionLine', {
                           sets: s.sets,
                           best: s.bestLoad
-                            ? `${s.bestLoad} ${unitLabel}`
+                            ? `${s.bestLoad.toLocaleString(i18n.language)} ${unitLabel}`
                             : t('workout.rest.reps', { count: s.bestReps ?? 0 }),
                         })}
                       </AppText>

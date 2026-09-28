@@ -100,9 +100,14 @@ export function recordActiveDay(
 }
 
 /**
- * Home hint the day after a workout (improvements v1, D2): a live streak and
- * nothing logged today — a short mobility session keeps it going.
+ * Home hint the day after a workout (improvements v1, D2): a live streak,
+ * nothing logged today and a rest day in the plan — a short mobility session
+ * keeps it going. Never on a planned training day (QA R4 P2).
  */
-export function showStreakHint(state: StreakState, today: LocalDate): boolean {
-  return state.current > 0 && state.lastActive === addDays(today, -1);
+export function showStreakHint(
+  state: StreakState,
+  today: LocalDate,
+  plannedToday = false,
+): boolean {
+  return !plannedToday && state.current > 0 && state.lastActive === addDays(today, -1);
 }

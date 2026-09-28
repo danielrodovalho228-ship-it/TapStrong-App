@@ -40,6 +40,9 @@ export function dotGeometry(scale: number) {
 // Dot hit area: the 44 px minimum touch target (QA D-05). Taps between dots
 // still go to the nearest one via the image press.
 const HIT = sizes.touchTarget;
+/** Web reads a toggle button's state from aria-pressed (QA R4 P2). */
+const pressedAttr = (on: boolean): Record<string, boolean> =>
+  Platform.OS === 'web' ? { 'aria-pressed': on } : {};
 const MIN_ZOOM = 1;
 const MAX_ZOOM = 3;
 const ZOOM_STEP = 0.75;
@@ -262,6 +265,16 @@ export function BodyMapCanvas({
             {halos}
             {hotspots.flatMap((h) => {
               const isSelected = selected.includes(h.key);
+              // Each dot's target stops halfway to the nearest other muscle's dot,
+              // so neighbours like mid and lower chest never overlap (QA R4 P2).
+              const hitFor = (x: number, y: number) => {
+                let nearest = Infinity;
+                for (const o of hotspots)
+                  if (o.key !== h.key)
+                    for (const [ox, oy] of o.points)
+                      nearest = Math.min(nearest, Math.hypot(ox - x, oy - y) * scale);
+                return Math.max(geo.dot + 4, Math.min(HIT, nearest));
+              };
               const muscle = muscleByKey(h.key);
               const label = muscle ? t(muscle.labelKey as 'muscles.chest') : h.key;
               return h.points.map(([x, y], i) => (
@@ -276,7 +289,16 @@ export function BodyMapCanvas({
                   accessibilityRole="button"
                   accessibilityLabel={label}
                   accessibilityState={{ selected: isSelected }}
-                  style={[styles.hit, { left: x * scale - HIT / 2, top: y * scale - HIT / 2 }]}
+                  {...pressedAttr(isSelected)}
+                  style={[
+                    styles.hit,
+                    {
+                      width: hitFor(x, y),
+                      height: hitFor(x, y),
+                      left: x * scale - hitFor(x, y) / 2,
+                      top: y * scale - hitFor(x, y) / 2,
+                    },
+                  ]}
                 >
                   <View
                     testID={`dot-${h.key}`}

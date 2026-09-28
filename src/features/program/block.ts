@@ -26,8 +26,11 @@ export function blockWeek(
   return { week, of, phase: week === of ? 'deload' : 'build' };
 }
 
-/** Sets in a deload week: 40% less volume, never below 1. */
-export const deloadSets = (sets: number) => Math.max(1, Math.round(sets * DELOAD_VOLUME));
+/**
+ * Sets in a deload week: at least 40% fewer, never below 1 (QA R4 P2: 3 sets
+ * rounded to 2 was only 33% fewer). 2→1, 3→1, 4→2, 5→3.
+ */
+export const deloadSets = (sets: number) => Math.max(1, Math.floor(sets * DELOAD_VOLUME));
 
 export type DayName =
   'push' | 'pull' | 'legs' | 'upper' | 'lower' | 'fullBody' | 'mobility' | 'repair' | 'balance';

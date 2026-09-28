@@ -44,6 +44,9 @@ jest.mock('@/features/notifications/apply', () => ({
   requestPermission: jest.fn(async () => true),
 }));
 
+// Several full-screen renders and seed scans: give slow CI machines room (QA R4 P2: flaky under load).
+jest.setTimeout(30_000);
+
 const NOW = new Date('2026-09-28T12:00:00Z');
 
 const log = (exerciseId: string, patch: Partial<SetLog> = {}): SetLog => ({

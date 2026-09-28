@@ -50,12 +50,18 @@ export function isLowerBody(e: Pick<Exercise, 'pattern' | 'muscles'>): boolean {
   return !!parent && muscleByKey(parent)?.movementGroup === 'legs';
 }
 
-function toUnit(value: number, from: LoadUnit, to: LoadUnit): number {
+/**
+ * One rounding rule for a load shown in another unit (QA R4 P2): the same
+ * unit is shown as logged; a converted load rounds to the nearest plate step
+ * (5 lb / 2.5 kg), in the workout, on the exercise page and on the rest screen.
+ */
+export function convertLoad(value: number, from: LoadUnit, to: LoadUnit): number {
   if (from === to) return value;
   const kg = from === 'lb' ? value * 0.45359237 : value;
   const out = to === 'lb' ? kg / 0.45359237 : kg;
   return Math.round(out / UPPER_STEP[to]) * UPPER_STEP[to];
 }
+const toUnit = convertLoad;
 
 const done = (l: SetLog) => l.reps ?? l.seconds ?? 0;
 const allTop = (s: Session, top: number) =>

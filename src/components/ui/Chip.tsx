@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, type PressableProps } from 'react-native';
+import { Platform, Pressable, StyleSheet, type PressableProps } from 'react-native';
 
 import { colors, radius, sizes, spacing } from '@/theme';
 
@@ -15,6 +15,8 @@ export function Chip({ label, selected = false, disabled, ...rest }: ChipProps) 
       accessibilityRole="button"
       accessibilityLabel={label}
       accessibilityState={{ selected, disabled: !!disabled }}
+      // Web reads a toggle button's state from aria-pressed (QA R4 P2).
+      {...(Platform.OS === 'web' ? ({ 'aria-pressed': selected } as Record<string, boolean>) : {})}
       disabled={disabled}
       style={({ pressed }) => [
         styles.base,

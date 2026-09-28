@@ -55,7 +55,7 @@ function AddMemberScreenInner() {
     plan === 'family' && entitlement.status !== 'trial' && !!entitlement.firstChargedAt;
 
   const blocker = ownerMinor
-    ? t('family.errors.ownerMinor')
+    ? t(kidsUnder13Enabled() ? 'family.errors.ownerMinor' : 'family.errors.ownerMinorTeen')
     : full
       ? t('family.errors.full', { count: FAMILY_MAX_PROFILES })
       : plan !== 'family'

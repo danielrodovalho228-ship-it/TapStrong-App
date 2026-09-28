@@ -70,7 +70,12 @@ export function BodyPanel() {
         <AppText variant="h3">{t('progress.body.whtr')}</AppText>
         {ratio !== null ? (
           <>
-            <AppText variant="h1">{ratio.toFixed(2)}</AppText>
+            <AppText variant="h1">
+              {ratio.toLocaleString(i18n.language, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
+            </AppText>
             <AppText color={colors.mutedStrong}>{t('progress.body.whtrNote')}</AppText>
           </>
         ) : (

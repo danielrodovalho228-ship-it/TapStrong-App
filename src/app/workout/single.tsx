@@ -31,7 +31,12 @@ export default function SingleWorkoutScreen() {
     const session = generateSession({
       ...input,
       muscleGoals: picked.map((muscleKey) => ({ muscleKey, goal })),
-      exercisesPerSession: Math.max(input.exercisesPerSession, Math.min(picked.length, 8)),
+      // Only the picked muscles: up to two moves each (QA R4 P2).
+      targetsOnly: true,
+      exercisesPerSession: Math.max(
+        picked.length,
+        Math.min(input.exercisesPerSession, picked.length * 2, 8),
+      ),
     });
     if (session.error)
       return setError(

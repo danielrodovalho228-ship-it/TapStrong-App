@@ -13,7 +13,8 @@
     "remove": "Remover",
     "edit": "Editar",
     "separator": " · ",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "and": "e"
   },
   "language": {
     "en": "English",
@@ -279,7 +280,8 @@
       "schedule": "Onde você treina, por quanto tempo e com que frequência?",
       "focus": "O que você quer melhorar?",
       "body": "Qual modelo de corpo combina com você? Altura e peso são opcionais; uso para escolher o modelo mais parecido com você.",
-      "bodyChild": "Qual modelo de corpo vamos mostrar?"
+      "bodyChild": "Qual modelo de corpo vamos mostrar?",
+      "bodyTeen": "Qual modelo de corpo combina com você? Escolha o mais parecido."
     },
     "where": "Onde",
     "howLong": "Quanto tempo",
@@ -3517,7 +3519,8 @@
       "recovering": "{{muscles}} ainda se recupera do último treino, então hoje você treina outras áreas.",
       "unavailable": "Nenhum exercício seguro para {{muscles}} cabe na configuração de hoje (posição, equipamento, restrições). Adicione equipamento ou outra posição para trabalhá-los.",
       "customLeftOut_one": "Uma escolha ficou de fora: não é segura para você agora.",
-      "customLeftOut_other": "{{count}} escolhas ficaram de fora: não são seguras para você agora."
+      "customLeftOut_other": "{{count}} escolhas ficaram de fora: não são seguras para você agora.",
+      "painToday": "{{muscles}} fica de fora hoje por causa da dor que você informou. Volta amanhã se estiver tudo bem."
     }
   },
   "tabs": {
@@ -4042,7 +4045,8 @@
       "full_other": "O plano Família tem até {{count}} perfis.",
       "needFamily": "Familiares precisam do plano Família.",
       "needCharge": "Perfis de crianças com menos de 13 anos são liberados depois do primeiro pagamento do plano Família. O teste grátis não conta: o pagamento é como verificamos o consentimento do responsável.",
-      "ownerMinor": "Só um adulto (18+) pode gerenciar perfis da família e dar o consentimento dos pais."
+      "ownerMinor": "Só um adulto (18+) pode gerenciar perfis da família e dar o consentimento dos pais.",
+      "ownerMinorTeen": "Só um adulto (18+) pode gerenciar perfis da família."
     },
     "consent": {
       "title": "Consentimento do responsável",
@@ -4668,7 +4672,7 @@
     "locked_other": "Tentativas demais. Tente de novo em {{count}} minutos.",
     "noPin": "Primeiro o pai ou a mãe precisa criar um PIN dos pais no próprio perfil (Configurações).",
     "setupTitle": "Crie um PIN dos pais",
-    "setupBody": "4 dígitos. Crianças e adolescentes neste celular precisam dele para mudar planos, perfis ou configurações. Não conte para ninguém.",
+    "setupBody": "4 dígitos. Adolescentes neste celular precisam dele para trocar de perfil, mudar o plano, tirar uma restrição ou mudar o nível de treino. Não compartilhe.",
     "newPin": "PIN novo",
     "repeatPin": "Repita o PIN",
     "mismatch": "Os PINs não conferem. Tente de novo.",
@@ -4767,7 +4771,7 @@
     "down": "Um degrau mais leve hoje: {{load}} {{unit}}.",
     "effort": "Quão pesada foi a série?",
     "easy": "Fácil",
-    "solid": "Firme",
+    "solid": "Puxado",
     "hard": "Muito pesada",
     "repsUpBodyweight": "Tente {{reps}} repetições desta vez."
   },
@@ -4842,7 +4846,8 @@
     "empty": "Adicione exercícios da lista abaixo.",
     "note": "Sua própria lista. Exercícios que não são seguros para você agora não aparecem.",
     "chosen_one": "{{count}} exercício escolhido",
-    "chosen_other": "{{count}} exercícios escolhidos"
+    "chosen_other": "{{count}} exercícios escolhidos",
+    "chosen_zero": "Nenhum exercício escolhido ainda"
   },
   "familyShare": {
     "allow": "Permitir que {{name}} compartilhe treinos",
@@ -4892,10 +4897,13 @@
       "back": "Costas",
       "chest": "Peito",
       "core": "Abdômen",
-      "balance": "Equilíbrio"
+      "balance": "Equilíbrio",
+      "shoulders": "Ombros"
     },
     "create": "Criar exercício",
-    "empty": "Nenhum exercício combina com estes filtros."
+    "empty": "Nenhum exercício combina com estes filtros.",
+    "showAll": "Ver todos os {{count}}",
+    "notReviewed": "Não revisado por treinador"
   },
   "exercise": {
     "guidance": "Orientação",
@@ -5033,7 +5041,7 @@
       "some": "Alguma experiência",
       "experienced": "Experiente"
     },
-    "experienceNote": "\"Começando a treinar\" usa só exercícios para iniciantes.",
+    "experienceNote": "\"Começando a treinar\" usa exercícios mais fáceis, no máximo um passo acima de iniciante.",
     "sounds": "Sons",
     "soundsDetail": "Um toque curto quando um timer termina. Respeita o modo silencioso do celular."
   },
@@ -5043,6 +5051,6 @@
     "days": "Dias",
     "daysAuto": "Os dias do meu plano",
     "dayLabel": "{{day}}, lembrete",
-    "motivation": "Salvar a sequência"
+    "motivation": "Motivação"
   }
 }

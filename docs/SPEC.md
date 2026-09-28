@@ -152,7 +152,7 @@ Verify every point on every one of the 28 images; bodies differ.
 - **`muscle_activity`**: `profile_id`, `muscle_key`, `last_trained_at`, `volume_7d` (derived, feeds the body colors)
 - **`streaks`**: `profile_id`, `current`, `best`, `freezes_available`, `last_active_date`
 - **`pain_reports`**: `profile_id`, `session_id`, `area`, `side`, `type` (sharp / dull / tired), `action_taken`
-- **`checkins`** (Phase 7): `profile_id`, `taken_at`, `strength` (json), `waist_cm`, `weight_kg`, `whtr`, `bmi`. Body fields are refused by a trigger unless the profile is adult or 60+.
+- **`checkins`** (Phase 7): `profile_id`, `taken_at`, `strength` (json), `waist_cm`, `weight_kg`, `whtr`, `bmi`. Body fields are refused by a trigger unless the profile is adult or 60+; the app itself shows and collects them for adults 18–59 only (QA round 4).
 - **`repair_results`** (Phase 7): `profile_id`, `test_key`, `value` or `left_value` + `right_value` (seconds / reps) or `pass_left` + `pass_right`, `tested_at`. The test catalog (`supabase/seed/repair_tests.json`) is a draft until the certified reviewer signs it off, like exercises: development builds only.
 - **`repair_plans`** (Phase 7): `profile_id`, `weeks`, `sessions_per_week`, `focus` (json: muscle + goal), `retest_at`, `ended_at`. Repair sessions use `session_kind = 'repair'`.
 - **`exercises`** also carries (Phase 9) `joint_movements` (json: joint, movement, range `full` / `partial` / `isometric`), `range_limit` (movements it can do in a shorter range) and `rehab` (recovery-plan only). Reviewed with the muscle mapping.

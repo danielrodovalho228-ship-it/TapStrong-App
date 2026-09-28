@@ -1217,7 +1217,7 @@ Base: `docs/improvements-v1.md`; mapa de telas × mockups em `docs/phase14-scree
 - Faixa da semana na Home, na Home 60+ e na lista de treinos (hoje contornado, ponto cheio = treinou, vazado = planejado); tocar num dia abre o registro ou a prévia.
 - Blocos de programa de 4 a 6 semanas, com a última semana de deload (40% menos séries). Cada treino tem nome do dia (Push, Pull, Pernas, Superior…) e o resumo "N exercícios · N min", com kcal só para adultos e 60+.
 - Carga sugerida e progressão determinística:
-  - +5/+10 lb (2,5/5 kg) no topo da faixa com esforço ≤ 8;
+  - +5/+10 lb (2,5/5 kg) quando as **2 últimas sessões** ficaram no topo da faixa com esforço ≤ 8 (corrigido na Fase 15: o código sempre exigiu 2 sessões);
   - +1 repetição no peso corporal;
   - 60+ e articulação em cuidado: repetição antes de carga;
   - mantém após 2 falhas e reduz após 3;
@@ -1280,7 +1280,7 @@ Base: `docs/improvements-v1.md`; mapa de telas × mockups em `docs/phase14-scree
 ### Como testar (QA rodada 4)
 
 1. **Home:** faixa da semana; toque em ontem (registro) e amanhã (prévia). Nome do dia e "N exercícios · N min".
-2. **Treino:** registre carga e esforço 8 no topo da faixa → no próximo treino a sugestão sobe 5 lb.
+2. **Treino:** registre carga e esforço 8 no topo da faixa em 2 treinos seguidos → no próximo a sugestão sobe 5 lb.
 3. **Biblioteca:** toque num ponto, favorite um exercício, crie um exercício próprio (adulto) e use-o em Personalizado.
 4. **Equipamentos:** escolha "Hotel", crie o local "Casa" e troque de local no topo do treino.
 5. **Progresso:** Atividade (troque o período e o mês; defina uma meta de carga) e Corpo (adicione cintura → a relação aparece).
@@ -1319,3 +1319,115 @@ Daniel: "Sobre as decisões seguir suas recomendações."
   - Todas as regras de segurança valem para esses nomes, exceto a de equipamento.
 
 **Verificações:** lint e typecheck limpos, **734 testes** passando, `bundle:check` limpo. O `expo-doctor` volta ao estado anterior (as 2 falhas que já existiam: esquema do app.json e consulta de rede bloqueada).
+
+## Fase 15 — QA rodada 4 (P1 de segurança, P1 de função, P2)
+
+Texto da QA salvo em `docs/qa-round-4.md` (`d766a9b`). Três commits, um por grupo, na ordem pedida: segurança (`843093c`), função (`bce09a1`) e P2 (último commit desta fase).
+
+### P1 — segurança
+
+- **R4-01 Lombar:** bird dog (com e sem apoio), prancha, prancha lateral, prancha inclinada e "Goblet carry hold" ganharam a etiqueta de lombar. Depois de uma parada por dor aguda na lombar, eles saem do treino avulso e de todos os outros.
+- **R4-02 Joelho:** 78 exercícios de perna, de locomoção em pé, unilaterais ou de carregar peso ganharam a etiqueta de joelho: os 8 citados (levantamento terra unilateral, equilíbrio num pé, panturrilha unilateral, andar nos calcanhares, farmer walk, andar pé ante pé, marchas e polichinelo sem impacto) e os parecidos.
+  - O teste de auditoria novo exige a etiqueta de joelho em todo exercício de perna feito em pé ou carregando peso e a de lombar em toda prancha e todo exercício com lombar como músculo principal. Quem é feito sentado ou deitado e não carrega as pernas (alongamentos, abdução deitada) precisa de pelo menos uma etiqueta de joelho, tornozelo ou quadril.
+  - `seed.sql` e a planilha de revisão foram regenerados.
+- **R4-03 Exercício próprio:**
+  - as articulações vêm sempre dos músculos principais (por exemplo, quadríceps inclui o joelho), além das que a pessoa marcar, e pelo menos 1 músculo principal é obrigatório;
+  - a posição padrão é "em pé"; "com apoio" fica bloqueado quando há peso livre nas mãos;
+  - o agachamento com halteres da Rosa e o exercício de quadríceps do Dave agora são barrados.
+- **R4-04 Planos por link:** a idade é checada na página do plano, no gerador e na Home. Um adolescente que abre `/program/weightLoss-fullBody-3` vê "não disponível", sem botão; um plano inválido já ativo é apagado.
+- **R4-05 Tipo de perfil:** o armazenamento seguro (Keychain/Keystore) agora também guarda o perfil ativo, espelhado a cada troca, e quais perfis são menores, gravado na criação. Resultado:
+  - `kind` editado para "self" continua com a data de nascimento travada;
+  - `activeId` editado à mão (para o dono ou para um id desconhecido) e perfil apagado da lista caem no PIN;
+  - voltar para o dono pelo app continua normal;
+  - um PIN colocado no armazenamento comum nunca é importado: a migração antiga foi removida, porque o app ainda não foi lançado.
+
+### P1 — função
+
+- **R4-06:** "Músculos trabalhados" mostra os principais como pontos cheios e os secundários como halo; "chest" acende os três pontos do peito.
+- **R4-07:** Criar exercício usa a lista detalhada de equipamentos, agrupada. Os exercícios próprios já salvos migram das chaves antigas (kettlebell → kettlebells, cabos → estação de cabos etc.).
+- **R4-08 Planos divididos:**
+  - o dia Push fica só push (o preenchimento respeita os grupos do dia);
+  - a prévia de dias futuros avança pelo plano;
+  - escolher um plano refaz o treino de hoje;
+  - a faixa da semana usa os dias do plano;
+  - Planos ganhou filtros de equipamento ("sem pesos") e de músculos.
+- **R4-09:** equipamento e local entram na chave de revisão. Mudar em Configurações descarta o treino planejado ainda não começado, e o local salvo deixa de aparecer ativo quando a lista não bate mais.
+- **R4-10:** no dia de "+1 repetição" a carga anterior é mantida (60+ e articulação em cuidado). No peso corporal o texto não fala mais em "mesmo peso".
+
+### P2
+
+- **Listas:** Biblioteca com "Ver todos" (antes parava em 60); "Não é para você" sem limite; busca com espera enquanto se digita; o campo de busca não some mais.
+- **60+:** Progresso sem "Séries" nem o gráfico semanal; a aba Corpo agora é só para adultos de 18 a 59 (também no check-in; ajustei a SPEC); a Biblioteca ganhou a área "Ombros".
+- **Unidades:**
+  - uma regra de arredondamento só (40 lb = 17,5 kg no treino, na página do exercício e no gráfico);
+  - a tela de descanso mostra "última vez" na unidade da pessoa;
+  - a dica "+5 lb" usa o passo real (+10 lb / +5 kg para perna).
+- **Descanso:** o rótulo mostra o descanso que o timer vai usar (ex.: 90 s escolhido em Configurações).
+- **Dias:** lembretes, faixa da semana e prévias usam a mesma regra de dias e respeitam o primeiro dia da semana do celular.
+- **Dica "Dia de descanso?":** só em dias sem treino planejado.
+- **"Descanse hoje":** vale só para duas sessões seguidas dentro de 72 h; treinos personalizados não contam.
+- **Treino avulso:**
+  - treina só os músculos escolhidos (até 2 exercícios por músculo) e não aparece mais como "Corpo todo";
+  - depois de uma parada por dor aparece uma nota só, com o motivo certo ("fora hoje por causa da dor");
+  - dead bug com halter não recebe mais séries de aquecimento com carga.
+- **Sessões curtas:** equilíbrio curto só com exercícios de equilíbrio (sem abdominal reverso); mobilidade e equilíbrio curtos não mostram mais "semana de deload".
+- **Deload:** pelo menos 40% menos séries (3→1, 4→2, 5→3), nunca abaixo de 1.
+- **Variedade:** exercícios das 2 últimas sessões dão lugar a outras opções boas (favoritos continuam). O preenchimento não usa mais puxada de ponta de pé nem pendurar na barra.
+- **Documento:** a progressão exige 2 sessões no topo da faixa; corrigi o texto da Fase 14.
+- **Exercício próprio:** "Não revisado por treinador" aparece na lista, no treino e no player.
+- **Compartilhar:**
+  - adolescente com compartilhamento desligado não vê "Compartilhar sequência" nem "Compartilhar com amigos";
+  - "Compartilhar com amigos" envia o link de convite.
+- **Conquistas:** aberta pelo Progresso, a tela não mostra mais o "NOVA CONQUISTA" antigo, e os números saem formatados.
+- **Gráfico de exercícios:** mostra todos os exercícios, com rolagem lateral; a meta salva ao sair do campo, também no web.
+- **Textos para adolescentes:**
+  - a pergunta do modelo do corpo não fala mais em altura e peso;
+  - "Sua data de nascimento" no próprio perfil;
+  - o dono de 17 anos não vê "consentimento dos pais";
+  - o texto do PIN agora descreve só o que ele de fato bloqueia, e duas coisas passaram a pedir PIN para adolescentes: tirar uma restrição e mudar o nível de treino;
+  - "Inchworm lite" foi liberado para adolescentes.
+- **i18n:**
+  - números e decimais localizados (horas, relação cintura-altura, recordes);
+  - "Outubro de 2026";
+  - ES "Entrenamientos";
+  - PT "Nenhum exercício escolhido ainda";
+  - "Salva-sequência" com um nome só (o título da seção passou a ser "Motivação");
+  - o chip "Firme" virou "Exigente" (ES) e "Puxado" (PT);
+  - o texto de experiência bate com o código;
+  - o "&" na Home virou "y" em espanhol e "e" em português.
+- **Acessibilidade:**
+  - rótulos das abas sem corte (fonte 11, sem espaço extra) e novo fluxo Maestro `07-tab-labels` com captura de tela;
+  - `aria-pressed` nos chips e nos pontos do corpo;
+  - interruptores com área de 44 px e `aria-checked`;
+  - `aria-expanded` em "Não é para você";
+  - os cards da Biblioteca não têm mais botão dentro de botão;
+  - os pontos vizinhos (peito médio e inferior) não se sobrepõem mais.
+- **Outros:**
+  - o onboarding sem predefinição termina com a predefinição do local (casa → "Só peso corporal"; academia → completa);
+  - as "rotações de ombro sentado" da Laura agora têm pelo menos 3 trocas seguras;
+  - o teste `d-package` ganhou mais tempo para máquinas lentas.
+
+### Verificações
+
+- Lint, typecheck e **795 testes** passando (68 suítes); `db:test`, `functions:check` e `bundle:check` limpos.
+- **Achado durante a verificação:** o commit de função travava a exportação dos bundles (renderização estática). A prévia de dia futuro recebia o texto literal `[date]` e entrava num laço sem fim. Corrigido no commit P2: a data é validada e o laço tem limite de 1 ano; há teste para isso. O commit `bce09a1` sozinho não exporta, então use o commit final.
+- Testes novos:
+  - `r4-safety`: auditoria de etiquetas, parada por dor na lombar e no joelho, exercício próprio, planos por idade, proteção do perfil;
+  - `r4-function`;
+  - `r4-p2`;
+  - PIN antigo não importado.
+
+### Como testar (build de desenvolvimento)
+
+1. **Dave (joelho):** pare um treino com dor aguda no joelho → no mesmo dia, nenhum exercício com marcha, equilíbrio num pé ou panturrilha, nem o exercício próprio de quadríceps.
+2. **Lombar:** pare com dor aguda na lombar → Treino avulso → Lombar não oferece bird dog nem prancha.
+3. **Adolescente:** abra `/program/weightLoss-fullBody-3` → "não disponível". Edite o `kind` para "self" → a data de nascimento continua travada.
+4. **Plano PPL:** escolha Ganhar músculo · PPL · 3 dias → hoje aparece como "Push"; sexta aparece como "Pernas".
+5. **60+ com dor no joelho:** no dia de +1 repetição, a carga continua a mesma da última vez.
+6. **Configurações → Equipamentos:** tire os halteres → o treino planejado é refeito sem halteres.
+
+### Perguntas em aberto
+
+1. **Aviso "component name 'o'" do React:** não reproduziu nos testes nem no build local. Se aparecer de novo, me mande a tela em que surgiu.
+2. **"Puxar atrás do empurrar":** a variedade nova e a regra de equilíbrio devem aproximar os dois, mas não mexi no peso de cada grupo. Vale medir de novo na rodada 5.
+3. **Teste de captura das abas:** é um fluxo Maestro (roda num aparelho ou emulador) que salva a imagem para conferir a olho; não é uma comparação automática de pixels.

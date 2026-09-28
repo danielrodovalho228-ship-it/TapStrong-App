@@ -13,13 +13,15 @@ import { streakToday } from '../workout/streak';
 import { useWorkoutStore } from '../workout/store';
 
 import { applyPlan, onNotificationTap } from './apply';
+import { useTrainingDaysPerWeek } from '../program/useTrainingDays';
+
 import { planNotifications } from './plan';
 
 /** Keeps scheduled notifications in line with prefs, streak and language. */
 export function useNotificationSync() {
   const prefs = useAccountStore((s) => s.notifications);
   const streak = useWorkoutStore((s) => s.streak);
-  const daysPerWeek = useOnboardingStore((s) => s.daysPerWeek);
+  const daysPerWeek = useTrainingDaysPerWeek();
   const locale = useOnboardingStore((s) => s.locale);
   const entitlement = useBillingStore((s) => s.entitlement);
   const reports = useMovementPainStore((s) => s.reports);
@@ -31,6 +33,7 @@ export function useNotificationSync() {
     const plan = planNotifications({
       prefs,
       daysPerWeek,
+      startsOn: deviceWeekStart(),
       streak: streakToday(streak, localDate(now), deviceWeekStart()),
       lastActive: streak.lastActive,
       now,

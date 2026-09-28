@@ -13,7 +13,8 @@
     "remove": "Remove",
     "edit": "Edit",
     "separator": " · ",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "and": "&"
   },
   "language": {
     "en": "English",
@@ -279,7 +280,8 @@
       "schedule": "Where do you train, how long, and how often?",
       "focus": "What do you want to improve?",
       "body": "Which body model fits you? Height and weight are optional; I use them to pick the model closest to you.",
-      "bodyChild": "Which body model should we show?"
+      "bodyChild": "Which body model should we show?",
+      "bodyTeen": "Which body model fits you? Pick the one closest to you."
     },
     "where": "Where",
     "howLong": "How long",
@@ -3517,7 +3519,8 @@
       "recovering": "{{muscles}} still recovering from your last workout, so today trains other areas.",
       "unavailable": "No safe exercise for {{muscles}} fits today’s setup (position, equipment, restrictions). Add equipment or another position to work them.",
       "customLeftOut_one": "One pick was left out: it isn’t safe for you right now.",
-      "customLeftOut_other": "{{count}} picks were left out: they aren’t safe for you right now."
+      "customLeftOut_other": "{{count}} picks were left out: they aren’t safe for you right now.",
+      "painToday": "{{muscles}} left out today after the pain you reported. Back tomorrow if it feels fine."
     }
   },
   "tabs": {
@@ -4042,7 +4045,8 @@
       "full_other": "The Family plan holds up to {{count}} profiles.",
       "needFamily": "Family members need the Family plan.",
       "needCharge": "Profiles for children under 13 open after your first Family payment. The free trial doesn't count: the payment is how we verify a parent's consent.",
-      "ownerMinor": "Only an adult (18+) can manage family profiles and give parental consent."
+      "ownerMinor": "Only an adult (18+) can manage family profiles and give parental consent.",
+      "ownerMinorTeen": "Only an adult (18+) can manage family profiles."
     },
     "consent": {
       "title": "Parent consent",
@@ -4668,7 +4672,7 @@
     "locked_other": "Too many tries. Try again in {{count}} minutes.",
     "noPin": "A parent needs to create a parent PIN first, from their own profile (Settings).",
     "setupTitle": "Create a parent PIN",
-    "setupBody": "4 digits. Kids and teens on this phone need it to change plans, profiles or settings. Keep it to yourself.",
+    "setupBody": "4 digits. Teens on this phone need it to switch profiles, change plans, remove a restriction or change their training level. Keep it to yourself.",
     "newPin": "New PIN",
     "repeatPin": "Repeat the PIN",
     "mismatch": "The PINs don’t match. Try again.",
@@ -4842,7 +4846,8 @@
     "empty": "Add exercises from the list below.",
     "note": "Your own list. Exercises that aren't safe for you right now aren't shown.",
     "chosen_one": "{{count}} exercise chosen",
-    "chosen_other": "{{count}} exercises chosen"
+    "chosen_other": "{{count}} exercises chosen",
+    "chosen_zero": "No exercises chosen yet"
   },
   "familyShare": {
     "allow": "Allow {{name}} to share workouts",
@@ -4892,10 +4897,13 @@
       "back": "Back",
       "chest": "Chest",
       "core": "Core",
-      "balance": "Balance"
+      "balance": "Balance",
+      "shoulders": "Shoulders"
     },
     "create": "Create exercise",
-    "empty": "No exercise matches these filters."
+    "empty": "No exercise matches these filters.",
+    "showAll": "Show all {{count}}",
+    "notReviewed": "Not reviewed by a coach"
   },
   "exercise": {
     "guidance": "Guidance",
@@ -5033,7 +5041,7 @@
       "some": "Some experience",
       "experienced": "Experienced"
     },
-    "experienceNote": "\"New to training\" keeps to beginner moves.",
+    "experienceNote": "\"New to training\" keeps to easier moves, one step above beginner at most.",
     "sounds": "Sounds",
     "soundsDetail": "A short chime when a timer ends. Follows your phone's silent switch."
   },
@@ -5043,6 +5051,6 @@
     "days": "Days",
     "daysAuto": "My plan's days",
     "dayLabel": "{{day}}, reminder",
-    "motivation": "Streak saver"
+    "motivation": "Motivation"
   }
 }

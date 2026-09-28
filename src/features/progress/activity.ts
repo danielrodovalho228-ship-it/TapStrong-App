@@ -1,6 +1,7 @@
 import { addDays, localDate, weekStart, type LocalDate, type WeekStartDay } from '@/lib/dates';
 
 import type { Exercise } from '../exercises/types';
+import { convertLoad } from '../workout/loads';
 import type { LoadUnit, WorkoutRecord } from '../workout/types';
 
 import { countsAsWorkout, workoutMinutes } from './stats';
@@ -86,15 +87,16 @@ export function exerciseBest(workouts: WorkoutRecord[], exerciseId: string, unit
   const points = workouts
     .filter(finished)
     .map((w) => {
-      const kg = Math.max(
-        0,
-        ...w.logs
-          .filter((l) => l.exerciseId === exerciseId && l.load)
-          .map((l) => (l.unit === 'lb' ? l.load! * LB : l.load!)),
+      const logs = w.logs.filter((l) => l.exerciseId === exerciseId && l.load);
+      const kg = (l: (typeof logs)[number]) => (l.unit === 'lb' ? l.load! * LB : l.load!);
+      const top = logs.reduce<(typeof logs)[number] | null>(
+        (a, l) => (!a || kg(l) > kg(a) ? l : a),
+        null,
       );
+      // Same rounding rule as the workout and the exercise page (QA R4 P2).
       return {
         date: w.endedAt ?? w.createdAt,
-        best: kg ? Math.round((unit === 'lb' ? kg / LB : kg) * 2) / 2 : 0,
+        best: top ? convertLoad(top.load!, top.unit ?? 'lb', unit) : 0,
       };
     })
     .filter((p) => p.best > 0)

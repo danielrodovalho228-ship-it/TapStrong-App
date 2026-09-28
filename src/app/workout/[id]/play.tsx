@@ -5,7 +5,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { AppText, Button, Card, Chip, IconButton, Screen } from '@/components/ui';
 import { adviceForItem, adviceLoad } from '@/features/workout/loads';
-import { usePrefsStore } from '@/features/settings/store';
+import { restFor, usePrefsStore } from '@/features/settings/store';
 import * as Speech from 'expo-speech';
 import { prototypeVideo } from '@/features/exercises/library';
 import type { Exercise } from '@/features/exercises/types';
@@ -133,6 +133,11 @@ export default function PlayerScreen() {
         <AppText variant="h1" accessibilityRole="header">
           {exerciseName(t, exercise, step.item.exerciseId)}
         </AppText>
+        {exercise?.custom ? (
+          <AppText variant="caption" color={colors.mutedStrong}>
+            {t('library.notReviewed')}
+          </AppText>
+        ) : null}
         <AppText color={colors.mutedStrong}>{exerciseCues(t, exercise)}</AppText>
         <RangeNote exercise={exercise} />
         <SafetyCues exercise={exercise} />
@@ -308,6 +313,7 @@ function SetStep({
   onMachineTaken?: () => void;
 }) {
   const { t } = useTranslation();
+  const prefs = usePrefsStore();
   const { logSet, workouts } = useWorkoutStore();
   const units = useOnboardingStore((s) => s.units);
   const unit: LoadUnit = units === 'imperial' ? 'lb' : 'kg';
@@ -448,7 +454,7 @@ function SetStep({
           <View style={styles.flex}>
             <Button
               variant="secondary"
-              label={t('workout.player.restButton', { seconds: item.restSeconds })}
+              label={t('workout.player.restButton', { seconds: restFor(item, prefs) })}
               onPress={() =>
                 router.push({
                   pathname: '/workout/[id]/rest',

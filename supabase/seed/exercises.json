@@ -8853,7 +8853,7 @@
       "equipment": [],
       "location": ["home", "gym", "outdoors"],
       "level": 2,
-      "minAgeBand": "adult",
+      "minAgeBand": "teen",
       "positions": ["standing"],
       "contraindications": [
         "elbow_wrist",

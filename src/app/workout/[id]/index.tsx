@@ -42,6 +42,7 @@ import { createMobilityWorkout, useSafetyRefresh, useWorkout } from '@/features/
 import { isReviewed } from '@/features/workout/plan';
 import { useWorkoutStore } from '@/features/workout/store';
 import { track } from '@/lib/analytics';
+import { restFor, usePrefsStore } from '@/features/settings/store';
 import { clock } from '@/lib/clock';
 import { deviceWeekStart } from '@/lib/dates';
 import { colors, fonts, radius, spacing } from '@/theme';
@@ -53,6 +54,7 @@ type SheetState = { itemId: string | null; reason: SwapReasonUi } | null;
 /** Mockup 10 — the generated workout (SPEC §9 /workout/[id]). */
 export default function WorkoutScreen() {
   const { t } = useTranslation();
+  const prefs = usePrefsStore();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { workout, byId, input, library } = useWorkout(id);
   const mode = input?.mode ?? 'adult';
@@ -129,6 +131,7 @@ export default function WorkoutScreen() {
       n.key === 'generator.notes.substituted' ||
       n.key === 'generator.notes.recovering' ||
       n.key === 'generator.notes.unavailable' ||
+      n.key === 'generator.notes.painToday' ||
       n.key === 'generator.notes.trimmedMuscles'
     ) {
       return t(n.key, { muscles: n.muscles.map((m) => muscleLabel(t, m)).join(', ') });
@@ -226,12 +229,17 @@ export default function WorkoutScreen() {
             <ExerciseThumb size={44} />
             <View style={styles.rowText}>
               <AppText variant="bodyStrong">{exerciseName(t, e, item.exerciseId)}</AppText>
+              {e?.custom ? (
+                <AppText variant="caption" color={colors.mutedStrong}>
+                  {t('library.notReviewed')}
+                </AppText>
+              ) : null}
               <AppText variant="caption" color={colors.mutedStrong}>
                 {item.part === 'ramp_up'
                   ? t('workout.rampUp', { count: item.sets })
                   : item.durationSeconds
                     ? durationText(t, item.durationSeconds)
-                    : doseLine(t, item)}
+                    : doseLine(t, item, restFor(item, prefs))}
               </AppText>
               <RangeNote exercise={e} />
             </View>
@@ -326,10 +334,17 @@ export default function WorkoutScreen() {
             <ExerciseThumb />
             <View style={styles.rowText}>
               <AppText variant="bodyStrong">{exerciseName(t, e, item.exerciseId)}</AppText>
+              {e?.custom ? (
+                <AppText variant="caption" color={colors.mutedStrong}>
+                  {t('library.notReviewed')}
+                </AppText>
+              ) : null}
               <AppText variant="caption" color={colors.mutedStrong}>
                 {skipped
                   ? t('workout.skipped')
-                  : [doseLine(t, item), loadLabel(item, e)].filter(Boolean).join(' · ')}
+                  : [doseLine(t, item, restFor(item, prefs)), loadLabel(item, e)]
+                      .filter(Boolean)
+                      .join(' · ')}
               </AppText>
               <RangeNote exercise={e} />
               <Tag

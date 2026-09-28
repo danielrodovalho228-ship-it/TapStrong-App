@@ -20,6 +20,7 @@ flow clears the app state first, so they run in any order.
 | 04-child-blocked    | Under 13 cannot sign up alone (COPPA)                                     |
 | 05-senior-home      | 60+ mode: big Start, no body-map tab, photos off by default               |
 | 06-paywall          | The 4th workout of the week opens the paywall with cancel info            |
+| 07-tab-labels       | Tab labels read in full at 390 px; saves a screenshot to compare by eye    |
 
 Released exercises are needed for workouts in a preview build; in a
 development build the draft library is used.

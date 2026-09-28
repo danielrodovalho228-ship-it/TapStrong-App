@@ -13,6 +13,10 @@ export type RecentSession = {
   mainMuscles: string[];
   /** When it ended (ISO time), for recovery hours. */
   at?: string;
+  /** A Custom workout: counts for recovery, not for the "rest today" rule (QA R4 P2). */
+  custom?: boolean;
+  /** Main exercises done, so the next sessions vary (QA R4 P2). */
+  exerciseIds?: string[];
 };
 
 /** Everything the generator needs. Pure data in, pure data out (SPEC §8). */
@@ -62,6 +66,8 @@ export type GeneratorInput = {
    * Push day stays push. Unset = balance push / pull / legs over the week.
    */
   dayGroups?: MovementGroup[];
+  /** Single workout (A6): more work for the picked muscles, nothing else (QA R4 P2). */
+  targetsOnly?: boolean;
   /** Now (ISO time): recovery hours for the targets (QA R2-08). */
   now?: string;
   stoppedToday?: string[];
@@ -119,7 +125,9 @@ export type GeneratorNote =
   /** Chosen muscles still recovering from a recent workout (QA R2-08). */
   | { key: 'generator.notes.recovering'; muscles: string[] }
   /** Chosen muscles with no safe exercise for this setup today (QA R2-10). */
-  | { key: 'generator.notes.unavailable'; muscles: string[] };
+  | { key: 'generator.notes.unavailable'; muscles: string[] }
+  /** Chosen muscles left out today after pain was reported (QA R4 P2). */
+  | { key: 'generator.notes.painToday'; muscles: string[] };
 
 export type GeneratedSession = {
   items: SessionItem[];
@@ -130,6 +138,8 @@ export type GeneratedSession = {
   notes: GeneratorNote[];
   /** A deload week: 40% less volume (improvements v1, A2). */
   deload?: boolean;
+  /** Built from the person's own list (Custom workout, A6). */
+  custom?: boolean;
   /** A short mobility or balance session instead of a workout (QA R3-03, R3-05). */
   focus?: 'mobility' | 'balance';
   /** Set when no safe session can be built. */

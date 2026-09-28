@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { AppText, Card, Chip, IconButton, TextField } from '@/components/ui';
 import type { AppMode } from '@/features/profile/age';
@@ -49,10 +49,12 @@ export function ActivityCard({ mode, unit }: { mode: AppMode; unit: 'lb' | 'kg' 
   const weekday = (d: number) =>
     new Date(2026, 8, 20 + d, 12).toLocaleDateString(i18n.language, { weekday: 'narrow' }); // Sep 20 2026 is a Sunday
   const [y, m] = month.split('-').map(Number);
-  const monthTitle = new Date(y, m - 1, 1).toLocaleDateString(i18n.language, {
+  // "Outubro de 2026", not "Outubro De 2026" (QA R4 P2): only the first letter.
+  const monthRaw = new Date(y, m - 1, 1).toLocaleDateString(i18n.language, {
     month: 'long',
     year: 'numeric',
   });
+  const monthTitle = monthRaw.charAt(0).toLocaleUpperCase(i18n.language) + monthRaw.slice(1);
   const dayText = (date: string) =>
     new Date(`${date}T12:00:00`).toLocaleDateString(i18n.language, {
       month: 'short',
@@ -60,8 +62,16 @@ export function ActivityCard({ mode, unit }: { mode: AppMode; unit: 'lb' | 'kg' 
     });
 
   const tiles = [
-    { key: 'workouts', label: t('progress.activity.workouts'), value: totals.workouts },
-    { key: 'hours', label: t('progress.activity.hours'), value: totals.hours },
+    {
+      key: 'workouts',
+      label: t('progress.activity.workouts'),
+      value: totals.workouts.toLocaleString(i18n.language),
+    },
+    {
+      key: 'hours',
+      label: t('progress.activity.hours'),
+      value: totals.hours.toLocaleString(i18n.language),
+    },
     ...(mode === 'adult'
       ? [
           {
@@ -73,7 +83,13 @@ export function ActivityCard({ mode, unit }: { mode: AppMode; unit: 'lb' | 'kg' 
       : []),
     ...(senior
       ? []
-      : [{ key: 'mobility', label: t('progress.activity.mobility'), value: totals.mobility }]),
+      : [
+          {
+            key: 'mobility',
+            label: t('progress.activity.mobility'),
+            value: totals.mobility.toLocaleString(i18n.language),
+          },
+        ]),
   ];
 
   return (
@@ -210,8 +226,13 @@ function ExerciseGraph({
   return (
     <View style={styles.graph}>
       <AppText variant="bodyStrong">{t('progress.activity.exercise')}</AppText>
-      <View style={styles.chips}>
-        {exercises.slice(0, 8).map((e) => (
+      {/* Every logged exercise, scrolling sideways (QA R4 P2: only 8 before). */}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.row}
+      >
+        {exercises.map((e) => (
           <Chip
             key={e.id}
             label={exerciseName(t, e, e.id)}
@@ -222,7 +243,7 @@ function ExerciseGraph({
             }}
           />
         ))}
-      </View>
+      </ScrollView>
       <View style={styles.plot}>
         {recent.map((p) => (
           <View
@@ -252,7 +273,7 @@ function ExerciseGraph({
         ) : null}
       </View>
       <AppText variant="bodyStrong">
-        {t('progress.activity.best', { value: max, unit: unitText })}
+        {t('progress.activity.best', { value: max.toLocaleString(i18n.language), unit: unitText })}
       </AppText>
       {goal ? (
         <AppText color={max >= goal ? colors.teal : colors.mutedStrong}>
@@ -271,6 +292,7 @@ function ExerciseGraph({
         onChangeText={setDraft}
         onEndEditing={saveGoal}
         onSubmitEditing={saveGoal}
+        onBlur={saveGoal}
       />
     </View>
   );
@@ -279,6 +301,7 @@ function ExerciseGraph({
 const styles = StyleSheet.create({
   card: { gap: spacing.md },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  row: { flexDirection: 'row', gap: spacing.sm },
   tiles: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   tile: {
     flexGrow: 1,
@@ -290,7 +313,7 @@ const styles = StyleSheet.create({
   },
   caps: { textTransform: 'uppercase', letterSpacing: 1.2, fontFamily: fonts.headingSemi },
   monthHead: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
-  monthTitle: { flex: 1, textAlign: 'center', textTransform: 'capitalize' },
+  monthTitle: { flex: 1, textAlign: 'center' },
   week: { flexDirection: 'row' },
   dayCell: { flex: 1, alignItems: 'center', paddingVertical: 2, textAlign: 'center' },
   dot: { width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center' },

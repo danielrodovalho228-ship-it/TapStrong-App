@@ -68,31 +68,34 @@ export default function ProgressScreen() {
           })}
         />
         <Stat label={t('progress.workouts')} value={String(count)} />
-        <Stat label={t('progress.sets')} value={String(sets)} />
+        {mode === 'senior' ? null : <Stat label={t('progress.sets')} value={String(sets)} />}
       </View>
 
       <ActivityCard mode={mode} unit={unit} />
 
-      <Card style={styles.card}>
-        <AppText variant="h3">{t('progress.chart.title')}</AppText>
-        {selected ? (
-          <>
-            <View style={styles.chips}>
-              {muscles.map((m) => (
-                <Chip
-                  key={m}
-                  label={muscleLabel(t, m)}
-                  selected={m === selected}
-                  onPress={() => setMuscle(m)}
-                />
-              ))}
-            </View>
-            <WeekChart bars={weeklySets(workouts, library, selected, now, deviceWeekStart())} />
-          </>
-        ) : (
-          <AppText color={colors.mutedStrong}>{t('progress.chart.empty')}</AppText>
-        )}
-      </Card>
+      {/* 60+: workouts, hours and the calendar only (QA R4 P2). */}
+      {mode === 'senior' ? null : (
+        <Card style={styles.card}>
+          <AppText variant="h3">{t('progress.chart.title')}</AppText>
+          {selected ? (
+            <>
+              <View style={styles.chips}>
+                {muscles.map((m) => (
+                  <Chip
+                    key={m}
+                    label={muscleLabel(t, m)}
+                    selected={m === selected}
+                    onPress={() => setMuscle(m)}
+                  />
+                ))}
+              </View>
+              <WeekChart bars={weeklySets(workouts, library, selected, now, deviceWeekStart())} />
+            </>
+          ) : (
+            <AppText color={colors.mutedStrong}>{t('progress.chart.empty')}</AppText>
+          )}
+        </Card>
+      )}
 
       <Card style={styles.card}>
         <View style={styles.row}>
@@ -134,7 +137,7 @@ export default function ProgressScreen() {
         <LinkRow
           icon="star"
           label={t('progress.links.badges')}
-          onPress={() => router.push('/milestone')}
+          onPress={() => router.push({ pathname: '/milestone', params: { from: 'badges' } })}
         />
         <LinkRow
           icon="shield"

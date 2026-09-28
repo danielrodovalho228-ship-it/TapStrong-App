@@ -18,11 +18,13 @@ import { sendEmailCode, signOut, verifyEmailCode, type EmailMode } from '@/featu
 import { afterAccountSaved, syncNow } from '@/features/account/cloud';
 import { useAccountStore } from '@/features/account/store';
 import { requestPermission } from '@/features/notifications/apply';
-import { parseTime, TRAINING_DAYS } from '@/features/notifications/plan';
+import { parseTime, trainingWeekdays } from '@/features/notifications/plan';
+import { useTrainingDaysPerWeek } from '@/features/program/useTrainingDays';
 import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
+import { deviceWeekStart } from '@/lib/dates';
 import { getSupabase } from '@/lib/supabase';
 import { colors, fonts, spacing } from '@/theme';
 import { OwnerOnly } from '@/features/family/OwnerOnly';
@@ -88,13 +90,14 @@ function AccountScreenInner() {
     account.setNotifications({ [key]: value });
   };
 
+  const trainingDays = useTrainingDaysPerWeek();
   const timeText = (hhmm: string) => {
     const { hour, minute } = parseTime(hhmm);
     const d = clock.now();
     d.setHours(hour, minute, 0, 0);
     return d.toLocaleTimeString(i18n.language, { hour: 'numeric', minute: '2-digit' });
   };
-  const dayNames = (TRAINING_DAYS[profile.daysPerWeek ?? 3] ?? TRAINING_DAYS[3]).map((day) => {
+  const dayNames = trainingWeekdays(trainingDays, deviceWeekStart()).map((day) => {
     const d = new Date(2026, 8, 20 + day, 12); // Sep 20 2026 is a Sunday
     return d.toLocaleDateString(i18n.language, { weekday: 'short' });
   });

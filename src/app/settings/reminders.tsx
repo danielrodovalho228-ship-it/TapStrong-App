@@ -6,9 +6,10 @@ import { StyleSheet, View } from 'react-native';
 import { AppText, Card, Chip, Header, Notice, Screen, ToggleRow } from '@/components/ui';
 import { useAccountStore } from '@/features/account/store';
 import { requestPermission } from '@/features/notifications/apply';
-import { parseTime, TRAINING_DAYS } from '@/features/notifications/plan';
-import { useOnboardingStore } from '@/features/onboarding/store';
+import { parseTime, trainingWeekdays } from '@/features/notifications/plan';
+import { useTrainingDaysPerWeek } from '@/features/program/useTrainingDays';
 import { clock } from '@/lib/clock';
+import { deviceWeekStart } from '@/lib/dates';
 import { colors, spacing } from '@/theme';
 
 const TIMES = ['07:00', '12:00', '17:30', '19:00', '20:30'];
@@ -18,9 +19,9 @@ const WEEK = [0, 1, 2, 3, 4, 5, 6];
 export default function RemindersScreen() {
   const { t, i18n } = useTranslation();
   const { notifications, setNotifications } = useAccountStore();
-  const daysPerWeek = useOnboardingStore((s) => s.daysPerWeek);
+  const daysPerWeek = useTrainingDaysPerWeek();
   const [denied, setDenied] = useState(false);
-  const planDays = TRAINING_DAYS[daysPerWeek ?? 3] ?? TRAINING_DAYS[3];
+  const planDays = trainingWeekdays(daysPerWeek, deviceWeekStart());
   const days = notifications.reminderDays?.length ? notifications.reminderDays : planDays;
 
   const toggle = async (key: 'reminders' | 'streakSaver', value: boolean) => {

@@ -1,10 +1,11 @@
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText, Button, Icon, type IconName } from '@/components/ui';
 import { useAccountStore } from '@/features/account/store';
+import { activeProfile, canShare, useFamilyStore } from '@/features/family/store';
 import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { badgeStatus, VOLUME_STEPS, type BadgeKey } from '@/features/workout/badges';
@@ -44,6 +45,10 @@ export default function MilestoneScreen() {
   const library = useExerciseLibrary();
   const now = clock.now();
   const days = milestone?.streak ?? streak.current;
+  // A real milestone celebrates; the Badges link from Progress just lists them.
+  const { from } = useLocalSearchParams<{ from?: string }>();
+  const celebrate = !!milestone || from !== 'badges';
+  const member = useFamilyStore(activeProfile);
   const units = useOnboardingStore((s) => s.units);
   const reports = useMovementPainStore((s) => s.reports);
   const unit = units === 'imperial' ? 'lb' : 'kg';
@@ -71,52 +76,61 @@ export default function MilestoneScreen() {
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
       <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.center}>
-          <View style={styles.ringOuter}>
-            <View style={styles.ring}>
-              <Icon name="flame" size={56} color={colors.onAccent} />
-            </View>
-          </View>
-          <AppText variant="caption" color={colors.dark.accentSoft} style={styles.caps}>
-            {t('milestone.eyebrow')}
-          </AppText>
-          <AppText variant="display" color={colors.dark.text} accessibilityRole="header">
-            {t('milestone.title', { count: days })}
-          </AppText>
-          <AppText color={colors.dark.text} style={styles.centerText}>
-            {/* A deep link with a short streak is not "a full week" (QA round 2). */}
-            {days < 7
-              ? t('milestone.bodyEarly', { count: 7 - days })
-              : streak.freezes > 0
-                ? t(streak.freezes >= MAX_FREEZES ? 'milestone.bodyMax' : 'milestone.body')
-                : t('milestone.bodyNoFreeze')}
-          </AppText>
-        </View>
-
-        <View style={styles.week}>
-          {week.map((d) => {
-            const on = active.has(d);
-            const label = new Date(`${d}T12:00:00`).toLocaleDateString(i18n.language, {
-              weekday: 'narrow',
-            });
-            return (
-              <View
-                key={d}
-                style={[styles.day, on ? styles.dayOn : styles.dayOff]}
-                accessible
-                accessibilityLabel={t(on ? 'milestone.dayActive' : 'milestone.dayRest', {
-                  day: new Date(`${d}T12:00:00`).toLocaleDateString(i18n.language, {
-                    weekday: 'long',
-                  }),
-                })}
-              >
-                <AppText variant="button" color={colors.onAccent}>
-                  {label}
-                </AppText>
+        {celebrate ? (
+          <>
+            <View style={styles.center}>
+              <View style={styles.ringOuter}>
+                <View style={styles.ring}>
+                  <Icon name="flame" size={56} color={colors.onAccent} />
+                </View>
               </View>
-            );
-          })}
-        </View>
+              <AppText variant="caption" color={colors.dark.accentSoft} style={styles.caps}>
+                {t('milestone.eyebrow')}
+              </AppText>
+              <AppText variant="display" color={colors.dark.text} accessibilityRole="header">
+                {t('milestone.title', { count: days })}
+              </AppText>
+              <AppText color={colors.dark.text} style={styles.centerText}>
+                {/* A deep link with a short streak is not "a full week" (QA round 2). */}
+                {days < 7
+                  ? t('milestone.bodyEarly', { count: 7 - days })
+                  : streak.freezes > 0
+                    ? t(streak.freezes >= MAX_FREEZES ? 'milestone.bodyMax' : 'milestone.body')
+                    : t('milestone.bodyNoFreeze')}
+              </AppText>
+            </View>
+
+            <View style={styles.week}>
+              {week.map((d) => {
+                const on = active.has(d);
+                const label = new Date(`${d}T12:00:00`).toLocaleDateString(i18n.language, {
+                  weekday: 'narrow',
+                });
+                return (
+                  <View
+                    key={d}
+                    style={[styles.day, on ? styles.dayOn : styles.dayOff]}
+                    accessible
+                    accessibilityLabel={t(on ? 'milestone.dayActive' : 'milestone.dayRest', {
+                      day: new Date(`${d}T12:00:00`).toLocaleDateString(i18n.language, {
+                        weekday: 'long',
+                      }),
+                    })}
+                  >
+                    <AppText variant="button" color={colors.onAccent}>
+                      {label}
+                    </AppText>
+                  </View>
+                );
+              })}
+            </View>
+          </>
+        ) : (
+          // Opened from Progress → Badges: no stale "new milestone" (QA R4 P2).
+          <AppText variant="h1" color={colors.dark.text} accessibilityRole="header">
+            {t('progress.links.badges')}
+          </AppText>
+        )}
 
         <AppText variant="caption" color={colors.dark.accentSoft} style={styles.caps}>
           {t('milestone.badges')}
@@ -145,14 +159,17 @@ export default function MilestoneScreen() {
               </AppText>
               {!b.earned && b.progress ? (
                 <AppText variant="caption" color={colors.dark.accentSoft}>
-                  {t('milestone.progress', { done: b.progress[0], total: b.progress[1] })}
+                  {t('milestone.progress', {
+                    done: b.progress[0].toLocaleString(i18n.language),
+                    total: b.progress[1].toLocaleString(i18n.language),
+                  })}
                 </AppText>
               ) : null}
             </View>
           ))}
         </View>
 
-        {mode !== 'child' ? (
+        {canShare(member, mode) ? (
           <Button
             variant="accent"
             label={t('milestone.share')}

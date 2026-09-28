@@ -162,7 +162,10 @@ export default function WhoScreen() {
 
       <View style={styles.section}>
         <AppText variant="label" style={styles.sectionLabel}>
-          {t(`who.birth.${effectiveWho}`)}
+          {/* A teen on their own profile reads "Your birth month" (QA R4 P2). */}
+          {t(
+            `who.birth.${lock && !isOwnerProfile(profile, { ownerId, activeId }) ? 'me' : effectiveWho}`,
+          )}
         </AppText>
         {locked && !unlocked ? (
           <>

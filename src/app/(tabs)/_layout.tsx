@@ -21,15 +21,18 @@ export default function TabsLayout() {
         tabBarInactiveTintColor: colors.muted,
         tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.line },
         // Tighter tracking so "PROGRESSO" / "FAMILIA" fit at 60+ size (QA round 1).
+        // Five tabs at 390 px: "BIBLIOTECA" / "PROGRESSO" need the whole item
+        // width, so no side padding and no extra tracking (QA R4 P2).
+        tabBarItemStyle: { paddingHorizontal: 0 },
         tabBarLabelStyle: {
           fontFamily: fonts.headingSemi,
-          fontSize: senior ? 14 : 12,
+          fontSize: senior ? 13 : 11,
           // Room for the full line so labels are never clipped (QA round 2):
           // an explicit height too, or web renders a 10 px box (QA R3).
           lineHeight: senior ? 18 : 16,
           height: senior ? 18 : 16,
           includeFontPadding: false,
-          letterSpacing: 0.3,
+          letterSpacing: 0,
           textTransform: 'uppercase',
         },
         sceneStyle: { backgroundColor: colors.background },

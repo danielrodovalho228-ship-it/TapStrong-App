@@ -10,7 +10,8 @@ const DAY = 86_400_000;
 const KG_PER_LB = 0.45359237;
 
 /** Body measurements and indexes: adults only (SPEC §2.3). */
-export const measurementsAllowed = (mode: AppMode) => mode === 'adult' || mode === 'senior';
+// Adults 18–59 only (QA R4 P2): 60+ keep a simpler Progress with no body numbers.
+export const measurementsAllowed = (mode: AppMode) => mode === 'adult';
 
 /**
  * Before/after photos: adults, and 60+ once turned on (off by default).

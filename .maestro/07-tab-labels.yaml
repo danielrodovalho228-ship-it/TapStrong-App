@@ -1,0 +1,11 @@
+appId: app.tapstrong
+name: Tab labels are never clipped (QA R4 P2)
+---
+- runFlow: _onboard_adult.yaml
+- assertVisible: 'Home'
+- assertVisible: 'Body'
+- assertVisible: 'Library'
+- assertVisible: 'Progress'
+- assertVisible: 'Family'
+# Visual check at 390 px wide: every label reads in full, on one line.
+- takeScreenshot: tab-labels-en

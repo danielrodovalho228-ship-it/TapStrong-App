@@ -25,6 +25,11 @@ export function ToggleRow({ label, detail, value, onChange }: ToggleRowProps) {
       </View>
       <Switch
         accessibilityLabel={label}
+        accessibilityRole="switch"
+        accessibilityState={{ checked: value }}
+        aria-checked={value}
+        // A 44 px target around the switch (QA R4 P2).
+        style={styles.switch}
         value={value}
         onValueChange={onChange}
         trackColor={{ false: colors.line, true: colors.ink }}
@@ -43,4 +48,5 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
   },
   text: { flex: 1, gap: spacing.xxs },
+  switch: { minWidth: sizes.touchTarget, minHeight: sizes.touchTarget },
 });

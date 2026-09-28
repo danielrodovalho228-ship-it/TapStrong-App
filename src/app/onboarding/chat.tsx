@@ -59,7 +59,14 @@ export default function ChatScreen() {
   const complete = current ? isStepComplete(current, s) : true;
 
   const question = (step: InterviewStep) =>
-    t(step === 'body' && mode === 'child' ? 'chat.questions.bodyChild' : `chat.questions.${step}`);
+    t(
+      step === 'body' && mode === 'child'
+        ? 'chat.questions.bodyChild'
+        : // Teens have no height or weight fields (QA R4 P2).
+          step === 'body' && mode === 'teen'
+          ? 'chat.questions.bodyTeen'
+          : `chat.questions.${step}`,
+    );
 
   const finishStep = (step: InterviewStep) => {
     s.completeStep(step);

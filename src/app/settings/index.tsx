@@ -1,14 +1,18 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { Share, StyleSheet, View } from 'react-native';
 
 import { AppText, Button, Header, Screen } from '@/components/ui';
+import { loadReferralCode, referralLink } from '@/features/account/cloud';
 import { currentPlan } from '@/features/billing/rules';
 import { useBillingStore } from '@/features/billing/store';
 import { useOwnerAccess } from '@/features/family/OwnerOnly';
 import { ParentGate, ParentPinSetup } from '@/features/family/ParentGate';
 import { useParentPinStore } from '@/features/family/parentPin';
+import { activeProfile, canShare, useFamilyStore } from '@/features/family/store';
+import { derive } from '@/features/onboarding/derived';
+import { useOnboardingStore } from '@/features/onboarding/store';
 import { clock } from '@/lib/clock';
 import { contactSupport } from '@/lib/support';
 import { colors, spacing } from '@/theme';
@@ -26,6 +30,15 @@ export default function SettingsScreen() {
   const hasPin = useParentPinStore((s) => !!s.hash);
   // Changing the parent PIN asks for the current one first (QA R2-05).
   const [pinStep, setPinStep] = useState<'check' | 'set' | 'saved' | null>(null);
+  // "Share with friends" shares the invite link, only where sharing is on (QA R4 P2).
+  const member = useFamilyStore(activeProfile);
+  const mode = derive(useOnboardingStore())?.mode ?? 'adult';
+  const shareOk = canShare(member, mode);
+  const shareInvite = async () => {
+    const code = await loadReferralCode();
+    if (!code) return router.push('/share');
+    await Share.share({ message: t('share.inviteMessage', { link: referralLink(code) }) });
+  };
 
   return (
     <Screen
@@ -93,11 +106,13 @@ export default function SettingsScreen() {
           label={t('settings.help')}
           onPress={() => void contactSupport(t('settings.helpSubject'))}
         />
-        <Button
-          variant="secondary"
-          label={t('settings.shareFriends')}
-          onPress={() => router.push('/share')}
-        />
+        {shareOk ? (
+          <Button
+            variant="secondary"
+            label={t('settings.shareFriends')}
+            onPress={() => void shareInvite()}
+          />
+        ) : null}
       </View>
       <View style={styles.danger}>
         <AppText variant="caption" color={colors.mutedStrong}>

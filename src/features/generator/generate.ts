@@ -5,7 +5,7 @@ import type { AppMode } from '../profile/age';
 
 import { deloadSets } from '../program/block';
 
-import { rampAllowed } from './alternatives';
+import { rampable, rampAllowed } from './alternatives';
 import { doseFor, estimateSeconds, needsCaution } from './dosage';
 import {
   emphasisOn,
@@ -335,6 +335,9 @@ function pickByOverlap(
 // generateSession
 // ---------------------------------------------------------------------------
 
+/** Patterns the balance filler never adds: fine as a chosen target, odd as padding. */
+const MINOR_FILLER_PATTERNS = ['ankle', 'wrist', 'breathing', 'mobility', 'stretch'];
+
 export function generateSession(input: GeneratorInput): GeneratedSession {
   // A deload week keeps the exercises and cuts the sets by 40% (A2).
   if (input.deload) {
@@ -378,9 +381,21 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   const root = (t: Target) => rootOf(t.muscle);
   // A Repair recovery session or a short mobility session stays on its focus.
   const focused = !!input.rehab || !!input.mobilityOnly;
-  const rested = input.mobilityOnly
-    ? []
-    : allTargets.filter((t) => hitIn(recent[0], root(t)) && hitIn(recent[1], root(t)));
+  const nowMsEarly = input.now
+    ? Date.parse(input.now)
+    : input.today
+      ? Date.parse(`${input.today}T12:00:00`)
+      : undefined;
+  const sessionMsEarly = (r: RecentSession) => Date.parse(r.at ?? `${r.date}T12:00:00`);
+  // "Rest today" (QA R4 P2): the same muscle in the last two plan sessions,
+  // back to back within 72 h. Custom workouts don't count.
+  const planned = recent.filter((r) => !r.custom);
+  const within72 = (r: RecentSession | undefined) =>
+    !!r && (nowMsEarly === undefined || nowMsEarly - sessionMsEarly(r) <= 72 * 3600 * 1000);
+  const rested =
+    input.mobilityOnly || !within72(planned[1])
+      ? []
+      : allTargets.filter((t) => hitIn(planned[0], root(t)) && hitIn(planned[1], root(t)));
   if (rested.length)
     notes.push({ key: 'generator.notes.rested', muscles: rested.map((t) => t.muscle) });
 
@@ -440,7 +455,15 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   const day = input.today ? Math.floor(Date.parse(input.today) / 86_400_000) : 0;
   const strengthGym =
     input.location === 'gym' && input.mainGoals.includes('strength') && input.mode === 'adult';
-  const rotate = (list: Exercise[], salt: number) => {
+  // Variety (QA R4 P2): moves from the last two sessions step aside when
+  // another good option exists, so a day doesn't repeat three days later.
+  const recentIds = new Set(recent.slice(0, 2).flatMap((r) => r.exerciseIds ?? []));
+  const rotate = (all: Exercise[], salt: number) => {
+    // A starred exercise at the top stays, even if done last time (B4).
+    const starred = all.find((e) => input.favourites?.includes(e.id));
+    if (starred && starred === all[0] && !strengthGym) return starred;
+    const fresh = all.filter((e) => !recentIds.has(e.id) || input.favourites?.includes(e.id));
+    const list = fresh.length ? fresh : all;
     const equipped = strengthGym ? list.filter((e) => e.equipment.length > 0) : list;
     const top = (equipped.length ? equipped : list).slice(0, 3);
     if (!top.length) return undefined;
@@ -464,7 +487,9 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   });
   // A recovery session stays on its joint: more holds for the same focus
   // until its 4 slots are full (QA round 2: it had 3).
-  for (let pass = 0; focused && main.length < slots && pass < 3; pass++) {
+  // A Single workout does the same: only what was picked (QA R4 P2).
+  const onlyTargets = focused || !!input.targetsOnly;
+  for (let pass = 0; onlyTargets && main.length < slots && pass < 3; pass++) {
     for (const target of targets) {
       if (main.length >= slots) break;
       const pick = rankForTarget(pool, target, input.mode, input.favourites).find(
@@ -474,8 +499,20 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     }
   }
   // A chosen muscle with no safe option is never dropped silently (QA R2-10).
-  if (unavailable.length && !input.mobilityOnly)
-    notes.push({ key: 'generator.notes.unavailable', muscles: unavailable });
+  // One note per muscle, with the real reason (QA R4 P2): pain reported
+  // today, or the setup (position, equipment, restrictions).
+  const painFreePool =
+    unavailable.length && (input.stoppedToday?.length || input.painToday?.length)
+      ? programmablePool({ ...input, stoppedToday: [], painToday: [] })
+      : [];
+  const painToday = unavailable.filter((m) =>
+    painFreePool.some((e) => emphasisOn(e, muscleFamily(parentOf(m))) > 0),
+  );
+  const setup = unavailable.filter((m) => !painToday.includes(m));
+  if (painToday.length && !input.mobilityOnly)
+    notes.push({ key: 'generator.notes.painToday', muscles: painToday });
+  if (setup.length && !input.mobilityOnly)
+    notes.push({ key: 'generator.notes.unavailable', muscles: setup });
 
   // The rest of the session keeps push / pull / legs balanced over the week:
   // groups trained least this week first, only recovered ones, never a
@@ -501,13 +538,15 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
       rankForGroup(pool, g, defaultGoal, input.mode, input.favourites).filter(
         (e) =>
           !used.has(e.id) &&
+          // Fillers are real main work: no toe pulls or hangs (QA R4 P2).
+          !MINOR_FILLER_PATTERNS.includes(e.pattern) &&
           !usedParents.has(parentOf(topPrimary(e)!)) &&
           primariesReady(e) &&
           !e.muscles.some((m) => m.role === 'primary' && restedKeys.has(m.muscleKey)),
       ),
       main.length + 11,
     );
-  while (!focused && main.length < slots) {
+  while (!onlyTargets && main.length < slots) {
     const options = fill
       // Core once per session; the big groups share the rest.
       .filter((g) => g !== 'core' || sessionCount('core') === 0)
@@ -539,12 +578,16 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     return fail('all_recovering');
   }
   if (!main.length) return fail('no_main');
+  // "Trains other areas" replaces the setup note instead of repeating it.
   if (
-    unavailable.length &&
+    setup.length &&
     main.length &&
     !targets.some((t) => main.some((i) => i.targetMuscle === t.muscle))
-  )
-    notes.push({ key: 'generator.notes.substituted', muscles: unavailable });
+  ) {
+    const at = notes.findIndex((n) => n.key === 'generator.notes.unavailable');
+    if (at >= 0) notes.splice(at, 1);
+    notes.push({ key: 'generator.notes.substituted', muscles: setup });
+  }
 
   // 60+, a fall in the last year, or a balance goal: always some balance or
   // fall-prevention work (QA B-08, C-06), protected from the time fit (QA R2-06).
@@ -700,7 +743,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   // teens light only; never kids (SPEC §8 table).
   // Ramp-up for the first LOADED main lift, even when a bodyweight move comes
   // before it (QA P2).
-  const firstLoadedIndex = mainExercises.findIndex((e) => e.loaded && !e.isolation);
+  const firstLoadedIndex = mainExercises.findIndex(rampable);
   const first = firstLoadedIndex >= 0 ? mainExercises[firstLoadedIndex] : undefined;
   let rampSeconds = 0;
   let ramp: SessionItem | null = null;
@@ -859,6 +902,8 @@ export function generateMobilitySession(
   const focus = [...MOBILITY_FOCUS.slice(start), ...MOBILITY_FOCUS.slice(0, start)].slice(0, 3);
   const session = generateSession({
     ...input,
+    // A short mobility session is never a "deload week" workout (QA R4 P2).
+    deload: false,
     minutes,
     mobilityOnly: true,
     mainGoals: ['mobility'],
@@ -880,6 +925,10 @@ export function generateBalanceSession(
 ): GeneratedSession {
   const session = generateSession({
     ...input,
+    // Main work is balance moves only (QA R4 P2: no reverse crunch); warm-up
+    // and cool-down still come from the whole library.
+    library: input.library.filter((e) => e.pattern === 'balance' || !e.parts.includes('main')),
+    deload: false,
     minutes,
     mobilityOnly: true,
     mainGoals: ['balance'],
@@ -960,6 +1009,7 @@ export function generateCustomSession(
     ...base,
     items,
     focus: undefined,
+    custom: true,
     estimatedMinutes: Math.round(seconds / 60),
     notes: left.length ? [{ key: 'generator.notes.customLeftOut', count: left.length }] : [],
   };

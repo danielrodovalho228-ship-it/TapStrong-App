@@ -16,6 +16,7 @@ import { useProgressStore } from '@/features/progress/store';
 import { useWorkoutStore } from '@/features/workout/store';
 import { clock } from '@/lib/clock';
 import { colors, fonts, radius, sizes, spacing } from '@/theme';
+import { listText } from '@/lib/listText';
 
 import { dayPart, lastWorkout, relativeDay } from './summary';
 
@@ -144,7 +145,7 @@ export function SeniorHome({
         <Card style={styles.today}>
           <AppText color={colors.mutedStrong}>{meta}</AppText>
           <AppText variant="h1">
-            {goals.length ? goals.join(' & ') : t('home.senior.balance')}
+            {goals.length ? listText(goals, t('common.and')) : t('home.senior.balance')}
           </AppText>
           <AppText>{t('home.withWarmup', { minutes })}</AppText>
           <Button

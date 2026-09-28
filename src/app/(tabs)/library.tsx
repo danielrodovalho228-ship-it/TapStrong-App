@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
@@ -29,6 +29,8 @@ import { useExerciseLibrary, useGeneratorInput } from '@/features/workout/hooks'
 import { ExerciseThumb } from '@/features/workout/components/Media';
 import { colors, fonts, radius, spacing } from '@/theme';
 
+/** Cards shown before "Show all". */
+const PAGE = 60;
 const ROLES: LibraryRole[] = ['main', 'warmup', 'stretch', 'balance', 'repair'];
 /** 60+ browse by area instead of the body map (simpler, big buttons). */
 const AREAS: Record<string, string[]> = {
@@ -36,6 +38,7 @@ const AREAS: Record<string, string[]> = {
   legs: ['quads', 'hamstrings', 'glutes', 'calves'],
   back: ['upperBack', 'lats', 'lowerBack'],
   chest: ['chest'],
+  shoulders: ['shoulders', 'rearDelts', 'rotatorCuff'],
   core: ['abs', 'obliques'],
 };
 
@@ -54,8 +57,14 @@ export default function LibraryScreen() {
   const [segment, setSegment] = useState<'exercises' | 'plans'>('exercises');
   const [filter, setFilter] = useState<LibraryFilter>({});
   const [showOut, setShowOut] = useState(false);
+  const [showAll, setShowAll] = useState(false);
+  // Search waits for typing to settle (QA R4 P2).
+  const [query, setQuery] = useState('');
+  const deferredQuery = useDeferredValue(query);
   const name = (e: Exercise) => exerciseName(t, e, e.id);
-  const view = input ? libraryView(input, filter, name) : { safe: [], notForYou: [] };
+  const view = input
+    ? libraryView(input, { ...filter, query: deferredQuery }, name)
+    : { safe: [], notForYou: [] };
   // Only items some exercise actually uses (improvements v1, C).
   const equipment = [
     'none',
@@ -66,18 +75,27 @@ export default function LibraryScreen() {
 
   const card = (e: Exercise) => {
     const starred = favourites.includes(e.id);
+    // The card and the star are sibling buttons, never one inside the other (QA R4 P2).
     return (
-      <Pressable
-        key={e.id}
-        accessibilityRole="button"
-        accessibilityLabel={name(e)}
-        onPress={() => router.push({ pathname: '/exercise/[id]', params: { id: e.id } })}
-        style={[styles.card, senior && styles.cardWide]}
-      >
-        <ExerciseThumb size={senior ? 64 : 48} />
-        <AppText variant={senior ? 'h3' : 'bodyStrong'} style={styles.flex} numberOfLines={2}>
-          {name(e)}
-        </AppText>
+      <View key={e.id} style={[styles.card, senior && styles.cardWide]}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={e.custom ? `${name(e)}, ${t('library.notReviewed')}` : name(e)}
+          onPress={() => router.push({ pathname: '/exercise/[id]', params: { id: e.id } })}
+          style={styles.cardMain}
+        >
+          <ExerciseThumb size={senior ? 64 : 48} />
+          <View style={styles.flex}>
+            <AppText variant={senior ? 'h3' : 'bodyStrong'} numberOfLines={2}>
+              {name(e)}
+            </AppText>
+            {e.custom ? (
+              <AppText variant="caption" color={colors.mutedStrong}>
+                {t('library.notReviewed')}
+              </AppText>
+            ) : null}
+          </View>
+        </Pressable>
         <IconButton
           icon="star"
           variant={starred ? 'filled' : 'outlined'}
@@ -86,7 +104,7 @@ export default function LibraryScreen() {
           })}
           onPress={() => toggleFavourite(e.id)}
         />
-      </Pressable>
+      </View>
     );
   };
 
@@ -108,11 +126,7 @@ export default function LibraryScreen() {
         <PlansBrowser mode={mode} />
       ) : (
         <>
-          <TextField
-            label={t('library.search')}
-            value={filter.query ?? ''}
-            onChangeText={(query) => setFilter((f) => ({ ...f, query }))}
-          />
+          <TextField label={t('library.search')} value={query} onChangeText={setQuery} />
           {senior ? (
             <View style={styles.wrapChips}>
               {Object.entries(AREAS).map(([area, muscles]) => (
@@ -214,7 +228,18 @@ export default function LibraryScreen() {
             {t('library.count', { count: view.safe.length })}
           </AppText>
           {view.safe.length ? (
-            <View style={styles.grid}>{view.safe.slice(0, 60).map(card)}</View>
+            <>
+              <View style={styles.grid}>
+                {(showAll ? view.safe : view.safe.slice(0, PAGE)).map(card)}
+              </View>
+              {!showAll && view.safe.length > PAGE ? (
+                <Button
+                  variant="secondary"
+                  label={t('library.showAll', { count: view.safe.length })}
+                  onPress={() => setShowAll(true)}
+                />
+              ) : null}
+            </>
           ) : (
             <AppText color={colors.mutedStrong}>{t('library.empty')}</AppText>
           )}
@@ -224,6 +249,7 @@ export default function LibraryScreen() {
               <Pressable
                 accessibilityRole="button"
                 accessibilityState={{ expanded: showOut }}
+                aria-expanded={showOut}
                 onPress={() => setShowOut((v) => !v)}
               >
                 <AppText variant="bodyStrong">
@@ -233,7 +259,7 @@ export default function LibraryScreen() {
                 </AppText>
               </Pressable>
               {showOut
-                ? view.notForYou.slice(0, 40).map(({ exercise, reason }) => (
+                ? view.notForYou.map(({ exercise, reason }) => (
                     <View key={exercise.id} style={styles.outRow}>
                       <AppText style={styles.flex}>{name(exercise)}</AppText>
                       <AppText variant="caption" color={colors.mutedStrong}>
@@ -274,6 +300,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
   },
   cardWide: { flexBasis: '100%' },
+  cardMain: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   flex: { flex: 1 },
   out: { gap: spacing.sm },
   outRow: { flexDirection: 'row', gap: spacing.sm, alignItems: 'center' },

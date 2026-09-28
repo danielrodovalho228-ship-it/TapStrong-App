@@ -14,7 +14,9 @@ import {
   Screen,
   TextLink,
 } from '@/components/ui';
+import { ParentGate } from '@/features/family/ParentGate';
 import { MovementPainEntry } from '@/features/movement/Entry';
+import { derive } from '@/features/onboarding/derived';
 import { PAIN_AREAS, type PainArea } from '@/features/onboarding/options';
 import { restrictionAreas } from '@/features/onboarding/safety';
 import { useOnboardingStore } from '@/features/onboarding/store';
@@ -39,7 +41,24 @@ export default function RestrictionsScreen() {
   const [area, setArea] = useState<PainArea | null>(null);
   const [confirmId, setConfirmId] = useState<string | null>(null);
   const [side, setSide] = useState<Side | 'both' | undefined>();
+  // A teen or child removing a restriction needs a parent (QA R4 P2).
+  const minor = ['teen', 'child'].includes(derive(useOnboardingStore())?.mode ?? 'adult');
+  const [gateFor, setGateFor] = useState<string | null>(null);
+  const heal = (id: string) => {
+    if (minor && gateFor !== id) return setGateFor(id);
+    setGateFor(null);
+    setActive(id, false);
+  };
 
+  const gate = gateFor ? (
+    <ParentGate
+      onPass={() => {
+        setActive(gateFor, false);
+        setGateFor(null);
+      }}
+      onCancel={() => setGateFor(null)}
+    />
+  ) : null;
   const active = items.filter((r) => r.active);
   const healed = items.filter((r) => !r.active);
   const fromHealthCheck = restrictionAreas(painAreas);
@@ -81,6 +100,7 @@ export default function RestrictionsScreen() {
       footer={<Button label={t('restrictions.done')} onPress={() => router.back()} />}
     >
       <MovementPainEntry />
+      {gate}
       {active.map((r) => {
         const swaps = painSwaps(workouts, r.area);
         return (
@@ -125,7 +145,7 @@ export default function RestrictionsScreen() {
                   variant="secondary"
                   label={t('restrictions.clearedYes')}
                   onPress={() => {
-                    setActive(r.id, false);
+                    heal(r.id);
                     setConfirmId(null);
                   }}
                 />
@@ -139,9 +159,7 @@ export default function RestrictionsScreen() {
               <TextLink
                 label={t('restrictions.healed')}
                 // A red-flag area needs an explicit "cleared by a doctor" (QA C-02).
-                onPress={() =>
-                  r.source === 'doctor' ? setConfirmId(r.id) : setActive(r.id, false)
-                }
+                onPress={() => (r.source === 'doctor' ? setConfirmId(r.id) : heal(r.id))}
               />
             )}
           </Card>
