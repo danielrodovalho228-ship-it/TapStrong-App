@@ -4831,7 +4831,8 @@
       "legs": "Pernas, glúteos",
       "core": "Core"
     },
-    "notFound": "Não encontramos este plano. Escolha um em Planos."
+    "notFound": "Não encontramos este plano. Escolha um em Planos.",
+    "notFoundTitle": "Plano não encontrado"
   },
   "modes": {
     "title": "O que você quer fazer?",

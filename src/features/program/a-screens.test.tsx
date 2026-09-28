@@ -181,6 +181,17 @@ describe('ready-made plans (A5)', () => {
     await fireEvent.press(screen.getByRole('button', { name: 'Back to My plan' }));
     expect(useProgramStore.getState().planId).toBeNull();
   });
+
+  it('an unknown plan id shows "Plan not found" with Back, never a crash (QA R6-06)', async () => {
+    await adult();
+    mockParams = { id: 'no-such-plan' };
+    await render(<ProgramScreen />);
+    expect(screen.getByText('Plan not found')).toBeTruthy();
+    expect(screen.getByText("We couldn't find this plan. Pick one from Plans.")).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Use this plan' })).toBeNull();
+    // The header's Back and one under the message.
+    expect(screen.getAllByRole('button', { name: 'Back' })).toHaveLength(2);
+  });
 });
 
 describe('sharing a teen workout (A7)', () => {

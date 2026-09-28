@@ -35,7 +35,7 @@ export default function ProgramScreen() {
 
   const use = () => {
     if (blocked || unknown) return;
-    choosePlan(mine ? null : plan!.id, localDate(clock.now()));
+    choosePlan(mine || !plan ? null : plan.id, localDate(clock.now()));
     // Today's planned workout follows the new plan (QA R4-08).
     discardPlannedWorkouts();
     setSaved(true);
@@ -46,7 +46,14 @@ export default function ProgramScreen() {
       header={
         <Header
           onBack={() => router.back()}
-          title={mine ? t('plans.myPlan') : `${t(`plans.goals.${plan!.goal}`)}`}
+          // An unknown id has no plan to read: never touch it (QA R6-06).
+          title={
+            mine
+              ? t('plans.myPlan')
+              : plan
+                ? t(`plans.goals.${plan.goal}`)
+                : t('plans.notFoundTitle')
+          }
         />
       }
       footer={
@@ -55,24 +62,35 @@ export default function ProgramScreen() {
         )
       }
     >
-      {unknown ? (
-        <Notice tone="warning">{t('plans.notFound')}</Notice>
+      {unknown || !plan ? (
+        mine ? (
+          <AppText color={colors.mutedStrong}>{t('plans.myPlanBody')}</AppText>
+        ) : (
+          <>
+            <Notice tone="warning">{t('plans.notFound')}</Notice>
+            <Button
+              variant="secondary"
+              label={t('common.back')}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/plans'))}
+            />
+          </>
+        )
       ) : blocked ? (
         <Notice tone="warning">{t('plans.notForYou')}</Notice>
       ) : mine ? (
         <AppText color={colors.mutedStrong}>{t('plans.myPlanBody')}</AppText>
       ) : (
         <>
-          <AppText variant="h3">{t(`plans.splits.${plan!.split}`)}</AppText>
+          <AppText variant="h3">{t(`plans.splits.${plan.split}`)}</AppText>
           <AppText color={colors.mutedStrong}>
-            {t('plans.meta', { days: plan!.daysPerWeek, minutes: plan!.minutes })}
+            {t('plans.meta', { days: plan.daysPerWeek, minutes: plan.minutes })}
           </AppText>
           <AppText color={colors.mutedStrong}>
-            {t('plans.weeks', { count: plan!.blockWeeks })}
+            {t('plans.weeks', { count: plan.blockWeeks })}
           </AppText>
           <Card style={styles.card}>
             <AppText variant="label">{t('plans.schedule')}</AppText>
-            {plan!.days.map((d, i) => (
+            {plan.days.map((d, i) => (
               <View key={i} style={styles.row}>
                 <AppText color={colors.muted}>{i + 1}</AppText>
                 <AppText variant="bodyStrong">{t(`program.day.${d.name}`)}</AppText>

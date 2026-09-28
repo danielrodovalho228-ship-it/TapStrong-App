@@ -4831,7 +4831,8 @@
       "legs": "Legs, glutes",
       "core": "Core"
     },
-    "notFound": "We couldn't find this plan. Pick one from Plans."
+    "notFound": "We couldn't find this plan. Pick one from Plans.",
+    "notFoundTitle": "Plan not found"
   },
   "modes": {
     "title": "What do you want to do?",
