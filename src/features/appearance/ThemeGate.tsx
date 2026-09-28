@@ -41,6 +41,13 @@ export function ThemeGate({ children }: { children: ReactNode }) {
     void SystemUI.setBackgroundColorAsync(background).catch(() => undefined);
   }, [background]);
 
+  // Web: the page was hidden in Dark until now (+html.tsx); show it once the
+  // real scheme is on screen.
+  useEffect(() => {
+    if (Platform.OS === 'web' && hydrated && typeof document !== 'undefined')
+      document.documentElement.dataset.ready = '1';
+  }, [hydrated, scheme]);
+
   return (
     <SchemeContext.Provider value={scheme}>
       <View style={[styles.root, { backgroundColor: background }]}>

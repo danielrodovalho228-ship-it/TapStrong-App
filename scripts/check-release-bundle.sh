@@ -9,7 +9,7 @@ OUT="$(mktemp -d)"
 trap 'rm -rf "$OUT"' EXIT
 
 cd "$ROOT"
-EXPO_OFFLINE=1 CI=1 npx expo export --platform android --platform ios --platform web --output-dir "$OUT" >/dev/null
+EXPO_OFFLINE=1 CI=1 npx expo export --clear --platform android --platform ios --platform web --output-dir "$OUT" >/dev/null
 
 if grep -rl 'Prototype exercise library' "$OUT" >/dev/null; then
   echo "FAIL: a release bundle contains the draft exercise library" >&2

@@ -14,7 +14,7 @@ export const executablePath = [
 
 /** A development export: its sample library lets workout screens render offline. */
 export function exportWeb(out) {
-  execSync(`npx expo export --dev --platform web --output-dir ${out}`, {
+  execSync(`npx expo export --clear --dev --platform web --output-dir ${out}`, {
     stdio: 'ignore',
     env: { ...process.env, EXPO_OFFLINE: '1', CI: '1' },
   });
