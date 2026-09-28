@@ -1590,6 +1590,30 @@
       "rangeLimit": []
     },
     {
+      "slug": "st_seated_behind_back_triceps",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "teen",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": ["shoulder"],
+      "pattern": "stretch",
+      "parts": ["cooldown_stretch"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["triceps", "primary", 0.7],
+        ["shoulders", "secondary", 0.3]
+      ],
+      "joints": [
+        ["shoulder", "reach_behind", "partial"],
+        ["elbow", "flexion", "full"]
+      ],
+      "rangeLimit": []
+    },
+    {
       "slug": "standing_quad_stretch",
       "equipment": [],
       "location": ["home", "gym", "outdoors"],

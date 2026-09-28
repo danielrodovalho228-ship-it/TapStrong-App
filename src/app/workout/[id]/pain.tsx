@@ -101,7 +101,7 @@ export default function PainScreen() {
       <View style={styles.backdrop} />
       <View style={[styles.sheet, { paddingBottom: insets.bottom + spacing.lg }]}>
         <ScrollView contentContainerStyle={styles.content}>
-          <AppText variant="caption" color={colors.accentText} style={styles.caps}>
+          <AppText variant="caption" color={colors.mutedStrong} style={styles.caps}>
             {t('workout.pain.eyebrow')}
           </AppText>
           <AppText variant="h1" accessibilityRole="header">
@@ -207,7 +207,7 @@ export default function PainScreen() {
 
 const useStyles = makeStyles(() => ({
   overlay: { flex: 1, justifyContent: 'flex-end' },
-  backdrop: { ...StyleSheet.absoluteFill, backgroundColor: colors.ink, opacity: 0.5 },
+  backdrop: { ...StyleSheet.absoluteFill, backgroundColor: colors.scrim },
   sheet: {
     maxHeight: '90%',
     backgroundColor: colors.background,

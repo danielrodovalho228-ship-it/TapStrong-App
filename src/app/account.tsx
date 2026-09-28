@@ -107,7 +107,7 @@ function AccountScreenInner() {
   return (
     <Screen header={<Header onBack={close} />}>
       <View style={styles.head}>
-        <AppText variant="caption" color={colors.accentText} style={styles.caps}>
+        <AppText variant="caption" color={colors.mutedStrong} style={styles.caps}>
           {from === 'done' && firstDone ? t('account.eyebrowDone') : t('account.eyebrow')}
         </AppText>
         <AppText variant="h1" accessibilityRole="header">

@@ -299,6 +299,9 @@ export function BodyMapCanvas({
                     {
                       width: hitFor(x, y),
                       height: hitFor(x, y),
+                      // Round: circles sized to the nearest dot never overlap,
+                      // squares did at the corners (QA R6 P2).
+                      borderRadius: hitFor(x, y) / 2,
                       left: x * scale - hitFor(x, y) / 2,
                       top: y * scale - hitFor(x, y) / 2,
                     },

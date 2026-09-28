@@ -22,8 +22,10 @@ export function TextLink({ label, tone = 'ink', ...rest }: TextLinkProps) {
     >
       <AppText
         variant="bodyStrong"
-        color={tone === 'accent' ? colors.accentText : colors.ink}
-        style={styles.text}
+        // Links are ink in both tones: coral is for primary actions (QA R6 P2).
+        // `tone` stays for emphasis (bolder underline).
+        color={colors.ink}
+        style={[styles.text, tone === 'accent' && styles.strong]}
       >
         {label}
       </AppText>
@@ -41,4 +43,5 @@ const styles = StyleSheet.create({
   },
   pressed: { opacity: 0.6 },
   text: { textDecorationLine: 'underline' },
+  strong: { textDecorationStyle: 'solid', fontWeight: '700' },
 });

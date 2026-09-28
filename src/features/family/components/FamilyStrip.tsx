@@ -43,7 +43,7 @@ export function FamilyStrip() {
         return (
           <View key={p.id} style={styles.card}>
             <View style={styles.avatar}>
-              <AppText variant="h2" color={colors.onCanvas}>
+              <AppText variant="h2" color={colors.ink}>
                 {name.slice(0, 1).toUpperCase()}
               </AppText>
             </View>
@@ -83,7 +83,8 @@ const useStyles = makeStyles(() => ({
     width: 88,
     height: 104,
     borderRadius: radius.card,
-    backgroundColor: colors.bodyCanvas,
+    // A letter, not a body image: the soft tint of each mode (QA R6 P2).
+    backgroundColor: colors.primarySoft,
     alignItems: 'center',
     justifyContent: 'center',
   },

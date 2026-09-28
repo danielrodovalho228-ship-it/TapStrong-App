@@ -54,7 +54,7 @@ export default function ExitScreen() {
 
 const useStyles = makeStyles(() => ({
   overlay: { flex: 1, justifyContent: 'center', padding: spacing.xl },
-  backdrop: { ...StyleSheet.absoluteFill, backgroundColor: colors.ink, opacity: 0.6 },
+  backdrop: { ...StyleSheet.absoluteFill, backgroundColor: colors.scrim },
   card: {
     backgroundColor: colors.background,
     borderRadius: radius.card * 2,

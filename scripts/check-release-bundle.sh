@@ -32,9 +32,15 @@ if grep -rl 'simulateFirstCharge' "$OUT" >/dev/null; then
   echo "FAIL: a release bundle contains the development purchase simulator" >&2
   exit 1
 fi
+# Development-only navigator warnings (QA R6 P2: "component with the name
+# 'o'") are stripped from release builds.
+if grep -rl 'Got a component with the name' "$OUT" >/dev/null; then
+  echo "FAIL: a release bundle contains development-only navigator warnings" >&2
+  exit 1
+fi
 if find "$OUT" -iname '*.mp4' | grep -q .; then
   echo "FAIL: a release bundle contains video files" >&2
   find "$OUT" -iname '*.mp4' >&2
   exit 1
 fi
-echo "OK: no draft exercises, draft Repair tests, the draft movement catalog, prototype videos or purchase simulator in release bundles"
+echo "OK: no draft exercises, draft Repair tests, the draft movement catalog, prototype videos, purchase simulator or dev-only warnings in release bundles"

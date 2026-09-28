@@ -46,8 +46,9 @@ const useStyles = makeStyles(() => ({
     alignItems: 'center',
   },
   idle: { backgroundColor: colors.surface, borderColor: colors.line },
-  // Theme v2: selected chips are soft coral with a coral edge; the text stays ink.
-  selected: { backgroundColor: colors.primarySoft, borderColor: colors.accent },
+  // Theme v2: selected chips are a soft tint with an ink edge; coral stays for
+  // actions, the active tab, today and progress (QA R6 P2).
+  selected: { backgroundColor: colors.primarySoft, borderColor: colors.ink },
   pressed: { borderColor: colors.ink },
   disabled: { opacity: 0.45 },
 }));

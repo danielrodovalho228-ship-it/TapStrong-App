@@ -3501,6 +3501,10 @@
     "wu_seated_toe_taps": {
       "name": "Toques de punta sentado",
       "cues": "Siéntate erguido, estira un poco una pierna y toca con la punta al frente; cambia con un ritmo suave."
+    },
+    "st_seated_behind_back_triceps": {
+      "name": "Estiramiento de tríceps sentado detrás de la espalda",
+      "cues": "Siéntate erguido, apoya el dorso de una mano en la zona lumbar y lleva ese codo suavemente hacia delante con la otra mano. Respira; cambia de lado."
     }
   },
   "generator": {
@@ -3591,7 +3595,7 @@
     },
     "freezes_one": "{{count}} protección de racha guardada",
     "freezes_other": "{{count}} protecciones de racha guardadas",
-    "mobility": "Movilidad corta · {{minutes}} min",
+    "mobility": "Movilidad corta · {{minutes}} min",
     "mobilityNote": "Cuenta para tu racha. Siempre gratis, cuantas veces quieras.",
     "morningCheck": "Califica tu dolor esta mañana",
     "morningCheckBody": "Un toque: tu plan de recuperación avanza o se suaviza.",
@@ -3599,7 +3603,7 @@
     "dayStreak_other": "Días seguidos",
     "recoveringTitle": "Todo se está recuperando",
     "recoveringBody": "Tus músculos necesitan un poco más de tiempo. Hoy va bien una movilidad corta, unos ejercicios de equilibrio o un día de descanso.",
-    "balance": "Equilibrio corto · {{minutes}} min",
+    "balance": "Equilibrio corto · {{minutes}} min",
     "rest": "Descansar hoy",
     "restNote": "Descansar también es entrenar. Tu próximo entrenamiento estará listo cuando tus músculos lo estén.",
     "streakHint": "¿Día de descanso? 10 minutos de movilidad mantienen tu racha.",
@@ -4126,10 +4130,10 @@
   "progress": {
     "title": "Progreso",
     "streak": "Racha",
-    "workouts": "Entrenamientos",
+    "workouts": "Sesiones",
     "sets": "Series",
-    "days_one": "{{count}} día",
-    "days_other": "{{count}} días",
+    "days_one": "{{count}} día",
+    "days_other": "{{count}} días",
     "chart": {
       "title": "Series por semana y músculo",
       "empty": "Termina un entrenamiento para ver tus series de la semana.",

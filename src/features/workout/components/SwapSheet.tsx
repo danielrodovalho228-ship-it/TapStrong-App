@@ -95,7 +95,7 @@ export function SwapSheet({
       <View style={[styles.sheet, { paddingBottom: insets.bottom + spacing.lg }]}>
         <View style={styles.head}>
           <View style={styles.headText}>
-            <AppText variant="caption" color={colors.accentText} style={styles.eyebrow}>
+            <AppText variant="caption" color={colors.mutedStrong} style={styles.eyebrow}>
               {t(
                 reason === 'machine_taken' ? 'workout.swap.machineEyebrow' : 'workout.swap.eyebrow',
               )}
@@ -174,7 +174,7 @@ export function SwapSheet({
 
 const useStyles = makeStyles(() => ({
   missing: { gap: spacing.xs, paddingTop: spacing.sm },
-  backdrop: { flex: 1, backgroundColor: colors.ink, opacity: 0.4 },
+  backdrop: { flex: 1, backgroundColor: colors.scrim },
   sheet: {
     maxHeight: '85%',
     backgroundColor: colors.background,

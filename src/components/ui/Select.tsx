@@ -95,7 +95,7 @@ export function Select<T extends string | number>({
                   style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}
                 >
                   <AppText variant={selected ? 'bodyStrong' : 'body'}>{item.label}</AppText>
-                  {selected ? <Icon name="check" color={colors.accentText} /> : null}
+                  {selected ? <Icon name="check" color={colors.ink} /> : null}
                 </Pressable>
               );
             }}

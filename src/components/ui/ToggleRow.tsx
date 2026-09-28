@@ -1,4 +1,4 @@
-import { Pressable, View } from 'react-native';
+import { Platform, Pressable, View } from 'react-native';
 
 import { colors, makeStyles, sizes, spacing, useColors } from '@/theme';
 
@@ -27,6 +27,8 @@ export function ToggleRow({ label, detail, value, onChange }: ToggleRowProps) {
       accessibilityState={{ checked: value }}
       aria-checked={value}
       onPress={() => onChange(!value)}
+      // Space toggles a switch on the web keyboard, like Enter (QA R6 P2).
+      {...(Platform.OS === 'web' ? { onKeyDown: spaceToggles(() => onChange(!value)) } : {})}
       style={({ pressed }) => [styles.row, pressed && styles.pressed]}
     >
       <View style={styles.text}>
@@ -38,11 +40,23 @@ export function ToggleRow({ label, detail, value, onChange }: ToggleRowProps) {
         ) : null}
       </View>
       <View style={[styles.track, value ? styles.trackOn : styles.trackOff]}>
-        <View style={[styles.thumb, value ? styles.thumbOn : styles.thumbOff]} />
+        <View
+          style={[
+            styles.thumb,
+            value ? [styles.thumbOn, styles.thumbOnFill] : [styles.thumbOff, styles.thumbOffFill],
+          ]}
+        />
       </View>
     </Pressable>
   );
 }
+
+type KeyEvent = { key?: string; nativeEvent?: { key?: string }; preventDefault?: () => void };
+const spaceToggles = (toggle: () => void) => (e: KeyEvent) => {
+  if ((e.nativeEvent?.key ?? e.key) !== ' ') return;
+  e.preventDefault?.();
+  toggle();
+};
 
 const useStyles = makeStyles(() => ({
   row: {
@@ -56,8 +70,17 @@ const useStyles = makeStyles(() => ({
   text: { flex: 1, gap: spacing.xxs },
   track: { width: 48, height: 28, borderRadius: 14, padding: 3, justifyContent: 'center' },
   trackOn: { backgroundColor: colors.ink },
-  trackOff: { backgroundColor: colors.line },
-  thumb: { width: 22, height: 22, borderRadius: 11, backgroundColor: colors.surface },
+  // Off must read against the card too (≥ 3:1, QA R6 P2): an outlined track
+  // with a dark thumb.
+  trackOff: {
+    backgroundColor: colors.surface,
+    borderWidth: 1.5,
+    borderColor: colors.muted,
+    padding: 1.5,
+  },
+  thumb: { width: 22, height: 22, borderRadius: 11 },
+  thumbOnFill: { backgroundColor: colors.surface },
+  thumbOffFill: { backgroundColor: colors.muted },
   thumbOn: { alignSelf: 'flex-end' },
   thumbOff: { alignSelf: 'flex-start' },
 }));

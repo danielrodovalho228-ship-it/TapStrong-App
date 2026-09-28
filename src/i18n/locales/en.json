@@ -3501,6 +3501,10 @@
     "wu_seated_toe_taps": {
       "name": "Seated toe taps",
       "cues": "Sit tall, straighten one leg a little and tap the toes forward, then switch, in an easy rhythm."
+    },
+    "st_seated_behind_back_triceps": {
+      "name": "Seated behind-the-back triceps stretch",
+      "cues": "Sit tall, rest the back of one hand on your lower back, then gently draw that elbow forward with the other hand. Breathe; switch sides."
     }
   },
   "generator": {
@@ -3591,7 +3595,7 @@
     },
     "freezes_one": "{{count}} streak freeze saved",
     "freezes_other": "{{count}} streak freezes saved",
-    "mobility": "Short mobility · {{minutes}} min",
+    "mobility": "Short mobility · {{minutes}} min",
     "mobilityNote": "Counts for your streak. Always free, as often as you like.",
     "morningCheck": "Rate your pain this morning",
     "morningCheckBody": "One tap: it moves your recovery plan on or eases it back.",
@@ -3599,7 +3603,7 @@
     "dayStreak_other": "Day streak",
     "recoveringTitle": "Everything is recovering",
     "recoveringBody": "Your muscles need a little more time. Today is good for short mobility, a few balance holds or a rest day.",
-    "balance": "Short balance · {{minutes}} min",
+    "balance": "Short balance · {{minutes}} min",
     "rest": "Rest today",
     "restNote": "Rest is part of training. Your next workout will be ready when your muscles are.",
     "streakHint": "Rest day? A 10-minute mobility session keeps your streak going.",
@@ -4128,8 +4132,8 @@
     "streak": "Streak",
     "workouts": "Workouts",
     "sets": "Sets",
-    "days_one": "{{count}} day",
-    "days_other": "{{count}} days",
+    "days_one": "{{count}} day",
+    "days_other": "{{count}} days",
     "chart": {
       "title": "Weekly sets by muscle",
       "empty": "Finish a workout to see your weekly sets.",

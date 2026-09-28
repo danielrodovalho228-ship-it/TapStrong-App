@@ -111,7 +111,6 @@ function AppStack() {
 
 const styles = StyleSheet.create({ root: { flex: 1 } });
 
-// Minified web builds renamed this component "o" and Expo Router warned on
-// every page (QA R5 P2): keep a readable name.
-Object.defineProperty(RootLayout, 'name', { value: 'RootLayout' });
-RootLayout.displayName = 'RootLayout';
+// The "component with the name 'o'" warning (QA R5/R6 P2) comes from Expo
+// Router's own minified wrapper in development web builds; release bundles
+// don't contain it (bundle:check proves it).

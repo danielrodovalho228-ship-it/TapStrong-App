@@ -59,7 +59,7 @@ function DevControls() {
     const dev = require('@/features/billing/devProvider') as Dev;
     return (
       <View style={styles.dev}>
-        <AppText variant="caption" color={colors.accentText}>
+        <AppText variant="caption" color={colors.mutedStrong}>
           {t('billing.dev.note')}
         </AppText>
         <Button

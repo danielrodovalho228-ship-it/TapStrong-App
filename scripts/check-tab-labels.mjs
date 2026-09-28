@@ -1,82 +1,108 @@
-// QA R5-07: proves the bottom tab labels are never clipped on web.
-// Exports the web build, serves it, opens /home at 390×844 in Chromium and
-// checks that every tab label box is at least as tall as its text and that
-// no ancestor clips it. Saves a screenshot next to the report.
-// Run: npm run tabs:check  (uses the Chromium in PLAYWRIGHT_BROWSERS_PATH)
-import { execSync } from 'node:child_process';
-import { existsSync, mkdtempSync, readFileSync, rmSync, statSync } from 'node:fs';
-import { createServer } from 'node:http';
+// QA R5-07, R6 P2: proves the bottom tab labels are never clipped on web, in
+// English, Portuguese and Spanish, in Light and Dark. Exports the web build,
+// serves it, opens /home at 390×844 in Chromium with a sample profile in each
+// language and scheme, and checks that every tab label box is at least as
+// tall and wide as its text, that no ancestor clips it, that the labels do
+// not touch the bottom edge and that the page is not taller than the window.
+// Saves one screenshot of the bar per language and scheme.
+// Run: npm run tabs:check  (THEME_EXPORT_DIR=<dir> reuses a web export)
+import { mkdirSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { extname, join } from 'node:path';
+import { join } from 'node:path';
 
 import { chromium } from 'playwright-core';
 
-const out = mkdtempSync(join(tmpdir(), 'tabs-'));
-const shot = process.env.TABS_SCREENSHOT ?? join(process.cwd(), 'docs', 'tab-labels.png');
-const browsers = process.env.PLAYWRIGHT_BROWSERS_PATH ?? '/opt/pw-browsers';
-const executablePath = [
-  join(browsers, 'chromium'),
-  join(browsers, 'chromium-1194', 'chrome-linux', 'chrome'),
-].find((p) => existsSync(p) && statSync(p).isFile());
+import { executablePath, exportWeb, profile, serve } from './lib/web.mjs';
 
-execSync(`npx expo export --platform web --output-dir ${out}`, {
-  stdio: 'ignore',
-  env: { ...process.env, EXPO_OFFLINE: '1', CI: '1' },
-});
-
-const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png', '.ttf': 'font/ttf', '.json': 'application/json' };
-const server = createServer((req, res) => {
-  const path = decodeURIComponent((req.url ?? '/').split('?')[0]);
-  const candidates = [join(out, path), join(out, `${path}.html`), join(out, path, 'index.html')];
-  const file = candidates.find((f) => existsSync(f) && statSync(f).isFile());
-  if (!file) return void res.writeHead(404).end();
-  res.writeHead(200, { 'content-type': TYPES[extname(file)] ?? 'application/octet-stream' });
-  res.end(readFileSync(file));
-});
-await new Promise((r) => server.listen(0, r));
-const port = server.address().port;
+const shots = process.env.TABS_SCREENSHOTS ?? join(process.cwd(), 'docs', 'screenshots', 'tabs');
+const reuse = process.env.THEME_EXPORT_DIR;
+const out = reuse ?? mkdtempSync(join(tmpdir(), 'tabs-'));
+if (!reuse) exportWeb(out);
+const { origin, close } = await serve(out);
+mkdirSync(shots, { recursive: true });
 
 const browser = await chromium.launch({ executablePath });
-let failed = [];
+const failed = [];
+const lines = [];
 try {
-  // The static HTML is what paints first; JS off keeps the page from
-  // redirecting to onboarding before we measure.
-  const page = await browser.newPage({ viewport: { width: 390, height: 844 }, javaScriptEnabled: false });
-  await page.goto(`http://localhost:${port}/home`);
-  const labels = await page.$$eval('[data-testid="tab-label"]', (els) =>
-    els.map((el) => {
-      const box = el.getBoundingClientRect();
-      const clippedBy = [];
-      for (let p = el.parentElement; p; p = p.parentElement) {
-        const cs = getComputedStyle(p);
-        if (cs.overflow !== 'visible' && p.getBoundingClientRect().height < box.height - 0.5)
-          clippedBy.push(p.tagName);
+  for (const locale of ['en', 'pt-BR', 'es']) {
+    for (const scheme of ['light', 'dark']) {
+      const context = await browser.newContext({
+        viewport: { width: 390, height: 844 },
+        colorScheme: scheme,
+        locale,
+        deviceScaleFactor: 1,
+      });
+      const seed = JSON.stringify(profile(1990, true, { locale }));
+      await context.addInitScript((v) => {
+        if (!sessionStorage.getItem('seeded')) {
+          localStorage.setItem('tapstrong\\onboarding', v);
+          sessionStorage.setItem('seeded', '1');
+        }
+      }, seed);
+      const page = await context.newPage();
+      await page.goto(`${origin}/home`, { waitUntil: 'networkidle' });
+      await page.waitForTimeout(700);
+      const found = await page.evaluate(() => {
+        const labels = [...document.querySelectorAll('[data-testid="tab-label"]')]
+          .filter((el) => el.checkVisibility?.() ?? true)
+          .map((el) => {
+            const box = el.getBoundingClientRect();
+            const clippedBy = [];
+            for (let p = el.parentElement; p; p = p.parentElement) {
+              const cs = getComputedStyle(p);
+              if (cs.overflow !== 'visible' && p.getBoundingClientRect().height < box.height - 0.5)
+                clippedBy.push(p.tagName);
+            }
+            return {
+              text: el.textContent,
+              height: box.height,
+              textHeight: el.scrollHeight,
+              width: box.width,
+              textWidth: el.scrollWidth,
+              bottomGap: innerHeight - box.bottom,
+              clippedBy,
+            };
+          });
+        return {
+          labels,
+          pageHeight: document.documentElement.scrollHeight,
+          viewport: innerHeight,
+        };
+      });
+      const tag = `${locale}/${scheme}`;
+      if (found.labels.length < 4) failed.push(`${tag}: found ${found.labels.length} tab labels`);
+      if (found.pageHeight > found.viewport)
+        failed.push(
+          `${tag}: page ${found.pageHeight}px taller than the ${found.viewport}px window`,
+        );
+      for (const l of found.labels) {
+        if (l.height + 0.5 < l.textHeight)
+          failed.push(`${tag} ${l.text}: box ${l.height}px < text ${l.textHeight}px`);
+        if (l.width + 0.5 < l.textWidth)
+          failed.push(`${tag} ${l.text}: box ${l.width}px < text ${l.textWidth}px wide`);
+        if (l.clippedBy.length)
+          failed.push(`${tag} ${l.text}: clipped by ${l.clippedBy.join(' > ')}`);
+        if (l.bottomGap < 4) failed.push(`${tag} ${l.text}: ${l.bottomGap}px from the bottom edge`);
       }
-      return {
-        text: el.textContent,
-        height: box.height,
-        textHeight: el.scrollHeight,
-        width: box.width,
-        textWidth: el.scrollWidth,
-        clippedBy,
-      };
-    }),
-  );
-  if (labels.length < 4) failed.push(`found ${labels.length} tab labels`);
-  for (const l of labels) {
-    if (l.height + 0.5 < l.textHeight) failed.push(`${l.text}: box ${l.height}px < text ${l.textHeight}px`);
-    if (l.width + 0.5 < l.textWidth) failed.push(`${l.text}: box ${l.width}px < text ${l.textWidth}px wide`);
-    if (l.clippedBy.length) failed.push(`${l.text}: clipped by ${l.clippedBy.join(' > ')}`);
+      await page.screenshot({
+        path: join(shots, `${locale}-${scheme}.png`),
+        clip: { x: 0, y: 844 - 90, width: 390, height: 90 },
+      });
+      lines.push(
+        `${tag}: ${found.labels.map((l) => `${l.text} ${l.width.toFixed(0)}×${l.height.toFixed(0)}`).join(', ')}`,
+      );
+      await context.close();
+    }
   }
-  await page.screenshot({ path: shot, clip: { x: 0, y: 844 - 90, width: 390, height: 90 } });
-  console.log(labels.map((l) => `${l.text} ${l.width.toFixed(0)}×${l.height.toFixed(0)}`).join(', '));
 } finally {
   await browser.close();
-  server.close();
-  rmSync(out, { recursive: true, force: true });
+  close();
+  if (!reuse) rmSync(out, { recursive: true, force: true });
 }
+console.log(lines.join('\n'));
 if (failed.length) {
-  console.error(`FAIL: ${failed.join('; ')}`);
+  console.error(`FAIL:\n${failed.join('\n')}`);
   process.exit(1);
 }
-console.log(`OK: tab labels fit (screenshot: ${shot})`);
+console.log(`OK: tab labels fit in EN/PT/ES, light and dark (screenshots: ${shots})`);

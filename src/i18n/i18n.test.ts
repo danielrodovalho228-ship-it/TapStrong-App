@@ -1,3 +1,5 @@
+import { createInstance } from 'i18next';
+
 import { resolveLocale, resources, SUPPORTED_LOCALES } from './index';
 
 function flattenKeys(obj: object, prefix = ''): string[] {
@@ -11,8 +13,21 @@ function flattenKeys(obj: object, prefix = ''): string[] {
 describe('locales', () => {
   const enKeys = flattenKeys(resources.en.translation).sort();
 
+  // `_zero` is extra where a language's own rules need it (pt: CLDR puts 0
+  // in "one", QA R6 P2); every one has its `_other`.
+  const withoutZero = (keys: string[]) => keys.filter((k) => !k.endsWith('_zero'));
   it.each(SUPPORTED_LOCALES.filter((l) => l !== 'en'))('%s has exactly the en keys', (locale) => {
-    expect(flattenKeys(resources[locale].translation).sort()).toEqual(enKeys);
+    const keys = flattenKeys(resources[locale].translation);
+    expect(withoutZero(keys).sort()).toEqual(withoutZero(enKeys));
+    for (const k of keys.filter((x) => x.endsWith('_zero')))
+      expect(keys).toContain(k.replace(/_zero$/, '_other'));
+  });
+
+  it('pt-BR says "0 dias", not "0 dia"', async () => {
+    const i18n = createInstance();
+    await i18n.init({ lng: 'pt-BR', resources });
+    expect(i18n.t('progress.days', { count: 0 })).toBe('0\u00a0dias');
+    expect(i18n.t('progress.days', { count: 1 })).toBe('1\u00a0dia');
   });
 
   it.each(SUPPORTED_LOCALES)('%s has no empty strings', (locale) => {

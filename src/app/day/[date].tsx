@@ -153,7 +153,7 @@ export default function DayScreen() {
           </Notice>
         ) : (
           <Card style={styles.card}>
-            <AppText variant="caption" color={colors.accentText} style={styles.caps}>
+            <AppText variant="caption" color={colors.mutedStrong} style={styles.caps}>
               {t('day.preview')}
             </AppText>
             <AppText variant="h3">{t(`program.day.${dayName(preview, library)}`)}</AppText>

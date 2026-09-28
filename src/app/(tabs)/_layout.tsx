@@ -1,6 +1,7 @@
 import { Tabs } from 'expo-router/js-tabs';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Icon } from '@/components/ui';
 import { derive } from '@/features/onboarding/derived';
@@ -15,6 +16,7 @@ export default function TabsLayout() {
   const { t } = useTranslation();
   // 60+ mode keeps to the simple screens (SPEC §11.10): no body-map tab.
   const senior = derive(useOnboardingStore())?.mode === 'senior';
+  const bottom = Math.max(useSafeAreaInsets().bottom, 8);
   return (
     <Tabs
       screenOptions={{
@@ -22,7 +24,15 @@ export default function TabsLayout() {
         // Theme v2: the active tab is coral (the AA text coral for the label).
         tabBarActiveTintColor: colors.accentText,
         tabBarInactiveTintColor: colors.muted,
-        tabBarStyle: { backgroundColor: colors.tabBar, borderTopColor: colors.line },
+        // Room under the labels and the phone's home indicator; the bar's own
+        // height, so the screen never runs 2 px past the window (QA R6 P2).
+        tabBarStyle: {
+          backgroundColor: colors.tabBar,
+          borderTopColor: colors.line,
+          height: TAB_BAR_HEIGHT + bottom,
+          paddingTop: 4,
+          paddingBottom: bottom,
+        },
         // Five tabs at 390 px: no side padding so "BIBLIOTECA" / "PROGRESSO"
         // get the whole item width (QA R4 P2).
         tabBarItemStyle: { paddingHorizontal: 0 },
@@ -79,6 +89,9 @@ export default function TabsLayout() {
     </Tabs>
   );
 }
+
+/** Icon, gap and one label line above the bottom padding. */
+const TAB_BAR_HEIGHT = 56;
 
 const styles = StyleSheet.create({
   label: {

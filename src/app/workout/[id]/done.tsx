@@ -154,8 +154,8 @@ export default function DoneScreen() {
         </Card>
       ) : null}
       <View style={styles.head}>
-        <View style={styles.flex}>
-          <AppText variant="caption" color={colors.accentText} style={styles.caps}>
+        <View style={styles.headTitle}>
+          <AppText variant="caption" color={colors.mutedStrong} style={styles.caps}>
             {stopped
               ? t('workout.done.stoppedEyebrow')
               : mobility
@@ -261,7 +261,10 @@ function Stat({ value, label }: { value: string; label: string }) {
 }
 
 const useStyles = makeStyles(() => ({
-  head: { flexDirection: 'row', alignItems: 'flex-end', gap: spacing.md },
+  // The streak pill drops below the title when the title needs the room:
+  // 60+ type broke "WORKOUT" mid-word (QA R6 P2).
+  head: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-end', gap: spacing.md },
+  headTitle: { flexGrow: 1, flexShrink: 1, flexBasis: 220 },
   flex: { flex: 1 },
   caps: { textTransform: 'uppercase', letterSpacing: 1.2, fontFamily: fonts.headingSemi },
   streak: {

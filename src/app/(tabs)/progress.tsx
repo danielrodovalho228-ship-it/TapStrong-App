@@ -206,7 +206,7 @@ function Stat({ label, value }: { label: string; value: string }) {
       <AppText variant="caption" color={colors.muted} style={styles.caps}>
         {label}
       </AppText>
-      <AppText variant="h1">{value}</AppText>
+      <AppText variant="h2">{value}</AppText>
     </View>
   );
 }

@@ -51,7 +51,7 @@ function PaywallScreenInner() {
         />
       }
     >
-      <AppText variant="caption" color={colors.accentText} style={styles.caps}>
+      <AppText variant="caption" color={colors.mutedStrong} style={styles.caps}>
         {/* A subscriber is never told they are on the free plan (QA R2-03). */}
         {current === 'free'
           ? t('paywall.eyebrow', { count: FREE_WORKOUTS_PER_WEEK })

@@ -111,7 +111,7 @@ export default function ProfileScreen() {
     >
       <View style={styles.hero}>
         <View style={styles.heroText}>
-          <AppText variant="label" color={colors.accentText} style={styles.eyebrow}>
+          <AppText variant="label" color={colors.mutedStrong} style={styles.eyebrow}>
             {t('profile.eyebrow')}
           </AppText>
           <AppText variant="h1" accessibilityRole="header">

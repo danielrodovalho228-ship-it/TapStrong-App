@@ -416,6 +416,7 @@
     "back": "Costas",
     "hint": "Toque num ponto para escolher. Frente e costas para cada corpo.",
     "selectedCount_one": "{{count}} área escolhida",
+    "selectedCount_zero": "{{count}} áreas escolhidas",
     "selectedCount_other": "{{count}} áreas escolhidas",
     "none": "Nenhuma área ainda. Toque num ponto do corpo.",
     "chipHint": "Toque numa etiqueta para mudar o objetivo",
@@ -3501,6 +3502,10 @@
     "wu_seated_toe_taps": {
       "name": "Toques de ponta sentado",
       "cues": "Sente-se ereto, estique um pouco uma perna e toque a ponta do pé à frente; troque num ritmo leve."
+    },
+    "st_seated_behind_back_triceps": {
+      "name": "Alongamento de tríceps sentado atrás das costas",
+      "cues": "Sente-se ereto, apoie o dorso de uma mão na lombar e leve esse cotovelo para a frente com a outra mão, com suavidade. Respire; troque de lado."
     }
   },
   "generator": {
@@ -3562,6 +3567,7 @@
     "senior": {
       "today": "Hoje",
       "minutes_one": "{{count}} minuto",
+      "minutes_zero": "{{count}} minutos",
       "minutes_other": "{{count}} minutos",
       "seated": "opções sentado",
       "balance": "Equilíbrio e pernas",
@@ -3569,6 +3575,7 @@
       "progress": "Meu progresso",
       "lastTitle": "Último treino: {{day}}",
       "lastBody_one": "Você fez {{count}} exercício em {{minutes}} min. Está salvo.",
+      "lastBody_zero": "Você fez {{count}} exercícios em {{minutes}} min. Está salvo.",
       "lastBody_other": "Você fez {{count}} exercícios em {{minutes}} min. Está salvo.",
       "familySees": "{{name}} também pode ver no plano Família.",
       "familySeesPlan": "Sua família também pode ver no plano Família.",
@@ -3590,8 +3597,9 @@
       "supported": "opções com apoio"
     },
     "freezes_one": "{{count}} proteção de sequência guardada",
+    "freezes_zero": "{{count}} proteções de sequência guardadas",
     "freezes_other": "{{count}} proteções de sequência guardadas",
-    "mobility": "Mobilidade curta · {{minutes}} min",
+    "mobility": "Mobilidade curta · {{minutes}} min",
     "mobilityNote": "Conta para a sua sequência. Sempre grátis, quantas vezes quiser.",
     "morningCheck": "Dê nota à dor desta manhã",
     "morningCheckBody": "Um toque: seu plano de recuperação avança ou fica mais leve.",
@@ -3599,7 +3607,7 @@
     "dayStreak_other": "Dias seguidos",
     "recoveringTitle": "Tudo está se recuperando",
     "recoveringBody": "Seus músculos precisam de um pouco mais de tempo. Hoje é um bom dia para uma mobilidade curta, alguns exercícios de equilíbrio ou descanso.",
-    "balance": "Equilíbrio curto · {{minutes}} min",
+    "balance": "Equilíbrio curto · {{minutes}} min",
     "rest": "Descansar hoje",
     "restNote": "Descanso também é treino. Seu próximo treino estará pronto quando seus músculos estiverem.",
     "streakHint": "Dia de descanso? 10 minutos de mobilidade mantêm sua sequência.",
@@ -3613,6 +3621,7 @@
   "workout": {
     "title": "Seu treino",
     "summary_one": "{{minutes}} min · aquecimento + {{count}} exercício + desaquecimento",
+    "summary_zero": "{{minutes}} min · aquecimento + {{count}} exercícios + desaquecimento",
     "summary_other": "{{minutes}} min · aquecimento + {{count}} exercícios + desaquecimento",
     "underReview": "A biblioteca de exercícios está sendo revisada por um treinador certificado. Seus treinos aparecem aqui em breve.",
     "backHome": "Voltar ao início",
@@ -3627,6 +3636,7 @@
       "skip": "Pular descanso",
       "logged": "Registrado",
       "reps_one": "{{count}} repetição",
+      "reps_zero": "{{count}} repetições",
       "reps_other": "{{count}} repetições",
       "lastSession": "Última sessão: {{value}}",
       "upNext": "A seguir",
@@ -3752,6 +3762,7 @@
       "firstTitle": "O primeiro já foi!",
       "title": "Treino feito!",
       "streak_one": "{{count}} dia seguido",
+      "streak_zero": "{{count}} dias seguidos",
       "streak_other": "{{count}} dias seguidos",
       "time": "Tempo",
       "sets": "Séries",
@@ -3812,12 +3823,14 @@
       "breathe": "Solte o ar no esforço e nunca prenda a respiração. Pare se sentir tontura ou falta de ar; a orientação do seu médico vem primeiro."
     },
     "rampUp_one": "{{count}} série leve de aproximação",
+    "rampUp_zero": "{{count}} séries leves de aproximação",
     "rampUp_other": "{{count}} séries leves de aproximação",
     "minSec": "{{minutes}} min {{seconds}} s",
     "backToFull": "Voltar ao treino completo",
     "restDay": "Tirar um dia de descanso",
     "spare": {
       "body_one": "Sobrou {{count}} min do seu tempo.",
+      "body_zero": "Sobraram {{count}} min do seu tempo.",
       "body_other": "Sobraram {{count}} min do seu tempo.",
       "add": "Adicionar 1 exercício?"
     },
@@ -3862,8 +3875,10 @@
     "eyebrow": "Treino {{n}} · {{date}}",
     "cardTitle": "Meu mapa muscular",
     "workouts_one": "{{count}} treino",
+    "workouts_zero": "{{count}} treinos",
     "workouts_other": "{{count}} treinos",
     "sets_one": "{{count}} série",
+    "sets_zero": "{{count}} séries",
     "sets_other": "{{count}} séries",
     "tagline": "Tap. Talk. Train. · tapstrong.app",
     "shareImage": "Compartilhar meu mapa",
@@ -3879,6 +3894,7 @@
   "milestone": {
     "eyebrow": "Nova conquista",
     "title_one": "{{count}} dia seguido",
+    "title_zero": "{{count}} dias seguidos",
     "title_other": "{{count}} dias seguidos",
     "body": "Uma semana inteira de presença. Você ganhou 1 proteção de sequência para um dia corrido.",
     "bodyMax": "Uma semana inteira de presença. Suas proteções de sequência estão cheias (2).",
@@ -3907,6 +3923,7 @@
     "share": "Compartilhar minha sequência",
     "keepGoing": "Continuar",
     "bodyEarly_one": "Cada dia ativo conta: falta {{count}} dia para a sua sequência de 7.",
+    "bodyEarly_zero": "Cada dia ativo conta: faltam {{count}} dias para a sua sequência de 7.",
     "bodyEarly_other": "Cada dia ativo conta: faltam {{count}} dias para a sua sequência de 7."
   },
   "notifications": {
@@ -3918,6 +3935,7 @@
     },
     "streakSaver": {
       "title_one": "Mantenha sua sequência de {{count}} dia",
+      "title_zero": "Mantenha sua sequência de {{count}} dias",
       "title_other": "Mantenha sua sequência de {{count}} dias",
       "body": "Uma sessão curta ou um momento de mobilidade já conta. Você consegue."
     },
@@ -3972,6 +3990,7 @@
     "onFree": "Você está no plano Grátis: 3 treinos por semana.",
     "seePlans": "Ver planos",
     "familyProfiles_one": "Família · {{count}} perfil",
+    "familyProfiles_zero": "Família · {{count}} perfis",
     "familyProfiles_other": "Família · {{count}} perfis",
     "rows": {
       "plan": "Plano",
@@ -4006,6 +4025,7 @@
   },
   "paywall": {
     "eyebrow_one": "Plano Grátis · {{count}} treino nesta semana",
+    "eyebrow_zero": "Plano Grátis · {{count}} treinos nesta semana",
     "eyebrow_other": "Plano Grátis · {{count}} treinos nesta semana",
     "title": "Mantenha sua sequência",
     "value": {
@@ -4025,6 +4045,7 @@
     "setUp": "Falta configurar",
     "add": "Adicionar",
     "upTo_one": "Até {{count}}",
+    "upTo_zero": "Até {{count}}",
     "upTo_other": "Até {{count}}",
     "modes": {
       "child": "Modo criança",
@@ -4050,6 +4071,7 @@
     "create": "Criar perfil",
     "errors": {
       "full_one": "O plano Família tem até {{count}} perfil.",
+      "full_zero": "O plano Família tem até {{count}} perfis.",
       "full_other": "O plano Família tem até {{count}} perfis.",
       "needFamily": "Familiares precisam do plano Família.",
       "needCharge": "Perfis de crianças com menos de 13 anos são liberados depois do primeiro pagamento do plano Família. O teste grátis não conta: o pagamento é como verificamos o consentimento do responsável.",
@@ -4089,6 +4111,7 @@
     "dashboard": {
       "title": "Sua família nesta semana",
       "week_one": "{{count}} treino nesta semana · {{minutes}} min",
+      "week_zero": "{{count}} treinos nesta semana · {{minutes}} min",
       "week_other": "{{count}} treinos nesta semana · {{minutes}} min",
       "last": "Último treino: {{date}} · sequência {{streak}}",
       "none": "Nenhum treino ainda.",
@@ -4128,14 +4151,17 @@
     "streak": "Sequência",
     "workouts": "Treinos",
     "sets": "Séries",
-    "days_one": "{{count}} dia",
-    "days_other": "{{count}} dias",
+    "days_one": "{{count}} dia",
+    "days_zero": "{{count}} dias",
+    "days_other": "{{count}} dias",
     "chart": {
       "title": "Séries por semana e músculo",
       "empty": "Termine um treino para ver suas séries da semana.",
       "week_one": "S{{n}} · {{count}}",
+      "week_zero": "S{{n}} · {{count}}",
       "week_other": "S{{n}} · {{count}}",
       "barLabel_one": "Semana {{n}}: {{count}} série",
+      "barLabel_zero": "Semana {{n}}: {{count}} séries",
       "barLabel_other": "Semana {{n}}: {{count}} séries"
     },
     "measurements": "Medidas",
@@ -4288,6 +4314,7 @@
       "todo": "Começar"
     },
     "skipped_one": "{{count}} teste ficou de fora por causa das suas respostas de segurança ou restrições.",
+    "skipped_zero": "{{count}} testes ficaram de fora por causa das suas respostas de segurança ou restrições.",
     "skipped_other": "{{count}} testes ficaram de fora por causa das suas respostas de segurança ou restrições.",
     "foundTitle": "O que encontramos até agora",
     "findings": {
@@ -4366,6 +4393,7 @@
     },
     "impact": "{{excluded}} de {{total}} exercícios da sua biblioteca ficam de fora.",
     "swaps_one": "{{count}} exercício trocado até agora por causa dela.",
+    "swaps_zero": "{{count}} exercícios trocados até agora por causa dela.",
     "swaps_other": "{{count}} exercícios trocados até agora por causa dela.",
     "healed": "Marcar como curada",
     "editHealth": "Mudar na checagem de segurança",
@@ -4675,8 +4703,10 @@
     "enterPin": "Digite o PIN dos pais.",
     "pin": "PIN dos pais",
     "wrong_one": "PIN errado. Resta {{count}} tentativa.",
+    "wrong_zero": "PIN errado. Restam {{count}} tentativas.",
     "wrong_other": "PIN errado. Restam {{count}} tentativas.",
     "locked_one": "Tentativas demais. Tente de novo em {{count}} minuto.",
+    "locked_zero": "Tentativas demais. Tente de novo em {{count}} minutos.",
     "locked_other": "Tentativas demais. Tente de novo em {{count}} minutos.",
     "noPin": "Primeiro o pai ou a mãe precisa criar um PIN dos pais no próprio perfil (Configurações).",
     "setupTitle": "Crie um PIN dos pais",
@@ -4747,6 +4777,7 @@
   },
   "day": {
     "sets_one": "{{count}} série",
+    "sets_zero": "{{count}} séries",
     "sets_other": "{{count}} séries",
     "start": "Começar o treino de hoje",
     "nothing": "Nenhum treino registrado neste dia.",
@@ -4773,6 +4804,7 @@
       "deload": "Semana {{week}} de {{of}} · Alívio (mais leve)"
     },
     "summary_one": "{{count}} exercício · {{minutes}} min",
+    "summary_zero": "{{count}} exercícios · {{minutes}} min",
     "summary_other": "{{count}} exercícios · {{minutes}} min",
     "kcal": "cerca de {{kcal}} kcal"
   },
@@ -4806,6 +4838,7 @@
       "any": "Qualquer",
       "short": "30 min ou menos",
       "daysValue_one": "{{count}} dia",
+      "daysValue_zero": "{{count}} dias",
       "daysValue_other": "{{count}} dias",
       "equipment": "Equipamento",
       "noWeights": "Sem pesos",
@@ -4896,6 +4929,7 @@
     "clearMuscle": "Todos os músculos",
     "tapDot": "Toque num ponto para ver exercícios desse músculo.",
     "count_one": "{{count}} exercício",
+    "count_zero": "{{count}} exercícios",
     "count_other": "{{count}} exercícios",
     "notForYou": "Não são para você agora ({{count}})",
     "hide": "Esconder",
@@ -5008,6 +5042,7 @@
     "placeName": "Nome do lugar",
     "active": "Usando: {{name}}",
     "count_one": "{{count}} item",
+    "count_zero": "{{count}} itens",
     "count_other": "{{count}} itens",
     "custom": "Minha lista",
     "switch": "Equipamento: {{name}}",
