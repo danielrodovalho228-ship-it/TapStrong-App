@@ -2,16 +2,17 @@ import { Linking } from 'react-native';
 
 /**
  * Support contact (QA R3-01: the age stop needs a way out for a mistyped
- * date). Temporary address from Daniel (Phase 13); set
- * EXPO_PUBLIC_SUPPORT_EMAIL to the real support address before publishing.
+ * date). The address comes only from EXPO_PUBLIC_SUPPORT_EMAIL (EAS
+ * environment): no personal fallback ships in a build (QA R7 P2), and a
+ * production build stops without it (scripts/check-env.mjs).
  */
-export const SUPPORT_EMAIL =
-  process.env.EXPO_PUBLIC_SUPPORT_EMAIL || 'danielrodovalho228@gmail.com';
+export const SUPPORT_EMAIL = process.env.EXPO_PUBLIC_SUPPORT_EMAIL?.trim() || null;
 
-export function supportMailto(subject: string): string {
-  return `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(subject)}`;
+export function supportMailto(subject: string): string | null {
+  return SUPPORT_EMAIL ? `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(subject)}` : null;
 }
 
 export function contactSupport(subject: string) {
-  return Linking.openURL(supportMailto(subject)).catch(() => undefined);
+  const url = supportMailto(subject);
+  return url ? Linking.openURL(url).catch(() => undefined) : Promise.resolve();
 }

@@ -38,9 +38,14 @@ if grep -rl 'Got a component with the name' "$OUT" >/dev/null; then
   echo "FAIL: a release bundle contains development-only navigator warnings" >&2
   exit 1
 fi
+# No personal contact address as a fallback (QA R7 P2).
+if grep -rl 'danielrodovalho' "$OUT" >/dev/null; then
+  echo "FAIL: a release bundle contains a personal email address" >&2
+  exit 1
+fi
 if find "$OUT" -iname '*.mp4' | grep -q .; then
   echo "FAIL: a release bundle contains video files" >&2
   find "$OUT" -iname '*.mp4' >&2
   exit 1
 fi
-echo "OK: no draft exercises, draft Repair tests, the draft movement catalog, prototype videos, purchase simulator or dev-only warnings in release bundles"
+echo "OK: no draft exercises, draft Repair tests, the draft movement catalog, prototype videos, purchase simulator, dev-only warnings or personal contact in release bundles"

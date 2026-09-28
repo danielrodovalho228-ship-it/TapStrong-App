@@ -17,7 +17,7 @@ Category: Health & Fitness. Price: free with in-app subscriptions.
 
 **Name:** TapStrong: AI Muscle Coach
 
-**Subtitle (App Store):** Tap a muscle. Get your workout.
+**Subtitle (App Store):** Tap a muscle, get a workout
 
 **Short description (Google Play):** Tap the muscle you want to improve. Your coach builds a safe workout.
 

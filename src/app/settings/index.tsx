@@ -15,7 +15,7 @@ import { LegalLinks } from '@/features/legal/LegalLinks';
 import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { clock } from '@/lib/clock';
-import { contactSupport } from '@/lib/support';
+import { contactSupport, SUPPORT_EMAIL } from '@/lib/support';
 import { spacing, useColors } from '@/theme';
 
 /**
@@ -108,11 +108,13 @@ export default function SettingsScreen() {
         ) : pinStep === 'saved' ? (
           <AppText color={colors.teal}>{t('settings.pinSaved')}</AppText>
         ) : null}
-        <Button
-          variant="secondary"
-          label={t('settings.help')}
-          onPress={() => void contactSupport(t('settings.helpSubject'))}
-        />
+        {SUPPORT_EMAIL ? (
+          <Button
+            variant="secondary"
+            label={t('settings.help')}
+            onPress={() => void contactSupport(t('settings.helpSubject'))}
+          />
+        ) : null}
         {shareOk ? (
           <Button
             variant="secondary"

@@ -17,7 +17,7 @@ export type ResetVerify = 'ok' | 'wrong_code' | 'offline' | 'error';
 
 type AuthError = { code?: string; status?: number } | null;
 
-/** "d•••@gmail.com": enough for the owner to recognise, not to read out. */
+/** "d•••@example.com": enough for the owner to recognise, not to read out. */
 export function maskEmail(email: string): string {
   const [user, domain] = email.split('@');
   if (!domain) return '•••';

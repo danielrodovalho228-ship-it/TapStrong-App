@@ -106,14 +106,18 @@ export default function WhoScreen() {
             {t('ageBlock.title')}
           </AppText>
           <AppText color={colors.mutedStrong}>{t('ageBlock.body')}</AppText>
-          <AppText variant="caption" color={colors.muted}>
-            {t('ageBlock.support', { email: SUPPORT_EMAIL })}
-          </AppText>
-          <TextLink
-            tone="accent"
-            label={t('ageBlock.contact')}
-            onPress={() => contactSupport(t('ageBlock.subject'))}
-          />
+          {SUPPORT_EMAIL ? (
+            <>
+              <AppText variant="caption" color={colors.muted}>
+                {t('ageBlock.support', { email: SUPPORT_EMAIL })}
+              </AppText>
+              <TextLink
+                tone="accent"
+                label={t('ageBlock.contact')}
+                onPress={() => contactSupport(t('ageBlock.subject'))}
+              />
+            </>
+          ) : null}
         </View>
       </Screen>
     );
