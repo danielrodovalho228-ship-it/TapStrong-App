@@ -1,6 +1,6 @@
 import { Platform, Pressable, type PressableProps } from 'react-native';
 
-import { colors, makeStyles, radius, sizes, spacing } from '@/theme';
+import { colors, makeStyles, radius, sizes, spacing, useColors } from '@/theme';
 
 import { AppText } from './AppText';
 
@@ -10,6 +10,8 @@ export type ChipProps = Omit<PressableProps, 'children' | 'style'> & {
 };
 
 export function Chip({ label, selected = false, disabled, ...rest }: ChipProps) {
+  const colors = useColors();
+  const styles = useStyles();
   return (
     <Pressable
       accessibilityRole="button"
@@ -33,7 +35,7 @@ export function Chip({ label, selected = false, disabled, ...rest }: ChipProps) 
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   base: {
     minHeight: sizes.touchTarget,
     minWidth: sizes.touchTarget,

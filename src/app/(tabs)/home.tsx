@@ -43,13 +43,15 @@ import { useBillingStore } from '@/features/billing/store';
 import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
 import { addDays, deviceWeekStart, localDate } from '@/lib/dates';
-import { colors, fonts, makeStyles, spacing } from '@/theme';
+import { colors, fonts, makeStyles, spacing, useColors } from '@/theme';
 import { listText } from '@/lib/listText';
 
 const LEGEND: Exclude<RecoveryState, 'neutral'>[] = ['fresh', 'recovering', 'almost', 'neglected'];
 
 /** Mockup 07 — home: today's workout, streak, recovery map (SPEC §9). */
 export default function HomeScreen() {
+  const colors = useColors();
+  const styles = useStyles();
   const { t, i18n } = useTranslation();
   const profile = useOnboardingStore();
   const derived = derive(profile);
@@ -403,7 +405,7 @@ export default function HomeScreen() {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   head: { flexDirection: 'row', alignItems: 'flex-end', gap: spacing.md },
   flex: { flex: 1 },
   caps: { textTransform: 'uppercase', letterSpacing: 1.2, fontFamily: fonts.headingSemi },

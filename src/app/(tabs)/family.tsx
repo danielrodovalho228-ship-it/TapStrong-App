@@ -22,10 +22,12 @@ import { useOnboardingStore } from '@/features/onboarding/store';
 import { clock } from '@/lib/clock';
 import { deviceWeekStart } from '@/lib/dates';
 import { kvStorage } from '@/lib/storage';
-import { colors, fonts, makeStyles, spacing } from '@/theme';
+import { colors, fonts, makeStyles, spacing, useColors } from '@/theme';
 
 /** Family tab (SPEC §9 /(tabs)/family, mockup 19): who trains on this phone. */
 export default function FamilyScreen() {
+  const colors = useColors();
+  const styles = useStyles();
   const { t, i18n } = useTranslation();
   const live = useOnboardingStore();
   const { profiles, activeId, setShareAllowed } = useFamilyStore();
@@ -222,7 +224,7 @@ export default function FamilyScreen() {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   list: { gap: 0, paddingVertical: spacing.xs },
   row: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: spacing.sm },
   divider: { borderTopWidth: 1, borderTopColor: colors.line },

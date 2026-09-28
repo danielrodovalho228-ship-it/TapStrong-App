@@ -12,12 +12,13 @@ import { currentPlan } from '@/features/billing/rules';
 import { useBillingStore } from '@/features/billing/store';
 import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
-import { colors, fonts, spacing } from '@/theme';
+import { fonts, spacing, useColors } from '@/theme';
 
 const VALUE = ['unlimited', 'repair', 'family', 'progress'] as const;
 
 /** Free limit reached (SPEC §8): value first, price second, cancel info visible. */
 function PaywallScreenInner() {
+  const colors = useColors();
   const { t, i18n } = useTranslation();
   const { next } = useLocalSearchParams<{ next?: string }>();
   const current = currentPlan(

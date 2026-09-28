@@ -1,6 +1,6 @@
 import { Pressable, type PressableProps } from 'react-native';
 
-import { colors, makeStyles, radius, sizes } from '@/theme';
+import { colors, makeStyles, radius, sizes, useColors } from '@/theme';
 
 import { Icon, type IconName } from './Icon';
 
@@ -13,6 +13,8 @@ export type IconButtonProps = Omit<PressableProps, 'children' | 'style'> & {
 };
 
 export function IconButton({ icon, variant = 'plain', color, disabled, ...rest }: IconButtonProps) {
+  const colors = useColors();
+  const styles = useStyles();
   const iconColor = color ?? (variant === 'filled' ? colors.onAccent : colors.ink);
   return (
     <Pressable
@@ -33,7 +35,7 @@ export function IconButton({ icon, variant = 'plain', color, disabled, ...rest }
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   base: {
     width: sizes.touchTarget,
     height: sizes.touchTarget,

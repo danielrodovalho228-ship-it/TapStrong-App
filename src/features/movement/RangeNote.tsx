@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
 import { AppText } from '@/components/ui';
-import { colors } from '@/theme';
+import { useColors } from '@/theme';
 
 import type { Exercise } from '../exercises/types';
 
@@ -15,6 +15,7 @@ import { activeReports, useMovementPainStore } from './store';
  * exercise gets the right note too.
  */
 export function RangeNote({ exercise }: { exercise: Exercise | undefined }) {
+  const colors = useColors();
   const { t } = useTranslation();
   const reports = useMovementPainStore((s) => s.reports);
   const limits = activeReports(reports).map(limitFrom);

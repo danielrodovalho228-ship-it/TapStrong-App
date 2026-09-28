@@ -26,7 +26,7 @@ import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
 import { deviceWeekStart } from '@/lib/dates';
 import { getSupabase } from '@/lib/supabase';
-import { colors, fonts, makeStyles, spacing } from '@/theme';
+import { colors, fonts, makeStyles, spacing, useColors } from '@/theme';
 import { OwnerOnly } from '@/features/family/OwnerOnly';
 import { useWorkoutStore } from '@/features/workout/store';
 
@@ -34,6 +34,8 @@ type Step = 'start' | 'code';
 
 /** Mockup 16 — save progress after the first workout (SPEC §8, §9 /account). */
 function AccountScreenInner() {
+  const colors = useColors();
+  const styles = useStyles();
   const { t, i18n } = useTranslation();
   const { from } = useLocalSearchParams<{ from?: string }>();
   // "First workout · done" only after the first one (QA P2).
@@ -218,7 +220,7 @@ function AccountScreenInner() {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   head: { gap: spacing.sm },
   caps: { textTransform: 'uppercase', letterSpacing: 1.2, fontFamily: fonts.headingSemi },
   actions: { gap: spacing.md },

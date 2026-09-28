@@ -3,12 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 
 import { AppText } from '@/components/ui';
-import { colors, makeStyles, radius, sizes, spacing } from '@/theme';
+import { colors, makeStyles, radius, sizes, spacing, useColors } from '@/theme';
 
 import { UNDO_MS, useWorkoutStore } from '../store';
 
 /** "Swapped to … · Undo", visible for 5 seconds after a swap (SPEC §8). */
 export function UndoBar({ message, onDone }: { message: string | null; onDone: () => void }) {
+  const colors = useColors();
+  const styles = useStyles();
   const { t } = useTranslation();
   const undoSwap = useWorkoutStore((s) => s.undoSwap);
 
@@ -41,7 +43,7 @@ export function UndoBar({ message, onDone }: { message: string | null; onDone: (
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   bar: {
     flexDirection: 'row',
     alignItems: 'center',

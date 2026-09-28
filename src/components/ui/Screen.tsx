@@ -14,6 +14,7 @@ export type ScreenProps = {
 
 /** Standard screen frame: safe area, optional header, scrolling body, pinned footer. */
 export function Screen({ header, children, footer, scroll = true }: ScreenProps) {
+  const styles = useStyles();
   const body = scroll ? (
     <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
       {children}
@@ -36,7 +37,7 @@ export function Screen({ header, children, footer, scroll = true }: ScreenProps)
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   safe: { flex: 1, backgroundColor: colors.background },
   fill: { flex: 1 },
   content: { paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, gap: spacing.lg },

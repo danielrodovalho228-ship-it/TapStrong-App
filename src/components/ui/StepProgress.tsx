@@ -1,11 +1,12 @@
 import { StyleSheet, View } from 'react-native';
 
-import { colors, spacing } from '@/theme';
+import { spacing, useColors } from '@/theme';
 
 export type StepProgressProps = { current: number; total: number; accessibilityLabel: string };
 
 /** Segmented progress bar: done = ink, current = accent, upcoming = line (mockup 03). */
 export function StepProgress({ current, total, accessibilityLabel }: StepProgressProps) {
+  const colors = useColors();
   return (
     <View
       accessibilityRole="progressbar"

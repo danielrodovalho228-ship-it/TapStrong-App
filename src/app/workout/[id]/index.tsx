@@ -45,7 +45,7 @@ import { track } from '@/lib/analytics';
 import { restFor, usePrefsStore } from '@/features/settings/store';
 import { clock } from '@/lib/clock';
 import { deviceWeekStart } from '@/lib/dates';
-import { colors, fonts, makeStyles, radius, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, spacing, useColors } from '@/theme';
 
 const SHORT_MINUTES = 15;
 
@@ -53,6 +53,8 @@ type SheetState = { itemId: string | null; reason: SwapReasonUi } | null;
 
 /** Mockup 10 — the generated workout (SPEC §9 /workout/[id]). */
 export default function WorkoutScreen() {
+  const colors = useColors();
+  const styles = useStyles();
   const { t } = useTranslation();
   const prefs = usePrefsStore();
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -433,7 +435,7 @@ export default function WorkoutScreen() {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   places: { gap: spacing.xs },
   placeChips: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   spare: { gap: spacing.sm },

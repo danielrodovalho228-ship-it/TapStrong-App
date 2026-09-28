@@ -6,10 +6,12 @@ import { AppText, Button } from '@/components/ui';
 import { mainSetCounts } from '@/features/workout/flow';
 import { endWorkout, useWorkout } from '@/features/workout/hooks';
 import { useWorkoutStore } from '@/features/workout/store';
-import { colors, makeStyles, radius, spacing } from '@/theme';
+import { colors, makeStyles, radius, spacing, useColors } from '@/theme';
 
 /** Mockup 13 — "End workout?": keep going / save & end / discard. */
 export default function ExitScreen() {
+  const colors = useColors();
+  const styles = useStyles();
   const { t } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { workout } = useWorkout(id);
@@ -50,7 +52,7 @@ export default function ExitScreen() {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   overlay: { flex: 1, justifyContent: 'center', padding: spacing.xl },
   backdrop: { ...StyleSheet.absoluteFill, backgroundColor: colors.ink, opacity: 0.6 },
   card: {

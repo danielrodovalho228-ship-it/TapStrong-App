@@ -6,7 +6,7 @@ import { StyleSheet, View } from 'react-native';
 import { AppText, Button, Notice, TextLink } from '@/components/ui';
 import { useAccountStore } from '@/features/account/store';
 import { clock } from '@/lib/clock';
-import { colors, spacing } from '@/theme';
+import { spacing, useColors } from '@/theme';
 
 import { buy, currentOwnerAge } from '../actions';
 import {
@@ -35,6 +35,7 @@ export function SubscribeFooter({
   /** Where to go after a purchase; Billing by default (the paywall resumes the workout). */
   onBought?: () => void;
 }) {
+  const colors = useColors();
   const { t, i18n } = useTranslation();
   const saved = useAccountStore((s) => s.saved);
   const { entitlement, prices, hadTrial } = useBillingStore();

@@ -1,7 +1,7 @@
 import { StyleSheet, Text, type TextProps } from 'react-native';
 
 import { useAppModeStore } from '@/stores/app-mode';
-import { colors, fontSizeFor, SENIOR_TYPE_BOOST, textVariants, type TextVariant } from '@/theme';
+import { fontSizeFor, SENIOR_TYPE_BOOST, textVariants, type TextVariant, useColors } from '@/theme';
 
 export type AppTextProps = TextProps & {
   variant?: TextVariant;
@@ -12,11 +12,13 @@ export type AppTextProps = TextProps & {
 
 export function AppText({
   variant = 'body',
-  color = colors.ink,
+  color: colorProp,
   boost,
   style,
   ...rest
 }: AppTextProps) {
+  const ink = useColors().ink;
+  const color = colorProp ?? ink;
   const mode = useAppModeStore((s) => s.mode);
   const spec = textVariants[variant];
   const fontSize = fontSizeFor(variant, boost ?? (mode === 'senior' ? SENIOR_TYPE_BOOST : 0));

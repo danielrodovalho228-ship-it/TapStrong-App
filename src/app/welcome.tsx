@@ -9,7 +9,7 @@ import { useOnboardingStore } from '@/features/onboarding/store';
 import { SUPPORTED_LOCALES, type SupportedLocale } from '@/i18n';
 import { track } from '@/lib/analytics';
 import { kidsUnder13Enabled } from '@/lib/features';
-import { colors, fonts, makeStyles, radius, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, spacing, useColors } from '@/theme';
 
 // Kids under 13 off for launch (Phase 12): the fourth tile shows teens 13+.
 const models = () => [
@@ -23,6 +23,8 @@ const models = () => [
 
 /** Mockup 01 — Welcome. */
 export default function Welcome() {
+  const colors = useColors();
+  const styles = useStyles();
   const { t, i18n } = useTranslation();
   const update = useOnboardingStore((s) => s.update);
   const locale = (SUPPORTED_LOCALES as readonly string[]).includes(i18n.language)
@@ -104,7 +106,7 @@ export default function Welcome() {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   brandRow: {
     flexDirection: 'row',
     alignItems: 'center',

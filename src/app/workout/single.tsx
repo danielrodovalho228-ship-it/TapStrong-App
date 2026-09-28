@@ -9,13 +9,14 @@ import { defaultMuscleGoal } from '@/features/onboarding/options';
 import { muscleLabel } from '@/features/onboarding/summaries';
 import { useExerciseLibrary, useGeneratorInput } from '@/features/workout/hooks';
 import { useWorkoutStore } from '@/features/workout/store';
-import { colors } from '@/theme';
+import { useColors } from '@/theme';
 
 /**
  * Single workout (A6; mockup 08 body map): pick muscles for one session. The
  * profile's goals and plan stay as they are; every safety rule applies.
  */
 export default function SingleWorkoutScreen() {
+  const colors = useColors();
   const { t } = useTranslation();
   const library = useExerciseLibrary();
   const input = useGeneratorInput(library);

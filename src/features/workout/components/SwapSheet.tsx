@@ -9,7 +9,7 @@ import { getAlternatives, missingEquipmentOptions, swapItem } from '@/features/g
 import { isMachine } from '@/features/generator/filters';
 import type { GeneratorInput, SessionItem } from '@/features/generator/types';
 import { track } from '@/lib/analytics';
-import { colors, makeStyles, radius, spacing } from '@/theme';
+import { colors, makeStyles, radius, spacing, useColors } from '@/theme';
 
 import { setsLogged } from '../flow';
 import { exerciseCues, exerciseName } from '../format';
@@ -58,6 +58,8 @@ export function SwapSheet({
   onClose,
   onSwapped,
 }: Props) {
+  const colors = useColors();
+  const styles = useStyles();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const applySwap = useWorkoutStore((s) => s.applySwap);
@@ -170,7 +172,7 @@ export function SwapSheet({
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   missing: { gap: spacing.xs, paddingTop: spacing.sm },
   backdrop: { flex: 1, backgroundColor: colors.ink, opacity: 0.4 },
   sheet: {

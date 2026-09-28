@@ -1,6 +1,6 @@
 import Svg, { Path } from 'react-native-svg';
 
-import { colors } from '@/theme';
+import { useColors } from '@/theme';
 
 /** Minimal line-icon set, drawn in-house to avoid a generic icon-font look. */
 const paths = {
@@ -42,7 +42,9 @@ type IconProps = {
   strokeWidth?: number;
 };
 
-export function Icon({ name, size = 24, color = colors.ink, strokeWidth = 2 }: IconProps) {
+export function Icon({ name, size = 24, color: colorProp, strokeWidth = 2 }: IconProps) {
+  const ink = useColors().ink;
+  const color = colorProp ?? ink;
   return (
     // Decorative: SVGs are not accessibility elements by default. (Passing
     // accessible={false} leaks an invalid DOM attribute on web.)

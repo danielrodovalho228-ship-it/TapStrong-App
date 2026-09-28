@@ -11,6 +11,7 @@ import {
   PALETTES,
   radius,
   spacing,
+  useColors,
 } from '@/theme';
 
 /**
@@ -19,6 +20,8 @@ import {
  * licensed media we show a neutral frame, never a prototype clip.
  */
 export function ExerciseThumb({ size = 56 }: { size?: number }) {
+  const colors = useColors();
+  const styles = useStyles();
   return (
     <View testID="exercise-thumb" style={[styles.thumb, { width: size, height: size }]} aria-hidden>
       <Icon name="play" size={size * 0.34} color={colors.onCanvasMuted} />
@@ -34,6 +37,8 @@ export function DemoLoop({
   /** Prototype clip in development builds; null shows the neutral frame. */
   video?: number | null;
 }) {
+  const colors = useColors();
+  const styles = useStyles();
   const { t } = useTranslation();
   if (video) {
     // Loaded lazily: only development builds ever have a clip to show.
@@ -104,6 +109,8 @@ export function Tag({
   label: string;
   tone?: 'accent' | 'ink' | 'teal';
 }) {
+  const colors = useColors();
+  const styles = useStyles();
   // Coral fills are for primary actions only (theme v2): the accent tag is a soft tint.
   const bg = tone === 'accent' ? colors.primarySoft : tone === 'teal' ? colors.teal : colors.ink;
   const fg = tone === 'accent' ? colors.accentText : tone === 'teal' ? colors.onTeal : colors.onInk;
@@ -116,7 +123,7 @@ export function Tag({
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   thumb: {
     backgroundColor: colors.bodyCanvas,
     borderRadius: radius.chip,

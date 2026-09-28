@@ -9,7 +9,7 @@ import { useOnboardingStore } from '@/features/onboarding/store';
 import { lbToKg } from '@/features/profile/units';
 import { clock } from '@/lib/clock';
 import { localDate } from '@/lib/dates';
-import { colors, makeStyles, spacing } from '@/theme';
+import { colors, makeStyles, spacing, useColors } from '@/theme';
 
 import { formatLength, formatWeight, inchesToCm } from '../format';
 import { useProgressStore } from '../store';
@@ -22,6 +22,8 @@ type Field = (typeof FIELDS)[number];
  * measurementsAllowed): waist-to-height first, weight trend, tape entries.
  */
 export function BodyPanel() {
+  const colors = useColors();
+  const styles = useStyles();
   const { t, i18n } = useTranslation();
   const { units, heightCm } = useOnboardingStore();
   const checkins = useProgressStore((s) => s.checkins);
@@ -159,7 +161,7 @@ export function BodyPanel() {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   card: { gap: spacing.sm },
   line: {
     flexDirection: 'row',

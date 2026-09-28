@@ -6,7 +6,7 @@ import { AppText } from '@/components/ui';
 import { useWorkoutStore } from '@/features/workout/store';
 import { clock } from '@/lib/clock';
 import { deviceWeekStart, localDate } from '@/lib/dates';
-import { colors, fonts, makeStyles, radius, sizes, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, sizes, spacing, useColors } from '@/theme';
 
 import { useTrainingDaysPerWeek } from '../useTrainingDays';
 import { weekStrip, type WeekDay } from '../week';
@@ -17,6 +17,8 @@ import { weekStrip, type WeekDay } from '../week';
  * session (past = log, future = preview). `large` for 60+.
  */
 export function WeekStrip({ large = false }: { large?: boolean }) {
+  const colors = useColors();
+  const styles = useStyles();
   const { t, i18n } = useTranslation();
   const workouts = useWorkoutStore((s) => s.workouts);
   const daysPerWeek = useTrainingDaysPerWeek();
@@ -66,7 +68,7 @@ export function WeekStrip({ large = false }: { large?: boolean }) {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   row: { flexDirection: 'row', gap: spacing.xs },
   day: {
     flex: 1,

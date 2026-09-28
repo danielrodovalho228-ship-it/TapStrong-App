@@ -17,12 +17,14 @@ import { playTimerEnd } from '@/features/workout/sound';
 import { useWorkoutStore } from '@/features/workout/store';
 import type { SetLog } from '@/features/workout/types';
 import { clock } from '@/lib/clock';
-import { colors, fonts, makeStyles, radius, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, spacing, useColors } from '@/theme';
 
 const EXTRA_SECONDS = 30;
 
 /** Mockup 12 — rest between sets: timer, +30 s, skip, last-time comparison. */
 export default function RestScreen() {
+  const colors = useColors();
+  const styles = useStyles();
   const { t, i18n } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string; manual?: string }>();
   const { workout, byId, input } = useWorkout(id);
@@ -181,7 +183,7 @@ export default function RestScreen() {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   safe: { flex: 1, backgroundColor: colors.dark.background },
   content: { flex: 1, padding: spacing.xl, gap: spacing.lg },
   caps: { textTransform: 'uppercase', letterSpacing: 1.2, fontFamily: fonts.headingSemi },

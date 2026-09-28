@@ -30,10 +30,12 @@ import { streakToday } from '@/features/workout/streak';
 import { useWorkoutStore } from '@/features/workout/store';
 import { clock } from '@/lib/clock';
 import { deviceWeekStart, localDate } from '@/lib/dates';
-import { colors, fonts, makeStyles, radius, sizes, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, sizes, spacing, useColors } from '@/theme';
 
 /** Mockup 18 — progress (SPEC §9 /(tabs)/progress). */
 export default function ProgressScreen() {
+  const colors = useColors();
+  const styles = useStyles();
   const { t } = useTranslation();
   const profile = useOnboardingStore();
   const mode = derive(profile)?.mode ?? 'adult';
@@ -197,6 +199,8 @@ export default function ProgressScreen() {
 }
 
 function Stat({ label, value }: { label: string; value: string }) {
+  const colors = useColors();
+  const styles = useStyles();
   return (
     <View style={styles.stat}>
       <AppText variant="caption" color={colors.muted} style={styles.caps}>
@@ -208,6 +212,7 @@ function Stat({ label, value }: { label: string; value: string }) {
 }
 
 function Line({ label, value }: { label: string; value: string }) {
+  const styles = useStyles();
   return (
     <View style={[styles.row, styles.line]}>
       <AppText style={styles.flex}>{label}</AppText>
@@ -217,6 +222,8 @@ function Line({ label, value }: { label: string; value: string }) {
 }
 
 function LinkRow({ icon, label, onPress }: { icon: IconName; label: string; onPress: () => void }) {
+  const colors = useColors();
+  const styles = useStyles();
   return (
     <Pressable
       accessibilityRole="button"
@@ -233,7 +240,7 @@ function LinkRow({ icon, label, onPress }: { icon: IconName; label: string; onPr
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   stats: { flexDirection: 'row', gap: spacing.sm },
   stat: {
     flex: 1,

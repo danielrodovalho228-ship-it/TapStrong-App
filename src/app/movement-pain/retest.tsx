@@ -8,10 +8,11 @@ import type { MovementKey } from '@/features/movement/catalog';
 import { useMovementPainStore } from '@/features/movement/store';
 import { movementExample, movementName, reportTitle, ScoreChips } from '@/features/movement/ui';
 import { clock } from '@/lib/clock';
-import { colors, spacing } from '@/theme';
+import { spacing, useColors } from '@/theme';
 
 /** Weekly retest of the movements that hurt (SPEC §8). */
 export default function PainRetestScreen() {
+  const colors = useColors();
   const { t } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const report = useMovementPainStore((s) => s.reports.find((r) => r.id === id));

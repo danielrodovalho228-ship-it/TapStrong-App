@@ -9,10 +9,11 @@ export type CardProps = ViewProps & {
 };
 
 export function Card({ tone = 'default', style, ...rest }: CardProps) {
+  const styles = useStyles();
   return <View style={[styles.base, styles[tone], style]} {...rest} />;
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   base: {
     borderRadius: radius.card,
     padding: spacing.lg,

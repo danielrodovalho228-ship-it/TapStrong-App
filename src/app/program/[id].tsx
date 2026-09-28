@@ -11,7 +11,7 @@ import { useProgramStore } from '@/features/program/store';
 import { discardPlannedWorkouts } from '@/features/workout/hooks';
 import { clock } from '@/lib/clock';
 import { localDate } from '@/lib/dates';
-import { colors, spacing } from '@/theme';
+import { spacing, useColors } from '@/theme';
 
 /**
  * A ready-made plan (A5, mockup 19 detail): the week layout, then "Use this
@@ -19,6 +19,7 @@ import { colors, spacing } from '@/theme';
  * "mine") goes back to the coach's plan.
  */
 export default function ProgramScreen() {
+  const colors = useColors();
   const { t } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { planId, choosePlan } = useProgramStore();

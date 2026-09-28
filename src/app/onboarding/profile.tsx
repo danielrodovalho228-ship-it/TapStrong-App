@@ -11,10 +11,12 @@ import { restrictionAreas } from '@/features/onboarding/safety';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { sexLabelKey } from '@/features/onboarding/visible';
 import { measurementText, musclePairs } from '@/features/onboarding/summaries';
-import { colors, fonts, makeStyles, radius, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, spacing, useColors } from '@/theme';
 
 /** Mockup 05 — Profile summary (step 7 of 7). */
 export default function ProfileScreen() {
+  const colors = useColors();
+  const styles = useStyles();
   const { t } = useTranslation();
   const s = useOnboardingStore();
   const derived = derive(s);
@@ -145,7 +147,7 @@ export default function ProfileScreen() {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   hero: { flexDirection: 'row', alignItems: 'flex-end', gap: spacing.lg },
   heroText: { flex: 1, gap: spacing.sm },
   eyebrow: { textTransform: 'uppercase', letterSpacing: 1.5, fontFamily: fonts.heading },

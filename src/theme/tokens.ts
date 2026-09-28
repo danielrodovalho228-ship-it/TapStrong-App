@@ -1,3 +1,4 @@
+import { createContext, useContext } from 'react';
 import { StyleSheet } from 'react-native';
 
 import { PALETTES, type Palette, type Scheme } from './palettes';
@@ -9,9 +10,11 @@ import { PALETTES, type Palette, type Scheme } from './palettes';
  */
 
 /**
- * The active palette (theme v2, docs/theme-v2.md). Screens read `colors.x`
- * at render; `applyScheme` swaps the values and the root remounts, so every
- * screen follows Light / Dark without a restart.
+ * The active palette (theme v2, docs/theme-v2.md), for code outside React
+ * and for `makeStyles` factories. Components read colors through
+ * `useColors()` and styles through the hook `makeStyles` returns, so a theme
+ * change re-renders them in place: no remount, navigation and screen state
+ * stay (QA R6-01).
  */
 export const colors: Palette = clonePalette(PALETTES.light);
 
@@ -22,7 +25,7 @@ function clonePalette(p: Palette): Palette {
   return { ...p, dark: { ...p.dark } };
 }
 
-/** Makes `next` the active palette. Call before rendering (ThemeGate). */
+/** Makes `next` the active palette for non-React code (ThemeGate calls it). */
 export function applyScheme(next: Scheme) {
   if (next === scheme) return;
   scheme = next;
@@ -30,22 +33,37 @@ export function applyScheme(next: Scheme) {
   Object.assign(colors, p, { dark: { ...p.dark } });
 }
 
+/** The scheme on screen; ThemeGate provides it. Light outside the app root. */
+export const SchemeContext = createContext<Scheme>('light');
+
+/** The scheme on screen. */
+export const useScheme = () => useContext(SchemeContext);
+
+/** The palette on screen; a new object when the scheme changes. */
+export const useColors = (): Palette => PALETTES[useContext(SchemeContext)];
+
 /**
- * `StyleSheet.create` for styles that use `colors`: built on first use for
- * each scheme, so a module-level style follows the active theme.
+ * `StyleSheet.create` per scheme, as a hook: `const useStyles = makeStyles(
+ * () => ({ ... colors.x ... }))`, then `const styles = useStyles()` in the
+ * component. The factory reads `colors`, which holds the requested scheme
+ * while it runs.
  */
-export function makeStyles<T extends StyleSheet.NamedStyles<T>>(factory: () => T): T {
+export function makeStyles<T extends StyleSheet.NamedStyles<T>>(factory: () => T): () => T {
   const cache: Partial<Record<Scheme, T>> = {};
-  const get = () => (cache[scheme] ??= StyleSheet.create(factory()));
-  return new Proxy({} as T, {
-    get: (_, key) => get()[key as keyof T],
-    ownKeys: () => Reflect.ownKeys(get()),
-    getOwnPropertyDescriptor: (_, key) => ({
-      configurable: true,
-      enumerable: true,
-      value: get()[key as keyof T],
-    }),
-  });
+  const build = (s: Scheme): T => {
+    const cached = cache[s];
+    if (cached) return cached;
+    const previous = scheme;
+    applyScheme(s);
+    try {
+      return (cache[s] = StyleSheet.create(factory()));
+    } finally {
+      applyScheme(previous);
+    }
+  };
+  return function useStyles() {
+    return build(useContext(SchemeContext));
+  };
 }
 
 /**

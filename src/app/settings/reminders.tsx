@@ -10,13 +10,14 @@ import { parseTime, trainingWeekdays } from '@/features/notifications/plan';
 import { useTrainingDaysPerWeek } from '@/features/program/useTrainingDays';
 import { clock } from '@/lib/clock';
 import { deviceWeekStart } from '@/lib/dates';
-import { colors, spacing } from '@/theme';
+import { spacing, useColors } from '@/theme';
 
 const TIMES = ['07:00', '12:00', '17:30', '19:00', '20:30'];
 const WEEK = [0, 1, 2, 3, 4, 5, 6];
 
 /** Settings → Reminders (improvements v1, D4): on/off, time, days, streak saver. */
 export default function RemindersScreen() {
+  const colors = useColors();
   const { t, i18n } = useTranslation();
   const { notifications, setNotifications } = useAccountStore();
   const daysPerWeek = useTrainingDaysPerWeek();

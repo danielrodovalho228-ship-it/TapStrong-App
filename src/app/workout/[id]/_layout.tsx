@@ -1,9 +1,10 @@
 import { Stack } from 'expo-router';
 
-import { colors } from '@/theme';
+import { useColors } from '@/theme';
 
 /** Workout flow — SPEC §9: list → play ⇄ rest, with pain and exit over the player. */
 export default function WorkoutLayout() {
+  const colors = useColors();
   return (
     <Stack
       screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }}

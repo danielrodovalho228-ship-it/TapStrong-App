@@ -10,14 +10,16 @@ import { useProgressStore } from '@/features/progress/store';
 import { buildRepairPlan, grade } from '@/features/repair/tests';
 import { useRepair } from '@/features/repair/useRepair';
 import { clock } from '@/lib/clock';
-import { colors, fonts, makeStyles, sizes, spacing } from '@/theme';
+import { colors, fonts, makeStyles, sizes, spacing, useColors, type Palette } from '@/theme';
 
-/** Read at render: the colors follow the active theme. */
-const gradeColor = (g: 'good' | 'uneven' | 'low' | 'limited' | 'todo') =>
-  g === 'good' ? colors.teal : colors.accentText;
+/** Grade color from the palette on screen. */
+const gradeColor = (c: Palette, g: 'good' | 'uneven' | 'low' | 'limited' | 'todo') =>
+  g === 'good' ? c.teal : c.accentText;
 
 /** Mockup 17 — Repair check: find weak spots (SPEC §9 /repair). */
 export default function RepairScreen() {
+  const colors = useColors();
+  const styles = useStyles();
   const { t } = useTranslation();
   const { all, tests, mode, results, plan, found } = useRepair();
   const setRepairPlan = useProgressStore((s) => s.setRepairPlan);
@@ -95,7 +97,7 @@ export default function RepairScreen() {
               </AppText>
               <AppText
                 variant="caption"
-                color={gradeColor(g)}
+                color={gradeColor(colors, g)}
                 style={[styles.caps, g === 'todo' && styles.underline]}
               >
                 {t(`repair.grades.${g}`)}
@@ -133,7 +135,7 @@ export default function RepairScreen() {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   list: { gap: 0, paddingVertical: spacing.xs },
   row: {
     flexDirection: 'row',

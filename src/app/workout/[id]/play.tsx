@@ -35,10 +35,12 @@ import { useWorkoutStore } from '@/features/workout/store';
 import type { LoadUnit, WorkoutRecord } from '@/features/workout/types';
 import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
-import { colors, fonts, makeStyles, radius, sizes, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, sizes, spacing, useColors } from '@/theme';
 
 /** Mockup 11 — the player: warm-up → exercises → cool-down, in order. */
 export default function PlayerScreen() {
+  const colors = useColors();
+  const styles = useStyles();
   const { t, i18n } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { workout, byId, input, library } = useWorkout(id);
@@ -193,6 +195,8 @@ function TimedStep({
   step: Step;
   onSwap: () => void;
 }) {
+  const colors = useColors();
+  const styles = useStyles();
   const { t } = useTranslation();
   const { logSet, skipItem } = useWorkoutStore();
   const [startedAt, setStartedAt] = useState<number | null>(null);
@@ -312,6 +316,8 @@ function SetStep({
   onSwap: () => void;
   onMachineTaken?: () => void;
 }) {
+  const colors = useColors();
+  const styles = useStyles();
   const { t } = useTranslation();
   const prefs = usePrefsStore();
   const { logSet, workouts } = useWorkoutStore();
@@ -497,6 +503,7 @@ function Counter({
   step: number;
   onChange: (v: number) => void;
 }) {
+  const styles = useStyles();
   const { t } = useTranslation();
   return (
     <View style={styles.counter}>
@@ -522,7 +529,7 @@ function Counter({
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   setStack: { flexDirection: 'column-reverse', gap: spacing.lg },
   effort: { gap: spacing.xs },
   effortRow: { flexDirection: 'row', gap: spacing.sm, flexWrap: 'wrap' },

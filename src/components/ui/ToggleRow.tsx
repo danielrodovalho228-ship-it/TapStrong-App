@@ -1,6 +1,6 @@
 import { Pressable, View } from 'react-native';
 
-import { colors, makeStyles, sizes, spacing } from '@/theme';
+import { colors, makeStyles, sizes, spacing, useColors } from '@/theme';
 
 import { AppText } from './AppText';
 
@@ -17,6 +17,8 @@ export type ToggleRowProps = {
  * web), and a target far bigger than 44 px. The track is drawn, not native.
  */
 export function ToggleRow({ label, detail, value, onChange }: ToggleRowProps) {
+  const colors = useColors();
+  const styles = useStyles();
   return (
     <Pressable
       accessibilityRole="switch"
@@ -42,7 +44,7 @@ export function ToggleRow({ label, detail, value, onChange }: ToggleRowProps) {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   row: {
     flexDirection: 'row',
     alignItems: 'center',

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText, Chip } from '@/components/ui';
-import { colors, makeStyles, spacing } from '@/theme';
+import { colors, makeStyles, spacing, useColors, type Palette } from '@/theme';
 
 import type { MovementKey } from './catalog';
 import type { Light } from './progress';
@@ -32,9 +32,9 @@ export const reportTitle = (t: TFunction, r: Pick<MovementPain, 'area' | 'side'>
       })
     : areaName(t, r.area);
 
-/** Traffic-light text color, read at render so it follows the theme. */
-export const lightColor = (l: Light): string =>
-  l === 'green' ? colors.teal : l === 'yellow' ? colors.mutedStrong : colors.accentText;
+/** Traffic-light text color from the palette on screen. */
+export const lightColor = (c: Palette, l: Light): string =>
+  l === 'green' ? c.teal : l === 'yellow' ? c.mutedStrong : c.accentText;
 
 /** Pain 0–10 as a row of chips (large targets, one tap). */
 export function ScoreChips({
@@ -44,6 +44,7 @@ export function ScoreChips({
   value: number | null;
   onChange: (score: number) => void;
 }) {
+  const colors = useColors();
   const { t } = useTranslation();
   return (
     <View style={styles.wrap}>
@@ -79,6 +80,7 @@ export function ScoreChips({
 
 /** Pain at the report and each weekly retest, 0–10 (lower is better). */
 export function PainBars({ points }: { points: number[] }) {
+  const barStyles = useBarStyles();
   const { t } = useTranslation();
   return (
     <View style={barStyles.bars}>
@@ -97,7 +99,7 @@ export function PainBars({ points }: { points: number[] }) {
   );
 }
 
-const barStyles = makeStyles(() => ({
+const useBarStyles = makeStyles(() => ({
   bars: { flexDirection: 'row', alignItems: 'flex-end', gap: spacing.md, minHeight: 110 },
   barCol: { alignItems: 'center', gap: spacing.xxs },
   bar: { width: 24, borderRadius: 4, backgroundColor: colors.ink },

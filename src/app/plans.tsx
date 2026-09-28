@@ -12,11 +12,12 @@ import { useBillingStore } from '@/features/billing/store';
 import { FamilyStrip } from '@/features/family/components/FamilyStrip';
 import { clock } from '@/lib/clock';
 import { kidsUnder13Enabled } from '@/lib/features';
-import { colors, fonts, spacing } from '@/theme';
+import { fonts, spacing, useColors } from '@/theme';
 import { OwnerOnly } from '@/features/family/OwnerOnly';
 
 /** Mockup 19 — plans and family (SPEC §9 /plans). */
 function PlansScreenInner() {
+  const colors = useColors();
   const { t } = useTranslation();
   const entitlement = useBillingStore((s) => s.entitlement);
   const current = currentPlan(entitlement, clock.now());
@@ -49,6 +50,7 @@ function PlansScreenInner() {
 
 /** Development builds without RevenueCat: move the simulated plan along. */
 function DevControls() {
+  const colors = useColors();
   const { t } = useTranslation();
   // Inside `if (__DEV__)` so release bundles drop the simulator entirely.
   if (__DEV__) {

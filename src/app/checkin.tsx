@@ -24,10 +24,12 @@ import { useWorkoutStore } from '@/features/workout/store';
 import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
 import { uuid } from '@/lib/uuid';
-import { colors, fonts, makeStyles, radius, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, spacing, useColors } from '@/theme';
 
 /** Mockup 25 — the 4-week check-in (SPEC §8 "Measurements"). */
 export default function CheckinScreen() {
+  const colors = useColors();
+  const styles = useStyles();
   const { t } = useTranslation();
   const profile = useOnboardingStore();
   const mode = derive(profile)?.mode ?? 'adult';
@@ -272,7 +274,7 @@ export default function CheckinScreen() {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   card: { gap: spacing.sm },
   caps: {
     textTransform: 'uppercase',

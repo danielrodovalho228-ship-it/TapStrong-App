@@ -28,10 +28,12 @@ import { useWorkoutStore } from '@/features/workout/store';
 import { streakToday } from '@/features/workout/streak';
 import { clock } from '@/lib/clock';
 import { deviceWeekStart, localDate } from '@/lib/dates';
-import { colors, fonts, makeStyles, radius, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, spacing, useColors } from '@/theme';
 
 /** Mockup 14 — done: the body turns red, stats, a finisher suggestion. */
 export default function DoneScreen() {
+  const colors = useColors();
+  const styles = useStyles();
   const { t } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { workout, library, input } = useWorkout(id);
@@ -246,6 +248,8 @@ export default function DoneScreen() {
 }
 
 function Stat({ value, label }: { value: string; label: string }) {
+  const colors = useColors();
+  const styles = useStyles();
   return (
     <View style={styles.stat}>
       <AppText variant="h2">{value}</AppText>
@@ -256,7 +260,7 @@ function Stat({ value, label }: { value: string; label: string }) {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   head: { flexDirection: 'row', alignItems: 'flex-end', gap: spacing.md },
   flex: { flex: 1 },
   caps: { textTransform: 'uppercase', letterSpacing: 1.2, fontFamily: fonts.headingSemi },

@@ -26,13 +26,15 @@ import { useRestrictionsStore, type Restriction } from '@/features/restrictions/
 import { useExerciseLibrary } from '@/features/workout/hooks';
 import { useWorkoutStore } from '@/features/workout/store';
 import type { Side } from '@/features/workout/types';
-import { colors, fonts, makeStyles, radius, sizes, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, sizes, spacing, useColors } from '@/theme';
 
 const AREAS = PAIN_AREAS.filter((a) => a !== 'recent_surgery');
 const SIDED: PainArea[] = ['shoulder', 'elbow_wrist', 'hip', 'knee', 'ankle_foot'];
 
 /** Mockup 20 — My restrictions: applied to every workout until changed. */
 export default function RestrictionsScreen() {
+  const colors = useColors();
+  const styles = useStyles();
   const { t, i18n } = useTranslation();
   const painAreas = useOnboardingStore((s) => s.painAreas);
   const { items, add, setActive } = useRestrictionsStore();
@@ -260,7 +262,7 @@ export default function RestrictionsScreen() {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   card: { gap: spacing.sm },
   row: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   flex: { flex: 1 },

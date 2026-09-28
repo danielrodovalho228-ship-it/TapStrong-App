@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, type PressableProps } from 'react-native';
 
-import { colors, sizes } from '@/theme';
+import { sizes, useColors } from '@/theme';
 
 import { AppText } from './AppText';
 
@@ -11,6 +11,7 @@ export type TextLinkProps = Omit<PressableProps, 'children' | 'style'> & {
 
 /** Underlined text action ("I already have an account", "Edit"). */
 export function TextLink({ label, tone = 'ink', ...rest }: TextLinkProps) {
+  const colors = useColors();
   return (
     <Pressable
       accessibilityRole="link"

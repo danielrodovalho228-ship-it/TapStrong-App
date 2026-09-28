@@ -4,7 +4,7 @@ import { View } from 'react-native';
 
 import { AppText, Header, RadioCard, Screen } from '@/components/ui';
 import { useAppearanceStore, type Appearance } from '@/features/appearance/store';
-import { colors, makeStyles, spacing } from '@/theme';
+import { makeStyles, spacing, useColors } from '@/theme';
 
 const OPTIONS: Appearance[] = ['auto', 'light', 'dark'];
 
@@ -13,6 +13,8 @@ const OPTIONS: Appearance[] = ['auto', 'light', 'dark'];
  * Light / Dark. Applies instantly and is saved on this device.
  */
 export default function AppearanceScreen() {
+  const colors = useColors();
+  const styles = useStyles();
   const { t } = useTranslation();
   const { appearance, setAppearance } = useAppearanceStore();
 
@@ -36,6 +38,6 @@ export default function AppearanceScreen() {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   list: { gap: spacing.sm },
 }));

@@ -3,7 +3,7 @@ import { Pressable, View } from 'react-native';
 
 import { AppText, SegmentedControl } from '@/components/ui';
 import { kidsUnder13Enabled } from '@/lib/features';
-import { colors, fonts, makeStyles, radius, sizes, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, sizes, spacing, useColors } from '@/theme';
 
 import { priceLabel, type Period, type Plan } from '../rules';
 import { useBillingStore } from '../store';
@@ -18,6 +18,8 @@ type Props = {
 
 /** Plan cards (mockup 19): Free, Premium, Family, with monthly / yearly. */
 export function PlanPicker({ plan, period, onPlan, onPeriod, showFree = true }: Props) {
+  const colors = useColors();
+  const styles = useStyles();
   const { t } = useTranslation();
   const prices = useBillingStore((s) => s.prices);
   const plans: Plan[] = showFree ? ['free', 'premium', 'family'] : ['premium', 'family'];
@@ -85,7 +87,7 @@ export function PlanPicker({ plan, period, onPlan, onPeriod, showFree = true }: 
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   wrap: { gap: spacing.md },
   list: { gap: spacing.sm },
   card: {

@@ -5,7 +5,7 @@ import { Pressable, ScrollView, View } from 'react-native';
 
 import { AppText, Card, Chip } from '@/components/ui';
 import type { AppMode } from '@/features/profile/age';
-import { colors, fonts, makeStyles, radius, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, spacing, useColors } from '@/theme';
 
 import {
   findPlans,
@@ -32,6 +32,8 @@ const DAYS = [2, 3, 4, 5, 6];
  * then plans for this age mode with day, goal, split and length filters.
  */
 export function PlansBrowser({ mode }: { mode: AppMode }) {
+  const colors = useColors();
+  const styles = useStyles();
   const { t } = useTranslation();
   const activeId = useProgramStore((s) => s.planId);
   const [filter, setFilter] = useState<PlanFilter>({});
@@ -173,7 +175,7 @@ export function PlansBrowser({ mode }: { mode: AppMode }) {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   wrap: { gap: spacing.sm },
   card: {
     gap: spacing.xs,

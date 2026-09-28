@@ -30,7 +30,7 @@ import { useOnboardingStore } from '@/features/onboarding/store';
 import { useRestrictionsStore } from '@/features/restrictions/store';
 import { clock } from '@/lib/clock';
 import { uuid } from '@/lib/uuid';
-import { colors, fonts, makeStyles, spacing } from '@/theme';
+import { colors, fonts, makeStyles, spacing, useColors } from '@/theme';
 
 type Step = 'gate' | 'area' | 'side' | 'flags' | 'stop' | 'moves' | 'score' | 'duration';
 type Rating = 'hurts' | 'fine' | 'untried';
@@ -40,6 +40,8 @@ type Rating = 'hurts' | 'fine' | 'untried';
  * movements hurt and which don't, pain 0–10 and how long. Never a diagnosis.
  */
 export default function MovementPainScreen() {
+  const colors = useColors();
+  const styles = useStyles();
   const { t } = useTranslation();
   const params = useLocalSearchParams<{ area?: string }>();
   const catalog = useMemo(() => movementCatalog(), []);
@@ -306,7 +308,7 @@ export default function MovementPainScreen() {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   card: { gap: spacing.sm },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   group: { gap: spacing.sm },

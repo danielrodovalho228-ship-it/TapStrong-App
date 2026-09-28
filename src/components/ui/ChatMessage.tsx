@@ -1,12 +1,13 @@
 import type { ReactNode } from 'react';
 import { View } from 'react-native';
 
-import { colors, makeStyles, radius, spacing } from '@/theme';
+import { colors, makeStyles, radius, spacing, useColors } from '@/theme';
 
 import { AppText } from './AppText';
 
 /** Coach line with the left rule (mockup 03). */
 export function CoachMessage({ text, children }: { text?: string; children?: ReactNode }) {
+  const styles = useStyles();
   return (
     <View style={styles.coach}>
       {text ? <AppText variant="body">{text}</AppText> : null}
@@ -17,6 +18,8 @@ export function CoachMessage({ text, children }: { text?: string; children?: Rea
 
 /** User answer bubble, right aligned, ink background. */
 export function UserMessage({ text }: { text: string }) {
+  const colors = useColors();
+  const styles = useStyles();
   return (
     <View style={styles.userWrap}>
       <View style={styles.user}>
@@ -26,7 +29,7 @@ export function UserMessage({ text }: { text: string }) {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   coach: {
     borderLeftWidth: 3,
     borderLeftColor: colors.ink,

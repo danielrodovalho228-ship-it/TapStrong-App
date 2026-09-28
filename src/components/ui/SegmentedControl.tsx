@@ -1,6 +1,6 @@
 import { Pressable, View } from 'react-native';
 
-import { colors, makeStyles, radius, sizes, spacing } from '@/theme';
+import { colors, makeStyles, radius, sizes, spacing, useColors } from '@/theme';
 
 import { AppText } from './AppText';
 
@@ -25,6 +25,8 @@ export function SegmentedControl<T extends string>({
   onChange,
   accessibilityLabel,
 }: SegmentedControlProps<T>) {
+  const colors = useColors();
+  const styles = useStyles();
   return (
     <View accessibilityRole="radiogroup" accessibilityLabel={accessibilityLabel} style={styles.row}>
       {options.map((option) => {
@@ -54,7 +56,7 @@ export function SegmentedControl<T extends string>({
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   row: {
     flexDirection: 'row',
     padding: spacing.xs,

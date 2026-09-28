@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { View } from 'react-native';
 
-import { colors, fonts, makeStyles, radius, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, spacing, useColors } from '@/theme';
 
 import { AppText } from './AppText';
 import { Icon } from './Icon';
@@ -15,6 +15,8 @@ export type NoticeProps = {
 };
 
 export function Notice({ title, children, tone = 'safety', icon = false }: NoticeProps) {
+  const colors = useColors();
+  const styles = useStyles();
   const warning = tone === 'warning';
   const color = warning ? colors.accentText : colors.teal;
   return (
@@ -43,7 +45,7 @@ export function Notice({ title, children, tone = 'safety', icon = false }: Notic
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   box: {
     flexDirection: 'row',
     gap: spacing.md,

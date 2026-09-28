@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
 import { AppText } from '@/components/ui';
-import { colors } from '@/theme';
+import { useColors } from '@/theme';
 
 import type { Exercise } from '../../exercises/types';
 import { needsCaution } from '../../generator/dosage';
@@ -13,6 +13,7 @@ import { useOnboardingStore } from '../../onboarding/store';
  * for a heart condition or high blood pressure (QA C-09).
  */
 export function SafetyCues({ exercise }: { exercise: Exercise | undefined }) {
+  const colors = useColors();
   const { t } = useTranslation();
   const position = useOnboardingStore((s) => s.position);
   const conditions = useOnboardingStore((s) => s.conditions);

@@ -10,7 +10,7 @@ import { useWorkoutStore } from '@/features/workout/store';
 import { useLibraryStore } from '@/features/library/store';
 import { clock } from '@/lib/clock';
 import { deviceWeekStart, localDate } from '@/lib/dates';
-import { colors, fonts, makeStyles, radius, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, spacing, useColors } from '@/theme';
 
 import {
   activityTotals,
@@ -36,6 +36,8 @@ const shiftMonth = (month: string, by: number) => {
  * only workouts, hours and the calendar.
  */
 export function ActivityCard({ mode, unit }: { mode: AppMode; unit: 'lb' | 'kg' }) {
+  const colors = useColors();
+  const styles = useStyles();
   const { t, i18n } = useTranslation();
   const workouts = useWorkoutStore((s) => s.workouts);
   const library = useExerciseLibrary();
@@ -190,6 +192,8 @@ function ExerciseGraph({
   library: ReturnType<typeof useExerciseLibrary>;
   workouts: ReturnType<typeof useWorkoutStore.getState>['workouts'];
 }) {
+  const colors = useColors();
+  const styles = useStyles();
   const { t, i18n } = useTranslation();
   const exercises = loggedExercises(workouts, library);
   const [picked, setPicked] = useState<string | null>(null);
@@ -298,7 +302,7 @@ function ExerciseGraph({
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   card: { gap: spacing.md },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   row: { flexDirection: 'row', gap: spacing.sm },

@@ -15,7 +15,7 @@ import { checkinDue } from '@/features/progress/checkin';
 import { useProgressStore } from '@/features/progress/store';
 import { useWorkoutStore } from '@/features/workout/store';
 import { clock } from '@/lib/clock';
-import { colors, fonts, makeStyles, radius, sizes, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, sizes, spacing, useColors } from '@/theme';
 import { listText } from '@/lib/listText';
 
 import { dayPart, lastWorkout, relativeDay } from './summary';
@@ -44,6 +44,8 @@ export function SeniorHome({
   /** Sharp pain stopped a workout today: gentle options only (QA R5 P2). */
   stoppedToday?: boolean;
 }) {
+  const colors = useColors();
+  const styles = useStyles();
   const { t, i18n } = useTranslation();
   const profile = useOnboardingStore();
   const { workouts } = useWorkoutStore();
@@ -217,6 +219,7 @@ export function SeniorHome({
 }
 
 function BigLink({ icon, label, onPress }: { icon: IconName; label: string; onPress: () => void }) {
+  const styles = useStyles();
   return (
     <Pressable
       accessibilityRole="button"
@@ -232,7 +235,7 @@ function BigLink({ icon, label, onPress }: { icon: IconName; label: string; onPr
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   today: {
     gap: spacing.md,
     padding: spacing.xl,

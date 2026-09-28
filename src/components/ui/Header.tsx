@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { colors, sizes, spacing } from '@/theme';
+import { sizes, spacing, useColors } from '@/theme';
 
 import { AppText } from './AppText';
 import { IconButton } from './IconButton';
@@ -17,6 +17,7 @@ export type HeaderProps = {
 
 /** Left-aligned top bar, as in the mockups: outlined back box, eyebrow, optional title. */
 export function Header({ title, eyebrow, onBack, right }: HeaderProps) {
+  const colors = useColors();
   const { t } = useTranslation();
   return (
     <View style={styles.row}>

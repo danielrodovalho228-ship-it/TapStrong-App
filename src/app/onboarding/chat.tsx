@@ -29,7 +29,7 @@ import { answerSummary, coachAck } from '@/features/onboarding/summaries';
 import { visibleMainGoals } from '@/features/onboarding/visible';
 import { SUPPORTED_LOCALES, type SupportedLocale } from '@/i18n';
 import { track } from '@/lib/analytics';
-import { colors, currentScheme, fonts, makeStyles, radius, sizes, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, sizes, spacing, useColors, useScheme } from '@/theme';
 
 function isInterviewStep(value: unknown): value is InterviewStep {
   return typeof value === 'string' && (INTERVIEW_STEPS as readonly string[]).includes(value);
@@ -37,6 +37,9 @@ function isInterviewStep(value: unknown): value is InterviewStep {
 
 /** Mockup 03 — Coach interview (steps 2–5 of 7). */
 export default function ChatScreen() {
+  const colors = useColors();
+  const scheme = useScheme();
+  const styles = useStyles();
   const { t, i18n } = useTranslation();
   const params = useLocalSearchParams<{ step?: string; edit?: string }>();
   const s = useOnboardingStore();
@@ -152,7 +155,7 @@ export default function ChatScreen() {
                 placeholder={t('chat.inputPlaceholder')}
                 placeholderTextColor={colors.muted}
                 // The keyboard follows the theme (theme v2).
-                keyboardAppearance={currentScheme()}
+                keyboardAppearance={scheme}
                 value={draft}
                 onChangeText={setDraft}
                 maxLength={MAX_USER_TEXT}
@@ -222,7 +225,7 @@ export default function ChatScreen() {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   headerWrap: { gap: spacing.sm },
   progress: { paddingHorizontal: spacing.xl },
   thread: { gap: spacing.xl, paddingBottom: spacing.lg, paddingTop: spacing.sm },

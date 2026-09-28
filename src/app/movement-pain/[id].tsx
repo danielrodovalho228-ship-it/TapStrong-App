@@ -26,13 +26,15 @@ import { useExerciseLibrary, useGeneratorInput } from '@/features/workout/hooks'
 import { useWorkoutStore } from '@/features/workout/store';
 import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
-import { colors, fonts, makeStyles, radius, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, spacing, useColors } from '@/theme';
 
 const SESSION_MINUTES = 15;
 const DAY = 86_400_000;
 
 /** A recovery plan for a movement that hurts (SPEC §8), inside Repair. */
 export default function MovementPlanScreen() {
+  const colors = useColors();
+  const styles = useStyles();
   const { t, i18n } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const report = useMovementPainStore((s) => s.reports.find((r) => r.id === id));
@@ -135,11 +137,11 @@ export default function MovementPlanScreen() {
             {lights.map((l) => (
               <View
                 key={l.workoutId}
-                style={[styles.light, { borderColor: lightColor(l.light) }]}
+                style={[styles.light, { borderColor: lightColor(colors, l.light) }]}
                 accessible
                 accessibilityLabel={t(`movementPain.plan.lights.${l.light}`)}
               >
-                <AppText variant="caption" color={lightColor(l.light)}>
+                <AppText variant="caption" color={lightColor(colors, l.light)}>
                   {t(`movementPain.plan.lights.${l.light}`)}
                 </AppText>
               </View>
@@ -186,7 +188,7 @@ export default function MovementPlanScreen() {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   card: { gap: spacing.sm },
   caps: {
     textTransform: 'uppercase',

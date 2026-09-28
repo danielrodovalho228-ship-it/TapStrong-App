@@ -3,7 +3,7 @@ import { FlatList, Modal, Platform, Pressable, StyleSheet, View } from 'react-na
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { colors, makeStyles, radius, sizes, spacing } from '@/theme';
+import { colors, makeStyles, radius, sizes, spacing, useColors } from '@/theme';
 
 import { AppText } from './AppText';
 import { Icon } from './Icon';
@@ -27,6 +27,8 @@ export function Select<T extends string | number>({
   value,
   onChange,
 }: SelectProps<T>) {
+  const colors = useColors();
+  const styles = useStyles();
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const listRef = useRef<FlatList<SelectOption<T>>>(null);
@@ -106,7 +108,7 @@ export function Select<T extends string | number>({
 
 const ROW = 56;
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   field: {
     flex: 1,
     minHeight: sizes.primaryButtonHeight - 6,

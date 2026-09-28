@@ -7,13 +7,14 @@ import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { createWorkoutFrom, useExerciseLibrary, useGeneratorInput } from '@/features/workout/hooks';
 import { useWorkoutStore } from '@/features/workout/store';
-import { colors, spacing } from '@/theme';
+import { spacing, useColors } from '@/theme';
 
 /**
  * Workout modes (improvements v1, A6; mockup 09 choice cards): My plan,
  * Single workout, Custom, and the ready-made plans.
  */
 export default function NewWorkoutScreen() {
+  const colors = useColors();
   const { t } = useTranslation();
   const library = useExerciseLibrary();
   const input = useGeneratorInput(library);

@@ -16,7 +16,7 @@ import { MAX_FREEZES } from '@/features/workout/streak';
 import { useWorkoutStore } from '@/features/workout/store';
 import { clock } from '@/lib/clock';
 import { addDays, deviceWeekStart, localDate } from '@/lib/dates';
-import { colors, fonts, makeStyles, radius, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, spacing, useColors } from '@/theme';
 
 const BADGE_ICON: Record<BadgeKey, IconName> = {
   first_workout: 'check',
@@ -38,6 +38,8 @@ const BADGE_ICON: Record<BadgeKey, IconName> = {
 
 /** Mockup 24 — streak milestone and badges. */
 export default function MilestoneScreen() {
+  const colors = useColors();
+  const styles = useStyles();
   const { t, i18n } = useTranslation();
   const { workouts, streak } = useWorkoutStore();
   const { milestone, update } = useAccountStore();
@@ -185,7 +187,7 @@ export default function MilestoneScreen() {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   safe: { flex: 1, backgroundColor: colors.dark.background },
   content: { padding: spacing.xl, gap: spacing.lg },
   center: { alignItems: 'center', gap: spacing.sm },

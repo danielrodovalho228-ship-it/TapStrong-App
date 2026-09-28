@@ -1,6 +1,6 @@
 import { ActivityIndicator, Pressable, View, type PressableProps } from 'react-native';
 
-import { colors, makeStyles, radius, sizes, spacing } from '@/theme';
+import { colors, makeStyles, radius, sizes, spacing, useColors } from '@/theme';
 
 import { AppText } from './AppText';
 
@@ -38,6 +38,8 @@ export function Button({
   fullWidth = true,
   ...rest
 }: ButtonProps) {
+  const colors = useColors();
+  const styles = useStyles();
   const isDisabled = disabled || loading;
   // Theme v2: primary actions are coral; teal stays the 60+ Start.
   const textColor =
@@ -87,7 +89,7 @@ export function Button({
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   base: {
     minHeight: sizes.primaryButtonHeight,
     borderRadius: radius.button,

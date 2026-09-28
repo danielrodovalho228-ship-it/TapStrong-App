@@ -1,6 +1,6 @@
 import { Pressable, View } from 'react-native';
 
-import { colors, makeStyles, sizes, spacing } from '@/theme';
+import { colors, makeStyles, sizes, spacing, useColors } from '@/theme';
 
 import { AppText } from './AppText';
 import { Icon } from './Icon';
@@ -12,6 +12,8 @@ export type CheckboxProps = {
 };
 
 export function Checkbox({ label, checked, onChange }: CheckboxProps) {
+  const colors = useColors();
+  const styles = useStyles();
   return (
     <Pressable
       accessibilityRole="checkbox"
@@ -28,7 +30,7 @@ export function Checkbox({ label, checked, onChange }: CheckboxProps) {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   row: {
     flexDirection: 'row',
     alignItems: 'center',

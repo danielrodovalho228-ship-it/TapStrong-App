@@ -312,6 +312,45 @@ try {
       await context.close();
     }
   }
+  // QA R6-01: the phone flips to dark mid-workout. The player keeps its
+  // route and step, and repaints dark without a reload.
+  {
+    const context = await browser.newContext({
+      viewport: { width: 390, height: 844 },
+      colorScheme: 'light',
+      deviceScaleFactor: 1,
+    });
+    const value = JSON.stringify(profile(ADULT, true));
+    await context.addInitScript((v) => {
+      if (!sessionStorage.getItem('seeded')) {
+        localStorage.setItem('tapstrong\\onboarding', v);
+        sessionStorage.setItem('seeded', '1');
+      }
+    }, value);
+    const page = await context.newPage();
+    try {
+      await page.goto(`${origin}/home`, { waitUntil: 'networkidle' });
+      await button(page, /^Start · /).click();
+      await page.waitForURL(/\/workout\/[^/]+$/);
+      await button(page, 'Start with warm-up').click();
+      await page.waitForURL(/\/play$/);
+      await page.waitForTimeout(500);
+      const before = new URL(page.url()).pathname;
+      const step = await page.locator('[role="heading"]:visible').last().textContent();
+      await page.emulateMedia({ colorScheme: 'dark' });
+      await page.waitForTimeout(800);
+      const after = new URL(page.url()).pathname;
+      const stepAfter = await page.locator('[role="heading"]:visible').last().textContent();
+      const seen = await pixel(page, 2, 422);
+      if (after !== before) failed.push(`live switch: ${before} became ${after}`);
+      if (stepAfter !== step) failed.push(`live switch: step "${step}" became "${stepAfter}"`);
+      if (seen !== PALETTE_BG.dark) failed.push(`live switch: background ${seen} after going dark`);
+      done.push(`live switch: ${after} "${stepAfter}" ${seen}`);
+    } catch (e) {
+      failed.push(`live switch: ${String(e.message ?? e).split('\n')[0]}`);
+    }
+    await context.close();
+  }
 } finally {
   await browser.close();
   server.close();

@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import { AppText } from '@/components/ui';
-import { colors, makeStyles, spacing } from '@/theme';
+import { colors, makeStyles, spacing, useColors } from '@/theme';
 
 import type { WeekBar } from '../stats';
 
@@ -10,6 +10,8 @@ const HEIGHT = 140;
 
 /** Weekly sets bars; the current week in accent (mockup 18). */
 export function WeekChart({ bars }: { bars: WeekBar[] }) {
+  const colors = useColors();
+  const styles = useStyles();
   const { t } = useTranslation();
   const max = Math.max(1, ...bars.map((b) => b.sets));
   const summary = bars
@@ -50,7 +52,7 @@ export function WeekChart({ bars }: { bars: WeekBar[] }) {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   plot: { height: HEIGHT, flexDirection: 'row', alignItems: 'flex-end', gap: spacing.lg },
   col: { flex: 1, alignItems: 'center', justifyContent: 'flex-end' },
   bar: { width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 },

@@ -30,12 +30,13 @@ import { track } from '@/lib/analytics';
 import { kidsUnder13Enabled } from '@/lib/features';
 import { contactSupport, SUPPORT_EMAIL } from '@/lib/support';
 import { useAppModeStore } from '@/stores/app-mode';
-import { colors, fonts, spacing } from '@/theme';
+import { fonts, spacing, useColors } from '@/theme';
 
 const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1);
 
 /** Mockup 02 — Who's training + age mode (step 1 of 7). */
 export default function WhoScreen() {
+  const colors = useColors();
   const { t } = useTranslation();
   const { edit } = useLocalSearchParams<{ edit?: string }>();
   const stored = useOnboardingStore();

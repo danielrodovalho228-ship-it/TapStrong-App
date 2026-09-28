@@ -4,7 +4,7 @@ import { StyleSheet } from 'react-native';
 
 import { AppText, Button, Card, Notice, TextField, TextLink } from '@/components/ui';
 import { getSupabase } from '@/lib/supabase';
-import { colors, spacing } from '@/theme';
+import { spacing, useColors } from '@/theme';
 
 import {
   checkParentPin,
@@ -27,6 +27,7 @@ import { activeProfile, useFamilyStore } from './store';
  * owner's own profile may create one; a child profile is told to ask a parent.
  */
 export function ParentGate({ onPass, onCancel }: { onPass: () => void; onCancel?: () => void }) {
+  const colors = useColors();
   const { t } = useTranslation();
   const hasPin = useParentPinStore((s) => !!s.hash);
   const active = useFamilyStore(activeProfile);
@@ -108,6 +109,7 @@ export function ParentPinSetup({
   onDone: () => void;
   onCancel?: () => void;
 }) {
+  const colors = useColors();
   const { t } = useTranslation();
   const [pin, setPin] = useState('');
   const [again, setAgain] = useState('');
@@ -163,6 +165,7 @@ export function ParentPinSetup({
  * inbox.
  */
 export function ParentPinReset({ onDone, onCancel }: { onDone: () => void; onCancel: () => void }) {
+  const colors = useColors();
   const { t } = useTranslation();
   const [step, setStep] = useState<'intro' | 'code' | 'new'>('intro');
   const [code, setCode] = useState('');

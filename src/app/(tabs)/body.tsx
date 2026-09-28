@@ -21,10 +21,12 @@ import { muscleLabel } from '@/features/onboarding/summaries';
 import { recoveryFills } from '@/features/workout/components/RecoveryBody';
 import { useBodyStates } from '@/features/workout/hooks';
 import { track } from '@/lib/analytics';
-import { colors, fonts, makeStyles, radius, sizes, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, sizes, spacing, useColors } from '@/theme';
 
 /** Mockup 08 — Body map (SPEC §9 /(tabs)/body). */
 export default function BodyMapScreen() {
+  const colors = useColors();
+  const styles = useStyles();
   const { t } = useTranslation();
   const { height: screenHeight } = useWindowDimensions();
   const s = useOnboardingStore();
@@ -163,6 +165,8 @@ export default function BodyMapScreen() {
 }
 
 function ViewToggle({ value, onChange }: { value: BodyView; onChange: (v: BodyView) => void }) {
+  const colors = useColors();
+  const styles = useStyles();
   const { t } = useTranslation();
   return (
     <View
@@ -193,7 +197,7 @@ function ViewToggle({ value, onChange }: { value: BodyView; onChange: (v: BodyVi
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   header: { gap: 0 },
   subtitle: {
     marginLeft: sizes.touchTarget + spacing.lg + spacing.md,

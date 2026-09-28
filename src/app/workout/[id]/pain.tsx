@@ -21,10 +21,12 @@ import {
 import { useWorkoutStore } from '@/features/workout/store';
 import type { PainAction, PainType } from '@/features/workout/types';
 import { track } from '@/lib/analytics';
-import { colors, fonts, makeStyles, radius, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, spacing, useColors } from '@/theme';
 
 /** Mockup 21 — pain during a set (SPEC §2.2, §9 /workout/[id]/pain). */
 export default function PainScreen() {
+  const colors = useColors();
+  const styles = useStyles();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -203,7 +205,7 @@ export default function PainScreen() {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   overlay: { flex: 1, justifyContent: 'flex-end' },
   backdrop: { ...StyleSheet.absoluteFill, backgroundColor: colors.ink, opacity: 0.5 },
   sheet: {

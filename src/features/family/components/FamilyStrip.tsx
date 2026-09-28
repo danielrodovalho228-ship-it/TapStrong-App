@@ -7,7 +7,7 @@ import { AppText, Icon } from '@/components/ui';
 import { useAccountStore } from '@/features/account/store';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { kvStorage } from '@/lib/storage';
-import { colors, fonts, makeStyles, radius, sizes, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, sizes, spacing, useColors } from '@/theme';
 
 import { FAMILY_MAX_PROFILES } from '../../billing/rules';
 import { summarize } from '../profiles';
@@ -16,6 +16,8 @@ import { ensureSelfProfile } from '../switch';
 
 /** Family profiles and the "Add" card (mockup 19). */
 export function FamilyStrip() {
+  const colors = useColors();
+  const styles = useStyles();
   const { t } = useTranslation();
   const live = useOnboardingStore();
   const { profiles, activeId } = useFamilyStore();
@@ -74,7 +76,7 @@ export function FamilyStrip() {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   row: { gap: spacing.md },
   card: { width: 88, gap: spacing.xs, minHeight: sizes.touchTarget },
   avatar: {

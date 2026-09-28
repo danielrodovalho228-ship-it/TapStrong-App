@@ -21,7 +21,7 @@ import { muscleLabel } from '@/features/onboarding/summaries';
 import { muscleByKey } from '@/features/muscles';
 import { createWorkoutFrom, useExerciseLibrary, useGeneratorInput } from '@/features/workout/hooks';
 import { track } from '@/lib/analytics';
-import { bodyMapColors, colors, fonts, makeStyles, radius, spacing } from '@/theme';
+import { bodyMapColors, colors, fonts, makeStyles, radius, spacing, useColors } from '@/theme';
 
 const THUMB = 64;
 const ZOOM = 0.8; // thumbnail points per frame unit
@@ -29,6 +29,8 @@ const HIGHLIGHT = 22;
 
 /** Mockup 09 — Goal for one area + session quantities (SPEC §9 /goals). */
 export default function GoalsSheet() {
+  const colors = useColors();
+  const styles = useStyles();
   const { t } = useTranslation();
   const { muscle } = useLocalSearchParams<{ muscle?: string }>();
   const s = useOnboardingStore();
@@ -157,7 +159,7 @@ export default function GoalsSheet() {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   header: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   thumb: {
     width: THUMB,

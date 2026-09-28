@@ -9,7 +9,7 @@ import { ParentGate } from '@/features/family/ParentGate';
 import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { REST_PRESETS, usePrefsStore, type Experience } from '@/features/settings/store';
-import { colors, spacing } from '@/theme';
+import { spacing, useColors } from '@/theme';
 
 const EXPERIENCE: Experience[] = ['new', 'some', 'experienced'];
 
@@ -19,6 +19,7 @@ const EXPERIENCE: Experience[] = ['new', 'some', 'experienced'];
  * safety rule: a short warm-up still has a warm-up and a cool-down.
  */
 export default function WorkoutPrefsScreen() {
+  const colors = useColors();
   const { t } = useTranslation();
   const profile = useOnboardingStore();
   const mode = derive(profile)?.mode;

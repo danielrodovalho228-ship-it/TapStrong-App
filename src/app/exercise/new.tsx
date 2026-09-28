@@ -32,7 +32,7 @@ import type { Position } from '@/features/onboarding/options';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { clock } from '@/lib/clock';
 import { uuid } from '@/lib/uuid';
-import { colors, spacing } from '@/theme';
+import { spacing, useColors } from '@/theme';
 
 /**
  * Create exercise (improvements v1, B5; mockup 09 body-map pick), adults
@@ -40,6 +40,7 @@ import { colors, spacing } from '@/theme';
  * joints it moves. Never auto-programmed; "Not reviewed by a coach".
  */
 export default function CreateExerciseScreen() {
+  const colors = useColors();
   const { t } = useTranslation();
   const mode = derive(useOnboardingStore())?.mode ?? 'adult';
   const addCustom = useLibraryStore((s) => s.addCustom);

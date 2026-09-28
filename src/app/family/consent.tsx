@@ -15,7 +15,7 @@ import { useFamilyStore } from '@/features/family/store';
 import { ensureSelfProfile, switchProfile } from '@/features/family/switch';
 import { clock } from '@/lib/clock';
 import { kidsUnder13Enabled } from '@/lib/features';
-import { colors, spacing } from '@/theme';
+import { spacing, useColors } from '@/theme';
 import { OwnerOnly } from '@/features/family/OwnerOnly';
 
 const POINTS = ['collect', 'use', 'never', 'rights'] as const;
@@ -26,6 +26,7 @@ const POINTS = ['collect', 'use', 'never', 'rights'] as const;
  * database refuses the profile without it. To be reviewed by a lawyer.
  */
 function ParentConsentScreenInner() {
+  const colors = useColors();
   const { t } = useTranslation();
   const params = useLocalSearchParams<{ id: string; name?: string; month: string; year: string }>();
   const { add, profiles, activeId } = useFamilyStore();

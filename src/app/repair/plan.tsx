@@ -12,10 +12,12 @@ import { repairInput } from '@/features/workout/plan';
 import { useWorkoutStore } from '@/features/workout/store';
 import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
-import { colors, fonts, makeStyles, spacing } from '@/theme';
+import { colors, fonts, makeStyles, spacing, useColors } from '@/theme';
 
 /** The 6-week Repair plan built from the check (SPEC §9 /repair/plan). */
 export default function RepairPlanScreen() {
+  const colors = useColors();
+  const styles = useStyles();
   const { t, i18n } = useTranslation();
   const { repairPlan: plan, setRepairPlan } = useProgressStore();
   const library = useExerciseLibrary();
@@ -106,7 +108,7 @@ export default function RepairPlanScreen() {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   card: { gap: spacing.sm },
   caps: {
     textTransform: 'uppercase',

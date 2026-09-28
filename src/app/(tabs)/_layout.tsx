@@ -5,12 +5,13 @@ import { StyleSheet, Text } from 'react-native';
 import { Icon } from '@/components/ui';
 import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
-import { colors, fonts } from '@/theme';
+import { fonts, useColors } from '@/theme';
 
 /**
  * Main tabs (mockups 06/07). The Coach tab joins with the ongoing coach chat.
  */
 export default function TabsLayout() {
+  const colors = useColors();
   const { t } = useTranslation();
   // 60+ mode keeps to the simple screens (SPEC §11.10): no body-map tab.
   const senior = derive(useOnboardingStore())?.mode === 'senior';

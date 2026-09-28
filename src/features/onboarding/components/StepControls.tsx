@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText, Chip, TextField } from '@/components/ui';
-import { colors, fonts, spacing } from '@/theme';
+import { fonts, spacing, useColors } from '@/theme';
 
 import { NEUTRAL_BODY_AVAILABLE } from '../../bodymap/images';
 import { FOCUS_CHIP_KEYS, muscleByKey } from '../../muscles';
@@ -25,6 +25,7 @@ import { useOnboardingStore } from '../store';
 import { sexLabelKey, visibleMainGoals } from '../visible';
 
 function Group({ label, children }: { label?: string; children: React.ReactNode }) {
+  const colors = useColors();
   return (
     <View style={styles.group}>
       {label ? (

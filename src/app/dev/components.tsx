@@ -5,12 +5,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText, Button, Card, Chip, Header, IconButton } from '@/components/ui';
 import { SUPPORTED_LOCALES, type SupportedLocale } from '@/i18n';
-import { colors, makeStyles, SENIOR_TYPE_BOOST, spacing } from '@/theme';
+import { colors, makeStyles, SENIOR_TYPE_BOOST, spacing, useColors } from '@/theme';
 
 const GOALS = ['grow', 'firm', 'strengthen', 'balance', 'mobility'] as const;
 
 /** Phase 0 component gallery. Replaced by /welcome in Phase 1. */
 export default function ComponentGallery() {
+  const colors = useColors();
+  const styles = useStyles();
   const { t, i18n } = useTranslation();
   const [goal, setGoal] = useState<(typeof GOALS)[number]>('grow');
 
@@ -105,7 +107,7 @@ export default function ComponentGallery() {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   safe: { flex: 1, backgroundColor: colors.background },
   content: { padding: spacing.lg, gap: spacing.xxl, paddingBottom: spacing.xxxl },
   section: { gap: spacing.md },

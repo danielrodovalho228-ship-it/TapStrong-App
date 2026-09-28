@@ -1,7 +1,7 @@
 import { Pressable, View } from 'react-native';
 
 import { AppText, Icon } from '@/components/ui';
-import { colors, makeStyles, radius, sizes, spacing } from '@/theme';
+import { colors, makeStyles, radius, sizes, spacing, useColors } from '@/theme';
 
 export type AreaChipProps = {
   muscle: string;
@@ -24,6 +24,8 @@ export function AreaChip({
   pressLabel,
   separator,
 }: AreaChipProps) {
+  const colors = useColors();
+  const styles = useStyles();
   return (
     <View style={styles.chip}>
       <Pressable
@@ -52,7 +54,7 @@ export function AreaChip({
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   chip: {
     flexDirection: 'row',
     alignItems: 'center',

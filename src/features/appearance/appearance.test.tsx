@@ -6,14 +6,15 @@ import '@/i18n';
 
 import { act, fireEvent, render, screen } from '@testing-library/react-native';
 import * as SystemUI from 'expo-system-ui';
-import { useColorScheme, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Pressable, useColorScheme, View } from 'react-native';
 
 import AppearanceScreen from '@/app/settings/appearance';
 import { AppText } from '@/components/ui';
-import { applyScheme, colors, makeStyles, PALETTES } from '@/theme';
+import { applyScheme, colors, makeStyles, PALETTES, useColors } from '@/theme';
 
 import { useAppearanceStore } from './store';
-import { ThemedScreen, ThemeGate } from './ThemeGate';
+import { ThemeGate } from './ThemeGate';
 
 jest.mock('expo-router', () => ({
   router: { push: jest.fn(), back: jest.fn(), replace: jest.fn(), canGoBack: () => true },
@@ -26,11 +27,22 @@ jest.mock('react-native/Libraries/Utilities/useColorScheme', () => ({
 
 const phone = useColorScheme as jest.Mock;
 
-const styles = makeStyles(() => ({ probe: { backgroundColor: colors.surface } }));
+const useStyles = makeStyles(() => ({ probe: { backgroundColor: colors.surface } }));
+let mounts = 0;
+/** Stands in for a running workout: local state and a mount counter. */
 function Probe() {
+  const c = useColors();
+  const styles = useStyles();
+  const [reps, setReps] = useState(0);
+  useEffect(() => {
+    mounts += 1;
+  }, []);
   return (
     <View testID="probe" style={styles.probe}>
-      <AppText>{colors.background}</AppText>
+      <AppText>{c.background}</AppText>
+      <Pressable accessibilityRole="button" onPress={() => setReps((r) => r + 1)}>
+        <AppText>{`reps ${reps}`}</AppText>
+      </Pressable>
     </View>
   );
 }
@@ -38,9 +50,7 @@ function Probe() {
 function App() {
   return (
     <ThemeGate>
-      <ThemedScreen>
-        <Probe />
-      </ThemedScreen>
+      <Probe />
     </ThemeGate>
   );
 }
@@ -69,6 +79,22 @@ describe('ThemeGate', () => {
     await render(<App />);
     expect(screen.getByText(PALETTES.dark.background)).toBeTruthy();
     expect(SystemUI.setBackgroundColorAsync).toHaveBeenLastCalledWith(PALETTES.dark.background);
+  });
+
+  it('a phone flip re-themes in place: no remount, typed reps stay (QA R6-01)', async () => {
+    mounts = 0;
+    await render(<App />);
+    await fireEvent.press(screen.getByRole('button'));
+    await fireEvent.press(screen.getByRole('button'));
+    expect(screen.getByText('reps 2')).toBeTruthy();
+
+    phone.mockReturnValue('dark');
+    await act(async () => useAppearanceStore.setState({ appearance: 'auto' }));
+    await screen.rerender(<App />);
+    expect(screen.getByText(PALETTES.dark.background)).toBeTruthy();
+    expect(screen.getByTestId('probe').props.style.backgroundColor).toBe(PALETTES.dark.surface);
+    expect(screen.getByText('reps 2')).toBeTruthy();
+    expect(mounts).toBe(1);
   });
 
   it('a fixed choice wins over the phone, and switches instantly', async () => {

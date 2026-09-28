@@ -27,7 +27,7 @@ import { PlansBrowser } from '@/features/program/components/PlansBrowser';
 import { exerciseName } from '@/features/workout/format';
 import { useExerciseLibrary, useGeneratorInput } from '@/features/workout/hooks';
 import { ExerciseThumb } from '@/features/workout/components/Media';
-import { colors, fonts, makeStyles, radius, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, spacing, useColors } from '@/theme';
 
 /** Cards shown before "Show all". */
 const PAGE = 60;
@@ -48,6 +48,8 @@ const AREAS: Record<string, string[]> = {
  * listed, the rest sit in a collapsed "Not for you right now" with the reason.
  */
 export default function LibraryScreen() {
+  const colors = useColors();
+  const styles = useStyles();
   const { t } = useTranslation();
   const library = useExerciseLibrary();
   const input = useGeneratorInput(library);
@@ -292,7 +294,7 @@ export default function LibraryScreen() {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   caps: { textTransform: 'uppercase', letterSpacing: 1.2, fontFamily: fonts.headingSemi },
   chips: { gap: spacing.sm },
   wrapChips: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },

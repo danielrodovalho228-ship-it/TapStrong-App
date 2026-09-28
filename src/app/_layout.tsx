@@ -14,7 +14,7 @@ import { AppState, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { ThemedScreen, ThemeGate, useScheme } from '@/features/appearance/ThemeGate';
+import { ThemeGate } from '@/features/appearance/ThemeGate';
 import { refreshBilling } from '@/features/billing/actions';
 import { useNotificationSync } from '@/features/notifications/useNotificationSync';
 import { useSyncProfileSettings } from '@/features/onboarding/sync';
@@ -22,7 +22,7 @@ import { useWorkoutStore } from '@/features/workout/store';
 import { clock } from '@/lib/clock';
 import { localDate } from '@/lib/dates';
 import { startMonitoring } from '@/lib/monitoring';
-import { colors } from '@/theme';
+import { useColors } from '@/theme';
 
 void SplashScreen.preventAutoHideAsync();
 startMonitoring();
@@ -77,11 +77,9 @@ export default function RootLayout() {
 
 /** Rendered inside ThemeGate, so its colors come from the active palette. */
 function AppStack() {
-  // Subscribing re-renders the navigator options with the new palette.
-  useScheme();
+  const colors = useColors();
   return (
     <Stack
-      screenLayout={({ children }) => <ThemedScreen>{children}</ThemedScreen>}
       screenOptions={{
         headerShown: false,
         contentStyle: { backgroundColor: colors.background },

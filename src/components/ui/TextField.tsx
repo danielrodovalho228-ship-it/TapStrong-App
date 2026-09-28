@@ -4,7 +4,6 @@ import { TextInput, View, type TextInputProps } from 'react-native';
 import { useAppModeStore } from '@/stores/app-mode';
 import {
   colors,
-  currentScheme,
   fonts,
   fontSizeFor,
   makeStyles,
@@ -12,6 +11,8 @@ import {
   SENIOR_TYPE_BOOST,
   sizes,
   spacing,
+  useColors,
+  useScheme,
 } from '@/theme';
 
 import { AppText } from './AppText';
@@ -26,6 +27,9 @@ export const TextField = forwardRef<TextInput, TextFieldProps>(function TextFiel
   { label, suffix, style, accessibilityLabel, ...rest },
   ref,
 ) {
+  const colors = useColors();
+  const scheme = useScheme();
+  const styles = useStyles();
   const mode = useAppModeStore((s) => s.mode);
   const fontSize = fontSizeFor('body', mode === 'senior' ? SENIOR_TYPE_BOOST : 0);
   return (
@@ -41,7 +45,7 @@ export const TextField = forwardRef<TextInput, TextFieldProps>(function TextFiel
           accessibilityLabel={accessibilityLabel ?? label}
           placeholderTextColor={colors.muted}
           // The keyboard follows the theme (theme v2).
-          keyboardAppearance={currentScheme()}
+          keyboardAppearance={scheme}
           style={[styles.input, { fontSize }, style]}
           {...rest}
         />
@@ -55,7 +59,7 @@ export const TextField = forwardRef<TextInput, TextFieldProps>(function TextFiel
   );
 });
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   // Grows in a row but never collapses in a column (QA R4 P2: search under the body map).
   wrap: { gap: spacing.xs, flexGrow: 1, flexShrink: 1 },
   field: {

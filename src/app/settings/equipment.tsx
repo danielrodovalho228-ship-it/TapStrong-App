@@ -17,13 +17,14 @@ import { usePlacesStore } from '@/features/equipment/store';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { discardPlannedWorkouts } from '@/features/workout/hooks';
 import { uuid } from '@/lib/uuid';
-import { colors, spacing } from '@/theme';
+import { spacing, useColors } from '@/theme';
 
 /**
  * Settings → Equipment (improvements v1, C1–C2; mockup 20 grouped toggles):
  * presets, saved places, and every item with a switch.
  */
 export default function EquipmentScreen() {
+  const colors = useColors();
   const { t } = useTranslation();
   const s = useOnboardingStore();
   const { places, activeId, save, use } = usePlacesStore();

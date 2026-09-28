@@ -24,7 +24,7 @@ import { streakToday } from '@/features/workout/streak';
 import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
 import { deviceWeekStart, localDate } from '@/lib/dates';
-import { colors, fonts, makeStyles, radius, spacing } from '@/theme';
+import { colors, fonts, makeStyles, radius, spacing, useColors } from '@/theme';
 
 /**
  * Mockup 15 — share card: today's muscle map, streak and an invite link.
@@ -33,6 +33,8 @@ import { colors, fonts, makeStyles, radius, spacing } from '@/theme';
  * shows the body map only — never photos, measurements or health details.
  */
 export default function ShareScreen() {
+  const colors = useColors();
+  const styles = useStyles();
   const { t, i18n } = useTranslation();
   const profile = useOnboardingStore();
   const derived = derive(profile);
@@ -195,7 +197,7 @@ export default function ShareScreen() {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   safe: { flex: 1, backgroundColor: colors.dark.background },
   top: {
     flexDirection: 'row',

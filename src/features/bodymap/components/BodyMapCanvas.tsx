@@ -85,6 +85,7 @@ export function BodyMapCanvas({
   accessibilityLabel,
   dotTestID,
 }: BodyMapCanvasProps) {
+  const styles = useStyles();
   const { t } = useTranslation();
   const [width, setWidth] = useState(0);
   const hotspots = hotspotsFor(band, sex, view);
@@ -338,7 +339,7 @@ export function BodyMapCanvas({
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   canvas: {
     backgroundColor: colors.bodyCanvas,
     borderRadius: radius.bodyCard,

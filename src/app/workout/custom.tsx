@@ -17,7 +17,7 @@ import { generateCustomSession, safePool } from '@/features/generator';
 import { exerciseName } from '@/features/workout/format';
 import { useExerciseLibrary, useGeneratorInput } from '@/features/workout/hooks';
 import { useWorkoutStore } from '@/features/workout/store';
-import { colors, spacing } from '@/theme';
+import { spacing, useColors } from '@/theme';
 
 /**
  * Custom workout (A6; mockup 10 list): the person's own list from the
@@ -25,6 +25,7 @@ import { colors, spacing } from '@/theme';
  * cool-down are added around it.
  */
 export default function CustomWorkoutScreen() {
+  const colors = useColors();
   const { t } = useTranslation();
   const library = useExerciseLibrary();
   const input = useGeneratorInput(library);

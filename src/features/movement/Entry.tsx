@@ -5,7 +5,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import { AppText, Button, Card, Icon } from '@/components/ui';
 import { clock } from '@/lib/clock';
-import { colors, sizes, spacing } from '@/theme';
+import { sizes, spacing, useColors } from '@/theme';
 
 import { movementCatalog } from './catalog';
 import { retestDue, retestSeries } from './progress';
@@ -17,6 +17,7 @@ import { PainBars, reportTitle } from './ui';
  * Hidden in release builds until the reviewer signs the catalog off.
  */
 export function MovementPainEntry({ chart = false }: { chart?: boolean }) {
+  const colors = useColors();
   const { t } = useTranslation();
   const catalog = useMemo(() => movementCatalog(), []);
   const reports = activeReports(useMovementPainStore((s) => s.reports));

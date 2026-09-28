@@ -15,7 +15,7 @@ import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { clock } from '@/lib/clock';
 import { contactSupport } from '@/lib/support';
-import { colors, spacing } from '@/theme';
+import { spacing, useColors } from '@/theme';
 
 /**
  * Settings (QA round 1): one findable place for the account, plan and
@@ -23,6 +23,7 @@ import { colors, spacing } from '@/theme';
  * screens keep their own parent gate.
  */
 export default function SettingsScreen() {
+  const colors = useColors();
   const { t } = useTranslation();
   const entitlement = useBillingStore((s) => s.entitlement);
   const plan = currentPlan(entitlement, clock.now());

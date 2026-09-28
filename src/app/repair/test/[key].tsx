@@ -10,10 +10,12 @@ import { useNow } from '@/features/workout/components/TimerRing';
 import { clockText } from '@/features/workout/format';
 import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
-import { colors, fonts, makeStyles, sizes, spacing } from '@/theme';
+import { colors, fonts, makeStyles, sizes, spacing, useColors } from '@/theme';
 
 /** Guided Repair test (SPEC §9 /repair/test/[key]): timer, left/right. */
 export default function RepairTestScreen() {
+  const colors = useColors();
+  const styles = useStyles();
   const { t } = useTranslation();
   const { key } = useLocalSearchParams<{ key: string }>();
   const { tests } = useRepair();
@@ -150,6 +152,7 @@ function SecondsTimer({
   onChange: (v: number) => void;
   countdown?: boolean;
 }) {
+  const styles = useStyles();
   const { t } = useTranslation();
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const now = useNow(startedAt ? 250 : 5000);
@@ -191,6 +194,7 @@ function Counter({
   value: number;
   onChange: (v: number) => void;
 }) {
+  const styles = useStyles();
   const { t } = useTranslation();
   return (
     <View style={styles.counter}>
@@ -216,7 +220,7 @@ function Counter({
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   card: { gap: spacing.md },
   timer: { gap: spacing.sm, alignItems: 'stretch' },
   caps: {

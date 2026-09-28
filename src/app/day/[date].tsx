@@ -14,7 +14,7 @@ import type { WorkoutRecord } from '@/features/workout/types';
 import { restFor, usePrefsStore } from '@/features/settings/store';
 import { clock } from '@/lib/clock';
 import { addDays, deviceWeekStart, localDate } from '@/lib/dates';
-import { colors, spacing } from '@/theme';
+import { spacing, useColors } from '@/theme';
 
 /**
  * A day from the week strip (improvements v1, A1; mockup 10 layout): a past
@@ -22,6 +22,7 @@ import { colors, spacing } from '@/theme';
  * would build. Start is offered only today.
  */
 export default function DayScreen() {
+  const colors = useColors();
   const { t, i18n } = useTranslation();
   const prefs = usePrefsStore();
   const { date: param } = useLocalSearchParams<{ date: string }>();

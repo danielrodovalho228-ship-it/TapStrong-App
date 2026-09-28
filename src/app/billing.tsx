@@ -15,11 +15,13 @@ import {
 } from '@/features/billing/rules';
 import { useBillingStore } from '@/features/billing/store';
 import { clock } from '@/lib/clock';
-import { colors, fonts, makeStyles, spacing } from '@/theme';
+import { colors, fonts, makeStyles, spacing, useColors } from '@/theme';
 import { OwnerOnly } from '@/features/family/OwnerOnly';
 
 /** Mockup 22 — honest billing: trial end, first charge, cancel in 2 taps. */
 function BillingScreenInner() {
+  const colors = useColors();
+  const styles = useStyles();
   const { t, i18n } = useTranslation();
   const { entitlement, prices } = useBillingStore();
   const [message, setMessage] = useState<string | null>(null);
@@ -140,6 +142,7 @@ function BillingScreenInner() {
 }
 
 function Row({ label, value }: { label: string; value: string }) {
+  const styles = useStyles();
   return (
     <View style={styles.row}>
       <AppText style={styles.flex}>{label}</AppText>
@@ -148,7 +151,7 @@ function Row({ label, value }: { label: string; value: string }) {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   rows: { gap: 0, paddingVertical: spacing.xs },
   row: {
     flexDirection: 'row',

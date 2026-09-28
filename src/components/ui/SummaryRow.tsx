@@ -1,6 +1,6 @@
 import { View } from 'react-native';
 
-import { colors, fonts, makeStyles, spacing } from '@/theme';
+import { colors, fonts, makeStyles, spacing, useColors } from '@/theme';
 
 import { AppText } from './AppText';
 import { TextLink } from './TextLink';
@@ -15,6 +15,8 @@ export type SummaryRowProps = {
 
 /** Labeled value with an Edit link (mockup 05). */
 export function SummaryRow({ label, value, editLabel, onEdit, last }: SummaryRowProps) {
+  const colors = useColors();
+  const styles = useStyles();
   return (
     <View style={[styles.row, !last && styles.divider]}>
       <View style={styles.text}>
@@ -37,7 +39,7 @@ export function SummaryRow({ label, value, editLabel, onEdit, last }: SummaryRow
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   row: {
     flexDirection: 'row',
     alignItems: 'center',

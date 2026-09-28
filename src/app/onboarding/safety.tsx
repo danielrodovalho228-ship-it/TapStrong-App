@@ -11,10 +11,11 @@ import { PAIN_AREAS, POSITIONS, STEP_NUMBER, TOTAL_STEPS } from '@/features/onbo
 import { hasRedFlag, toggleInList, visibleConditions } from '@/features/onboarding/safety';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { track } from '@/lib/analytics';
-import { colors, fonts, spacing } from '@/theme';
+import { fonts, spacing, useColors } from '@/theme';
 
 /** Mockup 04 — Safety check (step 6 of 7). SPEC §2.2. */
 export default function SafetyScreen() {
+  const colors = useColors();
   const { t } = useTranslation();
   const { edit } = useLocalSearchParams<{ edit?: string }>();
   const store = useOnboardingStore();

@@ -1,7 +1,8 @@
+import { render } from '@testing-library/react-native';
 import { resolveScheme } from '@/features/appearance/store';
 
 import { PALETTES } from './palettes';
-import { applyScheme, colors, currentScheme, makeStyles } from './tokens';
+import { applyScheme, colors, currentScheme, makeStyles, SchemeContext } from './tokens';
 
 afterEach(() => applyScheme('light'));
 
@@ -37,11 +38,21 @@ describe('applyScheme', () => {
 });
 
 describe('makeStyles', () => {
-  it('reads the active palette', () => {
-    const styles = makeStyles(() => ({ root: { backgroundColor: colors.background } }));
-    expect(styles.root.backgroundColor).toBe(PALETTES.light.background);
-    applyScheme('dark');
-    expect(styles.root.backgroundColor).toBe(PALETTES.dark.background);
-    expect(Object.keys(styles)).toEqual(['root']);
+  it('returns a hook with the styles of the scheme on screen', async () => {
+    const useStyles = makeStyles(() => ({ root: { backgroundColor: colors.background } }));
+    const seen: string[] = [];
+    function Probe() {
+      seen.push(String(useStyles().root.backgroundColor));
+      return null;
+    }
+    await render(
+      <SchemeContext.Provider value="dark">
+        <Probe />
+      </SchemeContext.Provider>,
+    );
+    await render(<Probe />);
+    expect(seen).toEqual([PALETTES.dark.background, PALETTES.light.background]);
+    // Building the dark styles never leaves the global palette dark.
+    expect(colors.background).toBe(PALETTES.light.background);
   });
 });

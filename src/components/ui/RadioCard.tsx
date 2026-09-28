@@ -1,6 +1,6 @@
 import { Pressable, View, type PressableProps } from 'react-native';
 
-import { colors, makeStyles, radius, sizes, spacing } from '@/theme';
+import { colors, makeStyles, radius, sizes, spacing, useColors } from '@/theme';
 
 import { AppText } from './AppText';
 
@@ -13,6 +13,8 @@ export type RadioCardProps = Omit<PressableProps, 'children' | 'style'> & {
 
 /** Single-choice row (mockup 02 "Who's training?"). */
 export function RadioCard({ label, description, selected, ...rest }: RadioCardProps) {
+  const colors = useColors();
+  const styles = useStyles();
   return (
     <Pressable
       accessibilityRole="radio"
@@ -42,7 +44,7 @@ export function RadioCard({ label, description, selected, ...rest }: RadioCardPr
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   card: {
     minHeight: sizes.primaryButtonHeight,
     borderRadius: radius.card,

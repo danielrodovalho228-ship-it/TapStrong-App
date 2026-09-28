@@ -27,7 +27,7 @@ import { exerciseCues, exerciseName } from '@/features/workout/format';
 import { useExerciseLibrary, useGeneratorInput } from '@/features/workout/hooks';
 import { useWorkoutStore } from '@/features/workout/store';
 import type { LoadUnit } from '@/features/workout/types';
-import { colors, makeStyles, radius, spacing } from '@/theme';
+import { colors, makeStyles, radius, spacing, useColors } from '@/theme';
 
 /**
  * Exercise page (improvements v1, B3; mockups 11 + 18): Guidance (demo, cues,
@@ -35,6 +35,8 @@ import { colors, makeStyles, radius, spacing } from '@/theme';
  * best load by session, past sessions, private note).
  */
 export default function ExerciseScreen() {
+  const colors = useColors();
+  const styles = useStyles();
   const { t, i18n } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const library = useExerciseLibrary();
@@ -232,7 +234,7 @@ export default function ExerciseScreen() {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   card: { gap: spacing.sm },
   tiles: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   tile: { flexGrow: 1, flexBasis: '30%', gap: spacing.xs },

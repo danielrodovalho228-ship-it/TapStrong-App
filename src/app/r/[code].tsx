@@ -5,7 +5,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { AppText, Button, Screen } from '@/components/ui';
 import { normalizeReferral, useAccountStore } from '@/features/account/store';
-import { colors, fonts, spacing } from '@/theme';
+import { fonts, spacing, useColors } from '@/theme';
 
 /**
  * Referral link: tapstrong://r/CODE (and https://tapstrong.app/r/CODE once
@@ -13,6 +13,7 @@ import { colors, fonts, spacing } from '@/theme';
  * person sees that the invite was received (QA round 1).
  */
 export default function ReferralLink() {
+  const colors = useColors();
   const { t } = useTranslation();
   const { code } = useLocalSearchParams<{ code: string }>();
   const update = useAccountStore((s) => s.update);

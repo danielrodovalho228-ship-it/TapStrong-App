@@ -19,7 +19,7 @@ import { useOnboardingStore } from '@/features/onboarding/store';
 import { photosAllowed } from '@/features/progress/checkin';
 import { deletePhotoFile, takePhoto } from '@/features/progress/photos';
 import { useProgressStore, type Pose, type ProgressPhoto } from '@/features/progress/store';
-import { colors, makeStyles, radius, spacing } from '@/theme';
+import { colors, makeStyles, radius, spacing, useColors } from '@/theme';
 
 /**
  * Mockup 26 — before & after. Adults only (SPEC §2.3–2.4: never for minors);
@@ -27,6 +27,8 @@ import { colors, makeStyles, radius, spacing } from '@/theme';
  * phone; sharing uses the muscle map, never a photo.
  */
 export default function BeforeAfterScreen() {
+  const colors = useColors();
+  const styles = useStyles();
   const { t, i18n } = useTranslation();
   const mode = derive(useOnboardingStore())?.mode;
   const { photos, addPhoto, removePhoto, seniorPhotos } = useProgressStore();
@@ -151,7 +153,7 @@ export default function BeforeAfterScreen() {
   );
 }
 
-const styles = makeStyles(() => ({
+const useStyles = makeStyles(() => ({
   pair: { flexDirection: 'row', gap: spacing.md },
   slot: {
     flex: 1,

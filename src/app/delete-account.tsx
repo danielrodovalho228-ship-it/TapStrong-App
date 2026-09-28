@@ -9,11 +9,12 @@ import { useAccountStore } from '@/features/account/store';
 import { currentPlan, manageSubscriptionUrl } from '@/features/billing/rules';
 import { useBillingStore } from '@/features/billing/store';
 import { clock } from '@/lib/clock';
-import { colors, spacing } from '@/theme';
+import { spacing, useColors } from '@/theme';
 import { OwnerOnly } from '@/features/family/OwnerOnly';
 
 /** Delete account (App Store rule; Daniel, Sep 2026). */
 function DeleteAccountScreenInner() {
+  const colors = useColors();
   const { t } = useTranslation();
   const saved = useAccountStore((s) => s.saved);
   const entitlement = useBillingStore((s) => s.entitlement);
