@@ -1,10 +1,11 @@
+import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { AppText, Button, Card, IconButton, Notice } from '@/components/ui';
+import { AppText, Button, Card, IconButton, Notice, TextLink } from '@/components/ui';
 import type { Exercise } from '@/features/exercises/types';
-import { getAlternatives, swapItem } from '@/features/generator';
+import { getAlternatives, missingEquipmentOptions, swapItem } from '@/features/generator';
 import { isMachine } from '@/features/generator/filters';
 import type { GeneratorInput, SessionItem } from '@/features/generator/types';
 import { track } from '@/lib/analytics';
@@ -65,6 +66,10 @@ export function SwapSheet({
   const current = item ? byId.get(item.exerciseId) : undefined;
   const options = item ? getAlternatives(workout.session, item.id, input, { reason }) : [];
   const picking = reason === 'machine_taken' && !item;
+  const missing =
+    item && reason !== 'machine_taken'
+      ? missingEquipmentOptions(workout.session, item.id, input, { reason }).slice(0, 3)
+      : [];
 
   const replace = (next: Exercise) => {
     if (!item) return;
@@ -137,6 +142,23 @@ export function SwapSheet({
               </Card>
             ))
           )}
+          {missing.length ? (
+            <View style={styles.missing} testID="swap-missing-equipment">
+              <AppText variant="caption" color={colors.mutedStrong}>
+                {t('workout.swap.missingEquipment', {
+                  names: missing.map((e) => exerciseName(t, e, e.id)).join(', '),
+                })}
+              </AppText>
+              <TextLink
+                tone="accent"
+                label={t('workout.swap.editEquipment')}
+                onPress={() => {
+                  onClose();
+                  router.push('/settings/equipment');
+                }}
+              />
+            </View>
+          ) : null}
           {item && setsLogged(workout, item.id) > 0 && options.length > 0 ? (
             <AppText variant="caption" color={colors.muted}>
               {t('workout.swap.remainingOnly')}
@@ -149,6 +171,7 @@ export function SwapSheet({
 }
 
 const styles = StyleSheet.create({
+  missing: { gap: spacing.xs, paddingTop: spacing.sm },
   backdrop: { flex: 1, backgroundColor: colors.ink, opacity: 0.4 },
   sheet: {
     maxHeight: '85%',

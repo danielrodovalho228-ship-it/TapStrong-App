@@ -3661,7 +3661,9 @@
       "replaceWith": "Reemplazar por {{name}}",
       "remainingOnly": "Las series ya registradas se quedan igual; el cambio cubre las series que faltan.",
       "done": "Cambiado por {{name}}",
-      "undo": "Deshacer"
+      "undo": "Deshacer",
+      "missingEquipment": "También parecidos, pero necesitan equipo que no tienes: {{names}}",
+      "editEquipment": "Editar mi equipo"
     },
     "player": {
       "progress": "{{n}} / {{total}}",
@@ -5017,7 +5019,9 @@
       "some": "Algo de experiencia",
       "experienced": "Con experiencia"
     },
-    "experienceNote": "\"Empiezo a entrenar\" usa solo ejercicios para principiantes."
+    "experienceNote": "\"Empiezo a entrenar\" usa solo ejercicios para principiantes.",
+    "sounds": "Sonidos",
+    "soundsDetail": "Un tono corto al terminar un temporizador. Respeta el modo silencio del teléfono."
   },
   "reminders": {
     "title": "Recordatorios",

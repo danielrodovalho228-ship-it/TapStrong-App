@@ -1,3 +1,4 @@
+import { ALL_EQUIPMENT } from '../equipment/catalog';
 import type { Exercise, SessionPart } from '../exercises/types';
 import { muscleByKey, muscleFamily } from '../muscles';
 import { defaultMuscleGoal } from '../onboarding/options';
@@ -134,6 +135,24 @@ export function getAlternatives(
   // Wider circles only when the same muscle leaves fewer than 3 options (QA R3 P2).
   const closest = ranked.filter((x) => x.tier === 0);
   return (closest.length >= MIN_OPTIONS ? closest : ranked).slice(0, limit).map((x) => x.e);
+}
+
+/**
+ * Close options left out only because of equipment the person doesn't have
+ * (improvements v1). The swap sheet lists them as plain text — they are never
+ * offered, so it still offers at most MAX_ALTERNATIVES replacements.
+ */
+export function missingEquipmentOptions(
+  session: GeneratedSession,
+  itemId: string,
+  input: GeneratorInput,
+  options: { reason?: SwapReason } = {},
+): Exercise[] {
+  const offered = new Set(getAlternatives(session, itemId, input, options).map((e) => e.id));
+  const have = new Set<string>(input.equipment);
+  return getAlternatives(session, itemId, { ...input, equipment: ALL_EQUIPMENT }, options).filter(
+    (e) => !offered.has(e.id) && e.equipment.some((q) => !have.has(q)),
+  );
 }
 
 /** The generator's ramp-up rule (SPEC §8 table, QA R2-07): same check on swap. */

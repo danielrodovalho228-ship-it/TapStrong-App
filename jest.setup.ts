@@ -36,6 +36,10 @@ jest.mock('react-native-reanimated', () => {
     withTiming: <T>(v: T) => v,
   };
 });
+jest.mock('expo-audio', () => ({
+  setAudioModeAsync: jest.fn(async () => undefined),
+  createAudioPlayer: jest.fn(() => ({ play: jest.fn(), seekTo: jest.fn(async () => undefined) })),
+}));
 jest.mock('expo-speech', () => ({
   speak: jest.fn(),
   stop: jest.fn(async () => undefined),

@@ -3661,7 +3661,9 @@
       "replaceWith": "Substituir por {{name}}",
       "remainingOnly": "As séries já registradas ficam como estão; a troca vale para as séries restantes.",
       "done": "Trocado por {{name}}",
-      "undo": "Desfazer"
+      "undo": "Desfazer",
+      "missingEquipment": "Também parecidos, mas precisam de equipamento que você não tem: {{names}}",
+      "editEquipment": "Editar meus equipamentos"
     },
     "player": {
       "progress": "{{n}} / {{total}}",
@@ -5017,7 +5019,9 @@
       "some": "Alguma experiência",
       "experienced": "Experiente"
     },
-    "experienceNote": "\"Começando a treinar\" usa só exercícios para iniciantes."
+    "experienceNote": "\"Começando a treinar\" usa só exercícios para iniciantes.",
+    "sounds": "Sons",
+    "soundsDetail": "Um toque curto quando um timer termina. Respeita o modo silencioso do celular."
   },
   "reminders": {
     "title": "Lembretes",

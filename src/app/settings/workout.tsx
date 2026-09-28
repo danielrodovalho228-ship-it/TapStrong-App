@@ -72,6 +72,12 @@ export default function WorkoutPrefsScreen() {
 
       <Card>
         <ToggleRow
+          label={t('prefs.sounds')}
+          detail={t('prefs.soundsDetail')}
+          value={prefs.sounds}
+          onChange={(sounds) => prefs.set({ sounds })}
+        />
+        <ToggleRow
           label={t('prefs.voice')}
           detail={t('prefs.voiceDetail')}
           value={prefs.voice}

@@ -30,6 +30,7 @@ import {
 import { clockText, exerciseCues, exerciseName, targetText } from '@/features/workout/format';
 import { endWorkout, useSafetyRefresh, useWorkout } from '@/features/workout/hooks';
 import { LOAD_STEP, targetRange } from '@/features/workout/progression';
+import { playTimerEnd } from '@/features/workout/sound';
 import { useWorkoutStore } from '@/features/workout/store';
 import type { LoadUnit, WorkoutRecord } from '@/features/workout/types';
 import { track } from '@/lib/analytics';
@@ -198,6 +199,11 @@ function TimedStep({
     (i) => i.role === 'main' && i.loadHint !== 'bodyweight',
   );
   const canEnd = canEndTimedStep(step.item, elapsed, dayHasLoad);
+  // One chime when the countdown reaches zero (D4 "Sounds").
+  const timeUp = startedAt !== null && total > 0 && elapsed >= total;
+  useEffect(() => {
+    if (timeUp) playTimerEnd();
+  }, [timeUp]);
 
   const done = () =>
     logSet(workout.id, {

@@ -12,6 +12,7 @@ import { currentStep, mainItems } from '@/features/workout/flow';
 import { clockText, exerciseName } from '@/features/workout/format';
 import { useWorkout } from '@/features/workout/hooks';
 import { pastSessions, progressionFor, targetRange } from '@/features/workout/progression';
+import { playTimerEnd } from '@/features/workout/sound';
 import { useWorkoutStore } from '@/features/workout/store';
 import type { SetLog } from '@/features/workout/types';
 import { clock } from '@/lib/clock';
@@ -46,6 +47,7 @@ export default function RestScreen() {
   useEffect(() => {
     if (left0 && !leaving.current) {
       leaving.current = true;
+      playTimerEnd();
       router.back();
     }
   }, [left0]);

@@ -3661,7 +3661,9 @@
       "replaceWith": "Replace with {{name}}",
       "remainingOnly": "Sets you already logged stay as they are; the swap covers the remaining sets.",
       "done": "Swapped to {{name}}",
-      "undo": "Undo"
+      "undo": "Undo",
+      "missingEquipment": "Also close, but need equipment you don't have: {{names}}",
+      "editEquipment": "Edit my equipment"
     },
     "player": {
       "progress": "{{n}} / {{total}}",
@@ -5017,7 +5019,9 @@
       "some": "Some experience",
       "experienced": "Experienced"
     },
-    "experienceNote": "\"New to training\" keeps to beginner moves."
+    "experienceNote": "\"New to training\" keeps to beginner moves.",
+    "sounds": "Sounds",
+    "soundsDetail": "A short chime when a timer ends. Follows your phone's silent switch."
   },
   "reminders": {
     "title": "Reminders",

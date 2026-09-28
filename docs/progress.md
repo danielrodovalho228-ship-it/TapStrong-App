@@ -1294,3 +1294,28 @@ Base: `docs/improvements-v1.md`; mapa de telas × mockups em `docs/phase14-scree
 3. **"Falta equipamento" na troca:** itens indisponíveis aparecem só em "Não é para você agora" na Biblioteca; na troca de exercício eles não aparecem desativados. Quer esse detalhe também na troca?
 4. **Avaliar o app:** fica para depois do lançamento, quando as contas das lojas existirem.
 5. **Velocidade do PIN:** continua como combinado; você testa no Expo Go e, se passar de 1 s, falamos da biblioteca nativa.
+
+### Fase 14 — decisões finais (seguindo as recomendações)
+
+Daniel: "Sobre as decisões seguir suas recomendações."
+
+| Pergunta | Decisão | Situação |
+|---|---|---|
+| Apple Saúde / Health Connect | Deixar para depois do lançamento (biblioteca nativa, rótulos de privacidade e revisão das lojas) | Não feito |
+| Som ao fim do timer | Fazer | **Feito** |
+| Equipamento que falta, na troca | Fazer como texto, sem virar opção extra | **Feito** |
+| Avaliar o app | Depois das contas das lojas | Não feito |
+| Velocidade do PIN | Você testa no Expo Go; nativo só se passar de 1 s | Aguardando o teste |
+
+**Feito:**
+- **Som:** um toque curto, gerado por nós (sem licença de terceiros), quando o descanso ou uma contagem do aquecimento/desaquecimento chega a zero.
+  - Liga/desliga em Preferências de treino → Sons (ligado por padrão).
+  - Respeita o modo silencioso e não pausa a música da pessoa.
+  - Pacotes gratuitos da Expo: `expo-audio` e `expo-asset`.
+  - Configurei o `expo-audio` sem microfone e sem áudio em segundo plano, então não há permissão nova para o usuário nem mudança nos rótulos de privacidade. `RECORD_AUDIO` continua removido; `MODIFY_AUDIO_SETTINGS` é uma permissão comum do Android, sem pedido na tela.
+  - O Expo Go já inclui o `expo-audio`; o build de desenvolvimento precisa ser refeito para ter o som.
+- **Troca:** abaixo das opções aparece "Também parecidos, mas precisam de equipamento que você não tem: …" (até 3 nomes), com o link "Editar meus equipamentos".
+  - São só texto: a troca continua oferecendo no máximo 5 substituições.
+  - Todas as regras de segurança valem para esses nomes, exceto a de equipamento.
+
+**Verificações:** lint e typecheck limpos, **734 testes** passando, `bundle:check` limpo. O `expo-doctor` volta ao estado anterior (as 2 falhas que já existiam: esquema do app.json e consulta de rede bloqueada).
