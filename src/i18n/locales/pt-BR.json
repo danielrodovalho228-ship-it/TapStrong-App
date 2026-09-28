@@ -3524,6 +3524,7 @@
       "recovering": "{{muscles}} ainda se recupera do último treino, então hoje você treina outras áreas.",
       "unavailable": "Nenhum exercício seguro para {{muscles}} cabe na configuração de hoje (posição, equipamento, restrições). Adicione equipamento ou outra posição para trabalhá-los.",
       "customLeftOut_one": "Uma escolha ficou de fora: não é segura para você agora.",
+      "customLeftOut_zero": "{{count}} escolhas ficaram de fora: não são seguras para você agora.",
       "customLeftOut_other": "{{count}} escolhas ficaram de fora: não são seguras para você agora.",
       "painToday": "{{muscles}} fica de fora hoje por causa da dor que você informou. Volta amanhã se estiver tudo bem.",
       "pullAdded": "Incluímos um exercício de puxar para equilibrar."
@@ -3548,14 +3549,19 @@
     "recoveryMap": "Mapa de recuperação",
     "recovery": {
       "fresh_one": "{{muscles}} · acabou de ser treinado",
+      "fresh_zero": "{{muscles}} · acabaram de ser treinados",
       "fresh_other": "{{muscles}} · acabaram de ser treinados",
       "recovering_one": "{{muscles}} · recuperando",
+      "recovering_zero": "{{muscles}} · recuperando",
       "recovering_other": "{{muscles}} · recuperando",
       "almost_one": "{{muscles}} · quase pronto",
+      "almost_zero": "{{muscles}} · quase prontos",
       "almost_other": "{{muscles}} · quase prontos",
       "neglected_one": "{{muscles}} · hora de treinar",
+      "neglected_zero": "{{muscles}} · hora de treinar",
       "neglected_other": "{{muscles}} · hora de treinar",
       "never_one": "{{muscles}} · ainda não treinado",
+      "never_zero": "{{muscles}} · ainda não treinados",
       "never_other": "{{muscles}} · ainda não treinados",
       "ready": "Pontos brancos · recuperado / pronto"
     },
@@ -3605,6 +3611,7 @@
     "morningCheck": "Dê nota à dor desta manhã",
     "morningCheckBody": "Um toque: seu plano de recuperação avança ou fica mais leve.",
     "dayStreak_one": "Dia seguido",
+    "dayStreak_zero": "Dias seguidos",
     "dayStreak_other": "Dias seguidos",
     "recoveringTitle": "Tudo está se recuperando",
     "recoveringBody": "Seus músculos precisam de um pouco mais de tempo. Hoje é um bom dia para uma mobilidade curta, alguns exercícios de equilíbrio ou descanso.",
@@ -3615,6 +3622,7 @@
     "stoppedTitle": "Hoje, vá com calma",
     "stoppedBody": "Você parou um treino por dor hoje. No resto do dia: mobilidade leve, equilíbrio ou descanso.",
     "freeDoneTitle_one": "Seu treino grátis desta semana já foi",
+    "freeDoneTitle_zero": "Seus {{count}} treinos grátis desta semana já foram",
     "freeDoneTitle_other": "Seus {{count}} treinos grátis desta semana já foram",
     "freeDoneBody": "Continue se mexendo com uma mobilidade curta: é grátis e conta para a sua sequência. Seus treinos voltam na próxima semana.",
     "freeDonePremium": "Premium: treinos todos os dias"
@@ -4129,6 +4137,7 @@
       "error": "Não conseguimos salvar o seu perfil na sua conta. Nada foi criado. Tente de novo."
     },
     "removePending_one": "Um perfil removido ainda está na sua conta. Vamos terminar de removê-lo quando você estiver online.",
+    "removePending_zero": "{{count}} perfis removidos ainda estão na sua conta. Vamos terminar de removê-los quando você estiver online.",
     "removePending_other": "{{count}} perfis removidos ainda estão na sua conta. Vamos terminar de removê-los quando você estiver online."
   },
   "deleteAccount": {

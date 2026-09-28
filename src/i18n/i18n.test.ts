@@ -23,6 +23,25 @@ describe('locales', () => {
       expect(keys).toContain(k.replace(/_zero$/, '_other'));
   });
 
+  // QA R7-07: every plural key renders its plural form for 0 ("0 dias
+  // seguidos", never "0 DIA SEGUIDO") in every language.
+  it.each(SUPPORTED_LOCALES)('%s: count 0 renders the plural form', async (locale) => {
+    const i18n = createInstance();
+    await i18n.init({ lng: locale, resources, interpolation: { escapeValue: false } });
+    const bases = flattenKeys(resources[locale].translation)
+      .filter((k) => k.endsWith('_one'))
+      .map((k) => k.slice(0, -4));
+    expect(bases.length).toBeGreaterThan(20);
+    const keys = new Set(flattenKeys(resources[locale].translation));
+    // An explicit `_zero` ("None chosen yet") wins; otherwise the plural.
+    const wrong = bases.filter(
+      (base) =>
+        i18n.t(base, { count: 0 }) !==
+        i18n.t(keys.has(`${base}_zero`) ? `${base}_zero` : `${base}_other`, { count: 0 }),
+    );
+    expect(wrong).toEqual([]);
+  });
+
   it('pt-BR says "0 dias", not "0 dia"', async () => {
     const i18n = createInstance();
     await i18n.init({ lng: 'pt-BR', resources });
