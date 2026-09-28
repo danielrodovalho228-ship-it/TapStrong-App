@@ -268,6 +268,24 @@ const SCREENS = [
   },
   { name: 'library', year: ADULT, path: '/library' },
   {
+    // QA R7-06: the list itself, one card per row on a phone.
+    name: 'library-list',
+    year: ADULT,
+    path: '/library',
+    steps: async (page) => {
+      const first = page.locator('[role="button"]:has([data-testid="exercise-thumb"])').first();
+      await first.scrollIntoViewIfNeeded();
+      await page.waitForTimeout(300);
+      const widths = await page
+        .locator('[role="button"]:has([data-testid="exercise-thumb"])')
+        .evaluateAll((els) => els.slice(0, 8).map((el) => el.getBoundingClientRect().width));
+      const narrow = widths.filter((w) => w < 240);
+      if (!widths.length || narrow.length)
+        throw new Error(`exercise cards too narrow for their names: ${widths.join(', ')}`);
+    },
+    lands: '/library',
+  },
+  {
     name: 'exercise',
     year: ADULT,
     path: '/library',
@@ -364,6 +382,25 @@ try {
       }
       await context.close();
     }
+  }
+  // QA R7-05: before any script runs, a dark load already paints the dark
+  // background, and the served HTML carries theme-color for both schemes.
+  {
+    const context = await browser.newContext({
+      viewport: { width: 390, height: 844 },
+      colorScheme: 'dark',
+      javaScriptEnabled: false,
+    });
+    const page = await context.newPage();
+    const response = await page.goto(`${origin}/welcome`);
+    const html = (await response?.text()) ?? '';
+    for (const scheme of ['light', 'dark'])
+      if (!html.includes(`name="theme-color" media="(prefers-color-scheme: ${scheme})"`))
+        failed.push(`web shell: no ${scheme} theme-color meta in the served HTML`);
+    const seen = await pixel(page, 2, 5);
+    if (seen !== PALETTE_BG.dark) failed.push(`web shell: first paint ${seen} in dark, before JS`);
+    done.push(`web shell: first paint ${seen}`);
+    await context.close();
   }
   // QA R6-01: the phone flips to dark mid-workout. The player keeps its
   // route and step, and repaints dark without a reload.

@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, View } from 'react-native';
+import { Pressable, ScrollView, useWindowDimensions, View } from 'react-native';
 
 import {
   AppText,
@@ -50,6 +50,8 @@ const AREAS: Record<string, string[]> = {
 export default function LibraryScreen() {
   const colors = useColors();
   const styles = useStyles();
+  // Two columns only where a name still fits (tablets, wide windows).
+  const twoColumns = useWindowDimensions().width >= TWO_COLUMN_WIDTH;
   const { t } = useTranslation();
   const library = useExerciseLibrary();
   const input = useGeneratorInput(library);
@@ -81,7 +83,7 @@ export default function LibraryScreen() {
     const starred = favourites.includes(e.id);
     // The card and the star are sibling buttons, never one inside the other (QA R4 P2).
     return (
-      <View key={e.id} style={[styles.card, senior && styles.cardWide]}>
+      <View key={e.id} style={[styles.card, twoColumns && !senior && styles.cardHalf]}>
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={e.custom ? `${name(e)}, ${t('library.notReviewed')}` : name(e)}
@@ -294,13 +296,16 @@ export default function LibraryScreen() {
   );
 }
 
+const TWO_COLUMN_WIDTH = 600;
+
 const useStyles = makeStyles(() => ({
   caps: { textTransform: 'uppercase', letterSpacing: 1.2, fontFamily: fonts.headingSemi },
   chips: { gap: spacing.sm },
   wrapChips: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  // One column on phones: two left ~40 px for the name at 390 px (QA R7-06).
   card: {
-    flexBasis: '48%',
+    flexBasis: '100%',
     flexGrow: 1,
     flexDirection: 'row',
     alignItems: 'center',
@@ -309,7 +314,7 @@ const useStyles = makeStyles(() => ({
     borderRadius: radius.card,
     backgroundColor: colors.surface,
   },
-  cardWide: { flexBasis: '100%' },
+  cardHalf: { flexBasis: '48%' },
   cardMain: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   flex: { flex: 1 },
   out: { gap: spacing.sm },
