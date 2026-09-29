@@ -1,0 +1,12 @@
+# Security round 1 (P3): dependency updates wait until a release is at least
+# 7 days old (a published look-alike or a hijacked release is usually caught
+# and pulled within days). Security fixes still come as soon as they exist.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 3
+    cooldown:
+      default-days: 7

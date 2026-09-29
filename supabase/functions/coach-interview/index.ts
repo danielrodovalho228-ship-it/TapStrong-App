@@ -1,7 +1,7 @@
 // Coach interview: turns one free-text onboarding answer into structured values.
 // The Claude API key is a Supabase secret (ANTHROPIC_API_KEY); it never reaches the app.
 import Anthropic from 'npm:@anthropic-ai/sdk@0.128.0';
-import { createClient } from 'npm:@supabase/supabase-js@2';
+import { createClient } from 'npm:@supabase/supabase-js@2.117.1';
 
 import {
   outputSchema,

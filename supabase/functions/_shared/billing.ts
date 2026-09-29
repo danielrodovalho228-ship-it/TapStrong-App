@@ -67,6 +67,9 @@ export type RevenueCatEvent = {
   store?: string | null;
   transaction_id?: string | null;
   environment?: string | null;
+  /** TRANSFER only: the app user ids the purchase moved away from, and to. */
+  transferred_from?: string[] | null;
+  transferred_to?: string[] | null;
 };
 
 const iso = (ms: number | null | undefined) => (ms ? new Date(ms).toISOString() : null);
@@ -88,6 +91,22 @@ function storeOf(e: RevenueCatEvent): SubscriptionRow['store'] {
 
 const CHARGE_EVENTS = new Set(['INITIAL_PURCHASE', 'RENEWAL', 'PRODUCT_CHANGE', 'UNCANCELLATION']);
 const IGNORED = new Set(['TEST', 'TRANSFER', 'SUBSCRIBER_ALIAS', 'INVOICE_ISSUANCE']);
+
+/**
+ * A RevenueCat TRANSFER moves a purchase to another account (restore on a new
+ * login): the old accounts lose it now (security round 1, P3). The new one
+ * gets its plan from the events that follow.
+ */
+export function transferredAway(e: RevenueCatEvent, options: ApplyOptions = {}): string[] {
+  if (e.type !== 'TRANSFER') return [];
+  if (!isProductionEvent(e) && !options.acceptSandbox) return [];
+  const to = new Set(e.transferred_to ?? []);
+  return (e.transferred_from ?? []).filter((id) => !to.has(id));
+}
+
+export function expireRow(current: SubscriptionRow, at: string): SubscriptionRow {
+  return { ...current, status: 'expired', will_renew: false, expires_at: at, last_event_at: at };
+}
 
 export type ApplyOptions = {
   /**

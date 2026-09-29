@@ -2,7 +2,8 @@
   "version": "5",
   "specifiers": {
     "npm:@anthropic-ai/sdk@0.128.0": "0.128.0",
-    "npm:@supabase/supabase-js@2": "2.117.1"
+    "npm:@supabase/supabase-js@2": "2.117.1",
+    "npm:@supabase/supabase-js@2.117.1": "2.117.1"
   },
   "npm": {
     "@anthropic-ai/sdk@0.128.0": {

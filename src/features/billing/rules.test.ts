@@ -1,6 +1,8 @@
 import {
   activePlan,
   applyEvent,
+  expireRow,
+  transferredAway,
   planForEntitlements,
   planForProduct,
   PRODUCTS,
@@ -145,6 +147,25 @@ describe('RevenueCat events → subscription row', () => {
       { acceptSandbox: true },
     )!;
     expect(renewed.first_charged_at).toBeNull();
+  });
+
+  it('P3: a TRANSFER expires the accounts the purchase moved away from', () => {
+    const e = ev({
+      type: 'TRANSFER',
+      transferred_from: ['old-user', 'kept'],
+      transferred_to: ['kept', 'new-user'],
+    });
+    expect(transferredAway(e)).toEqual(['old-user']);
+    expect(
+      transferredAway(ev({ type: 'TRANSFER', environment: 'SANDBOX', transferred_from: ['x'] })),
+    ).toEqual([]);
+    expect(transferredAway(ev({}))).toEqual([]);
+    const paid = applyEvent(null, ev({}))!;
+    expect(expireRow(paid, '2026-10-05T00:00:00.000Z')).toMatchObject({
+      status: 'expired',
+      will_renew: false,
+      expires_at: '2026-10-05T00:00:00.000Z',
+    });
   });
 
   it('maps products and entitlements to plans', () => {

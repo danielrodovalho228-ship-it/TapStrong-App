@@ -2,9 +2,15 @@
 // trusts for Family limits and child consent). Called by RevenueCat, not by
 // the app: deploy with verify_jwt = false and set REVENUECAT_WEBHOOK_SECRET
 // (the same value goes in RevenueCat's "Authorization header" setting).
-import { createClient } from 'npm:@supabase/supabase-js@2';
+import { createClient } from 'npm:@supabase/supabase-js@2.117.1';
 
-import { applyEvent, type RevenueCatEvent, type SubscriptionRow } from '../_shared/billing.ts';
+import {
+  applyEvent,
+  expireRow,
+  transferredAway,
+  type RevenueCatEvent,
+  type SubscriptionRow,
+} from '../_shared/billing.ts';
 import { json, safeEqual } from '../_shared/http.ts';
 
 const secret = Deno.env.get('REVENUECAT_WEBHOOK_SECRET') ?? '';
@@ -31,6 +37,24 @@ Deno.serve(async (req) => {
     event = body.event;
   } catch {
     return json({ error: 'bad_request' }, 400);
+  }
+  // A purchase moved to another login: the old accounts lose it (P3).
+  const away = transferredAway(event, { acceptSandbox }).filter((id) => UUID.test(id));
+  if (event.type === 'TRANSFER') {
+    const at = new Date(event.event_timestamp_ms ?? Date.now()).toISOString();
+    for (const id of away) {
+      const { data: row } = await admin
+        .from('subscriptions')
+        .select('*')
+        .eq('user_id', id)
+        .maybeSingle();
+      if (!row) continue;
+      const { error } = await admin
+        .from('subscriptions')
+        .upsert({ ...expireRow(row as SubscriptionRow, at), updated_at: new Date().toISOString() });
+      if (error) return json({ error: 'write' }, 500);
+    }
+    return json({ ok: true, expired: away.length });
   }
   // App user ids are Supabase user ids; anonymous RevenueCat ids are ignored.
   if (!UUID.test(event.app_user_id ?? '')) return json({ ignored: 'app_user_id' });

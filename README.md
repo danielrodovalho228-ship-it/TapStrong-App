@@ -9,7 +9,7 @@
 ## Getting started
 
 ```bash
-npm install
+npm ci                 # exact versions from package-lock.json (security round 1)
 cp .env.example .env   # optional: Supabase URL + anon key
 npx expo start
 ```

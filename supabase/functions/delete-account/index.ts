@@ -3,7 +3,7 @@
 // (profiles, managed family profiles, workouts, consent, referrals,
 // subscription copy). Store subscriptions are NOT cancelled here — Apple and
 // Google only allow that from the store, and the app says so before this runs.
-import { createClient } from 'npm:@supabase/supabase-js@2';
+import { createClient } from 'npm:@supabase/supabase-js@2.117.1';
 
 import { corsHeaders, json } from '../_shared/http.ts';
 

@@ -3,7 +3,7 @@
 // gets it once; the inviter gets 1 week per friend, up to 4 in any 365 days.
 // Called by the app (signed-in user = the invited person) after a workout
 // syncs. Grants RevenueCat promotional entitlements with the secret key.
-import { createClient } from 'npm:@supabase/supabase-js@2';
+import { createClient } from 'npm:@supabase/supabase-js@2.117.1';
 
 import { ENTITLEMENTS } from '../_shared/billing.ts';
 import { corsHeaders, json } from '../_shared/http.ts';
@@ -60,13 +60,6 @@ Deno.serve(async (req) => {
   if (!claimed) return json({ status: 'already_rewarded' });
 
   const inviterId = (referral.referral_codes as unknown as { user_id: string }).user_id;
-  const yearAgo = new Date(Date.now() - 365 * 86_400_000).toISOString();
-  const { count: inviterRewards } = await admin
-    .from('referrals')
-    .select('id', { count: 'exact', head: true })
-    .eq('code', referral.code)
-    .eq('inviter_rewarded', true)
-    .gte('inviter_rewarded_at', yearAgo);
 
   const invitedOk = await grantWeek(user.id);
   if (!invitedOk) {
@@ -76,17 +69,16 @@ Deno.serve(async (req) => {
       .eq('id', referral.id);
     return json({ status: 'error' }, 502);
   }
+  // The inviter's yearly cap is checked and taken in one locked step
+  // (security round 1, P3): two rewards at once can't both pass it.
   let inviterGranted = false;
-  if ((inviterRewards ?? 0) < INVITER_WEEKS_PER_YEAR) {
+  const { data: claimedWeek } = await admin.rpc('claim_inviter_reward', {
+    referral_id: referral.id,
+    yearly_cap: INVITER_WEEKS_PER_YEAR,
+  });
+  if (claimedWeek === true) {
     inviterGranted = await grantWeek(inviterId);
-    await admin
-      .from('referrals')
-      .update(
-        inviterGranted
-          ? { inviter_rewarded: true, inviter_rewarded_at: new Date().toISOString() }
-          : { reward_error: 'grant_inviter_failed' },
-      )
-      .eq('id', referral.id);
+    if (!inviterGranted) await admin.rpc('release_inviter_reward', { referral_id: referral.id });
   }
   return json({ status: 'rewarded', inviter: inviterGranted });
 });

@@ -7,6 +7,9 @@ end $$;
 
 create schema if not exists auth;
 create table if not exists auth.users (id uuid primary key, is_anonymous boolean not null default false);
+-- Columns Supabase's auth.users has and the migrations read (security round 1, P3).
+alter table auth.users add column if not exists created_at timestamptz not null default now();
+alter table auth.users add column if not exists email_confirmed_at timestamptz default now();
 
 create or replace function auth.uid() returns uuid
 language sql stable
