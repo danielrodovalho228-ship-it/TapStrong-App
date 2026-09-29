@@ -14,6 +14,8 @@ import { clock } from '@/lib/clock';
 import { kidsUnder13Enabled } from '@/lib/features';
 import { fonts, spacing, useColors } from '@/theme';
 import { OwnerOnly } from '@/features/family/OwnerOnly';
+import { modeOf } from '@/features/onboarding/derived';
+import { useOnboardingStore } from '@/features/onboarding/store';
 
 /** Mockup 19 — plans and family (SPEC §9 /plans). */
 function PlansScreenInner() {
@@ -24,21 +26,27 @@ function PlansScreenInner() {
   // Premium first for new buyers; subscribers start on their plan (QA round 1).
   const [plan, setPlan] = useState<Plan>(current === 'free' ? 'premium' : current);
   const [period, setPeriod] = useState<Period>('monthly');
+  // A solo teen doesn't manage a family: no family lead or member strip (QA R8 P2).
+  const minor = ['teen', 'child'].includes(modeOf(useOnboardingStore()));
 
   return (
     <Screen
       header={
         <Header
           onBack={() => (router.canGoBack() ? router.back() : router.replace('/home'))}
-          title={t('billing.plansTitle')}
+          title={t(minor ? 'billing.plansTitleSolo' : 'billing.plansTitle')}
         />
       }
       footer={<SubscribeFooter plan={plan} period={period} />}
     >
-      <FamilyStrip />
-      <AppText color={colors.mutedStrong}>
-        {t(kidsUnder13Enabled() ? 'billing.familyIntro' : 'billing.familyIntroTeens')}
-      </AppText>
+      {minor ? null : (
+        <>
+          <FamilyStrip />
+          <AppText color={colors.mutedStrong}>
+            {t(kidsUnder13Enabled() ? 'billing.familyIntro' : 'billing.familyIntroTeens')}
+          </AppText>
+        </>
+      )}
       <AppText variant="caption" style={styles.caps}>
         {t('billing.choose')}
       </AppText>

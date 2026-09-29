@@ -2,7 +2,7 @@ import { ageFrom, bandForAge, modeForAge, type AppMode, type BodyBand } from '..
 
 import { KIDS_MIN_AGE } from '@/lib/features';
 
-import { activeMinorLock } from '../family/ownerIdentity';
+import { activeMinorLock, type MinorLock } from '../family/ownerIdentity';
 
 import { hasRedFlag } from './safety';
 import type { OnboardingData } from './store';
@@ -21,11 +21,15 @@ const validBirth = (s: Pick<OnboardingData, 'birthMonth' | 'birthYear'>) =>
   s.birthMonth! >= 1 &&
   s.birthMonth! <= 12;
 
-export function derive(s: Pick<OnboardingData, 'birthMonth' | 'birthYear'>): Derived {
+export function derive(
+  s: Pick<OnboardingData, 'birthMonth' | 'birthYear'>,
+  /** Another profile's own lock (Family tab); by default the active profile's. */
+  options?: { lock: MinorLock | undefined },
+): Derived {
   // A profile the secure record locks as a minor stays in its mode whatever
   // the stored birth date says: an edited, too-young or deleted date can't
   // switch a teen to adult mode (QA R7-03, R8-02). The lock only tightens.
-  const lock = activeMinorLock();
+  const lock = options ? options.lock : activeMinorLock();
   const age = validBirth(s) ? ageFrom({ year: s.birthYear!, month: s.birthMonth! }) : NaN;
   if (lock === 'teen') {
     const teen = Number.isFinite(age) ? Math.min(17, Math.max(13, age)) : 13;

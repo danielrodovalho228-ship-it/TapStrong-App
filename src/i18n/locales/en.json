@@ -3944,6 +3944,7 @@
   },
   "billing": {
     "plansTitle": "Train the whole family",
+    "plansTitleSolo": "Choose your plan",
     "familyIntro": "Each age gets its own safe rules: lighter loads for kids, seated and balance options for 60+. A parent manages kids' profiles.",
     "choose": "Choose a plan",
     "period": "Billing period",
@@ -4698,7 +4699,8 @@
     "mismatch": "The PINs don’t match. Try again.",
     "savePin": "Save PIN",
     "continue": "Confirm",
-    "createWithEmail": "Set a PIN with the account email"
+    "createWithEmail": "Set a PIN with the account email",
+    "noPinCreate": "No parent PIN yet. The account owner can create one now, with a code sent to the account email."
   },
   "ownerOnly": {
     "title": "For the account owner",
@@ -4750,7 +4752,9 @@
       "rate_limited": "Too many codes in a short time. Wait a few minutes and try again.",
       "wrong_code": "That code didn’t work. Check the latest email and try again.",
       "error": "Something went wrong. Try again."
-    }
+    },
+    "createTitle": "Create the parent PIN",
+    "createBody": "We’ll send a sign-in code to the account owner’s email ({{email}}). Then create the PIN."
   },
   "week": {
     "title": "This week",

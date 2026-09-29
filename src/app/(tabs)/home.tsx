@@ -36,7 +36,7 @@ import {
 import type { RecoveryState } from '@/features/workout/recovery';
 import { sessionTargets, todaySession } from '@/features/workout/plan';
 import { useWorkoutStore } from '@/features/workout/store';
-import { sharpStopAreasToday } from '@/features/workout/safety';
+import { todayState } from '@/features/workout/secondWorkout';
 import { showStreakHint, streakToday } from '@/features/workout/streak';
 import { canStartWorkout, currentPlan, FREE_WORKOUTS_PER_WEEK } from '@/features/billing/rules';
 import { useBillingStore } from '@/features/billing/store';
@@ -91,18 +91,16 @@ export default function HomeScreen() {
   // or rest instead of a workout Start can't build (QA R3-03).
   // After a sharp pain stop today, only mobility, balance or rest for the
   // rest of the day, never a second full workout (QA R5 P2).
-  const stoppedToday = !active && sharpStopAreasToday(workouts, today).length > 0;
+  const { stoppedToday, doneToday, extraAllowed } = todayState({
+    workouts,
+    now,
+    mode: derived.mode,
+    entitlement,
+  });
   const allRecovering = built?.error === 'all_recovering' || stoppedToday;
   // Today's workout is done (Daniel, Phase 19): mobility, balance or rest; an
   // adult may still choose an extra workout, after a short warning.
-  const doneToday =
-    !active &&
-    !stoppedToday &&
-    workouts.some(
-      (w) => (w.status === 'done' || w.status === 'partial') && w.kind === 'regular' && sameDay(w),
-    );
   const easyDay = allRecovering || doneToday;
-  const extraAllowed = doneToday && derived.mode === 'adult';
   // Free plan, weekly workouts used (Daniel, Phase 16): suggest the free short
   // mobility and mention Premium once, instead of a paywall on Start.
   const freeDone =

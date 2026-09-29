@@ -56,7 +56,8 @@ export function evaluateAgeGate(
 ): AgeGateResult {
   const age = ageFrom(birth, today);
   if (lock === 'under13' && age >= 13) return { status: 'child_locked', age };
-  if (lock === 'teen' && age < 13) return { status: 'teen_locked', age };
+  // A teen profile stays 13–17 both ways: an adult year says so too (QA R8 P2).
+  if (lock === 'teen' && (age < 13 || age >= 18)) return { status: 'teen_locked', age };
   if (!kidsUnder13Enabled() && age < LAUNCH_MIN_AGE) {
     if (who === 'child') return { status: 'child_unavailable', age };
     if (who === 'me') return { status: 'under_min', age };

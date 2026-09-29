@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { Redirect, router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -8,7 +8,9 @@ import { generateSession } from '@/features/generator';
 import { defaultMuscleGoal } from '@/features/onboarding/options';
 import { muscleLabel } from '@/features/onboarding/summaries';
 import { useExerciseLibrary, useGeneratorInput } from '@/features/workout/hooks';
+import { fullWorkoutAllowed } from '@/features/workout/secondWorkout';
 import { useWorkoutStore } from '@/features/workout/store';
+import { useTodayState } from '@/features/workout/useTodayState';
 import { useColors } from '@/theme';
 
 /**
@@ -23,8 +25,13 @@ export default function SingleWorkoutScreen() {
   const create = useWorkoutStore((s) => s.create);
   const [picked, setPicked] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const today = useTodayState();
   const toggle = (k: string) =>
     setPicked((p) => (p.includes(k) ? p.filter((x) => x !== k) : [...p, k]));
+
+  // Done today (60+ and teens) or stopped by sharp pain: Home offers
+  // mobility, balance or rest instead (QA R8 P2).
+  if (!fullWorkoutAllowed(today)) return <Redirect href="/home" />;
 
   const build = () => {
     if (!input || !picked.length) return setError(t('single.none'));

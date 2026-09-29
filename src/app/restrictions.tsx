@@ -103,10 +103,10 @@ export default function RestrictionsScreen() {
           eyebrow={t('restrictions.subtitle')}
         />
       }
-      footer={<Button label={t('restrictions.done')} onPress={() => router.back()} />}
+      // The PIN takes the footer, so it is on screen for any item (QA R8 P2).
+      footer={gate ?? <Button label={t('restrictions.done')} onPress={() => router.back()} />}
     >
       <MovementPainEntry />
-      {gate}
       {active.map((r) => {
         const swaps = painSwaps(workouts, r.area);
         return (

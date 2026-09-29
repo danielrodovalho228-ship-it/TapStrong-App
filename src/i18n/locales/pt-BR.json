@@ -3966,6 +3966,7 @@
   },
   "billing": {
     "plansTitle": "Treine a família inteira",
+    "plansTitleSolo": "Escolha seu plano",
     "familyIntro": "Cada idade tem suas próprias regras seguras: cargas mais leves para crianças, opções sentadas e de equilíbrio para 60+. Um responsável cuida dos perfis das crianças.",
     "choose": "Escolha um plano",
     "period": "Período de cobrança",
@@ -4733,7 +4734,8 @@
     "mismatch": "Os PINs não conferem. Tente de novo.",
     "savePin": "Salvar PIN",
     "continue": "Confirmar",
-    "createWithEmail": "Criar um PIN com o e-mail da conta"
+    "createWithEmail": "Criar um PIN com o e-mail da conta",
+    "noPinCreate": "Ainda não há PIN dos pais. O titular da conta pode criar agora, com um código enviado ao e-mail da conta."
   },
   "ownerOnly": {
     "title": "Para o titular da conta",
@@ -4785,7 +4787,9 @@
       "rate_limited": "Muitos códigos em pouco tempo. Espere alguns minutos e tente de novo.",
       "wrong_code": "Esse código não funcionou. Veja o e-mail mais recente e tente de novo.",
       "error": "Algo deu errado. Tente de novo."
-    }
+    },
+    "createTitle": "Criar o PIN dos pais",
+    "createBody": "Vamos enviar um código de acesso para o e-mail do titular da conta ({{email}}). Depois crie o PIN."
   },
   "week": {
     "title": "Esta semana",

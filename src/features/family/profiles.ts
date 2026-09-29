@@ -6,6 +6,7 @@ import type { AppMode } from '../profile/age';
 import { streakToday, type StreakState } from '../workout/streak';
 import type { WorkoutRecord } from '../workout/types';
 
+import { minorLockFor, useOwnerIdentityStore } from './ownerIdentity';
 import type { LocalProfile } from './store';
 
 const KEY = (id: string) => `profile-snapshot:${id}`;
@@ -27,7 +28,14 @@ export function summarize(
       ? (JSON.parse(raw) as { onboarding: Partial<OnboardingData> }).onboarding
       : undefined;
   }
-  const d = data ? derive({ birthMonth: data.birthMonth, birthYear: data.birthYear }) : null;
+  // Each profile with its own lock: the owner is never shown in teen mode
+  // because a teen is active (QA R8 P2).
+  const lock = minorLockFor(profile, useOwnerIdentityStore.getState().minors);
+  const d = data
+    ? derive({ birthMonth: data.birthMonth, birthYear: data.birthYear }, { lock })
+    : lock
+      ? derive({}, { lock })
+      : null;
   return { profile, mode: d?.mode ?? null, age: d?.age ?? null };
 }
 

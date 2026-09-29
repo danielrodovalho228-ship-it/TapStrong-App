@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { Redirect, router } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
@@ -16,7 +16,9 @@ import {
 import { generateCustomSession, safePool } from '@/features/generator';
 import { exerciseName } from '@/features/workout/format';
 import { useExerciseLibrary, useGeneratorInput } from '@/features/workout/hooks';
+import { fullWorkoutAllowed } from '@/features/workout/secondWorkout';
 import { useWorkoutStore } from '@/features/workout/store';
+import { useTodayState } from '@/features/workout/useTodayState';
 import { spacing, useColors } from '@/theme';
 
 /**
@@ -38,6 +40,9 @@ export default function CustomWorkoutScreen() {
     () => (input ? safePool(input).filter((e) => e.parts.includes('main')) : []),
     [input],
   );
+  const today = useTodayState();
+  // Same rule as Single and My plan (QA R8 P2).
+  if (!fullWorkoutAllowed(today)) return <Redirect href="/home" />;
   const byId = new Map(library.map((e) => [e.id, e]));
   const q = query.trim().toLowerCase();
   const matches = safe

@@ -65,12 +65,25 @@ export default function DayScreen() {
     day: 'numeric',
   });
   // A future day the plan keeps free is a rest day, not a workout (QA R5 P2).
+  // Today's planned workout not done yet moves to tomorrow, so tomorrow is
+  // not shown as a rest day (QA R8 P2).
+  const regularDone = (on: string) =>
+    workoutsOn(workouts, on, (iso) => localDate(new Date(iso))).some(
+      (w) => w.kind === 'regular' && (w.status === 'done' || w.status === 'partial'),
+    );
+  const carriedOver =
+    date === addDays(today, 1) &&
+    plannedDaysBetween(today, date, deviceWeekStart(), daysPerWeek).length > 0 &&
+    !regularDone(today);
   const restDay =
     date > today &&
+    !carriedOver &&
     plannedDaysBetween(date, addDays(date, 1), deviceWeekStart(), daysPerWeek).length === 0;
   // Stopped for sharp pain today: the same "take it easy" options as Home,
   // never a full workout preview (QA R6 P2).
-  const easyDay = date === today && !!input?.stoppedToday?.length;
+  // Today's workout done: no preview of another one (Daniel, Phase 19; QA R8 P2).
+  const stoppedDay = date === today && !!input?.stoppedToday?.length;
+  const easyDay = stoppedDay || (date === today && regularDone(today));
   const balanceOk = easyDay && !!input && !generateBalanceSession(input).error;
   const preview =
     !past && !restDay && !easyDay && input
@@ -143,8 +156,10 @@ export default function DayScreen() {
       ) : null}
       {easyDay ? (
         <Card style={styles.card}>
-          <AppText variant="h3">{t('home.stoppedTitle')}</AppText>
-          <AppText color={colors.mutedStrong}>{t('home.stoppedBody')}</AppText>
+          <AppText variant="h3">{t(stoppedDay ? 'home.stoppedTitle' : 'home.doneTitle')}</AppText>
+          <AppText color={colors.mutedStrong}>
+            {t(stoppedDay ? 'home.stoppedBody' : 'home.doneBody')}
+          </AppText>
           <Button
             variant="secondary"
             label={t('home.mobility', { minutes: MOBILITY_MINUTES })}

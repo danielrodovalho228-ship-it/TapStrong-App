@@ -202,11 +202,20 @@ export default function DoneScreen() {
         </View>
       </View>
 
-      <View style={styles.stats}>
-        <Stat value={t('workout.minutes', { value: minutes })} label={t('workout.done.time')} />
-        <Stat value={`${sets}`} label={t('workout.done.sets')} />
+      {/* Narrow or 60+: the tiles wrap 2 + 1, so no value breaks mid-word (QA R8 P2). */}
+      <View style={[styles.stats, stackFooter && styles.statsWrap]}>
+        <Stat
+          wide={stackFooter}
+          value={t('workout.minutes', { value: minutes })}
+          label={t('workout.done.time')}
+        />
+        <Stat wide={stackFooter} value={`${sets}`} label={t('workout.done.sets')} />
         {top ? (
-          <Stat value={t('share.sets', { count: top[1] })} label={muscleLabel(t, top[0])} />
+          <Stat
+            wide={stackFooter}
+            value={t('share.sets', { count: top[1] })}
+            label={muscleLabel(t, top[0])}
+          />
         ) : null}
       </View>
 
@@ -226,11 +235,15 @@ export default function DoneScreen() {
               {t('workout.finish.saved', { group: t(`workout.finish.groups.${group}`) })}
             </AppText>
           ) : (
-            <View style={styles.row}>
-              <View style={styles.flex}>
-                <Button variant="accent" label={t('workout.finish.addTen')} onPress={addTen} />
-              </View>
-              <View style={styles.flex}>
+            // Stacks like the footer when narrow or 60+ (QA R8 P2). 60+ never
+            // get "Add 10 min" after the day's workout (Daniel, Phase 19).
+            <View style={[styles.row, stackFooter && styles.column]}>
+              {derived.mode !== 'senior' ? (
+                <View style={stackFooter ? undefined : styles.flex}>
+                  <Button variant="accent" label={t('workout.finish.addTen')} onPress={addTen} />
+                </View>
+              ) : null}
+              <View style={stackFooter ? undefined : styles.flex}>
                 <Button
                   variant="onDark"
                   label={t('workout.finish.nextTime', {
@@ -250,11 +263,11 @@ export default function DoneScreen() {
   );
 }
 
-function Stat({ value, label }: { value: string; label: string }) {
+function Stat({ value, label, wide }: { value: string; label: string; wide?: boolean }) {
   const colors = useColors();
   const styles = useStyles();
   return (
-    <View style={styles.stat}>
+    <View style={[styles.stat, wide && styles.statWide]}>
       <AppText variant="h2">{value}</AppText>
       <AppText variant="caption" color={colors.muted} style={styles.caps} numberOfLines={2}>
         {label}
@@ -291,6 +304,8 @@ const useStyles = makeStyles(() => ({
   bodyRow: { gap: spacing.md },
   legend: { gap: spacing.sm },
   stats: { flexDirection: 'row', gap: spacing.sm },
+  statsWrap: { flexWrap: 'wrap' },
+  statWide: { flexBasis: '45%', flexGrow: 1 },
   stat: {
     flex: 1,
     backgroundColor: colors.surface,

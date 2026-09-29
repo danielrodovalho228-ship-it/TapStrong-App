@@ -6,7 +6,9 @@ import { AppText, Card, Header, Screen } from '@/components/ui';
 import { modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { createWorkoutFrom, useExerciseLibrary, useGeneratorInput } from '@/features/workout/hooks';
+import { fullWorkoutAllowed } from '@/features/workout/secondWorkout';
 import { useWorkoutStore } from '@/features/workout/store';
+import { useTodayState } from '@/features/workout/useTodayState';
 import { spacing, useColors } from '@/theme';
 
 /**
@@ -21,7 +23,11 @@ export default function NewWorkoutScreen() {
   const workouts = useWorkoutStore((s) => s.workouts);
   const mode = modeOf(useOnboardingStore());
 
+  const today = useTodayState();
   const myPlan = () => {
+    // After today's workout (60+ and teens) or a sharp stop: back to Home's
+    // mobility, balance or rest (QA R8 P2).
+    if (!fullWorkoutAllowed(today)) return router.replace('/home');
     const existing = workouts.find((w) => w.status === 'planned' && w.kind === 'regular');
     const id = existing?.id ?? createWorkoutFrom(input, library);
     router.replace({ pathname: '/workout/[id]', params: { id: id ?? 'unavailable' } });

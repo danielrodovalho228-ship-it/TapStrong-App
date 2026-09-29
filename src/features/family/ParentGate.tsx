@@ -44,7 +44,7 @@ export function ParentGate({ onPass, onCancel }: { onPass: () => void; onCancel?
   const owner = isOwnerProfile(active, { ownerId, activeId });
   const [value, setValue] = useState('');
   const [message, setMessage] = useState<string | null>(null);
-  const [resetting, setResetting] = useState(false);
+  const [resetting, setResetting] = useState<false | 'reset' | 'create'>(false);
   const accountSaved = useAccountStore((s) => s.saved);
   // A lock counted on the account applies here too (QA round 3).
   const [, setSynced] = useState(0);
@@ -64,20 +64,29 @@ export function ParentGate({ onPass, onCancel }: { onPass: () => void; onCancel?
   // Forgotten PIN: the owner proves it with an email code (Phase 12). With no
   // PIN yet on an unproven profile (an upgraded phone), the same email code
   // lets the owner create one, so nobody is locked out (QA R7 P2).
-  if (resetting) return <ParentPinReset onDone={pass} onCancel={() => setResetting(false)} />;
+  if (resetting)
+    return (
+      <ParentPinReset
+        creating={resetting === 'create'}
+        onDone={pass}
+        onCancel={() => setResetting(false)}
+      />
+    );
 
+  const canCreate = accountSaved || !!ownerEmail();
   if (!hasPin) {
     return owner ? (
       <ParentPinSetup onDone={onPass} onCancel={onCancel} />
     ) : (
       <Card style={styles.card}>
         <AppText variant="h3">{t('parentGate.title')}</AppText>
-        <Notice>{t('parentGate.noPin')}</Notice>
-        {accountSaved || ownerEmail() ? (
+        {/* "Create", not "reset": there is no PIN yet (QA R8 P2). */}
+        <Notice>{t(canCreate ? 'parentGate.noPinCreate' : 'parentGate.noPin')}</Notice>
+        {canCreate ? (
           <Button
             variant="secondary"
             label={t('parentGate.createWithEmail')}
-            onPress={() => setResetting(true)}
+            onPress={() => setResetting('create')}
           />
         ) : null}
         {onCancel ? <Button variant="ghost" label={t('common.back')} onPress={onCancel} /> : null}
@@ -121,7 +130,7 @@ export function ParentGate({ onPass, onCancel }: { onPass: () => void; onCancel?
         disabled={locked || !isValidPin(value.trim())}
         onPress={check}
       />
-      <TextLink tone="accent" label={t('pinReset.forgot')} onPress={() => setResetting(true)} />
+      <TextLink tone="accent" label={t('pinReset.forgot')} onPress={() => setResetting('reset')} />
       {onCancel ? <Button variant="ghost" label={t('common.back')} onPress={onCancel} /> : null}
     </Card>
   );
@@ -190,7 +199,16 @@ export function ParentPinSetup({
  * again, then they set a new PIN. A child can't pass it without the owner's
  * inbox.
  */
-export function ParentPinReset({ onDone, onCancel }: { onDone: () => void; onCancel: () => void }) {
+export function ParentPinReset({
+  onDone,
+  onCancel,
+  creating = false,
+}: {
+  onDone: () => void;
+  onCancel: () => void;
+  /** No PIN yet: the same email code creates the first one (QA R8 P2 wording). */
+  creating?: boolean;
+}) {
   const colors = useColors();
   const { t } = useTranslation();
   const [step, setStep] = useState<'intro' | 'code' | 'new'>('intro');
@@ -240,13 +258,13 @@ export function ParentPinReset({ onDone, onCancel }: { onDone: () => void; onCan
 
   return (
     <Card style={styles.card}>
-      <AppText variant="h3">{t('pinReset.title')}</AppText>
+      <AppText variant="h3">{t(creating ? 'pinReset.createTitle' : 'pinReset.title')}</AppText>
       {looking ? null : !email ? (
         <Notice>{t('pinReset.errors.no_account')}</Notice>
       ) : step === 'intro' ? (
         <>
           <AppText color={colors.mutedStrong}>
-            {t('pinReset.body', { email: maskEmail(email) })}
+            {t(creating ? 'pinReset.createBody' : 'pinReset.body', { email: maskEmail(email) })}
           </AppText>
           <Button label={t('pinReset.send')} loading={busy} onPress={send} />
         </>

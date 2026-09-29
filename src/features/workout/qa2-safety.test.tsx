@@ -82,9 +82,9 @@ describe('R2-01 teens can be added; members can be removed', () => {
     expect(evaluateAgeGate('child', { year: 2016, month: 5 }, today, false, teen).status).toBe(
       'teen_locked',
     );
-    // …or to 18+.
+    // …or to 18+ (QA R8 P2: it says the teen lock, not "too old for a child").
     expect(evaluateAgeGate('child', { year: 2006, month: 5 }, today, false, teen).status).toBe(
-      'child_too_old',
+      'teen_locked',
     );
     expect(evaluateAgeGate('child', { year: 2012, month: 5 }, today, true, child).status).toBe(
       'child_locked',
