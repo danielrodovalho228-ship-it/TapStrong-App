@@ -2060,3 +2060,85 @@ Lista do QA: `docs/qa-round-9.md`, com as suas 4 decisões no fim. Commits separ
 ### Observação
 
 O envio real do código do PIN por e-mail continua testado só com simulação. Os vídeos do lote 1 ainda não chegaram: a branch `videos-lote-1` não existe no GitHub.
+
+## Fase 23 — Correções da rodada 10 de QA
+
+Lista do QA: `docs/qa-round-10.md`, com as suas 3 decisões no fim. Commits separados: R10-01, R10-02 (com a decisão 2), R10-03 (com a decisão 1), a decisão 3, o P2 do gerador e do treino, e o P2 de cobrança.
+
+### P1 — o que foi corrigido
+
+- **R10-01 Aviso de limite sem nomes:** qualquer aviso que cita músculos ou articulações agora mostra os nomes, nunca um "{{muscles}}" cru.
+- **R10-02 Reparo cortado pelo limite:** a sessão de Reparo de verdade nunca é cortada pelo limite semanal. Antes o teste passava mesmo sem a correção; agora ele falha sem ela.
+- **R10-03 PIN esquecido podia trancar o titular para sempre:**
+  - se o código confere e é mesmo do titular, mas a sessão anterior não volta, o titular cria o PIN novo do mesmo jeito;
+  - a tela avisa que o celular saiu da conta, e a tela Conta mostra "Entre de novo";
+  - se o celular já estava sem sessão, a sessão verificada do titular fica, e a conta volta sozinha;
+  - teste: a sessão não volta → o PIN novo é criado → a Conta mostra o aviso.
+
+### Suas decisões
+
+1. **Contadores separados:**
+   - PIN errado trava só o PIN;
+   - código de e-mail errado tem contador próprio: 5 errados bloqueiam o código por 15 minutos;
+   - um adolescente errando o PIN não bloqueia mais a redefinição pelo e-mail;
+   - os dois contadores ficam no armazenamento seguro e são enviados ao servidor;
+   - migração nova `pin_reset_code_lockouts`, com teste no banco.
+2. **Reparo e o orçamento da articulação:** as séries do Reparo contam no limite de cada músculo, mas não nas 12 séries da articulação com dor. Teste: 2 sessões de Reparo de joelho na semana não bloqueiam o treino normal do joelho.
+3. **Só conta o que MOVE a articulação:**
+   - movimentos em que a articulação só segura ou estabiliza (marcados como isométricos) não usam o orçamento de 12 séries;
+   - revisei as marcações no seed. Viraram isométricos:
+     - o punho segurando o peso em agachamentos, levantamento terra romeno, carregadas e encolhimentos;
+     - o punho apoiado no chão na prancha e no bird dog;
+     - o ombro no agachamento com barra e na carregada de mala;
+     - o joelho no abdominal invertido;
+     - a lombar nas pontes de glúteo e no hip thrust;
+   - `seed.sql` e a planilha do revisor foram refeitos;
+   - testes por articulação (joelho, ombro, lombar, quadril, cotovelo/punho, pescoço), com um exemplo que move e um isométrico. Com a regra antiga, 16 dos 18 falham.
+   - A sua lista do joelho (encolhimentos, farmer, ponte/hip thrust, supino na ponte, RDL isométrico, caminhada lateral) está num teste próprio.
+
+### P2 — o que foi corrigido
+
+- **Sair da conta:** depois de uma falha ao sair, o app sempre tenta voltar à sessão anterior. O simulador agora imita o supabase-js 2.117, que apaga a sessão local mesmo quando dá erro.
+- **"Entre de novo" não cria mais usuário anônimo:** enquanto a conta pede login, o app não abre sessão anônima (nem para o coach), e o envio do código vai direto para o login.
+- **Limites do código:**
+  - o "1 envio por minuto" fica no armazenamento seguro;
+  - relógio atrasado conta como espera;
+  - códigos errados são enviados ao servidor, e uma trava do servidor vale no celular;
+  - as mensagens dizem "Espere N segundos" e "Tente de novo em N minutos";
+  - "Confirmar" fica desativado durante a trava.
+- **"+1 exercício?":**
+  - a estimativa é recalculada a partir dos segundos exatos, sem ir subindo;
+  - o cálculo não roda mais a cada atualização da tela;
+  - o foco "pernas na próxima vez" fica guardado no treino e vale para o "+1", a troca de local e as reconstruções;
+  - depois de mudar o plano, os exercícios acrescentados voltam; os que não cabem mais são avisados ("2 exercícios que você acrescentou não cabem mais…").
+- **Aviso de articulação:** quando o orçamento da articulação é o único motivo, o treino avisa "Você chegou ao limite desta semana para exercícios que movimentam uma articulação com dor (Joelho)" em vez de "sem exercício seguro… acrescente equipamento".
+- **Home no dia de limite:** a Home e a Home 60+ têm título e texto próprios ("Você chegou ao limite da semana"), em vez de "Tudo está se recuperando".
+- **Cobrança:**
+  - um menor tentando trocar de plano recebe "Só o titular da conta pode mudar o plano Família…";
+  - o plano pré-selecionado acompanha a permissão do Família quando ela carrega depois;
+  - "Gerenciar" leva a Cobrança sem pedir o PIN de novo. É um passe de uso único, só na memória, válido por 1 minuto e só para o mesmo perfil.
+- **Higiene dos testes:**
+  - o relógio é restaurado em `finally`;
+  - há testes novos para os contadores separados, para a volta ao passo do PIN e para as mensagens de espera e de trava.
+
+### Como testar
+
+- **PIN esquecido com a sessão expirada:**
+  1. Com a conta no Família e o adolescente ativo, toque em Esqueci o PIN → código.
+  2. Se a sessão anterior não voltar, a tela do PIN novo abre com o aviso.
+  3. Depois, em Conta, aparece "Este celular saiu da conta".
+- **Contadores separados:**
+  - erre o PIN 5 vezes: a redefinição por e-mail continua funcionando;
+  - erre o código 5 vezes: aparece "Tente de novo em 15 minutos" e "Confirmar" fica desativado.
+- **Orçamento do joelho:** com dor no joelho e 12 séries de joelho na semana, o treino pode trazer hip thrust ou ponte, mas não agachamento.
+
+### Perguntas em aberto
+
+- **"Ajoelhar" (`knee.kneel`):** deixei como está (conta no joelho) em flexão de joelhos, bird dog e crunch ajoelhado. O joelho não se mexe, mas fica apoiado com pressão no chão, e com dor isso costuma incomodar. Quer que isso conte como isométrico?
+- **Pescoço:** os exercícios isométricos de pescoço só existem na biblioteca do Reparo, que não tem limite. No treino normal, os que movem o pescoço já ficam de fora com dor no pescoço.
+- **Banco:** a migração nova precisa ir para o Supabase (`supabase db push`) antes do build de teste. Sem ela, o contador do código funciona só no celular.
+
+### Verificações
+
+- Lint e typecheck limpos; **1185 testes** passando, também em 3 ordens aleatórias (seeds 101, 424242, 987654321).
+- `db:test` (com a migração e o teste novos), `functions:check` e `bundle:check` passaram.
