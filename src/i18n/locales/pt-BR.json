@@ -4158,7 +4158,10 @@
     },
     "removePending_one": "Um perfil removido ainda está na sua conta. Vamos terminar de removê-lo quando você estiver online.",
     "removePending_zero": "{{count}} perfis removidos ainda estão na sua conta. Vamos terminar de removê-los quando você estiver online.",
-    "removePending_other": "{{count}} perfis removidos ainda estão na sua conta. Vamos terminar de removê-los quando você estiver online."
+    "removePending_other": "{{count}} perfis removidos ainda estão na sua conta. Vamos terminar de removê-los quando você estiver online.",
+    "mobileOnly": "Os perfis da família estão disponíveis no app para celular.",
+    "teenMobileOnly": "O TapStrong para adolescentes está disponível no app para celular. Na web, o TapStrong é para adultos.",
+    "mobileOnlyTitle": "Perfis da família ficam no app para celular"
   },
   "deleteAccount": {
     "title": "Excluir conta",
@@ -4747,7 +4750,9 @@
     "savePin": "Salvar PIN",
     "continue": "Confirmar",
     "createWithEmail": "Criar um PIN com o e-mail da conta",
-    "noPinCreate": "Ainda não há PIN dos pais. O titular da conta pode criar agora, com um código enviado ao e-mail da conta."
+    "noPinCreate": "Ainda não há PIN dos pais. O titular da conta pode criar agora, com um código enviado ao e-mail da conta.",
+    "offline": "Não conseguimos conferir o PIN agora. Conecte-se à internet e tente de novo.",
+    "offlineSave": "Conecte-se à internet para mudar o PIN, assim todos os celulares usam o novo."
   },
   "ownerOnly": {
     "title": "Para o titular da conta",

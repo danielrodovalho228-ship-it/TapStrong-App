@@ -114,12 +114,10 @@ export async function reportCodeCheck(
   supabase: SupabaseClient | null,
   result: 'ok' | 'wrong' | 'locked',
 ): Promise<void> {
-  if (!supabase || !signedIn()) return;
+  // A right code is cleared by the server itself (open_pin_reset_window,
+  // security round 1): clients can no longer clear their own lock.
+  if (!supabase || !signedIn() || result === 'ok') return;
   try {
-    if (result === 'ok') {
-      await supabase.rpc('pin_reset_code_passed');
-      return;
-    }
     const { data, error } = await supabase.rpc('pin_reset_code_failed');
     if (!error) mergeCodeLock((data as string | null) ?? null);
   } catch {

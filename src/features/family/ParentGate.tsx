@@ -6,16 +6,10 @@ import { AppText, Button, Card, Notice, TextField, TextLink } from '@/components
 import { getSupabase } from '@/lib/supabase';
 import { spacing, useColors } from '@/theme';
 
-import {
-  checkParentPin,
-  isValidPin,
-  lockMinutesLeft,
-  MAX_TRIES,
-  PIN_LENGTH,
-  setParentPin,
-  useParentPinStore,
-} from './parentPin';
-import { clearPinLock, pullPinLock, reportPinCheck } from './pinLockout';
+import { familyAvailable } from '@/lib/features';
+
+import { isValidPin, lockMinutesLeft, MAX_TRIES, PIN_LENGTH, useParentPinStore } from './parentPin';
+import { pullPinStatus, savePin, verifyPin } from './pinLockout';
 import { useAccountStore } from '../account/store';
 
 import {
@@ -36,9 +30,29 @@ import { activeProfile, useFamilyStore } from './store';
  * owner's own profile may create one; a child profile is told to ask a parent.
  */
 export function ParentGate({ onPass, onCancel }: { onPass: () => void; onCancel?: () => void }) {
+  // The web can't keep a PIN safe: family profiles are mobile-only for now
+  // (security round 1, S1-03).
+  if (!familyAvailable()) return <FamilyMobileOnly onCancel={onCancel} />;
+  return <ParentGateInner onPass={onPass} onCancel={onCancel} />;
+}
+
+/** "Family profiles are available in the mobile app" (web, S1-03). */
+export function FamilyMobileOnly({ onCancel }: { onCancel?: () => void }) {
+  const { t } = useTranslation();
+  return (
+    <Card style={styles.card}>
+      <Notice>{t('family.mobileOnly')}</Notice>
+      {onCancel ? <Button variant="ghost" label={t('common.back')} onPress={onCancel} /> : null}
+    </Card>
+  );
+}
+
+function ParentGateInner({ onPass, onCancel }: { onPass: () => void; onCancel?: () => void }) {
   const colors = useColors();
   const { t } = useTranslation();
-  const hasPin = useParentPinStore((s) => !!s.hash);
+  // A PIN on this phone or on the account (a new phone learns it from the server).
+  const hasPin = useParentPinStore((s) => !!s.hash || s.serverHasPin);
+  const [busy, setBusy] = useState(false);
   const active = useFamilyStore(activeProfile);
   const ownerId = useOwnerIdentityStore((s) => s.ownerId);
   const activeId = useOwnerIdentityStore((s) => s.activeId);
@@ -47,11 +61,11 @@ export function ParentGate({ onPass, onCancel }: { onPass: () => void; onCancel?
   const [message, setMessage] = useState<string | null>(null);
   const [resetting, setResetting] = useState<false | 'reset' | 'create'>(false);
   const accountSaved = useAccountStore((s) => s.saved);
-  // A lock counted on the account applies here too (QA round 3).
+  // Whether the account has a PIN, and its lock, from the server (S1-03).
   const [, setSynced] = useState(0);
   useEffect(() => {
-    if (hasPin) void pullPinLock(getSupabase()).then(() => setSynced((n) => n + 1));
-  }, [hasPin]);
+    void pullPinStatus(getSupabase()).then(() => setSynced((n) => n + 1));
+  }, []);
 
   // A correct PIN proves the owner's profile is really the active one: an
   // upgraded phone with no secure active id records it here (QA R6-05).
@@ -95,12 +109,17 @@ export function ParentGate({ onPass, onCancel }: { onPass: () => void; onCancel?
     );
   }
 
-  const check = () => {
-    const result = checkParentPin(value.trim());
+  const check = async () => {
+    const pin = value.trim();
     setValue('');
-    void reportPinCheck(getSupabase(), result);
+    setBusy(true);
+    // The server decides with a saved account; the phone's copy only offline.
+    const result = await verifyPin(getSupabase(), pin);
+    setBusy(false);
     if (result === 'ok') return pass();
-    if (result === 'locked') setMessage(t('parentGate.locked', { count: lockMinutesLeft() }));
+    if (result === 'offline') setMessage(t('parentGate.offline'));
+    else if (result === 'no_pin') setMessage(t('parentGate.noPinCreate'));
+    else if (result === 'locked') setMessage(t('parentGate.locked', { count: lockMinutesLeft() }));
     else
       setMessage(
         t('parentGate.wrong', { count: MAX_TRIES - useParentPinStore.getState().failures }),
@@ -128,8 +147,9 @@ export function ParentGate({ onPass, onCancel }: { onPass: () => void; onCancel?
       ) : null}
       <Button
         label={t('parentGate.continue')}
+        loading={busy}
         disabled={locked || !isValidPin(value.trim())}
-        onPress={check}
+        onPress={() => void check()}
       />
       <TextLink tone="accent" label={t('pinReset.forgot')} onPress={() => setResetting('reset')} />
       {onCancel ? <Button variant="ghost" label={t('common.back')} onPress={onCancel} /> : null}
@@ -149,15 +169,30 @@ export function ParentPinSetup({
   const { t } = useTranslation();
   const [pin, setPin] = useState('');
   const [again, setAgain] = useState('');
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  // The server wants proof first (an account that already manages minors):
+  // the email code opens its window, then the PIN is saved (S1-03).
+  const [viaEmail, setViaEmail] = useState(false);
 
-  const save = () => {
-    if (pin !== again || !setParentPin(pin)) {
-      setError(true);
+  if (viaEmail)
+    return (
+      <ParentPinReset creating onDone={onDone} onCancel={onCancel ?? (() => setViaEmail(false))} />
+    );
+
+  const save = async () => {
+    if (pin !== again || !isValidPin(pin)) {
+      setError(t('parentGate.mismatch'));
       setAgain('');
       return;
     }
-    onDone();
+    setBusy(true);
+    const result = await savePin(getSupabase(), pin);
+    setBusy(false);
+    if (result === 'ok') return onDone();
+    setAgain('');
+    if (result === 'reauth') return setViaEmail(true);
+    setError(t(result === 'offline' ? 'parentGate.offlineSave' : 'parentGate.mismatch'));
   };
 
   return (
@@ -182,13 +217,14 @@ export function ParentPinSetup({
       />
       {error ? (
         <AppText variant="caption" color={colors.accentText}>
-          {t('parentGate.mismatch')}
+          {error}
         </AppText>
       ) : null}
       <Button
         label={t('parentGate.savePin')}
+        loading={busy}
         disabled={!isValidPin(pin) || again.length !== PIN_LENGTH}
-        onPress={save}
+        onPress={() => void save()}
       />
       {onCancel ? <Button variant="ghost" label={t('common.back')} onPress={onCancel} /> : null}
     </Card>
@@ -235,13 +271,8 @@ export function ParentPinReset({
     return (
       <View style={styles.card}>
         {signedOut ? <Notice tone="warning">{t('pinReset.signedOut')}</Notice> : null}
-        <ParentPinSetup
-          onDone={() => {
-            void clearPinLock(getSupabase());
-            onDone();
-          }}
-          onCancel={onCancel}
-        />
+        {/* The server clears the lock itself when it saves the new PIN. */}
+        <ParentPinSetup onDone={onDone} onCancel={onCancel} />
       </View>
     );
 

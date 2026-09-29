@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText, Icon, Screen, TextLink } from '@/components/ui';
+import { familyAvailable } from '@/lib/features';
 import { FamilyAdultRequired } from '@/features/billing/components/FamilyAdultRequired';
 import { FamilyPlanOn } from '@/features/billing/components/FamilyPlanOn';
 import { PlanPicker } from '@/features/billing/components/PlanPicker';
@@ -23,7 +24,8 @@ function PaywallScreenInner() {
   const colors = useColors();
   const { t, i18n } = useTranslation();
   const { next, plan: wanted } = useLocalSearchParams<{ next?: string; plan?: string }>();
-  const familyOk = useFamilyPlanAllowed();
+  // Web: no family profiles yet, so no Family plan to pick (security round 1, S1-03).
+  const familyOk = useFamilyPlanAllowed() && familyAvailable();
   const current = currentPlan(
     useBillingStore((st) => st.entitlement),
     clock.now(),

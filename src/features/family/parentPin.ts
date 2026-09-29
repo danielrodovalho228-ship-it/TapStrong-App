@@ -33,10 +33,25 @@ type State = {
   algo: Algo;
   failures: number;
   lockedUntil: string | null;
+  /** The account has a PIN on the server (security round 1, S1-03). */
+  serverHasPin: boolean;
+  /**
+   * A PIN set offline on the phone, not yet on the server (native only, in
+   * the Keychain / Keystore); sent on the next status check, then removed.
+   */
+  pendingPin: string | null;
   reset: () => void;
 };
 
-const EMPTY = { hash: null, salt: null, algo: 'pbkdf2' as Algo, failures: 0, lockedUntil: null };
+const EMPTY = {
+  hash: null,
+  salt: null,
+  algo: 'pbkdf2' as Algo,
+  failures: 0,
+  lockedUntil: null,
+  serverHasPin: false,
+  pendingPin: null,
+};
 
 export const useParentPinStore = create<State>()(
   persist(
@@ -48,12 +63,14 @@ export const useParentPinStore = create<State>()(
       name: 'parent-pin-secure',
       version: 1,
       storage: createJSONStorage(() => secureStorage),
-      partialize: ({ hash, salt, algo, failures, lockedUntil }) => ({
+      partialize: ({ hash, salt, algo, failures, lockedUntil, serverHasPin, pendingPin }) => ({
         hash,
         salt,
         algo,
         failures,
         lockedUntil,
+        serverHasPin,
+        pendingPin,
       }),
       // A plain-storage PIN is never imported: anyone with file access could
       // plant one before the owner set theirs (QA R4-05). The stale copy from
@@ -100,7 +117,11 @@ function sameHex(a: string, b: string): boolean {
 
 export const isValidPin = (pin: string) => new RegExp(`^\\d{${PIN_LENGTH}}$`).test(pin);
 
-export const hasParentPin = () => !!useParentPinStore.getState().hash;
+/** A PIN on this phone or on the account (a new phone learns it from the server). */
+export const hasParentPin = () => {
+  const s = useParentPinStore.getState();
+  return !!s.hash || s.serverHasPin;
+};
 
 export function setParentPin(pin: string): boolean {
   if (!isValidPin(pin)) return false;
@@ -140,10 +161,7 @@ export function checkParentPin(pin: string, now: Date = clock.now()): PinCheck {
   return countWrongTry(now);
 }
 
-/**
- * One wrong try, for the PIN and for the email code alike (QA R9 P2): 5 in
- * a row lock both for 15 minutes.
- */
+/** One wrong try on this phone (offline fallback): 5 in a row lock the PIN for 15 minutes. */
 export function countWrongTry(now: Date = clock.now()): 'wrong' | 'locked' {
   const s = useParentPinStore.getState();
   const failures = (s.lockedUntil ? 0 : s.failures) + 1;

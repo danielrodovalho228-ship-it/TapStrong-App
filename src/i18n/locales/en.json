@@ -4130,7 +4130,10 @@
       "error": "Couldn’t save your profile to your account. Nothing was created. Try again."
     },
     "removePending_one": "One removed profile is still in your account. We’ll finish removing it when you’re back online.",
-    "removePending_other": "{{count}} removed profiles are still in your account. We’ll finish removing them when you’re back online."
+    "removePending_other": "{{count}} removed profiles are still in your account. We’ll finish removing them when you’re back online.",
+    "mobileOnly": "Family profiles are available in the mobile app.",
+    "teenMobileOnly": "TapStrong for teens is available in the mobile app. On the web, TapStrong is for adults.",
+    "mobileOnlyTitle": "Family profiles are in the mobile app"
   },
   "deleteAccount": {
     "title": "Delete account",
@@ -4712,7 +4715,9 @@
     "savePin": "Save PIN",
     "continue": "Confirm",
     "createWithEmail": "Set a PIN with the account email",
-    "noPinCreate": "No parent PIN yet. The account owner can create one now, with a code sent to the account email."
+    "noPinCreate": "No parent PIN yet. The account owner can create one now, with a code sent to the account email.",
+    "offline": "Can't check the PIN right now. Connect to the internet and try again.",
+    "offlineSave": "Connect to the internet to change the PIN, so every phone uses the new one."
   },
   "ownerOnly": {
     "title": "For the account owner",

@@ -46,9 +46,12 @@ begin
   exception when insufficient_privilege then null;
   end;
 
-  -- The right code clears it, and only the code's count.
-  perform pg_temp.act_as('00000000-0000-0000-0000-00000000c0d1');
+  -- The right code clears it, and only the code's count — server side only
+  -- since security round 1 (open_pin_reset_window does it; clients can't).
+  execute 'reset role';
+  perform set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-00000000c0d1', false);
   perform public.pin_reset_code_passed();
+  perform pg_temp.act_as('00000000-0000-0000-0000-00000000c0d1');
   if public.pin_reset_code_locked_until() is not null then raise exception 'code lock not cleared'; end if;
   if public.parent_pin_locked_until() is null then raise exception 'code pass cleared the PIN lock'; end if;
   execute 'reset role';

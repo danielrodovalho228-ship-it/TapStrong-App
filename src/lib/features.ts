@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+
 /**
  * Feature switches (Phase 12, Daniel).
  *
@@ -22,3 +24,20 @@ export function setKidsUnder13Enabled(on: boolean) {
 export const KIDS_MIN_AGE = 9;
 export const LAUNCH_MIN_AGE = 13;
 export const minAge = () => (kidsUnder13 ? KIDS_MIN_AGE : LAUNCH_MIN_AGE);
+
+/**
+ * FAMILY_ON_WEB (security round 1, S1-03, Daniel's decision): the web has no
+ * secure storage, so family, teen and child profiles stay in the mobile app
+ * until the server-checked PIN has passed QA on the web too. Web = adults
+ * without family.
+ */
+let familyOnWeb = false;
+
+export function familyAvailable(): boolean {
+  return Platform.OS !== 'web' || familyOnWeb;
+}
+
+/** Tests only. */
+export function setFamilyOnWeb(on: boolean) {
+  familyOnWeb = on;
+}

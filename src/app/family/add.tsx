@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { Redirect, router } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
@@ -17,7 +17,7 @@ import { ensureSelfProfile, switchProfile } from '@/features/family/switch';
 import { evaluateAgeGate, whoErrorKey } from '@/features/onboarding/age-gate';
 import { birthYearOptions } from '@/features/profile/age';
 import { clock } from '@/lib/clock';
-import { kidsUnder13Enabled } from '@/lib/features';
+import { familyAvailable, kidsUnder13Enabled } from '@/lib/features';
 import { uuid } from '@/lib/uuid';
 import { spacing } from '@/theme';
 import { OwnerOnly } from '@/features/family/OwnerOnly';
@@ -169,6 +169,8 @@ const styles = StyleSheet.create({
 
 /** Owner-only: a child profile needs the parent gate (QA B-03). */
 export default function AddMemberScreen() {
+  // Family profiles are mobile-only for now (security round 1, S1-03).
+  if (!familyAvailable()) return <Redirect href="/home" />;
   return (
     <OwnerOnly>
       <AddMemberScreenInner />

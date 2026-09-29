@@ -1,4 +1,4 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
@@ -14,7 +14,7 @@ import { kvStorage } from '@/lib/storage';
 import { useFamilyStore } from '@/features/family/store';
 import { ensureSelfProfile, switchProfile } from '@/features/family/switch';
 import { clock } from '@/lib/clock';
-import { kidsUnder13Enabled } from '@/lib/features';
+import { familyAvailable, kidsUnder13Enabled } from '@/lib/features';
 import { spacing, useColors } from '@/theme';
 import { OwnerOnly } from '@/features/family/OwnerOnly';
 
@@ -143,6 +143,8 @@ function ConsentUnavailable() {
 }
 
 export default function ParentConsentScreen() {
+  // Family profiles are mobile-only for now (security round 1, S1-03).
+  if (!familyAvailable()) return <Redirect href="/home" />;
   if (!kidsUnder13Enabled()) return <ConsentUnavailable />;
   return (
     <OwnerOnly>

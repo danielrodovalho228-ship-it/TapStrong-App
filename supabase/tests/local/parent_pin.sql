@@ -45,9 +45,12 @@ begin
   exception when insufficient_privilege then null;
   end;
 
-  -- The right PIN (or a reset) clears it.
-  perform pg_temp.act_as('00000000-0000-0000-0000-00000000a0a1');
+  -- The right PIN (or a reset) clears it — server side only since security
+  -- round 1 (verify_parent_pin / set_parent_pin call it; clients can't).
+  execute 'reset role';
+  perform set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-00000000a0a1', false);
   perform public.parent_pin_passed();
+  perform pg_temp.act_as('00000000-0000-0000-0000-00000000a0a1');
   if public.parent_pin_locked_until() is not null then raise exception 'lock not cleared'; end if;
   execute 'reset role';
 

@@ -5,6 +5,7 @@ import { isNetworkError } from '@/lib/network';
 import { useAccountStore } from '../account/store';
 
 import { useOwnerIdentityStore, type OwnerAuth } from './ownerIdentity';
+import { openPinResetWindow } from './pinLockout';
 import {
   clearCodeLock,
   codeLockMinutesLeft,
@@ -186,6 +187,9 @@ export async function verifyPinResetCode(
     });
     if (!error) {
       const owner = data?.user?.id === auth.userId;
+      // While the code's own session is active: the server sees the fresh
+      // sign-in and opens its window to set a new PIN (security round 1).
+      if (owner) await openPinResetWindow(supabase);
       if (!before) {
         if (!owner) {
           await succeeded(() => supabase.auth.signOut({ scope: 'local' }) as AuthCall);

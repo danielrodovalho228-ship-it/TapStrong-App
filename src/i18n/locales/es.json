@@ -4130,7 +4130,10 @@
       "error": "No pudimos guardar tu perfil en tu cuenta. No se creó nada. Inténtalo de nuevo."
     },
     "removePending_one": "Un perfil eliminado sigue en tu cuenta. Terminaremos de eliminarlo cuando vuelvas a tener conexión.",
-    "removePending_other": "{{count}} perfiles eliminados siguen en tu cuenta. Terminaremos de eliminarlos cuando vuelvas a tener conexión."
+    "removePending_other": "{{count}} perfiles eliminados siguen en tu cuenta. Terminaremos de eliminarlos cuando vuelvas a tener conexión.",
+    "mobileOnly": "Los perfiles familiares están disponibles en la app para móvil.",
+    "teenMobileOnly": "TapStrong para adolescentes está disponible en la app para móvil. En la web, TapStrong es para adultos.",
+    "mobileOnlyTitle": "Los perfiles familiares están en la app para móvil"
   },
   "deleteAccount": {
     "title": "Eliminar cuenta",
@@ -4712,7 +4715,9 @@
     "savePin": "Guardar PIN",
     "continue": "Confirmar",
     "createWithEmail": "Crear un PIN con el correo de la cuenta",
-    "noPinCreate": "Aún no hay PIN de padres. El titular de la cuenta puede crearlo ahora, con un código enviado al correo de la cuenta."
+    "noPinCreate": "Aún no hay PIN de padres. El titular de la cuenta puede crearlo ahora, con un código enviado al correo de la cuenta.",
+    "offline": "No podemos comprobar el PIN ahora. Conéctate a internet e inténtalo de nuevo.",
+    "offlineSave": "Conéctate a internet para cambiar el PIN, así todos los teléfonos usan el nuevo."
   },
   "ownerOnly": {
     "title": "Para el titular de la cuenta",

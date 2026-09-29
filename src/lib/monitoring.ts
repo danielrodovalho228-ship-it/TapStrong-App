@@ -23,6 +23,21 @@ const SENTRY_DSN = process.env.EXPO_PUBLIC_SENTRY_DSN?.trim();
 export const isChildProfile = () => derive(useOnboardingStore.getState())?.mode === 'child';
 
 let started = false;
+let sentry: typeof import('@sentry/react-native') | null = null;
+const reported = new Set<string>();
+
+/**
+ * A server table or function the app needs is missing (a migration not yet
+ * pushed, security round 1 / Phase 23): logged once per name to Sentry, with
+ * no user data. Development and tests only log to the console.
+ */
+export function reportServerMissing(name: string) {
+  if (reported.has(name)) return;
+  reported.add(name);
+  if (sentry) sentry.captureMessage(`server_missing:${name}`, 'error');
+  else if (__DEV__ && process.env.NODE_ENV !== 'test')
+    console.warn(`TapStrong server is missing ${name}: run supabase db push`);
+}
 
 export function startMonitoring() {
   if (started) return;
@@ -31,6 +46,7 @@ export function startMonitoring() {
   if (SENTRY_DSN) {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const Sentry = require('@sentry/react-native') as typeof import('@sentry/react-native');
+    sentry = Sentry;
     Sentry.init({
       dsn: SENTRY_DSN,
       sendDefaultPii: false,

@@ -91,13 +91,18 @@ describe('server lockout mirror', () => {
   it('pulls the lock when the gate opens', async () => {
     setParentPin('2468');
     const until = new Date(NOW.getTime() + 15 * 60000).toISOString();
-    const rpc = jest.fn(async () => ({ data: until, error: null }));
+    // Security round 1: one status call gives the PIN and the lock.
+    const rpc = jest.fn(async () => ({
+      data: [{ has_pin: true, locked_until: until }],
+      error: null,
+    }));
     await pullPinLock(client(rpc));
-    expect(rpc).toHaveBeenCalledWith('parent_pin_locked_until');
+    expect(rpc).toHaveBeenCalledWith('parent_pin_status');
+    expect(useParentPinStore.getState().serverHasPin).toBe(true);
     expect(checkParentPin('2468', NOW)).toBe('locked');
   });
 
-  it('reports wrong and right tries; the server lock comes back', async () => {
+  it('reports offline wrong tries; a right one is never "reported" (the server clears it)', async () => {
     setParentPin('2468');
     const until = new Date(NOW.getTime() + 15 * 60000).toISOString();
     const rpc = jest.fn(async (name: string) => ({
@@ -108,7 +113,7 @@ describe('server lockout mirror', () => {
     expect(rpc).toHaveBeenCalledWith('parent_pin_failed');
     expect(lockMinutesLeft(NOW)).toBe(15);
     await reportPinCheck(client(rpc), 'ok');
-    expect(rpc).toHaveBeenCalledWith('parent_pin_passed');
+    expect(rpc).not.toHaveBeenCalledWith('parent_pin_passed');
   });
 
   it('offline or signed out: nothing is sent and nothing breaks', async () => {

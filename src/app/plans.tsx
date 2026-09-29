@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
-import { AppText, Button, Header, Screen } from '@/components/ui';
+import { AppText, Button, Header, Notice, Screen } from '@/components/ui';
 import { PlanPicker } from '@/features/billing/components/PlanPicker';
 import { SubscribeFooter } from '@/features/billing/components/SubscribeFooter';
 import { getBilling } from '@/features/billing/provider';
@@ -11,7 +11,7 @@ import { currentPlan, type Period } from '@/features/billing/rules';
 import { useBillingStore } from '@/features/billing/store';
 import { FamilyStrip } from '@/features/family/components/FamilyStrip';
 import { clock } from '@/lib/clock';
-import { kidsUnder13Enabled } from '@/lib/features';
+import { familyAvailable, kidsUnder13Enabled } from '@/lib/features';
 import { fonts, spacing, useColors } from '@/theme';
 import { FamilyAdultRequired } from '@/features/billing/components/FamilyAdultRequired';
 import { FamilyPlanOn } from '@/features/billing/components/FamilyPlanOn';
@@ -28,7 +28,9 @@ function PlansScreenInner() {
   const current = currentPlan(entitlement, clock.now());
   // Premium first for new buyers; subscribers start on their plan (QA round 1).
   const { plan: wanted } = useLocalSearchParams<{ plan?: string }>();
-  const familyOk = useFamilyPlanAllowed();
+  // Web: no family profiles yet, so no Family plan to pick (security round 1, S1-03).
+  const onWeb = !familyAvailable();
+  const familyOk = useFamilyPlanAllowed() && !onWeb;
   const [plan, setPlan] = usePlanChoice(current, wanted, familyOk);
   const [period, setPeriod] = useState<Period>('monthly');
   // A solo teen doesn't manage a family: no family lead or member strip (QA R8 P2).
@@ -46,7 +48,9 @@ function PlansScreenInner() {
       }
       footer={familyLocked ? undefined : <SubscribeFooter plan={plan} period={period} />}
     >
-      {minor ? null : (
+      {onWeb ? (
+        <Notice tone="neutral">{t('family.mobileOnly')}</Notice>
+      ) : minor ? null : (
         <>
           <FamilyStrip />
           <AppText color={colors.mutedStrong}>

@@ -15,6 +15,7 @@ import {
 } from '@/components/ui';
 import { useAccountStore } from '@/features/account/store';
 import { ParentGate } from '@/features/family/ParentGate';
+import { WebMobileOnly } from '@/features/family/components/WebMobileOnly';
 import { activeProfile, useFamilyStore } from '@/features/family/store';
 import {
   isOwnerProfile,
@@ -27,7 +28,7 @@ import { ageLockApplies, isAgeBlocked, useAgeBlockStore } from '@/features/onboa
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { birthYearOptions } from '@/features/profile/age';
 import { track } from '@/lib/analytics';
-import { kidsUnder13Enabled } from '@/lib/features';
+import { familyAvailable, kidsUnder13Enabled } from '@/lib/features';
 import { contactSupport, SUPPORT_EMAIL } from '@/lib/support';
 import { useAppModeStore } from '@/stores/app-mode';
 import { fonts, spacing, useColors } from '@/theme';
@@ -68,6 +69,7 @@ export default function WhoScreen() {
   const locked = !!lock || unknown;
   const [unlocked, setUnlocked] = useState(false);
   const [gate, setGate] = useState(false);
+  const [webMinor, setWebMinor] = useState(false);
   const effectiveWho: Who = lock ? 'child' : who;
   const result =
     month && year
@@ -91,12 +93,17 @@ export default function WhoScreen() {
       return setUnderMinShown(true);
     }
     if (result?.status !== 'ok') return;
+    // The web is for adults without family (security round 1, S1-03).
+    if (!familyAvailable() && (result.mode === 'teen' || result.mode === 'child'))
+      return setWebMinor(true);
     stored.update({ who: effectiveWho, birthMonth: month, birthYear: year });
     setMode(result.mode);
     track('age_mode_set', { mode: result.mode });
     if (edit) router.back();
     else router.push('/onboarding/chat');
   };
+
+  if (webMinor) return <WebMobileOnly kind="teen" />;
 
   if (lockApplies && isAgeBlocked(ageBlock.birth)) {
     return (

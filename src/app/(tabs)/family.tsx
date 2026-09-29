@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { Redirect, router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
@@ -22,11 +22,18 @@ import { modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { clock } from '@/lib/clock';
 import { deviceWeekStart } from '@/lib/dates';
+import { familyAvailable } from '@/lib/features';
 import { kvStorage } from '@/lib/storage';
 import { colors, fonts, makeStyles, spacing, useColors } from '@/theme';
 
 /** Family tab (SPEC §9 /(tabs)/family, mockup 19): who trains on this phone. */
 export default function FamilyScreen() {
+  // Family profiles are mobile-only for now (security round 1, S1-03).
+  if (!familyAvailable()) return <Redirect href="/home" />;
+  return <FamilyScreenInner />;
+}
+
+function FamilyScreenInner() {
   const colors = useColors();
   const styles = useStyles();
   const { t, i18n } = useTranslation();

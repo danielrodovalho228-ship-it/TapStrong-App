@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 
 import { AppText, SegmentedControl } from '@/components/ui';
-import { kidsUnder13Enabled } from '@/lib/features';
+import { familyAvailable, kidsUnder13Enabled } from '@/lib/features';
 import { colors, fonts, makeStyles, radius, sizes, spacing, useColors } from '@/theme';
 
 import { priceLabel, type Period, type Plan } from '../rules';
@@ -24,7 +24,8 @@ export function PlanPicker({ plan, period, onPlan, onPeriod, showFree = true }: 
   const { t } = useTranslation();
   const prices = useBillingStore((s) => s.prices);
   // No Family card while a minor's profile is active (Daniel, Phase 21).
-  const family = useFamilyPlanAllowed();
+  // Not on the web until family profiles are (security round 1, S1-03).
+  const family = useFamilyPlanAllowed() && familyAvailable();
   const plans = (['free', 'premium', 'family'] as Plan[]).filter(
     (p) => (showFree || p !== 'free') && (family || p !== 'family'),
   );
