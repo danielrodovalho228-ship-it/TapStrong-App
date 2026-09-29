@@ -7,6 +7,7 @@ import { colors, fonts, makeStyles, radius, sizes, spacing, useColors } from '@/
 
 import { priceLabel, type Period, type Plan } from '../rules';
 import { useBillingStore } from '../store';
+import { useFamilyPlanAllowed } from '../useFamilyPlan';
 
 type Props = {
   plan: Plan;
@@ -22,7 +23,11 @@ export function PlanPicker({ plan, period, onPlan, onPeriod, showFree = true }: 
   const styles = useStyles();
   const { t } = useTranslation();
   const prices = useBillingStore((s) => s.prices);
-  const plans: Plan[] = showFree ? ['free', 'premium', 'family'] : ['premium', 'family'];
+  // No Family card while a minor's profile is active (Daniel, Phase 21).
+  const family = useFamilyPlanAllowed();
+  const plans = (['free', 'premium', 'family'] as Plan[]).filter(
+    (p) => (showFree || p !== 'free') && (family || p !== 'family'),
+  );
 
   return (
     <View style={styles.wrap}>

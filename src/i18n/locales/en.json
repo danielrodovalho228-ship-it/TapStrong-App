@@ -4018,6 +4018,7 @@
     "switchTo": "Switch to {{plan}} · {{price}} {{per}}",
     "trialEnds": "Free trial ends {{date}}. Cancel before then and you pay nothing.",
     "familyAdultsOnly": "The Family plan is for adults 18 and over. Premium works for you.",
+    "familyAdultRequired": "An adult needs to buy the Family plan.",
     "familyIntroTeens": "Each age gets its own safe rules: lighter, technique-first loads for teens, seated and balance options for 60+. A parent manages teen profiles."
   },
   "paywall": {

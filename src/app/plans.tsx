@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
@@ -13,6 +13,9 @@ import { FamilyStrip } from '@/features/family/components/FamilyStrip';
 import { clock } from '@/lib/clock';
 import { kidsUnder13Enabled } from '@/lib/features';
 import { fonts, spacing, useColors } from '@/theme';
+import { FamilyAdultRequired } from '@/features/billing/components/FamilyAdultRequired';
+import { startPlan } from '@/features/billing/rules';
+import { useFamilyPlanAllowed } from '@/features/billing/useFamilyPlan';
 import { OwnerOnly } from '@/features/family/OwnerOnly';
 import { modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
@@ -24,10 +27,14 @@ function PlansScreenInner() {
   const entitlement = useBillingStore((s) => s.entitlement);
   const current = currentPlan(entitlement, clock.now());
   // Premium first for new buyers; subscribers start on their plan (QA round 1).
-  const [plan, setPlan] = useState<Plan>(current === 'free' ? 'premium' : current);
+  const { plan: wanted } = useLocalSearchParams<{ plan?: string }>();
+  const familyOk = useFamilyPlanAllowed();
+  const [plan, setPlan] = useState<Plan>(() => startPlan(current, wanted, familyOk));
   const [period, setPeriod] = useState<Period>('monthly');
   // A solo teen doesn't manage a family: no family lead or member strip (QA R8 P2).
   const minor = ['teen', 'child'].includes(modeOf(useOnboardingStore()));
+  // A minor on the Family link: no purchase (Daniel, Phase 21).
+  if (wanted === 'family' && !familyOk) return <FamilyAdultRequired />;
 
   return (
     <Screen

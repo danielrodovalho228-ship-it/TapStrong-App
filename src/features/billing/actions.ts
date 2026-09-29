@@ -6,6 +6,7 @@ import { requestPermission } from '../notifications/apply';
 
 import { ownerAge } from '../family/profiles';
 import { useFamilyStore } from '../family/store';
+import { modeOf } from '../onboarding/derived';
 import { useOnboardingStore } from '../onboarding/store';
 
 import { getBilling, type PurchaseResult } from './provider';
@@ -40,10 +41,21 @@ export function currentOwnerAge(): number | null {
   );
 }
 
+/**
+ * The Family plan is bought and shown only by an adult (Daniel, Phase 21):
+ * never while a minor's profile is active (a solo teen, a locked teen, or a
+ * parent's phone with the teen's profile on), nor for an owner under 18.
+ */
+export function familyPlanAllowed(): boolean {
+  const s = useOnboardingStore.getState();
+  const minor = ['teen', 'child'].includes(modeOf(s));
+  return !minor && !familyPurchaseBlocked(currentOwnerAge());
+}
+
 export async function buy(productId: string): Promise<PurchaseResult | 'adults_only'> {
   // Never start a Family purchase for an owner under 18, whatever the screen shows.
   const family = (Object.values(PRODUCTS.family) as string[]).includes(productId);
-  if (family && familyPurchaseBlocked(currentOwnerAge())) return 'adults_only';
+  if (family && !familyPlanAllowed()) return 'adults_only';
   const before = useBillingStore.getState().entitlement;
   const result = await getBilling().purchase(productId);
   if (result === 'ok') {

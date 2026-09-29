@@ -25,6 +25,18 @@ export function familyPurchaseBlocked(ownerAge: number | null): boolean {
   return ownerAge !== null && ownerAge < FAMILY_MIN_OWNER_AGE;
 }
 
+/**
+ * The plan selected when a plans screen opens: the one a link asks for
+ * (`?plan=family`), else Premium for new buyers and the current plan for
+ * subscribers; never Family where Family is hidden.
+ */
+export function startPlan(current: Plan, wanted: string | undefined, familyOk: boolean): Plan {
+  if (wanted === 'family' && familyOk) return 'family';
+  if (wanted === 'premium') return 'premium';
+  if (current === 'free' || (current === 'family' && !familyOk)) return 'premium';
+  return current;
+}
+
 export function currentPlan(e: Entitlement, now: Date): Plan {
   return activePlan({ plan: e.plan, status: e.status, expires_at: e.expiresAt }, now);
 }

@@ -4,12 +4,19 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText, Icon, Screen, TextLink } from '@/components/ui';
+import { FamilyAdultRequired } from '@/features/billing/components/FamilyAdultRequired';
 import { PlanPicker } from '@/features/billing/components/PlanPicker';
 import { SubscribeFooter } from '@/features/billing/components/SubscribeFooter';
-import { FREE_WORKOUTS_PER_WEEK, type Period, type Plan } from '@/features/billing/rules';
+import {
+  currentPlan,
+  FREE_WORKOUTS_PER_WEEK,
+  startPlan,
+  type Period,
+  type Plan,
+} from '@/features/billing/rules';
 import { OwnerOnly } from '@/features/family/OwnerOnly';
-import { currentPlan } from '@/features/billing/rules';
 import { useBillingStore } from '@/features/billing/store';
+import { useFamilyPlanAllowed } from '@/features/billing/useFamilyPlan';
 import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
 import { fonts, spacing, useColors } from '@/theme';
@@ -20,17 +27,20 @@ const VALUE = ['unlimited', 'repair', 'family', 'progress'] as const;
 function PaywallScreenInner() {
   const colors = useColors();
   const { t, i18n } = useTranslation();
-  const { next } = useLocalSearchParams<{ next?: string }>();
+  const { next, plan: wanted } = useLocalSearchParams<{ next?: string; plan?: string }>();
+  const familyOk = useFamilyPlanAllowed();
   const current = currentPlan(
     useBillingStore((st) => st.entitlement),
     clock.now(),
   );
-  const [plan, setPlan] = useState<Plan>(current === 'free' ? 'premium' : current);
+  const [plan, setPlan] = useState<Plan>(() => startPlan(current, wanted, familyOk));
   const [period, setPeriod] = useState<Period>('monthly');
 
   useEffect(() => {
     track('paywall_viewed');
   }, []);
+  // A minor on the Family link: no purchase (Daniel, Phase 21).
+  if (wanted === 'family' && !familyOk) return <FamilyAdultRequired />;
 
   const nextDay = next
     ? new Date(`${next}T12:00:00`).toLocaleDateString(i18n.language, {
@@ -61,7 +71,7 @@ function PaywallScreenInner() {
         {t('paywall.title')}
       </AppText>
       <View style={styles.list}>
-        {VALUE.map((v) => (
+        {VALUE.filter((v) => familyOk || v !== 'family').map((v) => (
           <View key={v} style={styles.row}>
             <Icon name="check" color={colors.teal} />
             <AppText style={styles.flex}>{t(`paywall.value.${v}`)}</AppText>

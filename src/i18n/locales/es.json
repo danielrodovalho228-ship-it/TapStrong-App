@@ -4018,6 +4018,7 @@
     "switchTo": "Cambiar a {{plan}} · {{price}} {{per}}",
     "trialEnds": "La prueba gratis termina el {{date}}. Cancela antes y no pagas nada.",
     "familyAdultsOnly": "El plan Familia es para adultos de 18 años o más. Premium es para ti.",
+    "familyAdultRequired": "Un adulto tiene que contratar el plan Familia.",
     "familyIntroTeens": "Cada edad tiene sus propias reglas seguras: cargas ligeras y técnica primero para adolescentes, opciones sentadas y de equilibrio para mayores de 60. Un padre o madre gestiona los perfiles de adolescentes."
   },
   "paywall": {
