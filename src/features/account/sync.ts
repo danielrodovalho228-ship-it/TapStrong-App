@@ -330,7 +330,12 @@ export function buildSyncPlan(input: SyncInput): SyncPlan | PlanError {
  * a child's row is only ever created by create_child_profile().
  */
 async function writeProfile(supabase: SupabaseClient, plan: SyncPlan): Promise<{ error: unknown }> {
-  if (plan.profileWrite === 'upsert') return supabase.from('profiles').upsert(plan.profile);
+  if (plan.profileWrite === 'upsert') {
+    // Only a guardian may ever change guardian_id (security round 1, S2-02):
+    // the owner's own row never sends it.
+    const { guardian_id: _guardian, ...own } = plan.profile;
+    return supabase.from('profiles').upsert(own);
+  }
   const { id, ...fields } = plan.profile;
   const { data, error } = await supabase
     .from('profiles')

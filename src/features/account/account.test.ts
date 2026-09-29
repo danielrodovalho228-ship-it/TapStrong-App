@@ -436,6 +436,8 @@ describe('runSync', () => {
     );
     expect(r).toEqual({ status: 'ok', synced: [i.workouts[0].id], skipped: [] });
     expect(calls[0]).toMatchObject({ table: 'profiles', op: 'upsert' });
+    // Security round 1, S2-02: the owner's own row never sends guardian_id.
+    expect(calls[0].rows).not.toHaveProperty('guardian_id');
     const order = calls.map((c) => `${c.op}:${c.table}`);
     expect(order.indexOf('upsert:sessions')).toBeLessThan(order.indexOf('insert:session_items'));
     expect(order.indexOf('insert:session_items')).toBeLessThan(order.indexOf('insert:set_logs'));
