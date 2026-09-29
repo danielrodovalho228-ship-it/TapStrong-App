@@ -2262,3 +2262,86 @@ Texto da rodada: `docs/security-round-1.md`. Suas escolhas no início da fase: c
 - `db:test` com os 6 testes SQL novos e o `zz_security_policies.sql`; `functions:check`; `security:check` (arquivos, histórico, `npm audit`: 0 alto/crítico, 16 moderados já conhecidos); `web:check` com a CSP ativa.
 - `bundle:check` (produção) ok; `tabs:check` ok; `security:check --bundle` sem segredos no bundle web.
 - `theme:check`: 50 capturas, primeira pintura escura correta. As capturas "family" e "parent-pin" saíram, porque essas telas não existem mais na web; no lugar delas, a checagem confere que `/family` cai na Home.
+
+## Fase 25 — Segurança, rodada 2
+
+Texto da rodada salvo em `docs/security-round-2.md`. Corrigi na ordem P1 → P2 → P3, com um commit por item e testes para cada correção.
+
+### Feito
+
+**P1**
+- **S2-P1-1 — corrida na trava do PIN:** a verificação agora trava a linha do contador antes de comparar o PIN e só solta no fim. O teste dispara 30 tentativas ao mesmo tempo e conta as comparações de verdade: no máximo 5 por janela. Sem a correção o mesmo teste via 21.
+
+**P2**
+- **S2-P2-1 — bloqueio web completo:** o aviso "O TapStrong para adolescentes fica no app para celular" agora fica na raiz do app, em qualquer endereço (`/settings`, `/workout/new`, `/programs`...). Só abrem: a data de nascimento, a Conta e a exclusão de conta. O teste percorre todas as rotas.
+- **S2-P2-2 — trocar o PIN:** acertar o PIN no portão não abre mais uma janela para trocá-lo. A troca exige o PIN atual ou o código do e-mail, que vale 10 minutos e uma vez só.
+- **S2-P2-3 — PIN depois da redefinição:** se a sessão não volta depois do código (`ok_signed_out`), o PIN novo fica guardado e vai para o servidor no próximo login da Conta. A cópia offline do celular também passa a seguir o PIN da conta: se o PIN mudou em outro aparelho, ela é refeita; se o servidor diz "errado", ela é apagada.
+- **S2-P2-4 — adolescente virando adulto:**
+  - um perfil com responsável, ou em modo adolescente, só muda a data para mais cedo pelo responsável; para mais tarde (mais novo) pode;
+  - toda mudança fica registrada em `profile_birth_changes` (o dono e o responsável leem; ninguém escreve pelo app);
+  - o modo 60+ exige 60 anos ou mais;
+  - no app, a tela da data avisa em vez de salvar algo que o servidor recusaria.
+- **S2-P2-5 — limites do código por e-mail:** escolhi usar os limites do próprio Supabase, sem Edge Function nova nem serviço pago: um e-mail por minuto, código de 15 min e limite por IP. O `server:check` confere esses valores (com um token seu, só no terminal). O texto do S2-07 no `docs/SECURITY.md` foi atualizado. O botão "Enviar código" fica desativado, com contagem regressiva, durante a espera e a trava.
+- **S2-P2-6 — captcha:** o `server:check` e o build de produção **falham** com o captcha desligado. O teste pede um código sem captcha, para um endereço falso, e espera a recusa. O captcha também fica ligado na configuração local.
+- **S2-P2-7 — teste de catálogo do banco:** agora pega views sem `security_invoker`, políticas "abertas" disfarçadas (`1 = 1`, `not false`), políticas sem `TO` (que valem para anon) e funções em qualquer schema. Ele também planta cada erro e falha se não o pegar.
+- **S2-P2-8 — captcha offline:** se o widget não aparece em 15 s, ou falha ao carregar, a verificação fecha na hora. Depois de uma falha ou de um cancelamento, o coach segue offline na sessão, com o aviso "Coach indisponível — seguindo offline".
+
+**P3**
+- **Orçamento do coach:** o IP vem só do cabeçalho da plataforma; IP vazio cai num balde "unknown"; o limite do usuário é cobrado antes dos orçamentos compartilhados.
+- **Treino falso na indicação:** o servidor marca quando o treino chega no início e quando chega concluído, e exige 10 minutos reais entre as duas marcas. Para isso, o app agora envia a sessão também quando o treino começa.
+- **Responsável × adolescente com login próprio:** o responsável não apaga mais esse perfil. A aba Família explica: "Este adolescente tem login próprio...".
+- **PIN offline:** contador que só sobe offline; depois de 10 erros o celular precisa do servidor, e só um "ok" do servidor zera o contador.
+- **TRANSFER (RevenueCat):** só expira uma assinatura mais antiga que o evento e do mesmo produto. `parent_pin_failed` virou função só do servidor.
+- **Turnstile:**
+  - mensagens só da nossa página e só com formato de token;
+  - sub-quadros do iOS liberados;
+  - erros deixam o Turnstile tentar de novo (desiste no terceiro);
+  - um token por pedido.
+- **Cabeçalhos/CSP:**
+  - `web:check` confere também a exportação de produção;
+  - `npm run web:export` exporta, grava os cabeçalhos e confere o bundle;
+  - HSTS sem `preload`/`includeSubDomains`;
+  - `connect-src` só com os endereços do PostHog/Sentry configurados.
+- **Pontos cegos do `security:check`:**
+  - novos padrões: script injetado, `injectedJavaScript`, `insertAdjacentHTML`, `document.write`, `srcdoc`, agora com lista permitida por padrão;
+  - o histórico inclui merges;
+  - `npm audit` falha em CI se não rodar;
+  - `bundle:check` procura segredos e faz parte do `npm run check`.
+- **Pré-commit:** não sobrescreve outro `core.hooksPath`. O README explica que precisa de `node` e que `--ignore-scripts` pula a instalação.
+- **Textos da web:** sem "Meu adolescente" no `/onboarding/who`; `/plans` com título de adulto ("Escolha seu plano"); links das lojas no aviso quando `EXPO_PUBLIC_APP_STORE_URL` / `EXPO_PUBLIC_PLAY_STORE_URL` existirem.
+
+**Achado no caminho:** o teste de navegador do S2-P2-1 nunca passava de verdade. O título aparece em maiúsculas, e a comparação diferenciava maiúsculas de minúsculas. Corrigido; o bloqueio em si estava funcionando.
+
+### Como testar
+
+- **Celular (build novo):**
+  - troque o PIN em Ajustes: pede o PIN atual e salva;
+  - "Esqueci o PIN" → código → PIN novo → funciona também em outro celular da conta;
+  - no modo avião, erre o PIN 10 vezes: pede internet;
+  - num adolescente com conta, tente mudar a data para mais cedo: aparece o aviso.
+- **Web:** um adolescente que digita `/settings` ou `/home` vê só o aviso; `/account` abre; `/plans` mostra "Escolha seu plano".
+- **Conta:** peça um código; o botão fica desativado com a contagem de 60 s.
+
+### O que depende de você
+
+A lista curta e em ordem está em `docs/launch-readiness.md`, em "Antes do próximo build de teste":
+1. `supabase db push` (4 migrações novas desta fase).
+2. `npm run server:check`.
+3. Site key do Turnstile no EAS e build de teste.
+4. Painel do Supabase: captcha, 900 s, 60 s, senhas e rate limits.
+5. `server:check` com o token, para conferir tudo.
+6. Teste do Turnstile num iPhone de verdade.
+
+### Perguntas em aberto
+
+1. **Indicação:** com a regra dos 10 minutos reais no servidor, o treino que alguém faz *antes* de salvar a conta não conta mais para a indicação (ele sobe de uma vez só). A semana grátis vem no primeiro treino feito já com a conta. Está bom assim?
+2. **Adolescente com login próprio e data errada para mais tarde:** o responsável não consegue editar esse perfil (regra da Fase 24), então a correção para mais cedo fica com o suporte. O aviso no app manda falar com o suporte. Ok?
+3. **Captcha e build de produção:** o build de produção agora trava enquanto o captcha estiver desligado no Supabase. Os builds de preview e de desenvolvimento não travam.
+
+### Verificações
+
+- Lint e typecheck limpos; **1266 testes** passando, também em ordem aleatória (seeds 4242 e 917).
+- `db:test` com os novos testes SQL (`security_r2_birth_date`, `security_r2_p3`, catálogo com casos plantados) e o teste de corrida em paralelo.
+- `functions:check`; `security:check` (0 alto/crítico, 16 moderados já conhecidos).
+- `bundle:check` sem segredos nem rascunhos; `web:check` (dev + produção); `tabs:check`; `theme:check` com 50 capturas. A de `/plans` mudou por causa do título.
+- **Pendente de antes:** o lote de vídeos (`videos-lote-1`) continua esperando o seu "subi".
