@@ -15,14 +15,13 @@ import {
   TextField,
 } from '@/components/ui';
 import { BodyPicker } from '@/features/bodymap/components/BodyPicker';
-import { prototypeVideo } from '@/features/exercises/library';
 import { libraryView } from '@/features/library/browse';
 import { exerciseRecords, visibleRecords } from '@/features/library/performance';
 import { useLibraryStore } from '@/features/library/store';
 import { modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { muscleLabel } from '@/features/onboarding/summaries';
-import { DemoLoop } from '@/features/workout/components/Media';
+import { ExerciseDemo } from '@/features/workout/components/ExerciseDemo';
 import { exerciseCues, exerciseName } from '@/features/workout/format';
 import { useExerciseLibrary, useGeneratorInput } from '@/features/workout/hooks';
 import { useWorkoutStore } from '@/features/workout/store';
@@ -107,7 +106,7 @@ export default function ExerciseScreen() {
       />
       {tab === 'guidance' ? (
         <>
-          {!e.custom ? <DemoLoop video={prototypeVideo(e.slug)} chips={[]} /> : null}
+          {!e.custom ? <ExerciseDemo slug={e.slug} unilateral={e.unilateral} chips={[]} /> : null}
           {!e.custom ? (
             <Card style={styles.card}>
               <AppText variant="h3">{t('exercise.cues')}</AppText>

@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import { AppText, Icon } from '@/components/ui';
 import {
@@ -32,25 +33,41 @@ export function ExerciseThumb({ size = 56 }: { size?: number }) {
 export function DemoLoop({
   chips,
   video = null,
+  mirrorable = false,
 }: {
   chips: { label: string; strong?: boolean }[];
-  /** Prototype clip in development builds; null shows the neutral frame. */
+  /** The profile's own-sex clip in development builds; null shows the neutral frame. */
   video?: number | null;
+  /** One-sided move: the same clip mirrored shows the other side. */
+  mirrorable?: boolean;
 }) {
   const colors = useColors();
   const styles = useStyles();
   const { t } = useTranslation();
+  const [mirrored, setMirrored] = useState(false);
   if (video) {
     // Loaded lazily: only development builds ever have a clip to show.
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { DemoVideo } = require('./DemoVideo') as typeof import('./DemoVideo');
     return (
       <View style={styles.demo}>
-        <DemoVideo source={video} />
+        <DemoVideo source={video} mirrored={mirrored} />
         <View style={styles.demoTop}>
           <AppText variant="caption" color={colors.onCanvasMuted} style={styles.demoLabel}>
             {t('workout.demoPrototype')}
           </AppText>
+          {mirrorable ? (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityState={{ selected: mirrored }}
+              onPress={() => setMirrored((m) => !m)}
+              style={styles.sideButton}
+            >
+              <AppText variant="caption" color={colors.onCanvas} style={styles.demoLabel}>
+                {t('workout.otherSide')}
+              </AppText>
+            </Pressable>
+          ) : null}
         </View>
         <View style={styles.chips}>
           {chips.map((c) => (
@@ -137,7 +154,14 @@ const useStyles = makeStyles(() => ({
     padding: spacing.md,
     justifyContent: 'space-between',
   },
-  demoTop: { flexDirection: 'row' },
+  demoTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  sideButton: {
+    minHeight: 44,
+    justifyContent: 'center',
+    paddingHorizontal: spacing.sm,
+    borderRadius: radius.chip,
+    backgroundColor: colors.bodyCanvas,
+  },
   demoLabel: { fontFamily: fonts.headingSemi, letterSpacing: 1, textTransform: 'uppercase' },
   demoCenter: { alignItems: 'center', paddingVertical: spacing.lg },
   demoNote: { textAlign: 'center' },

@@ -7,14 +7,13 @@ import { AppText, Button, Card, Chip, IconButton, Screen } from '@/components/ui
 import { adviceForItem, adviceLoad, advisedReps } from '@/features/workout/loads';
 import { restFor, usePrefsStore } from '@/features/settings/store';
 import * as Speech from 'expo-speech';
-import { prototypeVideo } from '@/features/exercises/library';
 import type { Exercise } from '@/features/exercises/types';
 import { isMachine } from '@/features/generator/filters';
 import type { SessionItem } from '@/features/generator/types';
 import { sameMuscleGroup } from '@/features/muscles';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { RangeNote } from '@/features/movement/RangeNote';
-import { DemoLoop } from '@/features/workout/components/Media';
+import { ExerciseDemo } from '@/features/workout/components/ExerciseDemo';
 import { SafetyCues } from '@/features/workout/components/SafetyCues';
 import { SwapSheet, type SwapReasonUi } from '@/features/workout/components/SwapSheet';
 import { useNow } from '@/features/workout/components/TimerRing';
@@ -113,8 +112,9 @@ export default function PlayerScreen() {
       }
       footer={<UndoBar message={undoMessage} onDone={clearUndo} />}
     >
-      <DemoLoop
-        video={exercise ? prototypeVideo(exercise.slug) : null}
+      <ExerciseDemo
+        slug={exercise?.slug ?? ''}
+        unilateral={!!exercise?.unilateral}
         chips={[
           { label: targetText(t, step.item, exercise), strong: true },
           ...(exercise?.muscles ?? [])

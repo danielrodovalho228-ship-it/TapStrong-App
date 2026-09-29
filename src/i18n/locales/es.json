@@ -3833,7 +3833,8 @@
       "body_other": "Te sobran {{count}} min de tu tiempo.",
       "add": "¿Añadir 1 ejercicio?"
     },
-    "deload": "Semana de descarga: menos series"
+    "deload": "Semana de descarga: menos series",
+    "otherSide": "Otro lado"
   },
   "account": {
     "eyebrow": "Tu cuenta",
@@ -5115,5 +5116,11 @@
     "title": "Página no encontrada",
     "body": "Esta página no existe o ya no está disponible.",
     "home": "Volver al inicio"
+  },
+  "demoSex": {
+    "question": "Mostrar las demostraciones con:",
+    "woman": "Mujer",
+    "man": "Hombre",
+    "note": "Puedes cambiarlo cuando quieras en Cuerpo → Modelo de cuerpo."
   }
 }

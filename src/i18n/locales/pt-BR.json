@@ -3850,7 +3850,8 @@
       "body_other": "Sobraram {{count}} min do seu tempo.",
       "add": "Adicionar 1 exercício?"
     },
-    "deload": "Semana de alívio: menos séries"
+    "deload": "Semana de alívio: menos séries",
+    "otherSide": "Outro lado"
   },
   "account": {
     "eyebrow": "Sua conta",
@@ -5155,5 +5156,11 @@
     "title": "Página não encontrada",
     "body": "Esta página não existe ou não está mais disponível.",
     "home": "Voltar ao início"
+  },
+  "demoSex": {
+    "question": "Mostrar as demonstrações com:",
+    "woman": "Mulher",
+    "man": "Homem",
+    "note": "Você pode mudar isso quando quiser em Corpo → Modelo de corpo."
   }
 }

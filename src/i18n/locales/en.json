@@ -3833,7 +3833,8 @@
       "body_other": "{{count}} min left in your time.",
       "add": "Add 1 exercise?"
     },
-    "deload": "Deload week: fewer sets"
+    "deload": "Deload week: fewer sets",
+    "otherSide": "Other side"
   },
   "account": {
     "eyebrow": "Your account",
@@ -5115,5 +5116,11 @@
     "title": "Page not found",
     "body": "This page doesn't exist or is no longer available.",
     "home": "Back to Home"
+  },
+  "demoSex": {
+    "question": "Show exercise demos with:",
+    "woman": "Woman",
+    "man": "Man",
+    "note": "You can change this any time in Body → Body model."
   }
 }
