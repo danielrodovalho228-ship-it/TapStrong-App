@@ -1,5 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 
+import { captchaEnabled, requestCaptchaToken, withCaptcha } from '@/features/captcha/captcha';
 import { isNetworkError } from '@/lib/network';
 
 import { useAccountStore } from '../account/store';
@@ -85,9 +86,11 @@ export async function sendPinResetCode(supabase: SupabaseClient | null): Promise
   const auth = await resolveOwnerAuth(supabase);
   if (!auth) return 'no_account';
   try {
+    const captchaToken = await requestCaptchaToken();
+    if (captchaEnabled() && !captchaToken) return 'error';
     const { error } = await supabase.auth.signInWithOtp({
       email: auth.email,
-      options: { shouldCreateUser: false },
+      options: withCaptcha({ shouldCreateUser: false }, captchaToken),
     });
     if (!error) {
       markCodeSent();

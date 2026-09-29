@@ -1,6 +1,7 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 import { useAccountStore } from '@/features/account/store';
+import { captchaEnabled, requestCaptchaToken } from '@/features/captcha/captcha';
 
 import { publicEnv } from './env';
 import { kvStorage } from './storage';
@@ -37,6 +38,11 @@ export async function ensureSession(supabase: SupabaseClient): Promise<boolean> 
   const { data } = await supabase.auth.getSession();
   if (data.session) return true;
   if (useAccountStore.getState().needsSignIn) return false;
-  const { error } = await supabase.auth.signInAnonymously();
+  // A person check before each new anonymous account (security round 1, S2-04).
+  const captchaToken = await requestCaptchaToken();
+  if (captchaEnabled() && !captchaToken) return false;
+  const { error } = await supabase.auth.signInAnonymously(
+    captchaToken ? { options: { captchaToken } } : undefined,
+  );
   return !error;
 }

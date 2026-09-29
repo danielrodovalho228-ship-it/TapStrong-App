@@ -1,5 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 
+import { captchaEnabled, requestCaptchaToken, withCaptcha } from '@/features/captcha/captcha';
 import { ensureSession } from '@/lib/supabase';
 
 import { useAccountStore } from './store';
@@ -44,9 +45,11 @@ export async function sendEmailCode(
       if (!error) return { status: 'sent', mode: 'upgrade' };
       if ((error as AuthError)?.code !== 'email_exists') return failure(error as AuthError);
     }
+    const captchaToken = await requestCaptchaToken();
+    if (captchaEnabled() && !captchaToken) return { status: 'error' };
     const signIn = await supabase.auth.signInWithOtp({
       email,
-      options: { shouldCreateUser: false },
+      options: withCaptcha({ shouldCreateUser: false }, captchaToken),
     });
     return signIn.error ? failure(signIn.error as AuthError) : { status: 'sent', mode: 'signin' };
   } catch {

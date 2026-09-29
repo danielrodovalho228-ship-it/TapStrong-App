@@ -12,8 +12,15 @@ const REQUIRED = [
   ['EXPO_PUBLIC_PRIVACY_URL', 'Privacy Policy link (store requirement)'],
   ['EXPO_PUBLIC_SUPPORT_EMAIL', 'support contact'],
   ['EXPO_PUBLIC_SHARE_BASE_URL', 'invite links'],
+  // Security round 1 (S2-04, S2-07): Turnstile before anonymous sign-in and email codes.
+  ['EXPO_PUBLIC_TURNSTILE_SITE_KEY', 'person check (Cloudflare Turnstile)'],
 ];
-const OPTIONAL = ['EXPO_PUBLIC_SENTRY_DSN', 'EXPO_PUBLIC_POSTHOG_KEY', 'EXPO_PUBLIC_POSTHOG_HOST'];
+const OPTIONAL = [
+  'EXPO_PUBLIC_SENTRY_DSN',
+  'EXPO_PUBLIC_POSTHOG_KEY',
+  'EXPO_PUBLIC_POSTHOG_HOST',
+  'EXPO_PUBLIC_TURNSTILE_BASE_URL',
+];
 
 const onlyProduction = process.argv.includes('--if-production');
 const profile = process.env.EAS_BUILD_PROFILE;

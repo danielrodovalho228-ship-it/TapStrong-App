@@ -5142,5 +5142,9 @@
     "woman": "Woman",
     "man": "Man",
     "note": "You can change this any time in Body → Body model."
+  },
+  "captcha": {
+    "title": "Quick check",
+    "body": "Confirm you're a person. This keeps TapStrong's coach and sign-in safe from bots."
   }
 }

@@ -5142,5 +5142,9 @@
     "woman": "Mujer",
     "man": "Hombre",
     "note": "Puedes cambiarlo cuando quieras en Cuerpo → Modelo de cuerpo."
+  },
+  "captcha": {
+    "title": "Comprobación rápida",
+    "body": "Confirma que eres una persona. Así el coach y el inicio de sesión de TapStrong quedan a salvo de bots."
   }
 }

@@ -16,6 +16,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { ThemeGate } from '@/features/appearance/ThemeGate';
 import { refreshBilling } from '@/features/billing/actions';
+import { CaptchaHost } from '@/features/captcha/CaptchaHost';
 import { useNotificationSync } from '@/features/notifications/useNotificationSync';
 import { useSyncProfileSettings } from '@/features/onboarding/sync';
 import { useWorkoutStore } from '@/features/workout/store';
@@ -68,6 +69,8 @@ export default function RootLayout() {
         <SafeAreaProvider>
           <ThemeGate>
             <AppStack />
+            {/* Turnstile check for anonymous sign-in and email codes (S2-04). */}
+            <CaptchaHost />
           </ThemeGate>
         </SafeAreaProvider>
       </QueryClientProvider>

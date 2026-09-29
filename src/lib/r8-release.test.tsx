@@ -38,6 +38,7 @@ const GOOD = {
   EXPO_PUBLIC_TERMS_URL: 'https://tapstrong.app/terms',
   EXPO_PUBLIC_PRIVACY_URL: 'https://tapstrong.app/privacy',
   EXPO_PUBLIC_SHARE_BASE_URL: 'https://tapstrong.app',
+  EXPO_PUBLIC_TURNSTILE_SITE_KEY: '0x4AAAAAAAtest',
   EXPO_PUBLIC_SUPPORT_EMAIL: 'help@tapstrong.app',
 };
 const envCheck = (patch: Record<string, string>) =>
