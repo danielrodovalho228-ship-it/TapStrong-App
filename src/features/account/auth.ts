@@ -2,6 +2,8 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 
 import { ensureSession } from '@/lib/supabase';
 
+import { useAccountStore } from './store';
+
 /**
  * Save progress with an email code (SPEC §8: Apple / Google / email).
  *
@@ -34,10 +36,14 @@ export async function sendEmailCode(
   if (!isEmail(email)) return { status: 'invalid' };
   if (!supabase) return { status: 'offline' };
   try {
-    if (!(await ensureSession(supabase))) return { status: 'offline' };
-    const { error } = await supabase.auth.updateUser({ email });
-    if (!error) return { status: 'sent', mode: 'upgrade' };
-    if ((error as AuthError)?.code !== 'email_exists') return failure(error as AuthError);
+    // "Sign in again" (QA R10 P2): straight to the account's code, never
+    // through a new anonymous user.
+    if (!useAccountStore.getState().needsSignIn) {
+      if (!(await ensureSession(supabase))) return { status: 'offline' };
+      const { error } = await supabase.auth.updateUser({ email });
+      if (!error) return { status: 'sent', mode: 'upgrade' };
+      if ((error as AuthError)?.code !== 'email_exists') return failure(error as AuthError);
+    }
     const signIn = await supabase.auth.signInWithOtp({
       email,
       options: { shouldCreateUser: false },

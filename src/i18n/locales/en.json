@@ -4759,12 +4759,14 @@
       "rate_limited": "Too many codes in a short time. Wait a few minutes and try again.",
       "wrong_code": "That code didn’t work. Check the latest email and try again.",
       "error": "Something went wrong. Try again.",
-      "sign_in_again": "The code worked, but this phone was signed out. Sign in again from Account with your email, then reset the PIN.",
-      "wait": "Wait a minute before asking for another code.",
-      "locked": "Too many wrong codes. Try again in 15 minutes."
+      "wait_one": "Wait {{count}} second before asking for another code.",
+      "wait_other": "Wait {{count}} seconds before asking for another code.",
+      "locked_one": "Too many wrong codes. Try again in {{count}} minute.",
+      "locked_other": "Too many wrong codes. Try again in {{count}} minutes."
     },
     "createTitle": "Create the parent PIN",
-    "createBody": "We’ll send a sign-in code to the account owner’s email ({{email}}). Then create the PIN."
+    "createBody": "We’ll send a sign-in code to the account owner’s email ({{email}}). Then create the PIN.",
+    "signedOut": "The code worked, but this phone was signed out of the account. Set the new PIN now, then open Account and sign in again with your email."
   },
   "week": {
     "title": "This week",

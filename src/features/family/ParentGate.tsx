@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { AppText, Button, Card, Notice, TextField, TextLink } from '@/components/ui';
 import { getSupabase } from '@/lib/supabase';
@@ -26,6 +26,7 @@ import {
   verifyPinResetCode,
 } from './pinReset';
 import { isOwnerProfile, useOwnerIdentityStore } from './ownerIdentity';
+import { codeLockMinutesLeft, codeWaitSeconds, useResetCodeStore } from './resetCodeLock';
 import { activeProfile, useFamilyStore } from './store';
 
 /**
@@ -212,6 +213,9 @@ export function ParentPinReset({
   const colors = useColors();
   const { t } = useTranslation();
   const [step, setStep] = useState<'intro' | 'code' | 'new'>('intro');
+  const lockedUntil = useResetCodeStore((s) => s.lockedUntil);
+  // The code passed but the phone lost its session (QA R10-03).
+  const [signedOut, setSignedOut] = useState(false);
   const [code, setCode] = useState('');
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -229,13 +233,16 @@ export function ParentPinReset({
 
   if (step === 'new')
     return (
-      <ParentPinSetup
-        onDone={() => {
-          void clearPinLock(getSupabase());
-          onDone();
-        }}
-        onCancel={onCancel}
-      />
+      <View style={styles.card}>
+        {signedOut ? <Notice tone="warning">{t('pinReset.signedOut')}</Notice> : null}
+        <ParentPinSetup
+          onDone={() => {
+            void clearPinLock(getSupabase());
+            onDone();
+          }}
+          onCancel={onCancel}
+        />
+      </View>
     );
 
   const send = async () => {
@@ -244,6 +251,7 @@ export function ParentPinReset({
     const result = await sendPinResetCode(getSupabase());
     setBusy(false);
     if (result === 'sent') setStep('code');
+    else if (result === 'wait') setMessage(t('pinReset.errors.wait', { count: codeWaitSeconds() }));
     else setMessage(t(`pinReset.errors.${result}`));
   };
 
@@ -252,9 +260,14 @@ export function ParentPinReset({
     setMessage(null);
     const result = await verifyPinResetCode(getSupabase(), code);
     setBusy(false);
-    if (result === 'ok') setStep('new');
+    if (result === 'ok' || result === 'ok_signed_out') {
+      setSignedOut(result === 'ok_signed_out');
+      setStep('new');
+    } else if (result === 'locked') setMessage(null);
     else setMessage(t(`pinReset.errors.${result}`));
   };
+  // Wrong codes lock only the code, never the PIN (R10 decision 1).
+  const codeLocked = lockedUntil ? codeLockMinutesLeft() : 0;
 
   return (
     <Card style={styles.card}>
@@ -283,14 +296,16 @@ export function ParentPinReset({
           <Button
             label={t('pinReset.verify')}
             loading={busy}
-            disabled={code.trim().length < 6}
+            disabled={codeLocked > 0 || code.trim().length < 6}
             onPress={verify}
           />
         </>
       )}
-      {message ? (
+      {message || (step === 'code' && codeLocked > 0) ? (
         <AppText variant="caption" color={colors.accentText}>
-          {message}
+          {step === 'code' && codeLocked > 0
+            ? t('pinReset.errors.locked', { count: codeLocked })
+            : message}
         </AppText>
       ) : null}
       <Button variant="ghost" label={t('common.back')} onPress={onCancel} />

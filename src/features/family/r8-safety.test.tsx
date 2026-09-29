@@ -320,31 +320,55 @@ describe('R9-05 the code session always ends, and failures are never "ok"', () =
     reset.resetCodeCooldown();
   });
 
-  it('restore returns { error } (expired token): "sign in again", never ok, no anonymous sync', async () => {
+  it('restore returns { error } (expired token): the owner still sets the PIN, then signs in again (R10-03)', async () => {
     const c = auth({ setSession: jest.fn(async () => ({ error: { status: 400 } })) });
-    expect(await reset.verifyPinResetCode(c, '123456')).toBe('sign_in_again');
+    expect(await reset.verifyPinResetCode(c, '123456')).toBe('ok_signed_out');
     expect(account.useAccountStore.getState()).toMatchObject({ saved: false, needsSignIn: true });
   });
 
-  it('restore throws (offline): "sign in again"', async () => {
+  it('restore throws (offline): the owner still sets the PIN', async () => {
     const c = auth({
       setSession: jest.fn(async () => {
         throw new Error('Network request failed');
       }),
     });
-    expect(await reset.verifyPinResetCode(c, '123456')).toBe('sign_in_again');
+    expect(await reset.verifyPinResetCode(c, '123456')).toBe('ok_signed_out');
   });
 
-  it('no previous session: "sign in again", not ok', async () => {
+  it('no previous session: the verified owner session is kept, and the account is back (R10-03)', async () => {
+    account.useAccountStore.getState().update({ saved: false, needsSignIn: true });
     const c = auth({ getSession: jest.fn(async () => ({ data: { session: null } })) });
-    expect(await reset.verifyPinResetCode(c, '123456')).toBe('sign_in_again');
+    expect(await reset.verifyPinResetCode(c, '123456')).toBe('ok');
+    expect(c.auth.signOut).not.toHaveBeenCalled();
+    expect(account.useAccountStore.getState()).toMatchObject({ saved: true, needsSignIn: false });
   });
 
-  it('sign-out returns { error } twice: error, the owner session is not reported as ended', async () => {
+  it('no previous session and another user: signed out, error', async () => {
+    const c = auth({
+      getSession: jest.fn(async () => ({ data: { session: null } })),
+      verifyOtp: jest.fn(async () => ({ data: { user: { id: 'teen-user' } }, error: null })),
+    });
+    expect(await reset.verifyPinResetCode(c, '123456')).toBe('error');
+    expect(c.auth.signOut).toHaveBeenCalledWith({ scope: 'local' });
+    expect(account.useAccountStore.getState().saved).toBe(true);
+  });
+
+  it('sign-out returns { error } twice: the previous session is still put back (R10 P2)', async () => {
+    // supabase-js 2.117 removes the local session even when the call fails.
     const signOut = jest.fn(async () => ({ error: { status: 500 } }));
     const c = auth({ signOut });
-    expect(await reset.verifyPinResetCode(c, '123456')).toBe('error');
+    expect(await reset.verifyPinResetCode(c, '123456')).toBe('ok');
     expect(signOut).toHaveBeenCalledTimes(2);
+    expect(c.auth.setSession).toHaveBeenCalledWith({ access_token: 'a', refresh_token: 'r' });
+  });
+
+  it('sign-out and restore both fail: "sign in again", never plain ok', async () => {
+    const c = auth({
+      signOut: jest.fn(async () => ({ error: { status: 500 } })),
+      setSession: jest.fn(async () => ({ error: { status: 400 } })),
+    });
+    expect(await reset.verifyPinResetCode(c, '123456')).toBe('ok_signed_out');
+    expect(account.useAccountStore.getState()).toMatchObject({ saved: false, needsSignIn: true });
   });
 
   it('sign-out throws once, then works: retried, ok', async () => {
@@ -357,12 +381,22 @@ describe('R9-05 the code session always ends, and failures are never "ok"', () =
     expect(signOut).toHaveBeenCalledTimes(2);
   });
 
-  it('wrong user and sign-out fails: error, never ok', async () => {
+  it('wrong user and sign-out fails: error, never ok, the phone session put back', async () => {
     const c = auth({
       verifyOtp: jest.fn(async () => ({ data: { user: { id: 'teen-user' } }, error: null })),
       signOut: jest.fn(async () => ({ error: { status: 500 } })),
     });
     expect(await reset.verifyPinResetCode(c, '123456')).toBe('error');
+    expect(c.auth.setSession).toHaveBeenCalled();
+  });
+
+  it('wrong user and nothing can be restored: error, and "sign in again"', async () => {
+    const c = auth({
+      verifyOtp: jest.fn(async () => ({ data: { user: { id: 'teen-user' } }, error: null })),
+      setSession: jest.fn(async () => ({ error: { status: 400 } })),
+    });
+    expect(await reset.verifyPinResetCode(c, '123456')).toBe('error');
+    expect(account.useAccountStore.getState().needsSignIn).toBe(true);
   });
 });
 
@@ -371,6 +405,8 @@ describe('R9 P2 code limits', () => {
   const reset = require('./pinReset') as typeof import('./pinReset');
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const pin = require('./parentPin') as typeof import('./parentPin');
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const codeLock = require('./resetCodeLock') as typeof import('./resetCodeLock');
   const client = (over: Record<string, unknown> = {}) =>
     ({
       auth: {
@@ -401,18 +437,75 @@ describe('R9 P2 code limits', () => {
     expect(results.slice(1).every((r) => r === 'wait')).toBe(true);
     expect(c.auth.signInWithOtp).toHaveBeenCalledTimes(1);
     const now = clock.now;
-    clock.now = () => new Date(now().getTime() + 61_000);
-    expect(await reset.sendPinResetCode(c)).toBe('sent');
-    clock.now = now;
+    try {
+      clock.now = () => new Date(now().getTime() + 61_000);
+      expect(await reset.sendPinResetCode(c)).toBe('sent');
+    } finally {
+      clock.now = now;
+    }
   });
 
-  it('5 wrong codes lock the reset like the PIN, for 15 minutes', async () => {
+  it('the one-a-minute limit is kept in the secure store, and a clock set back still waits', async () => {
+    const c = client();
+    expect(await reset.sendPinResetCode(c)).toBe('sent');
+    expect(codeLock.useResetCodeStore.getState().lastCodeAt).not.toBeNull();
+    const now = clock.now;
+    try {
+      clock.now = () => new Date(now().getTime() - 3_600_000);
+      expect(await reset.sendPinResetCode(c)).toBe('wait');
+      expect(codeLock.codeWaitSeconds()).toBe(60);
+    } finally {
+      clock.now = now;
+    }
+  });
+
+  it('5 wrong codes lock the code for 15 minutes, never the PIN (R10 decision 1)', async () => {
     const c = client();
     const results = [];
     for (let n = 0; n < 6; n++) results.push(await reset.verifyPinResetCode(c, '111111'));
     expect(results.slice(0, 4)).toEqual(['wrong_code', 'wrong_code', 'wrong_code', 'wrong_code']);
     expect(results[4]).toBe('locked');
     expect(results[5]).toBe('locked');
-    expect(pin.lockMinutesLeft()).toBeGreaterThan(0);
+    expect(codeLock.codeLockMinutesLeft()).toBe(15);
+    expect(pin.lockMinutesLeft()).toBe(0);
+    expect(pin.useParentPinStore.getState().failures).toBe(0);
+  });
+
+  it('5 wrong PINs never block the email code (R10 decision 1)', async () => {
+    pin.setParentPin('1234');
+    for (let n = 0; n < 5; n++) pin.checkParentPin('9999');
+    expect(pin.lockMinutesLeft()).toBe(15);
+    const c = client({
+      getSession: jest.fn(async () => ({
+        data: { session: { access_token: 'a', refresh_token: 'r' } },
+      })),
+      verifyOtp: jest.fn(async () => ({ data: { user: { id: 'owner-user' } }, error: null })),
+    });
+    expect(await reset.verifyPinResetCode(c, '123456')).toBe('ok');
+  });
+
+  it('wrong codes are reported to the server, and a server lock applies on the phone', async () => {
+    const until = new Date(clock.now().getTime() + 10 * 60000).toISOString();
+    const rpc = jest.fn(async (name: string) =>
+      name === 'pin_reset_code_locked_until'
+        ? { data: null, error: null }
+        : { data: until, error: null },
+    );
+    const account = (
+      jest.requireActual('@/features/account/store') as typeof import('@/features/account/store')
+    ).useAccountStore;
+    account.getState().update({ saved: true });
+    const c = { ...client(), rpc } as never as Parameters<typeof reset.verifyPinResetCode>[0];
+    expect(await reset.verifyPinResetCode(c, '111111')).toBe('wrong_code');
+    expect(rpc).toHaveBeenCalledWith('pin_reset_code_failed');
+    expect(rpc).not.toHaveBeenCalledWith('parent_pin_failed');
+    expect(codeLock.codeLockMinutesLeft()).toBe(10);
+    // Cleared app data: the lock comes back from the server before any try.
+    codeLock.useResetCodeStore.getState().reset();
+    const locked = jest.fn(async () => ({ data: until, error: null }));
+    const c2 = { ...client(), rpc: locked } as never as Parameters<
+      typeof reset.verifyPinResetCode
+    >[0];
+    expect(await reset.verifyPinResetCode(c2, '123456')).toBe('locked');
   });
 });

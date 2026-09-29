@@ -4793,12 +4793,16 @@
       "rate_limited": "Muitos códigos em pouco tempo. Espere alguns minutos e tente de novo.",
       "wrong_code": "Esse código não funcionou. Veja o e-mail mais recente e tente de novo.",
       "error": "Algo deu errado. Tente de novo.",
-      "sign_in_again": "O código funcionou, mas este celular saiu da conta. Entre de novo em Conta com o seu e-mail e depois redefina o PIN.",
-      "wait": "Espere um minuto antes de pedir outro código.",
-      "locked": "Códigos errados demais. Tente de novo em 15 minutos."
+      "wait_one": "Espere {{count}} segundo antes de pedir outro código.",
+      "wait_other": "Espere {{count}} segundos antes de pedir outro código.",
+      "locked_one": "Códigos errados demais. Tente de novo em {{count}} minuto.",
+      "locked_other": "Códigos errados demais. Tente de novo em {{count}} minutos.",
+      "wait_zero": "Espere {{count}} segundos antes de pedir outro código.",
+      "locked_zero": "Códigos errados demais. Tente de novo em {{count}} minutos."
     },
     "createTitle": "Criar o PIN dos pais",
-    "createBody": "Vamos enviar um código de acesso para o e-mail do titular da conta ({{email}}). Depois crie o PIN."
+    "createBody": "Vamos enviar um código de acesso para o e-mail do titular da conta ({{email}}). Depois crie o PIN.",
+    "signedOut": "O código funcionou, mas este celular saiu da conta. Crie agora o novo PIN e depois abra Conta e entre de novo com o seu e-mail."
   },
   "week": {
     "title": "Esta semana",

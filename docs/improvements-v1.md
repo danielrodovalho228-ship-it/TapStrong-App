@@ -5,6 +5,7 @@ Phase 14 instructions (Daniel): implement packages A, B, C and D in this order, 
 ---
 
 Keep TapStrong's essence. Non-negotiables:
+
 - The tap body map with small dots is the heart of the app: goals, recovery, library, and "muscles worked" all use the same `BodyMapCanvas` dots.
 - The coach interview, Repair, Movement that hurts, age modes (teen 13–17, adult, 60+), safety filters and released-only exercises stay exactly as they are.
 - Swap sheet keeps Daniel's rule: up to 5 recommended alternatives, replace only.

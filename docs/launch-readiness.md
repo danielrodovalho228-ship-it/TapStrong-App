@@ -47,15 +47,15 @@ Situação na Fase 19 (28/09/2026), depois da rodada 7 de QA. O código das Fase
 
 O `.env` fica só no seu computador e não vai para o build da nuvem. As variáveis públicas do app entram no EAS: `npx eas-cli@latest env:create --environment production --name NOME --value VALOR --visibility plaintext` (ou pelo painel expo.dev → projeto → Environment variables). Os segredos (chave do Claude, service role, webhook) nunca entram aqui: ficam nos segredos do Supabase.
 
-| Variável | Obrigatória no build de produção | Para quê |
-|---|---|---|
-| `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY` | sim | conta, sincronização e funções |
-| `EXPO_PUBLIC_REVENUECAT_IOS_KEY`, `EXPO_PUBLIC_REVENUECAT_ANDROID_KEY` | sim | assinaturas |
-| `EXPO_PUBLIC_TERMS_URL`, `EXPO_PUBLIC_PRIVACY_URL` | sim | links de Termos e Privacidade (exigência das lojas) |
-| `EXPO_PUBLIC_SUPPORT_EMAIL` | sim | contato de suporte |
-| `EXPO_PUBLIC_SHARE_BASE_URL` | sim | link de convite |
-| `EXPO_PUBLIC_SENTRY_DSN`, `EXPO_PUBLIC_POSTHOG_KEY`, `EXPO_PUBLIC_POSTHOG_HOST` | não | erros e uso |
-| `EXPO_PUBLIC_KIDS_UNDER_13_ENABLED` | não (desligado) | menores de 13, só na versão 2 |
+| Variável                                                                        | Obrigatória no build de produção | Para quê                                            |
+| ------------------------------------------------------------------------------- | -------------------------------- | --------------------------------------------------- |
+| `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`                     | sim                              | conta, sincronização e funções                      |
+| `EXPO_PUBLIC_REVENUECAT_IOS_KEY`, `EXPO_PUBLIC_REVENUECAT_ANDROID_KEY`          | sim                              | assinaturas                                         |
+| `EXPO_PUBLIC_TERMS_URL`, `EXPO_PUBLIC_PRIVACY_URL`                              | sim                              | links de Termos e Privacidade (exigência das lojas) |
+| `EXPO_PUBLIC_SUPPORT_EMAIL`                                                     | sim                              | contato de suporte                                  |
+| `EXPO_PUBLIC_SHARE_BASE_URL`                                                    | sim                              | link de convite                                     |
+| `EXPO_PUBLIC_SENTRY_DSN`, `EXPO_PUBLIC_POSTHOG_KEY`, `EXPO_PUBLIC_POSTHOG_HOST` | não                              | erros e uso                                         |
+| `EXPO_PUBLIC_KIDS_UNDER_13_ENABLED`                                             | não (desligado)                  | menores de 13, só na versão 2                       |
 
 `npm run env:check` lista o que falta; o build de produção roda essa checagem e para se faltar alguma obrigatória.
 

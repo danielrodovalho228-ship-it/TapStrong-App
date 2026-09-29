@@ -1,12 +1,20 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 
-import { clock } from '@/lib/clock';
 import { isNetworkError } from '@/lib/network';
 
 import { useAccountStore } from '../account/store';
 
 import { useOwnerIdentityStore, type OwnerAuth } from './ownerIdentity';
-import { countWrongTry, lockMinutesLeft } from './parentPin';
+import {
+  clearCodeLock,
+  codeLockMinutesLeft,
+  codeWaitSeconds,
+  countWrongCode,
+  markCodeSent,
+  pullCodeLock,
+  reportCodeCheck,
+  useResetCodeStore,
+} from './resetCodeLock';
 
 /**
  * Forgotten parent PIN (Phase 12, Daniel): the account owner signs in again
@@ -18,7 +26,8 @@ import { countWrongTry, lockMinutesLeft } from './parentPin';
  * owner's email in the secure record, and only the owner's user passes.
  */
 export type ResetSend = 'sent' | 'no_account' | 'offline' | 'rate_limited' | 'wait' | 'error';
-export type ResetVerify = 'ok' | 'wrong_code' | 'locked' | 'offline' | 'error' | 'sign_in_again';
+/** "ok_signed_out": the owner's code passed, but the phone lost its session (QA R10-03). */
+export type ResetVerify = 'ok' | 'ok_signed_out' | 'wrong_code' | 'locked' | 'offline' | 'error';
 
 type AuthError = { code?: string; status?: number } | null;
 
@@ -64,17 +73,14 @@ export async function resolveOwnerAuth(supabase: SupabaseClient | null): Promise
   }
 }
 
-/** One code a minute at most (QA R9 P2: 20 taps sent 20 emails). */
-export const CODE_COOLDOWN_MS = 60_000;
-let lastCodeAt = 0;
+export { CODE_COOLDOWN_MS } from './resetCodeLock';
 /** Tests only. */
-export const resetCodeCooldown = () => {
-  lastCodeAt = 0;
-};
+export const resetCodeCooldown = () => useResetCodeStore.getState().reset();
 
 export async function sendPinResetCode(supabase: SupabaseClient | null): Promise<ResetSend> {
   if (!supabase) return ownerAuth() ? 'offline' : 'no_account';
-  if (clock.now().getTime() - lastCodeAt < CODE_COOLDOWN_MS) return 'wait';
+  // One code a minute at most (QA R9 P2), kept in the secure store (R10).
+  if (codeWaitSeconds() > 0) return 'wait';
   const auth = await resolveOwnerAuth(supabase);
   if (!auth) return 'no_account';
   try {
@@ -83,7 +89,7 @@ export async function sendPinResetCode(supabase: SupabaseClient | null): Promise
       options: { shouldCreateUser: false },
     });
     if (!error) {
-      lastCodeAt = clock.now().getTime();
+      markCodeSent();
       return 'sent';
     }
     if (isNetworkError(error)) return 'offline';
@@ -116,36 +122,43 @@ async function succeeded(call: () => AuthCall): Promise<boolean> {
 }
 
 /**
- * Ends the code's session and puts back the phone's own (QA R8-05, R9-05):
- * - sign-out failed (twice): the owner's code session could stay open on
- *   this phone → "signout_failed", never success;
- * - the previous session can't come back (expired, offline) or there was
- *   none: the phone is signed out → "restore_failed". The account is marked
- *   "sign in again" so no background sync starts a new anonymous account.
+ * Ends the code's session and puts back the phone's own (QA R8-05, R9-05,
+ * R10 P2). supabase-js removes the local session even when the sign-out call
+ * fails, so the previous session is always put back:
+ * - restored: "ok";
+ * - not restored and the sign-out failed: the code's session may still be on
+ *   the phone → "signout_failed";
+ * - not restored (expired, offline): the phone is signed out →
+ *   "restore_failed". The account is marked "sign in again" so no background
+ *   sync starts a new anonymous account.
  */
 async function endCodeSession(
   supabase: SupabaseClient,
-  before: Session,
+  before: NonNullable<Session>,
 ): Promise<'ok' | 'signout_failed' | 'restore_failed'> {
   const signOut = () => supabase.auth.signOut({ scope: 'local' }) as AuthCall;
-  if (!(await succeeded(signOut)) && !(await succeeded(signOut))) return 'signout_failed';
-  const restored =
-    !!before &&
-    (await succeeded(
-      () =>
-        supabase.auth.setSession({
-          access_token: before.access_token,
-          refresh_token: before.refresh_token,
-        }) as AuthCall,
-    ));
+  const signedOut = (await succeeded(signOut)) || (await succeeded(signOut));
+  const restored = await succeeded(
+    () =>
+      supabase.auth.setSession({
+        access_token: before.access_token,
+        refresh_token: before.refresh_token,
+      }) as AuthCall,
+  );
   if (restored) return 'ok';
   useAccountStore.getState().update({ saved: false, needsSignIn: true });
-  return 'restore_failed';
+  return signedOut ? 'restore_failed' : 'signout_failed';
 }
 
 /**
- * Checks the code, and that it signed in the owner's own user. Either way the
- * code's session is signed out and the phone goes back to the session it had.
+ * Checks the code, and that it signed in the owner's own user.
+ * - Another user: its session is ended, the phone's own put back → "error".
+ * - The owner, and the phone had a session: the code's session is only proof,
+ *   so it is ended and the previous one put back. If that fails the owner
+ *   still sets the new PIN ("ok_signed_out") and signs in again from Account:
+ *   a failed restore must never lock the owner out (QA R10-03).
+ * - The owner, and the phone had no session (signed out by an earlier
+ *   reset): the verified owner session is kept, so the account is back.
  */
 export async function verifyPinResetCode(
   supabase: SupabaseClient | null,
@@ -154,10 +167,16 @@ export async function verifyPinResetCode(
   const auth = ownerAuth();
   if (!auth) return 'error';
   if (!supabase) return 'offline';
-  // Wrong codes share the parent PIN's lockout: 5 in a row lock 15 minutes.
-  if (lockMinutesLeft() > 0) return 'locked';
+  // Wrong codes have their own lockout, apart from the PIN's (R10 decision 1).
+  await pullCodeLock(supabase);
+  if (codeLockMinutesLeft() > 0) return 'locked';
+  const wrong = async (): Promise<ResetVerify> => {
+    const result = countWrongCode();
+    await reportCodeCheck(supabase, result);
+    return result === 'locked' ? 'locked' : 'wrong_code';
+  };
   const token = code.replace(/\s/g, '');
-  if (!/^\d{6,10}$/.test(token)) return countWrongTry() === 'locked' ? 'locked' : 'wrong_code';
+  if (!/^\d{6,10}$/.test(token)) return wrong();
   try {
     const before = await currentSession(supabase);
     const { data, error } = await supabase.auth.verifyOtp({
@@ -166,17 +185,28 @@ export async function verifyPinResetCode(
       type: 'email',
     });
     if (!error) {
-      // The code's own session is only proof: it is always signed out and
-      // the phone goes back to the session it had (QA R8-05, Phase 21).
-      const ended = await endCodeSession(supabase, before);
-      if (ended === 'signout_failed') return 'error';
-      if (ended === 'restore_failed') return 'sign_in_again';
-      return data?.user?.id === auth.userId ? 'ok' : 'error';
+      const owner = data?.user?.id === auth.userId;
+      if (!before) {
+        if (!owner) {
+          await succeeded(() => supabase.auth.signOut({ scope: 'local' }) as AuthCall);
+          return 'error';
+        }
+        useAccountStore.getState().update({ saved: true, needsSignIn: false, email: auth.email });
+      } else {
+        const ended = await endCodeSession(supabase, before);
+        if (!owner) return 'error';
+        if (ended !== 'ok') {
+          clearCodeLock();
+          return 'ok_signed_out';
+        }
+      }
+      clearCodeLock();
+      await reportCodeCheck(supabase, 'ok');
+      return 'ok';
     }
     if (isNetworkError(error)) return 'offline';
     const e = error as AuthError;
-    if (e?.code === 'otp_expired' || e?.status === 403)
-      return countWrongTry() === 'locked' ? 'locked' : 'wrong_code';
+    if (e?.code === 'otp_expired' || e?.status === 403) return wrong();
     return 'error';
   } catch {
     return 'offline';

@@ -4759,12 +4759,14 @@
       "rate_limited": "Demasiados códigos en poco tiempo. Espera unos minutos e inténtalo de nuevo.",
       "wrong_code": "Ese código no funcionó. Revisa el último correo e inténtalo de nuevo.",
       "error": "Algo salió mal. Inténtalo de nuevo.",
-      "sign_in_again": "El código funcionó, pero este teléfono cerró la sesión. Vuelve a iniciar sesión en Cuenta con tu correo y después restablece el PIN.",
-      "wait": "Espera un minuto antes de pedir otro código.",
-      "locked": "Demasiados códigos incorrectos. Prueba de nuevo en 15 minutos."
+      "wait_one": "Espera {{count}} segundo antes de pedir otro código.",
+      "wait_other": "Espera {{count}} segundos antes de pedir otro código.",
+      "locked_one": "Demasiados códigos incorrectos. Prueba de nuevo en {{count}} minuto.",
+      "locked_other": "Demasiados códigos incorrectos. Prueba de nuevo en {{count}} minutos."
     },
     "createTitle": "Crear el PIN de padres",
-    "createBody": "Enviaremos un código de acceso al correo del titular de la cuenta ({{email}}). Luego crea el PIN."
+    "createBody": "Enviaremos un código de acceso al correo del titular de la cuenta ({{email}}). Luego crea el PIN.",
+    "signedOut": "El código funcionó, pero este teléfono cerró la sesión de la cuenta. Crea ahora el nuevo PIN y después abre Cuenta y vuelve a iniciar sesión con tu correo."
   },
   "week": {
     "title": "Esta semana",

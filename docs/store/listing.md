@@ -178,6 +178,7 @@ every screen in both modes are in `docs/screenshots/theme/light/` and
 final store images still come from the preview build on a phone.
 
 > **Só depois da aprovação do revisor (QA R8 P2):** a frase abaixo fica fora da descrição até o revisor certificado aprovar a biblioteca. Quando aprovar, acrescentar na seção de segurança de cada idioma:
+>
 > - EN: "Every exercise is checked by a certified coach before it reaches you."
 > - ES: "Cada ejercicio lo revisa un entrenador certificado antes de llegar a ti."
 > - PT: "Cada exercício é revisado por um profissional certificado antes de chegar a você."

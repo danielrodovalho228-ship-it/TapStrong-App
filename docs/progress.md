@@ -1214,6 +1214,7 @@ Base: `docs/improvements-v1.md`; mapa de telas × mockups em `docs/phase14-scree
 ### Feito
 
 **A — Semana, programa e cargas**
+
 - Faixa da semana na Home, na Home 60+ e na lista de treinos (hoje contornado, ponto cheio = treinou, vazado = planejado); tocar num dia abre o registro ou a prévia.
 - Blocos de programa de 4 a 6 semanas, com a última semana de deload (40% menos séries). Cada treino tem nome do dia (Push, Pull, Pernas, Superior…) e o resumo "N exercícios · N min", com kcal só para adultos e 60+.
 - Carga sugerida e progressão determinística:
@@ -1227,6 +1228,7 @@ Base: `docs/improvements-v1.md`; mapa de telas × mockups em `docs/phase14-scree
 - Adolescente gerenciado só compartilha se o responsável ligar.
 
 **B — Biblioteca**
+
 - Nova aba Biblioteca com os mesmos pontos do BodyMapCanvas (frente/costas), busca e filtros. Só aparecem exercícios seguros; o resto fica em "Não é para você agora", com o motivo.
 - Página do exercício:
   - orientação: demo, dicas, erros comuns, músculos;
@@ -1236,6 +1238,7 @@ Base: `docs/improvements-v1.md`; mapa de telas × mockups em `docs/phase14-scree
 - Criar exercício (só adultos): nunca entra no plano automático, só no Personalizado, e passa pelas mesmas checagens de restrição e dor. Aparece como "Não revisado por treinador".
 
 **C — Equipamentos**
+
 - ~60 itens em grupos, com liga/desliga em Configurações → Equipamentos.
 - Predefinições: Academia completa, Academia pequena, Casa, Só peso corporal, Hotel.
 - Locais salvos (ex.: Academia e Casa), trocáveis no topo do treino; o treino é refeito para o local.
@@ -1243,6 +1246,7 @@ Base: `docs/improvements-v1.md`; mapa de telas × mockups em `docs/phase14-scree
 - Teste de cobertura: cada predefinição mantém 5+ opções por músculo × posição.
 
 **D — Atividade, conquistas, corpo, configurações**
+
 - **Progresso → Atividade:**
   - período (7 dias a tudo), treinos, horas, volume e mobilidade;
   - calendário do mês;
@@ -1299,15 +1303,16 @@ Base: `docs/improvements-v1.md`; mapa de telas × mockups em `docs/phase14-scree
 
 Daniel: "Sobre as decisões seguir suas recomendações."
 
-| Pergunta | Decisão | Situação |
-|---|---|---|
-| Apple Saúde / Health Connect | Deixar para depois do lançamento (biblioteca nativa, rótulos de privacidade e revisão das lojas) | Não feito |
-| Som ao fim do timer | Fazer | **Feito** |
-| Equipamento que falta, na troca | Fazer como texto, sem virar opção extra | **Feito** |
-| Avaliar o app | Depois das contas das lojas | Não feito |
-| Velocidade do PIN | Você testa no Expo Go; nativo só se passar de 1 s | Aguardando o teste |
+| Pergunta                        | Decisão                                                                                          | Situação           |
+| ------------------------------- | ------------------------------------------------------------------------------------------------ | ------------------ |
+| Apple Saúde / Health Connect    | Deixar para depois do lançamento (biblioteca nativa, rótulos de privacidade e revisão das lojas) | Não feito          |
+| Som ao fim do timer             | Fazer                                                                                            | **Feito**          |
+| Equipamento que falta, na troca | Fazer como texto, sem virar opção extra                                                          | **Feito**          |
+| Avaliar o app                   | Depois das contas das lojas                                                                      | Não feito          |
+| Velocidade do PIN               | Você testa no Expo Go; nativo só se passar de 1 s                                                | Aguardando o teste |
 
 **Feito:**
+
 - **Som:** um toque curto, gerado por nós (sem licença de terceiros), quando o descanso ou uma contagem do aquecimento/desaquecimento chega a zero.
   - Liga/desliga em Preferências de treino → Sons (ligado por padrão).
   - Respeita o modo silencioso e não pausa a música da pessoa.
@@ -1460,6 +1465,7 @@ Texto da QA em `docs/qa-round-5.md` (`5157a76`). Commits por grupo: P1 (`4ec6700
   - encerrar um plano de recuperação.
 
   Adicionar continua livre. A edição agora é um rascunho, salvo em "Continuar".
+
 - **R5-05 Alvos do plano:** pernas → quadríceps, posterior e glúteos; puxar → dorsais e costas; empurrar → peito e ombros.
 - **R5-06 Push com 5 exercícios:** nos dias divididos, o mesmo músculo pode aparecer duas vezes, de outro ângulo.
 - **R5-07 Abas:**
@@ -1551,7 +1557,7 @@ Especificação: `docs/theme-v2.md`.
   - aba ativa;
   - "hoje";
   - marcas de progresso.
-  As etiquetas de músculo viraram um tom suave.
+    As etiquetas de músculo viraram um tom suave.
 - **Mapa do corpo:**
   - cartão claro #E9E5DE com cantos de 16 px nos dois modos, nunca invertido;
   - cores de recuperação, ponto branco e anel #333 iguais nos dois modos;
@@ -1594,6 +1600,7 @@ Especificação: `docs/theme-v2.md`.
    - vermelho de erro no claro: #C73E3E (a tabela dava 4,38:1).
 
    Prefere manter o branco no botão coral (fora do AA) ou fica assim?
+
 2. **Capturas das lojas:** a ordem ficou em `docs/store/listing.md`: claras primeiro, escuras como extras. As imagens finais saem do build de preview no celular. As de `docs/screenshots/theme/` são referência da web e usam a biblioteca de exemplo (versão de desenvolvimento). A tela de descanso aparece com um aviso de desenvolvimento, porque foi aberta direto pelo endereço.
 3. **Biblioteca de vídeos (Gym Animations ou outra):** é serviço pago, então a decisão é sua (e do advogado, pela licença). Não mexi em nada disso.
 
@@ -1718,6 +1725,7 @@ Lista do QA: `docs/qa-round-6.md`. Commits separados: um por grupo de P1 e dois 
    - Exemplo: halter de 25 lb, faixa 10–12 → 13 → 14 repetições → 30 lb.
    - O 60+ sem degrau grande mantém o "+1 repetição antes do peso".
    - Adultos sem condição continuam como antes.
+
 3. **Alongamento de tríceps sentado:** continua como rascunho até a revisão do especialista.
 4. **"Sesiones":** mantido.
 5. **Cores ajustadas para o AA:** aprovadas. Já estão no app desde a Fase 17.
@@ -1929,6 +1937,7 @@ Lista do QA: `docs/qa-round-8.md`, com as suas respostas às perguntas da Fase 1
 Texto da fase: `docs/phase-21.md`. Commits separados: limite semanal de séries, "+1 exercício?" no treino longo, plano Família só para adultos (mais o ajuste de um teste antigo) e itens da rodada 8.
 
 ### 1. Treino longo (75–90 min)
+
 - O limite de séries continua (4 para adultos; 3 para adolescentes, 60+ e quem tem cuidado com articulação). O app não aumenta séries nem soma exercício sozinho.
 - Se, depois das séries extras, o tempo estimado ainda ficar abaixo de ~85% do tempo escolhido, a sugestão aparece **no topo da lista**, em destaque. O texto usa o tempo real: "Cerca de 48 dos seus 90 min estão planejados. Adicionar 1 exercício?". Um toque acrescenta o exercício e recalcula o tempo.
 - O resumo do treino sempre mostra o tempo estimado, nunca o escolhido.
@@ -1939,6 +1948,7 @@ Texto da fase: `docs/phase-21.md`. Commits separados: limite semanal de séries,
   - adolescente e 60+ também veem a sugestão, sempre com no máximo 3 séries.
 
 ### 2. Plano Família só para adultos
+
 - O cartão Família (em Planos e no paywall) e o item "família" da lista de vantagens do paywall somem quando o perfil ativo é menor. Isso vale para adolescente sozinho, adolescente com trava (mesmo com ano adulto editado) e para o celular do dono enquanto o perfil do adolescente estiver ativo.
 - A compra também recusa o Família nesses casos, mesmo sem passar pela tela.
 - Link direto `/plans?plan=family` ou `/paywall?plan=family`:
@@ -1947,6 +1957,7 @@ Texto da fase: `docs/phase-21.md`. Commits separados: limite semanal de séries,
 - Testes: 17 anos sozinho, adolescente travado, adulto e dono com o adolescente ativo.
 
 ### 3. Limite semanal de séries por músculo
+
 - Máximo de séries de trabalho por músculo principal em qualquer janela de 7 dias:
   - adultos: 20;
   - adolescentes: 14;
@@ -1963,20 +1974,23 @@ Texto da fase: `docs/phase-21.md`. Commits separados: limite semanal de séries,
 - Sem o limite, 6 desses 9 testes falham.
 
 ### 4. Vídeos no Flow
+
 Anotado: Veo 3.1 Fast para chão, abdômen e movimentos pequenos; Lite para movimentos grandes. Nada mudou no código. Os arquivos `<slug>.f.mp4` / `<slug>.m.mp4` já têm lugar no manifesto; aguardo o seu texto sobre o Supabase Storage.
 
 ### 5. Itens da rodada 8
-| Item | Situação |
-| --- | --- |
-| R8-04: datas só depois da hidratação | Já estava feito (commit `b37531d`: as telas montam depois da hidratação). Agora o `web:check` também confere que o HTML estático de Início, Planos, Paywall e Progresso não tem datas. |
-| R8-05: encerrar a sessão do código do e-mail | **Corrigido agora.** Depois da verificação, a sessão do código sempre é encerrada e o celular volta à sessão que tinha, também quando é o dono. Com teste. |
-| "Tente +X" depois de trocar lb/kg | Já estava feito (commit `ef70e0f`: o descanso usa a mesma carga-base da lista). |
-| "Exercício não encontrado" | Na Fase 20 virou aviso de alerta (âmbar, commit `a82fbc6`). **Agora é um aviso neutro**, como você pediu, e o dia inválido usa o mesmo aviso. |
-| Termos e Privacidade escondidos sem URL | Já estava feito (commit `0831699`). |
-| Pulldown com elástico: "sentado ou em pé" | Já estava feito nos 3 idiomas (commit `ef70e0f`). Agora tem teste. |
-| Treino não feito passa para amanhã | Já estava feito (commit `a1cf2f1`). Agora tem teste: amanhã não aparece como "Dia de descanso". |
+
+| Item                                         | Situação                                                                                                                                                                               |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| R8-04: datas só depois da hidratação         | Já estava feito (commit `b37531d`: as telas montam depois da hidratação). Agora o `web:check` também confere que o HTML estático de Início, Planos, Paywall e Progresso não tem datas. |
+| R8-05: encerrar a sessão do código do e-mail | **Corrigido agora.** Depois da verificação, a sessão do código sempre é encerrada e o celular volta à sessão que tinha, também quando é o dono. Com teste.                             |
+| "Tente +X" depois de trocar lb/kg            | Já estava feito (commit `ef70e0f`: o descanso usa a mesma carga-base da lista).                                                                                                        |
+| "Exercício não encontrado"                   | Na Fase 20 virou aviso de alerta (âmbar, commit `a82fbc6`). **Agora é um aviso neutro**, como você pediu, e o dia inválido usa o mesmo aviso.                                          |
+| Termos e Privacidade escondidos sem URL      | Já estava feito (commit `0831699`).                                                                                                                                                    |
+| Pulldown com elástico: "sentado ou em pé"    | Já estava feito nos 3 idiomas (commit `ef70e0f`). Agora tem teste.                                                                                                                     |
+| Treino não feito passa para amanhã           | Já estava feito (commit `a1cf2f1`). Agora tem teste: amanhã não aparece como "Dia de descanso".                                                                                        |
 
 ### Verificações
+
 - Lint e typecheck limpos; **1094 testes** passando.
 - Passaram as checagens do banco (`db:test`), das funções (`functions:check`) e do bundle (`bundle:check`).
 - `web:check` passou, agora também sem datas no HTML estático.
@@ -1984,6 +1998,7 @@ Anotado: Veo 3.1 Fast para chão, abdômen e movimentos pequenos; Lite para movi
 - `theme:check`: 52 capturas, primeira pintura escura correta e troca de tema ao vivo OK.
 
 ### Observações
+
 - O envio real do código do PIN continua testado só com simulação, como você anotou para a rodada 9.
 - O limite semanal conta o grupo do músculo: peito superior, médio e inferior somam juntos no "peito".
 
@@ -2036,10 +2051,12 @@ Lista do QA: `docs/qa-round-9.md`, com as suas 4 decisões no fim. Commits separ
 - **O que não foi feito:** ao trocar de plano (`discardPlannedWorkouts`), os exercícios acrescentados não voltam, porque o treino é refeito do zero para o plano novo.
 
 ### Verificações
+
 - Lint e typecheck limpos; **1132 testes** passando, também em 5 ordens aleatórias.
 - As checagens do banco, das funções, do bundle e da web (`web:check`) passaram.
 - `tabs:check` 6/6.
 - `theme:check`: 52 capturas, primeira pintura escura correta.
 
 ### Observação
+
 O envio real do código do PIN por e-mail continua testado só com simulação. Os vídeos do lote 1 ainda não chegaram: a branch `videos-lote-1` não existe no GitHub.
