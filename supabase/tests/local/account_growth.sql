@@ -37,7 +37,9 @@ begin
   assert (select count(*) from public.referral_codes) = 0, 'friend cannot read the inviter code row';
 
   perform pg_temp.act_as('00000000-0000-0000-0000-0000000000e1');
-  assert (select count(*) from public.referrals) = 1, 'inviter sees who joined';
+  -- Security round 1: counts only, never who joined (no invited_user_id).
+  assert (select count(*) from public.referrals) = 0, 'inviter reads invited_user_id';
+  assert (select invited from public.my_referral_stats()) = 1, 'inviter sees the count';
 
   perform pg_temp.act_as('00000000-0000-0000-0000-0000000000e3');
   begin
