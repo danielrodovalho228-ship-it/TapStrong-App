@@ -1923,3 +1923,66 @@ Lista do QA: `docs/qa-round-8.md`, com as suas respostas às perguntas da Fase 1
 2. **Plano Família para adolescente sozinho:** escondi a apresentação da família, mas o cartão do plano Família continua na lista de planos. Como mexe com pagamento, não removi sem você. Esconder para menores de 18?
 3. **Limite semanal de séries:** o gerador não tinha um teto semanal de séries. As séries extras respeitam a recuperação e o equilíbrio puxar/empurrar. Quer um teto semanal por músculo (ex.: 20 séries)?
 4. **Teste no Veo 3.1 Fast (20 créditos):** a decisão é sua; o código não depende disso. Os vídeos gerados entram com os nomes `<slug>.f.mp4` / `<slug>.m.mp4`.
+
+## Fase 21 — Suas decisões da Fase 20 e itens da rodada 8
+
+Texto da fase: `docs/phase-21.md`. Commits separados: limite semanal de séries, "+1 exercício?" no treino longo, plano Família só para adultos (mais o ajuste de um teste antigo) e itens da rodada 8.
+
+### 1. Treino longo (75–90 min)
+- O limite de séries continua (4 para adultos; 3 para adolescentes, 60+ e quem tem cuidado com articulação). O app não aumenta séries nem soma exercício sozinho.
+- Se, depois das séries extras, o tempo estimado ainda ficar abaixo de ~85% do tempo escolhido, a sugestão aparece **no topo da lista**, em destaque. O texto usa o tempo real: "Cerca de 48 dos seus 90 min estão planejados. Adicionar 1 exercício?". Um toque acrescenta o exercício e recalcula o tempo.
+- O resumo do treino sempre mostra o tempo estimado, nunca o escolhido.
+- Testes:
+  - 90 min com 5 exercícios mostra a sugestão acima do aquecimento;
+  - 30 e 45 min não mostram;
+  - aceitar aumenta o tempo;
+  - adolescente e 60+ também veem a sugestão, sempre com no máximo 3 séries.
+
+### 2. Plano Família só para adultos
+- O cartão Família (em Planos e no paywall) e o item "família" da lista de vantagens do paywall somem quando o perfil ativo é menor. Isso vale para adolescente sozinho, adolescente com trava (mesmo com ano adulto editado) e para o celular do dono enquanto o perfil do adolescente estiver ativo.
+- A compra também recusa o Família nesses casos, mesmo sem passar pela tela.
+- Link direto `/plans?plan=family` ou `/paywall?plan=family`:
+  - para um menor, mostra "Um adulto precisa assinar o plano Família" e volta, sem iniciar compra;
+  - para um adulto, abre com o Família já selecionado.
+- Testes: 17 anos sozinho, adolescente travado, adulto e dono com o adolescente ativo.
+
+### 3. Limite semanal de séries por músculo
+- Máximo de séries de trabalho por músculo principal em qualquer janela de 7 dias:
+  - adultos: 20;
+  - adolescentes: 14;
+  - 60+ e exercícios com cuidado de articulação: 12.
+- Aquecimento, equilíbrio e mobilidade não contam. O histórico agora guarda as séries feitas por músculo.
+- O limite vale para a escolha dos exercícios, as séries extras, a troca para puxar e o "+1 exercício?".
+- Se um exercício estouraria o limite, o app escolhe outro. Se couber só em parte, entra com as séries que faltam. O deload continua cortando séries como antes.
+- Testes (4 semanas, duas datas de início):
+  - adulto: PPL 6 dias, Upper/Lower 5 e 6 dias sem plano em 90 min ficam em ≤ 20;
+  - adolescente 4 dias: ≤ 14; 60+ 4 dias: ≤ 12;
+  - cuidado com o joelho: exercícios de joelho param em 12;
+  - um músculo que já chegou a 20 não recebe séries;
+  - o "+1 exercício?" não passa do limite.
+- Sem o limite, 6 desses 9 testes falham.
+
+### 4. Vídeos no Flow
+Anotado: Veo 3.1 Fast para chão, abdômen e movimentos pequenos; Lite para movimentos grandes. Nada mudou no código. Os arquivos `<slug>.f.mp4` / `<slug>.m.mp4` já têm lugar no manifesto; aguardo o seu texto sobre o Supabase Storage.
+
+### 5. Itens da rodada 8
+| Item | Situação |
+| --- | --- |
+| R8-04: datas só depois da hidratação | Já estava feito (commit `b37531d`: as telas montam depois da hidratação). Agora o `web:check` também confere que o HTML estático de Início, Planos, Paywall e Progresso não tem datas. |
+| R8-05: encerrar a sessão do código do e-mail | **Corrigido agora.** Depois da verificação, a sessão do código sempre é encerrada e o celular volta à sessão que tinha, também quando é o dono. Com teste. |
+| "Tente +X" depois de trocar lb/kg | Já estava feito (commit `ef70e0f`: o descanso usa a mesma carga-base da lista). |
+| "Exercício não encontrado" | Na Fase 20 virou aviso de alerta (âmbar, commit `a82fbc6`). **Agora é um aviso neutro**, como você pediu, e o dia inválido usa o mesmo aviso. |
+| Termos e Privacidade escondidos sem URL | Já estava feito (commit `0831699`). |
+| Pulldown com elástico: "sentado ou em pé" | Já estava feito nos 3 idiomas (commit `ef70e0f`). Agora tem teste. |
+| Treino não feito passa para amanhã | Já estava feito (commit `a1cf2f1`). Agora tem teste: amanhã não aparece como "Dia de descanso". |
+
+### Verificações
+- Lint e typecheck limpos; **1094 testes** passando.
+- Passaram as checagens do banco (`db:test`), das funções (`functions:check`) e do bundle (`bundle:check`).
+- `web:check` passou, agora também sem datas no HTML estático.
+- `tabs:check` 6/6.
+- `theme:check`: 52 capturas, primeira pintura escura correta e troca de tema ao vivo OK.
+
+### Observações
+- O envio real do código do PIN continua testado só com simulação, como você anotou para a rodada 9.
+- O limite semanal conta o grupo do músculo: peito superior, médio e inferior somam juntos no "peito".
