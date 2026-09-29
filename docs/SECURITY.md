@@ -73,7 +73,16 @@ Automatic checks:
 - Every SECURITY DEFINER function sets `search_path = ''`, uses `auth.uid()`
   and is never executable by `anon`. Functions only the server may call
   (coach budget, referral rewards) are granted to `service_role` only.
-- Checked by: `zz_security_policies.sql` in `db:test`.
+- Views and materialized views clients can read need `security_invoker`
+  (materialized views can't have it, so none). Policies must depend on who
+  is asking (`auth.*`, `can_access_profile`, `user_id`, owner, guardian);
+  a policy without `TO` applies to `{public}`, which includes anon, and is
+  treated as anon. These rules cover every non-system schema, not only
+  `public` (round 2, S2-P2-7).
+- Checked by: `zz_security_policies.sql` in `db:test`, which also plants
+  each mistake (a leaking view, `1 = 1`, `not false`, a policy with no
+  `TO`, a SECURITY DEFINER function in another schema…) and fails if the
+  check misses it.
 
 ## 5. SQL — no injection
 
