@@ -55,9 +55,14 @@ export function recentSessions(history: WorkoutRecord[], library: Exercise[]): R
           // and lower abs are one abs set, not two (QA R9-06).
           muscleSets: tally((id) => [...new Set(primaries(id).map(parentOf))]),
           // And once per joint area it loads, for the joint-care budget.
-          jointSets: tally((id) => [
-            ...new Set((byId.get(id)?.joints ?? []).map((j) => JOINT_AREA[j.joint])),
-          ]),
+          // Repair sets are therapeutic: they don't use the painful-joint
+          // budget (Daniel, R10 decision 2).
+          jointSets:
+            w.kind === 'repair'
+              ? {}
+              : tally((id) => [
+                  ...new Set((byId.get(id)?.joints ?? []).map((j) => JOINT_AREA[j.joint])),
+                ]),
         };
       })
   );
@@ -125,6 +130,9 @@ export function repairInput(
     ...input,
     minutes,
     exercisesPerSession: 3,
+    // A Repair session keeps its prescribed moves at the weekly cap (Daniel,
+    // R9 decision 2; QA R10-02: the real path never set it).
+    repair: true,
     muscleGoals: focus.map(({ muscleKey, goal }) => ({ muscleKey, goal })),
     // Corrective work: no cardio finisher.
     mainGoals: input.mainGoals.filter((g) => g !== 'lose_weight' && g !== 'fitness'),

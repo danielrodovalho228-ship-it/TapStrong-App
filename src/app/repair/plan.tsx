@@ -1,4 +1,5 @@
 import { Redirect, router } from 'expo-router';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
@@ -23,6 +24,7 @@ export default function RepairPlanScreen() {
   const library = useExerciseLibrary();
   const input = useGeneratorInput(library);
   const { workouts, create } = useWorkoutStore();
+  const [problem, setProblem] = useState<string | null>(null);
   if (!plan) return <Redirect href="/repair" />;
 
   const done = workouts.filter(
@@ -41,7 +43,17 @@ export default function RepairPlanScreen() {
   const start = () => {
     if (!input) return;
     const session = generateSession(repairInput(input, plan.focus, PLAN_MINUTES));
-    if (session.error) return;
+    // Never a Start button that silently does nothing (QA R10-02).
+    if (session.error) {
+      setProblem(
+        t(
+          session.error === 'no_library'
+            ? 'workout.underReview'
+            : `workout.unavailable.${session.error}`,
+        ),
+      );
+      return;
+    }
     const id = create(session, 'repair');
     track('workout_generated');
     router.push({ pathname: '/workout/[id]', params: { id } });
@@ -58,6 +70,7 @@ export default function RepairPlanScreen() {
       }
       footer={
         <>
+          {problem ? <Notice tone="warning">{problem}</Notice> : null}
           <Button
             variant="accent"
             label={t('repair.startSession', { minutes: PLAN_MINUTES })}

@@ -594,7 +594,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   const muscleLeft = (parent: string) => ageCap - (weekSets.get(parent) ?? 0) - sessionSets(parent);
   const minSets = Math.min(2, Math.max(1, Math.round(input.setsPerExercise)));
   const setsLeft = (e: Exercise) => {
-    if (input.mobilityOnly || input.rehab) return Number.POSITIVE_INFINITY;
+    if (input.mobilityOnly || input.rehab || input.repair) return Number.POSITIVE_INFINITY;
     // A balance hold is never main work for a muscle that reached its cap.
     if (!counted(e))
       return primaryParents(e).some((p) => muscleLeft(p) < minSets) ? 0 : Number.POSITIVE_INFINITY;
@@ -610,7 +610,10 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   // their slots go to other muscles.
   const cappedTargets: string[] = [];
   const targetCapped = (t: Target) =>
-    !input.mobilityOnly && !input.rehab && muscleLeft(parentOf(t.muscle)) < minSets;
+    !input.mobilityOnly &&
+    !input.rehab &&
+    !input.repair &&
+    muscleLeft(parentOf(t.muscle)) < minSets;
   const add = (pick: Exercise, target: Target) => {
     const item = mainItem(pick, target, input);
     const left = setsLeft(pick);

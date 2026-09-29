@@ -62,6 +62,12 @@ export type GeneratorInput = {
   /** Areas where a sharp pain stopped a workout today: no exercise moving that joint today (QA R2-02). */
   /** The last week of a program block: 40% less volume (improvements v1, A2). */
   deload?: boolean;
+  /**
+   * A Repair plan session (QA R10-02): never cut by the weekly cap. Unlike
+   * `rehab` (a movement-pain recovery session), the normal library and
+   * rotation still apply.
+   */
+  repair?: boolean;
   /** Internal: no extra sets for spare time (the deload builds from this). */
   noExtraSets?: boolean;
   /**
