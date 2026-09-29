@@ -44,3 +44,16 @@ Four testers re-ran all personas. No P0, no crashes. jest 986/986 twice (random 
 ## What passed in round 8
 
 R7-01 on every workout path (425/366/187 moves for Dave/Sam/Joe, 0 knee-tagged; Short balance still 8 items), R7-02 on all direct body-change paths, R7-03 for adult-year and other plain-store tampers, R7-04 links/Restore/copy in 3 languages × 2 themes, R7-05 no white flash in all 6 phone/app theme combos and saved Appearance before hydration, R7-06 Library one column + 44 px star, R7-07 zero plurals PT/ES, R7-08 sheet; side_plank BP; heart/BP adults reps-first; missed reps at lightest load → easier version; 60+ lb/kg steps; list = player target; future previews after a stop = real day; 60+ Home after the day's workout only mobility/balance/rest; adults "Extra workout" with warning; legacy v1 seeding by birth dates; PIN creation by email (no teen path in UI); PIN in footer on safety/pain plan; copy fixes; +not-found themed/translated; unknown rest/play/done → Home; navigation theme dark; coral leftovers; body-map dots (1,248 sampled points); contrast 46×2; theme flip keeps state; tab labels 390/320; Jess, Carlos, Laura; Rosa with-support, Joe seated + rest ≥60 s, no impact ≥2 / kneeling for 60+, 90 h; holds 0 in main for all adult gym goals and Single; deload −67% adults; coverage 90 combos; swaps ≥3 (12,118); keyboard-only workout; env:check fails/passes correctly; iOS encryption flag, Android permissions, adaptive icon, channels removed; no gmail in bundles; jest 986/986.
+
+## Added to Phase 20 (Daniel, approved): exercise videos follow the profile's sex
+
+Own group: separate commit, tests, i18n en/es/pt-BR, in the Portuguese report.
+
+Every exercise video exists in two versions made in Google Flow from our body references: woman = `body-adult-f-front`, man = `body-adult-m-front`. A man always sees the man, a woman always sees the woman.
+
+- **Files:** `<slug>.f.mp4` and `<slug>.m.mp4` (main and Repair exercises). Add a small manifest (`src/features/exercises/videos.ts` or JSON) listing which slug/sex pairs exist, so the app knows without probing files. Replace `prototypeVideo(slug)` in `app/exercise/[id].tsx:108` and in the player/workout list/swap sheet with `demoVideo(slug, sex)`.
+- **Which sex:** the active profile's sex (`onboarding.sex`), falling back to `bodyModel.sex`. Family: each profile uses its own; switching profiles switches the videos immediately. Teens and 60+ use the adult model of their sex for now.
+- **Sex not set / neutral body:** ask once, on the first screen that would show a video: "Show exercise demos with: Woman / Man" (saved per profile, changeable in Settings → Body model). Never guess.
+- **Never the other sex:** if the matching video doesn't exist yet, show the same-sex start image (if present) or the existing "demo coming soon" card with the cues — never fall back to the other sex's video.
+- **Unilateral moves:** keep the mirror for the other side.
+- **Tests:** m profile gets `.m`, f gets `.f`; switching profile changes the source; missing `.m` shows the placeholder, not `.f`; unset sex shows the question once and stores the answer; bundle:check still has no .mp4 in the release bundle until the reviewer approves (videos stay behind the "in review" flag).
