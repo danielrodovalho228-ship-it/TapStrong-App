@@ -2142,3 +2142,4 @@ Lista do QA: `docs/qa-round-10.md`, com as suas 3 decisões no fim. Commits sepa
 
 - Lint e typecheck limpos; **1185 testes** passando, também em 3 ordens aleatórias (seeds 101, 424242, 987654321).
 - `db:test` (com a migração e o teste novos), `functions:check` e `bundle:check` passaram.
+- `web:check` passou; `tabs:check` ok (rótulos cabem em EN/PT/ES, claro e escuro); `theme:check`: 52 capturas, primeira pintura escura correta.
