@@ -2,7 +2,8 @@ import { localDate } from '@/lib/dates';
 
 import type { Exercise } from '../exercises/types';
 import type { GeneratedSession, GeneratorInput, RecentSession } from '../generator/types';
-import type { MovementGroup } from '../muscles';
+import { muscleByKey, type MovementGroup } from '../muscles';
+import { JOINT_AREA } from '../movement/catalog';
 import { generateSession, needsRecovery } from '../generator/generate';
 import { defaultMuscleGoal } from '../onboarding/options';
 
@@ -12,39 +13,54 @@ import type { NextFocus, WorkoutRecord } from './types';
 /** Finished workouts as balance-pass input, most recent first (SPEC §8). */
 export function recentSessions(history: WorkoutRecord[], library: Exercise[]): RecentSession[] {
   const byId = new Map(library.map((e) => [e.id, e]));
-  return history
-    .filter((w) => (w.status === 'done' || w.status === 'partial') && w.kind === 'regular')
-    .sort((a, b) => ((a.endedAt ?? '') < (b.endedAt ?? '') ? 1 : -1))
-    .map((w) => {
-      const main = new Set(w.session.items.filter((i) => i.role === 'main').map((i) => i.id));
-      const muscles = w.logs
-        // Balance and mobility moves don't need recovery (QA R3-08).
-        .filter((l) => main.has(l.itemId) && needsRecovery(byId.get(l.exerciseId)))
-        .flatMap((l) =>
-          (byId.get(l.exerciseId)?.muscles ?? [])
-            .filter((m) => m.role === 'primary')
-            .map((m) => m.muscleKey),
+  const parentOf = (m: string) => muscleByKey(m)?.parentKey ?? m;
+  return (
+    history
+      // Finishers and Repair sessions count too, for recovery and the weekly
+      // cap (Daniel, QA R9 decision 2); short mobility sessions have no sets.
+      .filter(
+        (w) =>
+          (w.status === 'done' || w.status === 'partial') &&
+          (w.kind === 'regular' || w.kind === 'finisher' || w.kind === 'repair'),
+      )
+      .sort((a, b) => ((a.endedAt ?? '') < (b.endedAt ?? '') ? 1 : -1))
+      .map((w) => {
+        const main = new Set(
+          w.session.items
+            .filter((i) => i.role === 'main' || i.role === 'finisher')
+            .map((i) => i.id),
         );
-      return {
-        date: localDate(new Date(w.endedAt ?? w.createdAt)),
-        // Recovery counts from the start of the session (QA R3-04).
-        at: w.startedAt ?? w.endedAt ?? w.createdAt,
-        mainMuscles: [...new Set(muscles)],
-        ...(w.session.custom ? { custom: true } : {}),
-        exerciseIds: [
-          ...new Set(w.logs.filter((l) => main.has(l.itemId)).map((l) => l.exerciseId)),
-        ],
-        // Each logged main set counts once per primary muscle (weekly cap, Phase 21).
-        muscleSets: w.logs
-          .filter((l) => main.has(l.itemId) && needsRecovery(byId.get(l.exerciseId)))
-          .flatMap((l) =>
-            (byId.get(l.exerciseId)?.muscles ?? [])
-              .filter((m) => m.role === 'primary')
-              .map((m) => m.muscleKey),
-          )
-          .reduce<Record<string, number>>((acc, m) => ({ ...acc, [m]: (acc[m] ?? 0) + 1 }), {}),
-      };
-    });
+        // Balance and mobility moves don't need recovery (QA R3-08).
+        const working = w.logs.filter(
+          (l) => main.has(l.itemId) && needsRecovery(byId.get(l.exerciseId)),
+        );
+        const primaries = (id: string) =>
+          (byId.get(id)?.muscles ?? []).filter((m) => m.role === 'primary').map((m) => m.muscleKey);
+        const tally = (keys: (id: string) => string[]) =>
+          working.reduce<Record<string, number>>((acc, l) => {
+            for (const k of keys(l.exerciseId)) acc[k] = (acc[k] ?? 0) + 1;
+            return acc;
+          }, {});
+        return {
+          date: localDate(new Date(w.endedAt ?? w.createdAt)),
+          // Recovery counts from the start of the session (QA R3-04).
+          at: w.startedAt ?? w.endedAt ?? w.createdAt,
+          mainMuscles: [...new Set(working.flatMap((l) => primaries(l.exerciseId)))],
+          ...(w.session.custom ? { custom: true } : {}),
+          ...(w.kind === 'finisher' || w.kind === 'repair' ? { kind: w.kind } : {}),
+          exerciseIds: [
+            ...new Set(w.logs.filter((l) => main.has(l.itemId)).map((l) => l.exerciseId)),
+          ],
+          // Each logged set counts once per parent muscle: a plank's upper
+          // and lower abs are one abs set, not two (QA R9-06).
+          muscleSets: tally((id) => [...new Set(primaries(id).map(parentOf))]),
+          // And once per joint area it loads, for the joint-care budget.
+          jointSets: tally((id) => [
+            ...new Set((byId.get(id)?.joints ?? []).map((j) => JOINT_AREA[j.joint])),
+          ]),
+        };
+      })
+  );
 }
 
 /** Group muscles, the ones most of the library trains first. */

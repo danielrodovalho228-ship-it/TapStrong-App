@@ -3527,7 +3527,8 @@
       "customLeftOut_one": "One pick was left out: it isn’t safe for you right now.",
       "customLeftOut_other": "{{count}} picks were left out: they aren’t safe for you right now.",
       "painToday": "{{muscles}} left out today after the pain you reported. Back tomorrow if it feels fine.",
-      "pullAdded": "We added a pull exercise to keep things balanced."
+      "pullAdded": "We added a pull exercise to keep things balanced.",
+      "weeklyCap": "You've reached this week's limit for {{muscles}} — today works other muscles."
     }
   },
   "tabs": {
@@ -3817,7 +3818,8 @@
       "no_cooldown": "No safe cool-down fits today’s settings. Try another training position or add equipment.",
       "editPlan": "Change my plan",
       "gone": "This workout is no longer available. Go back home to build today’s.",
-      "all_recovering": "Everything you picked is still recovering. Today is good for a short mobility session, a walk or a rest day."
+      "all_recovering": "Everything you picked is still recovering. Today is good for a short mobility session, a walk or a rest day.",
+      "weekly_cap": "You've reached this week's limit for today's muscles. A short mobility session or a rest day is the right call."
     },
     "cues": {
       "support": "Hold a chair or counter for balance the whole time.",

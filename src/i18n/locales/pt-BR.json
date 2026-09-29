@@ -3529,7 +3529,8 @@
       "customLeftOut_zero": "{{count}} escolhas ficaram de fora: não são seguras para você agora.",
       "customLeftOut_other": "{{count}} escolhas ficaram de fora: não são seguras para você agora.",
       "painToday": "{{muscles}} fica de fora hoje por causa da dor que você informou. Volta amanhã se estiver tudo bem.",
-      "pullAdded": "Incluímos um exercício de puxar para equilibrar."
+      "pullAdded": "Incluímos um exercício de puxar para equilibrar.",
+      "weeklyCap": "Você chegou ao limite desta semana para {{muscles}}: hoje o treino é de outros músculos."
     }
   },
   "tabs": {
@@ -3832,7 +3833,8 @@
       "no_cooldown": "Nenhum desaquecimento seguro combina com hoje. Tente outra posição ou acrescente equipamento.",
       "editPlan": "Mudar meu plano",
       "gone": "Este treino não está mais disponível. Volte ao início para montar o de hoje.",
-      "all_recovering": "Tudo o que você escolheu ainda está se recuperando. Hoje é bom para uma sessão curta de mobilidade, uma caminhada ou um dia de descanso."
+      "all_recovering": "Tudo o que você escolheu ainda está se recuperando. Hoje é bom para uma sessão curta de mobilidade, uma caminhada ou um dia de descanso.",
+      "weekly_cap": "Você chegou ao limite desta semana para os músculos de hoje. Uma mobilidade curta ou um dia de descanso é o ideal."
     },
     "cues": {
       "support": "Segure numa cadeira ou bancada para ter equilíbrio o tempo todo.",

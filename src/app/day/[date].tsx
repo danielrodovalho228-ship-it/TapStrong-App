@@ -179,7 +179,13 @@ export default function DayScreen() {
       {!past && preview ? (
         preview.error ? (
           <Notice>
-            {t(preview.error === 'all_recovering' ? 'home.recoveringBody' : 'day.noPreview')}
+            {t(
+              preview.error === 'all_recovering'
+                ? 'home.recoveringBody'
+                : preview.error === 'weekly_cap'
+                  ? 'workout.unavailable.weekly_cap'
+                  : 'day.noPreview',
+            )}
           </Notice>
         ) : (
           <Card style={styles.card}>

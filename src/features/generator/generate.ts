@@ -1,4 +1,5 @@
 import type { Exercise, SessionPart } from '../exercises/types';
+import { JOINT_AREA } from '../movement/catalog';
 import { muscleByKey, muscleFamily, type MovementGroup } from '../muscles';
 import { defaultMuscleGoal, type MuscleGoal } from '../onboarding/options';
 import type { AppMode } from '../profile/age';
@@ -211,7 +212,7 @@ const GROUP_ORDER: Record<MovementGroup, number> = { pull: 0, legs: 1, push: 2, 
  */
 function groupWeekCounts(input: GeneratorInput): Record<MovementGroup, number> {
   const out: Record<MovementGroup, number> = { push: 0, pull: 0, legs: 0, core: 0 };
-  const recent = input.recentSessions ?? [];
+  const recent = (input.recentSessions ?? []).filter((r) => !r.kind);
   const today = input.today ?? recent[0]?.date;
   if (!today) return out;
   const cutoff = Date.parse(today) - 6 * 24 * 3600 * 1000;
@@ -344,7 +345,7 @@ const isLightFiller = (e: Exercise) =>
 
 /** Patterns the balance filler never adds: fine as a chosen target, odd as padding. */
 /** Weekly working sets per primary muscle (Daniel, Phase 21). */
-export const WEEKLY_SETS: Record<AppMode, number> = { adult: 20, teen: 14, child: 14, senior: 12 };
+export const WEEKLY_SETS: Record<AppMode, number> = { adult: 20, teen: 14, child: 10, senior: 12 };
 export const JOINT_CARE_WEEKLY_SETS = 12;
 
 /** Spare time is filled with sets up to this share of the chosen minutes. */
@@ -390,7 +391,10 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   const byIdAll = new Map(pool.map((e) => [e.id, e]));
 
   // --- Main work -----------------------------------------------------------
-  const recent = input.recentSessions ?? [];
+  // Every session counts for recovery and the weekly cap; only the plan's
+  // own workouts count for variety and the push/pull balance (QA R9-08).
+  const allRecent = input.recentSessions ?? [];
+  const recent = allRecent.filter((r) => !r.kind);
   // "The last 7 days" are 7 calendar days, today included (QA R8 P2).
   const dayNo = (d: string) => Math.floor(Date.parse(`${d}T12:00:00Z`) / 864e5);
   const todayKey = input.today ?? input.now?.slice(0, 10);
@@ -440,7 +444,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
       : undefined;
   const sessionMs = (r: RecentSession) => Date.parse(r.at ?? `${r.date}T12:00:00`);
   const hoursSince = (family: string[]) => {
-    const hit = recent.find((r) => hitIn(r, family));
+    const hit = allRecent.find((r) => hitIn(r, family));
     if (!hit || nowMs === undefined) return Number.POSITIVE_INFINITY;
     return (nowMs - sessionMs(hit)) / 3_600_000;
   };
@@ -538,15 +542,21 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     const mix = Math.imul((day + 1) * 2654435761, salt + 7) >>> 0;
     return top[(mix >>> 7) % top.length];
   };
-  // Weekly working sets per primary muscle (Daniel, Phase 21): adults 20,
-  // teens 14, 60+ and joint care 12, over the last 7 days. Warm-up, balance
-  // and mobility moves don't count. A move that would pass the cap is not
-  // picked; one that fits partly gets fewer sets.
+  // Weekly working sets per primary muscle (Daniel, Phases 21–22): adults 20,
+  // teens 14, 60+ 12, kids 10, over the last 7 days, counting finishers and
+  // Repair too. With a painful joint, moves that load it share a budget of
+  // 12 sets, whatever muscle they train (R9 decision 1). Moves that fit
+  // fewer than 2 more sets are skipped (QA R9 P2). A Repair session is never
+  // cut (R9 decision 2); balance holds never stand in for a capped muscle.
   const weekSets = new Map<string, number>();
-  for (const r of recent)
-    if (inWeek(r))
+  const weekJoint = new Map<string, number>();
+  for (const r of allRecent)
+    if (inWeek(r)) {
       for (const [m, n] of Object.entries(r.muscleSets ?? {}))
         weekSets.set(parentOf(m), (weekSets.get(parentOf(m)) ?? 0) + n);
+      for (const [a, n] of Object.entries(r.jointSets ?? {}))
+        weekJoint.set(a, (weekJoint.get(a) ?? 0) + n);
+    }
   const primaryParents = (e: Exercise | undefined) =>
     e
       ? [
@@ -555,28 +565,56 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
           ),
         ]
       : [];
-  const setCap = (e: Exercise) =>
-    needsJointCare(e, input)
-      ? Math.min(JOINT_CARE_WEEKLY_SETS, WEEKLY_SETS[input.mode])
-      : WEEKLY_SETS[input.mode];
+  const painfulAreas = new Set([
+    ...(input.restrictions ?? []),
+    ...(input.stoppedToday ?? []),
+    ...(input.painAreas ?? []),
+    ...(input.movementLimits ?? []).map((l) => l.area),
+  ]);
+  const loadedPainful = (e: Exercise | undefined) =>
+    e
+      ? [...new Set(e.joints.map((j) => JOINT_AREA[j.joint]))].filter((a) => painfulAreas.has(a))
+      : [];
+  const ageCap = WEEKLY_SETS[input.mode];
+  const counted = (e: Exercise | undefined) => needsRecovery(e);
   const sessionSets = (parent: string) =>
     main
       .filter((i) => {
         const x = byIdAll.get(i.exerciseId);
-        return needsRecovery(x) && primaryParents(x).includes(parent);
+        return counted(x) && primaryParents(x).includes(parent);
       })
       .reduce((n, i) => n + i.sets, 0);
-  const setsLeft = (e: Exercise) =>
-    input.mobilityOnly || !needsRecovery(e)
-      ? Number.POSITIVE_INFINITY
-      : Math.min(
-          ...primaryParents(e).map((p) => setCap(e) - (weekSets.get(p) ?? 0) - sessionSets(p)),
-        );
-  const underCap = (e: Exercise) => setsLeft(e) >= 1;
+  const sessionJoint = (area: string) =>
+    main
+      .filter((i) => {
+        const x = byIdAll.get(i.exerciseId);
+        return counted(x) && loadedPainful(x).includes(area);
+      })
+      .reduce((n, i) => n + i.sets, 0);
+  const muscleLeft = (parent: string) => ageCap - (weekSets.get(parent) ?? 0) - sessionSets(parent);
+  const minSets = Math.min(2, Math.max(1, Math.round(input.setsPerExercise)));
+  const setsLeft = (e: Exercise) => {
+    if (input.mobilityOnly || input.rehab) return Number.POSITIVE_INFINITY;
+    // A balance hold is never main work for a muscle that reached its cap.
+    if (!counted(e))
+      return primaryParents(e).some((p) => muscleLeft(p) < minSets) ? 0 : Number.POSITIVE_INFINITY;
+    return Math.min(
+      ...primaryParents(e).map(muscleLeft),
+      ...loadedPainful(e).map(
+        (a) => JOINT_CARE_WEEKLY_SETS - (weekJoint.get(a) ?? 0) - sessionJoint(a),
+      ),
+    );
+  };
+  const underCap = (e: Exercise) => setsLeft(e) >= minSets;
+  // Chosen muscles that reached this week's cap (QA R9-07): named in a note,
+  // their slots go to other muscles.
+  const cappedTargets: string[] = [];
+  const targetCapped = (t: Target) =>
+    !input.mobilityOnly && !input.rehab && muscleLeft(parentOf(t.muscle)) < minSets;
   const add = (pick: Exercise, target: Target) => {
     const item = mainItem(pick, target, input);
     const left = setsLeft(pick);
-    if (left < 1) return false;
+    if (left < Math.min(minSets, item.sets)) return false;
     if (item.sets > left) {
       item.sets = left;
       item.estSeconds = estimateSeconds(item);
@@ -618,8 +656,10 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     main.push(item);
   }
   const covered = new Set(main.map((i) => i.targetMuscle));
+  for (const t of targets)
+    if (!covered.has(t.muscle) && targetCapped(t)) cappedTargets.push(t.muscle);
   targets
-    .filter((t) => !covered.has(t.muscle))
+    .filter((t) => !covered.has(t.muscle) && !cappedTargets.includes(t.muscle))
     .slice(0, Math.max(0, slots - main.length))
     .forEach((target, i) => {
       const options = readyFirst(
@@ -641,6 +681,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   for (let pass = 0; onlyTargets && main.length < slots && pass < passes; pass++) {
     for (const target of targets) {
       if (main.length >= slots) break;
+      if (cappedTargets.includes(target.muscle)) continue;
       const options = rankForTarget(pool, target, input.mode, input.favourites).filter(
         (e) => !used.has(e.id) && underCap(e),
       );
@@ -665,6 +706,8 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     notes.push({ key: 'generator.notes.painToday', muscles: painToday });
   if (setup.length && !input.mobilityOnly)
     notes.push({ key: 'generator.notes.unavailable', muscles: setup });
+  if (cappedTargets.length)
+    notes.push({ key: 'generator.notes.weeklyCap', muscles: cappedTargets });
 
   // The rest of the session keeps push / pull / legs balanced over the week:
   // groups trained least this week first, only recovered ones, never a
@@ -857,6 +900,23 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     // Everything chosen is still recovering and nothing else is ready:
     // mobility, balance, a walk or a rest day instead (QA R2-08).
     return fail('all_recovering');
+  }
+  if (!main.length && cappedTargets.length) {
+    // A split day whose muscles all reached the cap: build from the other
+    // groups instead; if nothing is left, say so (QA R9-07).
+    if (input.dayGroups?.length) {
+      const other = generateSession({
+        ...input,
+        dayGroups: undefined,
+        muscleGoals: input.muscleGoals.filter((g) => !cappedTargets.includes(g.muscleKey)),
+      });
+      if (!other.error)
+        return {
+          ...other,
+          notes: [{ key: 'generator.notes.weeklyCap', muscles: cappedTargets }, ...other.notes],
+        };
+    }
+    return fail('weekly_cap');
   }
   if (!main.length) return fail('no_main');
   // "Trains other areas" replaces the setup note instead of repeating it.

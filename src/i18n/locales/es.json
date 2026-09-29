@@ -3527,7 +3527,8 @@
       "customLeftOut_one": "Se dejó fuera una elección: ahora mismo no es segura para ti.",
       "customLeftOut_other": "Se dejaron fuera {{count}} elecciones: ahora mismo no son seguras para ti.",
       "painToday": "{{muscles}} fuera por hoy por el dolor que indicaste. Vuelve mañana si te sientes bien.",
-      "pullAdded": "Incluimos un ejercicio de tirón para equilibrar."
+      "pullAdded": "Incluimos un ejercicio de tirón para equilibrar.",
+      "weeklyCap": "Llegaste al límite de esta semana para {{muscles}}: hoy trabajas otros músculos."
     }
   },
   "tabs": {
@@ -3817,7 +3818,8 @@
       "no_cooldown": "Ningún enfriamiento seguro encaja con lo de hoy. Prueba otra posición o añade equipo.",
       "editPlan": "Cambiar mi plan",
       "gone": "Este entrenamiento ya no está disponible. Vuelve al inicio para armar el de hoy.",
-      "all_recovering": "Todo lo que elegiste todavía se está recuperando. Hoy va bien una sesión corta de movilidad, una caminata o un día de descanso."
+      "all_recovering": "Todo lo que elegiste todavía se está recuperando. Hoy va bien una sesión corta de movilidad, una caminata o un día de descanso.",
+      "weekly_cap": "Llegaste al límite de esta semana para los músculos de hoy. Una movilidad corta o un día de descanso es lo indicado."
     },
     "cues": {
       "support": "Sujétate de una silla o encimera para mantener el equilibrio todo el tiempo.",

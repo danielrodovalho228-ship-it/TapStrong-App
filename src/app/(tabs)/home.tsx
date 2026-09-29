@@ -97,7 +97,8 @@ export default function HomeScreen() {
     mode: derived.mode,
     entitlement,
   });
-  const allRecovering = built?.error === 'all_recovering' || stoppedToday;
+  const allRecovering =
+    built?.error === 'all_recovering' || built?.error === 'weekly_cap' || stoppedToday;
   // Today's workout is done (Daniel, Phase 19): mobility, balance or rest; an
   // adult may still choose an extra workout, after a short warning.
   const easyDay = allRecovering || doneToday;

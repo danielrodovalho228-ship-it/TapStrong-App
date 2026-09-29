@@ -3,6 +3,7 @@
  * pull vs push over every strict 7-day rolling window.
  */
 import type { Exercise } from '../exercises/types';
+import { JOINT_AREA } from '../movement/catalog';
 import { muscleByKey } from '../muscles';
 import { planDayInput, type ReadyPlan } from '../program/plans';
 
@@ -27,6 +28,8 @@ export type SimDay = {
   minutes: number;
   /** Working sets per parent muscle that day. */
   muscleSets: Record<string, number>;
+  /** Working sets per joint area loaded that day. */
+  jointSets?: Record<string, number>;
 };
 
 export function simulate(o: {
@@ -69,6 +72,13 @@ export function simulate(o: {
       slugs: main.map((i) => byId.get(i.exerciseId)!.slug),
       sets: main.reduce((n, i) => n + i.sets, 0),
       minutes: s.estimatedMinutes ?? 0,
+      jointSets: main.reduce<Record<string, number>>((acc, i) => {
+        const e = byId.get(i.exerciseId)!;
+        if (['balance', 'mobility', 'stretch', 'breathing'].includes(e.pattern)) return acc;
+        for (const a of new Set(e.joints.map((j) => JOINT_AREA[j.joint])))
+          acc[a] = (acc[a] ?? 0) + i.sets;
+        return acc;
+      }, {}),
       muscleSets: main.reduce<Record<string, number>>((acc, i) => {
         const e = byId.get(i.exerciseId)!;
         if (['balance', 'mobility', 'stretch', 'breathing'].includes(e.pattern)) return acc;
@@ -91,13 +101,9 @@ export function simulate(o: {
           .map((m) => m.muscleKey),
       ),
       exerciseIds: main.map((i) => i.exerciseId),
-      muscleSets: main.reduce<Record<string, number>>((acc, i) => {
-        const e = byId.get(i.exerciseId)!;
-        if (['balance', 'mobility', 'stretch', 'breathing'].includes(e.pattern)) return acc;
-        for (const m of e.muscles.filter((x) => x.role === 'primary'))
-          acc[m.muscleKey] = (acc[m.muscleKey] ?? 0) + i.sets;
-        return acc;
-      }, {}),
+      // Once per parent muscle per set, like the app's history (QA R9-06).
+      muscleSets: out[out.length - 1].muscleSets,
+      jointSets: out[out.length - 1].jointSets,
     });
   }
   return out;

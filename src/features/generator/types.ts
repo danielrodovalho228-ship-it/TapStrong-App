@@ -17,8 +17,15 @@ export type RecentSession = {
   custom?: boolean;
   /** Main exercises done, so the next sessions vary (QA R4 P2). */
   exerciseIds?: string[];
-  /** Working sets per primary muscle that day (Phase 21 weekly cap). */
+  /** Working sets per parent muscle that day, once per set (weekly cap, QA R9-06). */
   muscleSets?: Record<string, number>;
+  /** Working sets per joint area that day (joint-care budget, Daniel R9 decision 1). */
+  jointSets?: Record<string, number>;
+  /**
+   * A "+10 min" finisher or a Repair session (QA R9-08): counts for the weekly
+   * cap and recovery, not for variety or the push/pull balance.
+   */
+  kind?: 'finisher' | 'repair';
 };
 
 /** Everything the generator needs. Pure data in, pure data out (SPEC §8). */
@@ -137,6 +144,7 @@ export type GeneratorNote =
   | { key: 'generator.notes.unavailable'; muscles: string[] }
   /** Chosen muscles left out today after pain was reported (QA R4 P2). */
   | { key: 'generator.notes.painToday'; muscles: string[] }
+  | { key: 'generator.notes.weeklyCap'; muscles: string[] }
   /** A chosen push muscle gave its slot to a pull move (Daniel, Phase 18). */
   | { key: 'generator.notes.pullAdded' };
 
@@ -156,7 +164,7 @@ export type GeneratedSession = {
   /** Exercises the person added with "+1 exercise?" (kept on rebuilds, QA R9 P2). */
   addedExercises?: number;
   /** Set when no safe session can be built. */
-  error?: 'no_library' | 'no_warmup' | 'no_cooldown' | 'no_main' | 'all_recovering';
+  error?: 'no_library' | 'no_warmup' | 'no_cooldown' | 'no_main' | 'all_recovering' | 'weekly_cap';
 };
 
 export type SwapReason = 'user_choice' | 'machine_taken' | 'pain';

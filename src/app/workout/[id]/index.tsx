@@ -107,11 +107,14 @@ export default function WorkoutScreen() {
       : !input
         ? 'no_profile'
         : (generateSession(input).error ?? 'gone');
+    // Nothing to train today (recovering, or the weekly cap reached): a short
+    // mobility session or a rest day (QA R2-08, R9-07).
+    const easy = reason === 'all_recovering' || reason === 'weekly_cap';
     return (
       <Screen
         footer={
           <>
-            {reason === 'all_recovering' ? (
+            {easy ? (
               // Everything is recovering: a short mobility session or a rest day (QA R2-08).
               <Button
                 variant="accent"
@@ -129,8 +132,8 @@ export default function WorkoutScreen() {
               />
             ) : null}
             <Button
-              variant={reason === 'all_recovering' ? 'secondary' : 'primary'}
-              label={reason === 'all_recovering' ? t('workout.restDay') : t('workout.backHome')}
+              variant={easy ? 'secondary' : 'primary'}
+              label={easy ? t('workout.restDay') : t('workout.backHome')}
               onPress={() => router.replace('/home')}
             />
           </>

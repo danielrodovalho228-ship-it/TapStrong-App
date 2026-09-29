@@ -112,28 +112,3 @@ it('a partly used muscle gets only the sets left, and "+1 exercise?" never adds 
     expect(chest).toBeLessThanOrEqual(2);
   }
 });
-
-it('joint care: a knee move stops at 12 weekly sets for its muscles', () => {
-  const recent: RecentSession[] = [
-    {
-      date: '2026-09-26',
-      at: '2026-09-26T12:00:00Z',
-      mainMuscles: ['quads'],
-      muscleSets: { quads: 12 },
-    },
-  ];
-  const s = generateSession({
-    ...base,
-    painAreas: ['knee'],
-    muscleGoals: [{ muscleKey: 'quads', goal: 'grow' }],
-    today: '2026-09-28',
-    now: '2026-09-28T12:00:00Z',
-    recentSessions: recent,
-  });
-  for (const i of s.items.filter((x) => x.role === 'main')) {
-    const e = LIBRARY.find((x) => x.id === i.exerciseId)!;
-    const quads = e.muscles.some((m) => m.role === 'primary' && m.muscleKey === 'quads');
-    const knee = e.joints.some((j) => j.joint === 'knee');
-    expect(quads && knee).toBe(false);
-  }
-});
