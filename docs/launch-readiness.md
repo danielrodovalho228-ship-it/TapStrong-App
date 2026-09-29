@@ -96,6 +96,9 @@ Depois do push: `npm run server:check` (com as variáveis do `.env`) deve dizer 
 - Email: "Confirm email" ligado; validade do código (OTP expiry) **900 s** (15 min).
 - Senhas: mínimo **10** caracteres, com letras e números; "Secure password change" ligado.
 - Rate limits: confira os de e-mail (envio de códigos), verificação de token (30 por 5 min por IP) e login anônimo (30 por hora por IP).
+- E-mail: intervalo mínimo entre e-mails (**max frequency / "Minimum interval between emails"**) de **60 s**. É esse limite do Supabase que vale de verdade para os códigos; o contador do app é só uma ajuda.
+- Para o `server:check` conferir esses valores sozinho: crie um **Personal Access Token** em supabase.com → Account → Access Tokens e, só no terminal, rode `SUPABASE_ACCESS_TOKEN=... npm run server:check`. Esse token nunca vai no `.env`, no chat nem no GitHub. Sem ele, o check só avisa que não conferiu.
+- **Captcha:** a partir desta fase, `server:check` e o build de produção **falham** enquanto o captcha estiver desligado no Supabase.
 
 **Supabase → Edge Functions → Secrets** (pelo terminal):
 

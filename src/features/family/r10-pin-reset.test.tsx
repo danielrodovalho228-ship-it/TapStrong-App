@@ -156,9 +156,10 @@ describe('R10 P2 code limits in the UI', () => {
     clock.now = () => later;
     try {
       await render(<ParentGate onPass={jest.fn()} />);
-      await toCode();
+      await fireEvent.press(screen.getByText('Forgot the PIN?'));
+      // Round 2 (S2-P2-5): no new code while locked; the button says why.
       expect(screen.getByText('Too many wrong codes. Try again in 1 minute.')).toBeTruthy();
-      expect(screen.getByRole('button', { name: 'Confirm the code' })).toBeDisabled();
+      expect(screen.getByRole('button', { name: 'Send the code' })).toBeDisabled();
     } finally {
       clock.now = () => NOW;
     }

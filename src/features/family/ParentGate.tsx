@@ -20,6 +20,8 @@ import {
   verifyPinResetCode,
 } from './pinReset';
 import { isOwnerProfile, useOwnerIdentityStore } from './ownerIdentity';
+import { useSecondsLeft } from '@/lib/useSecondsLeft';
+
 import { codeLockMinutesLeft, codeWaitSeconds, useResetCodeStore } from './resetCodeLock';
 import { activeProfile, useFamilyStore } from './store';
 
@@ -271,6 +273,10 @@ export function ParentPinReset({
   const { t } = useTranslation();
   const [step, setStep] = useState<'intro' | 'code' | 'new'>('intro');
   const lockedUntil = useResetCodeStore((s) => s.lockedUntil);
+  // "Send the code" stays off during the minute between codes and the lock (S2-P2-5).
+  const lastCodeAt = useResetCodeStore((s) => s.lastCodeAt);
+  const waitLeft = useSecondsLeft(codeWaitSeconds, lastCodeAt);
+  const sendLock = useSecondsLeft(() => codeLockMinutesLeft() * 60, lockedUntil);
   // The code passed but the phone lost its session (QA R10-03).
   const [signedOut, setSignedOut] = useState(false);
   const [code, setCode] = useState('');
@@ -331,7 +337,19 @@ export function ParentPinReset({
           <AppText color={colors.mutedStrong}>
             {t(creating ? 'pinReset.createBody' : 'pinReset.body', { email: maskEmail(email) })}
           </AppText>
-          <Button label={t('pinReset.send')} loading={busy} onPress={send} />
+          <Button
+            label={t('pinReset.send')}
+            loading={busy}
+            disabled={waitLeft > 0 || sendLock > 0}
+            onPress={send}
+          />
+          {sendLock > 0 || waitLeft > 0 ? (
+            <AppText variant="caption" color={colors.mutedStrong}>
+              {sendLock > 0
+                ? t('pinReset.errors.locked', { count: Math.ceil(sendLock / 60) })
+                : t('pinReset.errors.wait', { count: waitLeft })}
+            </AppText>
+          ) : null}
         </>
       ) : (
         <>

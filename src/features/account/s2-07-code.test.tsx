@@ -102,8 +102,12 @@ it('the Account screen says how long, and Confirm is disabled while locked', asy
   }
   expect(screen.getByText('Too many wrong codes. Try again in 15 minutes.')).toBeTruthy();
   expect(screen.getByRole('button', { name: 'Save my progress' })).toBeDisabled();
-  // Going back and asking again right away: wait.
+  // Going back: no new code for this email while locked (round 2, S2-P2-5).
   await fireEvent.press(screen.getByRole('link', { name: 'Use a different email' }));
-  await fireEvent.press(screen.getByRole('button', { name: 'Email me a code' }));
+  expect(screen.getByRole('button', { name: 'Email me a code' })).toBeDisabled();
+  expect(screen.getByText('Too many wrong codes. Try again in 15 minutes.')).toBeTruthy();
+  // Another email: only the minute between codes.
+  await fireEvent.changeText(screen.getByLabelText('Email'), 'other@example.com');
   expect(screen.getByText('Wait 60 seconds before asking for another code.')).toBeTruthy();
+  expect(screen.getByRole('button', { name: 'Email me a code' })).toBeDisabled();
 });

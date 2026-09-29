@@ -86,12 +86,24 @@ Automatic checks:
 - Coach (Claude): per user (30/day), per IP (hashed) and global daily budgets
   in `coach_budget`; one try per model with a 20 s timeout; anonymous users get
   the primary model only; 1.5 s between calls in the app (S2-04).
-- Anonymous sign-in and email codes: Cloudflare Turnstile once the site key is
-  set, plus Supabase's own per-IP limits.
-- Email codes: one a minute; 5 wrong codes lock that code for 15 minutes, on
-  the phone and on the server (PIN reset and Account login, S2-07).
+- Anonymous sign-in and email codes: Cloudflare Turnstile, enforced by
+  Supabase Auth (on in `config.toml` too). `server:check`, and every
+  production build through `env:check`, fails while captcha is off: it asks
+  for a code without a captcha token and expects `captcha_failed` (round 2,
+  S2-P2-6).
+- Email codes (round 2, S2-P2-5, replaces the S2-07 wording): the limits
+  that count are Supabase Auth's own, which no client can skip: one email a
+  minute per user (`max_frequency` / `smtp_max_frequency` = 60 s), codes
+  valid 15 minutes (`otp_expiry` 900 s), code checks and anonymous sign-ins
+  30 per IP (5 min / 1 h). With `SUPABASE_ACCESS_TOKEN` in the terminal,
+  `server:check` reads these from the Management API and fails on weaker
+  values. The app's own counters (5 wrong codes → 15 minutes, via
+  `account_code_failed` / `pin_reset_code_failed`) are a courtesy for the
+  honest user: a client calling Auth directly skips them. "Send code" stays
+  disabled during the minute and the lock.
 - Parent PIN: 5 wrong → 15 minutes, enforced by the server.
-- Checked by: unit and SQL tests for each limit.
+- Checked by: unit and SQL tests for each limit; `server:check` for the
+  Auth settings.
 
 ## 7. Prompt injection — the model can't do anything
 

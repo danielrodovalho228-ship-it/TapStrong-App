@@ -32,7 +32,12 @@ import { pullPinStatus } from '@/features/family/pinLockout';
 import { colors, fonts, makeStyles, spacing, useColors } from '@/theme';
 import { OwnerOnly } from '@/features/family/OwnerOnly';
 import { rememberOwnerAuth } from '@/features/family/pinReset';
-import { lockMinutesLeft, useAccountCodeStore } from '@/features/account/codeLimits';
+import {
+  lockMinutesLeft,
+  sendWaitSeconds,
+  useAccountCodeStore,
+} from '@/features/account/codeLimits';
+import { useSecondsLeft } from '@/lib/useSecondsLeft';
 import { useWorkoutStore } from '@/features/workout/store';
 
 type Step = 'start' | 'code';
@@ -77,6 +82,10 @@ function AccountScreenInner() {
   // 5 wrong codes lock the email for 15 minutes (security round 1, S2-07).
   const lockedUntil = useAccountCodeStore((st) => st.lockedUntil);
   const codeLocked = !!lockedUntil && lockMinutesLeft(email) > 0;
+  // "Send code" stays off during the minute between codes and the lock (S2-P2-5).
+  const lastSentAt = useAccountCodeStore((st) => st.lastSentAt);
+  const waitLeft = useSecondsLeft(sendWaitSeconds, lastSentAt);
+  const sendLock = useSecondsLeft(() => lockMinutesLeft(email) * 60, `${lockedUntil}|${email}`);
 
   const confirm = async () => {
     setBusy(true);
@@ -180,7 +189,19 @@ function AccountScreenInner() {
             keyboardType="email-address"
             textContentType="emailAddress"
           />
-          <Button label={t('account.sendCode')} loading={busy} onPress={send} />
+          <Button
+            label={t('account.sendCode')}
+            loading={busy}
+            disabled={waitLeft > 0 || sendLock > 0}
+            onPress={send}
+          />
+          {sendLock > 0 || waitLeft > 0 ? (
+            <AppText variant="caption" color={colors.mutedStrong}>
+              {sendLock > 0
+                ? t('account.errors.locked', { count: Math.ceil(sendLock / 60) })
+                : t('account.errors.wait', { count: waitLeft })}
+            </AppText>
+          ) : null}
           <TextLink
             label={t('account.notNow')}
             onPress={() => {
@@ -207,7 +228,13 @@ function AccountScreenInner() {
             disabled={codeLocked}
             onPress={confirm}
           />
-          <TextLink label={t('account.changeEmail')} onPress={() => setStep('start')} />
+          <TextLink
+            label={t('account.changeEmail')}
+            onPress={() => {
+              setMessage(null);
+              setStep('start');
+            }}
+          />
         </View>
       )}
 

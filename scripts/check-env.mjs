@@ -75,21 +75,21 @@ console.log('OK: every required EXPO_PUBLIC_* variable is set');
 // A production build also checks that the server has the latest migrations
 // (Phase 23 answer 3): never ship against a server missing them.
 if (onlyProduction) {
-  const { missingOnServer } = await import('./check-server.mjs');
-  const missingFns = await missingOnServer(
+  const { serverProblems } = await import('./check-server.mjs');
+  const result = await serverProblems(
     process.env.EXPO_PUBLIC_SUPABASE_URL,
     process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY,
   ).catch((e) => {
-    console.error(`Could not reach the Supabase server to check migrations: ${e.message}`);
+    console.error(`Could not reach the Supabase server to check it: ${e.message}`);
     process.exit(1);
   });
-  if (missingFns.length) {
-    console.error('The Supabase server is missing migrations this app needs:');
-    for (const [m, fn] of missingFns) console.error(`  ${m}  (function ${fn})`);
-    console.error(
-      'Run `supabase db push` first (docs/launch-readiness.md, "Migrações pendentes").',
-    );
+  for (const w of result.warnings) console.warn(`warning: ${w}`);
+  // Round 2 (S2-P2-5, S2-P2-6): also captcha on and the Auth limits.
+  if (result.problems.length) {
+    console.error('The Supabase server is not ready for this app:');
+    for (const p of result.problems) console.error(`  ${p}`);
+    console.error('See docs/launch-readiness.md ("Migrações pendentes" and "Segurança").');
     process.exit(1);
   }
-  console.log('OK: the server has the latest migrations');
+  console.log('OK: the server has the latest migrations and captcha is on');
 }

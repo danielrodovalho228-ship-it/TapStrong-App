@@ -211,12 +211,14 @@ token_verifications = 30
 web3 = 30
 
 # Configure one of the supported captcha providers: `hcaptcha`, `turnstile`.
-# Security round 1 (S2-04): Cloudflare Turnstile in production (Daniel's
-# choice). Locally it stays off; the app skips the check without a site key.
-# [auth.captcha]
-# enabled = true
-# provider = "turnstile"
-# secret = "env(SUPABASE_AUTH_CAPTCHA_SECRET)"
+# Security round 1 (S2-04): Cloudflare Turnstile (Daniel's choice).
+# Round 2 (S2-P2-6): on locally too, like production. For local work set
+# SUPABASE_AUTH_CAPTCHA_SECRET to Cloudflare's always-pass test secret and
+# EXPO_PUBLIC_TURNSTILE_SITE_KEY to its test site key (see .env.example).
+[auth.captcha]
+enabled = true
+provider = "turnstile"
+secret = "env(SUPABASE_AUTH_CAPTCHA_SECRET)"
 
 [auth.email]
 # Allow/disallow new user signups via email to your project.
@@ -230,7 +232,8 @@ enable_confirmations = true
 # If enabled, users will need to reauthenticate or have logged in recently to change their password.
 secure_password_change = true
 # Controls the minimum amount of time that must pass before sending another signup confirmation or password reset email.
-max_frequency = "1s"
+# Round 2 (S2-P2-5): one email a minute, enforced by Supabase Auth (per user).
+max_frequency = "60s"
 # Number of characters used in the email OTP.
 otp_length = 6
 # Number of seconds before the email OTP expires (defaults to 1 hour).
