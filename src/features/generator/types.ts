@@ -153,7 +153,9 @@ export type GeneratorNote =
   | { key: 'generator.notes.weeklyCap'; muscles: string[] }
   | { key: 'generator.notes.jointCap'; joints: string[] }
   /** A chosen push muscle gave its slot to a pull move (Daniel, Phase 18). */
-  | { key: 'generator.notes.pullAdded' };
+  | { key: 'generator.notes.pullAdded' }
+  /** Exercises added with "+1" that no longer fit after a rebuild (QA R10 P2). */
+  | { key: 'generator.notes.addedRemoved'; count: number };
 
 export type GeneratedSession = {
   items: SessionItem[];
@@ -170,6 +172,8 @@ export type GeneratedSession = {
   focus?: 'mobility' | 'balance';
   /** Exercises the person added with "+1 exercise?" (kept on rebuilds, QA R9 P2). */
   addedExercises?: number;
+  /** "Legs next time" chosen when this workout was built; "+1" and rebuilds keep it (QA R10 P2). */
+  groupFocus?: MovementGroup;
   /** Set when no safe session can be built. */
   error?: 'no_library' | 'no_warmup' | 'no_cooldown' | 'no_main' | 'all_recovering' | 'weekly_cap';
 };

@@ -40,6 +40,7 @@ import {
 } from './safety';
 import { bodyStates, muscleActivity } from './recovery';
 import { findWorkout, useWorkoutStore } from './store';
+import type { NextFocus } from './types';
 
 /**
  * The exercise library this build may use. Development builds use the draft
@@ -118,12 +119,17 @@ export function refreshWorkout(
   if (r.kind === 'ok') return id;
   if (r.kind === 'regenerate') {
     const added = w.session.addedExercises ?? 0;
+    // The same "Legs next time" focus it was built with (QA R10 P2).
+    const focus = w.session.groupFocus ?? null;
     store.discard(id);
-    const next = createWorkoutFrom(input, library);
+    const next = createWorkoutFrom(input, library, focus);
     // The exercises added with "+1" come along when they're still safe (QA R9 P2).
     const rebuilt = next ? findWorkout(useWorkoutStore.getState().workouts, next) : undefined;
     if (next && rebuilt && added)
-      store.replaceSession(next, withAddedExercises(input, rebuilt.session, added));
+      store.replaceSession(
+        next,
+        withAddedExercises(withFocus(input, focus, library), rebuilt.session, added),
+      );
     return next;
   }
   store.replaceSession(id, r.session);
@@ -159,19 +165,51 @@ export function useSafetyRefresh(
  */
 export function discardPlannedWorkouts() {
   const store = useWorkoutStore.getState();
+  let added = 0;
   for (const w of store.workouts)
-    if (w.status === 'planned' && w.kind === 'regular' && !w.logs.length) store.discard(w.id);
+    if (w.status === 'planned' && w.kind === 'regular' && !w.logs.length) {
+      added += w.session.addedExercises ?? 0;
+      store.discard(w.id);
+    }
+  // "+1" exercises are put back on the next build, or named when they no
+  // longer fit (QA R10 P2: they were lost silently).
+  if (added) useWorkoutStore.setState({ addedLost: added });
 }
 
 /** Builds today's workout and stores it. Returns its id, or null when none is safe. */
-export function createWorkoutFrom(input: GeneratorInput | null, library: Exercise[]) {
+export function createWorkoutFrom(
+  input: GeneratorInput | null,
+  library: Exercise[],
+  focus: NextFocus = useWorkoutStore.getState().nextFocus,
+) {
   if (!input) return null;
   const store = useWorkoutStore.getState();
-  const session = generateSession(withFocus(input, store.nextFocus, library));
+  const focused = withFocus(input, focus, library);
+  let session = generateSession(focused);
   if (session.error) return null;
+  // The focus is kept on the workout: "+1" and rebuilds use it too (QA R10 P2).
+  if (focus) session = { ...session, groupFocus: focus };
+  const lost = store.addedLost ?? 0;
+  if (lost) {
+    session = withAddedExercises(focused, session, lost);
+    useWorkoutStore.setState({ addedLost: 0 });
+  }
   const id = store.create(session);
   if (store.nextFocus) store.setNextFocus(null);
   return id;
+}
+
+/**
+ * The generator input for work that runs the generator on screen ("+1"):
+ * the same object while nothing but the clock changed, so it isn't rebuilt
+ * on every render (QA R10 P2).
+ */
+export function useStableInput(input: GeneratorInput | null): GeneratorInput | null {
+  const key = input
+    ? JSON.stringify({ ...input, library: input.library.length, now: undefined })
+    : '';
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  return useMemo(() => input, [key]);
 }
 
 /** A short mobility session (decision 1, QA round 2): an active day, not in the free limit. */

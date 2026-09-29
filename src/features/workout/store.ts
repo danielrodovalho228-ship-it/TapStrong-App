@@ -34,6 +34,8 @@ type Data = {
   /** "Legs next time" on the Done screen puts this group first once. */
   nextFocus: NextFocus;
   undo: UndoSwap | null;
+  /** "+1" exercises on a planned workout thrown away by a plan change; the next build re-adds them (QA R10 P2). */
+  addedLost?: number;
 };
 
 type Actions = {

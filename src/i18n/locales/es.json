@@ -3529,7 +3529,9 @@
       "painToday": "{{muscles}} fuera por hoy por el dolor que indicaste. Vuelve mañana si te sientes bien.",
       "pullAdded": "Incluimos un ejercicio de tirón para equilibrar.",
       "weeklyCap": "Llegaste al límite de esta semana para {{muscles}}: hoy trabajas otros músculos.",
-      "jointCap": "Llegaste al límite de esta semana para ejercicios que mueven una articulación con dolor ({{joints}}): hoy se trabaja sin moverla."
+      "jointCap": "Llegaste al límite de esta semana para ejercicios que mueven una articulación con dolor ({{joints}}): hoy se trabaja sin moverla.",
+      "addedRemoved_one": "El ejercicio que añadiste ya no cabe tras el cambio del plan, así que se quitó.",
+      "addedRemoved_other": "{{count}} ejercicios que añadiste ya no caben tras el cambio del plan, así que se quitaron."
     }
   },
   "tabs": {
@@ -3622,7 +3624,9 @@
     "doneBody": "Buen trabajo. Tus músculos crecen mientras se recuperan: movilidad corta, equilibrio o descanso el resto del día.",
     "extra": "Entrenamiento extra",
     "extraWarning": "Un segundo entrenamiento completo hoy suma carga antes de recuperarte. Solo si te sientes fresco, y para si algo duele.",
-    "extraStart": "Empezar entrenamiento extra"
+    "extraStart": "Empezar entrenamiento extra",
+    "weeklyCapTitle": "Llegaste al límite de esta semana",
+    "weeklyCapBody": "Los músculos de hoy ya hicieron sus series de esta semana. Movilidad corta, unos ejercicios de equilibrio o un día de descanso te mantienen en movimiento mientras se recuperan."
   },
   "workout": {
     "title": "Tu entrenamiento",

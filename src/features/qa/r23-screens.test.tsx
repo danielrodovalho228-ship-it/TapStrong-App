@@ -63,3 +63,9 @@ it('the joint-budget note names the joint', async () => {
   expect(screen.getByText(/move a painful joint \(Knee\)/)).toBeTruthy();
   expect(screen.queryByText(/\{\{/)).toBeNull();
 });
+
+it('added exercises that no longer fit are named, with the count', async () => {
+  await workoutWith([{ key: 'generator.notes.addedRemoved', count: 2 }]);
+  await render(<WorkoutScreen />);
+  expect(screen.getByText(/2 exercises you added no longer fit/)).toBeTruthy();
+});

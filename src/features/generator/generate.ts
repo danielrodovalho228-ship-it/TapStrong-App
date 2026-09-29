@@ -606,6 +606,24 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     );
   };
   const underCap = (e: Exercise) => setsLeft(e) >= minSets;
+  // Painful-joint areas whose weekly budget is what keeps these moves out
+  // (their muscles still have room).
+  const jointCapped = new Set<string>();
+  const jointBudgetAreas = (list: Exercise[]) =>
+    input.mobilityOnly || input.rehab || input.repair
+      ? []
+      : [
+          ...new Set(
+            list
+              .filter((e) => counted(e) && primaryParents(e).every((p) => muscleLeft(p) >= minSets))
+              .flatMap((e) =>
+                loadedPainful(e).filter(
+                  (a) =>
+                    JOINT_CARE_WEEKLY_SETS - (weekJoint.get(a) ?? 0) - sessionJoint(a) < minSets,
+                ),
+              ),
+          ),
+        ];
   // Chosen muscles that reached this week's cap (QA R9-07): named in a note,
   // their slots go to other muscles.
   const cappedTargets: string[] = [];
@@ -665,14 +683,19 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     .filter((t) => !covered.has(t.muscle) && !cappedTargets.includes(t.muscle))
     .slice(0, Math.max(0, slots - main.length))
     .forEach((target, i) => {
-      const options = readyFirst(
-        rankForTarget(pool, target, input.mode, input.favourites).filter(
-          (e) => !used.has(e.id) && underCap(e),
-        ),
+      const all = rankForTarget(pool, target, input.mode, input.favourites).filter(
+        (e) => !used.has(e.id),
       );
+      const options = readyFirst(all.filter(underCap));
       const pick = input.rehab ? options[0] : rotate(moving(options), i);
       if (pick) add(pick, target);
-      else unavailable.push(target.muscle);
+      else {
+        // Blocked only by the painful joint's weekly budget: say so, not
+        // "no safe exercise… add equipment" (QA R10 P2).
+        const areas = jointBudgetAreas(all);
+        if (areas.length) areas.forEach((a) => jointCapped.add(a));
+        else unavailable.push(target.muscle);
+      }
     });
   // A recovery session stays on its joint: more holds for the same focus
   // until its 4 slots are full (QA round 2: it had 3).
@@ -711,6 +734,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     notes.push({ key: 'generator.notes.unavailable', muscles: setup });
   if (cappedTargets.length)
     notes.push({ key: 'generator.notes.weeklyCap', muscles: cappedTargets });
+  if (jointCapped.size) notes.push({ key: 'generator.notes.jointCap', joints: [...jointCapped] });
 
   // The rest of the session keeps push / pull / legs balanced over the week:
   // groups trained least this week first, only recovered ones, never a
@@ -921,6 +945,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     }
     return fail('weekly_cap');
   }
+  if (!main.length && jointCapped.size) return fail('weekly_cap');
   if (!main.length) return fail('no_main');
   // "Trains other areas" replaces the setup note instead of repeating it.
   if (
@@ -1344,6 +1369,16 @@ export function generateBalanceSession(
  * accept while that stays true. Never added on its own.
  */
 export const ONE_MORE_MIN_MINUTES = 45;
+/** Same sum as the generator's own estimate: warm-up and cool-down minutes plus main and finisher seconds. */
+const sessionSeconds = (
+  session: Pick<GeneratedSession, 'warmupMinutes' | 'cooldownMinutes'>,
+  items: GeneratedSession['items'],
+) =>
+  (session.warmupMinutes + session.cooldownMinutes) * 60 +
+  items
+    .filter((i) => i.role === 'main' || i.role === 'finisher')
+    .reduce((n, i) => n + i.estSeconds, 0);
+
 export const offersOneMore = (session: GeneratedSession) =>
   !session.error &&
   !session.deload &&
@@ -1376,15 +1411,17 @@ export function withOneMoreExercise(
   const known = new Set(current.map((i) => i.exerciseId));
   const added = picked.items.filter((i) => i.role === 'main' && !known.has(i.exerciseId));
   if (added.length !== 1) return null;
-  const minutes = session.estimatedMinutes + added[0].estSeconds / 60;
-  if (minutes > session.minutes) return null;
   const lastMain = session.items.reduce((at, i, n) => (i.role === 'main' ? n : at), -1);
   const items = [...session.items];
   items.splice(lastMain + 1, 0, added[0]);
+  // Recomputed from the items' exact seconds, never from the rounded header,
+  // so repeated "+1" doesn't drift upward (QA R10 P2).
+  const seconds = sessionSeconds(session, items);
+  if (seconds > session.minutes * 60) return null;
   return {
     ...session,
     items: items.map((item, i) => ({ ...item, id: `i${i}` })),
-    estimatedMinutes: Math.round(minutes),
+    estimatedMinutes: Math.round(seconds / 60),
     addedExercises: (session.addedExercises ?? 0) + 1,
   };
 }
@@ -1396,12 +1433,19 @@ export function withAddedExercises(
   count: number,
 ): GeneratedSession {
   let out = session;
-  for (let n = 0; n < count; n++) {
+  let added = 0;
+  for (; added < count; added++) {
     const next = withOneMoreExercise(input, out);
     if (!next) break;
     out = next;
   }
-  return out;
+  // Never lost silently (QA R10 P2): the ones that no longer fit are named.
+  return added < count
+    ? {
+        ...out,
+        notes: [...out.notes, { key: 'generator.notes.addedRemoved', count: count - added }],
+      }
+    : out;
 }
 
 /**

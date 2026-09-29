@@ -38,8 +38,13 @@ import {
   exerciseName,
   targetText,
 } from '@/features/workout/format';
-import { createMobilityWorkout, useSafetyRefresh, useWorkout } from '@/features/workout/hooks';
-import { isReviewed } from '@/features/workout/plan';
+import {
+  createMobilityWorkout,
+  useSafetyRefresh,
+  useStableInput,
+  useWorkout,
+} from '@/features/workout/hooks';
+import { isReviewed, withFocus } from '@/features/workout/plan';
 import { useWorkoutStore } from '@/features/workout/store';
 import { useTodayState } from '@/features/workout/useTodayState';
 import { track } from '@/lib/analytics';
@@ -77,16 +82,24 @@ export default function WorkoutScreen() {
   // workout, never on the day's second workout; built once per session
   // (it runs the generator).
   const planned0 = workout?.status === 'planned';
+  // A stable input (not a new one every render) with the workout's own
+  // "Legs next time" focus (QA R10 P2).
+  const stable = useStableInput(input);
+  const groupFocus = workout?.session.groupFocus ?? null;
+  const focusedInput = useMemo(
+    () => (stable ? withFocus(stable, groupFocus, library) : null),
+    [stable, groupFocus, library],
+  );
   const oneMore = useMemo(
     () =>
       workout &&
-      input &&
+      focusedInput &&
       planned0 &&
       workout.kind === 'regular' &&
       !workout.swaps.length &&
       !workout.fullSession &&
       !today.doneToday
-        ? withOneMoreExercise(input, workout.session)
+        ? withOneMoreExercise(focusedInput, workout.session)
         : null,
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
@@ -95,7 +108,7 @@ export default function WorkoutScreen() {
       workout?.fullSession,
       planned0,
       today.doneToday,
-      input,
+      focusedInput,
     ],
   );
 
@@ -173,7 +186,7 @@ export default function WorkoutScreen() {
           .join(', '),
       });
     }
-    if (n.key === 'generator.notes.customLeftOut') return t(n.key, { count: n.count });
+    if ('count' in n) return t(n.key, { count: n.count });
     return t(n.key);
   };
 
@@ -341,8 +354,15 @@ export default function WorkoutScreen() {
                 selected={activePlace === p.id}
                 onPress={() => {
                   choosePlace(p.id);
-                  const placeInput = { ...input, equipment: p.items, location: p.location };
-                  const next = generateSession(placeInput);
+                  const placeInput = withFocus(
+                    { ...input, equipment: p.items, location: p.location },
+                    session.groupFocus ?? null,
+                    library,
+                  );
+                  const built = generateSession(placeInput);
+                  const next = session.groupFocus
+                    ? { ...built, groupFocus: session.groupFocus }
+                    : built;
                   // The exercises added with "+1" come along (QA R9 P2).
                   if (!next.error)
                     store.replaceSession(

@@ -3529,7 +3529,9 @@
       "painToday": "{{muscles}} left out today after the pain you reported. Back tomorrow if it feels fine.",
       "pullAdded": "We added a pull exercise to keep things balanced.",
       "weeklyCap": "You’ve reached this week’s limit for {{muscles}} — today works other muscles.",
-      "jointCap": "You’ve reached this week’s limit for exercises that move a painful joint ({{joints}}) — today works around it."
+      "jointCap": "You’ve reached this week’s limit for exercises that move a painful joint ({{joints}}) — today works around it.",
+      "addedRemoved_one": "The exercise you added no longer fits after the plan changed, so it was removed.",
+      "addedRemoved_other": "{{count}} exercises you added no longer fit after the plan changed, so they were removed."
     }
   },
   "tabs": {
@@ -3622,7 +3624,9 @@
     "doneBody": "Nice work. Your muscles grow while they recover: short mobility, balance or rest for the rest of the day.",
     "extra": "Extra workout",
     "extraWarning": "A second full workout today adds load before you recover. Only if you feel fresh, and stop if anything hurts.",
-    "extraStart": "Start extra workout"
+    "extraStart": "Start extra workout",
+    "weeklyCapTitle": "You've reached this week's limit",
+    "weeklyCapBody": "Today's muscles have had their sets for this week. Short mobility, a few balance holds or a rest day keep you moving while they recover."
   },
   "workout": {
     "title": "Your workout",

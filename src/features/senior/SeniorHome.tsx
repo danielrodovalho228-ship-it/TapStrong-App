@@ -13,6 +13,7 @@ import { activeProfile, useFamilyStore } from '@/features/family/store';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { checkinDue } from '@/features/progress/checkin';
 import { useProgressStore } from '@/features/progress/store';
+import { easyDayKey } from '@/features/workout/secondWorkout';
 import { useWorkoutStore } from '@/features/workout/store';
 import { clock } from '@/lib/clock';
 import { colors, fonts, makeStyles, radius, sizes, spacing, useColors } from '@/theme';
@@ -32,6 +33,7 @@ export function SeniorHome({
   targets,
   minutes,
   allRecovering = false,
+  weeklyCap = false,
   stoppedToday = false,
   doneToday = false,
 }: {
@@ -43,6 +45,8 @@ export function SeniorHome({
   /** The session's own length, not the profile setting (QA R3-06). */
   minutes: number;
   allRecovering?: boolean;
+  /** This week's sets are used up for today's muscles (QA R10 P2). */
+  weeklyCap?: boolean;
   /** Sharp pain stopped a workout today: gentle options only (QA R5 P2). */
   stoppedToday?: boolean;
   /** Today's workout is done: only mobility, balance or rest (Daniel, Phase 19). */
@@ -134,23 +138,9 @@ export function SeniorHome({
         // Everything is still recovering (QA R3-03): mobility, balance or rest.
         <Card style={styles.today}>
           <AppText variant="h1" accessibilityRole="header">
-            {t(
-              stoppedToday
-                ? 'home.stoppedTitle'
-                : doneToday
-                  ? 'home.doneTitle'
-                  : 'home.recoveringTitle',
-            )}
+            {t(`home.${easyDayKey({ stoppedToday, doneToday, weeklyCap })}Title`)}
           </AppText>
-          <AppText>
-            {t(
-              stoppedToday
-                ? 'home.stoppedBody'
-                : doneToday
-                  ? 'home.doneBody'
-                  : 'home.recoveringBody',
-            )}
-          </AppText>
+          <AppText>{t(`home.${easyDayKey({ stoppedToday, doneToday, weeklyCap })}Body`)}</AppText>
           {onBalance ? (
             <Button
               variant="teal"

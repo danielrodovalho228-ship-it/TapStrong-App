@@ -36,7 +36,7 @@ import {
 import type { RecoveryState } from '@/features/workout/recovery';
 import { sessionTargets, todaySession } from '@/features/workout/plan';
 import { useWorkoutStore } from '@/features/workout/store';
-import { todayState } from '@/features/workout/secondWorkout';
+import { easyDayKey, todayState } from '@/features/workout/secondWorkout';
 import { showStreakHint, streakToday } from '@/features/workout/streak';
 import { canStartWorkout, currentPlan, FREE_WORKOUTS_PER_WEEK } from '@/features/billing/rules';
 import { useBillingStore } from '@/features/billing/store';
@@ -99,6 +99,8 @@ export default function HomeScreen() {
   });
   const allRecovering =
     built?.error === 'all_recovering' || built?.error === 'weekly_cap' || stoppedToday;
+  // The week's sets are used up: its own words, not "Everything is recovering" (QA R10 P2).
+  const weeklyCap = built?.error === 'weekly_cap';
   // Today's workout is done (Daniel, Phase 19): mobility, balance or rest; an
   // adult may still choose an extra workout, after a short warning.
   const easyDay = allRecovering || doneToday;
@@ -198,6 +200,7 @@ export default function HomeScreen() {
         targets={goals}
         minutes={cardMinutes}
         allRecovering={easyDay}
+        weeklyCap={weeklyCap}
         stoppedToday={stoppedToday}
         doneToday={doneToday}
       />
@@ -239,22 +242,10 @@ export default function HomeScreen() {
             {t('home.picked')}
           </AppText>
           <AppText variant="h1" color={colors.dark.text} accessibilityRole="header">
-            {t(
-              stoppedToday
-                ? 'home.stoppedTitle'
-                : doneToday
-                  ? 'home.doneTitle'
-                  : 'home.recoveringTitle',
-            )}
+            {t(`home.${easyDayKey({ stoppedToday, doneToday, weeklyCap })}Title`)}
           </AppText>
           <AppText color={colors.dark.text}>
-            {t(
-              stoppedToday
-                ? 'home.stoppedBody'
-                : doneToday
-                  ? 'home.doneBody'
-                  : 'home.recoveringBody',
-            )}
+            {t(`home.${easyDayKey({ stoppedToday, doneToday, weeklyCap })}Body`)}
           </AppText>
           <Button
             variant="accent"

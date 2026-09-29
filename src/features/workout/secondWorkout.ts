@@ -52,3 +52,7 @@ export function todayState(o: {
 
 /** A full workout may be built now: no easy day, or an adult's extra. */
 export const fullWorkoutAllowed = (s: TodayState) => !s.easyDay || s.extraAllowed;
+
+/** Which "easy day" words Home shows: a pain stop, today's workout done, the weekly limit, or recovery. */
+export const easyDayKey = (s: { stoppedToday: boolean; doneToday: boolean; weeklyCap: boolean }) =>
+  s.stoppedToday ? 'stopped' : s.doneToday ? 'done' : s.weeklyCap ? 'weeklyCap' : 'recovering';
