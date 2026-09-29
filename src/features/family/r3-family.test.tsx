@@ -84,13 +84,10 @@ describe('Family plan: adults only', () => {
     expect(familyPurchaseBlocked(null)).toBe(false);
   });
 
-  it('a 17-year-old owner sees "adults only" and no purchase button for Family', async () => {
+  it('a 17-year-old owner sees no Family card (Phase 21), and Premium stays available', async () => {
     await owner(2009);
     await render(<PlansScreen />);
-    await fireEvent.press(screen.getByRole('radio', { name: /^Family/ }));
-    expect(screen.getByText(/The Family plan is for adults 18 and over/)).toBeTruthy();
-    expect(screen.queryByRole('button', { name: /free trial|Subscribe/ })).toBeNull();
-    // Premium stays available.
+    expect(screen.queryByRole('radio', { name: /^Family/ })).toBeNull();
     await fireEvent.press(screen.getByRole('radio', { name: /^Premium/ }));
     expect(screen.getByRole('button', { name: /free trial|Subscribe/ })).toBeTruthy();
   });
