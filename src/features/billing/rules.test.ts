@@ -105,9 +105,8 @@ describe('RevenueCat events → subscription row', () => {
     });
   });
 
-  it('billing trouble is a grace period; sandbox purchases are marked as test', () => {
-    const paid = applyEvent(null, ev({ environment: 'SANDBOX' }))!;
-    expect(paid.store).toBe('test');
+  it('billing trouble is a grace period', () => {
+    const paid = applyEvent(null, ev({}))!;
     expect(
       applyEvent(
         paid,
@@ -115,6 +114,37 @@ describe('RevenueCat events → subscription row', () => {
       )!.status,
     ).toBe('grace');
     expect(applyEvent(paid, ev({ type: 'TEST' }))).toBeNull();
+  });
+
+  it('S1-02: sandbox (free test) purchases never grant a plan in production', () => {
+    for (const environment of ['SANDBOX', undefined, null, 'sandbox'])
+      expect(applyEvent(null, ev({ environment, entitlement_ids: ['family'] }))).toBeNull();
+    // Nor do they touch a real subscription.
+    const paid = applyEvent(null, ev({}))!;
+    expect(applyEvent(paid, ev({ type: 'EXPIRATION', environment: 'SANDBOX' }))).toBeNull();
+    // Production is unchanged.
+    expect(applyEvent(null, ev({ entitlement_ids: ['family'] }))).toMatchObject({
+      plan: 'family',
+      status: 'active',
+      store: 'app_store',
+    });
+  });
+
+  it('S1-02: a test project may accept sandbox, but never as a charge', () => {
+    const row = applyEvent(null, ev({ environment: 'SANDBOX', entitlement_ids: ['family'] }), {
+      acceptSandbox: true,
+    })!;
+    expect(row).toMatchObject({ plan: 'family', store: 'test', first_charged_at: null });
+    const renewed = applyEvent(
+      row,
+      ev({
+        type: 'RENEWAL',
+        environment: 'SANDBOX',
+        event_timestamp_ms: t('2026-11-01T00:00:00Z'),
+      }),
+      { acceptSandbox: true },
+    )!;
+    expect(renewed.first_charged_at).toBeNull();
   });
 
   it('maps products and entitlements to plans', () => {

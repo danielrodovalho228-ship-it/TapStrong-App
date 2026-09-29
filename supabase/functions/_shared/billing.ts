@@ -72,7 +72,7 @@ export type RevenueCatEvent = {
 const iso = (ms: number | null | undefined) => (ms ? new Date(ms).toISOString() : null);
 
 function storeOf(e: RevenueCatEvent): SubscriptionRow['store'] {
-  if (e.environment === 'SANDBOX') return 'test';
+  if (!isProductionEvent(e)) return 'test';
   switch (e.store) {
     case 'APP_STORE':
     case 'MAC_APP_STORE':
@@ -89,8 +89,22 @@ function storeOf(e: RevenueCatEvent): SubscriptionRow['store'] {
 const CHARGE_EVENTS = new Set(['INITIAL_PURCHASE', 'RENEWAL', 'PRODUCT_CHANGE', 'UNCANCELLATION']);
 const IGNORED = new Set(['TEST', 'TRANSFER', 'SUBSCRIBER_ALIAS', 'INVOICE_ISSUANCE']);
 
+export type ApplyOptions = {
+  /**
+   * Sandbox events (TestFlight, Play test tracks: nothing is charged) are
+   * ignored unless the webhook runs on a test project that opts in with
+   * REVENUECAT_ACCEPT_SANDBOX=true (security round 1, S1-02).
+   */
+  acceptSandbox?: boolean;
+};
+
+/** Only live store events change a real subscription (S1-02). */
+export const isProductionEvent = (e: RevenueCatEvent) => e.environment === 'PRODUCTION';
+
 /**
  * Next `subscriptions` row for a webhook event, or null to ignore it.
+ * - Sandbox (free test) purchases are ignored in production; a test project
+ *   that accepts them stores them as store 'test', never as a charge.
  * - Out-of-order events (older than the last one applied) are ignored.
  * - A promotional week (referral reward) never overrides a paid plan.
  * - first_charged_at is set on the first paid, non-trial period only; it is
@@ -100,8 +114,10 @@ const IGNORED = new Set(['TEST', 'TRANSFER', 'SUBSCRIBER_ALIAS', 'INVOICE_ISSUAN
 export function applyEvent(
   current: SubscriptionRow | null,
   e: RevenueCatEvent,
+  options: ApplyOptions = {},
 ): SubscriptionRow | null {
   if (IGNORED.has(e.type) || !e.app_user_id) return null;
+  if (!isProductionEvent(e) && !options.acceptSandbox) return null;
   const at = iso(e.event_timestamp_ms) ?? new Date().toISOString();
   if (current?.last_event_at && at < current.last_event_at) return null;
 
@@ -153,7 +169,8 @@ export function applyEvent(
   }
 
   const trial = period === 'TRIAL';
-  const paid = !trial && period !== 'PROMOTIONAL' && store !== 'promotional';
+  // A test store is never a charge: it can't be consent evidence (S1-02).
+  const paid = !trial && period !== 'PROMOTIONAL' && store !== 'promotional' && store !== 'test';
   return {
     ...next,
     plan: eventPlan === 'free' ? next.plan : eventPlan,

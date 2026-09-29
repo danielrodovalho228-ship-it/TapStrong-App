@@ -101,7 +101,7 @@ a fresh web export was built and inspected; nothing live was contacted.
   `supabase/config.toml` (`enable_anonymous_sign_ins = true`,
   `anonymous_users = 30`/h/IP, no captcha) + `coach-interview/index.ts:41,132`
   (30 calls/day per user): ~900 LLM calls/h/IP, each can fall back from Haiku
-  to Sonnet with 1024 output tokens. Fix: captcha (Cloudflare Turnstile — 
+  to Sonnet with 1024 output tokens. Fix: captcha (Cloudflare Turnstile —
   Daniel's choice) on anonymous sign-in and email OTP; per-IP and global daily
   budget in `coach-interview` (DB counter, return 429 + friendly message);
   explicit SDK `timeout` and `maxRetries: 0`; anonymous users get the primary
@@ -119,12 +119,12 @@ a fresh web export was built and inspected; nothing live was contacted.
   headers. Fix: ship headers from the host (host not decided: files for Vercel
   and Netlify/Cloudflare Pages) and a meta fallback in `src/app/+html.tsx`:
   `default-src 'self'; script-src 'self' <sha256 of the static inline scripts,
-  computed at build>; connect-src 'self' https://<ref>.supabase.co
-  wss://<ref>.supabase.co https://*.posthog.com https://*.ingest.sentry.io;
-  img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; object-src
-  'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'`, plus
+computed at build>; connect-src 'self' https://<ref>.supabase.co
+wss://<ref>.supabase.co https://*.posthog.com https://*.ingest.sentry.io;
+img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; object-src
+'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'`, plus
   `X-Content-Type-Options: nosniff`, `Referrer-Policy:
-  strict-origin-when-cross-origin`, HSTS. Add a `web:check` step that fails if
+strict-origin-when-cross-origin`, HSTS. Add a `web:check` step that fails if
   the hashes don't match the inline scripts.
 - **S2-07 Email OTP login (Account) has no resend cooldown or verify limit**
   (`src/features/account/auth.ts:47,67`, `src/app/account.tsx:169,190`); local
@@ -146,7 +146,7 @@ a fresh web export was built and inspected; nothing live was contacted.
 - **RevenueCat TRANSFER ignored** (`billing.ts:90`): expire the
   `transferred_from` users.
 - **Account deletion deletes teens' own profiles:** `profiles.guardian_id ...
-  on delete cascade`; use `set null` (or detach) when the teen has their own
+on delete cascade`; use `set null` (or detach) when the teen has their own
   `user_id`.
 - **Password policy:** `minimum_password_length = 6`, no
   `password_requirements`, `secure_password_change = false` → 10+ chars,

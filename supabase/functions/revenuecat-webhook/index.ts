@@ -8,6 +8,9 @@ import { applyEvent, type RevenueCatEvent, type SubscriptionRow } from '../_shar
 import { json, safeEqual } from '../_shared/http.ts';
 
 const secret = Deno.env.get('REVENUECAT_WEBHOOK_SECRET') ?? '';
+// Only a test project sets this: in production, sandbox (free test) purchases
+// never grant a plan (security round 1, S1-02).
+const acceptSandbox = Deno.env.get('REVENUECAT_ACCEPT_SANDBOX') === 'true';
 const admin = createClient(
   Deno.env.get('SUPABASE_URL')!,
   Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
@@ -39,7 +42,7 @@ Deno.serve(async (req) => {
     .maybeSingle();
   if (readError) return json({ error: 'read' }, 500);
 
-  const next = applyEvent(current as SubscriptionRow | null, event);
+  const next = applyEvent(current as SubscriptionRow | null, event, { acceptSandbox });
   if (!next) return json({ ignored: event.type });
 
   const { error } = await admin
