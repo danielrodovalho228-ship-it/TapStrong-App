@@ -4,7 +4,6 @@ import { StyleSheet, Text } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Icon } from '@/components/ui';
-import { WebMobileOnly, useWebFamilyBlocked } from '@/features/family/components/WebMobileOnly';
 import { derive } from '@/features/onboarding/derived';
 import { familyAvailable } from '@/lib/features';
 import { useOnboardingStore } from '@/features/onboarding/store';
@@ -14,14 +13,6 @@ import { fonts, useColors } from '@/theme';
  * Main tabs (mockups 06/07). The Coach tab joins with the ongoing coach chat.
  */
 export default function TabsLayout() {
-  // The web is for adults without family (security round 1, S1-03): a teen,
-  // child or other family profile left open on the web sees only this note.
-  const webBlocked = useWebFamilyBlocked();
-  if (webBlocked) return <WebMobileOnly kind={webBlocked} />;
-  return <TabsInner />;
-}
-
-function TabsInner() {
   const colors = useColors();
   const { t } = useTranslation();
   // 60+ mode keeps to the simple screens (SPEC §11.10): no body-map tab.

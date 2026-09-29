@@ -4167,7 +4167,9 @@
     "removePending_other": "{{count}} perfis removidos ainda estão na sua conta. Vamos terminar de removê-los quando você estiver online.",
     "mobileOnly": "Os perfis da família estão disponíveis no app para celular.",
     "teenMobileOnly": "O TapStrong para adolescentes está disponível no app para celular. Na web, o TapStrong é para adultos.",
-    "mobileOnlyTitle": "Perfis da família ficam no app para celular"
+    "mobileOnlyTitle": "Perfis da família ficam no app para celular",
+    "teenMobileOnlyTitle": "O TapStrong para adolescentes fica no app para celular",
+    "changeDate": "Mudar minha data de nascimento"
   },
   "deleteAccount": {
     "title": "Excluir conta",

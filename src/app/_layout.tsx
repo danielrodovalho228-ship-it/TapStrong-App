@@ -17,6 +17,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemeGate } from '@/features/appearance/ThemeGate';
 import { refreshBilling } from '@/features/billing/actions';
 import { CaptchaHost } from '@/features/captcha/CaptchaHost';
+import { WebFamilyGate } from '@/features/family/components/WebMobileOnly';
 import { useNotificationSync } from '@/features/notifications/useNotificationSync';
 import { useSyncProfileSettings } from '@/features/onboarding/sync';
 import { useWorkoutStore } from '@/features/workout/store';
@@ -68,7 +69,10 @@ export default function RootLayout() {
       <QueryClientProvider client={queryClient}>
         <SafeAreaProvider>
           <ThemeGate>
-            <AppStack />
+            {/* Web = adults without family, on every address (round 2, S2-P2-1). */}
+            <WebFamilyGate>
+              <AppStack />
+            </WebFamilyGate>
             {/* Turnstile check for anonymous sign-in and email codes (S2-04). */}
             <CaptchaHost />
           </ThemeGate>

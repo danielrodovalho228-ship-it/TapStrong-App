@@ -89,22 +89,3 @@ it('Plans on the web: the note, no Family plan', async () => {
   expect(screen.getByText('Family profiles are available in the mobile app.')).toBeTruthy();
   expect(screen.queryByRole('radio', { name: /Family/ })).toBeNull();
 });
-
-it('a teen or a family profile left open on the web sees only the note', async () => {
-  await adult(new Date().getFullYear() - 15);
-  await render(<TabsLayout />);
-  expect(screen.getByText(/TapStrong for teens is available in the mobile app/)).toBeTruthy();
-  expect(screen.queryByText('tab:home')).toBeNull();
-  await adult();
-  await act(() => {
-    useFamilyStore.setState({
-      profiles: [
-        { id: 'owner', kind: 'self', createdAt: '' },
-        { id: 'mom', kind: 'parent', createdAt: '' },
-      ],
-      activeId: 'mom',
-    });
-  });
-  await render(<TabsLayout />);
-  expect(screen.getByText('Family profiles are available in the mobile app.')).toBeTruthy();
-});

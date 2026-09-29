@@ -4137,7 +4137,9 @@
     "removePending_other": "{{count}} removed profiles are still in your account. We’ll finish removing them when you’re back online.",
     "mobileOnly": "Family profiles are available in the mobile app.",
     "teenMobileOnly": "TapStrong for teens is available in the mobile app. On the web, TapStrong is for adults.",
-    "mobileOnlyTitle": "Family profiles are in the mobile app"
+    "mobileOnlyTitle": "Family profiles are in the mobile app",
+    "teenMobileOnlyTitle": "TapStrong for teens is in the mobile app",
+    "changeDate": "Change my birth date"
   },
   "deleteAccount": {
     "title": "Delete account",

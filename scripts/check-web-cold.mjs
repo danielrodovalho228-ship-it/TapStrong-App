@@ -27,9 +27,9 @@ const pressed = (page, name) =>
     .getAttribute('aria-pressed')
     .catch(() => null);
 
-async function coldPage(extra) {
+async function coldPage(extra, birthYear = 1990) {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
-  const seed = JSON.stringify(profile(1990, true, extra));
+  const seed = JSON.stringify(profile(birthYear, true, extra));
   await context.addInitScript((v) => {
     if (!sessionStorage.getItem('seeded')) {
       localStorage.setItem('tapstrong\\onboarding', v);
@@ -73,6 +73,30 @@ try {
     await page.waitForTimeout(700);
     const text = await page.evaluate(() => document.body.innerText);
     if (!text.includes('1990')) failed.push('who: saved birth year not shown');
+    await context.close();
+  }
+  // Security round 2, S2-P2-1: a teen typing an address still gets only the
+  // note on the web; the account and the birth-date fix stay reachable.
+  {
+    const teenYear = new Date().getFullYear() - 15;
+    for (const path of ['/settings', '/workout/new', '/restrictions', '/programs', '/home']) {
+      const { context, page } = await coldPage({}, teenYear);
+      await page.goto(`${origin}${path}`, { waitUntil: 'networkidle' });
+      await page.waitForTimeout(600);
+      const text = await page.evaluate(() => document.body.innerText);
+      if (!text.includes('TapStrong for teens is in the mobile app'))
+        failed.push(`teen on the web: ${path} opened the app`);
+      await context.close();
+    }
+    const { context, page } = await coldPage({}, teenYear);
+    await page.goto(`${origin}/account`, { waitUntil: 'networkidle' });
+    await page.waitForTimeout(600);
+    if (
+      (await page.evaluate(() => document.body.innerText)).includes(
+        'TapStrong for teens is in the mobile app',
+      )
+    )
+      failed.push('teen on the web: /account is blocked (it must stay reachable)');
     await context.close();
   }
   // R8-04: clock-based text renders only after hydration, so the static HTML
