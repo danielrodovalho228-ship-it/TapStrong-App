@@ -50,7 +50,8 @@ try {
     await page.goto(`${origin}/onboarding/safety?edit=1`, { waitUntil: 'networkidle' });
     await page.waitForTimeout(700);
     for (const name of ['Knee', 'Diabetes / prediabetes', 'With support'])
-      if ((await pressed(page, name)) !== 'true') failed.push(`safety: "${name}" not shown selected`);
+      if ((await pressed(page, name)) !== 'true')
+        failed.push(`safety: "${name}" not shown selected`);
     await page.getByRole('button', { name: 'Continue', exact: true }).click();
     await page.waitForTimeout(500);
     const s = await stored(page);
@@ -67,6 +68,17 @@ try {
     if (!text.includes('1990')) failed.push('who: saved birth year not shown');
     await context.close();
   }
+  // R8-04: clock-based text renders only after hydration, so the static HTML
+  // carries no build-day date (no #418 the day after a build).
+  const DATE =
+    /\b(January|February|March|April|May|June|July|August|September|October|November|December) \d{1,2}\b|\b(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\b|\d{4}-\d{2}-\d{2}T/;
+  for (const path of ['/home', '/plans', '/paywall', '/progress']) {
+    const html = await (await fetch(`${origin}${path}`)).text();
+    const body = html.slice(html.indexOf('<body'));
+    const text = body.replace(/<script[\s\S]*?<\/script>/g, '').replace(/<[^>]+>/g, ' ');
+    const hit = text.match(DATE);
+    if (hit) failed.push(`${path}: static HTML shows a date ("${hit[0]}")`);
+  }
 } finally {
   await browser.close();
   close();
@@ -76,4 +88,6 @@ if (failed.length) {
   console.error(`web:check failed:\n- ${failed.join('\n- ')}`);
   process.exit(1);
 }
-console.log('web:check passed: cold-loaded edit screens show and keep the saved answers');
+console.log(
+  'web:check passed: cold-loaded edit screens show and keep the saved answers; no build-day dates in the static HTML',
+);

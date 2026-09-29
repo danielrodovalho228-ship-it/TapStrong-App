@@ -133,7 +133,7 @@ export default function DayScreen() {
   if (param && param !== '[date]' && !validDate(param)) {
     return (
       <Screen header={<Header onBack={backOrHome} title={t('notFound.title')} />}>
-        <Notice tone="warning">{t('notFound.body')}</Notice>
+        <Notice tone="neutral">{t('notFound.body')}</Notice>
         <Button variant="secondary" label={t('notFound.home')} onPress={backOrHome} />
       </Screen>
     );

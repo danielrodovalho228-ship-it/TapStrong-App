@@ -9,8 +9,11 @@ import { Icon } from './Icon';
 export type NoticeProps = {
   title?: string;
   children?: ReactNode;
-  /** safety: teal tint (trust). warning: accent outline (doctor notice). */
-  tone?: 'safety' | 'warning';
+  /**
+   * safety: teal tint (trust). warning: accent outline (doctor notice).
+   * neutral: plain surface, for information like "not found" (Phase 21).
+   */
+  tone?: 'safety' | 'warning' | 'neutral';
   icon?: boolean;
 };
 
@@ -18,25 +21,22 @@ export function Notice({ title, children, tone = 'safety', icon = false }: Notic
   const colors = useColors();
   const styles = useStyles();
   const warning = tone === 'warning';
-  const color = warning ? colors.accentText : colors.teal;
+  const neutral = tone === 'neutral';
+  const color = warning ? colors.accentText : neutral ? colors.mutedStrong : colors.teal;
   return (
     <View
       accessibilityRole={warning ? 'alert' : undefined}
-      style={[styles.box, warning ? styles.warning : styles.safety]}
+      style={[styles.box, warning ? styles.warning : neutral ? styles.neutral : styles.safety]}
     >
       {icon ? <Icon name="alert" color={color} /> : null}
       <View style={styles.text}>
         {title ? (
-          <AppText
-            variant="label"
-            color={warning ? colors.accentText : colors.teal}
-            style={styles.title}
-          >
+          <AppText variant="label" color={color} style={styles.title}>
             {title}
           </AppText>
         ) : null}
         {typeof children === 'string' ? (
-          <AppText color={warning ? colors.ink : colors.teal}>{children}</AppText>
+          <AppText color={warning || neutral ? colors.ink : colors.teal}>{children}</AppText>
         ) : (
           children
         )}
@@ -54,6 +54,7 @@ const useStyles = makeStyles(() => ({
   },
   safety: { backgroundColor: colors.tealTint },
   warning: { backgroundColor: colors.surface, borderWidth: 1.5, borderColor: colors.accent },
+  neutral: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.line },
   text: { flex: 1, gap: spacing.xs },
   title: { textTransform: 'uppercase', letterSpacing: 1, fontFamily: fonts.heading },
 }));

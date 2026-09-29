@@ -19,7 +19,8 @@ const slugs = new Set(
 );
 const repairFile = join(root, 'supabase', 'seed', 'repair_tests.json');
 if (existsSync(repairFile))
-  for (const t of JSON.parse(readFileSync(repairFile, 'utf8')).tests ?? []) slugs.add(t.slug ?? t.id);
+  for (const t of JSON.parse(readFileSync(repairFile, 'utf8')).tests ?? [])
+    slugs.add(t.slug ?? t.id);
 
 /** slug → { f?: file, m?: file } */
 const clips = {};

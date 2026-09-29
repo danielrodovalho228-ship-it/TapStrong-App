@@ -242,10 +242,11 @@ describe('R8-05 PIN reset goes only to the owner', () => {
     expect(c.auth.setSession).toHaveBeenCalledWith({ access_token: 'a', refresh_token: 'r' });
   });
 
-  it("the owner's own code passes", async () => {
+  it("the owner's own code passes, and its session is signed out (Phase 21)", async () => {
     const c = client();
     expect(await reset.verifyPinResetCode(c, '123456')).toBe('ok');
-    expect(c.auth.signOut).not.toHaveBeenCalled();
+    expect(c.auth.signOut).toHaveBeenCalledWith({ scope: 'local' });
+    expect(c.auth.setSession).toHaveBeenCalledWith({ access_token: 'a', refresh_token: 'r' });
   });
 
   it('an older phone learns the owner from the signed-in account, not the plain email', async () => {

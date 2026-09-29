@@ -88,10 +88,25 @@ async function currentSession(supabase: SupabaseClient) {
   }
 }
 
+async function endCodeSession(
+  supabase: SupabaseClient,
+  before: Awaited<ReturnType<typeof currentSession>>,
+) {
+  try {
+    await supabase.auth.signOut({ scope: 'local' });
+    if (before)
+      await supabase.auth.setSession({
+        access_token: before.access_token,
+        refresh_token: before.refresh_token,
+      });
+  } catch {
+    // Offline: the session ends when its token expires; the PIN step is local.
+  }
+}
+
 /**
- * Checks the code, and that it signed in the owner's own user. Any other user
- * (a stored email that no longer matches) is signed out again and the phone
- * goes back to the session it had.
+ * Checks the code, and that it signed in the owner's own user. Either way the
+ * code's session is signed out and the phone goes back to the session it had.
  */
 export async function verifyPinResetCode(
   supabase: SupabaseClient | null,
@@ -110,14 +125,10 @@ export async function verifyPinResetCode(
       type: 'email',
     });
     if (!error) {
-      if (data?.user?.id === auth.userId) return 'ok';
-      await supabase.auth.signOut({ scope: 'local' });
-      if (before)
-        await supabase.auth.setSession({
-          access_token: before.access_token,
-          refresh_token: before.refresh_token,
-        });
-      return 'error';
+      // The code's own session is only proof: it is always signed out and
+      // the phone goes back to the session it had (QA R8-05, Phase 21).
+      await endCodeSession(supabase, before);
+      return data?.user?.id === auth.userId ? 'ok' : 'error';
     }
     if (isNetworkError(error)) return 'offline';
     const e = error as AuthError;

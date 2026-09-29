@@ -51,7 +51,7 @@ export default function ExerciseScreen() {
   if (!e) {
     return (
       <Screen header={<Header onBack={backOrHome} />}>
-        <Notice tone="warning">{t('exercise.notFound')}</Notice>
+        <Notice tone="neutral">{t('exercise.notFound')}</Notice>
         <Button variant="secondary" label={t('notFound.home')} onPress={backOrHome} />
       </Screen>
     );
