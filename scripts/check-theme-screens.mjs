@@ -310,19 +310,10 @@ const SCREENS = [
   { name: 'equipment', year: ADULT, path: '/settings/equipment' },
   { name: 'settings', year: ADULT, path: '/settings' },
   { name: 'appearance', year: ADULT, path: '/settings/appearance' },
-  { name: 'family', year: ADULT, path: '/family' },
+  // Security round 1 (S1-03): family profiles and the parent PIN are
+  // mobile-only for now, so /family must land on Home on the web.
+  { name: 'family-off-web', year: ADULT, path: '/family', lands: '/home' },
   { name: 'paywall', year: ADULT, path: '/paywall' },
-  {
-    name: 'parent-pin',
-    year: ADULT,
-    path: '/settings',
-    steps: async (page) => {
-      await button(page, /parent PIN/i).click();
-      await page.waitForTimeout(400);
-    },
-    lands: '/settings',
-    background: null, // shown as a card on Settings
-  },
 ];
 
 const browser = await chromium.launch({ executablePath });

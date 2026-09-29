@@ -2260,4 +2260,5 @@ Texto da rodada: `docs/security-round-1.md`. Suas escolhas no início da fase: c
 
 - Lint e typecheck limpos; **1226 testes** passando, também em 3 ordens aleatórias (seeds 101, 424242, 987654321).
 - `db:test` com os 6 testes SQL novos e o `zz_security_policies.sql`; `functions:check`; `security:check` (arquivos, histórico, `npm audit`: 0 alto/crítico, 16 moderados já conhecidos); `web:check` com a CSP ativa.
-- Bundle de produção, `tabs:check`, `theme:check` e a busca de segredos no bundle web: resultado acrescentado abaixo quando terminarem.
+- `bundle:check` (produção) ok; `tabs:check` ok; `security:check --bundle` sem segredos no bundle web.
+- `theme:check`: 50 capturas, primeira pintura escura correta. As capturas "family" e "parent-pin" saíram, porque essas telas não existem mais na web; no lugar delas, a checagem confere que `/family` cai na Home.
