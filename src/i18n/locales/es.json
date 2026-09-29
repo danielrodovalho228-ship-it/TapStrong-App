@@ -3528,7 +3528,8 @@
       "customLeftOut_other": "Se dejaron fuera {{count}} elecciones: ahora mismo no son seguras para ti.",
       "painToday": "{{muscles}} fuera por hoy por el dolor que indicaste. Vuelve mañana si te sientes bien.",
       "pullAdded": "Incluimos un ejercicio de tirón para equilibrar.",
-      "weeklyCap": "Llegaste al límite de esta semana para {{muscles}}: hoy trabajas otros músculos."
+      "weeklyCap": "Llegaste al límite de esta semana para {{muscles}}: hoy trabajas otros músculos.",
+      "jointCap": "Llegaste al límite de esta semana para ejercicios que mueven una articulación con dolor ({{joints}}): hoy se trabaja sin moverla."
     }
   },
   "tabs": {

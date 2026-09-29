@@ -145,6 +145,7 @@ export type GeneratorNote =
   /** Chosen muscles left out today after pain was reported (QA R4 P2). */
   | { key: 'generator.notes.painToday'; muscles: string[] }
   | { key: 'generator.notes.weeklyCap'; muscles: string[] }
+  | { key: 'generator.notes.jointCap'; joints: string[] }
   /** A chosen push muscle gave its slot to a pull move (Daniel, Phase 18). */
   | { key: 'generator.notes.pullAdded' };
 

@@ -161,15 +161,17 @@ export default function WorkoutScreen() {
     if (n.key === 'generator.notes.balance') {
       return t(n.key, { groups: n.groups.map((g) => t(`generator.notes.groups.${g}`)).join(', ') });
     }
-    if (
-      n.key === 'generator.notes.rested' ||
-      n.key === 'generator.notes.substituted' ||
-      n.key === 'generator.notes.recovering' ||
-      n.key === 'generator.notes.unavailable' ||
-      n.key === 'generator.notes.painToday' ||
-      n.key === 'generator.notes.trimmedMuscles'
-    ) {
+    // Any note that names muscles or joints gets them (QA R10-01: a new note
+    // showed a raw "{{muscles}}" when it wasn't on a list here).
+    if ('muscles' in n) {
       return t(n.key, { muscles: n.muscles.map((m) => muscleLabel(t, m)).join(', ') });
+    }
+    if ('joints' in n) {
+      return t(n.key, {
+        joints: n.joints
+          .map((a) => t(`safety.painAreas.${a}` as 'safety.painAreas.knee'))
+          .join(', '),
+      });
     }
     if (n.key === 'generator.notes.customLeftOut') return t(n.key, { count: n.count });
     return t(n.key);
