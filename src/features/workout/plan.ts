@@ -3,7 +3,7 @@ import { localDate } from '@/lib/dates';
 import type { Exercise } from '../exercises/types';
 import type { GeneratedSession, GeneratorInput, RecentSession } from '../generator/types';
 import { muscleByKey, type MovementGroup } from '../muscles';
-import { JOINT_AREA } from '../movement/catalog';
+import { movedAreas } from '../movement/catalog';
 import { generateSession, needsRecovery } from '../generator/generate';
 import { defaultMuscleGoal } from '../onboarding/options';
 
@@ -54,15 +54,12 @@ export function recentSessions(history: WorkoutRecord[], library: Exercise[]): R
           // Each logged set counts once per parent muscle: a plank's upper
           // and lower abs are one abs set, not two (QA R9-06).
           muscleSets: tally((id) => [...new Set(primaries(id).map(parentOf))]),
-          // And once per joint area it loads, for the joint-care budget.
+          // And once per joint area it moves (not one it only holds still,
+          // R10 decision 3), for the joint-care budget.
           // Repair sets are therapeutic: they don't use the painful-joint
           // budget (Daniel, R10 decision 2).
           jointSets:
-            w.kind === 'repair'
-              ? {}
-              : tally((id) => [
-                  ...new Set((byId.get(id)?.joints ?? []).map((j) => JOINT_AREA[j.joint])),
-                ]),
+            w.kind === 'repair' ? {} : tally((id) => movedAreas(byId.get(id)?.joints ?? [])),
         };
       })
   );

@@ -777,7 +777,7 @@
       ],
       "joints": [
         ["shoulder", "carry", "full"],
-        ["wrist", "grip", "full"],
+        ["wrist", "grip", "isometric"],
         ["knee", "straighten_load", "isometric"]
       ],
       "rangeLimit": []
@@ -829,7 +829,7 @@
       "joints": [
         ["shoulder", "overhead", "partial"],
         ["hip", "extension", "partial"],
-        ["wrist", "extension_load", "partial"],
+        ["wrist", "extension_load", "isometric"],
         ["knee", "kneel", "full"],
         ["lower_back", "extension", "isometric"]
       ],
@@ -997,7 +997,7 @@
       ],
       "joints": [
         ["shoulder", "push", "isometric"],
-        ["wrist", "extension_load", "partial"],
+        ["wrist", "extension_load", "isometric"],
         ["lower_back", "extension", "isometric"]
       ],
       "rangeLimit": []
@@ -1072,7 +1072,7 @@
       "joints": [
         ["lower_back", "flexion", "full"],
         ["hip", "flexion", "full"],
-        ["knee", "deep_bend", "partial"]
+        ["knee", "deep_bend", "isometric"]
       ],
       "rangeLimit": []
     },
@@ -1175,7 +1175,7 @@
         ["knee", "deep_bend", "full"],
         ["hip", "deep_squat", "full"],
         ["ankle", "dorsiflexion", "full"],
-        ["wrist", "grip", "full"]
+        ["wrist", "grip", "isometric"]
       ],
       "rangeLimit": ["knee.deep_bend", "hip.deep_squat"]
     },
@@ -1276,7 +1276,7 @@
       ],
       "joints": [
         ["hip", "extension", "full"],
-        ["lower_back", "extension", "partial"],
+        ["lower_back", "extension", "isometric"],
         ["knee", "deep_bend", "isometric"]
       ],
       "rangeLimit": []
@@ -1303,7 +1303,7 @@
       "joints": [
         ["hip", "flexion", "full"],
         ["lower_back", "lift", "full"],
-        ["wrist", "grip", "full"],
+        ["wrist", "grip", "isometric"],
         ["knee", "straighten_load", "isometric"]
       ],
       "rangeLimit": ["hip.flexion"]
@@ -3792,7 +3792,7 @@
       ],
       "joints": [
         ["shoulder", "carry", "full"],
-        ["wrist", "grip", "partial"],
+        ["wrist", "grip", "isometric"],
         ["knee", "straighten_load", "isometric"]
       ],
       "rangeLimit": []
@@ -5867,7 +5867,7 @@
       ],
       "joints": [
         ["shoulder", "carry", "full"],
-        ["wrist", "grip", "full"],
+        ["wrist", "grip", "isometric"],
         ["knee", "straighten_load", "isometric"]
       ],
       "rangeLimit": []
@@ -5892,7 +5892,7 @@
       ],
       "joints": [
         ["shoulder", "carry", "full"],
-        ["wrist", "grip", "full"],
+        ["wrist", "grip", "isometric"],
         ["knee", "straighten_load", "isometric"]
       ],
       "rangeLimit": []
@@ -6470,7 +6470,7 @@
       "joints": [
         ["hip", "extension", "full"],
         ["hip", "single_leg", "partial"],
-        ["lower_back", "extension", "partial"],
+        ["lower_back", "extension", "isometric"],
         ["knee", "deep_bend", "isometric"]
       ],
       "rangeLimit": []
@@ -7572,7 +7572,7 @@
       "joints": [
         ["hip", "extension", "full"],
         ["hip", "abduction", "isometric"],
-        ["lower_back", "extension", "partial"],
+        ["lower_back", "extension", "isometric"],
         ["knee", "deep_bend", "isometric"]
       ],
       "rangeLimit": []
@@ -7774,7 +7774,7 @@
         ["knee", "deep_bend", "full"],
         ["hip", "extension", "partial"],
         ["ankle", "dorsiflexion", "partial"],
-        ["wrist", "grip", "full"]
+        ["wrist", "grip", "isometric"]
       ],
       "rangeLimit": ["knee.deep_bend"]
     },
@@ -7800,7 +7800,7 @@
         ["knee", "deep_bend", "partial"],
         ["hip", "deep_squat", "partial"],
         ["ankle", "dorsiflexion", "partial"],
-        ["wrist", "grip", "full"]
+        ["wrist", "grip", "isometric"]
       ],
       "rangeLimit": ["knee.deep_bend", "hip.deep_squat"]
     },
@@ -7824,7 +7824,7 @@
       ],
       "joints": [
         ["hip", "extension", "full"],
-        ["lower_back", "extension", "partial"],
+        ["lower_back", "extension", "isometric"],
         ["knee", "deep_bend", "isometric"]
       ],
       "rangeLimit": []
@@ -7852,7 +7852,7 @@
         ["knee", "deep_bend", "full"],
         ["hip", "deep_squat", "full"],
         ["hip", "abduction", "partial"],
-        ["wrist", "grip", "full"]
+        ["wrist", "grip", "isometric"]
       ],
       "rangeLimit": ["knee.deep_bend", "hip.deep_squat"]
     },
@@ -7879,7 +7879,7 @@
         ["hip", "flexion", "full"],
         ["hip", "single_leg", "full"],
         ["ankle", "balance", "partial"],
-        ["wrist", "grip", "full"],
+        ["wrist", "grip", "isometric"],
         ["knee", "straighten_load", "isometric"]
       ],
       "rangeLimit": ["hip.flexion"]
@@ -7925,8 +7925,8 @@
         ["forearms", "secondary", 0.4]
       ],
       "joints": [
-        ["shoulder", "carry", "partial"],
-        ["wrist", "grip", "full"],
+        ["shoulder", "carry", "isometric"],
+        ["wrist", "grip", "isometric"],
         ["lower_back", "side_bend", "isometric"],
         ["knee", "straighten_load", "isometric"]
       ],
@@ -7954,7 +7954,7 @@
       "joints": [
         ["hip", "flexion", "full"],
         ["shoulder", "flexion", "isometric"],
-        ["wrist", "grip", "partial"],
+        ["wrist", "grip", "isometric"],
         ["knee", "deep_bend", "partial"]
       ],
       "rangeLimit": []
@@ -8067,7 +8067,7 @@
         ["hip", "deep_squat", "full"],
         ["ankle", "dorsiflexion", "full"],
         ["lower_back", "lift", "isometric"],
-        ["shoulder", "external_rotation", "partial"]
+        ["shoulder", "external_rotation", "isometric"]
       ],
       "rangeLimit": ["knee.deep_bend", "hip.deep_squat"]
     },
@@ -8091,7 +8091,7 @@
       ],
       "joints": [
         ["hip", "extension", "full"],
-        ["lower_back", "extension", "partial"],
+        ["lower_back", "extension", "isometric"],
         ["knee", "deep_bend", "isometric"]
       ],
       "rangeLimit": []
@@ -8118,7 +8118,7 @@
       "joints": [
         ["hip", "flexion", "full"],
         ["hip", "extension", "full"],
-        ["wrist", "grip", "full"],
+        ["wrist", "grip", "isometric"],
         ["knee", "straighten_load", "isometric"]
       ],
       "rangeLimit": ["hip.flexion"]
@@ -17577,7 +17577,7 @@
       "joints": [
         ["lower_back", "flexion", "full"],
         ["hip", "flexion", "full"],
-        ["knee", "deep_bend", "partial"]
+        ["knee", "deep_bend", "isometric"]
       ],
       "rangeLimit": [],
       "rehab": true

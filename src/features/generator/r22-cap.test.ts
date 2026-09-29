@@ -5,6 +5,7 @@
  * with the cap switched off (history seeded near the cap).
  */
 import { devLibrary } from '../exercises/library';
+import { movedAreas } from '../movement/catalog';
 import { muscleByKey } from '../muscles';
 import { GYM_EQUIPMENT_OPTIONS } from '../onboarding/options';
 import { planById, planDayInput } from '../program/plans';
@@ -200,8 +201,9 @@ describe("Daniel's decision 1: the joint budget", () => {
       ],
       recentSessions: [day('2026-09-26', { glutes: 12 }, { jointSets: { knee: 12 } })],
     });
+    // Moves that only hold the knee still don't use it (R10 decision 3).
     for (const i of mainOf(s))
-      expect(byId.get(i.exerciseId)!.joints.some((j) => j.joint === 'knee')).toBe(false);
+      expect(movedAreas(byId.get(i.exerciseId)!.joints)).not.toContain('knee');
     expect(setsOn(s, 'glutes')).toBeGreaterThan(0);
     expect(setsOn(s, 'glutes')).toBeLessThanOrEqual(WEEKLY_SETS.adult - 12);
     expect(JOINT_CARE_WEEKLY_SETS).toBe(12);

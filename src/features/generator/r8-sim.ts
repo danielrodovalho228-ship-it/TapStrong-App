@@ -3,7 +3,7 @@
  * pull vs push over every strict 7-day rolling window.
  */
 import type { Exercise } from '../exercises/types';
-import { JOINT_AREA } from '../movement/catalog';
+import { movedAreas } from '../movement/catalog';
 import { muscleByKey } from '../muscles';
 import { planDayInput, type ReadyPlan } from '../program/plans';
 
@@ -75,8 +75,7 @@ export function simulate(o: {
       jointSets: main.reduce<Record<string, number>>((acc, i) => {
         const e = byId.get(i.exerciseId)!;
         if (['balance', 'mobility', 'stretch', 'breathing'].includes(e.pattern)) return acc;
-        for (const a of new Set(e.joints.map((j) => JOINT_AREA[j.joint])))
-          acc[a] = (acc[a] ?? 0) + i.sets;
+        for (const a of movedAreas(e.joints)) acc[a] = (acc[a] ?? 0) + i.sets;
         return acc;
       }, {}),
       muscleSets: main.reduce<Record<string, number>>((acc, i) => {

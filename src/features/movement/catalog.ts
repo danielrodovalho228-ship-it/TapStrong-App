@@ -33,6 +33,15 @@ export type MovementRange = 'full' | 'partial' | 'isometric';
 
 export type JointMovementTag = { joint: JointKey; movement: string; range: MovementRange };
 
+/**
+ * Joint areas an exercise moves (Daniel, R10 decision 3). A joint that only
+ * holds still or stabilises (tagged isometric: the knee in a hip thrust, the
+ * wrist gripping a goblet squat) is not counted in the painful-joint budget.
+ */
+export const movedAreas = (joints: JointMovementTag[]): string[] => [
+  ...new Set(joints.filter((j) => j.range !== 'isometric').map((j) => JOINT_AREA[j.joint])),
+];
+
 /** `shoulder.abduction` — how movements are stored in records and range limits. */
 export type MovementKey = `${JointKey}.${string}`;
 export const movementKey = (joint: JointKey, movement: string): MovementKey =>

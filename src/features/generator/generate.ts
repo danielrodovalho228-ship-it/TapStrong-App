@@ -1,5 +1,5 @@
 import type { Exercise, SessionPart } from '../exercises/types';
-import { JOINT_AREA } from '../movement/catalog';
+import { movedAreas } from '../movement/catalog';
 import { muscleByKey, muscleFamily, type MovementGroup } from '../muscles';
 import { defaultMuscleGoal, type MuscleGoal } from '../onboarding/options';
 import type { AppMode } from '../profile/age';
@@ -545,7 +545,8 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   // Weekly working sets per primary muscle (Daniel, Phases 21–22): adults 20,
   // teens 14, 60+ 12, kids 10, over the last 7 days, counting finishers and
   // Repair too. With a painful joint, moves that load it share a budget of
-  // 12 sets, whatever muscle they train (R9 decision 1). Moves that fit
+  // 12 sets, whatever muscle they train (R9 decision 1); a joint that only
+  // holds still doesn't count (R10 decision 3). Moves that fit
   // fewer than 2 more sets are skipped (QA R9 P2). A Repair session is never
   // cut (R9 decision 2); balance holds never stand in for a capped muscle.
   const weekSets = new Map<string, number>();
@@ -571,10 +572,9 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     ...(input.painAreas ?? []),
     ...(input.movementLimits ?? []).map((l) => l.area),
   ]);
+  // Only moves that MOVE the painful joint use its budget (R10 decision 3).
   const loadedPainful = (e: Exercise | undefined) =>
-    e
-      ? [...new Set(e.joints.map((j) => JOINT_AREA[j.joint]))].filter((a) => painfulAreas.has(a))
-      : [];
+    e ? movedAreas(e.joints).filter((a) => painfulAreas.has(a)) : [];
   const ageCap = WEEKLY_SETS[input.mode];
   const counted = (e: Exercise | undefined) => needsRecovery(e);
   const sessionSets = (parent: string) =>
