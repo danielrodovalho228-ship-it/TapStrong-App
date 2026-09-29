@@ -58,6 +58,7 @@ O `.env` fica só no seu computador e não vai para o build da nuvem. As variáv
 | `EXPO_PUBLIC_TURNSTILE_BASE_URL`                                                | não (`https://tapstrong.app/`)   | endereço do widget no celular                       |
 | `EXPO_PUBLIC_SENTRY_DSN`, `EXPO_PUBLIC_POSTHOG_KEY`, `EXPO_PUBLIC_POSTHOG_HOST` | não                              | erros e uso                                         |
 | `EXPO_PUBLIC_KIDS_UNDER_13_ENABLED`                                             | não (desligado)                  | menores de 13, só na versão 2                       |
+| `EXPO_PUBLIC_APP_STORE_URL` / `EXPO_PUBLIC_PLAY_STORE_URL`                      | não (depois da publicação)       | links das lojas no aviso da web para adolescentes    |
 
 `npm run env:check` lista o que falta; o build de produção roda essa checagem e para se faltar alguma obrigatória. No build de produção ela também pergunta ao servidor (só com a chave pública) se as funções das migrações novas existem, e para com a mensagem "The Supabase server is missing migrations…" se faltar alguma (`npm run server:check` faz só essa parte).
 

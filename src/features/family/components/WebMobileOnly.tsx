@@ -7,6 +7,7 @@ import { AppText, Button, Notice, Screen } from '@/components/ui';
 import { modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { familyAvailable } from '@/lib/features';
+import { openStore, storeLinks } from '@/lib/storeLinks';
 import { spacing } from '@/theme';
 
 import { activeProfile, useFamilyStore } from '../store';
@@ -29,6 +30,7 @@ export function useWebFamilyBlocked(): 'family' | 'teen' | null {
 
 export function WebMobileOnly({ kind }: { kind: 'family' | 'teen' }) {
   const { t } = useTranslation();
+  const stores = storeLinks();
   return (
     <Screen>
       <View style={styles.box}>
@@ -42,6 +44,21 @@ export function WebMobileOnly({ kind }: { kind: 'family' | 'teen' }) {
             variant="secondary"
             label={t('family.changeDate')}
             onPress={() => router.push({ pathname: '/onboarding/who', params: { edit: '1' } })}
+          />
+        ) : null}
+        {/* Where to get the app, once the store pages exist (round 2, P3). */}
+        {stores.ios ? (
+          <Button
+            variant="ghost"
+            label={t('family.getIos')}
+            onPress={() => void openStore(stores.ios!)}
+          />
+        ) : null}
+        {stores.android ? (
+          <Button
+            variant="ghost"
+            label={t('family.getAndroid')}
+            onPress={() => void openStore(stores.android!)}
           />
         ) : null}
       </View>

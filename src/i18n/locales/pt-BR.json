@@ -4172,7 +4172,9 @@
     "mobileOnlyTitle": "Perfis da família ficam no app para celular",
     "teenMobileOnlyTitle": "O TapStrong para adolescentes fica no app para celular",
     "changeDate": "Mudar minha data de nascimento",
-    "ownLogin": "Este adolescente tem login próprio, então só essa pessoa pode mudar ou apagar o perfil. Ele foi removido só deste celular."
+    "ownLogin": "Este adolescente tem login próprio, então só essa pessoa pode mudar ou apagar o perfil. Ele foi removido só deste celular.",
+    "getIos": "Baixe na App Store",
+    "getAndroid": "Baixe no Google Play"
   },
   "deleteAccount": {
     "title": "Excluir conta",

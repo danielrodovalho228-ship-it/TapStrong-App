@@ -4142,7 +4142,9 @@
     "mobileOnlyTitle": "Family profiles are in the mobile app",
     "teenMobileOnlyTitle": "TapStrong for teens is in the mobile app",
     "changeDate": "Change my birth date",
-    "ownLogin": "This teen has their own login, so only they can change or delete their profile. It was removed from this phone only."
+    "ownLogin": "This teen has their own login, so only they can change or delete their profile. It was removed from this phone only.",
+    "getIos": "Get it on the App Store",
+    "getAndroid": "Get it on Google Play"
   },
   "deleteAccount": {
     "title": "Delete account",

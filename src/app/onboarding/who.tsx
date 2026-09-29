@@ -172,7 +172,8 @@ export default function WhoScreen() {
 
       {!locked ? (
         <View accessibilityRole="radiogroup" style={styles.options}>
-          {WHO_OPTIONS.map((option) => (
+          {/* Web: adults without family, so no "My teen" dead end (round 2, P3). */}
+          {WHO_OPTIONS.filter((o) => familyAvailable() || o !== 'child').map((option) => (
             <RadioCard
               key={option}
               label={

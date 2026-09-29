@@ -43,7 +43,8 @@ function PlansScreenInner() {
       header={
         <Header
           onBack={() => (router.canGoBack() ? router.back() : router.replace('/home'))}
-          title={t(minor ? 'billing.plansTitleSolo' : 'billing.plansTitle')}
+          // Web has no family: adult copy, not "Train the whole family" (round 2, P3).
+          title={t(minor || onWeb ? 'billing.plansTitleSolo' : 'billing.plansTitle')}
         />
       }
       footer={familyLocked ? undefined : <SubscribeFooter plan={plan} period={period} />}

@@ -11,9 +11,13 @@ import { Platform } from 'react-native';
 import TabsLayout from '@/app/(tabs)/_layout';
 import FamilyScreen from '@/app/(tabs)/family';
 import AddMemberScreen from '@/app/family/add';
+import WhoScreen from '@/app/onboarding/who';
 import PlansScreen from '@/app/plans';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { familyAvailable, setFamilyOnWeb } from '@/lib/features';
+import { storeLinks } from '@/lib/storeLinks';
+
+import { WebMobileOnly } from './components/WebMobileOnly';
 
 import { useOwnerIdentityStore } from './ownerIdentity';
 import { useFamilyStore } from './store';
@@ -33,6 +37,16 @@ jest.mock('expo-router/js-tabs', () => {
     return options.href === null ? null : <Text>{`tab:${name}`}</Text>;
   };
   return { Tabs };
+});
+
+let mockStores: { ios: string | null; android: string | null } | null = null;
+jest.mock('@/lib/storeLinks', () => {
+  const real = jest.requireActual('@/lib/storeLinks');
+  return {
+    ...real,
+    storeLinks: (env?: Record<string, string>) =>
+      env ? real.storeLinks(env) : (mockStores ?? real.storeLinks()),
+  };
 });
 
 let os: jest.ReplaceProperty<typeof Platform.OS>;
@@ -88,4 +102,46 @@ it('Plans on the web: the note, no Family plan', async () => {
   await render(<PlansScreen />);
   expect(screen.getByText('Family profiles are available in the mobile app.')).toBeTruthy();
   expect(screen.queryByRole('radio', { name: /Family/ })).toBeNull();
+});
+
+describe('round 2 P3: web copy for adults without family', () => {
+  it('/plans says "Choose your plan", not "Train the whole family"', async () => {
+    await adult();
+    await render(<PlansScreen />);
+    expect(screen.getByText('Choose your plan')).toBeTruthy();
+    expect(screen.queryByText('Train the whole family')).toBeNull();
+  });
+
+  it('/onboarding/who offers no "My teen" dead end on the web', async () => {
+    await adult();
+    await render(<WhoScreen />);
+    expect(screen.getByRole('radio', { name: 'Me' })).toBeTruthy();
+    expect(screen.queryByRole('radio', { name: /My teen|My child/ })).toBeNull();
+  });
+
+  it('…and still offers it on the phone', async () => {
+    os.restore();
+    os = jest.replaceProperty(Platform, 'OS', 'ios');
+    await adult();
+    await render(<WhoScreen />);
+    expect(screen.getByRole('radio', { name: /My teen|My child/ })).toBeTruthy();
+  });
+
+  it('the teen note links to the stores once their pages are set, only real store hosts', async () => {
+    mockStores = storeLinks({
+      EXPO_PUBLIC_APP_STORE_URL: 'https://apps.apple.com/app/tapstrong/id1',
+      EXPO_PUBLIC_PLAY_STORE_URL: 'https://evil.example/tapstrong',
+    });
+    try {
+      await render(<WebMobileOnly kind="teen" />);
+      expect(screen.getByLabelText('Get it on the App Store')).toBeTruthy();
+      expect(screen.queryByLabelText('Get it on Google Play')).toBeNull();
+    } finally {
+      mockStores = null;
+    }
+    expect(storeLinks({})).toEqual({ ios: null, android: null });
+    expect(
+      storeLinks({ EXPO_PUBLIC_PLAY_STORE_URL: 'http://play.google.com/x' }).android,
+    ).toBeNull();
+  });
 });
