@@ -107,6 +107,31 @@ export function convertLoad(value: number, from: LoadUnit, to: LoadUnit): number
 }
 const toUnit = convertLoad;
 
+/** No step is bigger than this share of the current load (QA R8-07). */
+const MAX_STEP_SHARE = 0.25;
+
+/**
+ * One load step (QA R8-07: a 16 kg kettlebell went to 24 kg). Kettlebells
+ * always move one bell; other equipment moves its real step, or for adult
+ * lower-body lifts the bigger step rounded to it, never more than ~25% of
+ * the current load and never less than one real step.
+ */
+function loadStep(o: {
+  equip: number | null;
+  baseStep: number;
+  load: number;
+  oneStep: boolean;
+  exercise: Pick<Exercise, 'equipment'>;
+}): number {
+  const { equip, baseStep, load } = o;
+  if (!equip) return baseStep;
+  if (o.oneStep || o.exercise.equipment.includes('kettlebells')) return equip;
+  // Nearest real step; a tie goes to the smaller one (5 kg on 2 kg dumbbells → 4 kg).
+  const wanted = Math.max(equip, Math.round(baseStep / equip - 1e-9) * equip);
+  const cap = Math.max(equip, Math.floor((load * MAX_STEP_SHARE) / equip + 1e-9) * equip);
+  return Math.min(wanted, cap);
+}
+
 const done = (l: SetLog) => l.reps ?? l.seconds ?? 0;
 const allTop = (s: Session, top: number) =>
   s.logs.length > 0 &&
@@ -171,12 +196,11 @@ export function loadAdvice(input: {
     equip && logged !== unit ? Math.max(equip, Math.round(converted / equip) * equip) : converted;
   const lower = isLowerBody(exercise) && !minor;
   const baseStep = (lower ? LOWER_STEP : UPPER_STEP)[unit];
-  // Steps follow the equipment for everyone (QA R7 P2: a 16 kg kettlebell
-  // went to 18.5): the real step, or for adult lower-body lifts the bigger
-  // step rounded up to it. 60+ and heart / blood pressure always take the
+  // Steps follow the equipment for everyone (QA R7 P2, R8-07, loadStep).
+  // 60+ and heart / blood pressure always take the
   // real step, reps first when it is more than ~10% of the load (Daniel, Phase 18).
   const gentle = input.mode === 'senior' || !!input.cardio;
-  const step = !equip ? baseStep : gentle || !lower ? equip : Math.ceil(baseStep / equip) * equip;
+  const step = loadStep({ equip, baseStep, load, oneStep: gentle || !lower, exercise });
   const bigStep = gentle && step > load * GENTLE_SHARE + 1e-9;
   if (upDue) {
     // Reps above the top before any load: +2 when the step is big, +1 for

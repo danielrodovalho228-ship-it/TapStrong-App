@@ -1,7 +1,8 @@
 /**
  * Improvements v1, A4 — suggested load and progression, deterministic.
  */
-import { devLibrary } from '../exercises/library';
+import seed from '../../../supabase/seed/exercises.json';
+import { devLibrary, fromSeed, type SeedExercise } from '../exercises/library';
 
 import { isLowerBody, loadAdvice, loadText, type Session } from './loads';
 
@@ -128,5 +129,42 @@ describe('suggested load (A4)', () => {
   it('"3 × 10–12 · 25 lb" text', () => {
     expect(loadText({ kind: 'load', load: 25, unit: 'lb', change: 'same' }, 'lb')).toBe('25 lb');
     expect(loadText({ kind: 'first' }, 'lb')).toBeNull();
+  });
+});
+
+describe('R8-07 load steps never jump', () => {
+  const SEED = (seed.exercises as SeedExercise[]).map(fromSeed);
+  const kbDeadlift = SEED.find((e) => e.slug === 'rp_kettlebell_deadlift_floor')!;
+  const barbellSquat = SEED.find((e) => e.slug === 'barbell_back_squat')!;
+  const kbLower = SEED.find((e) => e.slug === 'rp_bench_kettlebell_lift')!;
+  const dbLower = SEED.find(
+    (e) => e.loaded && e.equipment.join() === 'dumbbells' && isLowerBody(e) && !e.rehab,
+  )!;
+  const up = (exercise: typeof bench, load: number, unit: 'lb' | 'kg') =>
+    loadAdvice({
+      sessions: [s([12, 12, 12], load, 7, unit), s([12, 12, 12], load, 7, unit)],
+      range: [10, 12],
+      exercise,
+      unit,
+      mode: 'adult',
+    });
+
+  it('adult kettlebell in kg moves one bell: 16 → 20, 8 → 12', () => {
+    expect(up(kbLower, 16, 'kg')).toMatchObject({ kind: 'load', load: 20 });
+    expect(up(kbDeadlift, 8, 'kg')).toMatchObject({ kind: 'load', load: 12 });
+    expect(up(kbLower, 35, 'lb')).toMatchObject({ kind: 'load', load: 45 });
+  });
+
+  it('no step is over ~25% of the load, and never under one real step', () => {
+    // An empty bar: 20 kg + 5 kg is exactly 25%.
+    expect(up(barbellSquat, 20, 'kg')).toMatchObject({ load: 25 });
+    // 10 kg on a lower lift: the 5 kg step is capped to one 2.5 kg plate step.
+    expect(up(barbellSquat, 10, 'kg')).toMatchObject({ load: 12.5 });
+    // A heavy lift keeps the normal lower-body step.
+    expect(up(barbellSquat, 100, 'kg')).toMatchObject({ load: 105 });
+    expect(up(barbellSquat, 225, 'lb')).toMatchObject({ load: 235 });
+    // Dumbbells in kg: 5 kg rounds to 4 kg (two 2 kg steps), 6 kg dumbbells go to 8.
+    expect(up(dbLower, 16, 'kg')).toMatchObject({ load: 20 });
+    expect(up(dbLower, 6, 'kg')).toMatchObject({ load: 8 });
   });
 });
