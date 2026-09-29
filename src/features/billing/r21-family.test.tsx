@@ -160,11 +160,11 @@ describe('R9-04 Family subscriber with the teen profile active', () => {
     expect(router.push).toHaveBeenCalledWith('/billing');
   });
 
-  it('buy() refuses a Premium switch from the teen profile', async () => {
+  it('buy() refuses a Premium switch from the teen profile, with its own reason (R10 P2)', async () => {
     await ownerWithTeen('teen');
     await familyOn();
     const purchase = jest.spyOn(provider.getBilling(), 'purchase');
-    expect(await buy(PRODUCTS.premium.monthly)).toBe('adults_only');
+    expect(await buy(PRODUCTS.premium.monthly)).toBe('family_owner_only');
     expect(purchase).not.toHaveBeenCalled();
   });
 

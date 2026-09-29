@@ -4009,7 +4009,8 @@
     "errors": {
       "unavailable": "As assinaturas ainda não estão disponíveis nesta versão.",
       "error": "A loja não concluiu a compra. Você não foi cobrado. Tente de novo.",
-      "adults_only": "O plano Família é para adultos a partir de 18 anos."
+      "adults_only": "O plano Família é para adultos a partir de 18 anos.",
+      "family_owner_only": "Só o titular da conta pode mudar o plano Família, pelo próprio perfil."
     },
     "title": "Sua assinatura",
     "onFree": "Você está no plano Grátis: 3 treinos por semana.",

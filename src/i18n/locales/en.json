@@ -3987,7 +3987,8 @@
     "errors": {
       "unavailable": "Subscriptions aren't available in this build yet.",
       "error": "The store didn't complete the purchase. You were not charged. Try again.",
-      "adults_only": "The Family plan is for adults 18 and over."
+      "adults_only": "The Family plan is for adults 18 and over.",
+      "family_owner_only": "Only the account owner can change the Family plan, from their own profile."
     },
     "title": "Your subscription",
     "onFree": "You're on the Free plan: 3 workouts a week.",

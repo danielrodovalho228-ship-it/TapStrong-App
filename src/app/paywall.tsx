@@ -8,16 +8,10 @@ import { FamilyAdultRequired } from '@/features/billing/components/FamilyAdultRe
 import { FamilyPlanOn } from '@/features/billing/components/FamilyPlanOn';
 import { PlanPicker } from '@/features/billing/components/PlanPicker';
 import { SubscribeFooter } from '@/features/billing/components/SubscribeFooter';
-import {
-  currentPlan,
-  FREE_WORKOUTS_PER_WEEK,
-  startPlan,
-  type Period,
-  type Plan,
-} from '@/features/billing/rules';
+import { currentPlan, FREE_WORKOUTS_PER_WEEK, type Period } from '@/features/billing/rules';
 import { OwnerOnly } from '@/features/family/OwnerOnly';
 import { useBillingStore } from '@/features/billing/store';
-import { useFamilyPlanAllowed } from '@/features/billing/useFamilyPlan';
+import { useFamilyPlanAllowed, usePlanChoice } from '@/features/billing/useFamilyPlan';
 import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
 import { fonts, spacing, useColors } from '@/theme';
@@ -34,7 +28,7 @@ function PaywallScreenInner() {
     useBillingStore((st) => st.entitlement),
     clock.now(),
   );
-  const [plan, setPlan] = useState<Plan>(() => startPlan(current, wanted, familyOk));
+  const [plan, setPlan] = usePlanChoice(current, wanted, familyOk);
   const [period, setPeriod] = useState<Period>('monthly');
 
   useEffect(() => {

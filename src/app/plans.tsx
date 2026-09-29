@@ -7,7 +7,7 @@ import { AppText, Button, Header, Screen } from '@/components/ui';
 import { PlanPicker } from '@/features/billing/components/PlanPicker';
 import { SubscribeFooter } from '@/features/billing/components/SubscribeFooter';
 import { getBilling } from '@/features/billing/provider';
-import { currentPlan, type Period, type Plan } from '@/features/billing/rules';
+import { currentPlan, type Period } from '@/features/billing/rules';
 import { useBillingStore } from '@/features/billing/store';
 import { FamilyStrip } from '@/features/family/components/FamilyStrip';
 import { clock } from '@/lib/clock';
@@ -15,8 +15,7 @@ import { kidsUnder13Enabled } from '@/lib/features';
 import { fonts, spacing, useColors } from '@/theme';
 import { FamilyAdultRequired } from '@/features/billing/components/FamilyAdultRequired';
 import { FamilyPlanOn } from '@/features/billing/components/FamilyPlanOn';
-import { startPlan } from '@/features/billing/rules';
-import { useFamilyPlanAllowed } from '@/features/billing/useFamilyPlan';
+import { useFamilyPlanAllowed, usePlanChoice } from '@/features/billing/useFamilyPlan';
 import { OwnerOnly } from '@/features/family/OwnerOnly';
 import { modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
@@ -30,7 +29,7 @@ function PlansScreenInner() {
   // Premium first for new buyers; subscribers start on their plan (QA round 1).
   const { plan: wanted } = useLocalSearchParams<{ plan?: string }>();
   const familyOk = useFamilyPlanAllowed();
-  const [plan, setPlan] = useState<Plan>(() => startPlan(current, wanted, familyOk));
+  const [plan, setPlan] = usePlanChoice(current, wanted, familyOk);
   const [period, setPeriod] = useState<Period>('monthly');
   // A solo teen doesn't manage a family: no family lead or member strip (QA R8 P2).
   const minor = ['teen', 'child'].includes(modeOf(useOnboardingStore()));
