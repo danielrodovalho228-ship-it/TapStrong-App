@@ -3829,8 +3829,6 @@
     "backToFull": "Volver al entrenamiento completo",
     "restDay": "Tomar un día de descanso",
     "spare": {
-      "body_one": "Te sobra {{count}} min de tu tiempo.",
-      "body_other": "Te sobran {{count}} min de tu tiempo.",
       "add": "¿Añadir 1 ejercicio?",
       "long": "Hay unos {{estimate}} de tus {{minutes}} min planificados."
     },

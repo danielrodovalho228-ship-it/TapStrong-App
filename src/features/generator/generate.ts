@@ -601,16 +601,36 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     ...list.filter(primariesReady),
     ...list.filter((e) => !primariesReady(e)),
   ];
-  targets.slice(0, slots).forEach((target, i) => {
-    const options = readyFirst(
-      rankForTarget(pool, target, input.mode, input.favourites).filter(
-        (e) => !used.has(e.id) && underCap(e),
-      ),
-    );
-    const pick = input.rehab ? options[0] : rotate(moving(options), i);
-    if (pick) add(pick, target);
-    else unavailable.push(target.muscle);
-  });
+  // "+1 exercise?" (QA R9-02): the exercises already on the list stay exactly
+  // as they are and count for variety, parents and the weekly cap; only the
+  // free slot is picked.
+  for (const item of input.fixedMain ?? []) {
+    const e = byIdAll.get(item.exerciseId);
+    if (!e) continue;
+    used.add(e.id);
+    const parent = parentOf(topPrimary(e) ?? item.targetMuscle ?? '');
+    usedParents.add(parent);
+    const u = parentUses.get(parent) ?? { count: 0, muscles: new Set(), patterns: new Set() };
+    u.count++;
+    u.muscles.add(topPrimary(e) ?? parent);
+    u.patterns.add(e.pattern);
+    parentUses.set(parent, u);
+    main.push(item);
+  }
+  const covered = new Set(main.map((i) => i.targetMuscle));
+  targets
+    .filter((t) => !covered.has(t.muscle))
+    .slice(0, Math.max(0, slots - main.length))
+    .forEach((target, i) => {
+      const options = readyFirst(
+        rankForTarget(pool, target, input.mode, input.favourites).filter(
+          (e) => !used.has(e.id) && underCap(e),
+        ),
+      );
+      const pick = input.rehab ? options[0] : rotate(moving(options), i);
+      if (pick) add(pick, target);
+      else unavailable.push(target.muscle);
+    });
   // A recovery session stays on its joint: more holds for the same focus
   // until its 4 slots are full (QA round 2: it had 3).
   // A Single workout does the same: only what was picked (QA R4 P2).
@@ -856,7 +876,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     input.mode === 'senior' ||
     input.conditions.includes('fell_last_year') ||
     input.mainGoals.includes('balance');
-  const protectedIds = new Set<string>();
+  const protectedIds = new Set<string>((input.fixedMain ?? []).map((i) => i.exerciseId));
   const balanceItem = main.find((i) => byIdAll.get(i.exerciseId)?.pattern === 'balance');
   if (balanceItem) protectedIds.add(balanceItem.exerciseId);
   if (needsBalance && !balanceItem && !focused) {
@@ -1255,38 +1275,70 @@ export function generateBalanceSession(
 }
 
 /**
- * Spare time (Daniel, Phase 13): the generator keeps the number of exercises
- * the person chose; when a session ends well short of its minutes, the
- * workout screen offers one more exercise and the person decides.
+ * "+1 exercise?" (Daniel, Phases 21–22): offered only when the chosen time is
+ * over 45 min, never in a deload week, and the session (with its extra sets)
+ * still uses under ~85% of that time. It can be offered again after each
+ * accept while that stays true. Never added on its own.
  */
-export const SPARE_OFFER_MINUTES = 6;
-export function spareMinutes(session: GeneratedSession): number {
-  return Math.max(0, session.minutes - session.estimatedMinutes);
-}
-
-/**
- * "+1 exercise?" (Daniel, Phase 21): offered when the session, with its
- * extra sets, still uses under ~85% of the chosen time. Never added on its own.
- */
+export const ONE_MORE_MIN_MINUTES = 45;
 export const offersOneMore = (session: GeneratedSession) =>
-  !session.error && session.estimatedMinutes < EXTRA_SETS_SHARE * session.minutes;
+  !session.error &&
+  !session.deload &&
+  !session.focus &&
+  !session.custom &&
+  session.minutes > ONE_MORE_MIN_MINUTES &&
+  session.estimatedMinutes < EXTRA_SETS_SHARE * session.minutes;
 
 /**
- * The same session with one more main exercise, or null when none fits.
- * With `built`, only when that session came from this input (the offer never
- * reshuffles a workout built another way).
+ * The same session with one more main exercise, or null when none fits the
+ * safety rules, the weekly cap or the chosen time. Every exercise already on
+ * the list stays exactly as it is (QA R9-02): only the new one is added,
+ * after the last main exercise; warm-up and cool-down don't change.
  */
 export function withOneMoreExercise(
   input: GeneratorInput,
-  built?: GeneratedSession,
+  session: GeneratedSession,
 ): GeneratedSession | null {
-  const mainIds = (s: GeneratedSession) =>
-    s.items.filter((i) => i.role === 'main').map((i) => i.exerciseId);
-  const current = generateSession(input);
-  if (built && mainIds(current).join() !== mainIds(built).join()) return null;
-  const more = generateSession({ ...input, exercisesPerSession: input.exercisesPerSession + 1 });
-  if (more.error || mainIds(more).length <= mainIds(current).length) return null;
-  return more;
+  if (!offersOneMore(session)) return null;
+  const current = session.items.filter((i) => i.role === 'main');
+  const picked = generateSession({
+    ...input,
+    minutes: session.minutes,
+    exercisesPerSession: current.length + 1,
+    fixedMain: current,
+    noExtraSets: true,
+    deload: false,
+  });
+  if (picked.error) return null;
+  const known = new Set(current.map((i) => i.exerciseId));
+  const added = picked.items.filter((i) => i.role === 'main' && !known.has(i.exerciseId));
+  if (added.length !== 1) return null;
+  const minutes = session.estimatedMinutes + added[0].estSeconds / 60;
+  if (minutes > session.minutes) return null;
+  const lastMain = session.items.reduce((at, i, n) => (i.role === 'main' ? n : at), -1);
+  const items = [...session.items];
+  items.splice(lastMain + 1, 0, added[0]);
+  return {
+    ...session,
+    items: items.map((item, i) => ({ ...item, id: `i${i}` })),
+    estimatedMinutes: Math.round(minutes),
+    addedExercises: (session.addedExercises ?? 0) + 1,
+  };
+}
+
+/** Puts back the exercises a person added with "+1" after a rebuild (QA R9 P2). */
+export function withAddedExercises(
+  input: GeneratorInput,
+  session: GeneratedSession,
+  count: number,
+): GeneratedSession {
+  let out = session;
+  for (let n = 0; n < count; n++) {
+    const next = withOneMoreExercise(input, out);
+    if (!next) break;
+    out = next;
+  }
+  return out;
 }
 
 /**

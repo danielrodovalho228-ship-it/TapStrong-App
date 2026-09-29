@@ -96,7 +96,8 @@ it('a partly used muscle gets only the sets left, and "+1 exercise?" never adds 
     now: '2026-09-28T12:00:00Z',
     recentSessions: recent,
   };
-  for (const s of [generateSession(input), withOneMoreExercise(input)]) {
+  const first = generateSession(input);
+  for (const s of [first, withOneMoreExercise(input, first)]) {
     if (!s) continue;
     const chest = s.items
       .filter((i) => i.role === 'main')

@@ -9,7 +9,12 @@ import { syncNow } from '../account/cloud';
 import { useAccountStore } from '../account/store';
 import { devLibrary } from '../exercises/library';
 import type { Exercise } from '../exercises/types';
-import { generateBalanceSession, generateMobilitySession, generateSession } from '../generator';
+import {
+  generateBalanceSession,
+  generateMobilitySession,
+  generateSession,
+  withAddedExercises,
+} from '../generator';
 import { inputFromProfile } from '../generator/fromProfile';
 import type { GeneratorInput } from '../generator/types';
 import { limitFrom } from '../movement/progress';
@@ -112,8 +117,14 @@ export function refreshWorkout(
   const r = safetyRefresh(w, input);
   if (r.kind === 'ok') return id;
   if (r.kind === 'regenerate') {
+    const added = w.session.addedExercises ?? 0;
     store.discard(id);
-    return createWorkoutFrom(input, library);
+    const next = createWorkoutFrom(input, library);
+    // The exercises added with "+1" come along when they're still safe (QA R9 P2).
+    const rebuilt = next ? findWorkout(useWorkoutStore.getState().workouts, next) : undefined;
+    if (next && rebuilt && added)
+      store.replaceSession(next, withAddedExercises(input, rebuilt.session, added));
+    return next;
   }
   store.replaceSession(id, r.session);
   for (const itemId of r.skip) store.skipItem(id, itemId);

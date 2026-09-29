@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
@@ -17,7 +17,7 @@ import { useOnboardingStore } from '@/features/onboarding/store';
 import {
   generateSession,
   MOBILITY_MINUTES,
-  offersOneMore,
+  withAddedExercises,
   swapItem,
   withOneMoreExercise,
 } from '@/features/generator';
@@ -41,6 +41,7 @@ import {
 import { createMobilityWorkout, useSafetyRefresh, useWorkout } from '@/features/workout/hooks';
 import { isReviewed } from '@/features/workout/plan';
 import { useWorkoutStore } from '@/features/workout/store';
+import { useTodayState } from '@/features/workout/useTodayState';
 import { track } from '@/lib/analytics';
 import { restFor, usePrefsStore } from '@/features/settings/store';
 import { clock } from '@/lib/clock';
@@ -71,6 +72,32 @@ export default function WorkoutScreen() {
   const [sheet, setSheet] = useState<SheetState>(null);
   const [undoMessage, setUndoMessage] = useState<string | null>(null);
   const clearUndo = useCallback(() => setUndoMessage(null), []);
+  const today = useTodayState();
+  // "+1 exercise?" (Daniel's rule, QA R9): only on an untouched planned
+  // workout, never on the day's second workout; built once per session
+  // (it runs the generator).
+  const planned0 = workout?.status === 'planned';
+  const oneMore = useMemo(
+    () =>
+      workout &&
+      input &&
+      planned0 &&
+      workout.kind === 'regular' &&
+      !workout.swaps.length &&
+      !workout.fullSession &&
+      !today.doneToday
+        ? withOneMoreExercise(input, workout.session)
+        : null,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      workout?.session,
+      workout?.swaps.length,
+      workout?.fullSession,
+      planned0,
+      today.doneToday,
+      input,
+    ],
+  );
 
   if (!workout || !input) {
     // Honest reason, with a way forward (QA C-03): "under review" only when
@@ -170,16 +197,6 @@ export default function WorkoutScreen() {
 
   // Adults and 60+ only; never teens (improvements v1, A3).
   const kcal = sessionSummary(session, mode, weightKg).kcal;
-
-  // Only on an untouched planned workout, when enough time is left.
-  const oneMore =
-    planned &&
-    workout.kind === 'regular' &&
-    !workout.swaps.length &&
-    !workout.fullSession &&
-    offersOneMore(session)
-      ? withOneMoreExercise(input, session)
-      : null;
 
   // "Only 15 min" keeps the swaps already made and can be undone (QA P2).
   const onlyFifteen = () => {
@@ -319,12 +336,14 @@ export default function WorkoutScreen() {
                 selected={activePlace === p.id}
                 onPress={() => {
                   choosePlace(p.id);
-                  const next = generateSession({
-                    ...input,
-                    equipment: p.items,
-                    location: p.location,
-                  });
-                  if (!next.error) store.replaceSession(workout.id, next);
+                  const placeInput = { ...input, equipment: p.items, location: p.location };
+                  const next = generateSession(placeInput);
+                  // The exercises added with "+1" come along (QA R9 P2).
+                  if (!next.error)
+                    store.replaceSession(
+                      workout.id,
+                      withAddedExercises(placeInput, next, session.addedExercises ?? 0),
+                    );
                 }}
               />
             ))}
@@ -344,6 +363,10 @@ export default function WorkoutScreen() {
           <Button
             variant="accent"
             label={t('workout.spare.add')}
+            accessibilityHint={t('workout.spare.long', {
+              estimate: session.estimatedMinutes,
+              minutes: session.minutes,
+            })}
             onPress={() => store.replaceSession(workout.id, oneMore)}
           />
         </Card>

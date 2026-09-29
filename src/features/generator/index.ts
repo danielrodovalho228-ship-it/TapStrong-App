@@ -16,9 +16,8 @@ export {
   MIN_COOLDOWN,
   MIN_WARMUP,
   shortSession,
-  SPARE_OFFER_MINUTES,
   offersOneMore,
-  spareMinutes,
+  withAddedExercises,
   withOneMoreExercise,
   warmupCooldownMinutes,
 } from './generate';

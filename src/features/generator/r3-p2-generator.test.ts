@@ -14,8 +14,7 @@ import {
   blockReason,
   doseFor,
   generateSession,
-  SPARE_OFFER_MINUTES,
-  spareMinutes,
+  offersOneMore,
   withOneMoreExercise,
   type GeneratorInput,
 } from './index';
@@ -83,8 +82,8 @@ describe('the filler', () => {
     const input = { ...base, minutes: 60, exercisesPerSession: 3 };
     const s = generateSession(input);
     expect(main(s)).toHaveLength(3);
-    expect(spareMinutes(s)).toBeGreaterThanOrEqual(SPARE_OFFER_MINUTES);
-    const more = withOneMoreExercise(input)!;
+    expect(offersOneMore(s)).toBe(true);
+    const more = withOneMoreExercise(input, s)!;
     expect(main(more)).toHaveLength(4);
     // The first three stay the same: the person only adds one.
     expect(

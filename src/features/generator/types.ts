@@ -57,6 +57,11 @@ export type GeneratorInput = {
   deload?: boolean;
   /** Internal: no extra sets for spare time (the deload builds from this). */
   noExtraSets?: boolean;
+  /**
+   * Internal ("+1 exercise?", QA R9-02): the session's current main items,
+   * kept as they are; only the extra slot is picked.
+   */
+  fixedMain?: SessionItem[];
   /** Starred exercises: preferred when safe (improvements v1, B4). */
   favourites?: string[];
   /** Shorter warm-up and cool-down (Settings, D4): shortened, never removed. */
@@ -148,6 +153,8 @@ export type GeneratedSession = {
   custom?: boolean;
   /** A short mobility or balance session instead of a workout (QA R3-03, R3-05). */
   focus?: 'mobility' | 'balance';
+  /** Exercises the person added with "+1 exercise?" (kept on rebuilds, QA R9 P2). */
+  addedExercises?: number;
   /** Set when no safe session can be built. */
   error?: 'no_library' | 'no_warmup' | 'no_cooldown' | 'no_main' | 'all_recovering';
 };

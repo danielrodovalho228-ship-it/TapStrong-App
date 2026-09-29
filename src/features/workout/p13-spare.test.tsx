@@ -114,3 +114,64 @@ describe('long workouts (Daniel, Phase 21)', () => {
     for (const n of mainSets()) expect(n).toBeLessThanOrEqual(3);
   });
 });
+
+describe('QA round 9 on the workout screen', () => {
+  it('the button tells screen readers how much time is planned', async () => {
+    await setUp(90, 5);
+    await render(<WorkoutScreen />);
+    const button = screen.getByRole('button', { name: 'Add 1 exercise?' });
+    expect(button.props.accessibilityHint).toMatch(/of your 90 min are planned/);
+  });
+
+  it('accepting twice keeps every exercise and adds one each time', async () => {
+    await setUp(120, 4);
+    await render(<WorkoutScreen />);
+    const ids = () =>
+      current()
+        .session.items.filter((i) => i.role === 'main')
+        .map((i) => i.exerciseId);
+    const first = ids();
+    await fireEvent.press(screen.getByRole('button', { name: 'Add 1 exercise?' }));
+    expect(ids().slice(0, first.length)).toEqual(first);
+    const second = ids();
+    const again = screen.queryByRole('button', { name: 'Add 1 exercise?' });
+    if (again) {
+      await fireEvent.press(again);
+      expect(ids().slice(0, second.length)).toEqual(second);
+      expect(ids()).toHaveLength(second.length + 1);
+    }
+  });
+
+  it("the day's second workout gets no offer", async () => {
+    await setUp(90, 5);
+    // This morning's workout, already done.
+    const plan = current();
+    const at = '2026-09-26T08:30:00.000Z';
+    await act(() =>
+      useWorkoutStore.setState({
+        workouts: [
+          ...useWorkoutStore.getState().workouts,
+          {
+            ...plan,
+            id: 'morning',
+            status: 'done',
+            createdAt: '2026-09-26T08:00:00.000Z',
+            startedAt: '2026-09-26T08:00:00.000Z',
+            endedAt: '2026-09-26T08:45:00.000Z',
+            logs: [
+              {
+                itemId: 'i0',
+                exerciseId: plan.session.items[0].exerciseId,
+                setNo: 1,
+                reps: 10,
+                loggedAt: at,
+              },
+            ],
+          },
+        ],
+      }),
+    );
+    await render(<WorkoutScreen />);
+    expect(screen.queryByRole('button', { name: 'Add 1 exercise?' })).toBeNull();
+  });
+});
