@@ -26,3 +26,10 @@ for f in "$ROOT"/supabase/tests/local/*.sql; do
   echo "test: $(basename "$f")"
   run "$f"
 done
+# Race tests (security round 2): shell scripts that open many connections at
+# once against the same throwaway database.
+for f in "$ROOT"/supabase/tests/local/*.sh; do
+  [[ -e "$f" ]] || continue
+  echo "test: $(basename "$f")"
+  DB="$DB" bash "$f"
+done
