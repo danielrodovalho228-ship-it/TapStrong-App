@@ -20,6 +20,7 @@ import type { WorkoutRecord } from '@/features/workout/types';
 import { restFor, usePrefsStore } from '@/features/settings/store';
 import { clock } from '@/lib/clock';
 import { addDays, deviceWeekStart, localDate } from '@/lib/dates';
+import { backOrHome } from '@/lib/nav';
 import { spacing, useColors } from '@/theme';
 
 /**
@@ -131,15 +132,16 @@ export default function DayScreen() {
   // or placeholder param of a pre-rendered page still reads as today.
   if (param && param !== '[date]' && !validDate(param)) {
     return (
-      <Screen header={<Header onBack={() => router.back()} title={t('notFound.title')} />}>
-        <Notice>{t('notFound.body')}</Notice>
+      <Screen header={<Header onBack={backOrHome} title={t('notFound.title')} />}>
+        <Notice tone="warning">{t('notFound.body')}</Notice>
+        <Button variant="secondary" label={t('notFound.home')} onPress={backOrHome} />
       </Screen>
     );
   }
 
   return (
     <Screen
-      header={<Header onBack={() => router.back()} title={title} />}
+      header={<Header onBack={backOrHome} title={title} />}
       footer={
         date === today && preview && !preview.error && !logged.length ? (
           <Button label={t('day.start')} onPress={start} />

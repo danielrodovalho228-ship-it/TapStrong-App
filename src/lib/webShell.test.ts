@@ -23,3 +23,11 @@ it('the shell sends theme-color for both schemes and paints the background early
   expect(html).toMatch(/name="color-scheme"/);
   expect(html).toMatch(/prefers-color-scheme: dark\)\{html,body\{background/);
 });
+
+it('the browser bar follows the saved Appearance, and a dark page waits for the app (QA R8 P2)', () => {
+  const html = readFileSync(join(ROOT, 'src/app/+html.tsx'), 'utf8');
+  expect(html).toMatch(/meta\[name="theme-color"\][\s\S]*setAttribute\('content'/);
+  expect(html).not.toMatch(/setTimeout/);
+  const gate = readFileSync(join(ROOT, 'src/features/appearance/ThemeGate.tsx'), 'utf8');
+  expect(gate).toMatch(/meta\[name="theme-color"\]/);
+});

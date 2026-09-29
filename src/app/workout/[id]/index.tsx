@@ -159,6 +159,10 @@ export default function WorkoutScreen() {
     });
   const loadLabel = (item: SessionItem, e: Exercise | undefined) =>
     loadText(adviceFor(item, e), t(`workout.units.${unit}`));
+  const easierFor = (item: SessionItem, e: Exercise | undefined) => {
+    const a = item.role === 'main' ? adviceFor(item, e) : null;
+    return a?.kind === 'load' && !!a.easier;
+  };
   // "3 × 16" on a "+1 rep" day, not the range (QA R7 P2).
   const doseFor = (item: SessionItem, e: Exercise | undefined) => {
     const aim = item.reps ? advisedReps(adviceFor(item, e)) : null;
@@ -354,6 +358,12 @@ export default function WorkoutScreen() {
                   ? t('workout.skipped')
                   : [doseFor(item, e), loadLabel(item, e)].filter(Boolean).join(' · ')}
               </AppText>
+              {/* The same hint as the player, on the list too (QA R8 P2). */}
+              {!skipped && easierFor(item, e) ? (
+                <AppText variant="caption" color={colors.mutedStrong}>
+                  {t('load.easier')}
+                </AppText>
+              ) : null}
               <RangeNote exercise={e} />
               <Tag
                 label={targetText(t, item, e)}

@@ -27,6 +27,7 @@ import { exerciseCues, exerciseName } from '@/features/workout/format';
 import { useExerciseLibrary, useGeneratorInput } from '@/features/workout/hooks';
 import { useWorkoutStore } from '@/features/workout/store';
 import type { LoadUnit } from '@/features/workout/types';
+import { backOrHome } from '@/lib/nav';
 import { colors, makeStyles, radius, spacing, useColors } from '@/theme';
 
 /**
@@ -50,8 +51,9 @@ export default function ExerciseScreen() {
   const e = library.find((x) => x.id === id);
   if (!e) {
     return (
-      <Screen header={<Header onBack={() => router.back()} />}>
-        <Notice>{t('exercise.notFound')}</Notice>
+      <Screen header={<Header onBack={backOrHome} />}>
+        <Notice tone="warning">{t('exercise.notFound')}</Notice>
+        <Button variant="secondary" label={t('notFound.home')} onPress={backOrHome} />
       </Screen>
     );
   }
@@ -73,7 +75,7 @@ export default function ExerciseScreen() {
     <Screen
       header={
         <Header
-          onBack={() => router.back()}
+          onBack={backOrHome}
           title={name}
           right={
             <IconButton

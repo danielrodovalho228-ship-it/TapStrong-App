@@ -11,7 +11,8 @@ const dark = PALETTES.dark.background;
 // device (the app stores it as "tapstrong\appearance").
 // The pre-rendered page is Light; in Dark it stays hidden over the dark
 // background until the app has mounted in Dark (ThemeGate sets data-ready),
-// so a dark load never flashes white (QA R7-05). A timer shows it anyway.
+// so a dark load never flashes white (QA R7-05), however slow the script
+// (QA R8 P2: no timer). The browser bar follows the saved choice too.
 const css = `
 html,body{background:${light}}
 @media (prefers-color-scheme: dark){html,body{background:${dark}}html:not([data-ready]):not([data-scheme="light"]) #root{visibility:hidden}}
@@ -19,7 +20,7 @@ html[data-scheme="light"],html[data-scheme="light"] body{background:${light}}
 html[data-scheme="dark"],html[data-scheme="dark"] body{background:${dark}}
 html[data-scheme="dark"]:not([data-ready]) #root{visibility:hidden}
 `;
-const script = `try{var v=JSON.parse(localStorage.getItem('tapstrong\\\\appearance')||'null');var a=v&&v.state&&v.state.appearance;if(a==='light'||a==='dark'){document.documentElement.dataset.scheme=a;document.documentElement.style.colorScheme=a;}}catch(e){}setTimeout(function(){document.documentElement.dataset.ready='1'},4000);`;
+const script = `try{var v=JSON.parse(localStorage.getItem('tapstrong\\\\appearance')||'null');var a=v&&v.state&&v.state.appearance;if(a==='light'||a==='dark'){var d=document.documentElement;d.dataset.scheme=a;d.style.colorScheme=a;document.querySelectorAll('meta[name="theme-color"]').forEach(function(m){m.setAttribute('content',a==='dark'?'${dark}':'${light}')});}}catch(e){}`;
 
 /** Web only: the HTML shell around every page (static export). */
 export default function Root({ children }: PropsWithChildren) {

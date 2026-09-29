@@ -11,6 +11,7 @@ import { useProgramStore } from '@/features/program/store';
 import { discardPlannedWorkouts } from '@/features/workout/hooks';
 import { clock } from '@/lib/clock';
 import { localDate } from '@/lib/dates';
+import { backOrHome } from '@/lib/nav';
 import { spacing, useColors } from '@/theme';
 
 /**
@@ -45,7 +46,7 @@ export default function ProgramScreen() {
     <Screen
       header={
         <Header
-          onBack={() => router.back()}
+          onBack={backOrHome}
           // An unknown id has no plan to read: never touch it (QA R6-06).
           title={
             mine

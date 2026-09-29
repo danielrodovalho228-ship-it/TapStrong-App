@@ -92,7 +92,7 @@ export default function LibraryScreen() {
         >
           <ExerciseThumb size={senior ? 64 : 48} />
           <View style={styles.flex}>
-            <AppText variant={senior ? 'h3' : 'bodyStrong'} numberOfLines={2}>
+            <AppText variant={senior ? 'h3' : 'bodyStrong'} numberOfLines={senior ? 3 : 2}>
               {name(e)}
             </AppText>
             {e.custom ? (

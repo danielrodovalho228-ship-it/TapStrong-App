@@ -50,9 +50,13 @@ export function ThemeGate({ children }: { children: ReactNode }) {
   // Web: the page was hidden in Dark until now (+html.tsx); show it once the
   // real scheme is on screen.
   useEffect(() => {
-    if (Platform.OS === 'web' && hydrated && typeof document !== 'undefined')
-      document.documentElement.dataset.ready = '1';
-  }, [hydrated, scheme]);
+    if (Platform.OS !== 'web' || !hydrated || typeof document === 'undefined') return;
+    document.documentElement.dataset.ready = '1';
+    // The browser bar follows the in-app choice, not only the phone (QA R8 P2).
+    document
+      .querySelectorAll('meta[name="theme-color"]')
+      .forEach((m) => m.setAttribute('content', background));
+  }, [hydrated, scheme, background]);
 
   return (
     <SchemeContext.Provider value={scheme}>
