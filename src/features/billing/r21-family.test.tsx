@@ -1,7 +1,7 @@
 /**
  * Phase 21 (Daniel): the Family plan is for adults. No Family card or offer
  * while a minor's profile is active, and a minor on the Family link gets
- * "An adult needs to buy the Family plan" with no purchase.
+ * "An adult needs to subscribe to the Family plan. with no purchase.
  */
 import '@/i18n';
 
@@ -23,6 +23,11 @@ jest.mock('expo-router', () => ({
   router: { push: jest.fn(), back: jest.fn(), replace: jest.fn(), canGoBack: () => true },
   useLocalSearchParams: () => mockParams,
   Redirect: () => null,
+}));
+// The parent PIN is tested elsewhere; here the owner has passed it.
+jest.mock('@/features/family/OwnerOnly', () => ({
+  ...jest.requireActual('@/features/family/OwnerOnly'),
+  OwnerOnly: ({ children }: { children: React.ReactNode }) => children,
 }));
 const { router } = jest.requireMock('expo-router') as { router: Record<string, jest.Mock> };
 
@@ -109,7 +114,7 @@ describe('Family link opened by a minor', () => {
     mockParams = { plan: 'family' };
     const purchase = jest.spyOn(provider.getBilling(), 'purchase');
     await render(<PlansScreen />);
-    expect(screen.getByText('An adult needs to buy the Family plan.')).toBeTruthy();
+    expect(screen.getByText('An adult needs to subscribe to the Family plan.')).toBeTruthy();
     await fireEvent.press(screen.getAllByRole('button', { name: 'Back' }).at(-1)!);
     expect(router.back).toHaveBeenCalled();
     expect(await buy(PRODUCTS.family.monthly)).toBe('adults_only');
@@ -121,5 +126,49 @@ describe('Family link opened by a minor', () => {
     mockParams = { plan: 'family' };
     await render(<PlansScreen />);
     expect(familyCard()).toBeChecked();
+  });
+});
+
+describe('R9-04 Family subscriber with the teen profile active', () => {
+  const familyOn = async () => {
+    const { useBillingStore } = jest.requireActual('./store') as typeof import('./store');
+    await act(() =>
+      useBillingStore.setState({
+        entitlement: {
+          ...useBillingStore.getState().entitlement,
+          plan: 'family',
+          status: 'active',
+          expiresAt: '2027-01-01T00:00:00Z',
+          productId: PRODUCTS.family.monthly,
+        },
+      }),
+    );
+  };
+
+  it('Plans shows "You\'re on the Family plan" + Manage, no picker, no buy button', async () => {
+    await ownerWithTeen('teen');
+    await familyOn();
+    mockParams = {};
+    await render(<PlansScreen />);
+    expect(screen.getByText(/You're on the Family plan/)).toBeTruthy();
+    expect(screen.queryByRole('radio', { name: /Premium/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Switch to|free trial|Subscribe/ })).toBeNull();
+    await fireEvent.press(screen.getByRole('button', { name: 'Manage my subscription' }));
+    expect(router.push).toHaveBeenCalledWith('/billing');
+  });
+
+  it('buy() refuses a Premium switch from the teen profile', async () => {
+    await ownerWithTeen('teen');
+    await familyOn();
+    const purchase = jest.spyOn(provider.getBilling(), 'purchase');
+    expect(await buy(PRODUCTS.premium.monthly)).toBe('adults_only');
+    expect(purchase).not.toHaveBeenCalled();
+  });
+
+  it('the owner on their own profile still sees the picker', async () => {
+    await ownerWithTeen('owner');
+    await familyOn();
+    await render(<PlansScreen />);
+    expect(screen.getByRole('radio', { name: /Family/ })).toBeTruthy();
   });
 });

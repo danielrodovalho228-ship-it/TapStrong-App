@@ -14,6 +14,7 @@ import { clock } from '@/lib/clock';
 import { kidsUnder13Enabled } from '@/lib/features';
 import { fonts, spacing, useColors } from '@/theme';
 import { FamilyAdultRequired } from '@/features/billing/components/FamilyAdultRequired';
+import { FamilyPlanOn } from '@/features/billing/components/FamilyPlanOn';
 import { startPlan } from '@/features/billing/rules';
 import { useFamilyPlanAllowed } from '@/features/billing/useFamilyPlan';
 import { OwnerOnly } from '@/features/family/OwnerOnly';
@@ -33,8 +34,8 @@ function PlansScreenInner() {
   const [period, setPeriod] = useState<Period>('monthly');
   // A solo teen doesn't manage a family: no family lead or member strip (QA R8 P2).
   const minor = ['teen', 'child'].includes(modeOf(useOnboardingStore()));
-  // A minor on the Family link: no purchase (Daniel, Phase 21).
-  if (wanted === 'family' && !familyOk) return <FamilyAdultRequired />;
+  // On the Family plan with a minor's profile active: only "Manage" (QA R9-04).
+  const familyLocked = current === 'family' && !familyOk;
 
   return (
     <Screen
@@ -44,7 +45,7 @@ function PlansScreenInner() {
           title={t(minor ? 'billing.plansTitleSolo' : 'billing.plansTitle')}
         />
       }
-      footer={<SubscribeFooter plan={plan} period={period} />}
+      footer={familyLocked ? undefined : <SubscribeFooter plan={plan} period={period} />}
     >
       {minor ? null : (
         <>
@@ -54,10 +55,16 @@ function PlansScreenInner() {
           </AppText>
         </>
       )}
-      <AppText variant="caption" style={styles.caps}>
-        {t('billing.choose')}
-      </AppText>
-      <PlanPicker plan={plan} period={period} onPlan={setPlan} onPeriod={setPeriod} />
+      {familyLocked ? (
+        <FamilyPlanOn />
+      ) : (
+        <>
+          <AppText variant="caption" style={styles.caps}>
+            {t('billing.choose')}
+          </AppText>
+          <PlanPicker plan={plan} period={period} onPlan={setPlan} onPeriod={setPeriod} />
+        </>
+      )}
       {__DEV__ && getBilling().kind === 'dev' ? <DevControls /> : null}
     </Screen>
   );
@@ -96,6 +103,11 @@ const styles = StyleSheet.create({
 
 /** Owner-only: a child profile needs the parent gate (QA B-03). */
 export default function PlansScreen() {
+  // A minor on the Family link hears it right away, before any parent PIN
+  // (Daniel, Phase 21; QA R9 P2).
+  const { plan: wanted } = useLocalSearchParams<{ plan?: string }>();
+  const familyOk = useFamilyPlanAllowed();
+  if (wanted === 'family' && !familyOk) return <FamilyAdultRequired />;
   return (
     <OwnerOnly>
       <PlansScreenInner />

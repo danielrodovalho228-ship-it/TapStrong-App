@@ -5,6 +5,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { AppText, Icon, Screen, TextLink } from '@/components/ui';
 import { FamilyAdultRequired } from '@/features/billing/components/FamilyAdultRequired';
+import { FamilyPlanOn } from '@/features/billing/components/FamilyPlanOn';
 import { PlanPicker } from '@/features/billing/components/PlanPicker';
 import { SubscribeFooter } from '@/features/billing/components/SubscribeFooter';
 import {
@@ -39,8 +40,8 @@ function PaywallScreenInner() {
   useEffect(() => {
     track('paywall_viewed');
   }, []);
-  // A minor on the Family link: no purchase (Daniel, Phase 21).
-  if (wanted === 'family' && !familyOk) return <FamilyAdultRequired />;
+  // On the Family plan with a minor's profile active: only "Manage" (QA R9-04).
+  const familyLocked = current === 'family' && !familyOk;
 
   const nextDay = next
     ? new Date(`${next}T12:00:00`).toLocaleDateString(i18n.language, {
@@ -53,12 +54,14 @@ function PaywallScreenInner() {
   return (
     <Screen
       footer={
-        <SubscribeFooter
-          plan={plan}
-          period={period}
-          // Back to the workout (or Repair) that asked, now unlocked (QA round 1).
-          onBought={() => (router.canGoBack() ? router.back() : router.replace('/home'))}
-        />
+        familyLocked ? undefined : (
+          <SubscribeFooter
+            plan={plan}
+            period={period}
+            // Back to the workout (or Repair) that asked, now unlocked (QA round 1).
+            onBought={() => (router.canGoBack() ? router.back() : router.replace('/home'))}
+          />
+        )
       }
     >
       <AppText variant="caption" color={colors.mutedStrong} style={styles.caps}>
@@ -81,13 +84,17 @@ function PaywallScreenInner() {
       {nextDay && current === 'free' ? (
         <AppText color={colors.mutedStrong}>{t('paywall.nextFree', { day: nextDay })}</AppText>
       ) : null}
-      <PlanPicker
-        plan={plan}
-        period={period}
-        onPlan={setPlan}
-        onPeriod={setPeriod}
-        showFree={false}
-      />
+      {familyLocked ? (
+        <FamilyPlanOn />
+      ) : (
+        <PlanPicker
+          plan={plan}
+          period={period}
+          onPlan={setPlan}
+          onPeriod={setPeriod}
+          showFree={false}
+        />
+      )}
       <View style={styles.center}>
         <TextLink label={t('paywall.notNow')} onPress={() => router.back()} />
       </View>
@@ -105,6 +112,11 @@ const styles = StyleSheet.create({
 
 /** Owner-only: a child or teen can't change the parent's plan (QA R2-03). */
 export default function PaywallScreen() {
+  // A minor on the Family link hears it right away, before any parent PIN
+  // (Daniel, Phase 21; QA R9 P2).
+  const { plan: wanted } = useLocalSearchParams<{ plan?: string }>();
+  const familyOk = useFamilyPlanAllowed();
+  if (wanted === 'family' && !familyOk) return <FamilyAdultRequired />;
   return (
     <OwnerOnly>
       <PaywallScreenInner />

@@ -56,6 +56,10 @@ export async function buy(productId: string): Promise<PurchaseResult | 'adults_o
   // Never start a Family purchase for an owner under 18, whatever the screen shows.
   const family = (Object.values(PRODUCTS.family) as string[]).includes(productId);
   if (family && !familyPlanAllowed()) return 'adults_only';
+  // A Family subscription is never changed from a minor's profile: another
+  // plan would downgrade the whole family (QA R9-04).
+  const onFamily = currentPlan(useBillingStore.getState().entitlement, clock.now()) === 'family';
+  if (!family && onFamily && !familyPlanAllowed()) return 'adults_only';
   const before = useBillingStore.getState().entitlement;
   const result = await getBilling().purchase(productId);
   if (result === 'ok') {
