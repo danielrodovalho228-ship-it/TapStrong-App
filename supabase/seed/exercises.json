@@ -11508,7 +11508,8 @@
       ],
       "joints": [
         ["lower_back", "flexion", "isometric"],
-        ["hip", "flexion", "isometric"]
+        ["hip", "flexion", "isometric"],
+        ["knee", "deep_bend", "isometric"]
       ],
       "rangeLimit": [],
       "rehab": true
@@ -17568,7 +17569,8 @@
       ],
       "joints": [
         ["lower_back", "flexion", "full"],
-        ["hip", "flexion", "full"]
+        ["hip", "flexion", "full"],
+        ["knee", "deep_bend", "partial"]
       ],
       "rangeLimit": [],
       "rehab": true

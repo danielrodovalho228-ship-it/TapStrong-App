@@ -51,6 +51,9 @@ describe('R7-01 knee movers', () => {
     'cable_woodchop',
     'sv_cs_knee_drop_hip',
     'st_supine_twist',
+    // QA R8-06
+    'rx_dead_bug_hold',
+    'rp_slow_reverse_crunch',
   ])('%s is ruled out after a sharp knee stop', (slug) => {
     const e = bySlug.get(slug)!;
     expect(
@@ -59,21 +62,26 @@ describe('R7-01 knee movers', () => {
         equipment: e.equipment,
         location: e.location[0],
         position: e.positions[e.positions.length - 1],
+        // Repair moves (QA R8-06) are judged the way Repair sessions build them.
+        rehab: e.rehab,
       }),
     ).toBe('contraindication');
   });
 
   it('audit: every move whose cues lift, lower, tap, step or pivot a leg carries the knee', () => {
     const moves =
-      /lift one foot|lift (?:one|a|your|the) (?:foot|feet|leg|knee)|lower (?:one|the opposite|the) (?:arm and )?leg|leg at a time|arm and leg|knees? toward|knees? up|bicycle|tap the feet|tap your feet|heel to tap|step (?:one foot )?out|step-out|pivot|march|jack|foot off|feet off|drop.*knee|knee.*drop/i;
+      /lift one foot|lift (?:one|a|your|the) (?:foot|feet|leg|knee)|lower (?:one|the opposite|the) (?:arm and )?leg|leg at a time|arm and leg|knees? toward|knees? up|bicycle|tap the feet|tap your feet|heel to tap|step (?:one foot )?out|step-out|pivot|march|jack|foot off|feet off|drop.*knee|knee.*drop|knees? (?:and hips )?at 90|toward your chest|hips off the floor/i;
     // Reviewed: the leg moves straight from the hip, the knee stays still.
     const kneeStill = new Set(['rp_prone_swimmer_lift']);
+    // Reviewed: the chin, not the knees, goes toward the chest (QA R8-06).
+    const chinOnly = new Set(['rp_band_neck_nod', 'rp_supine_head_lift_full']);
     const missing = RAW.filter((e) => {
       const t = names[e.slug];
       return (
         t &&
         moves.test(`${t.name} | ${t.cues}`) &&
         !kneeStill.has(e.slug) &&
+        !chinOnly.has(e.slug) &&
         !e.joints.some((j) => j[0] === 'knee')
       );
     }).map((e) => e.slug);

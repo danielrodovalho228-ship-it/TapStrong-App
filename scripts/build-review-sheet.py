@@ -73,6 +73,16 @@ COLUMNS = [
 DECISION_COL = 13
 COMMENT_COL = 14
 MP = en['movementPain']
+# Moves the reviewer must decide on, shown with the contraindications (QA R8-06).
+REVIEW_FLAGS = {
+    slug: 'REVIEWER: clinician decides whether this loads the knee / pivots the knee'
+    for slug in (
+        'rp_band_seated_hip_in_turn',
+        'rp_band_seated_hip_out_turn',
+        'rx_iso_hip_internal_rotation',
+        'rx_iso_hip_external_rotation',
+    )
+}
 RANGES = {'full': 'full', 'partial': 'partial', 'isometric': 'hold, no movement'}
 
 
@@ -100,7 +110,8 @@ def row_for(entry):
         entry['level'],
         BANDS[entry['minAgeBand']],
         ', '.join(POSITIONS[p] for p in entry['positions']),
-        ', '.join(RISK[c] for c in entry['contraindications']) or 'None',
+        (', '.join(RISK[c] for c in entry['contraindications']) or 'None')
+        + (f"\n{REVIEW_FLAGS[entry['slug']]}" if entry['slug'] in REVIEW_FLAGS else ''),
         en['exercises'][entry['slug']]['cues'],
         ', '.join(PARTS[p] for p in entry['parts'])
         + (' · recovery plan only' if entry.get('rehab') else ''),
