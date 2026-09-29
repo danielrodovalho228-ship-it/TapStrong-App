@@ -42,13 +42,20 @@ jest.mock('@/features/billing/provider', () => ({
   }),
   setBilling: () => undefined,
 }));
-let mockDelete: () => Promise<{ error: unknown; status: number }> = async () => ({
+let mockDelete: () => Promise<{ error: unknown; status: number; data?: unknown }> = async () => ({
   error: null,
-  status: 204,
+  status: 200,
+  data: [{ id: 'x' }],
 });
+let mockRow: { user_id: string | null } | null = null;
 jest.mock('@/lib/supabase', () => ({
   getSupabase: () => ({
-    from: () => ({ delete: () => ({ eq: () => mockDelete() }) }),
+    from: () => ({
+      delete: () => ({ eq: () => ({ select: () => mockDelete() }) }),
+      select: () => ({
+        eq: () => ({ maybeSingle: async () => ({ data: mockRow, error: null }) }),
+      }),
+    }),
   }),
   ensureSession: async () => true,
 }));
@@ -147,9 +154,25 @@ describe('remove member: a failed cloud delete is retried', () => {
     expect(await deleteOrQueue('p1')).toBe('queued');
     expect(usePendingDeletesStore.getState().ids).toEqual(['p1']);
     expect(await retryPendingDeletes()).toBe(1);
-    mockDelete = async () => ({ error: null, status: 204 });
+    mockDelete = async () => ({ error: null, status: 200, data: [{ id: 'x' }] });
     expect(await retryPendingDeletes()).toBe(0);
     expect(usePendingDeletesStore.getState().ids).toEqual([]);
+  });
+
+  it("round 2 (P3): a teen's own-login profile is theirs; the guardian is told, nothing is queued", async () => {
+    // The server deletes nothing (RLS) and the row has a login of its own.
+    mockDelete = async () => ({ error: null, status: 200, data: [] });
+    mockRow = { user_id: 'teen-user' };
+    try {
+      expect(await deleteOrQueue('teen')).toBe('own_login');
+      expect(usePendingDeletesStore.getState().ids).toEqual([]);
+      // Never synced (no row at all): nothing to do.
+      mockRow = null;
+      expect(await deleteOrQueue('never-synced')).toBe('ok');
+    } finally {
+      mockRow = null;
+      mockDelete = async () => ({ error: null, status: 200, data: [{ id: 'x' }] });
+    }
   });
 
   it('the Family tab tells the owner', async () => {

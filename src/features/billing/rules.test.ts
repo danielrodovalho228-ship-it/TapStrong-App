@@ -2,6 +2,7 @@ import {
   activePlan,
   applyEvent,
   expireRow,
+  transferExpires,
   transferredAway,
   planForEntitlements,
   planForProduct,
@@ -166,6 +167,23 @@ describe('RevenueCat events → subscription row', () => {
       will_renew: false,
       expires_at: '2026-10-05T00:00:00.000Z',
     });
+  });
+
+  it('round 2 P3: a TRANSFER expires only an older row of the same product', () => {
+    const paid = applyEvent(null, ev({ event_timestamp_ms: t('2026-10-01T00:00:00Z') }))!;
+    const transfer = (at: string, product_id?: string) =>
+      ev({ type: 'TRANSFER', event_timestamp_ms: t(at), product_id });
+    expect(transferExpires(paid, transfer('2026-10-05T00:00:00Z'))).toBe(true);
+    // A late or replayed transfer never ends a newer purchase on that account.
+    expect(transferExpires(paid, transfer('2026-09-20T00:00:00Z'))).toBe(false);
+    // Another product's transfer leaves this one alone.
+    expect(transferExpires(paid, transfer('2026-10-05T00:00:00Z', 'tapstrong_other'))).toBe(false);
+    expect(
+      transferExpires(paid, transfer('2026-10-05T00:00:00Z', paid.product_id ?? undefined)),
+    ).toBe(true);
+    // Already expired: nothing to do; no time: never.
+    expect(transferExpires(expireRow(paid, 'x'), transfer('2026-10-05T00:00:00Z'))).toBe(false);
+    expect(transferExpires(paid, ev({ type: 'TRANSFER', event_timestamp_ms: null }))).toBe(false);
   });
 
   it('maps products and entitlements to plans', () => {

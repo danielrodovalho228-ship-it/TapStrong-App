@@ -16,7 +16,7 @@ import {
   setParentPin,
   useParentPinStore,
 } from './parentPin';
-import { mergeLock, pullPinLock, reportPinCheck } from './pinLockout';
+import { mergeLock, pullPinLock } from './pinLockout';
 
 const NOW = new Date('2026-09-27T12:00:00Z');
 
@@ -102,25 +102,22 @@ describe('server lockout mirror', () => {
     expect(checkParentPin('2468', NOW)).toBe('locked');
   });
 
-  it('reports offline wrong tries; a right one is never "reported" (the server clears it)', async () => {
+  it('offline wrong tries stay on the phone; the app never counts them on the server itself', async () => {
+    // Round 2 (P3): parent_pin_failed is server-only; verify_parent_pin counts.
     setParentPin('2468');
-    const until = new Date(NOW.getTime() + 15 * 60000).toISOString();
     const rpc = jest.fn(async (name: string) => ({
-      data: name === 'parent_pin_failed' ? until : null,
+      data: name === 'parent_pin_status' ? [{ has_pin: true, locked_until: null }] : null,
       error: null,
     }));
-    await reportPinCheck(client(rpc), 'wrong');
-    expect(rpc).toHaveBeenCalledWith('parent_pin_failed');
-    expect(lockMinutesLeft(NOW)).toBe(15);
-    await reportPinCheck(client(rpc), 'ok');
-    expect(rpc).not.toHaveBeenCalledWith('parent_pin_passed');
+    await pullPinLock(client(rpc));
+    expect(rpc.mock.calls.map((c) => c[0])).not.toContain('parent_pin_failed');
   });
 
   it('offline or signed out: nothing is sent and nothing breaks', async () => {
     const rpc = jest.fn(async () => {
       throw new TypeError('Network request failed');
     });
-    await expect(reportPinCheck(client(rpc), 'wrong')).resolves.toBeUndefined();
+    await expect(pullPinLock(client(rpc))).resolves.toBeUndefined();
     useAccountStore.getState().update({ saved: false });
     const quiet = jest.fn();
     await pullPinLock(client(quiet));

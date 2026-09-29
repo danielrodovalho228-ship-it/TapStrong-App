@@ -4141,7 +4141,8 @@
     "teenMobileOnly": "TapStrong for teens is available in the mobile app. On the web, TapStrong is for adults.",
     "mobileOnlyTitle": "Family profiles are in the mobile app",
     "teenMobileOnlyTitle": "TapStrong for teens is in the mobile app",
-    "changeDate": "Change my birth date"
+    "changeDate": "Change my birth date",
+    "ownLogin": "This teen has their own login, so only they can change or delete their profile. It was removed from this phone only."
   },
   "deleteAccount": {
     "title": "Delete account",

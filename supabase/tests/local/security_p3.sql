@@ -51,8 +51,12 @@ begin
   insert into public.set_logs (session_item_id, exercise_id, set_no, reps) values (item, ex, 1, 10);
   assert public.first_completed_workout('00000000-0000-0000-0000-00000000f3a2') is null, 'a 2-minute tap counted';
 
-  insert into public.sessions (id, profile_id, status, started_at, ended_at)
-  values (real, '00000000-0000-0000-0000-00000000f3b2', 'done', now() - interval '25 minutes', now());
+  -- Round 2 (P3): server-side backfill (no user) of a session that reached
+  -- the server 25 minutes before it was done.
+  perform set_config('request.jwt.claim.sub', '', false);
+  insert into public.sessions (id, profile_id, status, started_at, ended_at, received_at, done_received_at)
+  values (real, '00000000-0000-0000-0000-00000000f3b2', 'done', now() - interval '25 minutes', now(),
+          now() - interval '25 minutes', now());
   insert into public.session_items (session_id, "order", exercise_id, role, part, sets)
   values (real, 0, ex, 'main', 'main', 6) returning id into item;
   for n in 1..6 loop

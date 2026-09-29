@@ -127,6 +127,24 @@ describe('sync plan', () => {
     expect(s.items.map((row) => row.order)).toEqual(s.items.map((_, n) => n));
   });
 
+  it('round 2 (P3): a workout in progress sends only its session row, never marked synced', () => {
+    const p = profile();
+    const active: WorkoutRecord = {
+      ...finishedWorkout(p),
+      status: 'active',
+      endedAt: undefined,
+      logs: [],
+    };
+    const plan = buildSyncPlan(input({ workouts: [active] }));
+    if (typeof plan === 'string') throw new Error(plan);
+    expect(plan.sessions).toHaveLength(0);
+    expect(plan.started).toEqual([
+      expect.objectContaining({ id: active.id, status: 'active', started_at: active.startedAt }),
+    ]);
+    // The server stamps its own times; the app never sends them.
+    expect(plan.started[0]).not.toHaveProperty('received_at');
+  });
+
   it('skips workouts whose exercises the database does not release (drafts)', () => {
     const plan = buildSyncPlan(input({ exerciseIds: new Map() }));
     if (typeof plan === 'string') throw new Error(plan);

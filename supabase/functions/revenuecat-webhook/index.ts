@@ -7,6 +7,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2.117.1';
 import {
   applyEvent,
   expireRow,
+  transferExpires,
   transferredAway,
   type RevenueCatEvent,
   type SubscriptionRow,
@@ -48,7 +49,8 @@ Deno.serve(async (req) => {
         .select('*')
         .eq('user_id', id)
         .maybeSingle();
-      if (!row) continue;
+      // Only a row older than the transfer, for the same product (round 2, P3).
+      if (!row || !transferExpires(row as SubscriptionRow, event)) continue;
       const { error } = await admin
         .from('subscriptions')
         .upsert({ ...expireRow(row as SubscriptionRow, at), updated_at: new Date().toISOString() });

@@ -16,9 +16,11 @@ do $$
 declare
   lock timestamptz;
 begin
-  perform pg_temp.act_as('00000000-0000-0000-0000-00000000c0d1');
-  -- Wrong PINs don't touch the code count.
+  -- Wrong PINs (counted server side since round 2) don't touch the code count.
+  execute 'reset role';
+  perform set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-00000000c0d1', false);
   for i in 1..5 loop perform public.parent_pin_failed(); end loop;
+  perform pg_temp.act_as('00000000-0000-0000-0000-00000000c0d1');
   if public.parent_pin_locked_until() is null then raise exception 'PIN not locked'; end if;
   if public.pin_reset_code_locked_until() is not null then raise exception 'PIN lock blocked the code'; end if;
 

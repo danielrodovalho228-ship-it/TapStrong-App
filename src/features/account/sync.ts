@@ -64,6 +64,11 @@ export type SyncPlan = {
   muscleActivity: Row[];
   badges: Row[];
   sessions: SessionRows[];
+  /**
+   * Workouts in progress: only the session row, sent when the workout starts
+   * so the server knows when it began (referral check, round 2 P3).
+   */
+  started: Row[];
   checkins: Row[];
   repairResults: Row[];
   repairPlans: Row[];
@@ -165,6 +170,18 @@ export function buildSyncPlan(input: SyncInput): SyncPlan | PlanError {
     return input.exerciseIds.get(slug);
   };
 
+  const started: Row[] = input.workouts
+    .filter((w) => w.status === 'active' && !w.syncedAt)
+    .map((w) => ({
+      id: w.id,
+      profile_id: profileId,
+      kind: w.kind,
+      status: 'active',
+      minutes: w.session.minutes,
+      scheduled_for: localDate(new Date(w.createdAt)),
+      started_at: w.startedAt ?? null,
+      created_at: w.createdAt,
+    }));
   const sessions: SessionRows[] = [];
   const skipped: string[] = [];
   const pending = input.workouts.filter(
@@ -316,6 +333,7 @@ export function buildSyncPlan(input: SyncInput): SyncPlan | PlanError {
     muscleActivity,
     badges,
     sessions,
+    started,
     checkins,
     repairResults,
     repairPlans,
@@ -447,6 +465,13 @@ export async function runSync(
   for (const [step, run] of steps) {
     const { error } = await run();
     if (error) return { status: 'error', step };
+  }
+
+  // A workout in progress: its row only, never marked synced (the finished
+  // workout is sent again, whole, when it ends).
+  if (plan.started.length) {
+    const { error } = await supabase.from('sessions').upsert(plan.started);
+    if (error) return { status: 'error', step: 'sessions' };
   }
 
   const synced: string[] = [];

@@ -48,9 +48,11 @@ function FamilyScreenInner() {
   const [removing, setRemoving] = useState<{ id: string; step: 'gate' | 'confirm' } | null>(null);
   // A failed cloud delete is queued and retried, and the owner is told (QA round 3).
   const pendingDeletes = usePendingDeletesStore((st) => st.ids.length);
+  // A teen with their own login: only they can delete it (round 2, P3).
+  const [ownLogin, setOwnLogin] = useState(false);
   const confirmRemove = (id: string) => {
     removeMember(id);
-    void deleteOrQueue(id);
+    void deleteOrQueue(id).then((r) => setOwnLogin(r === 'own_login'));
     setRemoving(null);
   };
   useEffect(() => {
@@ -95,6 +97,7 @@ function FamilyScreenInner() {
         {t('family.title')}
       </AppText>
       <FamilyStrip />
+      {ownLogin ? <Notice>{t('family.ownLogin')}</Notice> : null}
       {pendingDeletes ? (
         <Notice>{t('family.removePending', { count: pendingDeletes })}</Notice>
       ) : null}

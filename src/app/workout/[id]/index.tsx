@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import { AppText, Button, Card, Chip, Icon, IconButton, Notice, Screen } from '@/components/ui';
+import { syncNow } from '@/features/account/cloud';
 import { canStartWorkout, currentPlan } from '@/features/billing/rules';
 import { useBillingStore } from '@/features/billing/store';
 import type { Exercise } from '@/features/exercises/types';
@@ -246,6 +247,8 @@ export default function WorkoutScreen() {
       }
       store.start(workout.id);
       track('workout_started');
+      // The server notes when it started (referral check, round 2 P3).
+      void syncNow();
     }
     router.push({ pathname: '/workout/[id]/play', params: { id: workout.id } });
   };

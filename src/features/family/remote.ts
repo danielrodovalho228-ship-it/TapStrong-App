@@ -46,15 +46,31 @@ export async function createChildProfileRemote(input: {
  * Deletes a managed profile in the cloud (RLS: its guardian only). Its
  * workouts, restrictions and consent record go with it (on delete cascade).
  * Development builds and profiles never synced have nothing to delete.
+ * A teen with their own login is theirs to delete: the server refuses the
+ * guardian (security round 2, P3), which comes back as 'own_login'.
  */
-export async function deleteManagedProfileRemote(id: string): Promise<'ok' | 'offline' | 'error'> {
+export async function deleteManagedProfileRemote(
+  id: string,
+): Promise<'ok' | 'own_login' | 'offline' | 'error'> {
   if (__DEV__ && getBilling().kind === 'dev') return 'ok';
   const supabase = getSupabase();
   if (!supabase) return 'offline';
   try {
-    const { error, status } = await supabase.from('profiles').delete().eq('id', id);
-    if (!error) return 'ok';
-    return isNetworkError(error, status) ? 'offline' : 'error';
+    const { data, error, status } = await supabase
+      .from('profiles')
+      .delete()
+      .eq('id', id)
+      .select('id');
+    if (error) return isNetworkError(error, status) ? 'offline' : 'error';
+    if (data?.length) return 'ok';
+    // Nothing deleted: never synced (fine), or a profile with its own login.
+    const { data: row, error: readError } = await supabase
+      .from('profiles')
+      .select('user_id')
+      .eq('id', id)
+      .maybeSingle();
+    if (readError) return 'error';
+    return (row as { user_id?: string | null } | null)?.user_id ? 'own_login' : 'ok';
   } catch {
     return 'offline';
   }
@@ -84,11 +100,11 @@ export const usePendingDeletesStore = create<PendingState>()(
 );
 
 /** Deletes in the cloud, or queues it for later. */
-export async function deleteOrQueue(id: string): Promise<'ok' | 'queued'> {
+export async function deleteOrQueue(id: string): Promise<'ok' | 'own_login' | 'queued'> {
   const result = await deleteManagedProfileRemote(id);
-  if (result === 'ok') {
+  if (result === 'ok' || result === 'own_login') {
     usePendingDeletesStore.getState().done(id);
-    return 'ok';
+    return result;
   }
   usePendingDeletesStore.getState().add(id);
   return 'queued';
@@ -97,7 +113,8 @@ export async function deleteOrQueue(id: string): Promise<'ok' | 'queued'> {
 /** Retries every queued delete; returns how many are still waiting. */
 export async function retryPendingDeletes(): Promise<number> {
   for (const id of usePendingDeletesStore.getState().ids) {
-    if ((await deleteManagedProfileRemote(id)) === 'ok') usePendingDeletesStore.getState().done(id);
+    const result = await deleteManagedProfileRemote(id);
+    if (result === 'ok' || result === 'own_login') usePendingDeletesStore.getState().done(id);
   }
   return usePendingDeletesStore.getState().ids.length;
 }

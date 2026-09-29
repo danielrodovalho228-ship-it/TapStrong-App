@@ -16,7 +16,16 @@ do $$
 declare
   lock timestamptz;
 begin
+  -- Round 2 (P3): a client can't count its own tries any more; only
+  -- verify_parent_pin (server side) calls parent_pin_failed.
   perform pg_temp.act_as('00000000-0000-0000-0000-00000000a0a1');
+  begin
+    perform public.parent_pin_failed();
+    raise exception 'a client called parent_pin_failed';
+  exception when insufficient_privilege then null;
+  end;
+  execute 'reset role';
+  perform set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-00000000a0a1', false);
   -- Four wrong tries: not locked yet.
   for i in 1..4 loop
     lock := public.parent_pin_failed();
@@ -30,6 +39,8 @@ begin
   if public.parent_pin_locked_until() is null then raise exception 'lock not reported'; end if;
   -- More tries while locked don't extend or clear it.
   if public.parent_pin_failed() is distinct from lock then raise exception 'lock changed'; end if;
+  perform pg_temp.act_as('00000000-0000-0000-0000-00000000a0a1');
+  if public.parent_pin_locked_until() is null then raise exception 'lock not seen by the client'; end if;
 
   -- Another account is not affected and can't see it.
   perform pg_temp.act_as('00000000-0000-0000-0000-00000000a0a2');

@@ -88,20 +88,6 @@ async function flushPendingPin(supabase: SupabaseClient) {
 /** Kept for older callers: the status includes the lock. */
 export const pullPinLock = pullPinStatus;
 
-/** Offline wrong tries on the phone still count on the account once online. */
-export async function reportPinCheck(
-  supabase: SupabaseClient | null,
-  result: PinCheck,
-): Promise<void> {
-  if (!supabase || !signedIn() || (result !== 'wrong' && result !== 'locked')) return;
-  try {
-    const { data, error } = await supabase.rpc('parent_pin_failed');
-    if (!error) mergeLock((data as string | null) ?? null);
-  } catch {
-    // Offline: counted on the phone only.
-  }
-}
-
 const localCheck = (pin: string): GateCheck => (native() ? checkParentPin(pin) : 'offline');
 
 /**

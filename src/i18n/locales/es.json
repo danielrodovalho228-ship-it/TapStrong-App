@@ -4141,7 +4141,8 @@
     "teenMobileOnly": "TapStrong para adolescentes está disponible en la app para móvil. En la web, TapStrong es para adultos.",
     "mobileOnlyTitle": "Los perfiles familiares están en la app para móvil",
     "teenMobileOnlyTitle": "TapStrong para adolescentes está en la app para móvil",
-    "changeDate": "Cambiar mi fecha de nacimiento"
+    "changeDate": "Cambiar mi fecha de nacimiento",
+    "ownLogin": "Este adolescente tiene su propio inicio de sesión, así que solo esa persona puede cambiar o borrar su perfil. Se quitó solo de este teléfono."
   },
   "deleteAccount": {
     "title": "Eliminar cuenta",

@@ -104,6 +104,20 @@ export function transferredAway(e: RevenueCatEvent, options: ApplyOptions = {}):
   return (e.transferred_from ?? []).filter((id) => !to.has(id));
 }
 
+/**
+ * Whether a TRANSFER may expire this old row (security round 2, P3): only a
+ * row the transfer is newer than (a later purchase on that account stays),
+ * and, when the event names a product, only that product's row.
+ */
+export function transferExpires(current: SubscriptionRow, e: RevenueCatEvent): boolean {
+  if (current.status === 'expired') return false;
+  const at = e.event_timestamp_ms;
+  if (!at) return false;
+  if (current.last_event_at && Date.parse(current.last_event_at) > at) return false;
+  if (e.product_id && current.product_id && e.product_id !== current.product_id) return false;
+  return true;
+}
+
 export function expireRow(current: SubscriptionRow, at: string): SubscriptionRow {
   return { ...current, status: 'expired', will_renew: false, expires_at: at, last_event_at: at };
 }
