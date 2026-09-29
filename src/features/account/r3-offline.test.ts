@@ -2,6 +2,7 @@
  * QA R3-02 — supabase-js returns network failures as error objects, so the
  * offline copy must come from the error itself, not only from a throw.
  */
+import { useOwnerIdentityStore } from '@/features/family/ownerIdentity';
 import { setParentPin, useParentPinStore } from '@/features/family/parentPin';
 import { sendPinResetCode, verifyPinResetCode } from '@/features/family/pinReset';
 import { useFamilyStore } from '@/features/family/store';
@@ -57,6 +58,7 @@ beforeEach(() => {
   useFamilyStore.getState().reset();
   useAccountStore.getState().reset();
   useAccountStore.getState().update({ saved: true, email: 'dan@example.com' });
+  useOwnerIdentityStore.getState().setOwnerAuth({ email: 'dan@example.com', userId: 'u1' });
   useParentPinStore.getState().reset();
   setParentPin('2468');
 });

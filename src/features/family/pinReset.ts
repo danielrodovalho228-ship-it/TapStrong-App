@@ -4,13 +4,16 @@ import { isNetworkError } from '@/lib/network';
 
 import { useAccountStore } from '../account/store';
 
+import { useOwnerIdentityStore, type OwnerAuth } from './ownerIdentity';
+
 /**
  * Forgotten parent PIN (Phase 12, Daniel): the account owner signs in again
  * with a code sent to the account's email, then sets a new PIN. The code comes
  * from Supabase Auth, so real users receive it once the Resend SMTP is set up
  * (docs/store/smtp-resend.md); until then it reaches the project team only.
  * A Family plan (the only way to have a teen on the phone) needs a saved
- * account, so there is always an email to send to.
+ * account, so there is always an email to send to. The code goes only to the
+ * owner's email in the secure record, and only the owner's user passes.
  */
 export type ResetSend = 'sent' | 'no_account' | 'offline' | 'rate_limited' | 'error';
 export type ResetVerify = 'ok' | 'wrong_code' | 'offline' | 'error';
@@ -24,18 +27,48 @@ export function maskEmail(email: string): string {
   return `${user.slice(0, 1)}•••@${domain}`;
 }
 
-export const ownerEmail = () => {
-  const { saved, email } = useAccountStore.getState();
-  return saved && email ? email : null;
-};
+/**
+ * The owner's sign-in, from the secure owner record (QA R8-05). The plain
+ * account email can be edited on the phone, so it never decides where a code
+ * goes. A phone saved before the record existed learns it once from the
+ * signed-in Supabase user (verified by the server, not read from storage).
+ */
+export const ownerAuth = (): OwnerAuth | null => useOwnerIdentityStore.getState().ownerAuth;
+export const ownerEmail = () => ownerAuth()?.email ?? null;
+
+/** Called when the owner saves the account (account screen, owner-only). */
+export async function rememberOwnerAuth(supabase: SupabaseClient | null, email: string) {
+  try {
+    const { data } = (await supabase?.auth.getUser()) ?? { data: { user: null } };
+    const userId = data.user?.id;
+    if (userId) useOwnerIdentityStore.getState().setOwnerAuth({ email, userId });
+  } catch {
+    // Offline: learnt later from the signed-in account (resolveOwnerAuth).
+  }
+}
+
+export async function resolveOwnerAuth(supabase: SupabaseClient | null): Promise<OwnerAuth | null> {
+  const known = ownerAuth();
+  if (known || !supabase || !useAccountStore.getState().saved) return known;
+  try {
+    const { data } = await supabase.auth.getUser();
+    const user = data.user;
+    if (!user?.id || !user.email || user.is_anonymous) return null;
+    const auth = { email: user.email.toLowerCase(), userId: user.id };
+    useOwnerIdentityStore.getState().setOwnerAuth(auth);
+    return auth;
+  } catch {
+    return null;
+  }
+}
 
 export async function sendPinResetCode(supabase: SupabaseClient | null): Promise<ResetSend> {
-  const email = ownerEmail();
-  if (!email) return 'no_account';
-  if (!supabase) return 'offline';
+  if (!supabase) return ownerAuth() ? 'offline' : 'no_account';
+  const auth = await resolveOwnerAuth(supabase);
+  if (!auth) return 'no_account';
   try {
     const { error } = await supabase.auth.signInWithOtp({
-      email,
+      email: auth.email,
       options: { shouldCreateUser: false },
     });
     if (!error) return 'sent';
@@ -47,18 +80,45 @@ export async function sendPinResetCode(supabase: SupabaseClient | null): Promise
   }
 }
 
+async function currentSession(supabase: SupabaseClient) {
+  try {
+    return (await supabase.auth.getSession()).data.session;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Checks the code, and that it signed in the owner's own user. Any other user
+ * (a stored email that no longer matches) is signed out again and the phone
+ * goes back to the session it had.
+ */
 export async function verifyPinResetCode(
   supabase: SupabaseClient | null,
   code: string,
 ): Promise<ResetVerify> {
-  const email = ownerEmail();
-  if (!email) return 'error';
+  const auth = ownerAuth();
+  if (!auth) return 'error';
   if (!supabase) return 'offline';
   const token = code.replace(/\s/g, '');
   if (!/^\d{6,10}$/.test(token)) return 'wrong_code';
   try {
-    const { error } = await supabase.auth.verifyOtp({ email, token, type: 'email' });
-    if (!error) return 'ok';
+    const before = await currentSession(supabase);
+    const { data, error } = await supabase.auth.verifyOtp({
+      email: auth.email,
+      token,
+      type: 'email',
+    });
+    if (!error) {
+      if (data?.user?.id === auth.userId) return 'ok';
+      await supabase.auth.signOut({ scope: 'local' });
+      if (before)
+        await supabase.auth.setSession({
+          access_token: before.access_token,
+          refresh_token: before.refresh_token,
+        });
+      return 'error';
+    }
     if (isNetworkError(error)) return 'offline';
     const e = error as AuthError;
     return e?.code === 'otp_expired' || e?.status === 403 ? 'wrong_code' : 'error';

@@ -30,6 +30,7 @@ import { deviceWeekStart } from '@/lib/dates';
 import { getSupabase } from '@/lib/supabase';
 import { colors, fonts, makeStyles, spacing, useColors } from '@/theme';
 import { OwnerOnly } from '@/features/family/OwnerOnly';
+import { rememberOwnerAuth } from '@/features/family/pinReset';
 import { useWorkoutStore } from '@/features/workout/store';
 
 type Step = 'start' | 'code';
@@ -79,6 +80,8 @@ function AccountScreenInner() {
       return;
     }
     account.update({ saved: true, email: email.trim().toLowerCase(), promptDismissed: false });
+    // The owner's sign-in goes to the secure record: PIN reset codes go only there (QA R8-05).
+    await rememberOwnerAuth(getSupabase(), email.trim().toLowerCase());
     track('account_created', { method: 'email' });
     await afterAccountSaved();
     setBusy(false);

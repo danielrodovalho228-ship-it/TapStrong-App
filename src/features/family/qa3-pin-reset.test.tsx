@@ -11,14 +11,17 @@ import { clock } from '@/lib/clock';
 
 import { ParentGate } from './ParentGate';
 import { checkParentPin, setParentPin, useParentPinStore } from './parentPin';
+import { useOwnerIdentityStore } from './ownerIdentity';
 import { maskEmail } from './pinReset';
 import { useFamilyStore } from './store';
 
 const mockAuth = {
   signInWithOtp: jest.fn(async () => ({ error: null as unknown })),
   verifyOtp: jest.fn(async ({ token }: { token: string }) => ({
+    data: { user: token === '123456' ? { id: 'owner-user' } : null },
     error: token === '123456' ? null : { code: 'otp_expired', status: 403 },
   })),
+  getSession: jest.fn(async () => ({ data: { session: null } })),
 };
 jest.mock('@/lib/supabase', () => ({
   getSupabase: () => ({ auth: mockAuth }),
@@ -37,6 +40,9 @@ beforeEach(async () => {
     setParentPin('2468');
     useAccountStore.getState().reset();
     useAccountStore.getState().update({ saved: true, email: 'dan@example.com' });
+    useOwnerIdentityStore
+      .getState()
+      .setOwnerAuth({ email: 'dan@example.com', userId: 'owner-user' });
     // A teen profile is active: the owner can't switch without the PIN.
     useFamilyStore.setState({
       profiles: [
@@ -88,7 +94,10 @@ describe('forgotten parent PIN', () => {
   });
 
   it('without a saved account there is nothing to send a code to', async () => {
-    await act(() => useAccountStore.getState().update({ saved: false, email: undefined }));
+    await act(() => {
+      useAccountStore.getState().update({ saved: false, email: undefined });
+      useOwnerIdentityStore.getState().setOwnerAuth(null);
+    });
     await render(<ParentGate onPass={jest.fn()} />);
     await fireEvent.press(screen.getByRole('link', { name: 'Forgot the PIN?' }));
     expect(screen.getByText(/Only the account owner can reset the PIN/)).toBeTruthy();

@@ -187,3 +187,98 @@ describe('R8-03 v1-upgraded phone, not yet proven', () => {
     expect(modeOf({ birthMonth: 3, birthYear: 1990 })).toBe('adult');
   });
 });
+
+describe('R8-05 PIN reset goes only to the owner', () => {
+  // Imported here: the module under test reads the secure owner record.
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const reset = require('./pinReset') as typeof import('./pinReset');
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const account = require('@/features/account/store') as typeof import('@/features/account/store');
+
+  const client = (over: Record<string, unknown> = {}) => {
+    const auth = {
+      signInWithOtp: jest.fn(async () => ({ error: null })),
+      verifyOtp: jest.fn(async () => ({ data: { user: { id: 'owner-user' } }, error: null })),
+      getUser: jest.fn(async () => ({ data: { user: null } })),
+      getSession: jest.fn(async () => ({
+        data: { session: { access_token: 'a', refresh_token: 'r' } },
+      })),
+      signOut: jest.fn(async () => ({ error: null })),
+      setSession: jest.fn(async () => ({ error: null })),
+      ...over,
+    };
+    return { auth } as never as import('@supabase/supabase-js').SupabaseClient & {
+      auth: typeof auth;
+    };
+  };
+
+  beforeEach(() => {
+    useOwnerIdentityStore.setState({
+      ownerId: 'owner',
+      activeId: null,
+      minors: {},
+      ownerAuth: { email: 'dan@example.com', userId: 'owner-user' },
+    });
+    account.useAccountStore.getState().update({ saved: true, email: 'dan@example.com' });
+  });
+
+  it('an edited plain account email never receives the code', async () => {
+    account.useAccountStore.getState().update({ email: 'teen@example.com' });
+    const c = client();
+    expect(await reset.sendPinResetCode(c)).toBe('sent');
+    expect(c.auth.signInWithOtp).toHaveBeenCalledWith({
+      email: 'dan@example.com',
+      options: { shouldCreateUser: false },
+    });
+    expect(reset.ownerEmail()).toBe('dan@example.com');
+  });
+
+  it("a code that signs in another user fails and restores the phone's session", async () => {
+    const c = client({
+      verifyOtp: jest.fn(async () => ({ data: { user: { id: 'teen-user' } }, error: null })),
+    });
+    expect(await reset.verifyPinResetCode(c, '123456')).toBe('error');
+    expect(c.auth.signOut).toHaveBeenCalledWith({ scope: 'local' });
+    expect(c.auth.setSession).toHaveBeenCalledWith({ access_token: 'a', refresh_token: 'r' });
+  });
+
+  it("the owner's own code passes", async () => {
+    const c = client();
+    expect(await reset.verifyPinResetCode(c, '123456')).toBe('ok');
+    expect(c.auth.signOut).not.toHaveBeenCalled();
+  });
+
+  it('an older phone learns the owner from the signed-in account, not the plain email', async () => {
+    useOwnerIdentityStore.setState({ ownerAuth: null });
+    account.useAccountStore.getState().update({ email: 'teen@example.com' });
+    const c = client({
+      getUser: jest.fn(async () => ({
+        data: { user: { id: 'owner-user', email: 'Dan@Example.com', is_anonymous: false } },
+      })),
+    });
+    expect(await reset.sendPinResetCode(c)).toBe('sent');
+    expect(c.auth.signInWithOtp).toHaveBeenCalledWith(
+      expect.objectContaining({ email: 'dan@example.com' }),
+    );
+    expect(useOwnerIdentityStore.getState().ownerAuth).toEqual({
+      email: 'dan@example.com',
+      userId: 'owner-user',
+    });
+  });
+
+  it('no secure record and no signed-in owner: no code at all', async () => {
+    useOwnerIdentityStore.setState({ ownerAuth: null });
+    const c = client({
+      getUser: jest.fn(async () => ({ data: { user: { id: 'anon', is_anonymous: true } } })),
+    });
+    expect(await reset.sendPinResetCode(c)).toBe('no_account');
+    expect(c.auth.signInWithOtp).not.toHaveBeenCalled();
+  });
+
+  it('saving the account records the owner in the secure store', async () => {
+    useOwnerIdentityStore.setState({ ownerAuth: null });
+    const c = client({ getUser: jest.fn(async () => ({ data: { user: { id: 'owner-user' } } })) });
+    await reset.rememberOwnerAuth(c, 'dan@example.com');
+    expect(useOwnerIdentityStore.getState().ownerAuth?.userId).toBe('owner-user');
+  });
+});

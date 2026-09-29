@@ -162,7 +162,12 @@ describe('R7 P2: legacy records and the PIN', () => {
         ],
         activeId: 'owner',
       });
-      useOwnerIdentityStore.setState({ ownerId: 'owner', activeId: null, minors: { sam: 'teen' } });
+      useOwnerIdentityStore.setState({
+        ownerId: 'owner',
+        activeId: null,
+        minors: { sam: 'teen' },
+        ownerAuth: { email: 'owner@example.test', userId: 'u-owner' },
+      });
       account.useAccountStore.getState().update({ saved: true, email: 'owner@example.test' });
     });
     await render(<ParentGate onPass={() => undefined} onCancel={() => undefined} />);

@@ -16,14 +16,20 @@ import type { LocalProfile } from './store';
  * - the active profile id, mirrored on every switch (a hand-edited active
  *   id no longer matches);
  * - which profiles are minors and their birth-date lock, set when a teen or
- *   child profile is created (a kind edited to "self" or "parent" stays a minor).
+ *   child profile is created (a kind edited to "self" or "parent" stays a minor);
+ * - the owner's sign-in email and user id, for the PIN reset (QA R8-05).
  */
 export type MinorLock = 'teen' | 'under13';
+
+/** The owner's sign-in (QA R8-05): where a PIN reset code may go, and whose code counts. */
+export type OwnerAuth = { email: string; userId: string };
 
 type State = {
   ownerId: string | null;
   activeId: string | null;
   minors: Record<string, MinorLock>;
+  ownerAuth: OwnerAuth | null;
+  setOwnerAuth: (auth: OwnerAuth | null) => void;
   remember: (id: string) => void;
   setActive: (id: string | null) => void;
   addMinor: (id: string, lock: MinorLock) => void;
@@ -37,6 +43,8 @@ export const useOwnerIdentityStore = create<State>()(
       ownerId: null,
       activeId: null,
       minors: {},
+      ownerAuth: null,
+      setOwnerAuth: (ownerAuth) => set({ ownerAuth }),
       // Set once, when the owner's own profile is first registered.
       remember: (id) => {
         if (!get().ownerId) set({ ownerId: id });
@@ -48,14 +56,24 @@ export const useOwnerIdentityStore = create<State>()(
         delete minors[id];
         set({ minors });
       },
-      reset: () => set({ ownerId: null, activeId: null, minors: {} }),
+      reset: () => set({ ownerId: null, activeId: null, minors: {}, ownerAuth: null }),
     }),
     {
       name: 'owner-identity',
-      version: 2,
+      version: 3,
       storage: createJSONStorage(() => secureStorage),
-      partialize: ({ ownerId, activeId, minors }) => ({ ownerId, activeId, minors }),
-      migrate: (persisted) => ({ activeId: null, minors: {}, ...(persisted as object) }),
+      partialize: ({ ownerId, activeId, minors, ownerAuth }) => ({
+        ownerId,
+        activeId,
+        minors,
+        ownerAuth,
+      }),
+      migrate: (persisted) => ({
+        activeId: null,
+        minors: {},
+        ownerAuth: null,
+        ...(persisted as object),
+      }),
     },
   ),
 );

@@ -16,7 +16,15 @@ import {
   useParentPinStore,
 } from './parentPin';
 import { clearPinLock, pullPinLock, reportPinCheck } from './pinLockout';
-import { maskEmail, ownerEmail, sendPinResetCode, verifyPinResetCode } from './pinReset';
+import { useAccountStore } from '../account/store';
+
+import {
+  maskEmail,
+  ownerEmail,
+  resolveOwnerAuth,
+  sendPinResetCode,
+  verifyPinResetCode,
+} from './pinReset';
 import { isOwnerProfile, useOwnerIdentityStore } from './ownerIdentity';
 import { activeProfile, useFamilyStore } from './store';
 
@@ -37,6 +45,7 @@ export function ParentGate({ onPass, onCancel }: { onPass: () => void; onCancel?
   const [value, setValue] = useState('');
   const [message, setMessage] = useState<string | null>(null);
   const [resetting, setResetting] = useState(false);
+  const accountSaved = useAccountStore((s) => s.saved);
   // A lock counted on the account applies here too (QA round 3).
   const [, setSynced] = useState(0);
   useEffect(() => {
@@ -64,7 +73,7 @@ export function ParentGate({ onPass, onCancel }: { onPass: () => void; onCancel?
       <Card style={styles.card}>
         <AppText variant="h3">{t('parentGate.title')}</AppText>
         <Notice>{t('parentGate.noPin')}</Notice>
-        {ownerEmail() ? (
+        {accountSaved || ownerEmail() ? (
           <Button
             variant="secondary"
             label={t('parentGate.createWithEmail')}
@@ -188,7 +197,17 @@ export function ParentPinReset({ onDone, onCancel }: { onDone: () => void; onCan
   const [code, setCode] = useState('');
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const email = ownerEmail();
+  // Only the owner's email from the secure record (QA R8-05); an older phone
+  // learns it from the signed-in account.
+  const [email, setEmail] = useState(ownerEmail);
+  const [looking, setLooking] = useState(!email);
+  useEffect(() => {
+    if (email) return;
+    void resolveOwnerAuth(getSupabase()).then((auth) => {
+      setEmail(auth?.email ?? null);
+      setLooking(false);
+    });
+  }, [email]);
 
   if (step === 'new')
     return (
@@ -222,7 +241,7 @@ export function ParentPinReset({ onDone, onCancel }: { onDone: () => void; onCan
   return (
     <Card style={styles.card}>
       <AppText variant="h3">{t('pinReset.title')}</AppText>
-      {!email ? (
+      {looking ? null : !email ? (
         <Notice>{t('pinReset.errors.no_account')}</Notice>
       ) : step === 'intro' ? (
         <>
