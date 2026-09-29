@@ -26,6 +26,8 @@ type Data = {
   /** Profile row id in Postgres; created once, kept across syncs. */
   profileId: string;
   saved: boolean;
+  /** The phone lost the account's session (PIN reset, QA R9-05): sign in again. */
+  needsSignIn?: boolean;
   email?: string;
   lastSyncAt?: string;
   /** "Not now" on the save-progress screen. */
@@ -72,6 +74,7 @@ export const useAccountStore = create<Data & Actions>()(
         set({
           ...initial(),
           email: undefined,
+          needsSignIn: undefined,
           lastSyncAt: undefined,
           pendingReferral: undefined,
           referralCode: undefined,

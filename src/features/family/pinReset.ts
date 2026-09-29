@@ -16,7 +16,7 @@ import { useOwnerIdentityStore, type OwnerAuth } from './ownerIdentity';
  * owner's email in the secure record, and only the owner's user passes.
  */
 export type ResetSend = 'sent' | 'no_account' | 'offline' | 'rate_limited' | 'error';
-export type ResetVerify = 'ok' | 'wrong_code' | 'offline' | 'error';
+export type ResetVerify = 'ok' | 'wrong_code' | 'offline' | 'error' | 'sign_in_again';
 
 type AuthError = { code?: string; status?: number } | null;
 
@@ -88,20 +88,45 @@ async function currentSession(supabase: SupabaseClient) {
   }
 }
 
+type Session = Awaited<ReturnType<typeof currentSession>>;
+type AuthCall = Promise<{ error: unknown }>;
+
+/** true only when the call returned without an error and didn't throw. */
+async function succeeded(call: () => AuthCall): Promise<boolean> {
+  try {
+    const { error } = await call();
+    return !error;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Ends the code's session and puts back the phone's own (QA R8-05, R9-05):
+ * - sign-out failed (twice): the owner's code session could stay open on
+ *   this phone → "signout_failed", never success;
+ * - the previous session can't come back (expired, offline) or there was
+ *   none: the phone is signed out → "restore_failed". The account is marked
+ *   "sign in again" so no background sync starts a new anonymous account.
+ */
 async function endCodeSession(
   supabase: SupabaseClient,
-  before: Awaited<ReturnType<typeof currentSession>>,
-) {
-  try {
-    await supabase.auth.signOut({ scope: 'local' });
-    if (before)
-      await supabase.auth.setSession({
-        access_token: before.access_token,
-        refresh_token: before.refresh_token,
-      });
-  } catch {
-    // Offline: the session ends when its token expires; the PIN step is local.
-  }
+  before: Session,
+): Promise<'ok' | 'signout_failed' | 'restore_failed'> {
+  const signOut = () => supabase.auth.signOut({ scope: 'local' }) as AuthCall;
+  if (!(await succeeded(signOut)) && !(await succeeded(signOut))) return 'signout_failed';
+  const restored =
+    !!before &&
+    (await succeeded(
+      () =>
+        supabase.auth.setSession({
+          access_token: before.access_token,
+          refresh_token: before.refresh_token,
+        }) as AuthCall,
+    ));
+  if (restored) return 'ok';
+  useAccountStore.getState().update({ saved: false, needsSignIn: true });
+  return 'restore_failed';
 }
 
 /**
@@ -127,7 +152,9 @@ export async function verifyPinResetCode(
     if (!error) {
       // The code's own session is only proof: it is always signed out and
       // the phone goes back to the session it had (QA R8-05, Phase 21).
-      await endCodeSession(supabase, before);
+      const ended = await endCodeSession(supabase, before);
+      if (ended === 'signout_failed') return 'error';
+      if (ended === 'restore_failed') return 'sign_in_again';
       return data?.user?.id === auth.userId ? 'ok' : 'error';
     }
     if (isNetworkError(error)) return 'offline';

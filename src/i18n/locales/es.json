@@ -3869,7 +3869,8 @@
       "wrongCode": "Ese código no funcionó. Revísalo o pide uno nuevo."
     },
     "planBilling": "Plan y facturación",
-    "deleteAccount": "Eliminar cuenta"
+    "deleteAccount": "Eliminar cuenta",
+    "signInAgain": "Este teléfono cerró la sesión. Escribe tu correo para volver a iniciar sesión."
   },
   "share": {
     "title": "Compartir hoy",
@@ -4756,7 +4757,8 @@
       "offline": "No podemos conectar con TapStrong ahora. Revisa tu conexión e inténtalo de nuevo.",
       "rate_limited": "Demasiados códigos en poco tiempo. Espera unos minutos e inténtalo de nuevo.",
       "wrong_code": "Ese código no funcionó. Revisa el último correo e inténtalo de nuevo.",
-      "error": "Algo salió mal. Inténtalo de nuevo."
+      "error": "Algo salió mal. Inténtalo de nuevo.",
+      "sign_in_again": "El código funcionó, pero este teléfono cerró la sesión. Vuelve a iniciar sesión en Cuenta con tu correo y después restablece el PIN."
     },
     "createTitle": "Crear el PIN de padres",
     "createBody": "Enviaremos un código de acceso al correo del titular de la cuenta ({{email}}). Luego crea el PIN."

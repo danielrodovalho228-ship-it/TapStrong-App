@@ -79,7 +79,12 @@ function AccountScreenInner() {
       setMessage(t(result === 'wrong_code' ? 'account.errors.wrongCode' : 'account.errors.error'));
       return;
     }
-    account.update({ saved: true, email: email.trim().toLowerCase(), promptDismissed: false });
+    account.update({
+      saved: true,
+      needsSignIn: false,
+      email: email.trim().toLowerCase(),
+      promptDismissed: false,
+    });
     // The owner's sign-in goes to the secure record: PIN reset codes go only there (QA R8-05).
     await rememberOwnerAuth(getSupabase(), email.trim().toLowerCase());
     track('account_created', { method: 'email' });
@@ -123,6 +128,9 @@ function AccountScreenInner() {
         </AppText>
       </View>
 
+      {account.needsSignIn && !account.saved ? (
+        <Notice tone="warning">{t('account.signInAgain')}</Notice>
+      ) : null}
       {mode === 'child' ? (
         <Notice>{t('account.under13')}</Notice>
       ) : account.saved ? (

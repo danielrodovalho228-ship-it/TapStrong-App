@@ -283,3 +283,79 @@ describe('R8-05 PIN reset goes only to the owner', () => {
     expect(useOwnerIdentityStore.getState().ownerAuth?.userId).toBe('owner-user');
   });
 });
+
+describe('R9-05 the code session always ends, and failures are never "ok"', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const reset = require('./pinReset') as typeof import('./pinReset');
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const account = require('@/features/account/store') as typeof import('@/features/account/store');
+  const auth = (over: Record<string, unknown> = {}) =>
+    ({
+      auth: {
+        verifyOtp: jest.fn(async () => ({ data: { user: { id: 'owner-user' } }, error: null })),
+        getSession: jest.fn(async () => ({
+          data: { session: { access_token: 'a', refresh_token: 'r' } },
+        })),
+        signOut: jest.fn(async () => ({ error: null })),
+        setSession: jest.fn(async () => ({ error: null })),
+        ...over,
+      },
+    }) as never as import('@supabase/supabase-js').SupabaseClient & {
+      auth: Record<string, jest.Mock>;
+    };
+
+  beforeEach(() => {
+    useOwnerIdentityStore.setState({
+      ownerId: 'owner',
+      activeId: null,
+      minors: {},
+      ownerAuth: { email: 'dan@example.com', userId: 'owner-user' },
+    });
+    account.useAccountStore.getState().update({ saved: true, needsSignIn: false });
+  });
+
+  it('restore returns { error } (expired token): "sign in again", never ok, no anonymous sync', async () => {
+    const c = auth({ setSession: jest.fn(async () => ({ error: { status: 400 } })) });
+    expect(await reset.verifyPinResetCode(c, '123456')).toBe('sign_in_again');
+    expect(account.useAccountStore.getState()).toMatchObject({ saved: false, needsSignIn: true });
+  });
+
+  it('restore throws (offline): "sign in again"', async () => {
+    const c = auth({
+      setSession: jest.fn(async () => {
+        throw new Error('Network request failed');
+      }),
+    });
+    expect(await reset.verifyPinResetCode(c, '123456')).toBe('sign_in_again');
+  });
+
+  it('no previous session: "sign in again", not ok', async () => {
+    const c = auth({ getSession: jest.fn(async () => ({ data: { session: null } })) });
+    expect(await reset.verifyPinResetCode(c, '123456')).toBe('sign_in_again');
+  });
+
+  it('sign-out returns { error } twice: error, the owner session is not reported as ended', async () => {
+    const signOut = jest.fn(async () => ({ error: { status: 500 } }));
+    const c = auth({ signOut });
+    expect(await reset.verifyPinResetCode(c, '123456')).toBe('error');
+    expect(signOut).toHaveBeenCalledTimes(2);
+  });
+
+  it('sign-out throws once, then works: retried, ok', async () => {
+    const signOut = jest
+      .fn()
+      .mockRejectedValueOnce(new Error('flaky'))
+      .mockResolvedValueOnce({ error: null });
+    const c = auth({ signOut });
+    expect(await reset.verifyPinResetCode(c, '123456')).toBe('ok');
+    expect(signOut).toHaveBeenCalledTimes(2);
+  });
+
+  it('wrong user and sign-out fails: error, never ok', async () => {
+    const c = auth({
+      verifyOtp: jest.fn(async () => ({ data: { user: { id: 'teen-user' } }, error: null })),
+      signOut: jest.fn(async () => ({ error: { status: 500 } })),
+    });
+    expect(await reset.verifyPinResetCode(c, '123456')).toBe('error');
+  });
+});

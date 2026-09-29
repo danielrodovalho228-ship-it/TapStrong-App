@@ -21,7 +21,12 @@ const mockAuth = {
     data: { user: token === '123456' ? { id: 'owner-user' } : null },
     error: token === '123456' ? null : { code: 'otp_expired', status: 403 },
   })),
-  getSession: jest.fn(async () => ({ data: { session: null } })),
+  getSession: jest.fn(async () => ({
+    data: { session: { access_token: 'a', refresh_token: 'r' } },
+  })),
+  // Checked, not swallowed (QA R9-05): a mock without them hid a bug.
+  signOut: jest.fn(async () => ({ error: null })),
+  setSession: jest.fn(async () => ({ error: null })),
 };
 jest.mock('@/lib/supabase', () => ({
   getSupabase: () => ({ auth: mockAuth }),

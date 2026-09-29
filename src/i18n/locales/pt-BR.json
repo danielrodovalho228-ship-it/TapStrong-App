@@ -3886,7 +3886,8 @@
       "wrongCode": "Esse código não funcionou. Confira ou peça um novo."
     },
     "planBilling": "Plano e cobrança",
-    "deleteAccount": "Excluir conta"
+    "deleteAccount": "Excluir conta",
+    "signInAgain": "Este celular saiu da conta. Digite o seu e-mail para entrar de novo."
   },
   "share": {
     "title": "Compartilhar hoje",
@@ -4791,7 +4792,8 @@
       "offline": "Não conseguimos falar com o TapStrong agora. Verifique a conexão e tente de novo.",
       "rate_limited": "Muitos códigos em pouco tempo. Espere alguns minutos e tente de novo.",
       "wrong_code": "Esse código não funcionou. Veja o e-mail mais recente e tente de novo.",
-      "error": "Algo deu errado. Tente de novo."
+      "error": "Algo deu errado. Tente de novo.",
+      "sign_in_again": "O código funcionou, mas este celular saiu da conta. Entre de novo em Conta com o seu e-mail e depois redefina o PIN."
     },
     "createTitle": "Criar o PIN dos pais",
     "createBody": "Vamos enviar um código de acesso para o e-mail do titular da conta ({{email}}). Depois crie o PIN."
