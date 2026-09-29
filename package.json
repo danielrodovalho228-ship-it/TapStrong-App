@@ -77,7 +77,7 @@
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
     "test": "jest",
-    "check": "npm run lint && npm run typecheck && npm run functions:check && npm test && npm run security:check",
+    "check": "npm run lint && npm run typecheck && npm run functions:check && npm test && npm run security:check && npm run bundle:check",
     "db:test": "bash scripts/db-test.sh",
     "functions:check": "deno check --config supabase/functions/deno.json supabase/functions/*/index.ts && deno lint --config supabase/functions/deno.json supabase/functions",
     "seed:build": "node scripts/build-seed.mjs",

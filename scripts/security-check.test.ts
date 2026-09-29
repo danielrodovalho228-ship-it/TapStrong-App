@@ -37,3 +37,45 @@ it('leaves ordinary text and the public anon key alone', () => {
   expect(findSecrets('task-runner sk- short, skip_live_view, AIzaShort')).toEqual([]);
   expect(findSecrets(jwt({ role: 'anon', iss: 'supabase' }))).toEqual([]);
 });
+
+/** Round 2, P3: the sinks a file uses outside its per-sink allowlist. */
+function findSinks(file: string, text: string): string[] {
+  const code = `import('./scripts/security-check.mjs').then((m) => process.stdout.write(JSON.stringify(m.findSinks(${JSON.stringify(file)}, ${JSON.stringify(text)}))))`;
+  return JSON.parse(
+    execFileSync('node', ['--input-type=module', '-e', code], { cwd: ROOT, encoding: 'utf8' }),
+  );
+}
+
+it('round 2 P3: flags script injection, injectedJavaScript, insertAdjacentHTML, document.write, srcdoc', () => {
+  const f = 'src/features/x.tsx';
+  expect(findSinks(f, "const s = document.createElement('script');")).toEqual([
+    "createElement('script')",
+  ]);
+  expect(findSinks(f, '<WebView injectedJavaScript={code} />')).toEqual([
+    'WebView',
+    'injectedJavaScript',
+  ]);
+  expect(findSinks(f, 'el.insertAdjacentHTML("beforeend", html)')).toEqual(['insertAdjacentHTML']);
+  expect(findSinks(f, 'document.write(x)')).toEqual(['document.write']);
+  expect(findSinks(f, '<iframe srcdoc={html} />')).toEqual(['srcdoc']);
+  expect(findSinks(f, 'const ok = "plain text";')).toEqual([]);
+});
+
+it('round 2 P3: the allowlist is per sink, not per file', () => {
+  const web = 'src/features/captcha/TurnstileWidget.web.tsx';
+  expect(findSinks(web, "document.createElement('script')")).toEqual([]);
+  // The same file may not add another sink.
+  expect(findSinks(web, 'el.innerHTML = x')).toEqual(['innerHTML']);
+  const native = 'src/features/captcha/TurnstileWidget.tsx';
+  expect(findSinks(native, '<WebView source={x} />')).toEqual([]);
+  expect(findSinks(native, '<WebView injectedJavaScript={x} />')).toEqual(['injectedJavaScript']);
+});
+
+it('round 2 P3: the hook installer never replaces another core.hooksPath', () => {
+  const code = `import('./scripts/install-hooks.mjs').then((m) => process.stdout.write(JSON.stringify(['', '.githooks', '.husky'].map(m.planHooks))))`;
+  expect(
+    JSON.parse(
+      execFileSync('node', ['--input-type=module', '-e', code], { cwd: ROOT, encoding: 'utf8' }),
+    ),
+  ).toEqual(['install', 'already', 'keep']);
+});

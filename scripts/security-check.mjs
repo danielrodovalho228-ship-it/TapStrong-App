@@ -1,7 +1,8 @@
 // Security round 1, permanent protections (docs/SECURITY.md). Fails when:
 //  (c) a secret-looking key is in the tracked files, in git history, or in a
 //      web export given with --bundle <dir>;
-//  (d) an HTML / eval / WebView sink appears outside the audited allowlist;
+//  (d) an HTML / eval / script / WebView sink appears outside the audited
+//      allowlist for that sink;
 //  (e) a dependency in package.json isn't in package-lock.json with an
 //      integrity hash;
 //  (f) `npm audit --omit=dev` reports high or critical issues.
@@ -76,6 +77,8 @@ function scanHistory() {
     '--all',
     '--no-color',
     '-p',
+    // Merge commits too (round 2, P3): a secret can arrive in a merge alone.
+    '-m',
     '-G',
     'sk-|_live_|sb_secret_|AIza|gh[pousr]_|whsec_|PRIVATE KEY|eyJ',
     '--format=commit %H',
@@ -111,23 +114,41 @@ function scanDir(dir) {
 }
 
 // --- (d) sinks ---------------------------------------------------------------
-const SINKS = /dangerouslySetInnerHTML|\.innerHTML\s*=|\beval\s*\(|new Function\s*\(|<WebView\b/;
-// Audited uses: the static HTML shell (our own constant script and CSS) and
-// the Turnstile WebView (Cloudflare's page only, no navigation away).
-export const SINK_ALLOW = new Set([
-  'src/app/+html.tsx',
-  'src/features/captcha/TurnstileWidget.tsx',
-]);
+// Each sink with the files audited for it (round 2, P3: per sink, so a file
+// allowed one sink can't quietly add another).
+export const SINKS = [
+  ['dangerouslySetInnerHTML', /dangerouslySetInnerHTML/, ['src/app/+html.tsx']],
+  ['innerHTML', /\.innerHTML\s*=/, []],
+  ['outerHTML', /\.outerHTML\s*=/, []],
+  ['insertAdjacentHTML', /\binsertAdjacentHTML\s*\(/, []],
+  ['document.write', /\bdocument\.write(?:ln)?\s*\(/, []],
+  ['eval', /\beval\s*\(/, []],
+  ['new Function', /new Function\s*\(/, []],
+  // Cloudflare's script, from a constant URL (docs/SECURITY.md rule 1).
+  [
+    "createElement('script')",
+    /createElement\(\s*['"`]script['"`]\s*\)/,
+    ['src/features/captcha/TurnstileWidget.web.tsx'],
+  ],
+  ['WebView', /<WebView\b/, ['src/features/captcha/TurnstileWidget.tsx']],
+  ['injectedJavaScript', /\binjectedJavaScript\w*/, []],
+  ['srcdoc', /\bsrcdoc\b|\bsrcDoc\b/, ['src/features/captcha/TurnstileWidget.tsx']],
+];
+
+/** Sinks a file uses that aren't audited for it. */
+export function findSinks(file, text) {
+  return SINKS.filter(([, re, allowed]) => !allowed.includes(file) && re.test(text)).map(
+    ([name]) => name,
+  );
+}
 
 function scanSinks() {
   const files = git('ls-files', 'src', 'supabase/functions').split('\n').filter(Boolean);
   for (const file of files) {
-    if (!/\.(ts|tsx|js|jsx)$/.test(file) || /\.test\.(ts|tsx)$/.test(file) || SINK_ALLOW.has(file))
-      continue;
+    if (!/\.(ts|tsx|js|jsx)$/.test(file) || /\.test\.(ts|tsx)$/.test(file)) continue;
     const text = readFileSync(join(ROOT, file), 'utf8');
-    const m = text.match(SINKS);
-    if (m)
-      failed.push(`${file}: "${m[0]}" outside the audited allowlist (docs/SECURITY.md rule 1)`);
+    for (const name of findSinks(file, text))
+      failed.push(`${file}: "${name}" outside the audited allowlist (docs/SECURITY.md rule 1)`);
   }
 }
 
@@ -162,7 +183,10 @@ function audit() {
     else if (v.moderate)
       warnings.push(`npm audit: ${v.moderate} moderate (tracked in docs/SECURITY.md)`);
   } catch {
-    warnings.push('npm audit could not run (offline?): run it before a release');
+    // Offline-safe (round 2, P3): a warning on a laptop; in CI an audit that
+    // can't run fails, unless the run says --offline on purpose.
+    if (process.env.CI) failed.push('npm audit could not run in CI: pass --offline to skip it');
+    else warnings.push('npm audit could not run (offline?): run it before a release');
   }
 }
 

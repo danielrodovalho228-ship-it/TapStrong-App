@@ -7,14 +7,18 @@ rule needs Daniel's OK and a line here.
 Automatic checks:
 
 - `npm run security:check` (part of `npm run check`): secrets in tracked files,
-  git history and (with `--bundle <dir>`) a web export; HTML / eval / WebView
-  sinks outside the allowlist; every dependency in `package-lock.json` with an
+  git history (merge commits included) and (with `--bundle <dir>`) an export;
+  HTML / eval / script-injection / `injectedJavaScript` / `srcdoc` /
+  WebView sinks outside a per-sink allowlist; every dependency in `package-lock.json` with an
   integrity hash; `npm audit --omit=dev` with no high or critical issue.
 - `npm run db:test`: all migrations plus the SQL tests, ending with
   `supabase/tests/local/zz_security_policies.sql` (RLS, WITH CHECK, SECURITY
   DEFINER, anon grants).
+- `npm run bundle:check` (also part of `npm run check`): the release
+  bundles for iOS, Android and web carry no drafts and no secrets.
 - Pre-commit hook (`.githooks/pre-commit`, installed by `npm ci`): no secret in
-  the lines being committed.
+  the lines being committed. Needs `node`; skipped by `--ignore-scripts` and
+  when another `core.hooksPath` is set (README, "Pre-commit secret scan").
 - `npm run web:check`: the page's CSP hashes match its inline scripts, on the
   development and the production export, and the CSP blocks nothing the app
   needs.

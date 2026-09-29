@@ -48,4 +48,9 @@ if find "$OUT" -iname '*.mp4' | grep -q .; then
   find "$OUT" -iname '*.mp4' >&2
   exit 1
 fi
-echo "OK: no draft exercises, draft Repair tests, the draft movement catalog, prototype videos, purchase simulator, dev-only warnings or personal contact in release bundles"
+# Security round 2 (P3): no secret in any release bundle.
+node scripts/security-check.mjs --bundle "$OUT" --no-history --offline >/dev/null || {
+  node scripts/security-check.mjs --bundle "$OUT" --no-history --offline >&2
+  exit 1
+}
+echo "OK: no draft exercises, draft Repair tests, the draft movement catalog, prototype videos, purchase simulator, dev-only warnings, personal contact or secrets in release bundles"

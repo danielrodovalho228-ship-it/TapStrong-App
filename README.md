@@ -17,9 +17,21 @@ npx expo start
 ## Checks
 
 ```bash
-npm run check    # lint + typecheck + Edge Function check + unit tests
+npm run check    # lint + typecheck + Edge Function check + unit tests + security + release bundle
 npm run db:test  # migrations + RLS tests on a local Postgres
 ```
+
+### Pre-commit secret scan
+
+`npm ci` points git at `.githooks/`, whose `pre-commit` runs
+`node scripts/security-check.mjs --staged` (no secret in the lines being
+committed). It needs `node` on the PATH of whatever runs `git commit` (GUI
+clients too). Two cases where it is **not** installed:
+
+- `npm ci --ignore-scripts` (or `ignore-scripts=true` in `.npmrc`) skips the
+  installer: run `node scripts/install-hooks.mjs` once.
+- A `core.hooksPath` already set (Husky or another hook manager) is left
+  alone: add the line above to that pre-commit hook.
 
 ## Layout
 
