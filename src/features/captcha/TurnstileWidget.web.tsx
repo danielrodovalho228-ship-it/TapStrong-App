@@ -40,13 +40,20 @@ export function TurnstileWidget({
   useEffect(() => {
     let id: string | null = null;
     let api: Turnstile | null = null;
+    let errors = 0;
     loadScript()
       .then((t) => {
         api = t;
         id = t.render(box.current as unknown as HTMLElement, {
           sitekey: siteKey,
           callback: (token: string) => onToken(token),
-          'error-callback': () => onToken(null),
+          // Turnstile retries while this returns nothing; the third error gives up.
+          'error-callback': () => {
+            errors += 1;
+            if (errors < 3) return undefined;
+            onToken(null);
+            return true;
+          },
           'expired-callback': () => onToken(null),
         });
         captchaShown();

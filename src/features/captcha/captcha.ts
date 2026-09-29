@@ -26,8 +26,16 @@ export const setCaptchaSiteKey = (key: string) => {
   siteKey = key;
 };
 
-type State = { pending: boolean };
-export const useCaptchaStore = create<State>(() => ({ pending: false }));
+/**
+ * `round` changes for each token asked of the widget: Turnstile tokens are
+ * single-use, so every waiting request gets its own (round 2, P3), and the
+ * host remounts the widget for the next one.
+ */
+type State = { pending: boolean; round: number };
+export const useCaptchaStore = create<State>(() => ({ pending: false, round: 0 }));
+
+/** A Turnstile token: letters, digits, "_", "-" and ".", 20 to 4096 long. */
+export const TOKEN_PATTERN = /^[\w.-]{20,4096}$/;
 
 let waiting: ((token: string | undefined) => void)[] = [];
 let timer: ReturnType<typeof setTimeout> | null = null;
@@ -41,14 +49,19 @@ export const resetCaptchaSession = () => {
   failedThisSession = false;
 };
 
+function startRound() {
+  if (timer) clearTimeout(timer);
+  timer = setTimeout(() => finishCaptcha(null), CAPTCHA_TIMEOUT_MS);
+  if (loadTimer) clearTimeout(loadTimer);
+  loadTimer = setTimeout(() => finishCaptcha(null), CAPTCHA_LOAD_TIMEOUT_MS);
+  useCaptchaStore.setState((s) => ({ pending: true, round: s.round + 1 }));
+}
+
 export function requestCaptchaToken(): Promise<string | undefined> {
   if (!captchaEnabled()) return Promise.resolve(undefined);
   return new Promise((resolve) => {
     waiting.push(resolve);
-    if (waiting.length > 1) return; // one widget answers every caller
-    useCaptchaStore.setState({ pending: true });
-    timer = setTimeout(() => finishCaptcha(null), CAPTCHA_TIMEOUT_MS);
-    loadTimer = setTimeout(() => finishCaptcha(null), CAPTCHA_LOAD_TIMEOUT_MS);
+    if (waiting.length === 1) startRound();
   });
 }
 
@@ -58,16 +71,28 @@ export function captchaShown() {
   loadTimer = null;
 }
 
-/** Called by the widget with its token, or null on error / close. */
+/**
+ * Called by the widget with its token, or null on error / close. A token
+ * answers the first waiting request only; the next one gets a fresh widget.
+ * Closing or an error ends every waiting request.
+ */
 export function finishCaptcha(token: string | null) {
   if (timer) clearTimeout(timer);
   timer = null;
   captchaShown();
-  if (waiting.length) failedThisSession = !token;
+  const valid = !!token && TOKEN_PATTERN.test(token);
+  if (waiting.length) failedThisSession = !valid;
+  if (valid && waiting.length) {
+    const first = waiting.shift()!;
+    first(token!);
+    if (waiting.length) startRound();
+    else useCaptchaStore.setState({ pending: false });
+    return;
+  }
   const callers = waiting;
   waiting = [];
   useCaptchaStore.setState({ pending: false });
-  for (const resolve of callers) resolve(token ?? undefined);
+  for (const resolve of callers) resolve(undefined);
 }
 
 /** Supabase auth options with the token, when there is one. */

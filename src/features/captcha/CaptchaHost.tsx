@@ -12,6 +12,8 @@ export function CaptchaHost() {
   const { t } = useTranslation();
   const colors = useColors();
   const pending = useCaptchaStore((s) => s.pending);
+  // A fresh widget for each token (tokens are single-use, round 2 P3).
+  const round = useCaptchaStore((s) => s.round);
   if (!pending) return null;
   return (
     <Modal transparent animationType="fade" onRequestClose={() => finishCaptcha(null)}>
@@ -21,7 +23,7 @@ export function CaptchaHost() {
             {t('captcha.title')}
           </AppText>
           <AppText>{t('captcha.body')}</AppText>
-          <TurnstileWidget siteKey={captchaSiteKey()} onToken={finishCaptcha} />
+          <TurnstileWidget key={round} siteKey={captchaSiteKey()} onToken={finishCaptcha} />
           <Button variant="ghost" label={t('common.cancel')} onPress={() => finishCaptcha(null)} />
         </Card>
       </View>

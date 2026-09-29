@@ -1,6 +1,7 @@
 /**
  * The page the native WebView shows: only Cloudflare's widget, token posted
- * back, plus "shown" once it is rendered (round 2, S2-P2-8).
+ * back, plus "shown" once it is rendered (round 2, S2-P2-8). Errors let
+ * Turnstile retry (the callback returns nothing); the third one gives up.
  */
 export const TURNSTILE_BASE_URL =
   process.env.EXPO_PUBLIC_TURNSTILE_BASE_URL?.trim() || 'https://tapstrong.app/';
@@ -12,6 +13,7 @@ export function turnstileHtml(siteKey: string): string {
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=ready&render=explicit" async defer></script>
 <script>
 function post(v){window.ReactNativeWebView.postMessage(v);}
-function ready(){turnstile.render('#box',{sitekey:'${safeKey(siteKey)}',callback:post,'error-callback':function(){post('error')},'expired-callback':function(){post('error')}});post('shown');}
+var errors=0;
+function ready(){turnstile.render('#box',{sitekey:'${safeKey(siteKey)}',callback:post,'error-callback':function(){errors++;if(errors>=3){post('error');return true;}},'expired-callback':function(){post('error')}});post('shown');}
 </script></head><body style="margin:0;background:transparent"><div id="box"></div></body></html>`;
 }

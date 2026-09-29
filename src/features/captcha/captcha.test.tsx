@@ -47,15 +47,31 @@ it('no site key: no check at all', async () => {
   expect(useCaptchaStore.getState().pending).toBe(false);
 });
 
-it('with a site key: one widget answers every caller', async () => {
+it('with a site key: one single-use token per request, a fresh widget for the next', async () => {
   setCaptchaSiteKey('0x4AAAtest');
   const a = requestCaptchaToken();
   const b = requestCaptchaToken();
   expect(useCaptchaStore.getState().pending).toBe(true);
-  finishCaptcha('tok-1');
-  await expect(a).resolves.toBe('tok-1');
-  await expect(b).resolves.toBe('tok-1');
+  const round = useCaptchaStore.getState().round;
+  finishCaptcha('tok-1-0123456789abcdefghij');
+  await expect(a).resolves.toBe('tok-1-0123456789abcdefghij');
+  // b still waits, on a new widget.
+  expect(useCaptchaStore.getState()).toMatchObject({ pending: true, round: round + 1 });
+  finishCaptcha('tok-2-0123456789abcdefghij');
+  await expect(b).resolves.toBe('tok-2-0123456789abcdefghij');
   expect(useCaptchaStore.getState().pending).toBe(false);
+});
+
+it('closing ends every waiting request; something that is not a token is refused', async () => {
+  setCaptchaSiteKey('0x4AAAtest');
+  const a = requestCaptchaToken();
+  const b = requestCaptchaToken();
+  finishCaptcha(null);
+  await expect(a).resolves.toBeUndefined();
+  await expect(b).resolves.toBeUndefined();
+  const c = requestCaptchaToken();
+  finishCaptcha('<script>');
+  await expect(c).resolves.toBeUndefined();
 });
 
 it('a check that never finishes gives up', async () => {
@@ -91,9 +107,11 @@ describe('where it is used', () => {
   it('a new anonymous account carries the token; no token, no account', async () => {
     setCaptchaSiteKey('0x4AAAtest');
     const ok = ensureSession(client);
-    await answer('tok-anon');
+    await answer('tok-anon-0123456789abcdefghij');
     expect(await ok).toBe(true);
-    expect(auth.signInAnonymously).toHaveBeenCalledWith({ options: { captchaToken: 'tok-anon' } });
+    expect(auth.signInAnonymously).toHaveBeenCalledWith({
+      options: { captchaToken: 'tok-anon-0123456789abcdefghij' },
+    });
     const refused = ensureSession(client);
     await answer(null);
     expect(await refused).toBe(false);
@@ -104,11 +122,11 @@ describe('where it is used', () => {
     useAccountStore.getState().update({ needsSignIn: true });
     setCaptchaSiteKey('0x4AAAtest');
     const sent = sendEmailCode(client, 'dan@example.com');
-    await answer('tok-otp');
+    await answer('tok-otp-0123456789abcdefghij');
     expect(await sent).toEqual({ status: 'sent', mode: 'signin' });
     expect(auth.signInWithOtp).toHaveBeenCalledWith({
       email: 'dan@example.com',
-      options: { shouldCreateUser: false, captchaToken: 'tok-otp' },
+      options: { shouldCreateUser: false, captchaToken: 'tok-otp-0123456789abcdefghij' },
     });
   });
 });
