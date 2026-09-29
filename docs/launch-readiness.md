@@ -30,7 +30,7 @@ Situação na Fase 19 (28/09/2026), depois da rodada 7 de QA. O código das Fase
 7. **Chave da API do Claude:** `ANTHROPIC_API_KEY` nos segredos do Supabase, pelo terminal. Ativar também o login anônimo em Authentication → Providers.
 8. **EAS:** `npx eas-cli@latest init` para criar o projeto na sua conta Expo. Depois `eas build --profile preview` para testes internos (TestFlight e teste interno do Google Play) e `--profile production` para as lojas.
 
-## Depende de você (importante, mas não bloqueia o primeiro build)
+## Depende de você (importante; os itens 15 e 18 bloqueiam o build de produção)
 
 9. **SMTP com Resend:** passo a passo em `docs/store/smtp-resend.md`. A chave vai direto no painel do Supabase, não no chat.
 10. **PostHog e Sentry:** criar as contas (plano grátis) e pôr as chaves **públicas** nas variáveis do EAS (`EXPO_PUBLIC_POSTHOG_KEY`, `EXPO_PUBLIC_SENTRY_DSN`). Para o Sentry mostrar o código nos erros, `SENTRY_AUTH_TOKEN` entra como segredo no EAS e tira-se o `SENTRY_DISABLE_AUTO_UPLOAD` do `eas.json`.
@@ -38,10 +38,10 @@ Situação na Fase 19 (28/09/2026), depois da rodada 7 de QA. O código das Fase
 12. **Ícone:** aprovado para os testes. Um designer refina depois, junto com a marca (`python3 scripts/build-icons.py` gera de novo).
 13. **Capturas de tela** para as lojas: a ordem sugerida está em `docs/store/listing.md`. Nunca usar perfil de criança nem foto de antes e depois.
 14. **Marca e domínio:** busca e registro de "TapStrong" no USPTO; domínio `tapstrong.app`.
-15. **Link de convite (obrigatório):** definir `EXPO_PUBLIC_SHARE_BASE_URL` (ex.: `https://tapstrong.app`) nas variáveis do EAS, com uma página https em `/r/<código>` que abre o app ou leva à loja. Sem ela, o convite sai como `tapstrong://r/CÓDIGO`, que só funciona com o app instalado (QA rodada 5).
+15. **Link de convite (obrigatório, bloqueia o build de produção):** definir `EXPO_PUBLIC_SHARE_BASE_URL` (ex.: `https://tapstrong.app`) nas variáveis do EAS, com uma página https em `/r/<código>` que abre o app ou leva à loja. Sem ela, o convite sai como `tapstrong://r/CÓDIGO`, que só funciona com o app instalado (QA rodada 5).
 16. **Supabase de produção:** decidir se o projeto atual vira o de produção ou se cria outro (a SPEC §13 pede projetos de produção).
 17. **Segurança:** apagar o token do GitHub que ficou exposto.
-18. **E-mail de suporte (obrigatório):** definir `EXPO_PUBLIC_SUPPORT_EMAIL`. O app não tem mais endereço pessoal de reserva, e o build de produção falha sem ele.
+18. **E-mail de suporte (obrigatório, bloqueia o build de produção):** definir `EXPO_PUBLIC_SUPPORT_EMAIL` com um endereço do domínio (ex.: `ajuda@tapstrong.app`). O `env:check` recusa Gmail, Hotmail, iCloud e outros e-mails pessoais, e também links de Termos, Privacidade e convite que não sejam `https://`.
 
 ## Variáveis do app (EAS, não `.env`)
 
@@ -68,7 +68,7 @@ O `.env` fica só no seu computador e não vai para o build da nuvem. As variáv
 - **Menores de 13:** desligados no lançamento (Fase 12), no app (`EXPO_PUBLIC_KIDS_UNDER_13_ENABLED`) e no banco (`app_settings.kids_under_13_enabled`). Para religar na versão 2, as duas chaves precisam ser ligadas, e antes disso o advogado precisa revisar o fluxo COPPA.
 - **PIN dos pais esquecido:** a redefinição usa um código por e-mail, que só chega a usuários reais depois do SMTP do Resend (`docs/store/smtp-resend.md`).
 - **QA rodadas 1 e 2:** corrigidas (ver `docs/qa-round-1.md`, `docs/qa-round-2.md` e os relatórios das Fases 10 e 11 em `docs/progress.md`). Falta o reteste da rodada 2: mapa de recuperação, família (PIN, adolescentes, remover membro), mobilidade curta e fases 2 e 3 do reparo.
-- **Revisor certificado:** 754 exercícios `draft`. Ele também precisa confirmar as horas de recuperação (48 h, 96 h aos 60+), a carga leve em articulações restritas e as doses de equilíbrio.
+- **Revisor certificado:** 754 exercícios `draft`. Ele também precisa confirmar as horas de recuperação (44 h, 90 h aos 60+), a carga leve em articulações restritas e as doses de equilíbrio.
 
 ## Como verificar
 

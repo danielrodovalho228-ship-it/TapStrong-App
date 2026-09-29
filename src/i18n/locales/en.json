@@ -4006,6 +4006,7 @@
     "cancelNote": "If you cancel, you keep {{plan}} until {{date}} and your workout history forever.",
     "restore": "Restore purchases",
     "restored": "Purchases restored.",
+    "noneToRestore": "No purchases to restore on this account.",
     "deleteAccount": "Delete account",
     "dev": {
       "note": "Development build: purchases are simulated.",

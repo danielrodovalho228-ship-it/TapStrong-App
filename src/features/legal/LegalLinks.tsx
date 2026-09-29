@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import { AppText, TextLink } from '@/components/ui';
-import { restore } from '@/features/billing/actions';
+import { restore, restoreMessageKey } from '@/features/billing/actions';
 import { openLegal, PRIVACY_URL, TERMS_URL } from '@/lib/legal';
 import { makeStyles, spacing, useColors } from '@/theme';
 
@@ -24,24 +24,17 @@ export function LegalLinks({ withRestore = false }: { withRestore?: boolean }) {
             label={t('billing.restore')}
             onPress={async () => {
               const r = await restore();
-              setMessage(
-                r === 'ok'
-                  ? t('billing.restored')
-                  : t(r === 'unavailable' ? 'billing.errors.unavailable' : 'billing.errors.error'),
-              );
+              setMessage(t(restoreMessageKey(r)));
             }}
           />
         ) : null}
-        <TextLink
-          label={t('legal.terms')}
-          disabled={!TERMS_URL}
-          onPress={() => openLegal(TERMS_URL)}
-        />
-        <TextLink
-          label={t('legal.privacy')}
-          disabled={!PRIVACY_URL}
-          onPress={() => openLegal(PRIVACY_URL)}
-        />
+        {/* Unset in a dev build: hidden, never a link that looks live (QA R8 P2). */}
+        {TERMS_URL ? (
+          <TextLink label={t('legal.terms')} onPress={() => openLegal(TERMS_URL)} />
+        ) : null}
+        {PRIVACY_URL ? (
+          <TextLink label={t('legal.privacy')} onPress={() => openLegal(PRIVACY_URL)} />
+        ) : null}
       </View>
       {message ? (
         <AppText variant="caption" color={colors.mutedStrong} style={styles.center}>

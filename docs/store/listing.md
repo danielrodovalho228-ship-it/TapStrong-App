@@ -41,7 +41,6 @@ SAFETY FIRST
 
 - A short health check before your first workout.
 - Feel pain? Tap "I feel pain": sharp pain stops the workout, dull pain gets a safer swap and a saved restriction.
-- Every exercise is checked by a certified coach before it reaches you.
 
 SEE YOUR PROGRESS
 
@@ -92,7 +91,6 @@ PRIMERO LA SEGURIDAD
 
 - Un breve chequeo de salud antes del primer entrenamiento.
 - ¿Te duele? Toca "Siento dolor": un dolor agudo detiene el entrenamiento; un dolor leve trae un cambio más seguro y una restricción guardada.
-- Cada ejercicio lo revisa un entrenador certificado antes de llegar a ti.
 
 MIRA TU PROGRESO
 
@@ -143,7 +141,6 @@ SEGURANÇA EM PRIMEIRO LUGAR
 
 - Um check de saúde rápido antes do primeiro treino.
 - Sentiu dor? Toque "Sinto dor": dor aguda encerra o treino; dor leve traz uma troca mais segura e uma restrição salva.
-- Cada exercício é revisado por um profissional certificado antes de chegar a você.
 
 VEJA SEU PROGRESSO
 
@@ -179,3 +176,8 @@ allows more than six), never mixed into the first six. Reference renders of
 every screen in both modes are in `docs/screenshots/theme/light/` and
 `docs/screenshots/theme/dark/` (`npm run theme:check` regenerates them); the
 final store images still come from the preview build on a phone.
+
+> **Só depois da aprovação do revisor (QA R8 P2):** a frase abaixo fica fora da descrição até o revisor certificado aprovar a biblioteca. Quando aprovar, acrescentar na seção de segurança de cada idioma:
+> - EN: "Every exercise is checked by a certified coach before it reaches you."
+> - ES: "Cada ejercicio lo revisa un entrenador certificado antes de llegar a ti."
+> - PT: "Cada exercício é revisado por um profissional certificado antes de chegar a você."

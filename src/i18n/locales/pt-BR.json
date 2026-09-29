@@ -4029,6 +4029,7 @@
     "cancelNote": "Se cancelar, você mantém o {{plan}} até {{date}} e seu histórico de treinos para sempre.",
     "restore": "Restaurar compras",
     "restored": "Compras restauradas.",
+    "noneToRestore": "Não há compras para restaurar nesta conta.",
     "deleteAccount": "Excluir conta",
     "dev": {
       "note": "Build de desenvolvimento: as compras são simuladas.",

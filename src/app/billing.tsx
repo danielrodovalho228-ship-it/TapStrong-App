@@ -5,7 +5,7 @@ import { Linking, Platform, View } from 'react-native';
 
 import { AppText, Button, Card, Header, Notice, Screen, TextLink } from '@/components/ui';
 import { LegalLinks } from '@/features/legal/LegalLinks';
-import { refreshBilling, restore } from '@/features/billing/actions';
+import { refreshBilling, restore, restoreMessageKey } from '@/features/billing/actions';
 import {
   currentPlan,
   FAMILY_MAX_PROFILES,
@@ -126,11 +126,7 @@ function BillingScreenInner() {
           label={t('billing.restore')}
           onPress={async () => {
             const r = await restore();
-            setMessage(
-              r === 'ok'
-                ? t('billing.restored')
-                : t(r === 'unavailable' ? 'billing.errors.unavailable' : 'billing.errors.error'),
-            );
+            setMessage(t(restoreMessageKey(r)));
           }}
         />
         <TextLink

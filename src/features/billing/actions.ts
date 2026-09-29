@@ -1,4 +1,5 @@
 import { track } from '@/lib/analytics';
+import { clock } from '@/lib/clock';
 import { kvStorage } from '@/lib/storage';
 
 import { requestPermission } from '../notifications/apply';
@@ -8,7 +9,7 @@ import { useFamilyStore } from '../family/store';
 import { useOnboardingStore } from '../onboarding/store';
 
 import { getBilling, type PurchaseResult } from './provider';
-import { familyPurchaseBlocked, PRODUCTS } from './rules';
+import { currentPlan, familyPurchaseBlocked, PRODUCTS } from './rules';
 import { useBillingStore } from './store';
 
 /** Pulls the latest entitlement and prices from the store (best effort). */
@@ -57,8 +58,25 @@ export async function buy(productId: string): Promise<PurchaseResult | 'adults_o
   return result;
 }
 
-export async function restore() {
+/** What "Restore purchases" says for each answer. */
+export const restoreMessageKey = (r: PurchaseResult | 'none') =>
+  r === 'ok'
+    ? 'billing.restored'
+    : r === 'none'
+      ? 'billing.noneToRestore'
+      : r === 'unavailable'
+        ? 'billing.errors.unavailable'
+        : 'billing.errors.error';
+
+/**
+ * "Restore purchases": after the store answers, the entitlement decides what
+ * to say. Nothing to restore is not "restored" (QA R8 P2).
+ */
+export async function restore(): Promise<PurchaseResult | 'none'> {
   const result = await getBilling().restore();
-  if (result === 'ok') await refreshBilling();
-  return result;
+  if (result !== 'ok') return result;
+  await refreshBilling();
+  return currentPlan(useBillingStore.getState().entitlement, clock.now()) === 'free'
+    ? 'none'
+    : 'ok';
 }
