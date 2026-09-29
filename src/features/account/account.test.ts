@@ -12,6 +12,7 @@ import { initialStreak } from '../workout/streak';
 import type { WorkoutRecord } from '../workout/types';
 
 import { isEmail, sendEmailCode, verifyEmailCode } from './auth';
+import { useAccountCodeStore } from './codeLimits';
 import { normalizeReferral } from './store';
 import { buildSyncPlan, runSync, stableId, type SyncInput } from './sync';
 
@@ -238,6 +239,8 @@ describe('sync plan', () => {
 });
 
 describe('email sign-up', () => {
+  // Security round 1 (S2-07): one code a minute; each test starts fresh.
+  beforeEach(() => useAccountCodeStore.getState().reset());
   const client = (overrides: Record<string, jest.Mock> = {}) =>
     ({
       auth: {

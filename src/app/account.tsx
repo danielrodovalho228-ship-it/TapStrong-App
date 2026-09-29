@@ -31,6 +31,7 @@ import { getSupabase } from '@/lib/supabase';
 import { colors, fonts, makeStyles, spacing, useColors } from '@/theme';
 import { OwnerOnly } from '@/features/family/OwnerOnly';
 import { rememberOwnerAuth } from '@/features/family/pinReset';
+import { lockMinutesLeft, useAccountCodeStore } from '@/features/account/codeLimits';
 import { useWorkoutStore } from '@/features/workout/store';
 
 type Step = 'start' | 'code';
@@ -67,8 +68,14 @@ function AccountScreenInner() {
     if (result.status === 'sent') {
       setEmailMode(result.mode);
       setStep('code');
-    } else setMessage(t(`account.errors.${result.status}`));
+    } else if (result.status === 'wait')
+      setMessage(t('account.errors.wait', { count: result.seconds }));
+    else setMessage(t(`account.errors.${result.status}`));
   };
+
+  // 5 wrong codes lock the email for 15 minutes (security round 1, S2-07).
+  const lockedUntil = useAccountCodeStore((st) => st.lockedUntil);
+  const codeLocked = !!lockedUntil && lockMinutesLeft(email) > 0;
 
   const confirm = async () => {
     setBusy(true);
@@ -76,7 +83,11 @@ function AccountScreenInner() {
     const result = await verifyEmailCode(getSupabase(), email, code, emailMode);
     if (result !== 'ok') {
       setBusy(false);
-      setMessage(t(result === 'wrong_code' ? 'account.errors.wrongCode' : 'account.errors.error'));
+      setMessage(
+        result === 'locked'
+          ? t('account.errors.locked', { count: lockMinutesLeft(email) })
+          : t(result === 'wrong_code' ? 'account.errors.wrongCode' : 'account.errors.error'),
+      );
       return;
     }
     account.update({
@@ -187,7 +198,12 @@ function AccountScreenInner() {
             autoComplete="one-time-code"
             maxLength={10}
           />
-          <Button label={t('account.confirm')} loading={busy} onPress={confirm} />
+          <Button
+            label={t('account.confirm')}
+            loading={busy}
+            disabled={codeLocked}
+            onPress={confirm}
+          />
           <TextLink label={t('account.changeEmail')} onPress={() => setStep('start')} />
         </View>
       )}

@@ -3871,7 +3871,11 @@
       "offline": "Can't reach TapStrong right now. Check your connection and try again.",
       "rate_limited": "Too many codes in a short time. Wait a minute and try again.",
       "error": "Something went wrong. Try again.",
-      "wrongCode": "That code didn't work. Check it, or ask for a new one."
+      "wrongCode": "That code didn't work. Check it, or ask for a new one.",
+      "wait_one": "Wait {{count}} second before asking for another code.",
+      "wait_other": "Wait {{count}} seconds before asking for another code.",
+      "locked_one": "Too many wrong codes. Try again in {{count}} minute.",
+      "locked_other": "Too many wrong codes. Try again in {{count}} minutes."
     },
     "planBilling": "Plan & billing",
     "deleteAccount": "Delete account",

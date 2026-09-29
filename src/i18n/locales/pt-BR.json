@@ -3888,7 +3888,13 @@
       "offline": "Não foi possível falar com o TapStrong agora. Confira sua conexão e tente de novo.",
       "rate_limited": "Muitos códigos em pouco tempo. Espere um minuto e tente de novo.",
       "error": "Algo deu errado. Tente de novo.",
-      "wrongCode": "Esse código não funcionou. Confira ou peça um novo."
+      "wrongCode": "Esse código não funcionou. Confira ou peça um novo.",
+      "wait_one": "Espere {{count}} segundo antes de pedir outro código.",
+      "wait_other": "Espere {{count}} segundos antes de pedir outro código.",
+      "locked_one": "Códigos errados demais. Tente de novo em {{count}} minuto.",
+      "locked_other": "Códigos errados demais. Tente de novo em {{count}} minutos.",
+      "wait_zero": "Espere {{count}} segundos antes de pedir outro código.",
+      "locked_zero": "Códigos errados demais. Tente de novo em {{count}} minutos."
     },
     "planBilling": "Plano e cobrança",
     "deleteAccount": "Excluir conta",

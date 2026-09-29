@@ -11,6 +11,7 @@ import { useWorkoutStore } from '@/features/workout/store';
 import { setAnalyticsSink } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
 
+import { useAccountCodeStore } from './codeLimits';
 import { useAccountStore } from './store';
 
 let mockParams: Record<string, string> = {};
@@ -55,6 +56,7 @@ beforeAll(() => {
 
 beforeEach(async () => {
   await act(() => {
+    useAccountCodeStore.getState().reset();
     useOnboardingStore.getState().reset();
     useOnboardingStore.getState().update({
       birthMonth: 3,
