@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { View } from 'react-native';
 
+import { captchaShown } from './captcha';
+
 type Turnstile = {
   render: (el: HTMLElement, opts: Record<string, unknown>) => string;
   remove: (id: string) => void;
@@ -47,6 +49,7 @@ export function TurnstileWidget({
           'error-callback': () => onToken(null),
           'expired-callback': () => onToken(null),
         });
+        captchaShown();
       })
       .catch(() => onToken(null));
     return () => {

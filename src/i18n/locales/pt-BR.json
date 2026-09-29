@@ -322,7 +322,8 @@
     "summary": {
       "schedule": "{{place}}, {{minutes}} minutos, {{days}} dias por semana."
     },
-    "offline": "Não consegui falar com seu coach agora, então só entendo respostas curtas. Escolha nas opções abaixo."
+    "offline": "Não consegui falar com seu coach agora, então só entendo respostas curtas. Escolha nas opções abaixo.",
+    "coachUnavailable": "Coach indisponível — seguindo offline."
   },
   "safety": {
     "name": "Segurança",

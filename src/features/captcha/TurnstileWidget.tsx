@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 
+import { captchaShown } from './captcha';
 import { turnstileHtml, TURNSTILE_BASE_URL } from './turnstileHtml';
 
 /**
@@ -17,14 +18,19 @@ export function TurnstileWidget({
 }) {
   const onMessage = (e: WebViewMessageEvent) => {
     const data = e.nativeEvent.data;
+    if (data === 'shown') return captchaShown();
     onToken(data && data !== 'error' ? data : null);
   };
+  // Offline or blocked: end the check now, not after a blank wait (S2-P2-8).
+  const failed = () => onToken(null);
   return (
     <WebView
       style={styles.web}
       originWhitelist={['https://*']}
       source={{ html: turnstileHtml(siteKey), baseUrl: TURNSTILE_BASE_URL }}
       onMessage={onMessage}
+      onError={failed}
+      onHttpError={failed}
       onShouldStartLoadWithRequest={(r) =>
         r.url.startsWith(TURNSTILE_BASE_URL) ||
         r.url.startsWith('https://challenges.cloudflare.com/')

@@ -12,7 +12,11 @@ import { MUSCLE_KEYS } from '../muscles';
 import { parseScheduleLocally } from './interview';
 import type { InterviewStep } from './options';
 
-export type CoachResult = InterviewResult & { source: 'coach' | 'local' | 'none' };
+export type CoachResult = InterviewResult & {
+  source: 'coach' | 'local' | 'none';
+  /** No session for the coach this time (captcha closed / failed, offline). */
+  unavailable?: boolean;
+};
 
 type Context = {
   locale: SupportedLocale;
@@ -42,7 +46,10 @@ export async function interpretAnswer(
   const supabase = getSupabase();
   if (supabase) {
     try {
-      if (!(await ensureSession(supabase))) return offline(step, text);
+      // No session (captcha closed, failed or offline): say the coach is off
+      // and go on with the offline parser (round 2, S2-P2-8).
+      if (!(await ensureSession(supabase, { skipCaptchaAfterFailure: true })))
+        return { ...offline(step, text), unavailable: true };
       const wait = lastCallAt + COACH_COOLDOWN_MS - Date.now();
       if (wait > 0) await new Promise((resolve) => setTimeout(resolve, wait));
       lastCallAt = Date.now();

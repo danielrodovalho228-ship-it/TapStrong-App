@@ -9,6 +9,7 @@ import {
   CoachMessage,
   Header,
   IconButton,
+  Notice,
   Screen,
   StepProgress,
   UserMessage,
@@ -46,6 +47,8 @@ export default function ChatScreen() {
   const scrollRef = useRef<ScrollView>(null);
   const [draft, setDraft] = useState('');
   const [busy, setBusy] = useState(false);
+  // The coach couldn't be reached without a person check (S2-P2-8).
+  const [coachOff, setCoachOff] = useState(false);
 
   const derived = derive(s);
   if (!derived) return <Redirect href="/onboarding/who" />;
@@ -95,6 +98,7 @@ export default function ChatScreen() {
     const birth =
       s.birthYear && s.birthMonth ? { year: s.birthYear, month: s.birthMonth } : undefined;
     const result = await interpretAnswer(current, text, { locale, mode, birth });
+    if (result.unavailable) setCoachOff(true);
     const answer = { ...result.answer };
     if (answer.mainGoals) {
       const allowed = visibleMainGoals(mode);
@@ -188,6 +192,7 @@ export default function ChatScreen() {
         keyboardShouldPersistTaps="handled"
         onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: false })}
       >
+        {coachOff ? <Notice>{t('chat.coachUnavailable')}</Notice> : null}
         {history.map((step) => {
           const ack = coachAck(t, step, s);
           return (

@@ -322,7 +322,8 @@
     "summary": {
       "schedule": "{{place}}, {{minutes}} minutes, {{days}} days a week."
     },
-    "offline": "I couldn't reach your coach just now, so I only understand short answers. Pick from the options below."
+    "offline": "I couldn't reach your coach just now, so I only understand short answers. Pick from the options below.",
+    "coachUnavailable": "Coach unavailable — continuing offline."
   },
   "safety": {
     "name": "Safety check",

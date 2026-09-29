@@ -322,7 +322,8 @@
     "summary": {
       "schedule": "{{place}}, {{minutes}} minutos, {{days}} días por semana."
     },
-    "offline": "No pude conectar con tu coach ahora, así que solo entiendo respuestas cortas. Elige entre las opciones de abajo."
+    "offline": "No pude conectar con tu coach ahora, así que solo entiendo respuestas cortas. Elige entre las opciones de abajo.",
+    "coachUnavailable": "Coach no disponible: seguimos sin conexión."
   },
   "safety": {
     "name": "Seguridad",
