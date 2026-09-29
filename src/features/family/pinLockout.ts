@@ -6,6 +6,7 @@ import { isNetworkError } from '@/lib/network';
 
 import { useAccountStore } from '../account/store';
 
+import { useOwnerIdentityStore } from './ownerIdentity';
 import { checkParentPin, setParentPin, useParentPinStore, type PinCheck } from './parentPin';
 
 /**
@@ -22,7 +23,7 @@ const signedIn = () => useAccountStore.getState().saved;
 const native = () => Platform.OS !== 'web';
 
 export type GateCheck = PinCheck | 'offline';
-export type PinSave = 'ok' | 'reauth' | 'offline' | 'invalid';
+export type PinSave = 'ok' | 'reauth' | 'offline' | 'invalid' | 'wrong' | 'locked';
 
 type RpcError = { code?: string; message?: string } | null;
 /** The function isn't on the server yet (a migration not pushed): logged, then the local copy. */
@@ -47,15 +48,7 @@ export function mergeLock(serverUntil: string | null) {
 export async function pullPinStatus(supabase: SupabaseClient | null): Promise<void> {
   if (!supabase || !signedIn()) return;
   try {
-    const pending = useParentPinStore.getState().pendingPin;
-    if (pending) {
-      const { data, error } = await supabase.rpc('set_parent_pin', { new_pin: pending });
-      if (!error && (data === 'ok' || data === 'reauth' || data === 'invalid'))
-        useParentPinStore.setState({
-          pendingPin: null,
-          ...(data === 'ok' ? { serverHasPin: true } : {}),
-        });
-    }
+    await flushPendingPin(supabase);
     const { data, error } = await supabase.rpc('parent_pin_status');
     if (error) {
       if (missing(error as RpcError)) reportServerMissing('parent_pin_status');
@@ -70,6 +63,28 @@ export async function pullPinStatus(supabase: SupabaseClient | null): Promise<vo
     // Offline: the phone's copy still applies (native).
   }
 }
+/**
+ * A PIN kept on this phone while it had no session (first PIN offline, or a
+ * reset whose session didn't come back) goes to the server once signed in.
+ * If the server wants proof, a fresh email-code sign-in (the Account's "sign
+ * in again") opens its window (security round 2, S2-P2-3).
+ */
+async function flushPendingPin(supabase: SupabaseClient) {
+  const pending = useParentPinStore.getState().pendingPin;
+  if (!pending) return;
+  const set = async () => (await supabase.rpc('set_parent_pin', { new_pin: pending })).data;
+  let result = await set();
+  if (result === 'reauth' && (await openPinResetWindow(supabase))) result = await set();
+  if (result === 'ok') {
+    useParentPinStore.setState({ pendingPin: null, serverHasPin: true, pinVersion: null });
+    return;
+  }
+  // No proof to give: the account keeps its PIN; this phone's copy is dropped
+  // so the offline fallback never disagrees with the server.
+  if (result === 'reauth' || result === 'invalid')
+    useParentPinStore.setState({ pendingPin: null, hash: null, salt: null, pinVersion: null });
+}
+
 /** Kept for older callers: the status includes the lock. */
 export const pullPinLock = pullPinStatus;
 
@@ -96,7 +111,14 @@ const localCheck = (pin: string): GateCheck => (native() ? checkParentPin(pin) :
  */
 export async function verifyPin(supabase: SupabaseClient | null, pin: string): Promise<GateCheck> {
   if (!supabase || !signedIn()) return localCheck(pin);
-  let row: { result?: string; failures?: number; locked_until?: string | null } | undefined;
+  let row:
+    | {
+        result?: string;
+        failures?: number;
+        locked_until?: string | null;
+        pin_version?: string | null;
+      }
+    | undefined;
   try {
     const { data, error } = await supabase.rpc('verify_parent_pin', { pin });
     if (error) {
@@ -108,17 +130,27 @@ export async function verifyPin(supabase: SupabaseClient | null, pin: string): P
   } catch {
     return localCheck(pin);
   }
+  // The phone's offline copy must follow the account's PIN (round 2,
+  // S2-P2-3): made again when the server's version changed (the slow key
+  // derivation runs once per version), dropped when it is stale.
+  const version = row?.pin_version ?? null;
+  const stale = () => useParentPinStore.getState().pinVersion !== version;
   switch (row?.result) {
     case 'ok':
-      // A new phone gets its offline copy of the account's PIN (the slow key
-      // derivation runs once, not on every check).
-      if (!useParentPinStore.getState().hash) setParentPin(pin);
-      useParentPinStore.setState({ serverHasPin: true, failures: 0, lockedUntil: null });
+      if (!useParentPinStore.getState().hash || stale()) setParentPin(pin);
+      useParentPinStore.setState({
+        serverHasPin: true,
+        failures: 0,
+        lockedUntil: null,
+        pinVersion: version,
+      });
       return 'ok';
     case 'wrong':
+      if (stale()) useParentPinStore.setState({ hash: null, salt: null, pinVersion: null });
       useParentPinStore.setState({ failures: row.failures ?? 0, lockedUntil: null });
       return 'wrong';
     case 'locked':
+      if (stale()) useParentPinStore.setState({ hash: null, salt: null, pinVersion: null });
       useParentPinStore.setState({ failures: 0, lockedUntil: row.locked_until ?? null });
       return 'locked';
     case 'no_pin': {
@@ -134,25 +166,37 @@ export async function verifyPin(supabase: SupabaseClient | null, pin: string): P
 }
 
 /**
- * Saves a new PIN. The server takes it right after the right PIN or the email
- * code (a short window it opens itself), or as the first PIN of an account
- * without minors; otherwise "reauth". Offline, only a first PIN is kept on
- * the phone (native) and sent later; changing an account's PIN needs a
- * connection so the phone and the server never disagree.
+ * Saves a new PIN (security round 2, S2-P2-2): changing the account's PIN
+ * needs the current one (`oldPin`) or the window a fresh email code opens;
+ * a first PIN needs neither while the account manages no minors.
+ * Without a session (a reset whose session didn't come back, or offline
+ * before any server PIN) the PIN is kept on the phone and sent once signed
+ * in (S2-P2-3); changing an existing account PIN offline is refused so the
+ * phone and the server never disagree.
  */
-export async function savePin(supabase: SupabaseClient | null, pin: string): Promise<PinSave> {
-  if (!supabase || !signedIn()) {
+export async function savePin(
+  supabase: SupabaseClient | null,
+  pin: string,
+  oldPin?: string,
+): Promise<PinSave> {
+  const keepForLater = (): PinSave => {
     if (!native()) return 'offline';
-    return setParentPin(pin) ? 'ok' : 'invalid';
-  }
-  const offline = (): PinSave => {
-    if (!native() || useParentPinStore.getState().serverHasPin) return 'offline';
     if (!setParentPin(pin)) return 'invalid';
-    useParentPinStore.setState({ pendingPin: pin });
+    // Only the owner's own account can take it later.
+    if (useOwnerIdentityStore.getState().ownerAuth)
+      useParentPinStore.setState({ pendingPin: pin, pinVersion: null });
     return 'ok';
   };
+  if (!supabase || !signedIn()) return keepForLater();
+  const offline = (): PinSave =>
+    useParentPinStore.getState().serverHasPin && !useParentPinStore.getState().pendingPin
+      ? 'offline'
+      : keepForLater();
   try {
-    const { data, error } = await supabase.rpc('set_parent_pin', { new_pin: pin });
+    const { data, error } = await supabase.rpc('set_parent_pin', {
+      new_pin: pin,
+      ...(oldPin ? { old_pin: oldPin } : {}),
+    });
     if (error) {
       if (missing(error as RpcError)) {
         reportServerMissing('set_parent_pin');
@@ -162,10 +206,11 @@ export async function savePin(supabase: SupabaseClient | null, pin: string): Pro
     }
     if (data === 'ok') {
       setParentPin(pin);
-      useParentPinStore.setState({ serverHasPin: true, pendingPin: null });
+      useParentPinStore.setState({ serverHasPin: true, pendingPin: null, pinVersion: null });
       return 'ok';
     }
-    return data === 'invalid' ? 'invalid' : 'reauth';
+    if (data === 'invalid' || data === 'wrong' || data === 'locked') return data;
+    return 'reauth';
   } catch {
     return offline();
   }

@@ -40,6 +40,8 @@ type State = {
    * the Keychain / Keystore); sent on the next status check, then removed.
    */
   pendingPin: string | null;
+  /** The server PIN's version this phone's copy was made from (round 2, S2-P2-3). */
+  pinVersion: string | null;
   reset: () => void;
 };
 
@@ -51,6 +53,7 @@ const EMPTY = {
   lockedUntil: null,
   serverHasPin: false,
   pendingPin: null,
+  pinVersion: null,
 };
 
 export const useParentPinStore = create<State>()(
@@ -63,7 +66,7 @@ export const useParentPinStore = create<State>()(
       name: 'parent-pin-secure',
       version: 1,
       storage: createJSONStorage(() => secureStorage),
-      partialize: ({ hash, salt, algo, failures, lockedUntil, serverHasPin, pendingPin }) => ({
+      partialize: ({
         hash,
         salt,
         algo,
@@ -71,7 +74,8 @@ export const useParentPinStore = create<State>()(
         lockedUntil,
         serverHasPin,
         pendingPin,
-      }),
+        pinVersion,
+      }) => ({ hash, salt, algo, failures, lockedUntil, serverHasPin, pendingPin, pinVersion }),
       // A plain-storage PIN is never imported: anyone with file access could
       // plant one before the owner set theirs (QA R4-05). The stale copy from
       // dev builds before round 3 is just deleted.

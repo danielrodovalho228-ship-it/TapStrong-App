@@ -29,7 +29,14 @@ import { activeProfile, useFamilyStore } from './store';
  * tries (also counted on the account when online). Without a PIN, only the
  * owner's own profile may create one; a child profile is told to ask a parent.
  */
-export function ParentGate({ onPass, onCancel }: { onPass: () => void; onCancel?: () => void }) {
+/** `onPass` gets the PIN that passed, so a PIN change can prove it (S2-P2-2). */
+export function ParentGate({
+  onPass,
+  onCancel,
+}: {
+  onPass: (pin?: string) => void;
+  onCancel?: () => void;
+}) {
   // The web can't keep a PIN safe: family profiles are mobile-only for now
   // (security round 1, S1-03).
   if (!familyAvailable()) return <FamilyMobileOnly onCancel={onCancel} />;
@@ -47,7 +54,13 @@ export function FamilyMobileOnly({ onCancel }: { onCancel?: () => void }) {
   );
 }
 
-function ParentGateInner({ onPass, onCancel }: { onPass: () => void; onCancel?: () => void }) {
+function ParentGateInner({
+  onPass,
+  onCancel,
+}: {
+  onPass: (pin?: string) => void;
+  onCancel?: () => void;
+}) {
   const colors = useColors();
   const { t } = useTranslation();
   // A PIN on this phone or on the account (a new phone learns it from the server).
@@ -69,11 +82,11 @@ function ParentGateInner({ onPass, onCancel }: { onPass: () => void; onCancel?: 
 
   // A correct PIN proves the owner's profile is really the active one: an
   // upgraded phone with no secure active id records it here (QA R6-05).
-  const pass = () => {
+  const pass = (pin?: string) => {
     const identity = useOwnerIdentityStore.getState();
     if (!identity.activeId && active && active.id === identity.ownerId && active.kind === 'self')
       identity.setActive(active.id);
-    onPass();
+    onPass(pin);
   };
 
   // Forgotten PIN: the owner proves it with an email code (Phase 12). With no
@@ -83,7 +96,7 @@ function ParentGateInner({ onPass, onCancel }: { onPass: () => void; onCancel?: 
     return (
       <ParentPinReset
         creating={resetting === 'create'}
-        onDone={pass}
+        onDone={() => pass()}
         onCancel={() => setResetting(false)}
       />
     );
@@ -91,7 +104,7 @@ function ParentGateInner({ onPass, onCancel }: { onPass: () => void; onCancel?: 
   const canCreate = accountSaved || !!ownerEmail();
   if (!hasPin) {
     return owner ? (
-      <ParentPinSetup onDone={onPass} onCancel={onCancel} />
+      <ParentPinSetup onDone={() => onPass()} onCancel={onCancel} />
     ) : (
       <Card style={styles.card}>
         <AppText variant="h3">{t('parentGate.title')}</AppText>
@@ -116,7 +129,7 @@ function ParentGateInner({ onPass, onCancel }: { onPass: () => void; onCancel?: 
     // The server decides with a saved account; the phone's copy only offline.
     const result = await verifyPin(getSupabase(), pin);
     setBusy(false);
-    if (result === 'ok') return pass();
+    if (result === 'ok') return pass(pin);
     if (result === 'offline') setMessage(t('parentGate.offline'));
     else if (result === 'no_pin') setMessage(t('parentGate.noPinCreate'));
     else if (result === 'locked') setMessage(t('parentGate.locked', { count: lockMinutesLeft() }));
@@ -157,13 +170,19 @@ function ParentGateInner({ onPass, onCancel }: { onPass: () => void; onCancel?: 
   );
 }
 
-/** Creates or replaces the parent PIN (owner's own profile only). */
+/**
+ * Creates or replaces the parent PIN (owner's own profile only). Replacing
+ * it sends the current PIN (`oldPin`, from the gate just passed) or uses the
+ * window of a fresh email code (security round 2, S2-P2-2).
+ */
 export function ParentPinSetup({
   onDone,
   onCancel,
+  oldPin,
 }: {
   onDone: () => void;
   onCancel?: () => void;
+  oldPin?: string;
 }) {
   const colors = useColors();
   const { t } = useTranslation();
@@ -187,11 +206,13 @@ export function ParentPinSetup({
       return;
     }
     setBusy(true);
-    const result = await savePin(getSupabase(), pin);
+    const result = await savePin(getSupabase(), pin, oldPin);
     setBusy(false);
     if (result === 'ok') return onDone();
     setAgain('');
-    if (result === 'reauth') return setViaEmail(true);
+    // The PIN changed elsewhere meanwhile: prove it with the email code.
+    if (result === 'reauth' || result === 'wrong') return setViaEmail(true);
+    if (result === 'locked') return setError(t('parentGate.locked', { count: lockMinutesLeft() }));
     setError(t(result === 'offline' ? 'parentGate.offlineSave' : 'parentGate.mismatch'));
   };
 

@@ -28,6 +28,7 @@ import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
 import { deviceWeekStart } from '@/lib/dates';
 import { getSupabase } from '@/lib/supabase';
+import { pullPinStatus } from '@/features/family/pinLockout';
 import { colors, fonts, makeStyles, spacing, useColors } from '@/theme';
 import { OwnerOnly } from '@/features/family/OwnerOnly';
 import { rememberOwnerAuth } from '@/features/family/pinReset';
@@ -98,6 +99,8 @@ function AccountScreenInner() {
     });
     // The owner's sign-in goes to the secure record: PIN reset codes go only there (QA R8-05).
     await rememberOwnerAuth(getSupabase(), email.trim().toLowerCase());
+    // A PIN set while signed out goes to the account now (S2-P2-3).
+    await pullPinStatus(getSupabase());
     track('account_created', { method: 'email' });
     await afterAccountSaved();
     setBusy(false);

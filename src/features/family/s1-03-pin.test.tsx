@@ -14,7 +14,7 @@ import { PRODUCTS } from '@/features/billing/rules';
 import { clock } from '@/lib/clock';
 
 import { ParentGate, ParentPinSetup } from './ParentGate';
-import { lockMinutesLeft, setParentPin, useParentPinStore } from './parentPin';
+import { checkParentPin, lockMinutesLeft, setParentPin, useParentPinStore } from './parentPin';
 import { pullPinStatus, savePin, verifyPin } from './pinLockout';
 import { useOwnerIdentityStore } from './ownerIdentity';
 import { useFamilyStore } from './store';
@@ -30,50 +30,73 @@ const realNow = clock.now;
 const client = () => ({ rpc: (...a: unknown[]) => mockRpc(...a) }) as never;
 const until = (min: number) => new Date(NOW.getTime() + min * 60000).toISOString();
 
-/** A server with a PIN and its own lockout. */
+/** A server with a PIN, its own lockout and version (security round 2, S2-P2-2). */
 function server(pin = '2468') {
   let failures = 0;
   let lockedUntil: string | null = null;
-  let current: string | null = pin;
+  let current: string | null = pin || null;
+  let version = 1;
   let windowOpen = false;
-  mockRpc.mockImplementation(async (name: string, args?: { pin?: string; new_pin?: string }) => {
-    if (name === 'parent_pin_status')
-      return { data: [{ has_pin: !!current, locked_until: lockedUntil }], error: null };
-    if (name === 'verify_parent_pin') {
-      if (lockedUntil)
-        return {
-          data: [{ result: 'locked', failures: 0, locked_until: lockedUntil }],
-          error: null,
-        };
-      if (!current)
-        return { data: [{ result: 'no_pin', failures: 0, locked_until: null }], error: null };
-      if (args?.pin === current) {
-        failures = 0;
-        windowOpen = true;
-        return { data: [{ result: 'ok', failures: 0, locked_until: null }], error: null };
-      }
-      failures++;
-      if (failures >= 5) {
-        failures = 0;
-        lockedUntil = until(15);
-        return {
-          data: [{ result: 'locked', failures: 0, locked_until: lockedUntil }],
-          error: null,
-        };
-      }
-      return { data: [{ result: 'wrong', failures, locked_until: null }], error: null };
-    }
-    if (name === 'set_parent_pin') {
-      if (current && !windowOpen) return { data: 'reauth', error: null };
-      current = args?.new_pin ?? null;
-      windowOpen = false;
-      return { data: 'ok', error: null };
-    }
-    return { data: null, error: null };
+  const row = (result: string) => ({
+    data: [
+      {
+        result,
+        failures,
+        locked_until: lockedUntil,
+        pin_version: current ? `v${version}` : null,
+      },
+    ],
+    error: null,
   });
+  const check = (given?: string) => {
+    if (lockedUntil) return 'locked';
+    if (given === current) {
+      failures = 0;
+      return 'ok';
+    }
+    failures++;
+    if (failures >= 5) {
+      failures = 0;
+      lockedUntil = until(15);
+      return 'locked';
+    }
+    return 'wrong';
+  };
+  mockRpc.mockImplementation(
+    async (name: string, args?: { pin?: string; new_pin?: string; old_pin?: string }) => {
+      if (name === 'parent_pin_status')
+        return { data: [{ has_pin: !!current, locked_until: lockedUntil }], error: null };
+      if (name === 'verify_parent_pin') {
+        if (!current && !lockedUntil) return row('no_pin');
+        return row(check(args?.pin));
+      }
+      if (name === 'open_pin_reset_window') {
+        windowOpen = true;
+        return { data: true, error: null };
+      }
+      if (name === 'set_parent_pin') {
+        if (current && !windowOpen) {
+          if (!args?.old_pin) return { data: 'reauth', error: null };
+          const r = check(args.old_pin);
+          if (r !== 'ok') return { data: r, error: null };
+        }
+        current = args?.new_pin ?? null;
+        version++;
+        windowOpen = false;
+        lockedUntil = null;
+        return { data: 'ok', error: null };
+      }
+      return { data: null, error: null };
+    },
+  );
   return {
     get pin() {
       return current;
+    },
+    /** The PIN changed from another phone. */
+    change(next: string) {
+      current = next;
+      version++;
     },
   };
 }
@@ -158,10 +181,39 @@ describe('changing the PIN', () => {
     expect(screen.getByRole('button', { name: 'Send the code' })).toBeTruthy();
   });
 
-  it('right after the right PIN it is saved on the server', async () => {
+  it('a right PIN alone opens no window: without the current PIN the server refuses (S2-P2-2)', async () => {
     const s = server('2468');
     expect(await verifyPin(client(), '2468')).toBe('ok');
+    expect(await savePin(client(), '1357')).toBe('reauth');
+    expect(await savePin(client(), '1357', '0000')).toBe('wrong');
+    expect(s.pin).toBe('2468');
+    expect(await savePin(client(), '1357', '2468')).toBe('ok');
+    expect(s.pin).toBe('1357');
+  });
+
+  it('Settings: the gate hands over the PIN it checked', async () => {
+    server('2468');
+    const onPass = jest.fn();
+    await render(<ParentGate onPass={onPass} />);
+    await fireEvent.changeText(screen.getByLabelText('Parent PIN'), '2468');
+    await fireEvent.press(screen.getByRole('button', { name: 'Confirm' }));
+    expect(onPass).toHaveBeenCalledWith('2468');
+  });
+
+  it('Settings: Setup sends the checked PIN as proof', async () => {
+    const s = server('2468');
+    await render(<ParentPinSetup oldPin="2468" onDone={jest.fn()} />);
+    await fireEvent.changeText(screen.getByLabelText('New PIN'), '1357');
+    await fireEvent.changeText(screen.getByLabelText('Repeat the PIN'), '1357');
+    await fireEvent.press(screen.getByRole('button', { name: 'Save PIN' }));
+    expect(s.pin).toBe('1357');
+  });
+
+  it('the email-code window works once', async () => {
+    const s = server('2468');
+    await mockRpc('open_pin_reset_window');
     expect(await savePin(client(), '1357')).toBe('ok');
+    expect(await savePin(client(), '9753')).toBe('reauth');
     expect(s.pin).toBe('1357');
   });
 
@@ -180,6 +232,41 @@ describe('changing the PIN', () => {
     await pullPinStatus(client());
     expect(s.pin).toBe('1357');
     expect(useParentPinStore.getState()).toMatchObject({ pendingPin: null, serverHasPin: true });
+  });
+});
+
+describe('the offline copy follows the account (S2-P2-3)', () => {
+  it('a PIN changed on another phone replaces the old copy here', async () => {
+    const s = server('2468');
+    expect(await verifyPin(client(), '2468')).toBe('ok');
+    s.change('1357');
+    expect(await verifyPin(client(), '1357')).toBe('ok');
+    // Offline, the phone's copy now accepts only the new PIN.
+    expect(checkParentPin('1357')).toBe('ok');
+    expect(checkParentPin('2468')).toBe('wrong');
+  });
+
+  it('the server says wrong: a stale copy that accepts that PIN is dropped', async () => {
+    const s = server('2468');
+    expect(await verifyPin(client(), '2468')).toBe('ok');
+    s.change('1357');
+    expect(await verifyPin(client(), '2468')).toBe('wrong');
+    expect(useParentPinStore.getState().hash).toBeNull();
+  });
+
+  it('a reset whose session did not come back: the PIN is sent once signed in again', async () => {
+    const s = server('2468');
+    // ok_signed_out: the account is marked signed out, the owner is known.
+    useAccountStore.getState().update({ saved: false, needsSignIn: true });
+    expect(await savePin(client(), '1357')).toBe('ok');
+    expect(useParentPinStore.getState().pendingPin).toBe('1357');
+    expect(s.pin).toBe('2468');
+    // Signing in again from Account with the email code.
+    useAccountStore.getState().update({ saved: true, needsSignIn: false });
+    await pullPinStatus(client());
+    expect(s.pin).toBe('1357');
+    expect(useParentPinStore.getState().pendingPin).toBeNull();
+    expect(await verifyPin(client(), '1357')).toBe('ok');
   });
 });
 

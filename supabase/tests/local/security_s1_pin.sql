@@ -40,11 +40,18 @@ begin
   select * into r from public.verify_parent_pin('0000');
   assert r.result = 'wrong' and r.failures = 1, 'wrong PIN counted on the server';
   select * into r from public.verify_parent_pin('1234');
-  assert r.result = 'ok', 'right PIN';
-  assert public.set_parent_pin('5678') = 'ok', 'change within the window';
-  assert public.set_parent_pin('1111') = 'reauth', 'the window is used once';
+  assert r.result = 'ok' and r.pin_version is not null, 'right PIN, with its version';
+  -- Round 2 (S2-P2-2): a right PIN opens no window; changing needs the old PIN.
+  assert public.set_parent_pin('5678') = 'reauth', 'PIN changed right after an unlock without the old one';
+  assert public.set_parent_pin('5678', '0000') = 'wrong', 'PIN changed with a wrong old PIN';
+  select * into r from public.verify_parent_pin('0000');
+  assert r.failures = 2, 'a wrong old PIN counts toward the lock';
+  assert public.set_parent_pin('5678', '1234') = 'ok', 'change with the old PIN';
   select * into r from public.verify_parent_pin('1234');
   assert r.result = 'wrong', 'old PIN no longer works';
+  assert r.failures = 1, 'the count restarted with the right old PIN';
+  select * into r from public.verify_parent_pin('5678');
+  assert r.result = 'ok', 'new PIN works';
 
   -- 5 wrong in a row lock it; the right PIN is refused while locked.
   for i in 1..4 loop perform public.verify_parent_pin('0000'); end loop;
@@ -101,6 +108,8 @@ begin
   -- Back on the phone's own session: the window still holds.
   perform pg_temp.act_as('00000000-0000-0000-0000-00000000e6a2');
   assert public.set_parent_pin('2468') = 'ok', 'PIN set after the email code';
+  -- Round 2: the email-code window is used once.
+  assert public.set_parent_pin('1357') = 'reauth', 'the email-code window was used twice';
   select * into r from public.verify_parent_pin('2468');
   assert r.result = 'ok', 'new PIN works';
 

@@ -33,6 +33,8 @@ export default function SettingsScreen() {
   const hasPin = useParentPinStore((s) => !!s.hash || s.serverHasPin);
   // Changing the parent PIN asks for the current one first (QA R2-05).
   const [pinStep, setPinStep] = useState<'check' | 'set' | 'saved' | null>(null);
+  // The PIN just checked: the server needs it to change the PIN (S2-P2-2).
+  const [currentPin, setCurrentPin] = useState<string | undefined>();
   // "Share with friends" shares the invite link, only where sharing is on (QA R4 P2).
   const member = useFamilyStore(activeProfile);
   const mode = modeOf(useOnboardingStore());
@@ -104,9 +106,25 @@ export default function SettingsScreen() {
           />
         ) : null}
         {pinStep === 'check' ? (
-          <ParentGate onPass={() => setPinStep('set')} onCancel={() => setPinStep(null)} />
+          <ParentGate
+            onPass={(pin) => {
+              setCurrentPin(pin);
+              setPinStep('set');
+            }}
+            onCancel={() => setPinStep(null)}
+          />
         ) : pinStep === 'set' ? (
-          <ParentPinSetup onDone={() => setPinStep('saved')} onCancel={() => setPinStep(null)} />
+          <ParentPinSetup
+            oldPin={currentPin}
+            onDone={() => {
+              setCurrentPin(undefined);
+              setPinStep('saved');
+            }}
+            onCancel={() => {
+              setCurrentPin(undefined);
+              setPinStep(null);
+            }}
+          />
         ) : pinStep === 'saved' ? (
           <AppText color={colors.teal}>{t('settings.pinSaved')}</AppText>
         ) : null}
