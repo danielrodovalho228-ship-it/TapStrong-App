@@ -43,7 +43,7 @@ describe('R8-01 switching away and back', () => {
     await act(() =>
       useOnboardingStore
         .getState()
-        .update({ conditions: ['osteoporosis', 'pregnant_postpartum'], position: 'seated' }),
+        .update({ conditions: ['osteoporosis', 'pregnant_postpartum'], position: 'seated_only' }),
     );
     await act(() => useOnboardingStore.getState().applyAnswer('body', { sex: 'm' }));
     expect(useOnboardingStore.getState().conditions).toContain('pregnant_postpartum');
@@ -55,7 +55,7 @@ describe('R8-01 switching away and back', () => {
 
     const s = useOnboardingStore.getState();
     expect(s.conditions).toEqual(['osteoporosis', 'pregnant_postpartum']);
-    expect(s.position).toBe('seated');
+    expect(s.position).toBe('seated_only');
     expect(s.sex).toBe('m');
   });
 
