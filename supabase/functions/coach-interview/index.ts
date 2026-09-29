@@ -3,6 +3,8 @@
 import Anthropic from 'npm:@anthropic-ai/sdk@0.128.0';
 import { createClient } from 'npm:@supabase/supabase-js@2.117.1';
 
+import { chargeCoachCall, platformIp, type ChargeResult } from '../_shared/coachBudget.ts';
+
 import {
   outputSchema,
   parseRequest,
@@ -50,13 +52,9 @@ const admin = createClient(SUPABASE_URL, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY
   auth: { persistSession: false },
 });
 
-/** The caller's IP, hashed (SHA-256) so no raw address is ever stored. */
+/** The caller's IP (platform header only), hashed so no raw address is ever stored. */
 async function ipHash(req: Request): Promise<string> {
-  const ip =
-    req.headers.get('cf-connecting-ip') ??
-    req.headers.get('x-real-ip') ??
-    (req.headers.get('x-forwarded-for') ?? '').split(',')[0].trim() ??
-    'unknown';
+  const ip = platformIp((name) => req.headers.get(name));
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`coach:${ip}`));
   return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
@@ -148,19 +146,32 @@ Deno.serve(async (req) => {
   if (mode === 'child') return json({ error: 'child_mode' }, 403);
   const parsed = { ...request, mode };
 
-  const { data: budget, error: budgetError } = await admin.rpc('consume_coach_budget', {
-    ip_hash: await ipHash(req),
-    ip_limit: IP_DAILY_LIMIT,
-    global_limit: GLOBAL_DAILY_LIMIT,
-  });
-  if (budgetError) return json({ error: 'coach_unavailable' }, 500);
-  if (budget !== 'ok') return json({ error: 'busy' }, 429);
-
-  const { data: allowed, error: limitError } = await userClient.rpc('consume_coach_call', {
-    daily_limit: DAILY_CALL_LIMIT,
-  });
-  if (limitError) return json({ error: 'coach_unavailable' }, 500);
-  if (!allowed) return json({ error: 'daily_limit' }, 429);
+  // The caller's own limit first: a capped account never spends the shared
+  // IP / global budgets (security round 2, P3).
+  let charge: ChargeResult;
+  try {
+    charge = await chargeCoachCall({
+      user: async () => {
+        const { data, error } = await userClient.rpc('consume_coach_call', {
+          daily_limit: DAILY_CALL_LIMIT,
+        });
+        if (error) throw error;
+        return !!data;
+      },
+      shared: async () => {
+        const { data, error } = await admin.rpc('consume_coach_budget', {
+          ip_hash: await ipHash(req),
+          ip_limit: IP_DAILY_LIMIT,
+          global_limit: GLOBAL_DAILY_LIMIT,
+        });
+        if (error) throw error;
+        return String(data);
+      },
+    });
+  } catch {
+    return json({ error: 'coach_unavailable' }, 500);
+  }
+  if (charge !== 'ok') return json({ error: charge }, 429);
 
   try {
     const keys = await muscleKeys();
