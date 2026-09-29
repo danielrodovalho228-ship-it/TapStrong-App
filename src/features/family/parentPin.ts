@@ -23,6 +23,12 @@ export const PIN_LENGTH = 4;
 export const MAX_TRIES = 5;
 export const LOCK_MINUTES = 15;
 export const PIN_ROUNDS = 100_000;
+/**
+ * Wrong PINs the offline fallback accepts in total before it needs the
+ * server (security round 2, P3): the 15-minute lock uses the device clock,
+ * which airplane mode plus a clock set forward can skip.
+ */
+export const MAX_OFFLINE_WRONG = 10;
 
 type Algo = 'pbkdf2' | 'fnv';
 
@@ -42,6 +48,8 @@ type State = {
   pendingPin: string | null;
   /** The server PIN's version this phone's copy was made from (round 2, S2-P2-3). */
   pinVersion: string | null;
+  /** Wrong offline tries; only goes up, and only a server "ok" resets it (round 2, P3). */
+  offlineWrong: number;
   reset: () => void;
 };
 
@@ -54,6 +62,7 @@ const EMPTY = {
   serverHasPin: false,
   pendingPin: null,
   pinVersion: null,
+  offlineWrong: 0,
 };
 
 export const useParentPinStore = create<State>()(
@@ -75,7 +84,18 @@ export const useParentPinStore = create<State>()(
         serverHasPin,
         pendingPin,
         pinVersion,
-      }) => ({ hash, salt, algo, failures, lockedUntil, serverHasPin, pendingPin, pinVersion }),
+        offlineWrong,
+      }) => ({
+        hash,
+        salt,
+        algo,
+        failures,
+        lockedUntil,
+        serverHasPin,
+        pendingPin,
+        pinVersion,
+        offlineWrong,
+      }),
       // A plain-storage PIN is never imported: anyone with file access could
       // plant one before the owner set theirs (QA R4-05). The stale copy from
       // dev builds before round 3 is just deleted.

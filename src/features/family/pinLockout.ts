@@ -7,7 +7,13 @@ import { isNetworkError } from '@/lib/network';
 import { useAccountStore } from '../account/store';
 
 import { useOwnerIdentityStore } from './ownerIdentity';
-import { checkParentPin, setParentPin, useParentPinStore, type PinCheck } from './parentPin';
+import {
+  checkParentPin,
+  MAX_OFFLINE_WRONG,
+  setParentPin,
+  useParentPinStore,
+  type PinCheck,
+} from './parentPin';
 
 /**
  * The parent PIN on the server (security round 1, S1-03, Daniel's decision).
@@ -88,7 +94,20 @@ async function flushPendingPin(supabase: SupabaseClient) {
 /** Kept for older callers: the status includes the lock. */
 export const pullPinLock = pullPinStatus;
 
-const localCheck = (pin: string): GateCheck => (native() ? checkParentPin(pin) : 'offline');
+/**
+ * The phone's copy (native only). With an account, offline wrong tries count
+ * on a counter that never goes down offline: after MAX_OFFLINE_WRONG the
+ * phone needs the server again (security round 2, P3).
+ */
+const localCheck = (pin: string): GateCheck => {
+  if (!native()) return 'offline';
+  const account = signedIn();
+  if (account && useParentPinStore.getState().offlineWrong >= MAX_OFFLINE_WRONG) return 'offline';
+  const result = checkParentPin(pin);
+  if (account && (result === 'wrong' || result === 'locked'))
+    useParentPinStore.setState((s) => ({ offlineWrong: s.offlineWrong + 1 }));
+  return result;
+};
 
 /**
  * The parent gate's check. Server first with a saved account; the phone's
@@ -129,6 +148,7 @@ export async function verifyPin(supabase: SupabaseClient | null, pin: string): P
         failures: 0,
         lockedUntil: null,
         pinVersion: version,
+        offlineWrong: 0,
       });
       return 'ok';
     case 'wrong':

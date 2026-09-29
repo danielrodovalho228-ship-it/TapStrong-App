@@ -281,6 +281,30 @@ describe('offline fallback', () => {
     expect(await verifyPin(client(), '1111')).toBe('wrong');
   });
 
+  it('round 2 P3: offline wrong tries never reset offline; after 10 the phone needs the server', async () => {
+    setParentPin('2468');
+    const net = { data: null, error: { message: 'TypeError: Network request failed' } };
+    mockRpc.mockResolvedValue(net);
+    const later = (min: number) => new Date(NOW.getTime() + min * 60000);
+    try {
+      for (let n = 0; n < 10; n++) {
+        // Airplane mode + the clock moved past every lock.
+        clock.now = () => later(n * 20);
+        expect(['wrong', 'locked']).toContain(await verifyPin(client(), '0000'));
+      }
+      clock.now = () => later(500);
+      expect(useParentPinStore.getState().offlineWrong).toBe(10);
+      // Even the right PIN needs the server now.
+      expect(await verifyPin(client(), '2468')).toBe('offline');
+      // Back online: the server's "ok" resets the count.
+      server('2468');
+      expect(await verifyPin(client(), '2468')).toBe('ok');
+      expect(useParentPinStore.getState().offlineWrong).toBe(0);
+    } finally {
+      clock.now = () => NOW;
+    }
+  });
+
   it('web: never checks a PIN on its own', async () => {
     setParentPin('2468');
     const os = jest.replaceProperty(Platform, 'OS', 'web');
