@@ -105,7 +105,7 @@ Depois do push: `npm run server:check` (com as variáveis do `.env`) deve dizer 
 - `REVENUECAT_ACCEPT_SANDBOX`: **não** defina no projeto de produção. Só num projeto de teste, com `true`, para compras do TestFlight contarem como teste.
 - `COACH_IP_DAILY_LIMIT` (padrão 60) e `COACH_GLOBAL_DAILY_LIMIT` (padrão 5000): opcionais, para ajustar o orçamento diário do coach.
 
-**Versão web (quando houver hospedagem):** depois de `npx expo export --platform web --output-dir dist`, rode `npm run web:headers dist`. Ele grava `dist/_headers` (Netlify e Cloudflare Pages) e `dist/vercel.json` (Vercel) com a CSP e os cabeçalhos de segurança. Na web, os perfis da família ficam desligados até o PIN no servidor passar no QA da web.
+**Versão web (quando houver hospedagem):** rode `npm run web:export`: ele exporta para `dist`, grava os cabeçalhos e confere o bundle (antes eram dois passos). Ele grava `dist/_headers` (Netlify e Cloudflare Pages) e `dist/vercel.json` (Vercel) com a CSP e os cabeçalhos de segurança. Na web, os perfis da família ficam desligados até o PIN no servidor passar no QA da web.
 
 ## Lacunas do produto para decidir
 

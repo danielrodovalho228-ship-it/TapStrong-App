@@ -10,7 +10,7 @@ import { join } from 'node:path';
 import { chromium } from 'playwright-core';
 
 import { executablePath, exportWeb, profile, serve } from './lib/web.mjs';
-import { hashOf, headerPolicy, inlineScripts, writeHeaders } from './web-headers.mjs';
+import { cspProblems, hashOf, headerPolicy, inlineScripts, writeHeaders } from './web-headers.mjs';
 
 const reuse = process.env.THEME_EXPORT_DIR;
 const out = reuse ?? mkdtempSync(join(tmpdir(), 'cold-'));
@@ -78,24 +78,21 @@ try {
   // Security round 2, S2-P2-1: a teen typing an address still gets only the
   // note on the web; the account and the birth-date fix stay reachable.
   {
+    const TEEN_NOTE = 'tapstrong for teens is in the mobile app';
     const teenYear = new Date().getFullYear() - 15;
     for (const path of ['/settings', '/workout/new', '/restrictions', '/programs', '/home']) {
       const { context, page } = await coldPage({}, teenYear);
       await page.goto(`${origin}${path}`, { waitUntil: 'networkidle' });
       await page.waitForTimeout(600);
-      const text = await page.evaluate(() => document.body.innerText);
-      if (!text.includes('TapStrong for teens is in the mobile app'))
-        failed.push(`teen on the web: ${path} opened the app`);
+      // innerText follows the title's uppercase style: compare without case.
+      const text = (await page.evaluate(() => document.body.innerText)).toLowerCase();
+      if (!text.includes(TEEN_NOTE)) failed.push(`teen on the web: ${path} opened the app`);
       await context.close();
     }
     const { context, page } = await coldPage({}, teenYear);
     await page.goto(`${origin}/account`, { waitUntil: 'networkidle' });
     await page.waitForTimeout(600);
-    if (
-      (await page.evaluate(() => document.body.innerText)).includes(
-        'TapStrong for teens is in the mobile app',
-      )
-    )
+    if ((await page.evaluate(() => document.body.innerText)).toLowerCase().includes(TEEN_NOTE))
       failed.push('teen on the web: /account is blocked (it must stay reachable)');
     await context.close();
   }
@@ -141,10 +138,20 @@ try {
   close();
 }
 
+// Round 2, P3: the same CSP check on the production export, every page.
+if (!process.env.WEB_CHECK_SKIP_RELEASE) {
+  const release = mkdtempSync(join(tmpdir(), 'release-'));
+  exportWeb(release, { release: true });
+  for (const p of cspProblems(release)) failed.push(`release export: ${p}`);
+  const h = writeHeaders(release);
+  if (/preload|includeSubDomains/.test(h['Strict-Transport-Security']))
+    failed.push('release headers: HSTS preload / includeSubDomains before the domain is decided');
+}
+
 if (failed.length) {
   console.error(`web:check failed:\n- ${failed.join('\n- ')}`);
   process.exit(1);
 }
 console.log(
-  'web:check passed: cold-loaded edit screens show and keep the saved answers; no build-day dates in the static HTML; CSP hashes match the inline scripts and nothing was blocked',
+  'web:check passed: cold-loaded edit screens show and keep the saved answers; no build-day dates in the static HTML; CSP hashes match the inline scripts (dev and release exports) and nothing was blocked',
 );

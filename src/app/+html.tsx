@@ -27,6 +27,10 @@ const script = `try{var v=JSON.parse(localStorage.getItem('tapstrong\\\\appearan
 const csp = contentSecurityPolicy(
   [script, EXPO_HYDRATE_SCRIPT],
   process.env.EXPO_PUBLIC_SUPABASE_URL,
+  {
+    posthogHost: process.env.EXPO_PUBLIC_POSTHOG_HOST,
+    sentryDsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
+  },
 );
 
 /** Web only: the HTML shell around every page (static export). */

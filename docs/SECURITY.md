@@ -15,8 +15,9 @@ Automatic checks:
   DEFINER, anon grants).
 - Pre-commit hook (`.githooks/pre-commit`, installed by `npm ci`): no secret in
   the lines being committed.
-- `npm run web:check`: the page's CSP hashes match its inline scripts and the
-  CSP blocks nothing the app needs.
+- `npm run web:check`: the page's CSP hashes match its inline scripts, on the
+  development and the production export, and the CSP blocks nothing the app
+  needs.
 
 ## 1. XSS — no untrusted HTML
 
@@ -29,8 +30,12 @@ Automatic checks:
 - The web page ships a Content-Security-Policy (`src/lib/csp.ts`): scripts from
   our own origin plus the two inline scripts by SHA-256 hash (no
   `unsafe-inline` / `unsafe-eval` for scripts), `object-src 'none'`,
-  `base-uri 'none'`. Host headers add `frame-ancestors 'none'`, nosniff,
-  Referrer-Policy and HSTS (`npm run web:headers <dir>`).
+  `base-uri 'none'`. `connect-src` lists only our Supabase project and the
+  PostHog / Sentry hosts set for the build (no wildcards). Host headers add
+  `frame-ancestors 'none'`, nosniff, Referrer-Policy and HSTS without
+  `includeSubDomains` / `preload` until the domain is decided. `npm run
+  web:export` exports, writes the headers (refusing an export whose CSP
+  doesn't match its pages) and scans the bundle for secrets (round 2, P3).
 - Every `Linking.openURL` target is a constant or built from our own settings.
 - Checked by: `security:check` (sinks), `web:check` (CSP).
 

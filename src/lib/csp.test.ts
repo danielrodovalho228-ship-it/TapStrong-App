@@ -26,3 +26,21 @@ it('allows only the listed inline scripts, our Supabase project and the services
     "frame-ancestors 'none'",
   );
 });
+
+it('round 2 P3: connect-src lists only the PostHog and Sentry hosts this build uses', () => {
+  const csp = contentSecurityPolicy([], 'https://abcd.supabase.co', {
+    posthogHost: 'https://eu.i.posthog.com',
+    sentryDsn: 'https://pubkey@o123.ingest.de.sentry.io/456',
+  });
+  const connect = csp.split('; ').find((d) => d.startsWith('connect-src'))!;
+  expect(connect).toBe(
+    "connect-src 'self' https://abcd.supabase.co wss://abcd.supabase.co https://eu.i.posthog.com https://o123.ingest.de.sentry.io",
+  );
+  expect(connect).not.toContain('*');
+  // Not set, or not https: nothing added.
+  const bare = contentSecurityPolicy([], undefined, {
+    posthogHost: 'http://x.test',
+    sentryDsn: '',
+  });
+  expect(bare.split('; ').find((d) => d.startsWith('connect-src'))).toBe("connect-src 'self'");
+});

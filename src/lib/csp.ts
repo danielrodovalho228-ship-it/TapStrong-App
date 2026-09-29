@@ -35,22 +35,31 @@ function supabaseOrigins(url: string | undefined): string[] {
   }
 }
 
+/** An https origin from a URL (PostHog host) or a DSN (Sentry: key@host/project). */
+export function originOf(url: string | undefined): string | null {
+  try {
+    const u = new URL(url ?? '');
+    return u.protocol === 'https:' ? `https://${u.host}` : null;
+  } catch {
+    return null;
+  }
+}
+
 export function contentSecurityPolicy(
   inlineScripts: string[],
   supabaseUrl: string | undefined,
-  { forHeader = false }: { forHeader?: boolean } = {},
+  {
+    forHeader = false,
+    posthogHost,
+    sentryDsn,
+  }: { forHeader?: boolean; posthogHost?: string; sentryDsn?: string } = {},
 ): string {
+  // Only the hosts this build is set up for (round 2, P3), no wildcards.
+  const services = [originOf(posthogHost), originOf(sentryDsn)].filter((o): o is string => !!o);
   const directives = [
     "default-src 'self'",
     `script-src 'self' ${inlineScripts.map(scriptHash).join(' ')} https://challenges.cloudflare.com`,
-    [
-      "connect-src 'self'",
-      ...supabaseOrigins(supabaseUrl),
-      'https://*.posthog.com',
-      'https://*.ingest.sentry.io',
-      'https://*.ingest.us.sentry.io',
-      'https://*.ingest.de.sentry.io',
-    ].join(' '),
+    ["connect-src 'self'", ...supabaseOrigins(supabaseUrl), ...services].join(' '),
     "img-src 'self' data: blob:",
     "media-src 'self' data: blob:",
     "font-src 'self' data:",

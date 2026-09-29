@@ -12,9 +12,13 @@ export const executablePath = [
   join(browsers, 'chromium-1194', 'chrome-linux', 'chrome'),
 ].find((p) => existsSync(p) && statSync(p).isFile());
 
-/** A development export: its sample library lets workout screens render offline. */
-export function exportWeb(out) {
-  execSync(`npx expo export --clear --dev --platform web --output-dir ${out}`, {
+/**
+ * A development export by default: its sample library lets workout screens
+ * render offline. `{ release: true }` is the production build (round 2, P3:
+ * web:check also checks the CSP hashes on it).
+ */
+export function exportWeb(out, { release = false } = {}) {
+  execSync(`npx expo export --clear ${release ? '' : '--dev '}--platform web --output-dir ${out}`, {
     stdio: 'ignore',
     env: { ...process.env, EXPO_OFFLINE: '1', CI: '1' },
   });
