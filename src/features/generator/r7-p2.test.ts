@@ -3,6 +3,7 @@
  * plank with high blood pressure, no holds as gym main work for any gym
  * goal, and none in a gym-strength Single workout.
  */
+import { PRESETS } from '../equipment/catalog';
 import { devLibrary } from '../exercises/library';
 import { muscleByKey } from '../muscles';
 import { GYM_EQUIPMENT_OPTIONS } from '../onboarding/options';
@@ -10,6 +11,7 @@ import { planById, planDayInput } from '../program/plans';
 
 import { blockReason } from './filters';
 import { generateSession } from './generate';
+import { realVerticalPull, simulate, windows } from './r8-sim';
 import type { GeneratorInput, RecentSession } from './types';
 
 const LIBRARY = devLibrary();
@@ -114,5 +116,54 @@ describe('holds and blood pressure', () => {
     });
     expect(main(s).length).toBeGreaterThan(0);
     for (const i of main(s)) expect(byId.get(i.exerciseId)!.dose).not.toBe('time');
+  });
+});
+
+describe('R8 P2: pull ≥ 90% of push over every strict 7-day window', () => {
+  const small = PRESETS.smallGym.items;
+  it.each([
+    [
+      'custom, small gym, 3 exercises, 3 days',
+      { equipment: small, exercisesPerSession: 3 },
+      null,
+      [1, 3, 5],
+    ],
+    [
+      'custom, small gym, 3 exercises, 2 days',
+      { equipment: small, exercisesPerSession: 3 },
+      null,
+      [2, 5],
+    ],
+    ['custom, small gym, 5 exercises', { equipment: small }, null, [1, 3, 5]],
+    ['custom, full gym, 4 exercises, 4 days', { exercisesPerSession: 4 }, null, [1, 2, 4, 5]],
+    ['Build muscle full body 3', {}, 'muscle-fullBody-3', [1, 3, 5]],
+    ['Build muscle upper/lower 4', {}, 'muscle-upperLower-4', [1, 2, 4, 5]],
+    ['Build muscle upper/lower 5', {}, 'muscle-upperLower-5', [1, 2, 3, 4, 5]],
+    ['Build muscle PPL 6', {}, 'muscle-ppl-6', [1, 2, 3, 4, 5, 6]],
+  ] as const)(
+    '%s: every start date, all primary muscles, real vertical pulls',
+    (_n, patch, plan, days) => {
+      for (const start of ['2026-09-07', '2026-09-10', '2026-10-01']) {
+        const sim = simulate({
+          base: { ...base, ...(patch as Partial<GeneratorInput>) },
+          library: LIBRARY,
+          plan: plan ? planById(plan) : undefined,
+          start,
+          weekdays: [...days],
+          weeks: 6,
+        });
+        for (const w of windows(sim)) {
+          expect({ start, ...w, ok: w.pull >= 0.9 * w.push }).toMatchObject({ ok: true });
+          expect({ start, end: w.end, vertical: w.vertical }).toMatchObject({ vertical: true });
+        }
+      }
+    },
+  );
+
+  it('a scapular dip or a straight-arm pulldown is not a real vertical pull', () => {
+    for (const slug of ['seated_scapular_dip', 'straight_arm_cable_pulldown']) {
+      const e = LIBRARY.find((x) => x.slug === slug);
+      expect(e && realVerticalPull(e, 'gym')).toBe(false);
+    }
   });
 });

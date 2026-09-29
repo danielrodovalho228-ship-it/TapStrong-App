@@ -1118,7 +1118,7 @@
     },
     "band_lat_pulldown": {
       "name": "Jalón al pecho con banda",
-      "cues": "Ancla la banda arriba, de rodillas o de pie, y baja los codos a los costados hacia atrás."
+      "cues": "Ancla la banda arriba, sentado o de pie, y baja los codos a los costados hacia atrás."
     },
     "seated_band_pulldown": {
       "name": "Jalón sentado con banda",

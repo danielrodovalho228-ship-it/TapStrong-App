@@ -343,17 +343,32 @@ const isLightFiller = (e: Exercise) =>
   e.pattern === 'core_stability';
 
 /** Patterns the balance filler never adds: fine as a chosen target, odd as padding. */
+/** Spare time is filled with sets up to this share of the chosen minutes. */
+const EXTRA_SETS_SHARE = 0.85;
+
 const MINOR_FILLER_PATTERNS = ['ankle', 'wrist', 'breathing', 'mobility', 'stretch'];
 
 export function generateSession(input: GeneratorInput): GeneratedSession {
-  // A deload week keeps the exercises and cuts the sets by 40% (A2).
+  // A deload week keeps the exercises and cuts the sets by 40% (A2). The
+  // normal session is built first, then its sets are cut: fewer sets must not
+  // leave room for more exercises under a time cap (QA R8 P2).
   if (input.deload) {
-    const s = generateSession({
-      ...input,
-      deload: false,
-      setsPerExercise: deloadSets(input.setsPerExercise),
+    const s = generateSession({ ...input, deload: false, noExtraSets: true });
+    if (s.error) return s;
+    let saved = 0;
+    const items = s.items.map((i) => {
+      if (i.role !== 'main') return i;
+      const cut = { ...i, sets: deloadSets(i.sets) };
+      cut.estSeconds = estimateSeconds(cut);
+      saved += i.estSeconds - cut.estSeconds;
+      return cut;
     });
-    return s.error ? s : { ...s, deload: true };
+    return {
+      ...s,
+      items,
+      estimatedMinutes: Math.max(1, Math.round((s.estimatedMinutes * 60 - saved) / 60)),
+      deload: true,
+    };
   }
   const pool = programmablePool(input);
   const minutes = Math.max(10, Math.min(120, Math.round(input.minutes)));
@@ -488,7 +503,19 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   };
   // Variety (QA R4 P2): moves from the last two sessions step aside when
   // another good option exists, so a day doesn't repeat three days later.
-  const recentIds = new Set(recent.slice(0, 2).flatMap((r) => r.exerciseIds ?? []));
+  // Variety: the last two sessions, and on a split day the last session of
+  // the same day type too (QA R8 P2: PPL-6 repeated 4–5 moves every 3 days).
+  const dayGroups = input.dayGroups ?? [];
+  const sameDayType = dayGroups.length
+    ? recent.find((r) => {
+        const gs = r.mainMuscles.map((m) => groupOf(parentOf(m))).filter((g) => g && g !== 'core');
+        return gs.length > 0 && gs.every((g) => dayGroups.includes(g!));
+      })
+    : undefined;
+  const recentIds = new Set([
+    ...recent.slice(0, 2).flatMap((r) => r.exerciseIds ?? []),
+    ...(sameDayType?.exerciseIds ?? []),
+  ]);
   const rotate = (all: Exercise[], salt: number) => {
     // A starred exercise at the top stays, even if done last time (B4).
     const starred = all.find((e) => input.favourites?.includes(e.id));
@@ -514,9 +541,18 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     parentUses.set(parent, u);
     main.push(mainItem(pick, target, input));
   };
+  // Every primary muscle must be recovered, not only the target (QA R8 P2:
+  // a back squat 24 h after single-leg RDLs, a row the day after pull-ups):
+  // such moves go after the ready ones.
+  const primariesReady = (e: Exercise) =>
+    e.muscles.filter((m) => m.role === 'primary').every((m) => isReady(rootOf(m.muscleKey)));
+  const readyFirst = (list: Exercise[]) => [
+    ...list.filter(primariesReady),
+    ...list.filter((e) => !primariesReady(e)),
+  ];
   targets.slice(0, slots).forEach((target, i) => {
-    const options = rankForTarget(pool, target, input.mode, input.favourites).filter(
-      (e) => !used.has(e.id),
+    const options = readyFirst(
+      rankForTarget(pool, target, input.mode, input.favourites).filter((e) => !used.has(e.id)),
     );
     const pick = input.rehab ? options[0] : rotate(moving(options), i);
     if (pick) add(pick, target);
@@ -563,8 +599,6 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   const weekCount = groupWeekCounts(input);
   // Readiness is per muscle (QA R3-04): one recent muscle no longer closes its
   // whole group, only the moves that train it.
-  const primariesReady = (e: Exercise) =>
-    e.muscles.filter((m) => m.role === 'primary').every((m) => isReady(rootOf(m.muscleKey)));
   // A split plan's day fills only its own groups (QA R4-08).
   const fill: MovementGroup[] = (['push', 'pull', 'legs', 'core'] as MovementGroup[])
     .filter((g) => !input.dayGroups?.length || input.dayGroups.includes(g))
@@ -585,18 +619,25 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   };
   // Push and pull moves in the last 7 days (sets follow moves closely): the
   // exercises when known, else one per trained parent muscle.
+  // "The last 7 days" are 7 calendar days, today included: a session 7 days
+  // ago is out (QA R8 P2: the window counted 8 days).
+  const dayNo = (d: string) => Math.floor(Date.parse(`${d}T12:00:00Z`) / 864e5);
+  const todayKey = input.today ?? input.now?.slice(0, 10);
+  const inWeek = (r: RecentSession) => !todayKey || dayNo(todayKey) - dayNo(r.date) < 7;
+  // Every primary muscle counts (QA R8 P2): a pullover is push and pull.
+  const groupsOf = (e: Exercise | undefined) =>
+    new Set(
+      e ? e.muscles.filter((m) => m.role === 'primary').map((m) => groupOf(m.muscleKey)) : [],
+    );
   const weekMoves = { push: 0, pull: 0 };
   for (const r of recent) {
-    if (nowMsEarly !== undefined && nowMsEarly - sessionMsEarly(r) > 7 * 24 * 3600 * 1000) continue;
-    const keys = r.exerciseIds?.length
-      ? r.exerciseIds.map((id) => {
-          const e = byIdAll.get(id);
-          return e ? (topPrimary(e) ?? '') : '';
-        })
-      : [...new Set(r.mainMuscles.map(parentOf))];
-    for (const k of keys) {
-      const g = groupOf(k);
-      if (g === 'push' || g === 'pull') weekMoves[g]++;
+    if (!inWeek(r)) continue;
+    const sets = r.exerciseIds?.length
+      ? r.exerciseIds.map((id) => groupsOf(byIdAll.get(id)))
+      : [...new Set(r.mainMuscles.map(parentOf))].map((k) => new Set([groupOf(k)]));
+    for (const gs of sets) {
+      if (gs.has('push')) weekMoves.push++;
+      if (gs.has('pull')) weekMoves.pull++;
     }
   }
   // Vertical pulls were rare (QA R5 P2: lats once in 4 weeks): when none was
@@ -607,7 +648,9 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     !!e &&
     e.pattern === 'vertical_pull' &&
     (input.location !== 'gym' || topPrimary(e) === 'lats') &&
-    e.dose !== 'time';
+    e.dose !== 'time' &&
+    // A straight-arm pulldown or a pullover is an isolation move (QA R8 P2).
+    !e.isolation;
   const recentPatterns = new Set(
     recent
       .slice(0, 2)
@@ -617,9 +660,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   );
   // And at least one in any 7 days.
   const verticalThisWeek = recent.some(
-    (r) =>
-      (nowMsEarly === undefined || nowMsEarly - sessionMsEarly(r) <= 7 * 24 * 3600 * 1000) &&
-      (r.exerciseIds ?? []).some((id) => realVertical(byIdAll.get(id))),
+    (r) => inWeek(r) && (r.exerciseIds ?? []).some((id) => realVertical(byIdAll.get(id))),
   );
   const needVertical = () =>
     !main.some((i) => realVertical(byIdAll.get(i.exerciseId))) &&
@@ -676,31 +717,64 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   // last 7 days (under 90%), or no real vertical pull is in the week, the
   // last push target gives its slot to a pull (QA R6 P2). A push goal
   // always keeps at least one move.
-  const pushNow = () => main.filter((i) => groupOf(i.targetMuscle ?? '') === 'push').length;
-  const pullNow = () => main.filter((i) => groupOf(i.targetMuscle ?? '') === 'pull').length;
+  const itemGroups = (i: SessionItem) => groupsOf(byIdAll.get(i.exerciseId));
+  const pushNow = () => main.filter((i) => itemGroups(i).has('push')).length;
+  const pullNow = () => main.filter((i) => itemGroups(i).has('pull')).length;
   // Aim for pull ≥ push over the rolling 7 days, checked every session, so
   // calendar weeks stay at 90% or more (QA R7 P2: 75–78% weeks).
   const pullShortNow = () => weekMoves.pull + pullNow() < weekMoves.push + pushNow();
   const verticalDue = () =>
     !verticalThisWeek && !main.some((i) => realVertical(byIdAll.get(i.exerciseId)));
   const swappedForPull = new Set<string>();
-  for (let swaps = 0; swaps < slots; swaps++) {
-    // Split days swap only when the day trains pull too (an upper day).
-    const pullDay = !input.dayGroups?.length || input.dayGroups.includes('pull');
-    if (onlyTargets || !pullDay || pushNow() < 2) break;
-    if (!pullShortNow() && !(verticalDue() && swaps === 0)) break;
-    const at = main.map((i) => groupOf(i.targetMuscle ?? '')).lastIndexOf('push');
+  const exerciseAt = (i: number) => byIdAll.get(main[i].exerciseId);
+  // Takes the item at `at` out and puts the next pull move in; undone when
+  // there is none (or, for a vertical, when it isn't a real vertical pull).
+  const swapToPull = (at: number, vertical: boolean) => {
     const [gone] = main.splice(at, 1);
     used.delete(gone.exerciseId);
     const pick = nextFor('pull');
-    if (!pick) {
+    if (!pick || (vertical && !realVertical(pick))) {
       main.splice(at, 0, gone);
       used.add(gone.exerciseId);
-      break;
+      return false;
     }
     add(pick, { muscle: topPrimary(pick)!, family: [topPrimary(pick)!], goal: defaultGoal });
     added.set(pick.id, 'pull');
     swappedForPull.add(pick.id);
+    return true;
+  };
+  // The slot a pull may take: the last push when two or more are in (a push
+  // goal always keeps one), else the last filler that is neither push nor
+  // pull (QA R8 P2: the "two pushes" guard kept 3-exercise weeks at 80%).
+  const pullSlot = () => {
+    const pushOnly = (i: SessionItem) => itemGroups(i).has('push') && !itemGroups(i).has('pull');
+    if (pushNow() >= 2) {
+      for (let i = main.length - 1; i >= 0; i--) if (pushOnly(main[i])) return i;
+    }
+    for (let i = main.length - 1; i >= 0; i--) {
+      const g = added.get(main[i].exerciseId);
+      if (g && g !== 'push' && g !== 'pull') return i;
+    }
+    return -1;
+  };
+  for (let swaps = 0; swaps < slots; swaps++) {
+    // Split days swap only when the day trains pull too (an upper day).
+    const pullDay = !input.dayGroups?.length || input.dayGroups.includes('pull');
+    if (onlyTargets || !pullDay) break;
+    const due = verticalDue() && swaps === 0;
+    if (!pullShortNow() && !due) break;
+    // A vertical pull due: a pull filler already in becomes one first.
+    if (due) {
+      const at = main.findIndex(
+        (item, i) =>
+          added.get(item.exerciseId) === 'pull' &&
+          !swappedForPull.has(item.exerciseId) &&
+          !realVertical(exerciseAt(i)),
+      );
+      if (at >= 0 && swapToPull(at, true)) continue;
+    }
+    const at = pullSlot();
+    if (at < 0 || !swapToPull(at, false)) break;
   }
   if (!main.length && allTargets.length && !readyTargets.length && !focused) {
     // Everything chosen is still recovering and nothing else is ready:
@@ -821,6 +895,47 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
       used.delete(finisher.exerciseId);
       finisher = null;
     } else if (main.length <= 1 || !dropOne()) break;
+  }
+  // Spare time becomes sets, never exercises (Daniel, Phase 20): the count
+  // stays as chosen ("Add 1 exercise?" stays). Under ~85% of the chosen time,
+  // one set at a time goes to the main moves in turn, up to 4 per move for
+  // adults 18–59 and 3 for teens, 60+, kids and joint care. 30 min keeps its
+  // trim; deload weeks and focused sessions are unchanged.
+  const fillTo = budget * EXTRA_SETS_SHARE;
+  if (!focused && !input.noExtraSets && minutes > 30 && total() < fillTo) {
+    const cap = (i: SessionItem) => {
+      const e = byIdAll.get(i.exerciseId);
+      if (!e || e.pattern === 'balance' || e.pattern === 'mobility' || e.pattern === 'stretch')
+        return i.sets;
+      const light =
+        input.mode !== 'adult' || needsJointCare(e, input) || needsCaution(input.conditions ?? []);
+      return light ? 3 : 4;
+    };
+    // Pull moves get their extra set first and push moves last, and a push
+    // move never gets ahead of the session's pull sets: the extra sets keep
+    // the pull/push balance (QA R5 P2).
+    const rank = (i: SessionItem) => {
+      const g = itemGroups(i);
+      return g.has('pull') ? 0 : g.has('push') ? 2 : 1;
+    };
+    const setsOf = (g: MovementGroup) =>
+      main.filter((i) => itemGroups(i).has(g)).reduce((n, i) => n + i.sets, 0);
+    const order = main.map((_, n) => n).sort((a, b) => rank(main[a]) - rank(main[b]) || a - b);
+    for (let grew = true; grew && total() < fillTo;) {
+      grew = false;
+      for (const n of order) {
+        if (total() >= fillTo) break;
+        const item = main[n];
+        if (item.sets >= cap(item)) continue;
+        const pushOnly = itemGroups(item).has('push') && !itemGroups(item).has('pull');
+        if (pushOnly && pullNow() > 0 && setsOf('push') + 1 > setsOf('pull')) continue;
+        const next = { ...item, sets: item.sets + 1 };
+        next.estSeconds = estimateSeconds(next);
+        if (total() - item.estSeconds + next.estSeconds > budget) continue;
+        main[n] = next;
+        grew = true;
+      }
+    }
   }
   // Name the chosen muscles that didn't fit: they lead the next session,
   // since the least recently trained go first (QA R2-10).

@@ -53,6 +53,8 @@ export type GeneratorInput = {
   /** Areas where a sharp pain stopped a workout today: no exercise moving that joint today (QA R2-02). */
   /** The last week of a program block: 40% less volume (improvements v1, A2). */
   deload?: boolean;
+  /** Internal: no extra sets for spare time (the deload builds from this). */
+  noExtraSets?: boolean;
   /** Starred exercises: preferred when safe (improvements v1, B4). */
   favourites?: string[];
   /** Shorter warm-up and cool-down (Settings, D4): shortened, never removed. */

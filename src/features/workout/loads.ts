@@ -37,6 +37,8 @@ export type LoadAdvice =
       load: number;
       unit: LoadUnit;
       change: 'up' | 'same' | 'down';
+      /** The load the change starts from, in `unit` ("Try +X" = load − from). */
+      from?: number;
       /** Already at the lightest real load and still missing reps: an easier version. */
       easier?: boolean;
     }
@@ -107,6 +109,15 @@ export function convertLoad(value: number, from: LoadUnit, to: LoadUnit): number
 }
 const toUnit = convertLoad;
 
+/** The exact value in the other unit, not rounded. */
+function rawConvert(value: number, from: LoadUnit, to: LoadUnit): number {
+  if (from === to) return value;
+  return from === 'lb' ? value * 0.45359237 : value / 0.45359237;
+}
+
+/** An empty Olympic bar. */
+const EMPTY_BAR: Record<LoadUnit, number> = { lb: 45, kg: 20 };
+
 /** No step is bigger than this share of the current load (QA R8-07). */
 const MAX_STEP_SHARE = 0.25;
 
@@ -168,7 +179,6 @@ export function loadAdvice(input: {
     !loadedMove || (lastTwo.length === 2 && loadOf(lastTwo[0]) === loadOf(lastTwo[1]));
   const upDue =
     lastTwo.length === 2 && lastTwo.every((s) => allTop(s, top)) && sameLoad && !input.deload;
-  const missedTwo = lastTwo.length === 2 && lastTwo.every((s) => missed(s, bottom));
   const missedThree = sessions.length >= 3 && sessions.slice(0, 3).every((s) => missed(s, bottom));
   // Heart / blood pressure also go reps first before any load (QA R7 P2).
   const slow = input.mode === 'senior' || !!input.jointCare || !!input.cardio;
@@ -191,9 +201,12 @@ export function loadAdvice(input: {
   const logged = lastLoaded!.unit ?? unit;
   // A load logged in the other unit lands on a real size of this equipment
   // (QA R7 P2: 32 lb became a "14.5 kg" dumbbell).
-  const converted = toUnit(lastLoaded!.load!, logged, unit);
+  // The raw value is rounded once, to the equipment step (QA R8 P2: 32 lb
+  // became 16 kg, not 14, after a first rounding to 2.5 kg).
   const load =
-    equip && logged !== unit ? Math.max(equip, Math.round(converted / equip) * equip) : converted;
+    equip && logged !== unit
+      ? Math.max(equip, Math.round(rawConvert(lastLoaded!.load!, logged, unit) / equip) * equip)
+      : toUnit(lastLoaded!.load!, logged, unit);
   const lower = isLowerBody(exercise) && !minor;
   const baseStep = (lower ? LOWER_STEP : UPPER_STEP)[unit];
   // Steps follow the equipment for everyone (QA R7 P2, R8-07, loadStep).
@@ -215,17 +228,20 @@ export function loadAdvice(input: {
         load,
         unit,
       };
-    return { kind: 'load', load: load + step, unit, change: 'up' };
+    return { kind: 'load', load: load + step, unit, change: 'up', from: load };
   }
   if (missedThree) {
     // Never below the lightest real load (QA R7 P2: 5 lb → 0 lb): at the
     // lightest, an easier version instead.
-    const lightest = equip ?? UPPER_STEP[unit];
-    if (load - step < lightest) return { kind: 'load', load, unit, change: 'same', easier: true };
-    return { kind: 'load', load: load - step, unit, change: 'down' };
+    // A barbell never goes below the empty bar (QA R8 P2).
+    const lightest = exercise.equipment.includes('barbell')
+      ? EMPTY_BAR[unit]
+      : (equip ?? UPPER_STEP[unit]);
+    if (load - step < lightest)
+      return { kind: 'load', load, unit, change: 'same', easier: true, from: load };
+    return { kind: 'load', load: load - step, unit, change: 'down', from: load };
   }
-  if (missedTwo) return { kind: 'load', load, unit, change: 'same' };
-  return { kind: 'load', load, unit, change: 'same' };
+  return { kind: 'load', load, unit, change: 'same', from: load };
 }
 
 /** "3 × 10–12 · 25 lb" (A4): the dose line with the suggested load. */

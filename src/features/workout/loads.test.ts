@@ -37,9 +37,15 @@ describe('suggested load (A4)', () => {
 
   it('top of the range in the last 2 sessions with RPE ≤ 8: +5 lb upper, +10 lb lower', () => {
     const top = [s([12, 12, 12], 100, 8), s([12, 12, 12], 100, 7)];
-    expect(advice(top)).toEqual({ kind: 'load', load: 105, unit: 'lb', change: 'up' });
+    expect(advice(top)).toEqual({ kind: 'load', load: 105, unit: 'lb', change: 'up', from: 100 });
     expect(isLowerBody(squat)).toBe(true);
-    expect(advice(top, squat)).toEqual({ kind: 'load', load: 110, unit: 'lb', change: 'up' });
+    expect(advice(top, squat)).toEqual({
+      kind: 'load',
+      load: 110,
+      unit: 'lb',
+      change: 'up',
+      from: 100,
+    });
     expect(
       advice(
         top.map((x) => ({ ...x, logs: x.logs.map((l) => ({ ...l, unit: 'kg' as const })) })),
@@ -51,6 +57,7 @@ describe('suggested load (A4)', () => {
       load: 102.5,
       unit: 'kg',
       change: 'up',
+      from: 100,
     });
   });
 
@@ -117,6 +124,7 @@ describe('suggested load (A4)', () => {
       load: 25,
       unit: 'lb',
       change: 'up',
+      from: 20,
     });
   });
 
@@ -166,5 +174,68 @@ describe('R8-07 load steps never jump', () => {
     // Dumbbells in kg: 5 kg rounds to 4 kg (two 2 kg steps), 6 kg dumbbells go to 8.
     expect(up(dbLower, 16, 'kg')).toMatchObject({ load: 20 });
     expect(up(dbLower, 6, 'kg')).toMatchObject({ load: 8 });
+  });
+});
+
+describe('R8 P2 loads', () => {
+  const SEED = (seed.exercises as SeedExercise[]).map(fromSeed);
+  const dbPress = SEED.find((e) => e.slug === 'flat_dumbbell_press')!;
+  const barbellRow = SEED.find((e) => e.slug === 'barbell_bent_over_row')!;
+  const keep = (exercise: typeof bench, load: number, from: 'lb' | 'kg', to: 'lb' | 'kg') =>
+    loadAdvice({
+      sessions: [s([10, 10, 10], load, 8, from)],
+      range: [10, 12],
+      exercise,
+      unit: to,
+      mode: 'adult',
+    });
+
+  it('lb → kg rounds the raw value once, to the dumbbell step', () => {
+    expect(keep(dbPress, 32, 'lb', 'kg')).toMatchObject({ load: 14 });
+    expect(keep(dbPress, 10, 'lb', 'kg')).toMatchObject({ load: 4 });
+    expect(keep(dbPress, 25, 'lb', 'kg')).toMatchObject({ load: 12 });
+  });
+
+  it('every dumbbell value lands on the nearest 2 kg dumbbell', () => {
+    for (let lb = 5; lb <= 120; lb += 5) {
+      const kg = lb * 0.45359237;
+      const got = (keep(dbPress, lb, 'lb', 'kg') as { load: number }).load;
+      expect(Math.abs(got - kg)).toBeLessThanOrEqual(1 + 1e-9);
+      expect(got % 2).toBe(0);
+    }
+  });
+
+  it('the advice carries the base load, so "Try +X" matches after a unit switch', () => {
+    const up = loadAdvice({
+      sessions: [s([12, 12, 12], 50, 7, 'lb'), s([12, 12, 12], 50, 7, 'lb')],
+      range: [10, 12],
+      exercise: dbPress,
+      unit: 'kg',
+      mode: 'adult',
+    });
+    expect(up).toMatchObject({ kind: 'load', from: 22, load: 24 });
+  });
+
+  it('a barbell never goes below the empty bar: an easier version instead', () => {
+    const missed = [s([6, 6, 6], 45), s([6, 6, 6], 45), s([6, 6, 6], 45)];
+    expect(
+      loadAdvice({
+        sessions: missed,
+        range: [8, 12],
+        exercise: barbellRow,
+        unit: 'lb',
+        mode: 'adult',
+      }),
+    ).toMatchObject({ load: 45, easier: true });
+    const heavier = [s([6, 6, 6], 65), s([6, 6, 6], 65), s([6, 6, 6], 65)];
+    expect(
+      loadAdvice({
+        sessions: heavier,
+        range: [8, 12],
+        exercise: barbellRow,
+        unit: 'lb',
+        mode: 'adult',
+      }),
+    ).toMatchObject({ load: 60, change: 'down' });
   });
 });

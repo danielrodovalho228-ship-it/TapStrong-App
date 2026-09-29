@@ -71,12 +71,6 @@ export default function RestScreen() {
       .join(' · ');
 
   const lastTime = last ? pastSessions(workouts, last.exerciseId, workout.id)[0] : undefined;
-  const lastLoadOf = (exerciseId: string) => {
-    const l = pastSessions(workouts, exerciseId, workout.id)[0]
-      ?.logs.filter((x) => x.load)
-      .at(-1);
-    return l?.load ? convertLoad(l.load, l.unit ?? 'lb', unit) : null;
-  };
   const lastTimeLog = lastTime?.logs.find((l) => l.setNo === last?.setNo) ?? lastTime?.logs.at(-1);
   const nextExercise = next ? byId.get(next.item.exerciseId) : undefined;
   // The same advice as the player (QA R5-02): one source, and only before
@@ -92,9 +86,11 @@ export default function RestScreen() {
           generator: { ...input, deload: workout.session.deload },
         })
       : null;
+  // The step from the advice's own base load, so it matches the player
+  // after a unit switch (QA R8 P2).
   const upStep =
     nextAdvice?.kind === 'load' && nextAdvice.change === 'up'
-      ? nextAdvice.load - (lastLoadOf(next!.item.exerciseId) ?? nextAdvice.load)
+      ? nextAdvice.load - (nextAdvice.from ?? nextAdvice.load)
       : 0;
 
   return (
