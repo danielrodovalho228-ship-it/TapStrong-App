@@ -71,3 +71,25 @@ if (invalid.length) {
   process.exit(1);
 }
 console.log('OK: every required EXPO_PUBLIC_* variable is set');
+
+// A production build also checks that the server has the latest migrations
+// (Phase 23 answer 3): never ship against a server missing them.
+if (onlyProduction) {
+  const { missingOnServer } = await import('./check-server.mjs');
+  const missingFns = await missingOnServer(
+    process.env.EXPO_PUBLIC_SUPABASE_URL,
+    process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY,
+  ).catch((e) => {
+    console.error(`Could not reach the Supabase server to check migrations: ${e.message}`);
+    process.exit(1);
+  });
+  if (missingFns.length) {
+    console.error('The Supabase server is missing migrations this app needs:');
+    for (const [m, fn] of missingFns) console.error(`  ${m}  (function ${fn})`);
+    console.error(
+      'Run `supabase db push` first (docs/launch-readiness.md, "Migrações pendentes").',
+    );
+    process.exit(1);
+  }
+  console.log('OK: the server has the latest migrations');
+}

@@ -13,6 +13,7 @@ The full spec is in `docs/SPEC.md`. Read it before any task, and follow it over 
   - stop for Daniel's OK.
 - Exercise ↔ muscle mapping comes only from the database, and only `released` exercises reach users. Never invent exercises or muscles in code or in AI prompts.
 - The Claude API key and every other secret live in `.env` or Supabase secrets. Never commit them, and never put them in the app bundle.
+- Follow the 8 rules in `docs/SECURITY.md` in every phase: RLS with WITH CHECK on every new table, SQL tests with role switching for every new policy, limits on every auth/AI route, and every new package checked on the registry first. `npm run security:check` and `npm run db:test` must pass.
 - All user-facing text goes through i18n (`en` first). No hard-coded strings.
 - Follow the design tokens and accessibility rules in SPEC §2 and §4. Visual reference: `docs/mockups/` (see its README).
 - Ask Daniel before:

@@ -54,10 +54,55 @@ O `.env` fica só no seu computador e não vai para o build da nuvem. As variáv
 | `EXPO_PUBLIC_TERMS_URL`, `EXPO_PUBLIC_PRIVACY_URL`                              | sim                              | links de Termos e Privacidade (exigência das lojas) |
 | `EXPO_PUBLIC_SUPPORT_EMAIL`                                                     | sim                              | contato de suporte                                  |
 | `EXPO_PUBLIC_SHARE_BASE_URL`                                                    | sim                              | link de convite                                     |
+| `EXPO_PUBLIC_TURNSTILE_SITE_KEY`                                                | sim                              | verificação de pessoa (Cloudflare Turnstile)        |
+| `EXPO_PUBLIC_TURNSTILE_BASE_URL`                                                | não (`https://tapstrong.app/`)   | endereço do widget no celular                       |
 | `EXPO_PUBLIC_SENTRY_DSN`, `EXPO_PUBLIC_POSTHOG_KEY`, `EXPO_PUBLIC_POSTHOG_HOST` | não                              | erros e uso                                         |
 | `EXPO_PUBLIC_KIDS_UNDER_13_ENABLED`                                             | não (desligado)                  | menores de 13, só na versão 2                       |
 
-`npm run env:check` lista o que falta; o build de produção roda essa checagem e para se faltar alguma obrigatória.
+`npm run env:check` lista o que falta; o build de produção roda essa checagem e para se faltar alguma obrigatória. No build de produção ela também pergunta ao servidor (só com a chave pública) se as funções das migrações novas existem, e para com a mensagem "The Supabase server is missing migrations…" se faltar alguma (`npm run server:check` faz só essa parte).
+
+## Migrações pendentes (você roda `supabase db push`)
+
+Antes do próximo build de teste, no terminal, na pasta do projeto (com o CLI do Supabase ligado ao projeto: `supabase link --project-ref <ref>`, uma vez):
+
+```bash
+supabase db push
+```
+
+Migrações novas desde a Fase 22, em ordem:
+
+1. `20261017000000_pin_reset_code_lockout.sql` — trava própria do código do e-mail (Fase 23).
+2. `20261018000000_security_s1_profile_owner.sql` — perfil só se liga ao próprio login; indicações sem o id de quem entrou (S1-01).
+3. `20261018000100_security_s1_server_pin.sql` — PIN dos pais conferido no servidor (S1-03). Usa a extensão `pgcrypto`, que o Supabase já tem.
+4. `20261018000200_security_s2_profiles.sql` — vínculo de responsável e modo pela idade (S2-01 a S2-03).
+5. `20261018000300_security_s2_coach_budget.sql` — orçamento diário do coach por IP e total (S2-04).
+6. `20261018000400_security_s2_account_code.sql` — trava do código de login da Conta (S2-07).
+7. `20261018000500_security_p3.sql` — indicações, limite de quem convida, exclusão de conta mantendo o perfil do adolescente (P3).
+
+Depois do push: `npm run server:check` (com as variáveis do `.env`) deve dizer "OK". Se o app rodar contra um servidor sem essas funções, ele registra `server_missing:<função>` no Sentry.
+
+## Segurança — o que você configura nos painéis (rodada 1)
+
+**Cloudflare Turnstile** (grátis):
+
+1. Em dash.cloudflare.com → Turnstile, crie um site "TapStrong", modo **Managed**, com os domínios `tapstrong.app` (e o domínio da versão web, quando houver).
+2. A **site key** (pública) vai no EAS como `EXPO_PUBLIC_TURNSTILE_SITE_KEY`.
+3. A **secret key** vai só no Supabase: Authentication → Attack Protection (Bot and Abuse Protection) → Captcha: ligar, provedor Turnstile, colar a secret. Nunca no chat nem no GitHub.
+4. Ligue o captcha no Supabase **só depois** que o build com o Turnstile estiver nas mãos dos testadores: builds antigos param de conseguir entrar.
+5. O Turnstile no celular usa `react-native-webview`: é preciso um build novo (development ou preview), o Expo Go antigo não serve.
+
+**Supabase → Authentication:**
+
+- Email: "Confirm email" ligado; validade do código (OTP expiry) **900 s** (15 min).
+- Senhas: mínimo **10** caracteres, com letras e números; "Secure password change" ligado.
+- Rate limits: confira os de e-mail (envio de códigos), verificação de token (30 por 5 min por IP) e login anônimo (30 por hora por IP).
+
+**Supabase → Edge Functions → Secrets** (pelo terminal):
+
+- `REVENUECAT_ACCEPT_SANDBOX`: **não** defina no projeto de produção. Só num projeto de teste, com `true`, para compras do TestFlight contarem como teste.
+- `COACH_IP_DAILY_LIMIT` (padrão 60) e `COACH_GLOBAL_DAILY_LIMIT` (padrão 5000): opcionais, para ajustar o orçamento diário do coach.
+
+**Versão web (quando houver hospedagem):** depois de `npx expo export --platform web --output-dir dist`, rode `npm run web:headers dist`. Ele grava `dist/_headers` (Netlify e Cloudflare Pages) e `dist/vercel.json` (Vercel) com a CSP e os cabeçalhos de segurança. Na web, os perfis da família ficam desligados até o PIN no servidor passar no QA da web.
 
 ## Lacunas do produto para decidir
 
@@ -77,6 +122,8 @@ O `.env` fica só no seu computador e não vai para o build da nuvem. As variáv
 - `npm run bundle:check`: confirma que rascunhos, vídeos de protótipo, o simulador de compra e avisos de desenvolvimento não vão para a loja.
 - `npm run theme:check` e `npm run tabs:check`: telas nos modos claro e escuro (contraste de todo texto, troca ao vivo, primeiro quadro no escuro) e nomes das abas em EN/PT/ES.
 - `npm run env:check`: variáveis obrigatórias do build de produção.
+- `npm run security:check`: segredos nos arquivos, no histórico e no bundle web; usos de HTML/eval/WebView fora da lista auditada; integridade do lockfile; `npm audit` sem alto ou crítico (regras em `docs/SECURITY.md`).
+- `npm run server:check`: o servidor tem as migrações novas.
 - Maestro (num simulador, com o build de preview): `maestro test .maestro/`.
 
 ## Revisão final sugerida
