@@ -1,6 +1,7 @@
 import { ScrollViewStyleReset } from 'expo-router/html';
 import type { PropsWithChildren } from 'react';
 
+import { contentSecurityPolicy, EXPO_HYDRATE_SCRIPT } from '@/lib/csp';
 import { PALETTES } from '@/theme';
 
 const light = PALETTES.light.background;
@@ -22,12 +23,20 @@ html[data-scheme="dark"]:not([data-ready]) #root{visibility:hidden}
 `;
 const script = `try{var v=JSON.parse(localStorage.getItem('tapstrong\\\\appearance')||'null');var a=v&&v.state&&v.state.appearance;if(a==='light'||a==='dark'){var d=document.documentElement;d.dataset.scheme=a;d.style.colorScheme=a;document.querySelectorAll('meta[name="theme-color"]').forEach(function(m){m.setAttribute('content',a==='dark'?'${dark}':'${light}')});}}catch(e){}`;
 
+// Security round 1, S2-06: only these two inline scripts may run (by hash).
+const csp = contentSecurityPolicy(
+  [script, EXPO_HYDRATE_SCRIPT],
+  process.env.EXPO_PUBLIC_SUPABASE_URL,
+);
+
 /** Web only: the HTML shell around every page (static export). */
 export default function Root({ children }: PropsWithChildren) {
   return (
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
+        <meta httpEquiv="Content-Security-Policy" content={csp} />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="color-scheme" content="light dark" />

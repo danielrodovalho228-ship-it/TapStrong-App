@@ -87,7 +87,8 @@
     "web:check": "node scripts/check-web-cold.mjs",
     "theme:check": "node scripts/check-theme-screens.mjs",
     "env:check": "node scripts/check-env.mjs",
-    "eas-build-pre-install": "node scripts/check-env.mjs --if-production"
+    "eas-build-pre-install": "node scripts/check-env.mjs --if-production",
+    "web:headers": "node scripts/web-headers.mjs"
   },
   "private": true
 }

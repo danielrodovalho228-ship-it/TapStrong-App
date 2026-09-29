@@ -10,6 +10,7 @@ import { join } from 'node:path';
 import { chromium } from 'playwright-core';
 
 import { executablePath, exportWeb, profile, serve } from './lib/web.mjs';
+import { hashOf, headerPolicy, inlineScripts, writeHeaders } from './web-headers.mjs';
 
 const reuse = process.env.THEME_EXPORT_DIR;
 const out = reuse ?? mkdtempSync(join(tmpdir(), 'cold-'));
@@ -18,6 +19,7 @@ const { origin, close } = await serve(out);
 
 const browser = await chromium.launch({ executablePath });
 const failed = [];
+const cspViolations = [];
 const pressed = (page, name) =>
   page
     .getByRole('button', { name, exact: true })
@@ -34,7 +36,12 @@ async function coldPage(extra) {
       sessionStorage.setItem('seeded', '1');
     }
   }, seed);
-  return { context, page: await context.newPage() };
+  const page = await context.newPage();
+  // Security round 1, S2-06: nothing the page needs may be blocked by its CSP.
+  page.on('console', (m) => {
+    if (/Content Security Policy/i.test(m.text())) cspViolations.push(m.text().slice(0, 200));
+  });
+  return { context, page };
 }
 const stored = (page) =>
   page.evaluate(() => JSON.parse(localStorage.getItem('tapstrong\\onboarding')).state);
@@ -79,6 +86,32 @@ try {
     const hit = text.match(DATE);
     if (hit) failed.push(`${path}: static HTML shows a date ("${hit[0]}")`);
   }
+  // S2-06: every page's CSP lists exactly the hashes of its inline scripts,
+  // and the host header files carry the same policy plus frame-ancestors.
+  for (const path of ['/home', '/plans', '/account', '/onboarding/who']) {
+    const html = await (await fetch(`${origin}${path}`)).text();
+    let policy = '';
+    try {
+      policy = headerPolicy(html);
+    } catch {
+      failed.push(`${path}: no Content-Security-Policy meta tag`);
+      continue;
+    }
+    for (const s of inlineScripts(html))
+      if (!policy.includes(hashOf(s)))
+        failed.push(
+          `${path}: inline script not allowed by the CSP hash list ("${s.slice(0, 40)}…")`,
+        );
+    const listed = policy.match(/'sha256-[^']+'/g) ?? [];
+    if (listed.length !== inlineScripts(html).length)
+      failed.push(
+        `${path}: CSP lists ${listed.length} hashes for ${inlineScripts(html).length} inline scripts`,
+      );
+  }
+  const headers = writeHeaders(out);
+  if (!/frame-ancestors 'none'/.test(headers['Content-Security-Policy']))
+    failed.push('host headers: no frame-ancestors');
+  if (cspViolations.length) failed.push(`CSP blocked something: ${cspViolations[0]}`);
 } finally {
   await browser.close();
   close();
@@ -89,5 +122,5 @@ if (failed.length) {
   process.exit(1);
 }
 console.log(
-  'web:check passed: cold-loaded edit screens show and keep the saved answers; no build-day dates in the static HTML',
+  'web:check passed: cold-loaded edit screens show and keep the saved answers; no build-day dates in the static HTML; CSP hashes match the inline scripts and nothing was blocked',
 );
