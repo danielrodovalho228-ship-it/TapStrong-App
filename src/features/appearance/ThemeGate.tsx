@@ -28,6 +28,12 @@ const isServer = () => Platform.OS !== 'web';
  * Web pages are pre-rendered in Light, and hydration keeps the server's
  * styles, so on web the first render matches that HTML and the real scheme
  * follows right after mount.
+ *
+ * Web: the screens themselves mount only after hydration (QA R8-04). While
+ * hydrating, the stores report their initial state, so a screen that copies
+ * saved answers into a draft (safety check, birth date) would start from the
+ * defaults and Continue would save them; clock-based text (week strip, trial
+ * end) would also carry the build day. Native renders at once.
  */
 export function ThemeGate({ children }: { children: ReactNode }) {
   const wanted = useWantedScheme();
@@ -52,7 +58,7 @@ export function ThemeGate({ children }: { children: ReactNode }) {
     <SchemeContext.Provider value={scheme}>
       <View style={[styles.root, { backgroundColor: background }]}>
         <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
-        {children}
+        {hydrated ? children : null}
       </View>
     </SchemeContext.Provider>
   );

@@ -1,0 +1,79 @@
+// QA R8-04: on the static web export, a screen opened directly by URL must
+// show the saved answers, never the defaults (Continue would save them).
+// Exports the web build, serves it, seeds a profile the way the app stores it,
+// cold-loads the edit screens and checks what they show and save.
+// Run: npm run web:check  (THEME_EXPORT_DIR=<dir> reuses a web export)
+import { mkdtempSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
+import { chromium } from 'playwright-core';
+
+import { executablePath, exportWeb, profile, serve } from './lib/web.mjs';
+
+const reuse = process.env.THEME_EXPORT_DIR;
+const out = reuse ?? mkdtempSync(join(tmpdir(), 'cold-'));
+if (!reuse) exportWeb(out);
+const { origin, close } = await serve(out);
+
+const browser = await chromium.launch({ executablePath });
+const failed = [];
+const pressed = (page, name) =>
+  page
+    .getByRole('button', { name, exact: true })
+    .first()
+    .getAttribute('aria-pressed')
+    .catch(() => null);
+
+async function coldPage(extra) {
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const seed = JSON.stringify(profile(1990, true, extra));
+  await context.addInitScript((v) => {
+    if (!sessionStorage.getItem('seeded')) {
+      localStorage.setItem('tapstrong\\onboarding', v);
+      sessionStorage.setItem('seeded', '1');
+    }
+  }, seed);
+  return { context, page: await context.newPage() };
+}
+const stored = (page) =>
+  page.evaluate(() => JSON.parse(localStorage.getItem('tapstrong\\onboarding')).state);
+
+try {
+  // Safety check, edit mode.
+  {
+    const { context, page } = await coldPage({
+      painAreas: ['knee'],
+      conditions: ['diabetes'],
+      position: 'with_support',
+    });
+    await page.goto(`${origin}/onboarding/safety?edit=1`, { waitUntil: 'networkidle' });
+    await page.waitForTimeout(700);
+    for (const name of ['Knee', 'Diabetes / prediabetes', 'With support'])
+      if ((await pressed(page, name)) !== 'true') failed.push(`safety: "${name}" not shown selected`);
+    await page.getByRole('button', { name: 'Continue', exact: true }).click();
+    await page.waitForTimeout(500);
+    const s = await stored(page);
+    if (JSON.stringify(s.painAreas) !== '["knee"]' || s.position !== 'with_support')
+      failed.push(`safety: Continue saved ${JSON.stringify([s.painAreas, s.position])}`);
+    await context.close();
+  }
+  // Who, edit mode: the saved birth date is shown, not "—".
+  {
+    const { context, page } = await coldPage({});
+    await page.goto(`${origin}/onboarding/who?edit=1`, { waitUntil: 'networkidle' });
+    await page.waitForTimeout(700);
+    const text = await page.evaluate(() => document.body.innerText);
+    if (!text.includes('1990')) failed.push('who: saved birth year not shown');
+    await context.close();
+  }
+} finally {
+  await browser.close();
+  close();
+}
+
+if (failed.length) {
+  console.error(`web:check failed:\n- ${failed.join('\n- ')}`);
+  process.exit(1);
+}
+console.log('web:check passed: cold-loaded edit screens show and keep the saved answers');
