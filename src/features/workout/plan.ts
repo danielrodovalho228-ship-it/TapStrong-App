@@ -34,6 +34,15 @@ export function recentSessions(history: WorkoutRecord[], library: Exercise[]): R
         exerciseIds: [
           ...new Set(w.logs.filter((l) => main.has(l.itemId)).map((l) => l.exerciseId)),
         ],
+        // Each logged main set counts once per primary muscle (weekly cap, Phase 21).
+        muscleSets: w.logs
+          .filter((l) => main.has(l.itemId) && needsRecovery(byId.get(l.exerciseId)))
+          .flatMap((l) =>
+            (byId.get(l.exerciseId)?.muscles ?? [])
+              .filter((m) => m.role === 'primary')
+              .map((m) => m.muscleKey),
+          )
+          .reduce<Record<string, number>>((acc, m) => ({ ...acc, [m]: (acc[m] ?? 0) + 1 }), {}),
       };
     });
 }

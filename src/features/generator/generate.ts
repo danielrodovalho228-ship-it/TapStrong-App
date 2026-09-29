@@ -343,6 +343,10 @@ const isLightFiller = (e: Exercise) =>
   e.pattern === 'core_stability';
 
 /** Patterns the balance filler never adds: fine as a chosen target, odd as padding. */
+/** Weekly working sets per primary muscle (Daniel, Phase 21). */
+export const WEEKLY_SETS: Record<AppMode, number> = { adult: 20, teen: 14, child: 14, senior: 12 };
+export const JOINT_CARE_WEEKLY_SETS = 12;
+
 /** Spare time is filled with sets up to this share of the chosen minutes. */
 const EXTRA_SETS_SHARE = 0.85;
 
@@ -387,6 +391,10 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
 
   // --- Main work -----------------------------------------------------------
   const recent = input.recentSessions ?? [];
+  // "The last 7 days" are 7 calendar days, today included (QA R8 P2).
+  const dayNo = (d: string) => Math.floor(Date.parse(`${d}T12:00:00Z`) / 864e5);
+  const todayKey = input.today ?? input.now?.slice(0, 10);
+  const inWeek = (r: RecentSession) => !todayKey || dayNo(todayKey) - dayNo(r.date) < 7;
   const defaultGoal = defaultMuscleGoal(input.mainGoals);
   const allTargets: Target[] = input.muscleGoals.map((g) => ({
     muscle: g.muscleKey,
@@ -530,7 +538,49 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     const mix = Math.imul((day + 1) * 2654435761, salt + 7) >>> 0;
     return top[(mix >>> 7) % top.length];
   };
+  // Weekly working sets per primary muscle (Daniel, Phase 21): adults 20,
+  // teens 14, 60+ and joint care 12, over the last 7 days. Warm-up, balance
+  // and mobility moves don't count. A move that would pass the cap is not
+  // picked; one that fits partly gets fewer sets.
+  const weekSets = new Map<string, number>();
+  for (const r of recent)
+    if (inWeek(r))
+      for (const [m, n] of Object.entries(r.muscleSets ?? {}))
+        weekSets.set(parentOf(m), (weekSets.get(parentOf(m)) ?? 0) + n);
+  const primaryParents = (e: Exercise | undefined) =>
+    e
+      ? [
+          ...new Set(
+            e.muscles.filter((m) => m.role === 'primary').map((m) => parentOf(m.muscleKey)),
+          ),
+        ]
+      : [];
+  const setCap = (e: Exercise) =>
+    needsJointCare(e, input)
+      ? Math.min(JOINT_CARE_WEEKLY_SETS, WEEKLY_SETS[input.mode])
+      : WEEKLY_SETS[input.mode];
+  const sessionSets = (parent: string) =>
+    main
+      .filter((i) => {
+        const x = byIdAll.get(i.exerciseId);
+        return needsRecovery(x) && primaryParents(x).includes(parent);
+      })
+      .reduce((n, i) => n + i.sets, 0);
+  const setsLeft = (e: Exercise) =>
+    input.mobilityOnly || !needsRecovery(e)
+      ? Number.POSITIVE_INFINITY
+      : Math.min(
+          ...primaryParents(e).map((p) => setCap(e) - (weekSets.get(p) ?? 0) - sessionSets(p)),
+        );
+  const underCap = (e: Exercise) => setsLeft(e) >= 1;
   const add = (pick: Exercise, target: Target) => {
+    const item = mainItem(pick, target, input);
+    const left = setsLeft(pick);
+    if (left < 1) return false;
+    if (item.sets > left) {
+      item.sets = left;
+      item.estSeconds = estimateSeconds(item);
+    }
     used.add(pick.id);
     const parent = parentOf(topPrimary(pick) ?? target.muscle);
     usedParents.add(parent);
@@ -539,7 +589,8 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     u.muscles.add(topPrimary(pick) ?? target.muscle);
     u.patterns.add(pick.pattern);
     parentUses.set(parent, u);
-    main.push(mainItem(pick, target, input));
+    main.push(item);
+    return true;
   };
   // Every primary muscle must be recovered, not only the target (QA R8 P2:
   // a back squat 24 h after single-leg RDLs, a row the day after pull-ups):
@@ -552,7 +603,9 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   ];
   targets.slice(0, slots).forEach((target, i) => {
     const options = readyFirst(
-      rankForTarget(pool, target, input.mode, input.favourites).filter((e) => !used.has(e.id)),
+      rankForTarget(pool, target, input.mode, input.favourites).filter(
+        (e) => !used.has(e.id) && underCap(e),
+      ),
     );
     const pick = input.rehab ? options[0] : rotate(moving(options), i);
     if (pick) add(pick, target);
@@ -569,7 +622,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     for (const target of targets) {
       if (main.length >= slots) break;
       const options = rankForTarget(pool, target, input.mode, input.favourites).filter(
-        (e) => !used.has(e.id),
+        (e) => !used.has(e.id) && underCap(e),
       );
       // Holds stay out here too (QA R7 P2: adductors gave a Copenhagen hold).
       const equipped = strengthGym ? moving(options).filter((e) => e.equipment.length > 0) : [];
@@ -621,9 +674,6 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
   // exercises when known, else one per trained parent muscle.
   // "The last 7 days" are 7 calendar days, today included: a session 7 days
   // ago is out (QA R8 P2: the window counted 8 days).
-  const dayNo = (d: string) => Math.floor(Date.parse(`${d}T12:00:00Z`) / 864e5);
-  const todayKey = input.today ?? input.now?.slice(0, 10);
-  const inWeek = (r: RecentSession) => !todayKey || dayNo(todayKey) - dayNo(r.date) < 7;
   // Every primary muscle counts (QA R8 P2): a pullover is push and pull.
   const groupsOf = (e: Exercise | undefined) =>
     new Set(
@@ -675,6 +725,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
         !(strengthGym && isLightFiller(e)) &&
         parentOpen(e) &&
         primariesReady(e) &&
+        underCap(e) &&
         !e.muscles.some((m) => m.role === 'primary' && restedKeys.has(m.muscleKey)),
     );
     const vertical = g === 'pull' && needVertical() ? list.filter(realVertical) : [];
@@ -710,7 +761,10 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     if (!ranked.length) break;
     const { g, pick } = ranked[0];
     const muscle = topPrimary(pick)!;
-    add(pick, { muscle, family: [muscle], goal: defaultGoal });
+    if (!add(pick, { muscle, family: [muscle], goal: defaultGoal })) {
+      used.add(pick.id); // over the weekly cap: never offered again this session
+      continue;
+    }
     added.set(pick.id, g);
   }
   // Chosen push muscles filled the session: while pull trails push over the
@@ -733,12 +787,15 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     const [gone] = main.splice(at, 1);
     used.delete(gone.exerciseId);
     const pick = nextFor('pull');
-    if (!pick || (vertical && !realVertical(pick))) {
+    if (
+      !pick ||
+      (vertical && !realVertical(pick)) ||
+      !add(pick, { muscle: topPrimary(pick)!, family: [topPrimary(pick)!], goal: defaultGoal })
+    ) {
       main.splice(at, 0, gone);
       used.add(gone.exerciseId);
       return false;
     }
-    add(pick, { muscle: topPrimary(pick)!, family: [topPrimary(pick)!], goal: defaultGoal });
     added.set(pick.id, 'pull');
     swappedForPull.add(pick.id);
     return true;
@@ -927,6 +984,8 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
         if (total() >= fillTo) break;
         const item = main[n];
         if (item.sets >= cap(item)) continue;
+        const ex = byIdAll.get(item.exerciseId);
+        if (ex && setsLeft(ex) < 1) continue;
         const pushOnly = itemGroups(item).has('push') && !itemGroups(item).has('pull');
         if (pushOnly && pullNow() > 0 && setsOf('push') + 1 > setsOf('pull')) continue;
         const next = { ...item, sets: item.sets + 1 };

@@ -17,6 +17,8 @@ export type RecentSession = {
   custom?: boolean;
   /** Main exercises done, so the next sessions vary (QA R4 P2). */
   exerciseIds?: string[];
+  /** Working sets per primary muscle that day (Phase 21 weekly cap). */
+  muscleSets?: Record<string, number>;
 };
 
 /** Everything the generator needs. Pure data in, pure data out (SPEC §8). */

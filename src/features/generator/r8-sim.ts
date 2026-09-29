@@ -25,6 +25,8 @@ export type SimDay = {
   slugs: string[];
   sets: number;
   minutes: number;
+  /** Working sets per parent muscle that day. */
+  muscleSets: Record<string, number>;
 };
 
 export function simulate(o: {
@@ -67,6 +69,17 @@ export function simulate(o: {
       slugs: main.map((i) => byId.get(i.exerciseId)!.slug),
       sets: main.reduce((n, i) => n + i.sets, 0),
       minutes: s.estimatedMinutes ?? 0,
+      muscleSets: main.reduce<Record<string, number>>((acc, i) => {
+        const e = byId.get(i.exerciseId)!;
+        if (['balance', 'mobility', 'stretch', 'breathing'].includes(e.pattern)) return acc;
+        const parents = new Set(
+          e.muscles
+            .filter((m) => m.role === 'primary')
+            .map((m) => muscleByKey(m.muscleKey)?.parentKey ?? m.muscleKey),
+        );
+        for (const p of parents) acc[p] = (acc[p] ?? 0) + i.sets;
+        return acc;
+      }, {}),
     });
     recent.unshift({
       date: day,
@@ -78,6 +91,13 @@ export function simulate(o: {
           .map((m) => m.muscleKey),
       ),
       exerciseIds: main.map((i) => i.exerciseId),
+      muscleSets: main.reduce<Record<string, number>>((acc, i) => {
+        const e = byId.get(i.exerciseId)!;
+        if (['balance', 'mobility', 'stretch', 'breathing'].includes(e.pattern)) return acc;
+        for (const m of e.muscles.filter((x) => x.role === 'primary'))
+          acc[m.muscleKey] = (acc[m.muscleKey] ?? 0) + i.sets;
+        return acc;
+      }, {}),
     });
   }
   return out;
@@ -97,4 +117,21 @@ export function windows(days: SimDay[]) {
       const pull = inside.reduce((n, d) => n + d.pull, 0);
       return { end: end.date, push, pull, vertical: inside.some((d) => d.vertical) };
     });
+}
+
+/** The most working sets any parent muscle got in any strict 7-day window. */
+export function maxWeeklySets(days: SimDay[]): { muscle: string; sets: number; end: string } {
+  const ms = (d: string) => Date.parse(`${d}T12:00:00Z`);
+  let worst = { muscle: '', sets: 0, end: '' };
+  for (const end of days) {
+    const totals: Record<string, number> = {};
+    for (const d of days) {
+      const gap = ms(end.date) - ms(d.date);
+      if (gap < 0 || gap >= 7 * 864e5) continue;
+      for (const [m, n] of Object.entries(d.muscleSets)) totals[m] = (totals[m] ?? 0) + n;
+    }
+    for (const [m, n] of Object.entries(totals))
+      if (n > worst.sets) worst = { muscle: m, sets: n, end: end.date };
+  }
+  return worst;
 }
