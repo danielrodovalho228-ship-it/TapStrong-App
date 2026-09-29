@@ -30,6 +30,15 @@ export const EXPECTED = [
   ['20261019000100_security_r2_pin_change', 'set_parent_pin', { new_pin: '0000', old_pin: '0000' }],
 ];
 
+/**
+ * Migrations that add no function: a table or column, asked for with an
+ * empty read (anon key; RLS answers nothing, a missing one answers an error).
+ */
+export const EXPECTED_COLUMNS = [
+  ['20261019000200_security_r2_birth_date', 'profile_birth_changes', 'id'],
+  ['20261019000300_security_r2_p3', 'sessions', 'received_at'],
+];
+
 export async function missingOnServer(url, anonKey, fetchImpl = fetch) {
   const missing = [];
   for (const [migration, fn, args] of EXPECTED) {
@@ -50,6 +59,21 @@ export async function missingOnServer(url, anonKey, fetchImpl = fetch) {
     }
     if (code === 'PGRST202' || (res.status === 404 && code !== '42501'))
       missing.push([migration, fn]);
+  }
+  for (const [migration, table, column] of EXPECTED_COLUMNS) {
+    const res = await fetchImpl(
+      `${url.replace(/\/$/, '')}/rest/v1/${table}?select=${column}&limit=0`,
+      { headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` } },
+    );
+    let code = '';
+    try {
+      code = (await res.json())?.code ?? '';
+    } catch {
+      // Not JSON.
+    }
+    // PGRST205 / 42P01: no such table; 42703 / PGRST204: no such column.
+    if (['PGRST205', '42P01', '42703', 'PGRST204'].includes(code))
+      missing.push([migration, `${table}.${column}`]);
   }
   return missing;
 }
@@ -121,7 +145,7 @@ export async function serverProblems(url, anonKey, env = process.env, fetchImpl 
   const problems = [];
   const warnings = [];
   for (const [m, fn] of await missingOnServer(url, anonKey, fetchImpl))
-    problems.push(`missing migration ${m} (function ${fn}): run \`supabase db push\``);
+    problems.push(`missing migration ${m} (${fn}): run \`supabase db push\``);
   const captcha = await captchaProblem(url, anonKey, fetchImpl);
   if (captcha)
     problems.push(`${captcha} — turn it on in Supabase → Authentication → Attack Protection`);

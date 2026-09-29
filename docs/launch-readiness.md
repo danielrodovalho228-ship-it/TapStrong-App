@@ -79,8 +79,25 @@ Migrações novas desde a Fase 22, em ordem:
 5. `20261018000300_security_s2_coach_budget.sql` — orçamento diário do coach por IP e total (S2-04).
 6. `20261018000400_security_s2_account_code.sql` — trava do código de login da Conta (S2-07).
 7. `20261018000500_security_p3.sql` — indicações, limite de quem convida, exclusão de conta mantendo o perfil do adolescente (P3).
+8. `20261019000000_security_r2_pin_race.sql` — a trava do PIN não pode ser burlada com tentativas simultâneas (Fase 25, P1).
+9. `20261019000100_security_r2_pin_change.sql` — trocar o PIN exige o PIN atual ou o código do e-mail (uso único, 10 min).
+10. `20261019000200_security_r2_birth_date.sql` — adolescente não vira adulto mudando a data; registro das mudanças; modo 60+ só com 60+.
+11. `20261019000300_security_r2_p3.sql` — treino da indicação com horário do servidor; responsável não apaga perfil de adolescente com login próprio; `parent_pin_failed` só no servidor.
 
 Depois do push: `npm run server:check` (com as variáveis do `.env`) deve dizer "OK". Se o app rodar contra um servidor sem essas funções, ele registra `server_missing:<função>` no Sentry.
+
+## Antes do próximo build de teste — sua lista, nesta ordem (Fase 25)
+
+1. **Migrações:** no terminal, na pasta do projeto, `supabase db push` (aplica as 11 da lista acima que ainda faltarem).
+2. **Conferir o servidor:** `npm run server:check`. Ele deve dizer "OK" para as migrações. Nesta fase ele também **falha se o captcha estiver desligado**, então o passo 4 precisa vir antes do build de produção (builds de preview não travam por isso).
+3. **Turnstile (Cloudflare):** criar o site e colocar a *site key* no EAS como `EXPO_PUBLIC_TURNSTILE_SITE_KEY` (passo a passo em "Segurança" abaixo). Gerar o build de teste com essa chave.
+4. **Painel do Supabase → Authentication**, depois que os testadores tiverem o build com o Turnstile:
+   - Attack Protection → Captcha: ligar, provedor Turnstile, colar a *secret key* (só lá, nunca no chat);
+   - Email: "Confirm email" ligado, validade do código **900 s**, intervalo mínimo entre e-mails **60 s**;
+   - Senhas: mínimo **10** caracteres, letras e números; "Secure password change" ligado;
+   - Rate limits: verificação de token **30 por 5 min** por IP; login anônimo **30 por hora** por IP.
+5. **Conferir tudo de uma vez:** crie um Personal Access Token (supabase.com → Account → Access Tokens) e rode, só no terminal, `SUPABASE_ACCESS_TOKEN=... npm run server:check`. Ele confere os valores do passo 4 e o captcha.
+6. **iPhone de verdade:** abrir o coach e o "Esqueci o PIN" com o build novo e confirmar que a verificação do Turnstile aparece e fecha sozinha (o iOS carrega partes dela em sub-quadros, que agora estão liberados).
 
 ## Segurança — o que você configura nos painéis (rodada 1)
 

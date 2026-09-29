@@ -12,8 +12,14 @@ function missing(absent: string[]): [string, string][] {
   const code = `
     const absent = ${JSON.stringify(absent)};
     const fake = async (url, init) => {
-      const fn = url.split('/rpc/')[1];
       if (!init.headers.apikey) throw new Error('no apikey');
+      if (!url.includes('/rpc/')) {
+        const table = url.split('/rest/v1/')[1].split('?')[0];
+        return absent.includes(table)
+          ? { status: 404, json: async () => ({ code: 'PGRST205' }) }
+          : { status: 200, json: async () => [] };
+      }
+      const fn = url.split('/rpc/')[1];
       return absent.includes(fn)
         ? { status: 404, json: async () => ({ code: 'PGRST202' }) }
         : { status: 401, json: async () => ({ code: '42501' }) };
@@ -27,6 +33,13 @@ function missing(absent: string[]): [string, string][] {
 
 it('a server with every migration passes (permission errors mean the function exists)', () => {
   expect(missing([])).toEqual([]);
+});
+
+it('round 2: a migration without a function is found by its table or column', () => {
+  expect(missing(['profile_birth_changes', 'sessions'])).toEqual([
+    ['20261019000200_security_r2_birth_date', 'profile_birth_changes.id'],
+    ['20261019000300_security_r2_p3', 'sessions.received_at'],
+  ]);
 });
 
 it('names the migration of each missing function', () => {
