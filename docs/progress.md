@@ -1816,3 +1816,110 @@ Lista do QA: `docs/qa-round-7.md`. Commits separados: um por grupo de P1 e quatr
 2. **Puxar × empurrar com 3 exercícios e academia pequena:** algumas semanas de calendário oscilam entre 80% e 125%, porque não há um terceiro exercício de puxar disponível. Na janela móvel de 7 dias fica equilibrado.
 3. **Aviso React #418 na web** (diferença na hidratação da versão estática): a web não é alvo das lojas. O tema já não causa mais esse aviso. O que sobra vem de telas que dependem de dados salvos no aparelho, e fica anotado.
 4. **Planilha do revisor:** as fórmulas do resumo calculam quando a planilha é aberta no Excel ou no Google Sheets (o LibreOffice não roda neste ambiente).
+
+## Fase 20 — Correções da rodada 8 de QA e vídeos por sexo
+
+Lista do QA: `docs/qa-round-8.md`, com as suas respostas às perguntas da Fase 19 e a regra dos vídeos no fim. Commits separados: os P1 em quatro grupos, depois quatro de P2 (gerador e cargas, segurança e família, telas e web, lançamento e documentos) e um dos vídeos.
+
+### P1 — o que foi corrigido
+
+- **R8-01 Troca de perfil apagava a gravidez guardada:** o perfil salvo volta exatamente como estava, sem filtros, e o perfil de destino fica ativo antes de carregar. Teste: sair e voltar mantém todas as respostas de segurança, para todo tipo de perfil.
+- **R8-02 Ano abaixo de 13 ou data apagada:** com a trava de adolescente, qualquer data ausente, inválida ou jovem demais fica entre 13 e 17 anos, no modo adolescente. Nenhuma tela cai mais em "adulto": sem trava e sem data válida, o app usa o modo mais restritivo. Testes com 2016, 2021, vazio, NaN, mês 13 e 1990.
+- **R8-03 Celular antigo, ainda sem PIN digitado:** a trava agora é procurada também pelo perfil ativo comum. Essa busca só deixa as regras mais rígidas, nunca mais soltas.
+- **R8-04 Tela de segurança aberta pelo link, na web:** as telas só montam depois de carregar os dados salvos. A checagem de segurança e a tela "Quem" mostram as respostas reais, e "Continuar" não apaga mais nada. As datas na tela também não ficam mais presas ao dia do build. Novo `npm run web:check` (Playwright): abre `safety?edit=1` direto e confere o que aparece e o que é salvo.
+- **R8-05 PIN pelo e-mail:** o e-mail e o ID do dono ficam no registro seguro, gravados quando ele salva a conta. Num celular antigo, o app busca esses dados uma vez na conta conectada, conferida pelo servidor. O código vai só para esse e-mail, e ele só vale se entrar com o mesmo usuário. Se entrar outro, o app sai dele e volta à sessão anterior. Editar o e-mail comum no aparelho não muda nada.
+- **R8-06 Joelho:** "Dead bug hold" e "Slow reverse crunch" ganharam a marca de joelho. A auditoria agora também procura "joelhos a 90", "em direção ao peito" e "quadril fora do chão"; dois exercícios de pescoço foram revisados, porque nesses é o queixo que vai ao peito. Na planilha, quatro rotações de quadril ficaram marcadas como "o clínico decide joelho/giro".
+- **R8-07 Kettlebell:** sobe sempre um kettlebell por vez (16 → 20 kg, 8 → 12 kg). Nenhum aumento passa de cerca de 25% da carga.
+
+### Sua regra do treino curto (mais séries)
+
+- A quantidade de exercícios continua a escolhida, e o "+1 exercício?" continua.
+- Se o treino ficar abaixo de ~85% do tempo escolhido, o tempo que sobra vira séries, uma de cada vez e em rodízio entre os exercícios principais.
+- Limite por exercício: 4 séries para adultos; 3 para adolescentes, 60+, crianças e quem tem cuidado com articulação.
+- As séries extras vão primeiro para os exercícios de puxar, e um de empurrar nunca fica com mais séries que o puxar do mesmo treino.
+- 30 min, semana de deload, reparo e mobilidade não mudam. O tempo mostrado na lista soma o que está na lista.
+- Medido: academia, 60 min, 5 exercícios → 48 min (antes 34–43).
+
+### P2 — o que foi corrigido
+
+- **Segundo treino (sua regra) em todos os caminhos:**
+  - depois do treino do dia (60+ e adolescentes) ou de uma parada por dor forte, "Treino único", "Personalizado" e "Meu plano" voltam para a Home;
+  - no 60+, a tela final não oferece mais "+10 min" (fica "na próxima vez");
+  - a página de hoje não mostra prévia de outro treino;
+  - no plano grátis com 3/3 usados não aparece "Treino extra".
+- **Puxar × empurrar:**
+  - a janela conta 7 dias de calendário;
+  - todos os músculos principais contam (um pullover conta como puxar e empurrar);
+  - quando a puxada vertical está devida, um exercício de puxar do treino vira puxada vertical, ou ela entra no lugar de um exercício que não é de empurrar. Antes, a regra dos "dois de empurrar" bloqueava isso;
+  - pulldown de braço estendido e pullover não contam como puxada vertical de verdade.
+  - Teste novo mais rígido: janela móvel de 7 dias ≥ 90% e puxada vertical em toda janela, em 8 cenários (com 3 e 5 exercícios em academia pequena, e os planos "Ganhar músculo" de 3, 4, 5 e 6 dias) e três datas de início.
+- **Outros ajustes do gerador:**
+  - o deload monta o treino normal e só depois corta as séries (o 60+ com tempo curto não ganha mais exercícios);
+  - a recuperação confere todos os músculos principais, não só o alvo;
+  - no PPL-6, o treino também varia em relação ao último treino do mesmo tipo.
+- **Cargas:**
+  - lb → kg arredonda uma vez só, no degrau do equipamento (32 lb → 14 kg; 10 lb → 4 kg);
+  - "Tente +X" no descanso usa a mesma base do player;
+  - barra nunca abaixo da barra vazia (45 lb / 20 kg): abaixo disso, sugere uma versão mais fácil.
+- **Pressão alta:** mais 5 variações de prancha lateral, Copenhagen e carregada com halter marcadas.
+- **Família e adolescentes:**
+  - o dono nunca aparece como "Modo adolescente" quando um adolescente está ativo;
+  - o PIN de "Marcar como curado" fica no rodapé;
+  - um adolescente sozinho não vê "Adicionar", "Até 5" nem "Treine a família toda" (o título vira "Escolha seu plano");
+  - sem PIN: o texto fala em criar, não em redefinir;
+  - ano adulto num adolescente travado mostra o aviso da trava de adolescente.
+- **Telas:**
+  - tela final em 320 px ou no 60+: a linha "Finalize forte" e os números empilham;
+  - Biblioteca 60+ com 3 linhas para o nome;
+  - "não encontrado" (exercício, dia, plano) volta para a Home quando aberto direto;
+  - o aviso "Exercício não encontrado" deixou de ser verde;
+  - a dica de "versão mais fácil" aparece também na lista;
+  - dica do pulldown com elástico: "sentado ou em pé".
+  - Um treino não terminado passa para amanhã, e amanhã não aparece mais como "Descanso".
+- **Web:**
+  - a cor da barra do navegador segue a escolha de Aparência;
+  - no escuro, a página espera o app, sem o timer de 4 s.
+- **Lançamento:**
+  - "Restaurar compras" diz "Não há compras para restaurar" quando continua grátis;
+  - Termos e Privacidade somem enquanto o endereço não existe;
+  - o `env:check` recusa link que não seja `https://` e e-mail pessoal (Gmail, Hotmail, iCloud…);
+  - o perfil de produção do EAS usa o ambiente `production`;
+  - sem o texto de Face ID no iOS.
+- **Documentos:**
+  - planilha do revisor refeita, com um teste que compara a planilha com o seed (a antiga falharia no side_plank);
+  - `launch-readiness.md` com 44 h / 90 h, e os itens 15 e 18 como bloqueio do build de produção;
+  - a frase "revisado por treinador certificado" saiu da descrição das lojas até o revisor aprovar.
+
+### Vídeos por sexo (sua regra)
+
+- Os arquivos seguem o padrão `<slug>.f.mp4` e `<slug>.m.mp4`. O `npm run prototype:videos` gera o manifesto (exercício → mulher/homem), então o app não precisa procurar arquivos.
+- A tela do exercício e o player usam `demoVideo(slug, sexo)`. O app nunca mostra o vídeo do outro sexo: se faltar o vídeo certo, aparece o quadro "em breve".
+- Qual sexo vale: o do perfil; se não houver, o do modelo de corpo.
+- Sem nenhum dos dois, o app pergunta uma vez ("Mostrar as demonstrações com: Mulher / Homem"). A resposta fica no modelo de corpo daquele perfil e muda em Corpo → Modelo de corpo.
+- Trocar de perfil troca o vídeo na hora.
+- Exercício de um lado só tem o botão "Outro lado", que espelha o vídeo.
+- Os vídeos continuam só no build de desenvolvimento até o revisor aprovar (o `bundle:check` confirma).
+
+### Verificações
+
+- Lint e typecheck limpos; **1070 testes** passando.
+- `db:test`, `functions:check` e `bundle:check` limpos.
+- `web:check` (novo) passou.
+- `tabs:check` 6/6.
+- `theme:check`: 52 capturas, primeiro quadro no escuro e troca ao vivo OK.
+- Face ID conferido no `expo config`: o texto não aparece.
+
+### Como testar
+
+1. Adolescente com Grávida + Osteoporose e modelo Menino → trocar para Você (PIN) → voltar: as duas respostas continuam.
+2. Web: abrir `/onboarding/safety?edit=1` direto → mostra as respostas salvas; Continuar não apaga.
+3. 60+: terminar o treino → Treino único / Meu plano voltam para a Home; a tela final não tem "+10 min".
+4. Academia, 60 min, 5 exercícios → cerca de 48 min, 4 séries.
+5. Perfil sem sexo definido → abrir um exercício → "Mostrar as demonstrações com: Mulher / Homem".
+
+### Perguntas em aberto
+
+1. **Teto de séries no treino longo:** com 4 séries por exercício, 5 exercícios chegam a ~48 min. Em 90 min o treino fica igual ao de 60, e o que falta fica com o "+1 exercício?". Quer um teto maior para 75–90 min (por exemplo, 5 séries nos exercícios principais) ou está bom assim?
+2. **Plano Família para adolescente sozinho:** escondi a apresentação da família, mas o cartão do plano Família continua na lista de planos. Como mexe com pagamento, não removi sem você. Esconder para menores de 18?
+3. **Limite semanal de séries:** o gerador não tinha um teto semanal de séries. As séries extras respeitam a recuperação e o equilíbrio puxar/empurrar. Quer um teto semanal por músculo (ex.: 20 séries)?
+4. **Teste no Veo 3.1 Fast (20 créditos):** a decisão é sua; o código não depende disso. Os vídeos gerados entram com os nomes `<slug>.f.mp4` / `<slug>.m.mp4`.
