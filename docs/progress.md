@@ -1986,3 +1986,60 @@ Anotado: Veo 3.1 Fast para chão, abdômen e movimentos pequenos; Lite para movi
 ### Observações
 - O envio real do código do PIN continua testado só com simulação, como você anotou para a rodada 9.
 - O limite semanal conta o grupo do músculo: peito superior, médio e inferior somam juntos no "peito".
+
+## Fase 22 — Correções da rodada 9 de QA
+
+Lista do QA: `docs/qa-round-9.md`, com as suas 4 decisões no fim. Commits separados: R9-04, R9-05, o "+1 exercício?" (R9-01 a 03 e decisão 4), o limite semanal (R9-06 a 08 e decisões 1 a 3) e um grupo de P2.
+
+### P1 — o que foi corrigido
+
+- **R9-04 Plano Família no perfil do adolescente:** com a conta no Família e um menor ativo, Planos e o paywall mostram só "Você está no plano Família. Só o titular da conta pode mudar." e o botão "Gerenciar", que leva a Cobrança. Não aparece lista de planos nem botão de compra. A compra também recusa trocar de plano nesse caso, então não há como rebaixar a família inteira a partir do perfil do adolescente.
+- **R9-05 Código do PIN por e-mail:** o app agora confere a resposta de "sair" e de "voltar à sessão anterior".
+  - Se sair falhar duas vezes, o resultado é erro, nunca sucesso.
+  - Se a sessão anterior não voltar (expirada, sem internet ou inexistente), o app diz "Entre de novo em Conta com o seu e-mail". A conta fica marcada para login, e nenhuma sincronização cria uma conta anônima nova.
+  - O teste antigo escondia o problema porque o simulador não tinha essas funções; agora tem.
+- **R9-01 a 03 "+1 exercício?":**
+  - só aparece com tempo escolhido acima de 45 min e nunca em semana de deload;
+  - ao aceitar, os exercícios que já estavam na lista ficam iguais, inclusive séries, aquecimento e desaquecimento, e entra exatamente um novo no fim;
+  - a sugestão respeita as regras de segurança, o limite semanal e o tempo escolhido.
+- **Sua decisão 4:** a sugestão pode voltar depois de cada aceite, enquanto couber.
+- **R9-06 Abdômen em dobro:** cada série agora conta uma vez por músculo. Uma prancha é uma série de abdômen, não duas.
+- **R9-07 Músculo no limite:**
+  - não entra mais exercício de equilíbrio no lugar dele;
+  - aparece o aviso "Você chegou ao limite desta semana para peito: hoje o treino é de outros músculos", nos 3 idiomas, em vez de "sem exercício seguro";
+  - um dia dividido com todos os músculos no limite monta o treino com os outros grupos;
+  - se não sobrar nada, o app oferece mobilidade ou descanso;
+  - um exercício que caberia com só 1 série fica de fora.
+- **R9-08, suas decisões 1 a 3:**
+  - o "+10 min" e o Reparo contam no limite e na recuperação, mas não mexem na variedade nem no equilíbrio puxar/empurrar;
+  - uma sessão de Reparo nunca é cortada pelo limite;
+  - com dor numa articulação, os exercícios que carregam essa articulação somam no máximo 12 séries por semana, e os outros seguem o limite da idade;
+  - crianças têm limite de 10 séries.
+
+### P2 — o que foi corrigido
+
+- **Sugestão "+1":**
+  - os exercícios acrescentados voltam depois de trocar de local ou de uma reconstrução por segurança;
+  - o cálculo da sugestão é feito uma vez só, e não a cada atualização da tela;
+  - o botão tem descrição para leitor de tela;
+  - não aparece no segundo treino do dia.
+  - Com o novo jeito de acrescentar, o foco "pernas na próxima vez" não impede mais a sugestão, então não foi preciso guardar o foco.
+- **Testes do limite:** o histórico começa perto do limite. Com o limite desligado, 16 dos 22 testes falham. O teste do joelho agora confere o orçamento de 12.
+- **Família:**
+  - o cartão "Adicionar" some com o adolescente ativo;
+  - o link do plano Família avisa o menor antes de pedir PIN;
+  - a tela acompanha a trava quando ela carrega depois;
+  - o texto em inglês diz "subscribe".
+- **Código por e-mail:** no máximo 1 envio por minuto. Códigos errados usam a mesma trava do PIN: 5 seguidos bloqueiam por 15 minutos.
+- **Teste que dependia da ordem (B-03):** era estado de outro teste, não um problema do app. O teste agora prepara o registro seguro como uma troca real de perfil faz. Passou em 5 ordens aleatórias, incluindo a do QA.
+- **Outros:** código morto do "tempo sobrando" removido, e o aviso neutro ganhou uma borda visível.
+- **O que não foi feito:** ao trocar de plano (`discardPlannedWorkouts`), os exercícios acrescentados não voltam, porque o treino é refeito do zero para o plano novo.
+
+### Verificações
+- Lint e typecheck limpos; **1132 testes** passando, também em 5 ordens aleatórias.
+- As checagens do banco, das funções, do bundle e da web (`web:check`) passaram.
+- `tabs:check` 6/6.
+- `theme:check`: 52 capturas, primeira pintura escura correta.
+
+### Observação
+O envio real do código do PIN por e-mail continua testado só com simulação. Os vídeos do lote 1 ainda não chegaram: a branch `videos-lote-1` não existe no GitHub.
