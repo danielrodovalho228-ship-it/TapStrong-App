@@ -4792,7 +4792,9 @@
       "rate_limited": "Muitos códigos em pouco tempo. Espere alguns minutos e tente de novo.",
       "wrong_code": "Esse código não funcionou. Veja o e-mail mais recente e tente de novo.",
       "error": "Algo deu errado. Tente de novo.",
-      "sign_in_again": "O código funcionou, mas este celular saiu da conta. Entre de novo em Conta com o seu e-mail e depois redefina o PIN."
+      "sign_in_again": "O código funcionou, mas este celular saiu da conta. Entre de novo em Conta com o seu e-mail e depois redefina o PIN.",
+      "wait": "Espere um minuto antes de pedir outro código.",
+      "locked": "Códigos errados demais. Tente de novo em 15 minutos."
     },
     "createTitle": "Criar o PIN dos pais",
     "createBody": "Vamos enviar um código de acesso para o e-mail do titular da conta ({{email}}). Depois crie o PIN."

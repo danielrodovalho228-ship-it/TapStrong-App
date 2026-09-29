@@ -137,6 +137,15 @@ export function checkParentPin(pin: string, now: Date = clock.now()): PinCheck {
     else useParentPinStore.setState({ failures: 0, lockedUntil: null });
     return 'ok';
   }
+  return countWrongTry(now);
+}
+
+/**
+ * One wrong try, for the PIN and for the email code alike (QA R9 P2): 5 in
+ * a row lock both for 15 minutes.
+ */
+export function countWrongTry(now: Date = clock.now()): 'wrong' | 'locked' {
+  const s = useParentPinStore.getState();
   const failures = (s.lockedUntil ? 0 : s.failures) + 1;
   if (failures >= MAX_TRIES) {
     useParentPinStore.setState({

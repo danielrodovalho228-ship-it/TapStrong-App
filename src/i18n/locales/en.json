@@ -4758,7 +4758,9 @@
       "rate_limited": "Too many codes in a short time. Wait a few minutes and try again.",
       "wrong_code": "That code didn’t work. Check the latest email and try again.",
       "error": "Something went wrong. Try again.",
-      "sign_in_again": "The code worked, but this phone was signed out. Sign in again from Account with your email, then reset the PIN."
+      "sign_in_again": "The code worked, but this phone was signed out. Sign in again from Account with your email, then reset the PIN.",
+      "wait": "Wait a minute before asking for another code.",
+      "locked": "Too many wrong codes. Try again in 15 minutes."
     },
     "createTitle": "Create the parent PIN",
     "createBody": "We’ll send a sign-in code to the account owner’s email ({{email}}). Then create the PIN."

@@ -10,6 +10,7 @@ import { kvStorage } from '@/lib/storage';
 import { colors, fonts, makeStyles, radius, sizes, spacing, useColors } from '@/theme';
 
 import { FAMILY_MAX_PROFILES } from '../../billing/rules';
+import { useFamilyPlanAllowed } from '../../billing/useFamilyPlan';
 import { ownerAge, summarize } from '../profiles';
 import { useFamilyStore, type LocalProfile } from '../store';
 import { ensureSelfProfile } from '../switch';
@@ -29,6 +30,8 @@ export function FamilyStrip() {
   const selfId = useAccountStore((st) => st.profileId);
   const age = ownerAge(profiles, activeId, live, kvStorage.getItem);
   const ownerMinor = age != null && age < 18;
+  // Not while a teen's profile is active either (QA R9 P2).
+  const familyOk = useFamilyPlanAllowed();
   const list: LocalProfile[] = profiles.length
     ? profiles
     : [{ id: selfId, kind: 'self', createdAt: '' }];
@@ -59,7 +62,7 @@ export function FamilyStrip() {
         );
       })}
       {/* Only an adult owner adds members (QA R8 P2: a solo 17-year-old saw it). */}
-      {list.length < FAMILY_MAX_PROFILES && !ownerMinor ? (
+      {list.length < FAMILY_MAX_PROFILES && !ownerMinor && familyOk ? (
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={t('family.add')}

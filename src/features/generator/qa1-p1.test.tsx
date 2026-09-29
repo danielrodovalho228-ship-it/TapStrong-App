@@ -7,6 +7,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react-native';
 import FamilyScreen from '@/app/(tabs)/family';
 import BillingScreen from '@/app/billing';
 import { devLibrary } from '@/features/exercises/library';
+import { useOwnerIdentityStore } from '@/features/family/ownerIdentity';
 import { useFamilyStore } from '@/features/family/store';
 import { levelFor, lightHistory } from '@/features/movement/progress';
 import type { MovementPain } from '@/features/movement/store';
@@ -251,15 +252,19 @@ describe('Family and children', () => {
   });
 
   it('B-03 a managed 60+ profile never sees owner controls', async () => {
-    await act(() =>
+    await act(() => {
       useFamilyStore.setState({
         profiles: [
           { id: 'me', kind: 'self', createdAt: 'x' },
           { id: 'g', kind: 'parent', createdAt: 'x' },
         ],
         activeId: 'g',
-      }),
-    );
+      });
+      // As a real switch leaves it: the secure record follows the active
+      // profile. (A stale secure id from an earlier test showed the PIN
+      // gate instead — order-dependent, QA R9 P2; not an app path.)
+      useOwnerIdentityStore.setState({ ownerId: 'me', activeId: 'g', minors: {} });
+    });
     await render(<BillingScreen />);
     expect(screen.getAllByText(/The account owner manages/).length).toBeGreaterThan(0);
   });

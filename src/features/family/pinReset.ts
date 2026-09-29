@@ -1,10 +1,12 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 
+import { clock } from '@/lib/clock';
 import { isNetworkError } from '@/lib/network';
 
 import { useAccountStore } from '../account/store';
 
 import { useOwnerIdentityStore, type OwnerAuth } from './ownerIdentity';
+import { countWrongTry, lockMinutesLeft } from './parentPin';
 
 /**
  * Forgotten parent PIN (Phase 12, Daniel): the account owner signs in again
@@ -15,8 +17,8 @@ import { useOwnerIdentityStore, type OwnerAuth } from './ownerIdentity';
  * account, so there is always an email to send to. The code goes only to the
  * owner's email in the secure record, and only the owner's user passes.
  */
-export type ResetSend = 'sent' | 'no_account' | 'offline' | 'rate_limited' | 'error';
-export type ResetVerify = 'ok' | 'wrong_code' | 'offline' | 'error' | 'sign_in_again';
+export type ResetSend = 'sent' | 'no_account' | 'offline' | 'rate_limited' | 'wait' | 'error';
+export type ResetVerify = 'ok' | 'wrong_code' | 'locked' | 'offline' | 'error' | 'sign_in_again';
 
 type AuthError = { code?: string; status?: number } | null;
 
@@ -62,8 +64,17 @@ export async function resolveOwnerAuth(supabase: SupabaseClient | null): Promise
   }
 }
 
+/** One code a minute at most (QA R9 P2: 20 taps sent 20 emails). */
+export const CODE_COOLDOWN_MS = 60_000;
+let lastCodeAt = 0;
+/** Tests only. */
+export const resetCodeCooldown = () => {
+  lastCodeAt = 0;
+};
+
 export async function sendPinResetCode(supabase: SupabaseClient | null): Promise<ResetSend> {
   if (!supabase) return ownerAuth() ? 'offline' : 'no_account';
+  if (clock.now().getTime() - lastCodeAt < CODE_COOLDOWN_MS) return 'wait';
   const auth = await resolveOwnerAuth(supabase);
   if (!auth) return 'no_account';
   try {
@@ -71,7 +82,10 @@ export async function sendPinResetCode(supabase: SupabaseClient | null): Promise
       email: auth.email,
       options: { shouldCreateUser: false },
     });
-    if (!error) return 'sent';
+    if (!error) {
+      lastCodeAt = clock.now().getTime();
+      return 'sent';
+    }
     if (isNetworkError(error)) return 'offline';
     const e = error as AuthError;
     return e?.status === 429 || e?.code === 'over_email_send_rate_limit' ? 'rate_limited' : 'error';
@@ -140,8 +154,10 @@ export async function verifyPinResetCode(
   const auth = ownerAuth();
   if (!auth) return 'error';
   if (!supabase) return 'offline';
+  // Wrong codes share the parent PIN's lockout: 5 in a row lock 15 minutes.
+  if (lockMinutesLeft() > 0) return 'locked';
   const token = code.replace(/\s/g, '');
-  if (!/^\d{6,10}$/.test(token)) return 'wrong_code';
+  if (!/^\d{6,10}$/.test(token)) return countWrongTry() === 'locked' ? 'locked' : 'wrong_code';
   try {
     const before = await currentSession(supabase);
     const { data, error } = await supabase.auth.verifyOtp({
@@ -159,7 +175,9 @@ export async function verifyPinResetCode(
     }
     if (isNetworkError(error)) return 'offline';
     const e = error as AuthError;
-    return e?.code === 'otp_expired' || e?.status === 403 ? 'wrong_code' : 'error';
+    if (e?.code === 'otp_expired' || e?.status === 403)
+      return countWrongTry() === 'locked' ? 'locked' : 'wrong_code';
+    return 'error';
   } catch {
     return 'offline';
   }

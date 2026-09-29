@@ -54,7 +54,8 @@ const useStyles = makeStyles(() => ({
   },
   safety: { backgroundColor: colors.tealTint },
   warning: { backgroundColor: colors.surface, borderWidth: 1.5, borderColor: colors.accent },
-  neutral: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.line },
+  // A visible edge: the light line token was ~1.2:1 on white (QA R9 P2).
+  neutral: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.mutedStrong },
   text: { flex: 1, gap: spacing.xs },
   title: { textTransform: 'uppercase', letterSpacing: 1, fontFamily: fonts.heading },
 }));

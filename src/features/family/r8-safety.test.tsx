@@ -13,6 +13,7 @@ import { useOnboardingStore } from '@/features/onboarding/store';
 import { clock } from '@/lib/clock';
 
 import { activeMinorLock, useOwnerIdentityStore } from './ownerIdentity';
+import { useParentPinStore } from './parentPin';
 import { useFamilyStore } from './store';
 import { ensureSelfProfile, switchProfile } from './switch';
 
@@ -213,6 +214,8 @@ describe('R8-05 PIN reset goes only to the owner', () => {
   };
 
   beforeEach(() => {
+    reset.resetCodeCooldown();
+    useParentPinStore.getState().reset();
     useOwnerIdentityStore.setState({
       ownerId: 'owner',
       activeId: null,
@@ -312,6 +315,9 @@ describe('R9-05 the code session always ends, and failures are never "ok"', () =
       ownerAuth: { email: 'dan@example.com', userId: 'owner-user' },
     });
     account.useAccountStore.getState().update({ saved: true, needsSignIn: false });
+    // No lockout left over from another test (random order).
+    useParentPinStore.getState().reset();
+    reset.resetCodeCooldown();
   });
 
   it('restore returns { error } (expired token): "sign in again", never ok, no anonymous sync', async () => {
@@ -357,5 +363,56 @@ describe('R9-05 the code session always ends, and failures are never "ok"', () =
       signOut: jest.fn(async () => ({ error: { status: 500 } })),
     });
     expect(await reset.verifyPinResetCode(c, '123456')).toBe('error');
+  });
+});
+
+describe('R9 P2 code limits', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const reset = require('./pinReset') as typeof import('./pinReset');
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const pin = require('./parentPin') as typeof import('./parentPin');
+  const client = (over: Record<string, unknown> = {}) =>
+    ({
+      auth: {
+        signInWithOtp: jest.fn(async () => ({ error: null })),
+        verifyOtp: jest.fn(async () => ({ data: {}, error: { code: 'otp_expired', status: 403 } })),
+        getSession: jest.fn(async () => ({ data: { session: null } })),
+        signOut: jest.fn(async () => ({ error: null })),
+        setSession: jest.fn(async () => ({ error: null })),
+        ...over,
+      },
+    }) as never as import('@supabase/supabase-js').SupabaseClient & {
+      auth: Record<string, jest.Mock>;
+    };
+  beforeEach(() => {
+    reset.resetCodeCooldown();
+    pin.useParentPinStore.getState().reset();
+    useOwnerIdentityStore.setState({
+      ownerId: 'owner',
+      ownerAuth: { email: 'dan@example.com', userId: 'owner-user' },
+    });
+  });
+
+  it('20 taps send one code; another only after a minute', async () => {
+    const c = client();
+    const results = [];
+    for (let n = 0; n < 20; n++) results.push(await reset.sendPinResetCode(c));
+    expect(results[0]).toBe('sent');
+    expect(results.slice(1).every((r) => r === 'wait')).toBe(true);
+    expect(c.auth.signInWithOtp).toHaveBeenCalledTimes(1);
+    const now = clock.now;
+    clock.now = () => new Date(now().getTime() + 61_000);
+    expect(await reset.sendPinResetCode(c)).toBe('sent');
+    clock.now = now;
+  });
+
+  it('5 wrong codes lock the reset like the PIN, for 15 minutes', async () => {
+    const c = client();
+    const results = [];
+    for (let n = 0; n < 6; n++) results.push(await reset.verifyPinResetCode(c, '111111'));
+    expect(results.slice(0, 4)).toEqual(['wrong_code', 'wrong_code', 'wrong_code', 'wrong_code']);
+    expect(results[4]).toBe('locked');
+    expect(results[5]).toBe('locked');
+    expect(pin.lockMinutesLeft()).toBeGreaterThan(0);
   });
 });

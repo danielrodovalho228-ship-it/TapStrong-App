@@ -15,6 +15,7 @@ import { useOnboardingStore } from '@/features/onboarding/store';
 import { clock } from '@/lib/clock';
 
 import { buy, familyPlanAllowed } from './actions';
+import { useBillingStore } from './store';
 import * as provider from './provider';
 import { PRODUCTS } from './rules';
 
@@ -37,6 +38,7 @@ beforeAll(() => {
 
 async function solo(birthYear: number) {
   await act(() => {
+    useBillingStore.getState().reset();
     useFamilyStore.getState().reset();
     useOnboardingStore.getState().reset();
     useOnboardingStore.getState().update({ birthMonth: 3, birthYear, onboardingComplete: true });
@@ -45,6 +47,7 @@ async function solo(birthYear: number) {
 
 async function ownerWithTeen(active: 'owner' | 'teen') {
   await act(() => {
+    useBillingStore.getState().reset();
     useFamilyStore.setState({
       profiles: [
         { id: 'owner', kind: 'self', createdAt: '' },
