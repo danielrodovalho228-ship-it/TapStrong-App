@@ -75,7 +75,8 @@ begin
     update public.profiles set birth_year = teen_year - 1, mode = 'adult', body_band = 'young'
     where id = '00000000-0000-0000-0000-00000000e7b3';
     raise exception 'teen became adult with a small date change';
-  exception when check_violation then null;
+  -- Round 2 (S2-P2-4): refused earlier still, an earlier date needs the guardian.
+  exception when check_violation or insufficient_privilege then null;
   end;
   -- Normal edits still work.
   update public.profiles set units = 'metric' where id = '00000000-0000-0000-0000-00000000e7b3';
@@ -112,10 +113,11 @@ begin
     = '00000000-0000-0000-0000-00000000e7a4', 'guardian changed';
 end $$;
 
--- Adults: an adult may choose 60+ mode; body data is fine.
+-- Adults: 60+ mode follows a 60+ birth date (round 2, S2-P2-4); body data is fine.
 do $$ begin
   perform pg_temp.act_as('00000000-0000-0000-0000-00000000e7a2');
-  update public.profiles set mode = 'senior', body_band = 'senior' where id = '00000000-0000-0000-0000-00000000e7b2';
+  update public.profiles set birth_year = 1950, mode = 'senior', body_band = 'senior'
+  where id = '00000000-0000-0000-0000-00000000e7b2';
   insert into public.checkins (profile_id, taken_at, weight_kg)
   values ('00000000-0000-0000-0000-00000000e7b2', now(), 80);
   execute 'reset role';

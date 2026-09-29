@@ -41,7 +41,11 @@ Automatic checks:
   profile data goes through `can_access_profile()`.
 - Nobody can link a profile to another person's login (`profiles.user_id`),
   set someone else as guardian, or drop their guardian from the client (S1-01,
-  S2-01, S2-02). The age mode follows the birth date on the server (S2-03).
+  S2-01, S2-02). The age mode follows the birth date on the server (S2-03);
+  60+ mode needs 60 or more. A profile with a guardian or in teen / child
+  mode can move its birth date earlier only through the guardian (a teen with
+  their own login: support); every change is logged in
+  `profile_birth_changes` (round 2, S2-P2-4).
 - The parent PIN is checked on the server (`verify_parent_pin`), with the
   lockout inside the check; clients can't clear locks (S1-03). Until that has
   passed QA on the web, family profiles are mobile-only (`familyAvailable()`).

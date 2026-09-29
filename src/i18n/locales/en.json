@@ -170,7 +170,8 @@
       "under_min": "TapStrong is for ages 13 and up.",
       "child_unavailable": "Profiles for children under 13 aren’t available yet. Teens 13–17 can join.",
       "teen_lockedTeens": "A teen profile stays between 13 and 17.",
-      "child_too_oldTeens": "This option is for teens 13–17. Adults can set up their own profile."
+      "child_too_oldTeens": "This option is for teens 13–17. Adults can set up their own profile.",
+      "earlierNeedsParent": "With an account, only a parent can move a teen's birth date earlier. If it was entered wrong, contact support."
     },
     "footnote": "We use your age only to keep training safe for you.",
     "locked": "Only a parent can change the birth date on a child or teen profile.",

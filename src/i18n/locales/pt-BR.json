@@ -170,7 +170,8 @@
       "under_min": "O TapStrong é para quem tem 13 anos ou mais.",
       "child_unavailable": "Perfis para crianças com menos de 13 anos ainda não estão disponíveis. Adolescentes de 13 a 17 podem entrar.",
       "teen_lockedTeens": "Um perfil de adolescente fica entre 13 e 17 anos.",
-      "child_too_oldTeens": "Esta opção é para adolescentes de 13 a 17 anos. Adultos podem criar o próprio perfil."
+      "child_too_oldTeens": "Esta opção é para adolescentes de 13 a 17 anos. Adultos podem criar o próprio perfil.",
+      "earlierNeedsParent": "Com uma conta, só um responsável pode mudar a data de nascimento de um adolescente para mais cedo. Se ela foi digitada errado, fale com o suporte."
     },
     "footnote": "Usamos sua idade só para manter o treino seguro para você.",
     "locked": "Só o pai ou a mãe pode mudar a data de nascimento num perfil de criança ou adolescente.",

@@ -25,6 +25,7 @@ import {
 import { evaluateAgeGate, whoErrorKey } from '@/features/onboarding/age-gate';
 import { STEP_NUMBER, TOTAL_STEPS, WHO_OPTIONS, type Who } from '@/features/onboarding/options';
 import { ageLockApplies, isAgeBlocked, useAgeBlockStore } from '@/features/onboarding/ageBlock';
+import { modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { birthYearOptions } from '@/features/profile/age';
 import { track } from '@/lib/analytics';
@@ -85,7 +86,21 @@ export default function WhoScreen() {
     familyProfile: !!profile && profile.kind !== 'self',
   });
 
+  // Security round 2, S2-P2-4: with an account, a teen's birth date moves
+  // earlier only through a parent; the server refuses it, so say it here.
+  const storedMode = stored.birthYear && stored.birthMonth ? modeOf(stored) : null;
+  const earlier =
+    !!month &&
+    !!year &&
+    !!stored.birthYear &&
+    !!stored.birthMonth &&
+    year * 12 + month < stored.birthYear * 12 + stored.birthMonth;
+  const needsParent =
+    accountSaved && !unlocked && earlier && (storedMode === 'teen' || storedMode === 'child');
+  const [earlierShown, setEarlierShown] = useState(false);
+
   const onContinue = () => {
+    if (needsParent) return setEarlierShown(true);
     if (result?.status === 'under_min' && month && year) {
       // Under 13 answering for themselves (kids off): neutral stop, kept on
       // this phone until the date entered turns 13.
@@ -233,6 +248,20 @@ export default function WhoScreen() {
         )}
       </View>
 
+      {needsParent && earlierShown ? (
+        <>
+          <Notice tone="warning" icon>
+            {t('who.errors.earlierNeedsParent')}
+          </Notice>
+          {SUPPORT_EMAIL ? (
+            <TextLink
+              tone="accent"
+              label={t('ageBlock.contact')}
+              onPress={() => contactSupport(t('ageBlock.subject'))}
+            />
+          ) : null}
+        </>
+      ) : null}
       {result?.status === 'ok' && result.mode !== 'child' ? (
         <Notice
           title={t('who.modeTitle', { mode: t(`who.modes.${result.mode}`), age: result.age })}
