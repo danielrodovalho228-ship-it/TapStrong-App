@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet } from 'react-native';
 
 import { AppText, Card, Header, Screen } from '@/components/ui';
-import { derive } from '@/features/onboarding/derived';
+import { modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { createWorkoutFrom, useExerciseLibrary, useGeneratorInput } from '@/features/workout/hooks';
 import { useWorkoutStore } from '@/features/workout/store';
@@ -19,7 +19,7 @@ export default function NewWorkoutScreen() {
   const library = useExerciseLibrary();
   const input = useGeneratorInput(library);
   const workouts = useWorkoutStore((s) => s.workouts);
-  const mode = derive(useOnboardingStore())?.mode ?? 'adult';
+  const mode = modeOf(useOnboardingStore());
 
   const myPlan = () => {
     const existing = workouts.find((w) => w.status === 'planned' && w.kind === 'regular');

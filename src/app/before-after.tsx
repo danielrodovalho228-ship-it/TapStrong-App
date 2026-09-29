@@ -14,7 +14,7 @@ import {
   Screen,
   SegmentedControl,
 } from '@/components/ui';
-import { derive } from '@/features/onboarding/derived';
+import { modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { photosAllowed } from '@/features/progress/checkin';
 import { deletePhotoFile, takePhoto } from '@/features/progress/photos';
@@ -30,7 +30,7 @@ export default function BeforeAfterScreen() {
   const colors = useColors();
   const styles = useStyles();
   const { t, i18n } = useTranslation();
-  const mode = derive(useOnboardingStore())?.mode;
+  const mode = modeOf(useOnboardingStore());
   const { photos, addPhoto, removePhoto, seniorPhotos } = useProgressStore();
   const [pose, setPose] = useState<Pose>('front');
   const [message, setMessage] = useState<string | null>(null);

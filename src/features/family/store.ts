@@ -5,7 +5,7 @@ import { clock } from '@/lib/clock';
 import { kvStorage } from '@/lib/storage';
 
 import { FAMILY_MAX_PROFILES } from '../billing/rules';
-import { seedOwnerIdentity, useOwnerIdentityStore } from './ownerIdentity';
+import { registerPlainActiveId, seedOwnerIdentity, useOwnerIdentityStore } from './ownerIdentity';
 
 /**
  * Profiles on this phone (SPEC §7: the account owner plus family members
@@ -93,6 +93,8 @@ function storedBirth(id: string): { year?: number; month?: number } | null {
     return null;
   }
 }
+
+registerPlainActiveId(() => useFamilyStore.getState().activeId);
 
 // v1 → v2 owner record: seeded once both stores have loaded (QA R6-05).
 function seedWhenLoaded() {

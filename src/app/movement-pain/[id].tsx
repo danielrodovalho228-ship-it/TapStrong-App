@@ -21,6 +21,8 @@ import {
   seeTherapist,
 } from '@/features/movement/progress';
 import { useMovementPainStore } from '@/features/movement/store';
+import { modeOf } from '@/features/onboarding/derived';
+import { useOnboardingStore } from '@/features/onboarding/store';
 import { lightColor, movementName, PainBars, reportTitle } from '@/features/movement/ui';
 import { useExerciseLibrary, useGeneratorInput } from '@/features/workout/hooks';
 import { useWorkoutStore } from '@/features/workout/store';
@@ -45,7 +47,10 @@ export default function MovementPlanScreen() {
   const create = useWorkoutStore((s) => s.create);
   // A managed teen ending a recovery plan needs a parent (QA R5-04).
   const access = useOwnerAccess();
-  const minor = ['teen', 'child'].includes(input?.mode ?? 'adult');
+  // No generator input yet: the restrictive fallback, never adult (QA R8-02).
+  const birthMonth = useOnboardingStore((st) => st.birthMonth);
+  const birthYear = useOnboardingStore((st) => st.birthYear);
+  const minor = ['teen', 'child'].includes(input?.mode ?? modeOf({ birthMonth, birthYear }));
   const [gate, setGate] = useState(false);
   if (!report || !catalog) return <Redirect href="/restrictions" />;
   const end = () => {

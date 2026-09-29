@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { derive } from '../onboarding/derived';
+import { modeOf } from '../onboarding/derived';
 import { useOnboardingStore } from '../onboarding/store';
 import { useProgressStore } from '../progress/store';
 import { activeAreas, useRestrictionsStore } from '../restrictions/store';
@@ -12,7 +12,7 @@ export function useRepair() {
   const profile = useOnboardingStore();
   const restrictions = useRestrictionsStore((s) => s.items);
   const { repairResults, repairPlan } = useProgressStore();
-  const mode = derive(profile)?.mode ?? 'adult';
+  const mode = modeOf(profile);
   const all = useMemo(() => repairTests(), []);
   const risks = [...profile.painAreas, ...profile.conditions, ...activeAreas(restrictions)];
   const tests = testsFor(all, profile.position, risks);

@@ -22,7 +22,7 @@ import { useAccountStore } from '@/features/account/store';
 import { requestPermission } from '@/features/notifications/apply';
 import { parseTime, trainingWeekdays } from '@/features/notifications/plan';
 import { useTrainingDaysPerWeek } from '@/features/program/useTrainingDays';
-import { derive } from '@/features/onboarding/derived';
+import { modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
@@ -47,7 +47,7 @@ function AccountScreenInner() {
     ) <= 1;
   const account = useAccountStore();
   const profile = useOnboardingStore();
-  const mode = derive(profile)?.mode ?? 'adult';
+  const mode = modeOf(profile);
   const [step, setStep] = useState<Step>('start');
   const [email, setEmail] = useState(account.email ?? '');
   const [code, setCode] = useState('');

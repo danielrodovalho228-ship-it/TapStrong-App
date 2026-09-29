@@ -12,6 +12,7 @@ import { WeekStrip } from '@/features/program/components/WeekStrip';
 import { usePlacesStore } from '@/features/equipment/store';
 import { adviceForItem, advisedReps, loadText } from '@/features/workout/loads';
 import type { LoadUnit } from '@/features/workout/types';
+import { modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import {
   generateSession,
@@ -59,7 +60,10 @@ export default function WorkoutScreen() {
   const prefs = usePrefsStore();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { workout, byId, input, library } = useWorkout(id);
-  const mode = input?.mode ?? 'adult';
+  // No generator input yet: the restrictive fallback, never adult (QA R8-02).
+  const birthMonth = useOnboardingStore((st) => st.birthMonth);
+  const birthYear = useOnboardingStore((st) => st.birthYear);
+  const mode = input?.mode ?? modeOf({ birthMonth, birthYear });
   const weightKg = useOnboardingStore((st) => st.weightKg);
   const units = useOnboardingStore((st) => st.units);
   const { places, activeId: activePlace, use: choosePlace } = usePlacesStore();

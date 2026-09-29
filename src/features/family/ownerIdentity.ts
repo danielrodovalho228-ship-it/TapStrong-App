@@ -97,13 +97,24 @@ export function seedOwnerIdentity(
   });
 }
 
+/** The plain active id (family/store.ts registers it; no import cycle). */
+let plainActiveId: () => string | null = () => null;
+export function registerPlainActiveId(read: () => string | null) {
+  plainActiveId = read;
+}
+
 /**
- * The secure lock of the profile the app itself made active (QA R7-02/03):
- * the plain onboarding data (birth year, body) can be edited, this can't.
+ * The secure lock of the active profile (QA R7-02/03): the plain onboarding
+ * data (birth year, body) can be edited, this can't. Looked up by the secure
+ * active id, then by the plain one: until the owner proves the phone with the
+ * PIN (a v1 upgrade), the secure id is empty although `minors` already holds
+ * the teen (QA R8-03). The plain id is only a lookup key, so it can only
+ * make things stricter.
  */
 export function activeMinorLock(): MinorLock | undefined {
   const { activeId, minors } = useOwnerIdentityStore.getState();
-  return activeId ? minors[activeId] : undefined;
+  const plain = plainActiveId();
+  return (activeId ? minors[activeId] : undefined) ?? (plain ? minors[plain] : undefined);
 }
 
 type Identity = Pick<State, 'ownerId' | 'activeId'>;

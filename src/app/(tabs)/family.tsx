@@ -18,7 +18,7 @@ import {
   usePendingDeletesStore,
 } from '@/features/family/remote';
 import { ensureSelfProfile, removeMember, switchProfile } from '@/features/family/switch';
-import { derive } from '@/features/onboarding/derived';
+import { modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { clock } from '@/lib/clock';
 import { deviceWeekStart } from '@/lib/dates';
@@ -31,7 +31,7 @@ export default function FamilyScreen() {
   const styles = useStyles();
   const { t, i18n } = useTranslation();
   const live = useOnboardingStore();
-  const minor = ['teen', 'child'].includes(derive(live)?.mode ?? 'adult');
+  const minor = ['teen', 'child'].includes(modeOf(live));
   const { profiles, activeId, setShareAllowed } = useFamilyStore();
   const entitlement = useBillingStore((s) => s.entitlement);
   const plan = currentPlan(entitlement, clock.now());

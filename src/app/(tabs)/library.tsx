@@ -19,7 +19,7 @@ import type { Exercise } from '@/features/exercises/types';
 import { libraryView, type LibraryFilter, type LibraryRole } from '@/features/library/browse';
 import { canCreateExercise } from '@/features/library/custom';
 import { useLibraryStore } from '@/features/library/store';
-import { derive } from '@/features/onboarding/derived';
+import { modeOf } from '@/features/onboarding/derived';
 import { POSITIONS } from '@/features/onboarding/options';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { muscleLabel } from '@/features/onboarding/summaries';
@@ -55,7 +55,7 @@ export default function LibraryScreen() {
   const { t } = useTranslation();
   const library = useExerciseLibrary();
   const input = useGeneratorInput(library);
-  const mode = derive(useOnboardingStore())?.mode ?? 'adult';
+  const mode = modeOf(useOnboardingStore());
   const senior = mode === 'senior';
   const { favourites, toggleFavourite } = useLibraryStore();
   const [segment, setSegment] = useState<'exercises' | 'plans'>('exercises');

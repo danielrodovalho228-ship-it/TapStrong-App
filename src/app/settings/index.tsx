@@ -12,7 +12,7 @@ import { ParentGate, ParentPinSetup } from '@/features/family/ParentGate';
 import { useParentPinStore } from '@/features/family/parentPin';
 import { activeProfile, canShare, useFamilyStore } from '@/features/family/store';
 import { LegalLinks } from '@/features/legal/LegalLinks';
-import { derive } from '@/features/onboarding/derived';
+import { modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { clock } from '@/lib/clock';
 import { contactSupport, SUPPORT_EMAIL } from '@/lib/support';
@@ -34,7 +34,7 @@ export default function SettingsScreen() {
   const [pinStep, setPinStep] = useState<'check' | 'set' | 'saved' | null>(null);
   // "Share with friends" shares the invite link, only where sharing is on (QA R4 P2).
   const member = useFamilyStore(activeProfile);
-  const mode = derive(useOnboardingStore())?.mode ?? 'adult';
+  const mode = modeOf(useOnboardingStore());
   const shareOk = canShare(member, mode);
   const shareInvite = async () => {
     const code = await loadReferralCode();

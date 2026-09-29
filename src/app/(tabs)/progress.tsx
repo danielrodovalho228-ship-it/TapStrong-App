@@ -15,7 +15,7 @@ import {
   type IconName,
 } from '@/components/ui';
 import { MovementPainEntry } from '@/features/movement/Entry';
-import { derive } from '@/features/onboarding/derived';
+import { modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { muscleLabel } from '@/features/onboarding/summaries';
 import { ActivityCard } from '@/features/progress/components/ActivityCard';
@@ -38,7 +38,7 @@ export default function ProgressScreen() {
   const styles = useStyles();
   const { t } = useTranslation();
   const profile = useOnboardingStore();
-  const mode = derive(profile)?.mode ?? 'adult';
+  const mode = modeOf(profile);
   const { workouts, streak } = useWorkoutStore();
   const { checkins, seniorPhotos, setSeniorPhotos } = useProgressStore();
   const library = useExerciseLibrary();

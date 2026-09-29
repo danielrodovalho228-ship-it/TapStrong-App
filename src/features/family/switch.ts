@@ -72,7 +72,11 @@ function capture(): Snapshot {
 function load(snapshot: Snapshot | null, seed: Partial<OnboardingData>) {
   const onboarding = useOnboardingStore.getState();
   onboarding.reset();
-  onboarding.update({ ...(snapshot?.onboarding ?? {}), ...(snapshot ? {} : seed) });
+  // A saved profile comes back exactly as it was stored, with no filters: a
+  // locked teen's kept answers (pregnancy on a boy body model) must survive
+  // a switch away and back (QA R8-01). A new profile starts from its seed.
+  if (snapshot) useOnboardingStore.setState({ ...snapshot.onboarding });
+  else onboarding.update(seed);
   useWorkoutStore.setState({
     workouts: snapshot?.workouts ?? [],
     streak: snapshot?.streak ?? initialStreak(),
@@ -122,8 +126,9 @@ export function switchProfile(targetId: string, seed: Partial<OnboardingData> = 
   if (current === targetId) return;
   if (current) kvStorage.setItem(key(current), JSON.stringify(capture()));
   const raw = kvStorage.getItem(key(targetId));
-  load(raw ? (JSON.parse(raw) as Snapshot) : null, { ...initialOnboardingSeed(), ...seed });
+  // Active first, so everything that runs while loading sees the target's lock.
   family.setActive(targetId);
+  load(raw ? (JSON.parse(raw) as Snapshot) : null, { ...initialOnboardingSeed(), ...seed });
 }
 
 /**

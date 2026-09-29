@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import { AppText, Button, Card, Header, Notice, Screen, TextField } from '@/components/ui';
-import { derive } from '@/features/onboarding/derived';
+import { modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import {
   bmi,
@@ -32,7 +32,7 @@ export default function CheckinScreen() {
   const styles = useStyles();
   const { t } = useTranslation();
   const profile = useOnboardingStore();
-  const mode = derive(profile)?.mode ?? 'adult';
+  const mode = modeOf(profile);
   const adult = measurementsAllowed(mode);
   const workouts = useWorkoutStore((s) => s.workouts);
   const { checkins, addCheckin, seniorPhotos } = useProgressStore();

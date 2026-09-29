@@ -19,7 +19,7 @@ import { prototypeVideo } from '@/features/exercises/library';
 import { libraryView } from '@/features/library/browse';
 import { exerciseRecords, visibleRecords } from '@/features/library/performance';
 import { useLibraryStore } from '@/features/library/store';
-import { derive } from '@/features/onboarding/derived';
+import { modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { muscleLabel } from '@/features/onboarding/summaries';
 import { DemoLoop } from '@/features/workout/components/Media';
@@ -42,7 +42,7 @@ export default function ExerciseScreen() {
   const library = useExerciseLibrary();
   const input = useGeneratorInput(library);
   const profile = useOnboardingStore();
-  const mode = derive(profile)?.mode ?? 'adult';
+  const mode = modeOf(profile);
   const unit: LoadUnit = profile.units === 'imperial' ? 'lb' : 'kg';
   const workouts = useWorkoutStore((s) => s.workouts);
   const { favourites, toggleFavourite, notes, setNote, removeCustom } = useLibraryStore();

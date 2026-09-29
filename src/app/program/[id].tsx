@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText, Button, Card, Header, Notice, Screen } from '@/components/ui';
-import { derive } from '@/features/onboarding/derived';
+import { modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { planAllowed, planById } from '@/features/program/plans';
 import { useProgramStore } from '@/features/program/store';
@@ -24,7 +24,7 @@ export default function ProgramScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { planId, choosePlan } = useProgramStore();
   const [saved, setSaved] = useState(false);
-  const mode = derive(useOnboardingStore())?.mode;
+  const mode = modeOf(useOnboardingStore());
   const plan = planById(id);
   // An id that is neither "mine" nor a plan is "not found", never "Plan set" (QA R5 P2).
   const unknown = id !== 'mine' && !plan;

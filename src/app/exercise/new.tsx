@@ -27,7 +27,7 @@ import {
 } from '@/features/library/custom';
 import { useLibraryStore } from '@/features/library/store';
 import { JOINTS, type JointKey } from '@/features/movement/catalog';
-import { derive } from '@/features/onboarding/derived';
+import { modeOf } from '@/features/onboarding/derived';
 import type { Position } from '@/features/onboarding/options';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { clock } from '@/lib/clock';
@@ -42,7 +42,7 @@ import { spacing, useColors } from '@/theme';
 export default function CreateExerciseScreen() {
   const colors = useColors();
   const { t } = useTranslation();
-  const mode = derive(useOnboardingStore())?.mode ?? 'adult';
+  const mode = modeOf(useOnboardingStore());
   const addCustom = useLibraryStore((s) => s.addCustom);
   const [name, setName] = useState('');
   const [picking, setPicking] = useState<'primary' | 'secondary'>('primary');

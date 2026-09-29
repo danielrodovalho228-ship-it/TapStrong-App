@@ -26,7 +26,7 @@ import { useOwnerAccess } from '@/features/family/OwnerOnly';
 import { ParentGate } from '@/features/family/ParentGate';
 import { useMovementPainStore, type PainDuration } from '@/features/movement/store';
 import { areaName, movementExample, movementName, ScoreChips } from '@/features/movement/ui';
-import { derive } from '@/features/onboarding/derived';
+import { modeOf } from '@/features/onboarding/derived';
 import type { PainArea } from '@/features/onboarding/options';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { useRestrictionsStore } from '@/features/restrictions/store';
@@ -47,7 +47,7 @@ export default function MovementPainScreen() {
   const { t } = useTranslation();
   const params = useLocalSearchParams<{ area?: string }>();
   const catalog = useMemo(() => movementCatalog(), []);
-  const mode = derive(useOnboardingStore())?.mode;
+  const mode = modeOf(useOnboardingStore());
   const addReport = useMovementPainStore((s) => s.add);
   const reports = useMovementPainStore((s) => s.reports);
   // A managed teen's new report would replace the active recovery plan for

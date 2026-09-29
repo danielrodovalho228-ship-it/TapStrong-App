@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText, Button, Icon, type IconName } from '@/components/ui';
 import { useAccountStore } from '@/features/account/store';
 import { activeProfile, canShare, useFamilyStore } from '@/features/family/store';
-import { derive } from '@/features/onboarding/derived';
+import { modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { badgeStatus, VOLUME_STEPS, type BadgeKey } from '@/features/workout/badges';
 import { repairPhaseDone } from '@/features/movement/progress';
@@ -43,7 +43,7 @@ export default function MilestoneScreen() {
   const { t, i18n } = useTranslation();
   const { workouts, streak } = useWorkoutStore();
   const { milestone, update } = useAccountStore();
-  const mode = derive(useOnboardingStore())?.mode ?? 'adult';
+  const mode = modeOf(useOnboardingStore());
   const library = useExerciseLibrary();
   const now = clock.now();
   const days = milestone?.streak ?? streak.current;

@@ -3,7 +3,7 @@ import type { TFunction } from 'i18next';
 import { muscleByKey } from '../muscles';
 import { cmToFeetInches, kgToLb } from '../profile/units';
 
-import { derive } from './derived';
+import { modeOf } from './derived';
 import type { InterviewStep, MuscleGoalEntry } from './options';
 import type { OnboardingData } from './store';
 import { sexLabelKey } from './visible';
@@ -57,7 +57,7 @@ export function answerSummary(t: TFunction, step: InterviewStep, s: OnboardingDa
         ? t('chat.focusLater')
         : s.muscleGoals.map((m) => muscleLabel(t, m.muscleKey)).join(', ');
     case 'body': {
-      const sex = t(sexLabelKey(s.sex, derive(s)?.mode ?? 'adult'));
+      const sex = t(sexLabelKey(s.sex, modeOf(s)));
       const measures = measurementText(t, s);
       return measures ? `${sex} · ${measures}` : sex;
     }

@@ -14,7 +14,7 @@ import { inputFromProfile } from '../generator/fromProfile';
 import type { GeneratorInput } from '../generator/types';
 import { limitFrom } from '../movement/progress';
 import { activeReports, useMovementPainStore } from '../movement/store';
-import { derive } from '../onboarding/derived';
+import { modeOf } from '../onboarding/derived';
 import { useOnboardingStore } from '../onboarding/store';
 import { activeAreas, doctorFirstAreas, useRestrictionsStore } from '../restrictions/store';
 
@@ -195,7 +195,7 @@ export function useBodyStates() {
   const library = useExerciseLibrary();
   const workouts = useWorkoutStore((s) => s.workouts);
   const profile = useOnboardingStore();
-  const mode = derive(profile)?.mode ?? 'adult';
+  const mode = modeOf(profile);
   const now = clock.now();
   const activity = muscleActivity(workouts, library, now);
   const tracked = profile.muscleGoals.map((g) => g.muscleKey);

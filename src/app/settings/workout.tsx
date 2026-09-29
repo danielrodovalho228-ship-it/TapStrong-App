@@ -6,7 +6,7 @@ import { StyleSheet, View } from 'react-native';
 import { AppText, Card, Chip, Header, Screen, ToggleRow } from '@/components/ui';
 import { useOwnerAccess } from '@/features/family/OwnerOnly';
 import { ParentGate } from '@/features/family/ParentGate';
-import { derive } from '@/features/onboarding/derived';
+import { modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { REST_PRESETS, usePrefsStore, type Experience } from '@/features/settings/store';
 import { spacing, useColors } from '@/theme';
@@ -22,7 +22,7 @@ export default function WorkoutPrefsScreen() {
   const colors = useColors();
   const { t } = useTranslation();
   const profile = useOnboardingStore();
-  const mode = derive(profile)?.mode;
+  const mode = modeOf(profile);
   const senior = mode === 'senior';
   const prefs = usePrefsStore();
   const strength = senior ? REST_PRESETS.seniorStrength : REST_PRESETS.strength;
