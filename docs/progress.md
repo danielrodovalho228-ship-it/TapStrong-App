@@ -2143,3 +2143,121 @@ Lista do QA: `docs/qa-round-10.md`, com as suas 3 decisões no fim. Commits sepa
 - Lint e typecheck limpos; **1185 testes** passando, também em 3 ordens aleatórias (seeds 101, 424242, 987654321).
 - `db:test` (com a migração e o teste novos), `functions:check` e `bundle:check` passaram.
 - `web:check` passou; `tabs:check` ok (rótulos cabem em EN/PT/ES, claro e escuro); `theme:check`: 52 capturas, primeira pintura escura correta.
+
+## Fase 24 — Respostas da Fase 23 e rodada de segurança 1
+
+Texto da rodada: `docs/security-round-1.md`. Suas escolhas no início da fase: captcha **Cloudflare Turnstile**; hospedagem da web **ainda não decidida** (CSP dentro da página e arquivos de cabeçalho prontos para Vercel e Netlify/Cloudflare Pages). Commits separados: S1-01, S1-02, S1-03, S2-01 a 03, S2-04/05, Turnstile, S2-07, S2-06, P3 e as proteções permanentes.
+
+### Respostas da Fase 23
+
+- **Ajoelhar:** continua contando no joelho, sem mudança.
+- **Pescoço:** registrado em `docs/SECURITY.md` ("Known gaps").
+- **Migrações:** `docs/launch-readiness.md` tem a lista exata das 7 migrações pendentes e o comando `supabase db push`. O build de produção (`env:check`) agora para com uma mensagem clara se o servidor não tiver as funções novas. `npm run server:check` faz só essa checagem, e o app registra `server_missing:<função>` no Sentry se rodar contra um servidor sem elas.
+
+### P1 — o que foi corrigido
+
+- **S1-01 Roubo de conta:**
+  - o `user_id` de um perfil só pode ficar igual ou virar o do próprio usuário (gatilho e política);
+  - quem convida não vê mais o id de quem entrou, só a contagem (`my_referral_stats`).
+- **S1-02 Família de graça:** compras de teste (TestFlight, trilha de teste do Google Play) não dão plano no servidor de produção. Um projeto de teste pode aceitá-las com `REVENUECAT_ACCEPT_SANDBOX=true`, mas mesmo assim nunca como cobrança (nunca valem como prova de pai pagante).
+- **S1-03 PIN, pela sua decisão:**
+  - o PIN é guardado com bcrypt e conferido no servidor, com a trava de 5 erros aplicada lá dentro;
+  - o app não consegue mais limpar a própria trava;
+  - trocar o PIN exige ter acabado de acertar o PIN ou o código do e-mail;
+  - no celular, a cópia no Keychain/Keystore vale só sem internet;
+  - na web, o app nunca confere o PIN sozinho.
+  - **Web sem família** até o PIN no servidor passar no QA da web:
+    - sem aba Família e sem plano Família;
+    - `/family/*` volta para a Home;
+    - sem PIN nas Configurações;
+    - um perfil de adolescente ou da família aberto na web vê só o aviso "Os perfis da família estão disponíveis no app para celular".
+
+### P2 — o que foi corrigido
+
+- **S2-01/S2-02:**
+  - ninguém entra na família de um estranho;
+  - só o responsável atual pode mexer no `guardian_id`, e o adolescente não consegue tirar o responsável.
+  - Ligar um adulto que tem login próprio vai precisar de um fluxo de convite (não construído).
+- **S2-03:** o servidor liga o modo à data de nascimento:
+  - menos de 13 anos é sempre perfil de criança;
+  - menos de 18 nunca é adulto nem 60+;
+  - as medidas do check-in seguem a idade.
+- **S2-04 Custo do coach:**
+  - orçamento diário por IP (guardado como hash, nunca o endereço) e total, que só o servidor gasta;
+  - tempo limite de 20 s e nenhuma nova tentativa automática;
+  - contas anônimas usam só o modelo principal;
+  - 1,5 s entre chamadas no app;
+  - **Turnstile** antes de cada conta anônima nova e de cada código por e-mail.
+- **S2-05:** o modo do coach vem do perfil salvo ou da data de nascimento, nunca mais solto do que o app pediu. Adolescente nunca recebe "perder peso".
+- **S2-06 Web:**
+  - CSP na página (só os 2 scripts internos, pelo hash);
+  - `npm run web:headers <pasta>` grava `_headers` e `vercel.json`;
+  - o `web:check` falha se um hash não bater ou se a CSP bloquear algo.
+- **S2-07 Código da Conta:** 1 por minuto; 5 errados travam aquele e-mail por 15 min, no celular e no servidor. A tela diz quanto falta e desativa o botão.
+
+### P3
+
+- **Indicações:**
+  - só contam com conta salva, e-mail confirmado e até 14 dias depois de criar a conta;
+  - o "primeiro treino" precisa de pelo menos 6 séries em 10 min ou mais;
+  - o limite anual de quem convida é conferido numa etapa só, travada.
+- **TRANSFER do RevenueCat:** a conta de onde a compra saiu perde o plano.
+- **Excluir conta:** o perfil de um adolescente com login próprio fica (só perde o responsável); perfis sem login continuam sendo apagados.
+- **Senhas e e-mail** (`config.toml`):
+  - senha com 10+ caracteres, letras e números;
+  - troca de senha segura;
+  - e-mail confirmado;
+  - código válido por 15 min.
+- **Pacotes:**
+  - versão exata do supabase-js nas funções;
+  - README com `npm ci`;
+  - Dependabot só propõe versões com 7+ dias.
+- **Menores de 13 no servidor:** coberto pelo S2-03 (criança só com consentimento e com a chave de crianças ligada).
+- **Premium decidido no celular:** aceito para conteúdo do app. A regra para recursos pagos no servidor está em `docs/SECURITY.md`.
+
+### Proteções permanentes
+
+- **`docs/SECURITY.md`:** as 8 regras. O `CLAUDE.md` manda seguir em toda fase.
+- **`npm run security:check`** (dentro do `npm run check`) verifica:
+  - segredos nos arquivos, no histórico do git e no bundle web;
+  - HTML/eval/WebView fora da lista auditada;
+  - integridade do lockfile;
+  - `npm audit` sem alto ou crítico.
+  - Usei um verificador próprio com os padrões da rodada em vez do gitleaks, que é um programa em Go e não está instalado aqui.
+- **Pré-commit:** confere segredos nas linhas do commit. Testei: um commit com uma chave falsa foi bloqueado.
+- **`zz_security_policies.sql` no `db:test`** falha se alguma tabela ficar sem RLS, se alguma política ficar aberta, se algum INSERT/UPDATE ficar sem WITH CHECK, ou se alguma função SECURITY DEFINER ficar sem `search_path` ou executável sem login. Testei com uma tabela e uma função de propósito erradas.
+- **Testes SQL com troca de usuário** para cada política nova: `security_s1`, `security_s1_pin`, `security_s2`, `security_s2_coach`, `security_s2_account_code`, `security_p3`.
+
+### Como testar
+
+- **Celular (precisa de build novo por causa do Turnstile/WebView):**
+  - erre o PIN 5 vezes e apague os dados do app: a trava continua enquanto houver internet;
+  - "Esqueci o PIN" → código → PIN novo;
+  - com o site key do Turnstile no EAS, a verificação aparece antes do coach numa conta nova.
+- **Web:** abra a versão web: não há aba Família nem plano Família, e um perfil de adolescente vê só o aviso.
+
+### O que depende de você
+
+1. `supabase db push` antes do próximo build de teste, depois `npm run server:check`.
+2. **Turnstile:**
+   - criar o site no Cloudflare;
+   - site key no EAS (`EXPO_PUBLIC_TURNSTILE_SITE_KEY`);
+   - secret no painel do Supabase;
+   - ligar o captcha no Supabase **só depois** que os testadores tiverem o build novo.
+3. **Painel do Supabase** (lista em `docs/launch-readiness.md`):
+   - e-mail confirmado;
+   - OTP 900 s;
+   - senhas 10+;
+   - conferir os rate limits.
+4. Não definir `REVENUECAT_ACCEPT_SANDBOX` no projeto de produção.
+
+### Perguntas em aberto
+
+- **Adolescente sozinho na web:** li "web = adultos sem família" também para quem tem 13–17 anos e se cadastra sozinho. Na web, o cadastro para na etapa da idade com "O TapStrong para adolescentes está disponível no app para celular". Se preferir liberar adolescentes sem família na web, é uma chave só.
+- **Dependabot:** vai abrir até 3 pull requests por mês com atualizações de 7+ dias. Se não quiser pull requests automáticos, apago o arquivo `.github/dependabot.yml`.
+
+### Verificações
+
+- Lint e typecheck limpos; **1226 testes** passando, também em 3 ordens aleatórias (seeds 101, 424242, 987654321).
+- `db:test` com os 6 testes SQL novos e o `zz_security_policies.sql`; `functions:check`; `security:check` (arquivos, histórico, `npm audit`: 0 alto/crítico, 16 moderados já conhecidos); `web:check` com a CSP ativa.
+- Bundle de produção, `tabs:check`, `theme:check` e a busca de segredos no bundle web: resultado acrescentado abaixo quando terminarem.
