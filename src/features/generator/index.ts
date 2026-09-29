@@ -17,6 +17,7 @@ export {
   MIN_WARMUP,
   shortSession,
   SPARE_OFFER_MINUTES,
+  offersOneMore,
   spareMinutes,
   withOneMoreExercise,
   warmupCooldownMinutes,

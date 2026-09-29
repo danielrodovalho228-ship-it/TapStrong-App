@@ -3831,7 +3831,8 @@
     "spare": {
       "body_one": "Te sobra {{count}} min de tu tiempo.",
       "body_other": "Te sobran {{count}} min de tu tiempo.",
-      "add": "¿Añadir 1 ejercicio?"
+      "add": "¿Añadir 1 ejercicio?",
+      "long": "Hay unos {{estimate}} de tus {{minutes}} min planificados."
     },
     "deload": "Semana de descarga: menos series",
     "otherSide": "Otro lado"

@@ -3831,7 +3831,8 @@
     "spare": {
       "body_one": "{{count}} min left in your time.",
       "body_other": "{{count}} min left in your time.",
-      "add": "Add 1 exercise?"
+      "add": "Add 1 exercise?",
+      "long": "About {{estimate}} of your {{minutes}} min are planned."
     },
     "deload": "Deload week: fewer sets",
     "otherSide": "Other side"

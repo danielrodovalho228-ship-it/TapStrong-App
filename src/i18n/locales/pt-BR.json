@@ -3848,7 +3848,8 @@
       "body_one": "Sobrou {{count}} min do seu tempo.",
       "body_zero": "Sobraram {{count}} min do seu tempo.",
       "body_other": "Sobraram {{count}} min do seu tempo.",
-      "add": "Adicionar 1 exercício?"
+      "add": "Adicionar 1 exercício?",
+      "long": "Cerca de {{estimate}} dos seus {{minutes}} min estão planejados."
     },
     "deload": "Semana de alívio: menos séries",
     "otherSide": "Outro lado"

@@ -1265,6 +1265,13 @@ export function spareMinutes(session: GeneratedSession): number {
 }
 
 /**
+ * "+1 exercise?" (Daniel, Phase 21): offered when the session, with its
+ * extra sets, still uses under ~85% of the chosen time. Never added on its own.
+ */
+export const offersOneMore = (session: GeneratedSession) =>
+  !session.error && session.estimatedMinutes < EXTRA_SETS_SHARE * session.minutes;
+
+/**
  * The same session with one more main exercise, or null when none fits.
  * With `built`, only when that session came from this input (the offer never
  * reshuffles a workout built another way).

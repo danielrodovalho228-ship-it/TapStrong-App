@@ -32,12 +32,12 @@ beforeAll(() => {
   clock.now = () => new Date('2026-09-26T12:00:00Z');
 });
 
-async function setUp(minutes: number, exercisesPerSession: number) {
+async function setUp(minutes: number, exercisesPerSession: number, birthYear = 1983) {
   await act(() => {
     useOnboardingStore.getState().reset();
     useOnboardingStore.getState().update({
       birthMonth: 3,
-      birthYear: 1983,
+      birthYear,
       sex: 'm',
       mainGoals: ['strength'],
       minutes,
@@ -64,7 +64,7 @@ describe('spare time', () => {
     await setUp(60, 3);
     expect(mainCount()).toBe(3);
     await render(<WorkoutScreen />);
-    expect(screen.getByText(/min left in your time/)).toBeTruthy();
+    expect(screen.getByText(/of your 60 min are planned/)).toBeTruthy();
     await fireEvent.press(screen.getByRole('button', { name: 'Add 1 exercise?' }));
     expect(mainCount()).toBe(4);
   });
@@ -73,5 +73,44 @@ describe('spare time', () => {
     await setUp(20, 5);
     await render(<WorkoutScreen />);
     expect(screen.queryByRole('button', { name: 'Add 1 exercise?' })).toBeNull();
+  });
+});
+
+describe('long workouts (Daniel, Phase 21)', () => {
+  const estimate = () => current().session.estimatedMinutes;
+  const mainSets = () =>
+    current()
+      .session.items.filter((i) => i.role === 'main')
+      .map((i) => i.sets);
+
+  it('90 min with 5 exercises: the offer shows the real estimate, at the top of the list', async () => {
+    await setUp(90, 5);
+    await render(<WorkoutScreen />);
+    const before = estimate();
+    expect(before).toBeLessThan(0.85 * 90);
+    expect(screen.getByText(`About ${before} of your 90 min are planned.`)).toBeTruthy();
+    // Above the first exercise row, not after the cool-down.
+    const order = screen.toJSON() ? JSON.stringify(screen.toJSON()) : '';
+    expect(order.indexOf('are planned')).toBeLessThan(order.indexOf('Warm-up'));
+    await fireEvent.press(screen.getByRole('button', { name: 'Add 1 exercise?' }));
+    expect(mainCount()).toBe(6);
+    expect(estimate()).toBeGreaterThan(before);
+  });
+
+  it.each([30, 45])('%s min: no offer', async (minutes) => {
+    await setUp(minutes, 5);
+    await render(<WorkoutScreen />);
+    expect(screen.queryByRole('button', { name: 'Add 1 exercise?' })).toBeNull();
+  });
+
+  it.each([
+    ['teen', 2010],
+    ['60+', 1958],
+  ])('%s sees the offer too, within 3 sets a move', async (_n, year) => {
+    await setUp(90, 4, year);
+    for (const n of mainSets()) expect(n).toBeLessThanOrEqual(3);
+    await render(<WorkoutScreen />);
+    await fireEvent.press(screen.getByRole('button', { name: 'Add 1 exercise?' }));
+    for (const n of mainSets()) expect(n).toBeLessThanOrEqual(3);
   });
 });

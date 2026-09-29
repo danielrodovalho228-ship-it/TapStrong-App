@@ -17,8 +17,7 @@ import { useOnboardingStore } from '@/features/onboarding/store';
 import {
   generateSession,
   MOBILITY_MINUTES,
-  SPARE_OFFER_MINUTES,
-  spareMinutes,
+  offersOneMore,
   swapItem,
   withOneMoreExercise,
 } from '@/features/generator';
@@ -178,7 +177,7 @@ export default function WorkoutScreen() {
     workout.kind === 'regular' &&
     !workout.swaps.length &&
     !workout.fullSession &&
-    spareMinutes(session) >= SPARE_OFFER_MINUTES
+    offersOneMore(session)
       ? withOneMoreExercise(input, session)
       : null;
 
@@ -332,6 +331,23 @@ export default function WorkoutScreen() {
           </View>
         </View>
       ) : null}
+      {/* Spare time (Daniel, Phases 13 and 21): at the top of the list, the
+          real estimate against the chosen time; the person decides. */}
+      {oneMore ? (
+        <Card style={styles.spare} testID="one-more">
+          <AppText variant="bodyStrong">
+            {t('workout.spare.long', {
+              estimate: session.estimatedMinutes,
+              minutes: session.minutes,
+            })}
+          </AppText>
+          <Button
+            variant="accent"
+            label={t('workout.spare.add')}
+            onPress={() => store.replaceSession(workout.id, oneMore)}
+          />
+        </Card>
+      ) : null}
       {session.notes.map((n) => (
         <View key={n.key} style={styles.coachNote}>
           <AppText color={colors.mutedStrong}>{note(n)}</AppText>
@@ -376,18 +392,6 @@ export default function WorkoutScreen() {
       })}
 
       {phaseCard(cool, 'workout.cooldown', blockMinutes(cool))}
-
-      {/* Spare time (Daniel, Phase 13): the person decides to add one exercise. */}
-      {oneMore ? (
-        <Card style={styles.spare}>
-          <AppText>{t('workout.spare.body', { count: spareMinutes(session) })}</AppText>
-          <Button
-            variant="secondary"
-            label={t('workout.spare.add')}
-            onPress={() => store.replaceSession(workout.id, oneMore)}
-          />
-        </Card>
-      ) : null}
 
       <View style={styles.actions}>
         {planned && session.minutes > SHORT_MINUTES ? (
