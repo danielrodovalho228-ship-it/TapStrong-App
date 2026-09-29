@@ -76,7 +76,35 @@ export type InterviewRequest = {
   text: string;
   locale: Locale;
   mode: InterviewMode;
+  /** Birth month and year as the app knows them (used only before a profile is saved). */
+  birth?: { year: number; month: number };
 };
+
+export type Birth = { year: number; month: number };
+
+/** Whole years on the 1st of the birth month, like the app and the database. */
+export function ageOn(birth: Birth, now: Date): number {
+  const years = now.getUTCFullYear() - birth.year;
+  return now.getUTCMonth() + 1 < birth.month ? years - 1 : years;
+}
+
+/**
+ * The mode the coach uses (security round 1, S2-05): from the caller's saved
+ * profile when there is one, else from the birth date the app sent, and never
+ * less restrictive than the mode the app asked for. No birth date at all is
+ * treated as a teen. Under 13 never reaches the coach.
+ */
+export function serverMode(
+  sent: InterviewMode,
+  birth: Birth | null,
+  now: Date = new Date(),
+): InterviewMode | 'child' {
+  if (!birth) return 'teen';
+  const age = ageOn(birth, now);
+  if (age < 13) return 'child';
+  if (age < 18 || sent === 'teen') return 'teen';
+  return sent;
+}
 
 // ---------------------------------------------------------------------------
 // JSON schema for structured output. All fields required; "unknown" / 0 mean
@@ -176,13 +204,17 @@ export function validateOutput(
   step: InterviewStep,
   raw: unknown,
   muscleKeys: readonly string[],
+  mode: InterviewMode = 'adult',
 ): InterviewResult {
   if (!isRecord(raw)) return { answer: {}, reply: null };
   const answer: InterviewAnswer = {};
 
   switch (step) {
     case 'goals': {
-      const goals = pickEnumList(raw.main_goals, MAIN_GOALS);
+      let goals = pickEnumList(raw.main_goals, MAIN_GOALS);
+      // Teens never get a weight-loss goal, whatever the model says (S2-05).
+      if (mode === 'teen' && goals.includes('lose_weight'))
+        goals = [...new Set(goals.map((g) => (g === 'lose_weight' ? 'fitness' : g)))];
       if (goals.length) answer.mainGoals = goals;
       break;
     }
@@ -242,7 +274,11 @@ export function parseRequest(body: unknown): InterviewRequest | { error: string 
   if (body.mode === 'child') return { error: 'child_mode' };
   const mode = pickEnum(body.mode, ['teen', 'adult', 'senior'] as const);
   if (!mode) return { error: 'invalid_mode' };
-  return { step, text, locale, mode };
+  const birth = isRecord(body.birth) ? body.birth : null;
+  const year = birth && typeof birth.year === 'number' ? Math.trunc(birth.year) : NaN;
+  const month = birth && typeof birth.month === 'number' ? Math.trunc(birth.month) : NaN;
+  const valid = year >= 1900 && year <= 2100 && month >= 1 && month <= 12;
+  return { step, text, locale, mode, ...(valid ? { birth: { year, month } } : {}) };
 }
 
 // ---------------------------------------------------------------------------

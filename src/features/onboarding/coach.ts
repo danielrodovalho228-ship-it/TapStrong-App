@@ -14,7 +14,20 @@ import type { InterviewStep } from './options';
 
 export type CoachResult = InterviewResult & { source: 'coach' | 'local' | 'none' };
 
-type Context = { locale: SupportedLocale; mode: InterviewMode };
+type Context = {
+  locale: SupportedLocale;
+  mode: InterviewMode;
+  /** The server derives the age mode from it before a profile is saved (S2-05). */
+  birth?: { year: number; month: number };
+};
+
+/** A short pause between coach calls (security round 1, S2-04): no rapid-fire spend. */
+export const COACH_COOLDOWN_MS = 1500;
+let lastCallAt = 0;
+/** Tests only. */
+export const resetCoachCooldown = () => {
+  lastCallAt = 0;
+};
 
 /**
  * Interprets a free-text interview answer. Uses the `coach-interview` Edge
@@ -30,12 +43,21 @@ export async function interpretAnswer(
   if (supabase) {
     try {
       if (!(await ensureSession(supabase))) return offline(step, text);
+      const wait = lastCallAt + COACH_COOLDOWN_MS - Date.now();
+      if (wait > 0) await new Promise((resolve) => setTimeout(resolve, wait));
+      lastCallAt = Date.now();
       const { data, error } = await supabase.functions.invoke('coach-interview', {
-        body: { step, text, locale: ctx.locale, mode: ctx.mode },
+        body: {
+          step,
+          text,
+          locale: ctx.locale,
+          mode: ctx.mode,
+          ...(ctx.birth ? { birth: ctx.birth } : {}),
+        },
       });
       if (!error && data && typeof data === 'object' && 'answer' in data) {
         const raw = data as { answer: Record<string, unknown>; reply: unknown };
-        return { ...revalidate(step, raw), source: 'coach' };
+        return { ...revalidate(step, raw, ctx.mode), source: 'coach' };
       }
     } catch {
       // Fall through to the offline parser.
@@ -56,6 +78,7 @@ function offline(step: InterviewStep, text: string): CoachResult {
 function revalidate(
   step: InterviewStep,
   data: { answer: Record<string, unknown>; reply: unknown },
+  mode: InterviewMode,
 ): InterviewResult {
   const a = data.answer;
   const raw = {
@@ -75,5 +98,5 @@ function revalidate(
     height_cm: a.heightCm,
     weight_kg: a.weightKg,
   };
-  return validateOutput(step, raw, MUSCLE_KEYS);
+  return validateOutput(step, raw, MUSCLE_KEYS, mode);
 }

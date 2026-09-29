@@ -6,6 +6,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 import {
   outputSchema,
   parseRequest,
+  serverMode,
   SYSTEM_PROMPT,
   userPrompt,
   validateOutput,
@@ -18,6 +19,12 @@ import {
 const PRIMARY_MODEL = 'claude-haiku-4-5';
 const RESERVE_MODEL = 'claude-sonnet-5';
 const DAILY_CALL_LIMIT = 30;
+// Security round 1, S2-04: per-IP and global daily budgets on top of the
+// per-user limit (fresh anonymous accounts can't multiply the spend).
+const IP_DAILY_LIMIT = Number(Deno.env.get('COACH_IP_DAILY_LIMIT') ?? 60);
+const GLOBAL_DAILY_LIMIT = Number(Deno.env.get('COACH_GLOBAL_DAILY_LIMIT') ?? 5000);
+// One try per model, within the function's own time: no silent SDK retries.
+const MODEL_TIMEOUT_MS = 20_000;
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -32,9 +39,27 @@ function json(body: unknown, status = 200): Response {
   });
 }
 
-const anthropic = new Anthropic({ apiKey: Deno.env.get('ANTHROPIC_API_KEY') });
+const anthropic = new Anthropic({
+  apiKey: Deno.env.get('ANTHROPIC_API_KEY'),
+  timeout: MODEL_TIMEOUT_MS,
+  maxRetries: 0,
+});
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
+const admin = createClient(SUPABASE_URL, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, {
+  auth: { persistSession: false },
+});
+
+/** The caller's IP, hashed (SHA-256) so no raw address is ever stored. */
+async function ipHash(req: Request): Promise<string> {
+  const ip =
+    req.headers.get('cf-connecting-ip') ??
+    req.headers.get('x-real-ip') ??
+    (req.headers.get('x-forwarded-for') ?? '').split(',')[0].trim() ??
+    'unknown';
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`coach:${ip}`));
+  return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, '0')).join('');
+}
 
 let muscleKeysCache: string[] | null = null;
 
@@ -71,7 +96,7 @@ async function ask(model: string, req: InterviewRequest, keys: string[]): Promis
   const text = response.content.find((block) => block.type === 'text');
   if (!text || text.type !== 'text') return { retry: true };
   try {
-    return { result: validateOutput(req.step, JSON.parse(text.text), keys) };
+    return { result: validateOutput(req.step, JSON.parse(text.text), keys, req.mode) };
   } catch {
     return { retry: true };
   }
@@ -103,10 +128,33 @@ Deno.serve(async (req) => {
   } catch {
     return json({ error: 'invalid_body' }, 400);
   }
-  const parsed = parseRequest(body);
-  if ('error' in parsed) {
-    return json({ error: parsed.error }, parsed.error === 'child_mode' ? 403 : 400);
+  const request = parseRequest(body);
+  if ('error' in request) {
+    return json({ error: request.error }, request.error === 'child_mode' ? 403 : 400);
   }
+  // The age mode comes from the caller's saved profile when there is one,
+  // else from the birth date the app sent; never looser than asked (S2-05).
+  const { data: own } = await userClient
+    .from('profiles')
+    .select('birth_year, birth_month')
+    .eq('user_id', auth.user.id)
+    .maybeSingle();
+  const saved = own as { birth_year?: number; birth_month?: number } | null;
+  const birth =
+    saved?.birth_year && saved?.birth_month
+      ? { year: saved.birth_year, month: saved.birth_month }
+      : (request.birth ?? null);
+  const mode = serverMode(request.mode, birth);
+  if (mode === 'child') return json({ error: 'child_mode' }, 403);
+  const parsed = { ...request, mode };
+
+  const { data: budget, error: budgetError } = await admin.rpc('consume_coach_budget', {
+    ip_hash: await ipHash(req),
+    ip_limit: IP_DAILY_LIMIT,
+    global_limit: GLOBAL_DAILY_LIMIT,
+  });
+  if (budgetError) return json({ error: 'coach_unavailable' }, 500);
+  if (budget !== 'ok') return json({ error: 'busy' }, 429);
 
   const { data: allowed, error: limitError } = await userClient.rpc('consume_coach_call', {
     daily_limit: DAILY_CALL_LIMIT,
@@ -123,7 +171,9 @@ Deno.serve(async (req) => {
       if (!retryable(error)) throw error;
       attempt = { retry: true };
     }
-    if ('retry' in attempt) attempt = await ask(RESERVE_MODEL, parsed, keys);
+    // Anonymous accounts get the primary model only (S2-04).
+    if ('retry' in attempt && !auth.user.is_anonymous)
+      attempt = await ask(RESERVE_MODEL, parsed, keys);
     return json('result' in attempt ? attempt.result : { answer: {}, reply: null });
   } catch (error) {
     if (error instanceof Anthropic.APIError) {

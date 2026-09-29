@@ -92,7 +92,9 @@ export default function ChatScreen() {
     const locale = (SUPPORTED_LOCALES as readonly string[]).includes(i18n.language)
       ? (i18n.language as SupportedLocale)
       : 'en';
-    const result = await interpretAnswer(current, text, { locale, mode });
+    const birth =
+      s.birthYear && s.birthMonth ? { year: s.birthYear, month: s.birthMonth } : undefined;
+    const result = await interpretAnswer(current, text, { locale, mode, birth });
     const answer = { ...result.answer };
     if (answer.mainGoals) {
       const allowed = visibleMainGoals(mode);
