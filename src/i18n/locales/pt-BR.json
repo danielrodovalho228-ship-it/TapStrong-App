@@ -5184,7 +5184,11 @@
     "haptics": "Vibração",
     "hapticsDetail": "Um toque leve ao marcar uma série, terminar um exercício ou bater um recorde.",
     "celebrationSounds": "Sons de comemoração",
-    "celebrationSoundsDetail": "Um \"tic\" a cada série e um acorde curto no fim."
+    "celebrationSoundsDetail": "Um \"tic\" a cada série e um acorde curto no fim.",
+    "showName": "Mostrar meu nome nos cards",
+    "showNameDetail": "Seu primeiro nome no canto dos cards que você compartilha. Desligado por padrão.",
+    "noShareOffers": "Nunca mostrar ofertas de compartilhar",
+    "noShareOffersDetail": "Sem \"Quer uma versão bonita para postar?\" depois de um print. Compartilhar nunca é preciso para liberar nada."
   },
   "reminders": {
     "title": "Lembretes",

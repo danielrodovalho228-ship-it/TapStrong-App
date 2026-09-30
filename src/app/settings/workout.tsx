@@ -9,6 +9,8 @@ import { ParentGate } from '@/features/family/ParentGate';
 import { modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { REST_PRESETS, usePrefsStore, type Experience } from '@/features/settings/store';
+import { MAX_DECLINES } from '@/features/share/screenshot';
+import { useCanShare } from '@/features/share/open';
 import { spacing, useColors } from '@/theme';
 import { MoreOptions } from '@/features/home/MoreOptions';
 
@@ -31,6 +33,9 @@ export default function WorkoutPrefsScreen() {
   const access = useOwnerAccess();
   const minor = access === 'gate' && (mode === 'teen' || mode === 'child');
   const [pending, setPending] = useState<Experience | null>(null);
+  // Sharing (Phase 28, E): adults and 60+ who may share; a minor's card never
+  // has a name and never gets share offers.
+  const sharing = useCanShare() && (mode === 'adult' || mode === 'senior');
   const setExperience = (e: Experience) => (minor ? setPending(e) : prefs.set({ experience: e }));
 
   return (
@@ -102,6 +107,24 @@ export default function WorkoutPrefsScreen() {
           onChange={(surprises) => prefs.set({ surprises })}
         />
       </Card>
+
+      {sharing ? (
+        <Card>
+          <ToggleRow
+            label={t('prefs.showName')}
+            detail={t('prefs.showNameDetail')}
+            value={prefs.showNameOnCards}
+            onChange={(showNameOnCards) => prefs.set({ showNameOnCards })}
+          />
+          {/* On after 3 closes of the screenshot bar; turning it off offers again. */}
+          <ToggleRow
+            label={t('prefs.noShareOffers')}
+            detail={t('prefs.noShareOffersDetail')}
+            value={!prefs.shareOffers || prefs.shareOfferDeclines >= MAX_DECLINES}
+            onChange={(never) => prefs.set({ shareOffers: !never, shareOfferDeclines: 0 })}
+          />
+        </Card>
+      ) : null}
 
       {/* Rare settings, collapsed (Phase 27, A3). */}
       <MoreOptions>

@@ -5138,7 +5138,11 @@
     "haptics": "Vibración",
     "hapticsDetail": "Un toque suave al marcar una serie, terminar un ejercicio o lograr un récord.",
     "celebrationSounds": "Sonidos de celebración",
-    "celebrationSoundsDetail": "Un \"tic\" en cada serie y un acorde corto al final."
+    "celebrationSoundsDetail": "Un \"tic\" en cada serie y un acorde corto al final.",
+    "showName": "Mostrar mi nombre en las tarjetas",
+    "showNameDetail": "Tu nombre en la esquina de las tarjetas que compartes. Desactivado por defecto.",
+    "noShareOffers": "No mostrar nunca ofertas de compartir",
+    "noShareOffersDetail": "Sin \"¿Quieres una versión bonita para publicar?\" después de una captura. Compartir nunca es necesario para desbloquear nada."
   },
   "reminders": {
     "title": "Recordatorios",

@@ -5138,7 +5138,11 @@
     "haptics": "Vibration",
     "hapticsDetail": "A light tap when you log a set, finish an exercise or set a record.",
     "celebrationSounds": "Celebration sounds",
-    "celebrationSoundsDetail": "A \"tic\" on each set and a short chord at the end."
+    "celebrationSoundsDetail": "A \"tic\" on each set and a short chord at the end.",
+    "showName": "Show my name on cards",
+    "showNameDetail": "Your first name in the corner of the cards you share. Off by default.",
+    "noShareOffers": "Never show share offers",
+    "noShareOffersDetail": "No \"Want a nicer version to post?\" after a screenshot. Sharing is never needed to unlock anything."
   },
   "reminders": {
     "title": "Reminders",
