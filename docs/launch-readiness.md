@@ -42,23 +42,25 @@ Situação na Fase 19 (28/09/2026), depois da rodada 7 de QA. O código das Fase
 16. **Supabase de produção:** decidir se o projeto atual vira o de produção ou se cria outro (a SPEC §13 pede projetos de produção).
 17. **Segurança:** apagar o token do GitHub que ficou exposto.
 18. **E-mail de suporte (obrigatório, bloqueia o build de produção):** definir `EXPO_PUBLIC_SUPPORT_EMAIL` com um endereço do domínio (ex.: `ajuda@tapstrong.app`). O `env:check` recusa Gmail, Hotmail, iCloud e outros e-mails pessoais, e também links de Termos, Privacidade e convite que não sejam `https://`.
+19. **Cards compartilhados (Fase 28):** **Instagram Stories:** criar um App ID no developers.facebook.com (tipo "Consumer", grátis) e pôr em `EXPO_PUBLIC_FACEBOOK_APP_ID` no EAS. Sem ele, o botão "Stories do Instagram" abre a folha de compartilhar do sistema. **Função pública:** `supabase functions deploy share-link --no-verify-jwt` (a página pública abre sem login; a função só devolve o card e limita cada IP a 300 aberturas por dia, ajustável com o segredo `SHARE_IP_DAILY_LIMIT`). **Domínio `tapstrong.app`:** publicar a versão web (`npm run web:export`) com uma regra que manda `/c/*` para `c/[code].html` e `/r/*` para `r/[code].html`; pôr os dois arquivos de `docs/domain/.well-known/` em `https://tapstrong.app/.well-known/` trocando `TEAMID` (Apple Developer → Membership) e `SHA256_OF_THE_PLAY_APP_SIGNING_KEY` (Play Console → Integridade do app). O `app.json` já pede os links (`applinks:tapstrong.app` e os filtros do Android para `/c/` e `/r/`). **Lojas:** depois da publicação, `EXPO_PUBLIC_APP_STORE_URL` e `EXPO_PUBLIC_PLAY_STORE_URL` fazem aparecer os botões das lojas na página do card.
 
 ## Variáveis do app (EAS, não `.env`)
 
 O `.env` fica só no seu computador e não vai para o build da nuvem. As variáveis públicas do app entram no EAS: `npx eas-cli@latest env:create --environment production --name NOME --value VALOR --visibility plaintext` (ou pelo painel expo.dev → projeto → Environment variables). Os segredos (chave do Claude, service role, webhook) nunca entram aqui: ficam nos segredos do Supabase.
 
-| Variável                                                                        | Obrigatória no build de produção | Para quê                                            |
-| ------------------------------------------------------------------------------- | -------------------------------- | --------------------------------------------------- |
-| `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`                     | sim                              | conta, sincronização e funções                      |
-| `EXPO_PUBLIC_REVENUECAT_IOS_KEY`, `EXPO_PUBLIC_REVENUECAT_ANDROID_KEY`          | sim                              | assinaturas                                         |
-| `EXPO_PUBLIC_TERMS_URL`, `EXPO_PUBLIC_PRIVACY_URL`                              | sim                              | links de Termos e Privacidade (exigência das lojas) |
-| `EXPO_PUBLIC_SUPPORT_EMAIL`                                                     | sim                              | contato de suporte                                  |
-| `EXPO_PUBLIC_SHARE_BASE_URL`                                                    | sim                              | link de convite                                     |
-| `EXPO_PUBLIC_TURNSTILE_SITE_KEY`                                                | sim                              | verificação de pessoa (Cloudflare Turnstile)        |
-| `EXPO_PUBLIC_TURNSTILE_BASE_URL`                                                | não (`https://tapstrong.app/`)   | endereço do widget no celular                       |
-| `EXPO_PUBLIC_SENTRY_DSN`, `EXPO_PUBLIC_POSTHOG_KEY`, `EXPO_PUBLIC_POSTHOG_HOST` | não                              | erros e uso                                         |
-| `EXPO_PUBLIC_KIDS_UNDER_13_ENABLED`                                             | não (desligado)                  | menores de 13, só na versão 2                       |
-| `EXPO_PUBLIC_APP_STORE_URL` / `EXPO_PUBLIC_PLAY_STORE_URL`                      | não (depois da publicação)       | links das lojas no aviso da web para adolescentes    |
+| Variável                                                                        | Obrigatória no build de produção | Para quê                                                              |
+| ------------------------------------------------------------------------------- | -------------------------------- | --------------------------------------------------------------------- |
+| `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`                     | sim                              | conta, sincronização e funções                                        |
+| `EXPO_PUBLIC_REVENUECAT_IOS_KEY`, `EXPO_PUBLIC_REVENUECAT_ANDROID_KEY`          | sim                              | assinaturas                                                           |
+| `EXPO_PUBLIC_TERMS_URL`, `EXPO_PUBLIC_PRIVACY_URL`                              | sim                              | links de Termos e Privacidade (exigência das lojas)                   |
+| `EXPO_PUBLIC_SUPPORT_EMAIL`                                                     | sim                              | contato de suporte                                                    |
+| `EXPO_PUBLIC_SHARE_BASE_URL`                                                    | sim                              | link de convite                                                       |
+| `EXPO_PUBLIC_TURNSTILE_SITE_KEY`                                                | sim                              | verificação de pessoa (Cloudflare Turnstile)                          |
+| `EXPO_PUBLIC_TURNSTILE_BASE_URL`                                                | não (`https://tapstrong.app/`)   | endereço do widget no celular                                         |
+| `EXPO_PUBLIC_SENTRY_DSN`, `EXPO_PUBLIC_POSTHOG_KEY`, `EXPO_PUBLIC_POSTHOG_HOST` | não                              | erros e uso                                                           |
+| `EXPO_PUBLIC_KIDS_UNDER_13_ENABLED`                                             | não (desligado)                  | menores de 13, só na versão 2                                         |
+| `EXPO_PUBLIC_APP_STORE_URL` / `EXPO_PUBLIC_PLAY_STORE_URL`                      | não (depois da publicação)       | links das lojas no aviso da web para adolescentes e na página do card |
+| `EXPO_PUBLIC_FACEBOOK_APP_ID`                                                   | não (sem ele, folha do sistema)  | enviar o card direto para os Stories do Instagram                     |
 
 `npm run env:check` lista o que falta; o build de produção roda essa checagem e para se faltar alguma obrigatória. No build de produção ela também pergunta ao servidor (só com a chave pública) se as funções das migrações novas existem, e para com a mensagem "The Supabase server is missing migrations…" se faltar alguma (`npm run server:check` faz só essa parte).
 
@@ -85,6 +87,7 @@ Migrações novas desde a Fase 22, em ordem:
 11. `20261019000300_security_r2_p3.sql` — treino da indicação com horário do servidor; responsável não apaga perfil de adolescente com login próprio; `parent_pin_failed` só no servidor.
 12. `20261020000000_month_reviews.sql` — resumos dos meses fechados e a escolha do próximo mês (Fase 26).
 13. `20261021000000_moments.sql` — Momentos já mostrados (só id, tipo, data e a resposta ao coach), para nunca repetir (Fase 27).
+14. `20261022000000_share_links.sql` — links dos cards compartilhados (só adultos e 60+; só o dono vê e apaga; a página pública lê pela função `share-link`) (Fase 28).
 
 Depois do push: `npm run server:check` (com as variáveis do `.env`) deve dizer "OK". Se o app rodar contra um servidor sem essas funções, ele registra `server_missing:<função>` no Sentry.
 
@@ -92,9 +95,9 @@ Depois do push: `npm run server:check` (com as variáveis do `.env`) deve dizer 
 
 1. **Migrações:** no terminal, na pasta do projeto, `supabase db push` (aplica as da lista acima que ainda faltarem).
 2. **Conferir o servidor:** `npm run server:check`. Ele deve dizer "OK" para as migrações. Nesta fase ele também **falha se o captcha estiver desligado**, então o passo 4 precisa vir antes do build de produção (builds de preview não travam por isso).
-3. **Turnstile (Cloudflare):** criar o site e colocar a *site key* no EAS como `EXPO_PUBLIC_TURNSTILE_SITE_KEY` (passo a passo em "Segurança" abaixo). Gerar o build de teste com essa chave.
+3. **Turnstile (Cloudflare):** criar o site e colocar a _site key_ no EAS como `EXPO_PUBLIC_TURNSTILE_SITE_KEY` (passo a passo em "Segurança" abaixo). Gerar o build de teste com essa chave.
 4. **Painel do Supabase → Authentication**, depois que os testadores tiverem o build com o Turnstile:
-   - Attack Protection → Captcha: ligar, provedor Turnstile, colar a *secret key* (só lá, nunca no chat);
+   - Attack Protection → Captcha: ligar, provedor Turnstile, colar a _secret key_ (só lá, nunca no chat);
    - Email: "Confirm email" ligado, validade do código **900 s**, intervalo mínimo entre e-mails **60 s**;
    - Senhas: mínimo **10** caracteres, letras e números; "Secure password change" ligado;
    - Rate limits: verificação de token **30 por 5 min** por IP; login anônimo **30 por hora** por IP.

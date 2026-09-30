@@ -5418,5 +5418,14 @@
     "text": "¿Quieres una versión bonita para publicar?",
     "create": "Crear tarjeta",
     "close": "Cerrar"
+  },
+  "sharedCard": {
+    "title": "Una tarjeta de TapStrong",
+    "missing": "Esta tarjeta ya no está aquí.",
+    "cta": "Entrena con TapStrong",
+    "body": "Toca los músculos que quieres y recibe tu entrenamiento. Empezar es gratis.",
+    "appStore": "Descargar en App Store",
+    "playStore": "Disponible en Google Play",
+    "open": "Abrir TapStrong"
   }
 }

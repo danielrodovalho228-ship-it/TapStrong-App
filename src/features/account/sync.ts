@@ -1,4 +1,6 @@
 import type { StoredMoment } from '../moments/store';
+import { linkData } from '../share/public';
+import type { ShareLink } from '../share/store';
 import type { MonthEntry } from '../month/store';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
@@ -42,6 +44,8 @@ export type SyncInput = {
   months?: MonthEntry[];
   /** Moments already shown (Phase 27): ids, kinds, dates and the coach's answer. */
   moments?: StoredMoment[];
+  /** Links of shared cards (Phase 28): code, template and the card's safe data. */
+  shareLinks?: ShareLink[];
   /**
    * A family member the account holder manages on this phone (Phase 6):
    * the row has no login of its own and the account is its guardian.
@@ -81,6 +85,8 @@ export type SyncPlan = {
   movementPains: Row[];
   monthReviews: Row[];
   moments: Row[];
+  /** Adults and 60+ only; inserted once, never updated (the server owns the open count). */
+  shareLinks: Row[];
   /** Finished workouts that use exercises the database does not release. */
   skipped: string[];
 };
@@ -339,6 +345,18 @@ export function buildSyncPlan(input: SyncInput): SyncPlan | PlanError {
     answer: m.answer ?? null,
     shared: !!m.shared,
   }));
+  // Share links: only adults and 60+ (the database refuses minors too).
+  const shareLinks =
+    derived.mode === 'adult' || derived.mode === 'senior'
+      ? (input.shareLinks ?? []).map((l) => ({
+          id: l.id,
+          profile_id: profileId,
+          code: l.code,
+          template: l.template,
+          data: linkData(l, l.look),
+          created_at: l.createdAt,
+        }))
+      : [];
   const movementPains = (input.movementPain ?? []).map((r) => ({
     id: r.id,
     profile_id: profileId,
@@ -373,6 +391,7 @@ export function buildSyncPlan(input: SyncInput): SyncPlan | PlanError {
     movementPains,
     monthReviews,
     moments,
+    shareLinks,
     skipped,
   };
 }
@@ -498,6 +517,16 @@ export async function runSync(
     ['moments', plan.moments],
   ] as const) {
     if (rows2.length) steps.push([table, () => supabase.from(table).upsert(rows2)]);
+  }
+  if (plan.shareLinks.length) {
+    // Insert-only: a link already there is kept as it is.
+    steps.push([
+      'share_links',
+      () =>
+        supabase
+          .from('share_links')
+          .upsert(plan.shareLinks, { onConflict: 'id', ignoreDuplicates: true }),
+    ]);
   }
   for (const [step, run] of steps) {
     const { error } = await run();

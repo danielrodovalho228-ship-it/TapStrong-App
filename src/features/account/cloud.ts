@@ -1,3 +1,4 @@
+import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
 import { kvStorage } from '@/lib/storage';
 import { isNetworkError } from '@/lib/network';
@@ -17,6 +18,7 @@ import { useMovementPainStore } from '../movement/store';
 import { useOnboardingStore } from '../onboarding/store';
 import { useProgressStore } from '../progress/store';
 import { useRestrictionsStore } from '../restrictions/store';
+import { useShareStore } from '../share/store';
 import { badgeStatus } from '../workout/badges';
 import { muscleActivity } from '../workout/recovery';
 import { useWorkoutStore } from '../workout/store';
@@ -78,6 +80,7 @@ export function syncNow(): Promise<SyncResult> {
         movementPain: useMovementPainStore.getState().reports,
         months: useMonthStore.getState().history,
         moments: useMomentsStore.getState().shown,
+        shareLinks: useShareStore.getState().links,
       });
     },
     slugs,
@@ -168,7 +171,10 @@ export async function afterAccountSaved(): Promise<void> {
     const { error } = await supabase.rpc('redeem_referral', {
       referral_code: account.pendingReferral,
     });
-    if (!error) account.update({ referralRedeemed: true, pendingReferral: undefined });
+    if (!error) {
+      account.update({ referralRedeemed: true, pendingReferral: undefined });
+      track('referral_signup');
+    }
   }
   await syncNow();
 }

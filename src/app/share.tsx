@@ -5,7 +5,7 @@ import { Platform, ScrollView, Share, useWindowDimensions, View } from 'react-na
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText, Button, Chip, IconButton, SegmentedControl, TextLink } from '@/components/ui';
-import { loadReferralCode, referralLink } from '@/features/account/cloud';
+import { loadReferralCode, referralLink, syncNow } from '@/features/account/cloud';
 import { useAccountStore } from '@/features/account/store';
 import { displayBand } from '@/features/bodymap/selection';
 import { demoSexFor } from '@/features/exercises/videos';
@@ -181,7 +181,11 @@ export default function ShareScreen() {
     if (outcome === 'failed') return setFailed(true);
     if (outcome === 'cancelled') return;
     // The link's page draws this card (adults and 60+ only; never minors).
-    if (!minor) addLink(card, code, clock.now());
+    if (!minor) {
+      addLink(card, code, clock.now(), { sex, band });
+      // Up to the server now, so the link opens right away (saved accounts).
+      void syncNow();
+    }
     if (card.template === 'achievement' && moment) {
       markShared(moment.id);
       track('moment_shared', { kind: moment.kind });

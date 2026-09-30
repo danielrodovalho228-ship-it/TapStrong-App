@@ -39,6 +39,7 @@ export const EXPECTED_COLUMNS = [
   ['20261019000300_security_r2_p3', 'sessions', 'received_at'],
   ['20261020000000_month_reviews', 'month_reviews', 'id'],
   ['20261021000000_moments', 'moments', 'id'],
+  ['20261022000000_share_links', 'share_links', 'id'],
 ];
 
 export async function missingOnServer(url, anonKey, fetchImpl = fetch) {

@@ -4,6 +4,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import { kvStorage } from '@/lib/storage';
 import { uuid } from '@/lib/uuid';
 
+import type { CardLook } from './public';
 import type { CardData, ShareTemplate } from './types';
 
 /**
@@ -17,12 +18,14 @@ export type ShareLink = {
   code: string;
   template: ShareTemplate;
   data: CardData;
+  /** How the map looked: the profile's sex and body band (no age, no name). */
+  look: CardLook;
   createdAt: string;
 };
 
 type State = {
   links: ShareLink[];
-  add: (data: CardData, code: string, at: Date) => ShareLink;
+  add: (data: CardData, code: string, at: Date, look: CardLook) => ShareLink;
   reset: () => void;
 };
 
@@ -53,7 +56,7 @@ export const useShareStore = create<State>()(
   persist(
     (set, get) => ({
       links: [],
-      add: (data, code, at) => {
+      add: (data, code, at, look) => {
         const existing = get().links.find((l) => l.code === code);
         if (existing) return existing;
         const link: ShareLink = {
@@ -61,6 +64,7 @@ export const useShareStore = create<State>()(
           code,
           template: data.template,
           data,
+          look,
           createdAt: at.toISOString(),
         };
         set({ links: [...get().links, link].slice(-MAX_LINKS) });

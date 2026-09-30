@@ -1,0 +1,13 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["TEAMID.app.tapstrong"],
+        "components": [
+          { "/": "/c/*", "comment": "Shared cards (Phase 28)" },
+          { "/": "/r/*", "comment": "Invite links" }
+        ]
+      }
+    ]
+  }
+}

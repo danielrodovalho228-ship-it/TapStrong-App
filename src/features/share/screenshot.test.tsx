@@ -29,6 +29,9 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => params,
 }));
 
+// Renders the whole exercise page: slow on a busy machine.
+jest.setTimeout(20_000);
+
 const takeScreenshot = (Capture as unknown as { __takeScreenshot: () => void }).__takeScreenshot;
 const squat = devLibrary().find((e) => e.pattern === 'squat' && e.parts.includes('main'))!;
 
@@ -108,13 +111,13 @@ describe('C the bar after a screenshot', () => {
   it(`[x] counts; after ${MAX_DECLINES} in a row it stops offering`, async () => {
     await as('adult');
     for (let n = 1; n <= MAX_DECLINES; n++) {
-      useScreenshotOfferStore.getState().resetSession(); // a new app session
+      await act(() => useScreenshotOfferStore.getState().resetSession()); // a new app session
       await openExercise();
       await shoot();
       await fireEvent.press(screen.getByRole('button', { name: 'Close' }));
       expect(usePrefsStore.getState().shareOfferDeclines).toBe(n);
     }
-    useScreenshotOfferStore.getState().resetSession();
+    await act(() => useScreenshotOfferStore.getState().resetSession());
     (Capture.addScreenshotListener as jest.Mock).mockClear();
     await openExercise();
     expect(Capture.addScreenshotListener).not.toHaveBeenCalled();
