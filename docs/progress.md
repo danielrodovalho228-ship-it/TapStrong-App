@@ -2415,3 +2415,10 @@ Texto salvo em `docs/phase-26-monthly-cycle.md`. Dois commits de código: A (ló
 1. **Semana leve no bloco padrão:** agora quem não escolheu plano tem blocos de 4 semanas, e a semana leve (−40% de volume) vem a cada 4 semanas, e não mais a cada 5. Ok? *(Recomendado: sim, é o que faz "1 mês" fechar certinho.)*
 2. **Dor "sharp":** o exercício sai para sempre, mesmo com estrela. Ok? *(Recomendado: sim, segurança primeiro. Daria para liberar depois de um reteste de dor sem dor.)*
 3. **Menos de 4 treinos:** o card "Vamos retomar?" não traz resumo nem troca exercícios. Ok? *(Recomendado: sim, sem pressão.)*
+
+**Decisões do Daniel (Fase 26, aprovada):** seguir as recomendações:
+1. Semana leve a cada 4 semanas no bloco padrão.
+2. Dor "sharp" tira o exercício para sempre, mesmo com estrela.
+3. Com menos de 4 treinos, só o card "Vamos retomar?".
+
+Já é o comportamento implementado; nada muda no código.
