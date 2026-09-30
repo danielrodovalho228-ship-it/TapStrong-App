@@ -2625,3 +2625,20 @@ Limites deste teste:
 
 ### Pergunta
 1. **Aprova os 10 do mapa?** Recomendo aprovar todos. Os de confiança média ainda passam pelo QC, e se o movimento não bater eles caem como suspeitos.
+
+## Mídia 1 — Mapa aprovado: import e QC dos 10 vídeos
+
+- Restaurei do histórico os 10 vídeos aprovados em `docs/media-auto-map.md`, já com o nome do slug, e passei pelo mesmo import e pelo mesmo QC.
+- **Resultado:** 5 ok, 5 suspeitos. Os suspeitos ficam fora do app e entraram na `docs/media-redo.md`.
+
+| slug | f | m |
+|---|---|---|
+| towel_curl | ok | ok |
+| self_resisted_curl | ok | ok |
+| supported_split_squat | ok | **suspeito:** desce até o joelho quase tocar o chão; o exercício pede descer só um pouco |
+| doorframe_curl | **suspeito:** solta o batente e dobra os braços no ar; o corpo não é puxado até o batente | **suspeito:** solta o batente e dobra os braços no ar, inclinado para trás sem apoio |
+| su_seated_leg_lift_curl | **suspeito:** a perna não sobe e as mãos não seguram a coxa; vira rosca de braço no ar | **suspeito:** a perna sobe, mas as mãos não seguram a coxa; faz rosca de braço no ar |
+
+- **App:** 130 clipes em 75 exercícios; 45 suspeitos ficam fora.
+- **Lista de refazer:** caiu de 83 para 78 clipes (58 de exercícios sem nenhum sexo, 20 de exercícios com só um).
+- **Correção no script de import:** ele tratava o `.gitignore` da pasta como lixo e o apagaria na limpeza. Corrigido antes de apagar qualquer coisa.

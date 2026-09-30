@@ -39,7 +39,7 @@ const reportFile = value('--report');
 export const RAW = /^([a-z0-9_]+)\.(f|m)(?:_v(\d+))?_(\d{14})\.(mp4|jpg)$/;
 /** Files that belong to the app and stay: the final clips, the manifest and docs. */
 export const FINAL = /^[a-z0-9_]+\.(f|m)\.mp4$/;
-const KEEP = new Set(['README.md', 'map.json', 'videos.js', 'qc.json', 'posters']);
+const KEEP = new Set(['.gitignore', 'README.md', 'map.json', 'videos.js', 'qc.json', 'posters']);
 
 export function classify(name) {
   if (KEEP.has(name) || FINAL.test(name) || /^ex-.*\.mp4$/.test(name)) return 'keep';

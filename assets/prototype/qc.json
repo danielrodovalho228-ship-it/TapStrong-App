@@ -13,6 +13,8 @@
     "bal_supported_tandem_stance.m": "postura deveria ser parada; no início dá um passo/levanta o joelho",
     "bird_dog.f": "câmera muda de zoom no meio (salto de enquadramento)",
     "bridge_pillow_squeeze.f": "movimento errado: em vários quadros o tronco sobe quase sentado em vez da ponte de quadril",
+    "doorframe_curl.f": "solta o batente e dobra os braços no ar; o corpo não é puxado até o batente",
+    "doorframe_curl.m": "solta o batente e dobra os braços no ar, inclinado para trás sem apoio",
     "doorframe_row.m": "solta o batente no meio (mãos no ar, corpo inclinado para trás sem apoio)",
     "front_arm_hold.f": "hold que se mexe: braços vão da frente para os lados",
     "knee_push_up.f": "quadril empinado e quase não desce o peito",
@@ -37,16 +39,17 @@
     "su_seated_clasped_hands_squeeze.m": "solta as mãos e leva os braços acima da cabeça; deveria manter as mãos entrelaçadas atrás",
     "su_seated_elbow_pull_back.f": "braços ficam esticados à frente; quase não puxa os cotovelos para trás",
     "su_seated_elbow_pull_back.m": "punhos parados na frente do peito; os cotovelos não vão para trás",
+    "su_seated_leg_lift_curl.f": "a perna não sobe e as mãos não seguram a coxa; vira rosca de braço no ar",
+    "su_seated_leg_lift_curl.m": "a perna sobe, mas as mãos não seguram a coxa; faz rosca de braço no ar",
     "su_seated_self_resisted_palm_turn.m": "leva a mão à boca no meio; o giro da palma não aparece",
     "superman.f": "faz flexão/\"cobra\" com as mãos no chão em vez de erguer braços e pernas; linhas verticais no canto",
     "superman.m": "faz flexão/prancha com as mãos no chão em vez de erguer braços e pernas",
+    "supported_split_squat.m": "desce até o joelho quase tocar o chão; o exercício pede descer só um pouco",
     "wall_push_up.f": "dobra quadril e joelhos (agacha) em vez de manter o corpo reto"
   },
   "missing": {
     "bodyweight_good_morning.f": "só imagem: veio a imagem de partida, sem vídeo",
     "bridge_pillow_squeeze.m": "só imagem: veio a imagem de partida, sem vídeo",
-    "doorframe_curl.f": "só imagem: veio a imagem de partida, sem vídeo",
-    "doorframe_curl.m": "só imagem: veio a imagem de partida, sem vídeo",
     "downward_palm_press_hold.f": "faltando: não veio no lote 1–3",
     "downward_palm_press_hold.m": "faltando: não veio no lote 1–3",
     "glute_bridge.f": "só imagem: veio a imagem de partida, sem vídeo",
@@ -57,8 +60,6 @@
     "rx_low_step_up.m": "só imagem: veio a imagem de partida, sem vídeo",
     "seated_towel_press_up.f": "faltando: não veio no lote 1–3",
     "seated_towel_press_up.m": "faltando: não veio no lote 1–3",
-    "self_resisted_curl.f": "só imagem: veio a imagem de partida, sem vídeo",
-    "self_resisted_curl.m": "só imagem: veio a imagem de partida, sem vídeo",
     "sf_seated_back_arch_reach.f": "só imagem: veio a imagem de partida, sem vídeo",
     "sl_seated_abdominal_thigh_press.m": "só imagem: veio a imagem de partida, sem vídeo",
     "sl_seated_clamshell.m": "faltando: refeito no Flow (lote 4), aguardando upload",
@@ -70,13 +71,7 @@
     "sl_supported_hip_hinge.m": "faltando: não veio no lote 1–3",
     "su_seated_hammer_self_curl.f": "só imagem: veio a imagem de partida, sem vídeo",
     "su_seated_hammer_self_curl.m": "só imagem: veio a imagem de partida, sem vídeo",
-    "su_seated_leg_lift_curl.f": "só imagem: veio a imagem de partida, sem vídeo",
-    "su_seated_leg_lift_curl.m": "só imagem: veio a imagem de partida, sem vídeo",
     "su_seated_reverse_self_curl.f": "só imagem: veio a imagem de partida, sem vídeo",
-    "su_seated_reverse_self_curl.m": "só imagem: veio a imagem de partida, sem vídeo",
-    "supported_split_squat.f": "só imagem: veio a imagem de partida, sem vídeo",
-    "supported_split_squat.m": "só imagem: veio a imagem de partida, sem vídeo",
-    "towel_curl.f": "só imagem: veio a imagem de partida, sem vídeo",
-    "towel_curl.m": "só imagem: veio a imagem de partida, sem vídeo"
+    "su_seated_reverse_self_curl.m": "só imagem: veio a imagem de partida, sem vídeo"
   }
 }

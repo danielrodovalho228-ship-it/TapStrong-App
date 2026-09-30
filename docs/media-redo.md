@@ -6,7 +6,7 @@ Gerado por `npm run media:redo` a partir de `assets/prototype/qc.json` e dos cli
 Sexo: f = mulher, m = homem. Nome do arquivo no Flow: `<slug>.<f|m>` (o import
 aceita `_v2`, `_v3`… para refeitos).
 
-Total: 83 clipes (64 de exercícios sem nenhum sexo, 19 de exercícios com só um).
+Total: 78 clipes (58 de exercícios sem nenhum sexo, 20 de exercícios com só um).
 
 ## 1. Exercícios sem nenhum sexo no app (prioridade)
 
@@ -24,16 +24,10 @@ Total: 83 clipes (64 de exercícios sem nenhum sexo, 19 de exercícios com só u
 | prone_lat_pulldown | m | suspeito: braços apontam para o teto; deveria puxar os cotovelos para os lados do corpo |
 | prone_t_raise | f | suspeito: braços sobem para o teto em vez de abrir em T para os lados |
 | prone_t_raise | m | suspeito: braços vão para a frente (tipo "super-homem"), não abrem em T |
-| doorframe_curl | f | só imagem: veio a imagem de partida, sem vídeo |
-| doorframe_curl | m | só imagem: veio a imagem de partida, sem vídeo |
-| towel_curl | f | só imagem: veio a imagem de partida, sem vídeo |
-| towel_curl | m | só imagem: veio a imagem de partida, sem vídeo |
-| self_resisted_curl | f | só imagem: veio a imagem de partida, sem vídeo |
-| self_resisted_curl | m | só imagem: veio a imagem de partida, sem vídeo |
+| doorframe_curl | f | suspeito: solta o batente e dobra os braços no ar; o corpo não é puxado até o batente |
+| doorframe_curl | m | suspeito: solta o batente e dobra os braços no ar, inclinado para trás sem apoio |
 | heel_dig_bridge | f | só imagem: veio a imagem de partida, sem vídeo |
 | heel_dig_bridge | m | só imagem: veio a imagem de partida, sem vídeo |
-| supported_split_squat | f | só imagem: veio a imagem de partida, sem vídeo |
-| supported_split_squat | m | só imagem: veio a imagem de partida, sem vídeo |
 | bridge_pillow_squeeze | f | suspeito: movimento errado: em vários quadros o tronco sobe quase sentado em vez da ponte de quadril |
 | bridge_pillow_squeeze | m | só imagem: veio a imagem de partida, sem vídeo |
 | partial_sit_to_stand | f | suspeito: levanta por completo e balança os braços; deveria ser só metade do caminho |
@@ -50,8 +44,8 @@ Total: 83 clipes (64 de exercícios sem nenhum sexo, 19 de exercícios com só u
 | rx_low_step_up | m | só imagem: veio a imagem de partida, sem vídeo |
 | seated_towel_press_up | f | faltando: não veio no lote 1–3 |
 | seated_towel_press_up | m | faltando: não veio no lote 1–3 |
-| su_seated_leg_lift_curl | f | só imagem: veio a imagem de partida, sem vídeo |
-| su_seated_leg_lift_curl | m | só imagem: veio a imagem de partida, sem vídeo |
+| su_seated_leg_lift_curl | f | suspeito: a perna não sobe e as mãos não seguram a coxa; vira rosca de braço no ar |
+| su_seated_leg_lift_curl | m | suspeito: a perna sobe, mas as mãos não seguram a coxa; faz rosca de braço no ar |
 | su_seated_reverse_self_curl | f | só imagem: veio a imagem de partida, sem vídeo |
 | su_seated_reverse_self_curl | m | só imagem: veio a imagem de partida, sem vídeo |
 | su_seated_hammer_self_curl | f | só imagem: veio a imagem de partida, sem vídeo |
@@ -87,6 +81,7 @@ Total: 83 clipes (64 de exercícios sem nenhum sexo, 19 de exercícios com só u
 | prone_w_raise | m | suspeito: braços apontam para o teto em vez de formar o W junto ao corpo |
 | front_arm_hold | f | suspeito: hold que se mexe: braços vão da frente para os lados |
 | bodyweight_good_morning | f | só imagem: veio a imagem de partida, sem vídeo |
+| supported_split_squat | m | suspeito: desce até o joelho quase tocar o chão; o exercício pede descer só um pouco |
 | low_step_up | f | suspeito: perna duplicada/transparente num trecho (artefato) |
 | standing_supported_bird_dog | f | suspeito: vira de frente para a câmera e abre os braços em T; perde o apoio na parede |
 | bal_seated_weight_shifts | m | faltando: nunca foi gerado |
