@@ -8,6 +8,7 @@ import { usePlacesStore, type Place } from '../equipment/store';
 import { initialLibrary, useLibraryStore, type LibraryData } from '../library/store';
 import { useProgramStore } from '../program/store';
 import { initialProgress, useProgressStore, type ProgressData } from '../progress/store';
+import { initialMonth, useMonthStore, type MonthData } from '../month/store';
 import { useRestrictionsStore, type Restriction } from '../restrictions/store';
 import { initialPrefs, usePrefsStore, type Prefs } from '../settings/store';
 import { initialStreak, type StreakState } from '../workout/streak';
@@ -30,11 +31,25 @@ type Snapshot = {
   places?: { places: Place[]; activeId: string | null };
   prefs?: Prefs;
   body?: BodyEntry[];
+  month?: MonthData;
 };
 
 const key = (id: string) => `profile-snapshot:${id}`;
 const dataOnly = <T extends object>(s: T) =>
   Object.fromEntries(Object.entries(s).filter(([, v]) => typeof v !== 'function')) as Partial<T>;
+
+/** The month store's data only (Phase 26): each profile has its own cycle. */
+const monthData = (s: MonthData): MonthData => ({
+  reviewedFrom: s.reviewedFrom,
+  offer: s.offer,
+  cardUntil: s.cardUntil,
+  resumeUntil: s.resumeUntil,
+  plan: s.plan,
+  previousPlan: s.previousPlan,
+  banned: s.banned,
+  history: s.history,
+  autoNotice: s.autoNotice,
+});
 
 function capture(): Snapshot {
   const w = useWorkoutStore.getState();
@@ -66,6 +81,7 @@ function capture(): Snapshot {
       experience,
     }))(usePrefsStore.getState()),
     body: useBodyStore.getState().entries,
+    month: monthData(useMonthStore.getState()),
   };
 }
 
@@ -85,6 +101,7 @@ function load(snapshot: Snapshot | null, seed: Partial<OnboardingData>) {
   });
   useRestrictionsStore.setState({ items: snapshot?.restrictions ?? [] });
   useProgressStore.setState({ ...initialProgress(), ...snapshot?.progress });
+  useMonthStore.setState({ ...initialMonth(), ...snapshot?.month });
   useMovementPainStore.setState({ reports: snapshot?.movementPain ?? [] });
   useLibraryStore.setState({ ...initialLibrary(), ...snapshot?.library });
   usePrefsStore.setState({ ...initialPrefs(), ...snapshot?.prefs });

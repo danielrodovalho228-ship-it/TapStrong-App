@@ -22,6 +22,19 @@ export function planDayIndex(workouts: WorkoutRecord[], startedAt: LocalDate | n
 }
 
 /** Where the person is in their program: plan (if any), block week, deload. */
+/** Where blocks are counted from: the plan's start, else the first finished workout. */
+export function blockAnchor(
+  program: ProgramState,
+  workouts: WorkoutRecord[],
+  today: LocalDate,
+): LocalDate {
+  const firstWorkout = workouts
+    .filter((w) => w.status === 'done' || w.status === 'partial')
+    .map((w) => localDate(new Date(w.endedAt ?? w.createdAt)))
+    .sort()[0];
+  return program.startedAt ?? firstWorkout ?? today;
+}
+
 export function programStatus(
   program: ProgramState,
   workouts: WorkoutRecord[],
@@ -32,11 +45,7 @@ export function programStatus(
 ): { plan: ReadyPlan | undefined; block: BlockWeek; dayIndex: number } {
   // A plan for another age mode (a deep link, a birthday edit) is ignored (R4-04).
   const plan = allowedPlan(program.planId, mode);
-  const firstWorkout = workouts
-    .filter((w) => w.status === 'done' || w.status === 'partial')
-    .map((w) => localDate(new Date(w.endedAt ?? w.createdAt)))
-    .sort()[0];
-  const start = program.startedAt ?? firstWorkout ?? today;
+  const start = blockAnchor(program, workouts, today);
   return {
     plan,
     block: blockWeek(start, today, plan?.blockWeeks ?? DEFAULT_BLOCK_WEEKS),

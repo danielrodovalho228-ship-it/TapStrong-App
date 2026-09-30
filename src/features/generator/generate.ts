@@ -92,6 +92,7 @@ export function rankForTarget(
   target: Target,
   mode: AppMode,
   favourites: readonly string[] = [],
+  preferred: readonly string[] = [],
 ): Exercise[] {
   const level = userLevel(mode);
   const minor = mode === 'child' || mode === 'teen';
@@ -108,6 +109,8 @@ export function rankForTarget(
       balance: target.goal === 'balance' && e.pattern === 'balance' ? 1 : 0,
       // Starred and safe: preferred (improvements v1, B4).
       fav: favourites.includes(e.id) ? 1 : 0,
+      // This month's plan (Phase 26), right after the starred ones.
+      pref: preferred.includes(e.id) ? 1 : 0,
       emphasis:
         Math.round(emphasisOn(e, target.family, 'primary') * 10) +
         (minor && !e.loaded ? MINOR_UNLOADED_BONUS : 0),
@@ -118,6 +121,7 @@ export function rankForTarget(
       (a, b) =>
         b.balance - a.balance ||
         b.fav - a.fav ||
+        b.pref - a.pref ||
         b.emphasis - a.emphasis ||
         b.fit - a.fit ||
         a.distance - b.distance ||
@@ -151,6 +155,7 @@ function rankForGroup(
   goal: MuscleGoal,
   mode: AppMode,
   favourites: readonly string[] = [],
+  preferred: readonly string[] = [],
 ): Exercise[] {
   const level = userLevel(mode);
   return pool
@@ -163,6 +168,7 @@ function rankForGroup(
       e,
       compound: COMPOUND[group].includes(e.pattern) ? 1 : 0,
       fav: favourites.includes(e.id) ? 1 : 0,
+      pref: preferred.includes(e.id) ? 1 : 0,
       emphasis: Math.round(Math.max(...e.muscles.map((m) => m.emphasis)) * 10),
       fit: goalFit(e, goal, mode),
       distance: Math.abs(e.level - level),
@@ -170,6 +176,7 @@ function rankForGroup(
     .sort(
       (a, b) =>
         b.fav - a.fav ||
+        b.pref - a.pref ||
         b.compound - a.compound ||
         b.fit - a.fit ||
         b.emphasis - a.emphasis ||
@@ -532,13 +539,16 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     // A starred exercise at the top stays, even if done last time (B4).
     const starred = all.find((e) => input.favourites?.includes(e.id));
     if (starred && starred === all[0] && !strengthGym) return starred;
-    const fresh = all.filter((e) => !recentIds.has(e.id) || input.favourites?.includes(e.id));
+    // This month's kept moves stay too (Phase 26): that's how progress is measured.
+    const sticky = (e: Exercise) =>
+      !!input.favourites?.includes(e.id) || !!input.preferred?.includes(e.id);
+    const fresh = all.filter((e) => !recentIds.has(e.id) || sticky(e));
     const list = fresh.length ? fresh : all;
     const equipped = strengthGym ? list.filter((e) => e.equipment.length > 0) : list;
     const top = (equipped.length ? equipped : list).slice(0, 3);
     if (!top.length) return undefined;
     // A starred exercise at the top is picked, not rotated away (B4).
-    if (input.favourites?.includes(top[0].id)) return top[0];
+    if (sticky(top[0])) return top[0];
     const mix = Math.imul((day + 1) * 2654435761, salt + 7) >>> 0;
     return top[(mix >>> 7) % top.length];
   };
@@ -632,8 +642,14 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     !input.rehab &&
     !input.repair &&
     muscleLeft(parentOf(t.muscle)) < minSets;
+  const focusMax = input.mode === 'adult' ? 5 : 3;
   const add = (pick: Exercise, target: Target) => {
     const item = mainItem(pick, target, input);
+    // This month's focus (Phase 26): one more set, within the weekly cap below.
+    if (input.focusMuscles?.includes(parentOf(target.muscle)) && item.sets < focusMax) {
+      item.sets += 1;
+      item.estSeconds = estimateSeconds(item);
+    }
     const left = setsLeft(pick);
     if (left < Math.min(minSets, item.sets)) return false;
     if (item.sets > left) {
@@ -683,7 +699,7 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     .filter((t) => !covered.has(t.muscle) && !cappedTargets.includes(t.muscle))
     .slice(0, Math.max(0, slots - main.length))
     .forEach((target, i) => {
-      const all = rankForTarget(pool, target, input.mode, input.favourites).filter(
+      const all = rankForTarget(pool, target, input.mode, input.favourites, input.preferred).filter(
         (e) => !used.has(e.id),
       );
       const options = readyFirst(all.filter(underCap));
@@ -708,9 +724,13 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     for (const target of targets) {
       if (main.length >= slots) break;
       if (cappedTargets.includes(target.muscle)) continue;
-      const options = rankForTarget(pool, target, input.mode, input.favourites).filter(
-        (e) => !used.has(e.id) && underCap(e),
-      );
+      const options = rankForTarget(
+        pool,
+        target,
+        input.mode,
+        input.favourites,
+        input.preferred,
+      ).filter((e) => !used.has(e.id) && underCap(e));
       // Holds stay out here too (QA R7 P2: adductors gave a Copenhagen hold).
       const equipped = strengthGym ? moving(options).filter((e) => e.equipment.length > 0) : [];
       const pick = (equipped.length ? equipped : moving(options))[0];
@@ -806,7 +826,14 @@ export function generateSession(input: GeneratorInput): GeneratedSession {
     !main.some((i) => realVertical(byIdAll.get(i.exerciseId))) &&
     (!recentPatterns.has('vertical_pull') || !verticalThisWeek);
   const nextFor = (g: MovementGroup) => {
-    const list = rankForGroup(pool, g, defaultGoal, input.mode, input.favourites).filter(
+    const list = rankForGroup(
+      pool,
+      g,
+      defaultGoal,
+      input.mode,
+      input.favourites,
+      input.preferred,
+    ).filter(
       (e) =>
         !used.has(e.id) &&
         // Fillers are real main work: no toe pulls or hangs (QA R4 P2).

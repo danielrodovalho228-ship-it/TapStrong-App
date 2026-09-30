@@ -77,7 +77,16 @@ function bestSets(workouts: WorkoutRecord[], from: number, to: number): Map<stri
  */
 export function strengthChanges(workouts: WorkoutRecord[], now: Date, max = 3): StrengthRow[] {
   const end = now.getTime();
-  const start = end - CHECKIN_DAYS * DAY;
+  return strengthChangesBetween(workouts, end - CHECKIN_DAYS * DAY, end, max);
+}
+
+/** The same, week 1 vs the last week of any span (a block of 4–6 weeks, Phase 26). */
+export function strengthChangesBetween(
+  workouts: WorkoutRecord[],
+  start: number,
+  end: number,
+  max = 3,
+): StrengthRow[] {
   const first = bestSets(workouts, start, start + 7 * DAY);
   const last = bestSets(workouts, end - 7 * DAY, end);
   const rows: StrengthRow[] = [];

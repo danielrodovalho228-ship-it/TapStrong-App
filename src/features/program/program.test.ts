@@ -82,10 +82,11 @@ describe('week strip (A1)', () => {
 });
 
 describe('program blocks and deload (A2)', () => {
-  it('"Week 3 of 5 · Build", the last week a deload', () => {
-    expect(blockWeek('2026-09-01', '2026-09-15')).toEqual({ week: 3, of: 5, phase: 'build' });
-    expect(blockWeek('2026-09-01', '2026-09-29')).toEqual({ week: 5, of: 5, phase: 'deload' });
-    expect(blockWeek('2026-09-01', '2026-10-06').week).toBe(1);
+  it('"Week 3 of 4 · Build", the last week a deload (4 weeks = 1 month, Phase 26)', () => {
+    expect(blockWeek('2026-09-01', '2026-09-15')).toEqual({ week: 3, of: 4, phase: 'build' });
+    expect(blockWeek('2026-09-01', '2026-09-22')).toEqual({ week: 4, of: 4, phase: 'deload' });
+    expect(blockWeek('2026-09-01', '2026-09-29').week).toBe(1);
+    expect(blockWeek('2026-09-01', '2026-09-29', 5)).toEqual({ week: 5, of: 5, phase: 'deload' });
     expect(blockWeek('2026-09-01', '2026-09-01', 9).of).toBe(6);
   });
 
@@ -103,7 +104,7 @@ describe('program blocks and deload (A2)', () => {
 
   it('withProgram applies the deload week to the generator input', () => {
     const start = { planId: null, startedAt: '2026-09-01' };
-    expect(withProgram(base, LIBRARY, [], start, '2026-09-29').deload).toBe(true);
+    expect(withProgram(base, LIBRARY, [], start, '2026-09-22').deload).toBe(true);
     expect(withProgram(base, LIBRARY, [], start, '2026-09-15').deload).toBeUndefined();
   });
 });

@@ -25,6 +25,8 @@ export function userLevel(mode: AppMode): number {
  */
 export function blockReason(e: Exercise, input: GeneratorInput): string | null {
   if (e.status === 'retired') return 'retired';
+  // A sharp pain in an earlier block (Phase 26): never again.
+  if (input.banned?.includes(e.id)) return 'banned';
   // The person's own exercise (B5) skips the release check, never the safety ones.
   if (!e.custom && e.status !== 'released' && !input.includeDrafts) return 'not_released';
   if (!e.location.includes(input.location)) return 'location';
@@ -112,7 +114,11 @@ export function safePool(input: GeneratorInput): Exercise[] {
 
 /** What the generator and swap sheet may program: custom exercises never (B5). */
 export function programmablePool(input: GeneratorInput): Exercise[] {
-  return safePool(input).filter((e) => !e.custom);
+  // Swapped out for this month (Phase 26): out unless starred.
+  const avoid = new Set(input.avoid ?? []);
+  return safePool(input).filter(
+    (e) => !e.custom && (!avoid.has(e.id) || !!input.favourites?.includes(e.id)),
+  );
 }
 
 export function emphasisOn(e: Exercise, muscles: string[], role?: 'primary'): number {

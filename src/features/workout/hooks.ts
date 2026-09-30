@@ -1,3 +1,5 @@
+import { autoChooseIfPending, withMonth } from '../month/apply';
+import { useMonthStore } from '../month/store';
 import { router } from 'expo-router';
 import { useEffect, useMemo } from 'react';
 
@@ -68,6 +70,8 @@ export function useGeneratorInput(
   const favourites = useLibraryStore((s) => s.favourites);
   const shortWarmup = usePrefsStore((s) => s.warmup === 'short');
   const experience = usePrefsStore((s) => s.experience);
+  const monthPlan = useMonthStore((s) => s.plan);
+  const banned = useMonthStore((s) => s.banned);
   const today = localDate(clock.now());
   const laterDay = !!ahead && ahead.date > today;
   const base = inputFromProfile(profile, library, __DEV__, {
@@ -93,13 +97,17 @@ export function useGeneratorInput(
   }, [invalidPlan]);
   // A ready-made plan and the deload week apply on top (improvements v1, A2/A5).
   // Starred exercises are preferred when safe (B4).
+  // This month's plan (Phase 26): kept and new moves, focus, sharp-pain bans.
   return base
-    ? {
-        ...withProgram(base, library, workouts, program, ahead?.date ?? today, ahead?.days ?? 0),
-        favourites,
-        shortWarmup,
-        experience,
-      }
+    ? withMonth(
+        {
+          ...withProgram(base, library, workouts, program, ahead?.date ?? today, ahead?.days ?? 0),
+          favourites,
+          shortWarmup,
+          experience,
+        },
+        { plan: monthPlan, banned },
+      )
     : null;
 }
 
@@ -183,6 +191,8 @@ export function createWorkoutFrom(
   focus: NextFocus = useWorkoutStore.getState().nextFocus,
 ) {
   if (!input) return null;
+  // Starting without choosing next month applies the recommendation (Phase 26).
+  if (autoChooseIfPending(clock.now())) input = withMonth(input, useMonthStore.getState());
   const store = useWorkoutStore.getState();
   const focused = withFocus(input, focus, library);
   let session = generateSession(focused);

@@ -77,6 +77,17 @@ export type GeneratorInput = {
   fixedMain?: SessionItem[];
   /** Starred exercises: preferred when safe (improvements v1, B4). */
   favourites?: string[];
+  /**
+   * The month plan (Phase 26): this month's exercises, ranked right after the
+   * starred ones and kept through the variety rotation.
+   */
+  preferred?: string[];
+  /** Swapped out this month (Phase 26): left out unless starred. */
+  avoid?: string[];
+  /** Gave a sharp pain (Phase 26): never programmed again, starred or not. */
+  banned?: string[];
+  /** Focus muscles this month (Phase 26): +1 set per session, within every cap. */
+  focusMuscles?: string[];
   /** Shorter warm-up and cool-down (Settings, D4): shortened, never removed. */
   shortWarmup?: boolean;
   /** Experience level (Settings, D4): how far above the usual level a move may be. */

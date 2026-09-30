@@ -1,3 +1,4 @@
+import type { MonthEntry } from '../month/store';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 import { clock } from '@/lib/clock';
@@ -36,6 +37,8 @@ export type SyncInput = {
   progress?: Pick<ProgressData, 'checkins' | 'repairResults' | 'repairPlan'>;
   /** "Movement that hurts" reports (Phase 9). */
   movementPain?: MovementPain[];
+  /** Closed months (Phase 26): summary, choice and swaps. */
+  months?: MonthEntry[];
   /**
    * A family member the account holder manages on this phone (Phase 6):
    * the row has no login of its own and the account is its guardian.
@@ -73,6 +76,7 @@ export type SyncPlan = {
   repairResults: Row[];
   repairPlans: Row[];
   movementPains: Row[];
+  monthReviews: Row[];
   /** Finished workouts that use exercises the database does not release. */
   skipped: string[];
 };
@@ -306,6 +310,20 @@ export function buildSyncPlan(input: SyncInput): SyncPlan | PlanError {
       ]
     : [];
 
+  const monthReviews = (input.months ?? []).map((m) => ({
+    id: m.id,
+    profile_id: profileId,
+    block_no: m.blockNo,
+    starts_on: m.from,
+    ends_on: m.to,
+    // A minor's summary has no weights or records (built that way), never body data.
+    summary: m.summary,
+    choice: m.choice,
+    changes: m.changes.slice(0, 40),
+    focus: m.focus.slice(0, 2),
+    undo_until: m.undoUntil,
+    created_at: m.createdAt,
+  }));
   const movementPains = (input.movementPain ?? []).map((r) => ({
     id: r.id,
     profile_id: profileId,
@@ -338,6 +356,7 @@ export function buildSyncPlan(input: SyncInput): SyncPlan | PlanError {
     repairResults,
     repairPlans,
     movementPains,
+    monthReviews,
     skipped,
   };
 }
@@ -459,6 +478,7 @@ export async function runSync(
     ['repair_results', plan.repairResults],
     ['repair_plans', plan.repairPlans],
     ['movement_pains', plan.movementPains],
+    ['month_reviews', plan.monthReviews],
   ] as const) {
     if (rows2.length) steps.push([table, () => supabase.from(table).upsert(rows2)]);
   }

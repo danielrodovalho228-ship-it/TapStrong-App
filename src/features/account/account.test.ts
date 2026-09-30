@@ -127,6 +127,36 @@ describe('sync plan', () => {
     expect(s.items.map((row) => row.order)).toEqual(s.items.map((_, n) => n));
   });
 
+  it('Phase 26: closed months sync with their summary, choice and swaps (never body data)', () => {
+    const month = {
+      id: uuid(),
+      blockNo: 0,
+      from: '2026-08-31',
+      to: '2026-09-28',
+      summary: { workouts: 9 } as never,
+      choice: 'auto' as const,
+      changes: [{ from: 'a', to: 'b', reason: 'variety' as const, muscle: 'chest' }],
+      focus: [{ muscle: 'hamstrings', reason: 'lowGoal' as const }],
+      undoUntil: '2026-10-06T00:00:00.000Z',
+      createdAt: '2026-09-29T00:00:00.000Z',
+    };
+    const plan = buildSyncPlan(input({ months: [month] }));
+    if (typeof plan === 'string') throw new Error(plan);
+    expect(plan.monthReviews).toEqual([
+      expect.objectContaining({
+        id: month.id,
+        profile_id: plan.profile.id,
+        starts_on: '2026-08-31',
+        ends_on: '2026-09-28',
+        choice: 'auto',
+        focus: month.focus,
+      }),
+    ]);
+    expect(Object.keys(plan.monthReviews[0])).not.toEqual(
+      expect.arrayContaining(['waist_cm', 'weight_kg']),
+    );
+  });
+
   it('round 2 (P3): a workout in progress sends only its session row, never marked synced', () => {
     const p = profile();
     const active: WorkoutRecord = {

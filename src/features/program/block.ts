@@ -8,9 +8,11 @@ import type { WorkoutKind } from '../workout/types';
 
 /**
  * Program blocks (improvements v1, A2): 4–6 week blocks, the last week lighter
- * ("Deload": −40% volume). "Week 3 of 5 · Build".
+ * ("Deload": −40% volume). "Week 3 of 4 · Build". Without a plan a block is 4
+ * weeks, 3 normal + 1 lighter = "1 month" (Daniel, Phase 26); plans that ask
+ * for 5–6 weeks keep them.
  */
-export const DEFAULT_BLOCK_WEEKS = 5;
+export const DEFAULT_BLOCK_WEEKS = 4;
 export const DELOAD_VOLUME = 0.6;
 
 export type BlockWeek = { week: number; of: number; phase: 'build' | 'deload' };

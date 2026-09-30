@@ -11,6 +11,7 @@ import { retryPendingDeletes } from '../family/remote';
 import { activeProfile, useFamilyStore } from '../family/store';
 import { derive } from '../onboarding/derived';
 import { repairPhaseDone } from '../movement/progress';
+import { useMonthStore } from '../month/store';
 import { useMovementPainStore } from '../movement/store';
 import { useOnboardingStore } from '../onboarding/store';
 import { useProgressStore } from '../progress/store';
@@ -74,6 +75,7 @@ export function syncNow(): Promise<SyncResult> {
         library,
         progress: useProgressStore.getState(),
         movementPain: useMovementPainStore.getState().reports,
+        months: useMonthStore.getState().history,
       });
     },
     slugs,
