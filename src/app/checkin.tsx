@@ -119,7 +119,7 @@ export default function CheckinScreen() {
             {mode !== 'child' ? (
               <View style={styles.flex}>
                 <Button
-                  variant="accent"
+                  variant="secondary"
                   label={t('checkin.share')}
                   onPress={() => router.push({ pathname: '/share', params: { range: '4w' } })}
                 />

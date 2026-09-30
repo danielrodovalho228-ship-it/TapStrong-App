@@ -3,6 +3,7 @@ import { Pressable, type PressableProps } from 'react-native';
 import { colors, makeStyles, radius, sizes, useColors } from '@/theme';
 
 import { Icon, type IconName } from './Icon';
+import { noteTap } from '@/lib/usage';
 
 export type IconButtonProps = Omit<PressableProps, 'children' | 'style'> & {
   icon: IconName;
@@ -29,6 +30,11 @@ export function IconButton({ icon, variant = 'plain', color, disabled, ...rest }
         disabled && styles.disabled,
       ]}
       {...rest}
+      // Taps to the first set (Phase 27 "Measure"): a count, nothing else.
+      onPressIn={(e) => {
+        noteTap();
+        rest.onPressIn?.(e);
+      }}
     >
       <Icon name={icon} color={iconColor} />
     </Pressable>

@@ -111,8 +111,9 @@ describe('R3-03 all-recovering Home', () => {
     expect(screen.getByRole('header', { name: 'Everything is recovering' })).toBeTruthy();
     expect(screen.queryByRole('button', { name: /^Start/ })).toBeNull();
     expect(screen.getByRole('button', { name: /^Short mobility/ })).toBeTruthy();
-    await fireEvent.press(screen.getByRole('button', { name: 'Rest today' }));
+    await fireEvent.press(screen.getByRole('link', { name: 'Rest today' }));
     expect(screen.getByText(/Rest is part of training/)).toBeTruthy();
+    await fireEvent.press(screen.getByRole('button', { name: 'More options' }));
     await fireEvent.press(screen.getByRole('button', { name: /^Short balance/ }));
     const id = router.push.mock.calls.at(-1)![0].params.id;
     expect(id).not.toBe('unavailable');
@@ -125,7 +126,7 @@ describe('R3-03 all-recovering Home', () => {
     await profile(1990);
     await render(<HomeScreen />);
     expect(screen.queryByRole('header', { name: 'Everything is recovering' })).toBeNull();
-    expect(screen.getByRole('button', { name: /^Start/ })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /^Train now/ })).toBeTruthy();
   });
 });
 
@@ -150,6 +151,8 @@ describe('R3-06 60+ Home', () => {
     // Home passes the session's own estimate; the profile says 30.
     expect(screen.queryByText('Today · 30 minutes')).toBeNull();
     expect(screen.getByText(/^Today · \d+ minutes$/)).toBeTruthy();
+    // Short mobility is one tap away, under "More options" (Phase 27, A2).
+    await fireEvent.press(screen.getByRole('button', { name: 'More options' }));
     await fireEvent.press(screen.getByRole('button', { name: /^Short mobility/ }));
     const id = router.push.mock.calls.at(-1)![0].params.id;
     expect(useWorkoutStore.getState().workouts.find((x) => x.id === id)?.kind).toBe('mobility');
@@ -161,7 +164,7 @@ describe('R3-06 60+ Home', () => {
     await render(<HomeScreen />);
     expect(screen.getByRole('header', { name: 'Everything is recovering' })).toBeTruthy();
     expect(screen.getByRole('button', { name: /^Short balance/ })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Rest today' })).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'Rest today' })).toBeTruthy();
   });
 });
 
@@ -187,6 +190,7 @@ describe("After today's workout (Daniel, Phase 19)", () => {
     expect(screen.queryByRole('button', { name: /^Start ·/ })).toBeNull();
     expect(screen.getByRole('button', { name: /^Short mobility/ })).toBeTruthy();
     expect(screen.queryByTestId('extra-warning')).toBeNull();
+    await fireEvent.press(screen.getByRole('button', { name: 'More options' }));
     await fireEvent.press(screen.getByRole('button', { name: 'Extra workout' }));
     expect(screen.getByTestId('extra-warning')).toBeTruthy();
     await fireEvent.press(screen.getByRole('button', { name: 'Start extra workout' }));
@@ -198,6 +202,7 @@ describe("After today's workout (Daniel, Phase 19)", () => {
     await act(() => useWorkoutStore.setState({ workouts: [doneToday()] }));
     await render(<HomeScreen />);
     expect(screen.getByRole('header', { name: "Today's workout is done" })).toBeTruthy();
+    await fireEvent.press(screen.getByRole('button', { name: 'More options' }));
     expect(screen.queryByRole('button', { name: 'Extra workout' })).toBeNull();
     expect(screen.queryByRole('button', { name: /^Start/ })).toBeNull();
   });

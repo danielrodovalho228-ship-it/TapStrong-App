@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, type PressableProps } from 'react-native';
 import { sizes, useColors } from '@/theme';
 
 import { AppText } from './AppText';
+import { noteTap } from '@/lib/usage';
 
 export type TextLinkProps = Omit<PressableProps, 'children' | 'style'> & {
   label: string;
@@ -19,6 +20,11 @@ export function TextLink({ label, tone = 'ink', ...rest }: TextLinkProps) {
       hitSlop={8}
       style={({ pressed }) => [styles.base, pressed && styles.pressed]}
       {...rest}
+      // Taps to the first set (Phase 27 "Measure"): a count, nothing else.
+      onPressIn={(e) => {
+        noteTap();
+        rest.onPressIn?.(e);
+      }}
     >
       <AppText
         variant="bodyStrong"

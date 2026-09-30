@@ -148,7 +148,7 @@ describe('Recovery plan', () => {
     await render(<PlanScreen />);
     expect(screen.getByText('Phase 1 of 3')).toBeTruthy();
     expect(screen.getByText('Hurts: Raise arm to the side, Turn arm outward')).toBeTruthy();
-    await fireEvent.press(screen.getByRole('button', { name: 'Start a 15-min recovery session' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Recovery · 15 min' }));
     const [w] = useWorkoutStore.getState().workouts;
     expect(w.kind).toBe('repair');
     expect(w.session.items[0].role).toBe('warmup');

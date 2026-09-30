@@ -1,0 +1,6 @@
+# Shared steps: leave the workout that onboarding started and go Home.
+appId: app.tapstrong
+---
+- tapOn: 'End workout'
+- tapOn: 'Discard workout'
+- assertVisible: 'Today'

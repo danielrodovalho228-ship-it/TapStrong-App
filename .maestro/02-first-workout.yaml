@@ -2,12 +2,10 @@ appId: app.tapstrong
 name: First workout — warm-up first, log, end, save progress
 ---
 - runFlow: _onboard_adult.yaml
-- tapOn: 'Start · .* min'
-- assertVisible: 'Warm-up · .* min'
-- assertVisible: 'Cool-down · .* min'
-- tapOn: 'Start with warm-up'
-- assertVisible: 'Warm-up'
-- tapOn: 'Done'
+# The warm-up countdowns run and move on by themselves (Phase 27, A5).
+- extendedWaitUntil:
+    visible: 'Done with set'
+    timeout: 600000
 - repeat:
     times: 3
     commands:

@@ -32,7 +32,14 @@ export type AnalyticsEvent =
   | 'month_closed'
   | 'month_chosen'
   | 'month_skipped'
-  | 'month_undone';
+  | 'month_undone'
+  // Phase 27 "Measure": taps to the first set, install → first exercise,
+  // day 7 / day 30 returns, and Moments shown / shared.
+  | 'first_set_logged'
+  | 'first_exercise_started'
+  | 'app_returned'
+  | 'moment_shown'
+  | 'moment_shared';
 
 type Props = {
   mode?: 'child' | 'teen' | 'adult' | 'senior';
@@ -42,6 +49,11 @@ type Props = {
   type?: string;
   target?: string;
   method?: string;
+  /** Counts only: taps, a time bucket in seconds, a return day. */
+  taps?: number;
+  seconds?: number;
+  day?: number;
+  kind?: string;
 };
 
 type Sink = (event: AnalyticsEvent, props?: Props) => void;

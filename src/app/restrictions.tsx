@@ -104,7 +104,16 @@ export default function RestrictionsScreen() {
         />
       }
       // The PIN takes the footer, so it is on screen for any item (QA R8 P2).
-      footer={gate ?? <Button label={t('restrictions.done')} onPress={() => router.back()} />}
+      footer={
+        gate ?? (
+          // One main button per screen (Phase 27, A3): the form's "Save".
+          <Button
+            variant="secondary"
+            label={t('restrictions.done')}
+            onPress={() => router.back()}
+          />
+        )
+      }
     >
       <MovementPainEntry />
       {active.map((r) => {

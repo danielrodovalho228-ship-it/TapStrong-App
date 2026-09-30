@@ -14,6 +14,13 @@ import { useMonthStore } from '../store';
  * summary"); with fewer than 4 workouts, a light "Shall we pick it up
  * again?" instead. It replaces the old 4-week check-in card.
  */
+/** Whether the Home card has something to show (60+ keeps 3 things on Home). */
+export function useMonthCardVisible(): boolean {
+  const { offer, cardUntil, resumeUntil } = useMonthStore();
+  const now = clock.now();
+  return (!!offer && stillBefore(cardUntil, now)) || stillBefore(resumeUntil, now);
+}
+
 export function MonthHomeCard({ onStart }: { onStart?: () => void }) {
   const { t } = useTranslation();
   const colors = useColors();

@@ -88,10 +88,12 @@ describe('60+ home (mockup 23)', () => {
     await render(<HomeScreen />);
     expect(screen.getByText('Good morning')).toBeTruthy();
     expect(screen.getByText(/^Today · \d+ minutes · supported options$/)).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Start' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /^Start, / })).toBeTruthy();
     // No body-map or camera entry points from the 60+ home.
     expect(screen.queryByText('Open full body map')).toBeNull();
     expect(screen.queryByRole('button', { name: 'Pick something else' })).toBeNull();
+    // Progress is under "More options": 3 things on the 60+ Home (Phase 27, A2).
+    await fireEvent.press(screen.getByRole('button', { name: 'More options' }));
     await fireEvent.press(screen.getByRole('button', { name: 'My progress' }));
     expect(router.push).toHaveBeenCalledWith('/progress');
   });

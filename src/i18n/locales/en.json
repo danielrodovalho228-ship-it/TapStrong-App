@@ -14,7 +14,8 @@
     "edit": "Edit",
     "separator": " · ",
     "cancel": "Cancel",
-    "and": "&"
+    "and": "&",
+    "moreOptions": "More options"
   },
   "language": {
     "en": "English",
@@ -176,7 +177,7 @@
     "footnote": "We use your age only to keep training safe for you.",
     "locked": "Only a parent can change the birth date on a child or teen profile.",
     "changeParent": "Change (parent)",
-    "parentFirst": "Set up my profile first"
+    "parentFirst": "My profile first"
   },
   "mainGoals": {
     "look": "Look better",
@@ -3600,7 +3601,8 @@
       },
       "dayToday": "today",
       "dayYesterday": "yesterday",
-      "supported": "supported options"
+      "supported": "supported options",
+      "balanceTitle": "Short balance"
     },
     "freezes_one": "{{count}} streak freeze saved",
     "freezes_other": "{{count}} streak freezes saved",
@@ -3628,7 +3630,11 @@
     "extraWarning": "A second full workout today adds load before you recover. Only if you feel fresh, and stop if anything hurts.",
     "extraStart": "Start extra workout",
     "weeklyCapTitle": "You've reached this week's limit",
-    "weeklyCapBody": "Today's muscles have had their sets for this week. Short mobility, a few balance holds or a rest day keep you moving while they recover."
+    "weeklyCapBody": "Today's muscles have had their sets for this week. Short mobility, a few balance holds or a rest day keep you moving while they recover.",
+    "trainNow": "Train now",
+    "seeWorkout": "See workout",
+    "minutesShort": "{{minutes}} min",
+    "mobilityTitle": "Short mobility"
   },
   "workout": {
     "title": "Your workout",
@@ -3835,13 +3841,13 @@
     "rampUp_one": "{{count}} light ramp-up set",
     "rampUp_other": "{{count}} light ramp-up sets",
     "minSec": "{{minutes}} min {{seconds}} s",
-    "backToFull": "Back to the full workout",
+    "backToFull": "Back to full workout",
     "restDay": "Take a rest day",
     "spare": {
       "add": "Add 1 exercise?",
       "long": "About {{estimate}} of your {{minutes}} min are planned."
     },
-    "deload": "Deload week: fewer sets",
+    "deload": "Light week: fewer sets",
     "otherSide": "Other side"
   },
   "account": {
@@ -4342,7 +4348,7 @@
     },
     "notDiagnosis": "Not a diagnosis. In pain? See a physical therapist.",
     "allGood": "All tests look good. Retest in 6 weeks to keep it that way.",
-    "buildPlan": "Build my 6-week repair plan",
+    "buildPlan": "Build my repair plan",
     "openPlan": "Open my repair plan",
     "tests": {
       "squat": {
@@ -4380,7 +4386,7 @@
     "planTitle": "Your 6-week repair plan",
     "planIntro": "{{weeks}} weeks, {{times}} short sessions a week ({{minutes}} min), on the areas the check found.",
     "focus": "Focus",
-    "startSession": "Start a {{minutes}}-min repair session",
+    "startSession": "Repair · {{minutes}} min",
     "endPlan": "End this plan",
     "sessionsDone": "{{done}} of {{total}} sessions done",
     "retestOn": "Retest on {{date}}.",
@@ -4466,7 +4472,7 @@
       "level": "Step {{level}} of 6",
       "hurts": "Hurts: {{list}}",
       "fine": "No pain: {{list}}",
-      "start": "Start a {{minutes}}-min recovery session",
+      "start": "Recovery · {{minutes}} min",
       "lightTitle": "Pain traffic light",
       "lightRule": "0–3 green: moving on. 4–5 yellow: staying. Over 5, or clearly worse the next morning: red, one step back.",
       "lights": {
@@ -4477,13 +4483,13 @@
       "noLights": "Rate the pain after each workout and the next morning.",
       "rateNow": "Rate it now",
       "retest": "Weekly retest",
-      "retestDue": "Time for this week's retest",
+      "retestDue": "This week's retest",
       "retestNext": "Next retest: {{date}}",
       "seePT": "See a physical therapist",
       "seePTBody": "Your pain hasn't improved in 3 weeks, or it got worse. A physical therapist can find the cause; TapStrong can support the plan they give you.",
       "better": "It doesn't hurt anymore",
       "chart": "Pain at each retest (0–10)",
-      "morningCheck": "Morning check: rate it now"
+      "morningCheck": "Rate it this morning"
     },
     "check": {
       "after": "{{area}}: how does it feel now?",
@@ -4725,7 +4731,7 @@
     "mismatch": "The PINs don’t match. Try again.",
     "savePin": "Save PIN",
     "continue": "Confirm",
-    "createWithEmail": "Set a PIN with the account email",
+    "createWithEmail": "Create PIN by email",
     "noPinCreate": "No parent PIN yet. The account owner can create one now, with a code sent to the account email.",
     "offline": "Can't check the PIN right now. Connect to the internet and try again.",
     "offlineSave": "Connect to the internet to change the PIN, so every phone uses the new one."
@@ -4820,7 +4826,7 @@
     },
     "block": {
       "build": "Week {{week}} of {{of}} · Build",
-      "deload": "Week {{week}} of {{of}} · Deload (lighter)"
+      "deload": "Week {{week}} of {{of}} · Light week"
     },
     "summary_one": "{{count}} exercise · {{minutes}} min",
     "summary_other": "{{count}} exercises · {{minutes}} min",
@@ -4831,10 +4837,10 @@
     "repsUp": "Aim for {{reps}} reps this time, same weight.",
     "up": "Up a step today: {{load}} {{unit}}.",
     "down": "A step lighter today: {{load}} {{unit}}.",
-    "effort": "How hard was that set?",
-    "easy": "Easy",
-    "solid": "Solid",
-    "hard": "Very hard",
+    "effort": "How much was left in the tank?",
+    "easy": "😄 Lots",
+    "solid": "🙂 A little",
+    "hard": "😮‍💨 Nothing",
     "repsUpBodyweight": "Aim for {{reps}} reps this time.",
     "harder": "Top of the range 4 sessions in a row: time for a harder version. Tap Swap to pick one.",
     "easier": "Reps are hard at the lightest weight: try an easier version. Tap Swap to pick one."
@@ -4972,7 +4978,7 @@
     "showAll": "Show all {{count}}",
     "notReviewed": "Not reviewed by a coach",
     "hideNotForYou": "Hide exercises not for you",
-    "showMore": "Show {{count}} more (of {{total}})"
+    "showMore": "Show {{count}} more"
   },
   "exercise": {
     "guidance": "Guidance",

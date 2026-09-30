@@ -150,7 +150,7 @@ export default function DoneScreen() {
             {t('milestone.title', { count: account.milestone.streak })}
           </AppText>
           <Button
-            variant="accent"
+            variant="onDark"
             label={t('workout.done.seeMilestone')}
             onPress={() => router.push('/milestone')}
           />
@@ -240,7 +240,8 @@ export default function DoneScreen() {
             <View style={[styles.row, stackFooter && styles.column]}>
               {derived.mode !== 'senior' ? (
                 <View style={stackFooter ? undefined : styles.flex}>
-                  <Button variant="accent" label={t('workout.finish.addTen')} onPress={addTen} />
+                  {/* One main button per screen (Phase 27, A3): the footer's. */}
+                  <Button variant="onDark" label={t('workout.finish.addTen')} onPress={addTen} />
                 </View>
               ) : null}
               <View style={stackFooter ? undefined : styles.flex}>

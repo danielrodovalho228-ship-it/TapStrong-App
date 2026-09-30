@@ -1,9 +1,10 @@
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
-import { AppText, Button, Card, Chip, IconButton, Screen } from '@/components/ui';
+import { AppText, Button, Card, Chip, IconButton, Screen, TextLink } from '@/components/ui';
+import { MoreOptions } from '@/features/home/MoreOptions';
 import { adviceForItem, adviceLoad, advisedReps } from '@/features/workout/loads';
 import { restFor, usePrefsStore } from '@/features/settings/store';
 import * as Speech from 'expo-speech';
@@ -34,6 +35,7 @@ import { useWorkoutStore } from '@/features/workout/store';
 import type { LoadUnit, WorkoutRecord } from '@/features/workout/types';
 import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
+import { noteSetLogged, useUsageStore } from '@/lib/usage';
 import { colors, fonts, makeStyles, radius, sizes, spacing, useColors } from '@/theme';
 
 /** Mockup 11 — the player: warm-up → exercises → cool-down, in order. */
@@ -58,6 +60,11 @@ export default function PlayerScreen() {
       router.replace({ pathname: '/workout/[id]/done', params: { id: workout.id } });
     }
   }, [finished, workout]);
+
+  // Install → first exercise on screen (Phase 27 "Measure"), once.
+  useEffect(() => {
+    if (step) useUsageStore.getState().firstExercise(clock.now());
+  }, [step]);
 
   // Voice cues (Settings, D4): the exercise name is read out when it starts.
   const voice = usePrefsStore((st) => st.voice);
@@ -108,6 +115,15 @@ export default function PlayerScreen() {
           <AppText variant="label" style={styles.progress}>
             {progressLabel}
           </AppText>
+          {/* "I feel pain" stays one tap away on every step (SPEC safety). */}
+          <Button
+            variant="dangerText"
+            fullWidth={false}
+            label={t('workout.player.pain')}
+            onPress={() =>
+              router.push({ pathname: '/workout/[id]/pain', params: { id: workout.id } })
+            }
+          />
         </View>
       }
       footer={<UndoBar message={undoMessage} onDone={clearUndo} />}
@@ -185,7 +201,12 @@ export default function PlayerScreen() {
   );
 }
 
-/** Warm-up, finisher and cool-down steps with a countdown. */
+/**
+ * Warm-up, finisher and cool-down steps with a countdown. The countdown
+ * starts by itself and the step ends by itself when it reaches zero (Phase
+ * 27, A5: nothing to confirm between steps); "Done" ends it early once half
+ * of it has passed.
+ */
 function TimedStep({
   workout,
   step,
@@ -199,28 +220,36 @@ function TimedStep({
   const styles = useStyles();
   const { t } = useTranslation();
   const { logSet, skipItem } = useWorkoutStore();
-  const [startedAt, setStartedAt] = useState<number | null>(null);
+  const [startedAt] = useState(() => clock.now().getTime());
   const [confirmSkip, setConfirmSkip] = useState(false);
-  const now = useNow(startedAt ? 250 : 5000);
+  const now = useNow(250);
   const total = step.item.durationSeconds ?? 0;
-  const elapsed = startedAt ? (now - startedAt) / 1000 : 0;
+  const elapsed = (now - startedAt) / 1000;
   const dayHasLoad = workout.session.items.some(
     (i) => i.role === 'main' && i.loadHint !== 'bodyweight',
   );
   const canEnd = canEndTimedStep(step.item, elapsed, dayHasLoad);
-  // One chime when the countdown reaches zero (D4 "Sounds").
-  const timeUp = startedAt !== null && total > 0 && elapsed >= total;
-  useEffect(() => {
-    if (timeUp) playTimerEnd();
-  }, [timeUp]);
 
-  const done = () =>
-    logSet(workout.id, {
-      itemId: step.item.id,
-      exerciseId: step.item.exerciseId,
-      setNo: step.setNo,
-      seconds: Math.round(Math.min(elapsed, total) || total),
-    });
+  const done = useCallback(
+    () =>
+      logSet(workout.id, {
+        itemId: step.item.id,
+        exerciseId: step.item.exerciseId,
+        setNo: step.setNo,
+        seconds: Math.round(Math.min(elapsed, total) || total),
+      }),
+    [logSet, workout.id, step.item.id, step.item.exerciseId, step.setNo, elapsed, total],
+  );
+  // Time's up: one chime (D4 "Sounds") and the next step, once.
+  const timeUp = total > 0 && elapsed >= total;
+  const ended = useRef(false);
+  useEffect(() => {
+    if (timeUp && !ended.current) {
+      ended.current = true;
+      playTimerEnd();
+      done();
+    }
+  }, [timeUp, done]);
 
   const skipCooldown = () => {
     for (const i of workout.session.items.filter((x) => x.role === 'cooldown')) {
@@ -229,76 +258,63 @@ function TimedStep({
   };
 
   return (
-    <Card style={styles.setCard}>
-      <AppText variant="caption" color={colors.muted} style={styles.caps}>
-        {t(`workout.player.phase.${step.item.role}`)}
-      </AppText>
-      <AppText
-        variant="display"
-        accessibilityLabel={t('workout.player.timeLeft', { time: clockText(total - elapsed) })}
-      >
-        {clockText(total - elapsed)}
-      </AppText>
-      {startedAt ? null : (
-        <Button
-          variant="secondary"
-          label={t('workout.player.startTimer')}
-          onPress={() => setStartedAt(clock.now().getTime())}
-        />
-      )}
-      <Button label={t('workout.player.doneStep')} disabled={!canEnd} onPress={done} />
-      {!canEnd ? (
-        // Say when "Done" unlocks (QA P2).
-        <AppText variant="caption" color={colors.muted}>
-          {startedAt ? t('workout.player.halfHint') : t('workout.player.startFirst')}
-          {dayHasLoad ? ` ${t('workout.player.warmupShorten')}` : ''}
-        </AppText>
-      ) : null}
-      {/* Swap and "I feel pain" on timed steps too (QA P2). */}
-      <View style={styles.row}>
-        <View style={styles.flex}>
-          <Button variant="secondary" label={t('workout.player.swap')} onPress={onSwap} />
-        </View>
-        <View style={styles.flex}>
-          <Button
-            variant="danger"
-            label={t('workout.player.pain')}
-            onPress={() =>
-              router.push({ pathname: '/workout/[id]/pain', params: { id: workout.id } })
-            }
-          />
-        </View>
+    <View style={styles.setStack}>
+      <Button size="xl" label={t('workout.player.doneStep')} disabled={!canEnd} onPress={done} />
+      {/* Swap: one tap, then the pick (Phase 27, A1: at most 2 taps). */}
+      <View style={styles.links}>
+        <TextLink label={t('workout.player.swap')} onPress={onSwap} />
       </View>
       {step.item.role === 'cooldown' ? (
-        confirmSkip ? (
-          <View style={styles.confirm}>
-            <AppText variant="bodyStrong">{t('workout.player.skipCooldownConfirm')}</AppText>
-            <View style={styles.row}>
-              <View style={styles.flex}>
-                <Button
-                  variant="secondary"
-                  label={t('workout.player.keepCooldown')}
-                  onPress={() => setConfirmSkip(false)}
-                />
-              </View>
-              <View style={styles.flex}>
-                <Button
-                  variant="danger"
-                  label={t('workout.player.skipCooldown')}
-                  onPress={skipCooldown}
-                />
+        <MoreOptions>
+          {confirmSkip ? (
+            <View style={styles.confirm}>
+              <AppText variant="bodyStrong">{t('workout.player.skipCooldownConfirm')}</AppText>
+              <View style={styles.row}>
+                <View style={styles.flex}>
+                  <Button
+                    variant="secondary"
+                    label={t('workout.player.keepCooldown')}
+                    onPress={() => setConfirmSkip(false)}
+                  />
+                </View>
+                <View style={styles.flex}>
+                  <Button
+                    variant="danger"
+                    label={t('workout.player.skipCooldown')}
+                    onPress={skipCooldown}
+                  />
+                </View>
               </View>
             </View>
-          </View>
-        ) : (
-          <Button
-            variant="ghost"
-            label={t('workout.player.skipCooldown')}
-            onPress={() => setConfirmSkip(true)}
-          />
-        )
+          ) : (
+            <Button
+              variant="ghost"
+              label={t('workout.player.skipCooldown')}
+              onPress={() => setConfirmSkip(true)}
+            />
+          )}
+        </MoreOptions>
       ) : null}
-    </Card>
+      <Card style={styles.setCard}>
+        <AppText variant="caption" color={colors.muted} style={styles.caps}>
+          {t(`workout.player.phase.${step.item.role}`)}
+        </AppText>
+        <AppText
+          variant="display"
+          style={styles.num}
+          accessibilityLabel={t('workout.player.timeLeft', { time: clockText(total - elapsed) })}
+        >
+          {clockText(total - elapsed)}
+        </AppText>
+        {!canEnd ? (
+          // Say when "Done" unlocks (QA P2).
+          <AppText variant="caption" color={colors.muted}>
+            {t('workout.player.halfHint')}
+            {dayHasLoad ? ` ${t('workout.player.warmupShorten')}` : ''}
+          </AppText>
+        ) : null}
+      </Card>
+    </View>
   );
 }
 
@@ -359,6 +375,7 @@ function SetStep({
     });
     setRpe(undefined);
     track('set_logged');
+    noteSetLogged();
     const next = stepAfter(workout, step);
     if (next && item.restSeconds > 0 && item.role === 'main') {
       router.push({ pathname: '/workout/[id]/rest', params: { id: workout.id } });
@@ -384,18 +401,19 @@ function SetStep({
   // it still sits at the bottom of the screen.
   return (
     <View style={styles.setStack}>
-      <Button label={t('workout.player.doneSet')} onPress={done} />
-      {onMachineTaken ? (
-        <Button variant="ghost" label={t('workout.machineTaken')} onPress={onMachineTaken} />
+      <Button size="xl" label={t('workout.player.doneSet')} onPress={done} />
+      {/* Swap: one tap, then the pick (Phase 27, A1: at most 2 taps). */}
+      {item.part !== 'ramp_up' ? (
+        <View style={styles.links}>
+          <TextLink label={t('workout.player.swap')} onPress={onSwap} />
+        </View>
       ) : null}
-      <View style={styles.row}>
-        {item.part !== 'ramp_up' ? (
-          <View style={styles.flex}>
-            <Button variant="secondary" label={t('workout.player.swap')} onPress={onSwap} />
-          </View>
-        ) : null}
-        {item.restSeconds > 0 && item.role === 'main' ? (
-          <View style={styles.flex}>
+      {onMachineTaken || (item.restSeconds > 0 && item.role === 'main') ? (
+        <MoreOptions>
+          {onMachineTaken ? (
+            <Button variant="ghost" label={t('workout.machineTaken')} onPress={onMachineTaken} />
+          ) : null}
+          {item.restSeconds > 0 && item.role === 'main' ? (
             <Button
               variant="secondary"
               label={t('workout.player.restButton', { seconds: restFor(item, prefs) })}
@@ -406,18 +424,9 @@ function SetStep({
                 })
               }
             />
-          </View>
-        ) : null}
-        <View style={styles.flex}>
-          <Button
-            variant="danger"
-            label={t('workout.player.pain')}
-            onPress={() =>
-              router.push({ pathname: '/workout/[id]/pain', params: { id: workout.id } })
-            }
-          />
-        </View>
-      </View>
+          ) : null}
+        </MoreOptions>
+      ) : null}
       <Card style={styles.setCard}>
         <AppText variant="h3">
           {t('workout.player.setOf', { n: step.setNo, total: item.sets })}
@@ -559,6 +568,8 @@ const useStyles = makeStyles(() => ({
   setCard: { gap: spacing.md },
   caps: { textTransform: 'uppercase', letterSpacing: 1, fontFamily: fonts.headingSemi },
   row: { flexDirection: 'row', gap: spacing.sm },
+  links: { flexDirection: 'row', justifyContent: 'center', gap: spacing.lg },
+  num: { fontVariant: ['tabular-nums'] },
   flex: { flex: 1 },
   confirm: { gap: spacing.sm },
   counter: {

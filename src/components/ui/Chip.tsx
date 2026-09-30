@@ -3,6 +3,7 @@ import { Platform, Pressable, type PressableProps } from 'react-native';
 import { colors, makeStyles, radius, sizes, spacing, useColors } from '@/theme';
 
 import { AppText } from './AppText';
+import { noteTap } from '@/lib/usage';
 
 export type ChipProps = Omit<PressableProps, 'children' | 'style'> & {
   label: string;
@@ -27,6 +28,11 @@ export function Chip({ label, selected = false, disabled, ...rest }: ChipProps) 
         disabled && styles.disabled,
       ]}
       {...rest}
+      // Taps to the first set (Phase 27 "Measure"): a count, nothing else.
+      onPressIn={(e) => {
+        noteTap();
+        rest.onPressIn?.(e);
+      }}
     >
       <AppText variant="label" color={colors.ink}>
         {label}

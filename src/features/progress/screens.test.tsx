@@ -163,7 +163,7 @@ describe('Repair check (mockup 17)', () => {
     });
     await render(<RepairScreen />);
     expect(screen.getByRole('button', { name: 'Sit-to-stand (30 s), Low' })).toBeTruthy();
-    await fireEvent.press(screen.getByRole('button', { name: 'Build my 6-week repair plan' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Build my repair plan' }));
     expect(router.push).toHaveBeenCalledWith('/paywall');
     expect(useProgressStore.getState().repairPlan).toBeNull();
 
@@ -177,7 +177,7 @@ describe('Repair check (mockup 17)', () => {
         },
       }),
     );
-    await fireEvent.press(screen.getByRole('button', { name: 'Build my 6-week repair plan' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Build my repair plan' }));
     expect(router.push).toHaveBeenCalledWith('/repair/plan');
     expect(useProgressStore.getState().repairPlan?.focus.map((f) => f.muscleKey)).toEqual([
       'quads',

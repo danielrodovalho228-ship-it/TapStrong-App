@@ -14,7 +14,8 @@
     "edit": "Editar",
     "separator": " · ",
     "cancel": "Cancelar",
-    "and": "e"
+    "and": "e",
+    "moreOptions": "Mais opções"
   },
   "language": {
     "en": "English",
@@ -584,7 +585,7 @@
       "cues": "Puxe o elástico em direção ao rosto, cotovelos altos."
     },
     "one_arm_dumbbell_row": {
-      "name": "Remada unilateral com halter",
+      "name": "Remada com um braço com halter",
       "cues": "Mão no banco; puxe o halter até o quadril."
     },
     "band_row": {
@@ -912,7 +913,7 @@
       "cues": "Segure os dois lados de um batente firme, incline-se para trás e puxe o peito em direção à porta."
     },
     "single_arm_doorframe_row": {
-      "name": "Remada unilateral no batente",
+      "name": "Remada com um braço no batente",
       "cues": "Segure um batente firme com uma mão, incline-se e puxe o cotovelo em direção ao quadril sem girar."
     },
     "towel_lat_pulldown": {
@@ -1024,7 +1025,7 @@
       "cues": "Sentado com o elástico no encosto, empurre para frente e um pouco para cima; depois volte."
     },
     "single_arm_band_incline_press": {
-      "name": "Supino inclinado unilateral com elástico",
+      "name": "Supino inclinado com um braço no elástico",
       "cues": "Elástico preso embaixo atrás, empurre uma mão para frente e para cima sem girar o tronco; troque."
     },
     "band_chest_press": {
@@ -1064,7 +1065,7 @@
       "cues": "Sentado ereto com o elástico preso no alto atrás, empurre para baixo e à frente até os joelhos."
     },
     "single_arm_high_to_low_band_fly": {
-      "name": "Crucifixo unilateral para baixo",
+      "name": "Crucifixo para baixo com um braço",
       "cues": "Elástico preso no alto de um lado, leve a mão para baixo cruzando até o quadril oposto; troque."
     },
     "band_lateral_raise": {
@@ -1112,7 +1113,7 @@
       "cues": "Sentado ereto com o elástico nos pés, puxe até as costelas juntando as escápulas."
     },
     "single_arm_band_row": {
-      "name": "Remada unilateral com elástico",
+      "name": "Remada com um braço no elástico",
       "cues": "Elástico preso à frente, puxe um cotovelo para trás passando as costelas sem girar; troque."
     },
     "band_bent_over_row": {
@@ -1156,7 +1157,7 @@
       "cues": "Incline-se um pouco, cotovelo junto ao corpo, e estique o braço para trás contra o elástico."
     },
     "single_arm_band_pushdown": {
-      "name": "Tríceps unilateral com elástico",
+      "name": "Tríceps com um braço no elástico",
       "cues": "Elástico preso no alto, cotovelo junto ao corpo, empurre a mão para baixo até esticar; troque."
     },
     "band_wrist_extension": {
@@ -1180,7 +1181,7 @@
       "cues": "No banco inclinado, junte os halteres sobre o peito e aperte-os enquanto empurra."
     },
     "single_arm_incline_dumbbell_press": {
-      "name": "Supino inclinado unilateral",
+      "name": "Supino inclinado com um braço",
       "cues": "No banco inclinado, empurre um halter para cima sem mexer o corpo; depois troque de braço."
     },
     "reverse_grip_dumbbell_press": {
@@ -1204,7 +1205,7 @@
       "cues": "Deitado no chão, erga o quadril em ponte e empurre os halteres sobre a parte baixa do peito."
     },
     "single_arm_bridge_floor_press": {
-      "name": "Supino unilateral em ponte",
+      "name": "Supino com um braço em ponte",
       "cues": "Segure a ponte de quadril e empurre um halter sem deixar o quadril inclinar."
     },
     "bridge_floor_squeeze_press": {
@@ -1288,7 +1289,7 @@
       "cues": "Sentado na beira da cadeira, incline-se com as costas alongadas e reme ao lado dos joelhos."
     },
     "staggered_stance_dumbbell_row": {
-      "name": "Remada dorsal unilateral com apoio",
+      "name": "Remada com um braço e apoio",
       "cues": "Uma mão numa cadeira firme, incline-se e puxe o halter em direção ao quadril, cotovelo junto."
     },
     "dumbbell_hammer_curl": {
@@ -1376,7 +1377,7 @@
       "cues": "Com ajudante e pés presos no banco declinado, desça a barra ao peito baixo e empurre."
     },
     "single_arm_high_to_low_cable_fly": {
-      "name": "Crucifixo unilateral cabo alto",
+      "name": "Crucifixo com um braço no cabo alto",
       "cues": "Polia alta de um lado, leve a pegada para baixo cruzando até o quadril oposto; troque."
     },
     "machine_shoulder_press": {
@@ -1412,7 +1413,7 @@
       "cues": "Cruze os cabos de duas polias na altura dos ombros e abra os braços; depois volte."
     },
     "single_arm_cable_reverse_fly": {
-      "name": "Crucifixo invertido unilateral",
+      "name": "Crucifixo invertido com um braço",
       "cues": "Polia na altura do ombro, segure com a mão oposta e abra o braço; troque de lado."
     },
     "wide_grip_cable_row": {
@@ -1440,7 +1441,7 @@
       "cues": "Incline-se com as costas retas e joelhos soltos, e reme a barra até as costelas sem trancos."
     },
     "single_arm_cable_row": {
-      "name": "Remada unilateral no cabo",
+      "name": "Remada com um braço no cabo",
       "cues": "Polia na altura do peito, puxe uma pegada até as costelas sem girar; depois troque."
     },
     "inverted_bar_row": {
@@ -1464,7 +1465,7 @@
       "cues": "De frente para a polia alta, braços retos, desça a barra até as coxas sem abrir as costelas."
     },
     "single_arm_cable_pulldown": {
-      "name": "Puxada unilateral no cabo",
+      "name": "Puxada com um braço no cabo",
       "cues": "Sentado ou de joelhos sob a polia alta, desça um cotovelo até o quadril e volte; troque."
     },
     "cable_curl": {
@@ -1516,7 +1517,7 @@
       "cues": "Segure a barra e pendure-se com os pés perto de um degrau; apoie-se antes de perder a pegada."
     },
     "single_leg_glute_bridge": {
-      "name": "Ponte de glúteo unilateral",
+      "name": "Ponte de glúteo com uma perna",
       "cues": "Deite de costas, um pé apoiado e a outra perna no alto; suba o quadril nivelado sem arquear."
     },
     "heel_dig_bridge": {
@@ -1544,7 +1545,7 @@
       "cues": "Segure uma cadeira, joelhos lado a lado; dobre um joelho para subir o calcanhar e desça devagar."
     },
     "supported_single_leg_rdl": {
-      "name": "Levantamento terra unilateral com apoio",
+      "name": "Levantamento terra com uma perna e apoio",
       "cues": "Segure uma cadeira, joelho levemente dobrado; incline o tronco enquanto a outra perna vai para trás, costas retas."
     },
     "bodyweight_good_morning": {
@@ -1608,7 +1609,7 @@
       "cues": "De um assento alto, mãos nos braços da cadeira se precisar; incline, levante e sente devagar."
     },
     "supported_single_leg_calf_raise": {
-      "name": "Panturrilha unilateral com apoio",
+      "name": "Panturrilha com uma perna e apoio",
       "cues": "Segure uma bancada, apoiado em um pé; suba na ponta do pé e desça devagar."
     },
     "seated_heel_raise": {
@@ -1748,7 +1749,7 @@
       "cues": "Pés afastados, um halter entre as pernas; desça com os joelhos para fora e suba."
     },
     "dumbbell_single_leg_rdl": {
-      "name": "Levantamento terra unilateral com halter",
+      "name": "Levantamento terra com uma perna e halter",
       "cues": "Halter em uma mão, a outra na parede; incline sobre uma perna com as costas retas e suba."
     },
     "dumbbell_seated_calf_raise": {
@@ -3610,7 +3611,8 @@
       },
       "dayToday": "hoje",
       "dayYesterday": "ontem",
-      "supported": "opções com apoio"
+      "supported": "opções com apoio",
+      "balanceTitle": "Equilíbrio curto"
     },
     "freezes_one": "{{count}} proteção de sequência guardada",
     "freezes_zero": "{{count}} proteções de sequência guardadas",
@@ -3634,14 +3636,18 @@
     "freeDoneTitle_zero": "Seus {{count}} treinos grátis desta semana já foram",
     "freeDoneTitle_other": "Seus {{count}} treinos grátis desta semana já foram",
     "freeDoneBody": "Continue se mexendo com uma mobilidade curta: é grátis e conta para a sua sequência. Seus treinos voltam na próxima semana.",
-    "freeDonePremium": "Premium: treinos todos os dias",
+    "freeDonePremium": "Premium: treino todo dia",
     "doneTitle": "O treino de hoje está feito",
     "doneBody": "Bom trabalho. Seus músculos crescem enquanto se recuperam: mobilidade curta, equilíbrio ou descanso pelo resto do dia.",
     "extra": "Treino extra",
     "extraWarning": "Um segundo treino completo hoje soma carga antes de você se recuperar. Só se estiver descansado, e pare se algo doer.",
     "extraStart": "Começar treino extra",
     "weeklyCapTitle": "Você chegou ao limite da semana",
-    "weeklyCapBody": "Os músculos de hoje já fizeram as séries desta semana. Mobilidade curta, alguns exercícios de equilíbrio ou um dia de descanso mantêm você em movimento enquanto eles se recuperam."
+    "weeklyCapBody": "Os músculos de hoje já fizeram as séries desta semana. Mobilidade curta, alguns exercícios de equilíbrio ou um dia de descanso mantêm você em movimento enquanto eles se recuperam.",
+    "trainNow": "Treinar agora",
+    "seeWorkout": "Ver treino",
+    "minutesShort": "{{minutes}} min",
+    "mobilityTitle": "Mobilidade curta"
   },
   "workout": {
     "title": "Seu treino",
@@ -3853,12 +3859,12 @@
     "rampUp_other": "{{count}} séries leves de aproximação",
     "minSec": "{{minutes}} min {{seconds}} s",
     "backToFull": "Voltar ao treino completo",
-    "restDay": "Tirar um dia de descanso",
+    "restDay": "Descansar hoje",
     "spare": {
       "add": "Adicionar 1 exercício?",
       "long": "Cerca de {{estimate}} dos seus {{minutes}} min estão planejados."
     },
-    "deload": "Semana de alívio: menos séries",
+    "deload": "Semana leve: menos séries",
     "otherSide": "Outro lado"
   },
   "account": {
@@ -3914,7 +3920,7 @@
     "sets_other": "{{count}} séries",
     "tagline": "Tap. Talk. Train. · tapstrong.app",
     "shareImage": "Compartilhar meu mapa",
-    "shareLink": "Enviar meu link de convite",
+    "shareLink": "Enviar meu convite",
     "inviteMessage": "Estou treinando com o TapStrong. Vem comigo: {{link}}",
     "saveForLink": "Salve sua conta para ter seu próprio link de convite.",
     "failed": "Não foi possível compartilhar a imagem neste aparelho.",
@@ -4171,7 +4177,7 @@
     "teenMobileOnly": "O TapStrong para adolescentes está disponível no app para celular. Na web, o TapStrong é para adultos.",
     "mobileOnlyTitle": "Perfis da família ficam no app para celular",
     "teenMobileOnlyTitle": "O TapStrong para adolescentes fica no app para celular",
-    "changeDate": "Mudar minha data de nascimento",
+    "changeDate": "Mudar data de nascimento",
     "ownLogin": "Este adolescente tem login próprio, então só essa pessoa pode mudar ou apagar o perfil. Ele foi removido só deste celular.",
     "getIos": "Baixe na App Store",
     "getAndroid": "Baixe no Google Play"
@@ -4183,7 +4189,7 @@
     "bodyLocal": "Você não tem conta salva, então seus dados estão só neste celular. Isto os exclui: perfis, treinos, restrições e sequências. Não dá para desfazer.",
     "storeTitle": "Sua assinatura é separada",
     "storeBody": "Excluir a conta não cancela a assinatura. A Apple e o Google só deixam cancelar nas assinaturas da loja; cancele lá primeiro para não ser cobrado.",
-    "openStore": "Abrir minhas assinaturas da loja",
+    "openStore": "Abrir assinaturas da loja",
     "typeToConfirm": "Digite {{word}} para confirmar",
     "confirm": "Excluir minha conta",
     "confirmLocal": "Excluir meus dados",
@@ -4330,7 +4336,7 @@
     "after": "Mais recente",
     "firstEmpty": "Tire sua primeira foto. Mesma posição e mesma luz toda vez.",
     "latestEmpty": "Tire uma nova daqui a algumas semanas para comparar.",
-    "take": "Tirar a foto de hoje",
+    "take": "Tirar foto de hoje",
     "delete": "Excluir a foto {{label}}",
     "shareMap": "Compartilhar progresso (mapa muscular)",
     "shareNote": "O compartilhamento usa seu mapa muscular. As fotos nunca são compartilhadas.",
@@ -4376,8 +4382,8 @@
     },
     "notDiagnosis": "Não é diagnóstico. Com dor? Procure um fisioterapeuta.",
     "allGood": "Todos os testes estão bons. Refaça em 6 semanas para manter assim.",
-    "buildPlan": "Montar meu plano de reparo de 6 semanas",
-    "openPlan": "Abrir meu plano de reparo",
+    "buildPlan": "Montar plano de reparo",
+    "openPlan": "Abrir plano de reparo",
     "tests": {
       "squat": {
         "name": "Sentar e levantar (30 s)",
@@ -4414,7 +4420,7 @@
     "planTitle": "Seu plano de reparo de 6 semanas",
     "planIntro": "{{weeks}} semanas, {{times}} sessões curtas por semana ({{minutes}} min), nas áreas que o teste encontrou.",
     "focus": "Foco",
-    "startSession": "Começar sessão de reparo de {{minutes}} min",
+    "startSession": "Reparo · {{minutes}} min",
     "endPlan": "Encerrar este plano",
     "sessionsDone": "{{done}} de {{total}} sessões feitas",
     "retestOn": "Refazer o teste em {{date}}.",
@@ -4501,7 +4507,7 @@
       "level": "Passo {{level}} de 6",
       "hurts": "Dói: {{list}}",
       "fine": "Sem dor: {{list}}",
-      "start": "Começar uma sessão de recuperação de {{minutes}} min",
+      "start": "Recuperação · {{minutes}} min",
       "lightTitle": "Semáforo da dor",
       "lightRule": "0–3 verde: avança. 4–5 amarelo: mantém. Acima de 5, ou claramente pior na manhã seguinte: vermelho, um passo atrás.",
       "lights": {
@@ -4512,13 +4518,13 @@
       "noLights": "Dê nota à dor depois de cada treino e na manhã seguinte.",
       "rateNow": "Dar nota agora",
       "retest": "Reteste semanal",
-      "retestDue": "Hora do reteste da semana",
+      "retestDue": "Reteste da semana",
       "retestNext": "Próximo reteste: {{date}}",
       "seePT": "Procure um fisioterapeuta",
       "seePTBody": "Sua dor não melhorou em 3 semanas, ou piorou. Um fisioterapeuta pode descobrir a causa; o TapStrong pode apoiar o plano que ele passar.",
       "better": "Não dói mais",
       "chart": "Dor em cada reteste (0–10)",
-      "morningCheck": "Check da manhã: dê nota agora"
+      "morningCheck": "Dar nota agora"
     },
     "check": {
       "after": "{{area}}: como está agora?",
@@ -4536,7 +4542,7 @@
       "body": "Monte um plano de recuperação em torno dos movimentos que doem e continue treinando o resto.",
       "open": "Plano de recuperação: {{area}}"
     },
-    "rateAfter": "Dê nota à dor: {{area}}",
+    "rateAfter": "Nota da dor: {{area}}",
     "joints": {
       "shoulder": "Ombro",
       "elbow": "Cotovelo",
@@ -4762,7 +4768,7 @@
     "mismatch": "Os PINs não conferem. Tente de novo.",
     "savePin": "Salvar PIN",
     "continue": "Confirmar",
-    "createWithEmail": "Criar um PIN com o e-mail da conta",
+    "createWithEmail": "Criar PIN por e-mail",
     "noPinCreate": "Ainda não há PIN dos pais. O titular da conta pode criar agora, com um código enviado ao e-mail da conta.",
     "offline": "Não conseguimos conferir o PIN agora. Conecte-se à internet e tente de novo.",
     "offlineSave": "Conecte-se à internet para mudar o PIN, assim todos os celulares usam o novo."
@@ -4779,15 +4785,15 @@
     "restrictions": "Restrições",
     "deleteNote": "Excluir sua conta apaga seus dados dos nossos servidores e limpa este celular, inclusive as fotos. A próxima tela explica cada passo.",
     "delete": "Excluir conta",
-    "setPin": "Criar um PIN dos pais",
-    "changePin": "Mudar o PIN dos pais",
+    "setPin": "Criar PIN dos pais",
+    "changePin": "Mudar PIN dos pais",
     "pinSaved": "PIN dos pais salvo.",
     "workout": "Preferências de treino",
     "reminders": "Lembretes",
     "demoModel": "Modelo do corpo",
     "help": "Ajuda e suporte",
     "helpSubject": "Ajuda do TapStrong",
-    "shareFriends": "Compartilhe o TapStrong com amigos",
+    "shareFriends": "Compartilhe com amigos",
     "appearance": "Aparência"
   },
   "referral": {
@@ -4838,7 +4844,7 @@
     "sets_one": "{{count}} série",
     "sets_zero": "{{count}} séries",
     "sets_other": "{{count}} séries",
-    "start": "Começar o treino de hoje",
+    "start": "Treinar hoje",
     "nothing": "Nenhum treino registrado neste dia.",
     "preview": "Prévia",
     "noPreview": "Ainda não dá para montar uma sessão para este dia.",
@@ -4860,7 +4866,7 @@
     },
     "block": {
       "build": "Semana {{week}} de {{of}} · Evolução",
-      "deload": "Semana {{week}} de {{of}} · Alívio (mais leve)"
+      "deload": "Semana {{week}} de {{of}} · Semana leve"
     },
     "summary_one": "{{count}} exercício · {{minutes}} min",
     "summary_zero": "{{count}} exercícios · {{minutes}} min",
@@ -4872,10 +4878,10 @@
     "repsUp": "Tente {{reps}} repetições desta vez, com o mesmo peso.",
     "up": "Suba um degrau hoje: {{load}} {{unit}}.",
     "down": "Um degrau mais leve hoje: {{load}} {{unit}}.",
-    "effort": "Quão pesada foi a série?",
-    "easy": "Fácil",
-    "solid": "Puxado",
-    "hard": "Muito pesada",
+    "effort": "Quanto sobrou no tanque?",
+    "easy": "😄 Muito",
+    "solid": "🙂 Um pouco",
+    "hard": "😮‍💨 Nada",
     "repsUpBodyweight": "Tente {{reps}} repetições desta vez.",
     "harder": "No topo da faixa por 4 sessões seguidas: hora de uma versão mais difícil. Toque em Trocar para escolher.",
     "easier": "As repetições estão difíceis com o peso mais leve: tente uma versão mais fácil. Toque em Trocar para escolher."
@@ -5015,7 +5021,7 @@
     "showAll": "Ver todos os {{count}}",
     "notReviewed": "Não revisado por treinador",
     "hideNotForYou": "Esconder os exercícios que não são para você",
-    "showMore": "Ver mais {{count}} (de {{total}})"
+    "showMore": "Ver mais {{count}}"
   },
   "exercise": {
     "guidance": "Orientação",

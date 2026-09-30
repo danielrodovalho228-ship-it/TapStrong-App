@@ -64,7 +64,7 @@ describe('Who screen (mockup 02)', () => {
     expect(screen.getByText(/need a parent's consent/)).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled();
     // Not a dead end (QA B-05): the parent sets up their own profile first.
-    await fireEvent.press(screen.getByRole('button', { name: 'Set up my profile first' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'My profile first' }));
     expect(screen.getByRole('radio', { name: 'Me' })).toBeChecked();
     expect(screen.queryByText(/need a parent's consent/)).toBeNull();
   });
@@ -138,9 +138,20 @@ describe('Safety screen (mockup 04)', () => {
     expect(next).toBeDisabled();
     await fireEvent.press(screen.getByRole('button', { name: 'I understand' }));
     await fireEvent.press(screen.getByRole('button', { name: 'Continue' }));
-    expect(mockRouter.push).toHaveBeenCalledWith('/onboarding/profile');
+    // A red flag lands on Home: the person starts when ready (Phase 27, A1).
+    expect(mockRouter.replace).toHaveBeenCalledWith('/home');
+    expect(store().onboardingComplete).toBe(true);
     // The event never carries which condition it was.
     expect(events).toContainEqual({ event: 'safety_red_flag', props: undefined });
+  });
+
+  it('no red flag: onboarding ends and the first workout starts (Phase 27, A1)', async () => {
+    await act(() => store().update({ birthMonth: 3, birthYear: 1983, sex: 'f' }));
+    await render(<SafetyScreen />);
+    await fireEvent.press(screen.getByRole('button', { name: 'Continue' }));
+    expect(mockRouter.replace).toHaveBeenCalledWith('/start');
+    expect(store().onboardingComplete).toBe(true);
+    expect(events).not.toContainEqual({ event: 'safety_red_flag', props: undefined });
   });
 
   it('"None" clears the selection; pregnancy is hidden for the male body', async () => {

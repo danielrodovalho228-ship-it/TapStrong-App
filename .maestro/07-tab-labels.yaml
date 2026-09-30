@@ -2,6 +2,7 @@ appId: app.tapstrong
 name: Tab labels are never clipped (QA R4 P2)
 ---
 - runFlow: _onboard_adult.yaml
+- runFlow: _to_home.yaml
 - assertVisible: 'Home'
 - assertVisible: 'Body'
 - assertVisible: 'Library'

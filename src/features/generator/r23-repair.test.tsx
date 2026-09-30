@@ -152,7 +152,7 @@ it('the Repair screen Start opens a session at the cap', async () => {
     });
   });
   await render(<RepairPlanScreen />);
-  await fireEvent.press(screen.getByRole('button', { name: /Start/ }));
+  await fireEvent.press(screen.getByRole('button', { name: /Repair ·/ }));
   expect(router.push).toHaveBeenCalledWith(expect.objectContaining({ pathname: '/workout/[id]' }));
   const repair = useWorkoutStore.getState().workouts.find((w) => w.kind === 'repair')!;
   expect(repair.session.items.some((i) => i.role === 'main')).toBe(true);

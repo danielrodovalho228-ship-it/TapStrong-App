@@ -250,6 +250,7 @@ describe('Player (mockup 11) and rest (mockup 12)', () => {
       }
     });
     await render(<PlayerScreen />);
+    await fireEvent.press(screen.getByRole('button', { name: 'More options' }));
     await fireEvent.press(screen.getByRole('button', { name: 'Skip cool-down' }));
     expect(screen.getByText(/Skip cool-down\? It helps you recover/)).toBeTruthy();
     const skipButtons = screen.getAllByRole('button', { name: 'Skip cool-down' });
@@ -350,7 +351,7 @@ describe('Pain swap (mockup 21)', () => {
     );
     await render(<HomeScreen />);
     await act(() => workouts().reset());
-    await fireEvent.press(screen.getByRole('button', { name: /^Start · \d+ min/ }));
+    await fireEvent.press(screen.getByRole('button', { name: /^Train now/ }));
     const [next] = workouts().workouts;
     for (const item of next.session.items) {
       expect(byId.get(item.exerciseId)!.contraindications).not.toContain('shoulder');

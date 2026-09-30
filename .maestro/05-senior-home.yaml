@@ -21,7 +21,6 @@ name: 60+ home keeps to the simple screens
 - tapOn: '15 min'
 - tapOn: '3 days'
 - tapOn: 'Continue'
-- tapOn: "I'll tap the body map"
 - tapOn: 'Man'
 - tapOn: 'Skip'
 - tapOn: 'Next: quick safety check'
@@ -33,9 +32,11 @@ name: 60+ home keeps to the simple screens
     index: 1
 - tapOn: 'With support'
 - tapOn: 'Continue'
-- tapOn: 'Looks right'
-- assertVisible: 'Start'
-- assertVisible: 'My progress'
+# The first workout starts; leave it to see the 60+ Home.
+- tapOn: 'End workout'
+- tapOn: 'Discard workout'
+- assertVisible: 'Start.*'
 - assertNotVisible: 'Body'
+- tapOn: 'More options'
 - tapOn: 'My progress'
 - assertNotVisible: 'Before & after photos'

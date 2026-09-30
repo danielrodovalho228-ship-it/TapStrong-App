@@ -4,14 +4,16 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 
-import { AppText, Button, Card, Icon, Screen, type IconName } from '@/components/ui';
+import { AppText, Icon, Screen, TextLink, type IconName } from '@/components/ui';
 import { currentPlan } from '@/features/billing/rules';
 import { MOBILITY_MINUTES } from '@/features/generator';
 import { WeekStrip } from '@/features/program/components/WeekStrip';
 import { useBillingStore } from '@/features/billing/store';
 import { activeProfile, useFamilyStore } from '@/features/family/store';
 import { useOnboardingStore } from '@/features/onboarding/store';
-import { MonthHomeCard } from '@/features/month/components/MonthHomeCard';
+import { MonthHomeCard, useMonthCardVisible } from '@/features/month/components/MonthHomeCard';
+import { MoreOptions } from '@/features/home/MoreOptions';
+import { StartHero } from '@/features/home/StartHero';
 import { easyDayKey } from '@/features/workout/secondWorkout';
 import { useWorkoutStore } from '@/features/workout/store';
 import { clock } from '@/lib/clock';
@@ -24,9 +26,14 @@ import { dayPart, lastWorkout, relativeDay } from './summary';
  * Mockup 23 — 60+ home: one big "Start", then progress, then an audio
  * summary of the last workout. Links stay inside the simple screens
  * (SPEC §11.10): no body-map or camera entry points from here.
+ *
+ * Phase 27 (A2): at most 3 things on the screen: the big button (with its
+ * greeting and "See workout"), the month card or the last workout, and
+ * "More options" (short mobility and balance, the week, progress).
  */
 export function SeniorHome({
   onStart,
+  onPreview,
   onMobility,
   onBalance,
   targets,
@@ -37,6 +44,8 @@ export function SeniorHome({
   doneToday = false,
 }: {
   onStart: () => void;
+  /** The workout preview ("See workout"). */
+  onPreview?: () => void;
   onMobility: () => void;
   /** Missing when no balance session can be built today (QA R6-07). */
   onBalance?: () => void;
@@ -111,10 +120,14 @@ export function SeniorHome({
     });
   };
 
+  const easyKey = easyDayKey({ stoppedToday, doneToday, weeklyCap });
+  const easy = allRecovering && !active;
+  const month = useMonthCardVisible();
+
   return (
     <Screen>
-      <WeekStrip large />
-      <View>
+      {/* 1. The greeting and the one big button. */}
+      <View style={styles.block}>
         {managed && member.name ? (
           <>
             <AppText color={colors.mutedStrong}>
@@ -130,73 +143,46 @@ export function SeniorHome({
             {t(`home.senior.greetingAlone.${dayPart(now)}`)}
           </AppText>
         )}
+        {easy ? (
+          // Everything is still recovering (QA R3-03): balance, mobility or rest.
+          <>
+            <AppText variant="h2" accessibilityRole="header">
+              {t(`home.${easyKey}Title`)}
+            </AppText>
+            <AppText>{t(`home.${easyKey}Body`)}</AppText>
+            <StartHero
+              large
+              title={onBalance ? t('home.senior.balanceTitle') : t('home.mobilityTitle')}
+              detail={t('home.senior.minutes', { count: MOBILITY_MINUTES })}
+              onPress={onBalance ?? onMobility}
+            />
+            <View style={styles.links}>
+              <TextLink label={t('home.rest')} onPress={() => setResting(true)} />
+            </View>
+            {resting ? <AppText color={colors.mutedStrong}>{t('home.restNote')}</AppText> : null}
+          </>
+        ) : (
+          <>
+            <StartHero
+              large
+              eyebrow={meta}
+              title={active ? t('home.continue') : t('home.senior.start')}
+              detail={goals.length ? listText(goals, t('common.and')) : t('home.senior.balance')}
+              onPress={onStart}
+            />
+            {onPreview ? (
+              <View style={styles.links}>
+                <TextLink label={t('home.seeWorkout')} onPress={onPreview} />
+              </View>
+            ) : null}
+          </>
+        )}
       </View>
 
-      {allRecovering && !active ? (
-        // Everything is still recovering (QA R3-03): mobility, balance or rest.
-        <Card style={styles.today}>
-          <AppText variant="h1" accessibilityRole="header">
-            {t(`home.${easyDayKey({ stoppedToday, doneToday, weeklyCap })}Title`)}
-          </AppText>
-          <AppText>{t(`home.${easyDayKey({ stoppedToday, doneToday, weeklyCap })}Body`)}</AppText>
-          {onBalance ? (
-            <Button
-              variant="teal"
-              label={t('home.balance', { minutes: MOBILITY_MINUTES })}
-              onPress={onBalance}
-            />
-          ) : null}
-          <Button
-            variant="secondary"
-            label={t('home.mobility', { minutes: MOBILITY_MINUTES })}
-            onPress={onMobility}
-          />
-          <Button variant="ghost" label={t('home.rest')} onPress={() => setResting(true)} />
-          {resting ? <AppText color={colors.mutedStrong}>{t('home.restNote')}</AppText> : null}
-        </Card>
-      ) : (
-        <Card style={styles.today}>
-          <AppText color={colors.mutedStrong}>{meta}</AppText>
-          <AppText variant="h1">
-            {goals.length ? listText(goals, t('common.and')) : t('home.senior.balance')}
-          </AppText>
-          <AppText>{t('home.withWarmup', { minutes })}</AppText>
-          <Button
-            variant="teal"
-            label={active ? t('home.continue') : t('home.senior.start')}
-            onPress={onStart}
-          />
-        </Card>
-      )}
-
-      {/* Short mobility for 60+ too (QA R3-06): free, counts for the streak. */}
-      {!active && !allRecovering ? (
-        <>
-          <BigLink
-            icon="body"
-            label={t('home.mobility', { minutes: MOBILITY_MINUTES })}
-            onPress={onMobility}
-          />
-          {/* Short balance always offered at 60+ (QA R5 P2). */}
-          {onBalance ? (
-            <BigLink
-              icon="shield"
-              label={t('home.balance', { minutes: MOBILITY_MINUTES })}
-              onPress={onBalance}
-            />
-          ) : null}
-        </>
-      ) : null}
-
-      {/* The month's summary replaces the 4-week check-in link (Phase 26). */}
-      <MonthHomeCard onStart={onStart} />
-      <BigLink
-        icon="progress"
-        label={t('home.senior.progress')}
-        onPress={() => router.push('/progress')}
-      />
-
-      {last ? (
+      {/* 2. The month's summary (Phase 26), else the last workout. */}
+      {month ? (
+        <MonthHomeCard onStart={onStart} />
+      ) : last ? (
         <View style={styles.last}>
           <AppText variant="bodyStrong" color={colors.teal}>
             {t('home.senior.lastTitle', { day: lastDay })}
@@ -216,9 +202,41 @@ export function SeniorHome({
         </View>
       ) : null}
 
-      <AppText variant="caption" color={colors.mutedStrong} style={styles.center}>
-        {t('home.senior.note')}
-      </AppText>
+      {/* 3. Everything else, one tap away. Short mobility and balance for
+          60+ (QA R3-06, R5 P2): free, and they count for the streak. */}
+      <MoreOptions>
+        {!active && !easy ? (
+          <>
+            <BigLink
+              icon="body"
+              label={t('home.mobility', { minutes: MOBILITY_MINUTES })}
+              onPress={onMobility}
+            />
+            {onBalance ? (
+              <BigLink
+                icon="shield"
+                label={t('home.balance', { minutes: MOBILITY_MINUTES })}
+                onPress={onBalance}
+              />
+            ) : null}
+          </>
+        ) : easy && onBalance ? (
+          <BigLink
+            icon="body"
+            label={t('home.mobility', { minutes: MOBILITY_MINUTES })}
+            onPress={onMobility}
+          />
+        ) : null}
+        <BigLink
+          icon="progress"
+          label={t('home.senior.progress')}
+          onPress={() => router.push('/progress')}
+        />
+        <WeekStrip large />
+        <AppText variant="caption" color={colors.mutedStrong} style={styles.center}>
+          {t('home.senior.note')}
+        </AppText>
+      </MoreOptions>
     </Screen>
   );
 }
@@ -241,12 +259,8 @@ function BigLink({ icon, label, onPress }: { icon: IconName; label: string; onPr
 }
 
 const useStyles = makeStyles(() => ({
-  today: {
-    gap: spacing.md,
-    padding: spacing.xl,
-    borderWidth: 2,
-    borderColor: colors.ink,
-  },
+  block: { gap: spacing.md },
+  links: { flexDirection: 'row', justifyContent: 'center' },
   link: {
     flexDirection: 'row',
     alignItems: 'center',

@@ -11,6 +11,9 @@ import { activeProfile, useFamilyStore } from '@/features/family/store';
 import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { MonthHomeCard } from '@/features/month/components/MonthHomeCard';
+import { useMonthStore } from '@/features/month/store';
+import { MoreOptions } from '@/features/home/MoreOptions';
+import { StartHero } from '@/features/home/StartHero';
 import { useMonthClose } from '@/features/month/useMonthClose';
 import { SeniorHome } from '@/features/senior/SeniorHome';
 import { muscleLabel } from '@/features/onboarding/summaries';
@@ -35,6 +38,7 @@ import {
 } from '@/features/workout/hooks';
 import type { RecoveryState } from '@/features/workout/recovery';
 import { sessionTargets, todaySession } from '@/features/workout/plan';
+import { beginWorkout } from '@/features/workout/start';
 import { useWorkoutStore } from '@/features/workout/store';
 import { easyDayKey, todayState } from '@/features/workout/secondWorkout';
 import { showStreakHint, streakToday } from '@/features/workout/streak';
@@ -149,6 +153,29 @@ export default function HomeScreen() {
     router.push({ pathname: '/workout/[id]', params: { id: id ?? 'unavailable' } });
   };
 
+  // One tap from Home to the player (Phase 27, A2). The preview stays one
+  // small link away ("See workout"). The first workout of a new month opens
+  // the preview instead, so "Renewed N exercises · Undo" is seen before the
+  // workout starts (Phase 26).
+  const trainNow = () => {
+    const existing = active ?? planned;
+    const noticeBefore = useMonthStore.getState().autoNotice;
+    const id = existing
+      ? refreshWorkout(existing.id, input, library)
+      : createWorkoutFrom(input, library);
+    if (!existing && id) track('workout_generated', { mode: derived.mode });
+    if (!id || useMonthStore.getState().autoNotice !== noticeBefore) {
+      router.push({ pathname: '/workout/[id]', params: { id: id ?? 'unavailable' } });
+      return;
+    }
+    const begun = beginWorkout(id);
+    if (!begun.ok) {
+      router.push({ pathname: '/paywall', params: { next: begun.nextFreeDay } });
+      return;
+    }
+    router.push({ pathname: '/workout/[id]/play', params: { id } });
+  };
+
   // Labels name the state, not an elapsed time (QA round 2): a secondary muscle
   // worked minutes ago reads "recovering", never "1–2 days ago". Grey-blue
   // splits into "not trained yet" and "time to train" (QA P2).
@@ -195,7 +222,8 @@ export default function HomeScreen() {
   if (derived.mode === 'senior')
     return (
       <SeniorHome
-        onStart={openWorkout}
+        onStart={trainNow}
+        onPreview={openWorkout}
         onMobility={openMobility}
         onBalance={balanceOk ? openBalance : undefined}
         targets={goals}
@@ -207,9 +235,25 @@ export default function HomeScreen() {
       />
     );
 
+  const easyKey = easyDayKey({ stoppedToday, doneToday, weeklyCap });
+  const heroDetail = [
+    goals.length ? listText(goals, t('common.and')) : t('home.fullBody'),
+    t('home.minutesShort', { minutes: cardMinutes }),
+  ].join(' · ');
+  const eyebrow = active
+    ? t('home.inProgress')
+    : [
+        t(`program.block.${program.block.phase}`, {
+          week: program.block.week,
+          of: program.block.of,
+        }),
+        preview ? t(`program.day.${dayName(preview, library)}`) : null,
+      ]
+        .filter(Boolean)
+        .join(' · ');
+
   return (
     <Screen>
-      <WeekStrip />
       <View style={styles.head}>
         <View style={styles.flex}>
           <AppText variant="caption" color={colors.muted} style={styles.caps}>
@@ -225,7 +269,9 @@ export default function HomeScreen() {
           ) : null}
         </View>
         <View style={styles.streak}>
-          <AppText variant="h1">{streakToday(streak, localDate(now), deviceWeekStart())}</AppText>
+          <AppText variant="h1" style={styles.num}>
+            {streakToday(streak, localDate(now), deviceWeekStart())}
+          </AppText>
           <AppText variant="caption" color={colors.muted} style={styles.caps}>
             {t('home.dayStreak', { count: streakToday(streak, localDate(now), deviceWeekStart()) })}
           </AppText>
@@ -237,137 +283,67 @@ export default function HomeScreen() {
         </View>
       </View>
 
+      {/* The one action, at the top (Phase 27, A2); nothing above it. */}
       {easyDay ? (
-        <Card tone="dark" style={styles.today} testID={doneToday ? 'done-today' : undefined}>
-          <AppText variant="caption" color={colors.dark.text} style={styles.caps}>
-            {t('home.picked')}
+        <View style={styles.today} testID={doneToday ? 'done-today' : undefined}>
+          <AppText variant="h2" accessibilityRole="header">
+            {t(`home.${easyKey}Title`)}
           </AppText>
-          <AppText variant="h1" color={colors.dark.text} accessibilityRole="header">
-            {t(`home.${easyDayKey({ stoppedToday, doneToday, weeklyCap })}Title`)}
-          </AppText>
-          <AppText color={colors.dark.text}>
-            {t(`home.${easyDayKey({ stoppedToday, doneToday, weeklyCap })}Body`)}
-          </AppText>
-          <Button
-            variant="accent"
-            label={t('home.mobility', { minutes: MOBILITY_MINUTES })}
+          <AppText color={colors.mutedStrong}>{t(`home.${easyKey}Body`)}</AppText>
+          <StartHero
+            eyebrow={t('home.picked')}
+            title={t('home.mobilityTitle')}
+            detail={t('home.minutesShort', { minutes: MOBILITY_MINUTES })}
             onPress={openMobility}
           />
-          {balanceOk ? (
-            <Button
-              variant="onDark"
-              label={t('home.balance', { minutes: MOBILITY_MINUTES })}
-              onPress={openBalance}
-            />
-          ) : null}
-          <Button variant="onDark" label={t('home.rest')} onPress={() => setResting(true)} />
+          <View style={styles.links}>
+            <TextLink label={t('home.rest')} onPress={() => setResting(true)} />
+          </View>
           {resting ? (
-            <AppText variant="caption" color={colors.dark.text}>
+            <AppText variant="caption" color={colors.mutedStrong}>
               {t('home.restNote')}
             </AppText>
           ) : null}
-          {extraAllowed ? (
-            extraAsked ? (
-              <>
-                <AppText variant="caption" color={colors.dark.text} testID="extra-warning">
-                  {t('home.extraWarning')}
-                </AppText>
-                <Button variant="onDark" label={t('home.extraStart')} onPress={openWorkout} />
-              </>
-            ) : (
-              <Button
-                variant="onDark"
-                label={t('home.extra')}
-                onPress={() => setExtraAsked(true)}
-              />
-            )
-          ) : null}
-        </Card>
+        </View>
       ) : freeDone ? (
-        <Card tone="dark" style={styles.today} testID="free-done">
-          <AppText variant="h1" color={colors.dark.text} accessibilityRole="header">
+        <View style={styles.today} testID="free-done">
+          <AppText variant="h2" accessibilityRole="header">
             {t('home.freeDoneTitle', { count: FREE_WORKOUTS_PER_WEEK })}
           </AppText>
-          <AppText color={colors.dark.text}>{t('home.freeDoneBody')}</AppText>
-          <Button
-            variant="accent"
-            label={t('home.mobility', { minutes: MOBILITY_MINUTES })}
+          <AppText color={colors.mutedStrong}>{t('home.freeDoneBody')}</AppText>
+          <StartHero
+            title={t('home.mobilityTitle')}
+            detail={t('home.minutesShort', { minutes: MOBILITY_MINUTES })}
             onPress={openMobility}
           />
-          <Button
-            variant="onDark"
-            label={t('home.freeDonePremium')}
-            onPress={() => router.push('/plans')}
-          />
-        </Card>
-      ) : (
-        <Card tone="dark" style={styles.today}>
-          <AppText variant="caption" color={colors.dark.text} style={styles.caps}>
-            {active
-              ? t('home.inProgress')
-              : [
-                  t(`program.block.${program.block.phase}`, {
-                    week: program.block.week,
-                    of: program.block.of,
-                  }),
-                  preview ? t(`program.day.${dayName(preview, library)}`) : null,
-                ]
-                  .filter(Boolean)
-                  .join(' · ')}
-          </AppText>
-          <AppText variant="h1" color={colors.dark.text}>
-            {goals.length ? listText(goals, t('common.and')) : t('home.fullBody')}
-          </AppText>
-          {/* "6 exercises · 45 min" (+ kcal for adults only, never teens). */}
-          <AppText color={colors.dark.text}>
-            {summary
-              ? [
-                  t('program.summary', { count: summary.exercises, minutes: summary.minutes }),
-                  summary.kcal ? t('program.kcal', { kcal: summary.kcal }) : null,
-                ]
-                  .filter(Boolean)
-                  .join(' · ')
-              : t('home.withWarmup', { minutes: cardMinutes })}
-          </AppText>
-          <Button
-            variant="accent"
-            label={active ? t('home.continue') : t('home.start', { minutes: cardMinutes })}
-            onPress={openWorkout}
-          />
-          <Button
-            variant="onDark"
-            label={t('home.pickElse')}
-            onPress={() => router.push('/workout/new')}
-          />
-        </Card>
-      )}
-
-      {/* Short mobility (decision 1, QA round 2): always free, counts for the streak. */}
-      {!active && !easyDay && !freeDone ? (
-        <View style={styles.mobility}>
-          <Button
-            variant="secondary"
-            label={t('home.mobility', { minutes: MOBILITY_MINUTES })}
-            onPress={openMobility}
-          />
-          {balanceUser && balanceOk ? (
-            <Button
-              variant="secondary"
-              label={t('home.balance', { minutes: MOBILITY_MINUTES })}
-              onPress={openBalance}
-            />
-          ) : null}
-          {showStreakHint(streak, localDate(now), plannedToday) ? (
-            <AppText color={colors.teal} style={styles.center} testID="streak-hint">
-              {t('home.streakHint')}
-            </AppText>
-          ) : (
-            <AppText variant="caption" color={colors.mutedStrong} style={styles.center}>
-              {t('home.mobilityNote')}
-            </AppText>
-          )}
+          <View style={styles.links}>
+            <TextLink label={t('home.freeDonePremium')} onPress={() => router.push('/plans')} />
+          </View>
         </View>
-      ) : null}
+      ) : (
+        <View style={styles.today}>
+          <StartHero
+            eyebrow={eyebrow}
+            title={active ? t('home.continue') : t('home.trainNow')}
+            detail={heroDetail}
+            onPress={trainNow}
+          />
+          {/* "6 exercises · 45 min" (+ kcal for adults only, never teens). */}
+          {summary ? (
+            <AppText variant="caption" color={colors.mutedStrong} style={styles.center}>
+              {[
+                t('program.summary', { count: summary.exercises, minutes: summary.minutes }),
+                summary.kcal ? t('program.kcal', { kcal: summary.kcal }) : null,
+              ]
+                .filter(Boolean)
+                .join(' · ')}
+            </AppText>
+          ) : null}
+          <View style={styles.links}>
+            <TextLink label={t('home.seeWorkout')} onPress={openWorkout} />
+          </View>
+        </View>
+      )}
 
       {morning ? (
         // Morning check after a recovery session, right on Home (QA round 2).
@@ -391,8 +367,60 @@ export default function HomeScreen() {
         </Pressable>
       ) : null}
 
+      <WeekStrip />
+
+      {/* Less common choices, collapsed (Phase 27, A3). Short mobility stays
+          free and counts for the streak (decision 1, QA round 2). */}
+      <MoreOptions>
+        {!easyDay && !freeDone && !active ? (
+          <Button
+            variant="secondary"
+            label={t('home.mobility', { minutes: MOBILITY_MINUTES })}
+            onPress={openMobility}
+          />
+        ) : null}
+        {balanceOk && (easyDay || balanceUser) ? (
+          <Button
+            variant="secondary"
+            label={t('home.balance', { minutes: MOBILITY_MINUTES })}
+            onPress={openBalance}
+          />
+        ) : null}
+        {!easyDay && !freeDone ? (
+          <Button
+            variant="secondary"
+            label={t('home.pickElse')}
+            onPress={() => router.push('/workout/new')}
+          />
+        ) : null}
+        {easyDay && extraAllowed ? (
+          extraAsked ? (
+            <>
+              <AppText variant="caption" color={colors.mutedStrong} testID="extra-warning">
+                {t('home.extraWarning')}
+              </AppText>
+              <Button variant="secondary" label={t('home.extraStart')} onPress={openWorkout} />
+            </>
+          ) : (
+            <Button
+              variant="secondary"
+              label={t('home.extra')}
+              onPress={() => setExtraAsked(true)}
+            />
+          )
+        ) : null}
+        <AppText variant="caption" color={colors.mutedStrong} style={styles.center}>
+          {t('home.mobilityNote')}
+        </AppText>
+      </MoreOptions>
+      {!active && !easyDay && !freeDone && showStreakHint(streak, localDate(now), plannedToday) ? (
+        <AppText color={colors.teal} style={styles.center} testID="streak-hint">
+          {t('home.streakHint')}
+        </AppText>
+      ) : null}
+
       {/* The month's summary replaces the 4-week check-in card (Phase 26). */}
-      <MonthHomeCard onStart={openWorkout} />
+      <MonthHomeCard onStart={trainNow} />
 
       {/* The body takes the full card width; the legend sits below it (QA O-1b). */}
       <Card style={styles.recovery}>
@@ -430,10 +458,11 @@ const useStyles = makeStyles(() => ({
   flex: { flex: 1 },
   caps: { textTransform: 'uppercase', letterSpacing: 1.2, fontFamily: fonts.headingSemi },
   streak: { alignItems: 'flex-end' },
-  today: { gap: spacing.md, padding: spacing.xl },
+  today: { gap: spacing.md },
+  links: { flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap', gap: spacing.md },
+  num: { fontVariant: ['tabular-nums'] },
   recovery: { gap: spacing.md },
   legend: { gap: spacing.sm },
-  mobility: { gap: spacing.xs },
   center: { textAlign: 'center' },
   checkin: {
     flexDirection: 'row',

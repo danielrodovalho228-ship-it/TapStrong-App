@@ -1,4 +1,5 @@
-# Shared steps: adult (born March 1983) onboarding to the home screen.
+# Shared steps: adult (born March 1983) onboarding to the first workout
+# (Phase 27: after the safety check the player opens straight away).
 appId: app.tapstrong
 ---
 - launchApp:
@@ -15,14 +16,13 @@ appId: app.tapstrong
 - tapOn: '1983'
 - assertVisible: 'Adult mode · .*'
 - tapOn: 'Continue'
-# Coach interview: goal, schedule, focus, body model.
+# Coach interview: goal, schedule, body model (the focus is asked later).
 - tapOn: 'Look better'
 - tapOn: 'Continue'
 - tapOn: 'Home'
 - tapOn: '30 min'
 - tapOn: '3 days'
 - tapOn: 'Continue'
-- tapOn: "I'll tap the body map"
 - tapOn: 'Woman'
 - tapOn: 'Skip'
 - tapOn: 'Next: quick safety check'
@@ -35,6 +35,5 @@ appId: app.tapstrong
     index: 1
 - tapOn: 'Standing'
 - tapOn: 'Continue'
-# Profile summary.
-- assertVisible: 'Your plan, at a glance'
-- tapOn: 'Looks right'
+# The first workout starts with the warm-up.
+- assertVisible: 'Warm-up'

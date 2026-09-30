@@ -10,6 +10,7 @@ import { ParentGate } from '@/features/family/ParentGate';
 import { derive } from '@/features/onboarding/derived';
 import { PAIN_AREAS, POSITIONS, STEP_NUMBER, TOTAL_STEPS } from '@/features/onboarding/options';
 import { hasRedFlag, toggleInList, visibleConditions } from '@/features/onboarding/safety';
+import { finishOnboarding } from '@/features/onboarding/finish';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { track } from '@/lib/analytics';
 import { fonts, spacing, useColors } from '@/theme';
@@ -72,7 +73,14 @@ export default function SafetyScreen() {
     if (edit) {
       if (router.canGoBack()) router.back();
       else router.replace('/restrictions');
-    } else router.push('/onboarding/profile');
+      return;
+    }
+    // Onboarding ends here and the first workout starts (Phase 27, A1). A red
+    // flag lands on Home instead, so the person starts when ready.
+    const first = !store.onboardingComplete;
+    finishOnboarding();
+    if (redFlag || !first) router.replace('/home');
+    else router.replace('/start');
   };
   const onContinue = () => {
     if (staged && minorGated && removesSomething) return setGate(true);

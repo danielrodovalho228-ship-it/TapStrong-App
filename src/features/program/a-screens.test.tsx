@@ -73,7 +73,7 @@ describe('Home (A1–A3)', () => {
     await adult();
     await render(<HomeScreen />);
     expect(screen.getByTestId('week-strip')).toBeTruthy();
-    expect(screen.getByText(/^Week \d of 4 · (Build|Lighter|Deload)/)).toBeTruthy();
+    expect(screen.getByText(/^Week \d of 4 · (Build|Lighter|Light week)/)).toBeTruthy();
     expect(screen.getByText(/exercises? · \d+ min · about \d+ kcal/)).toBeTruthy();
     await fireEvent.press(screen.getByTestId('week-2026-10-02'));
     expect(router.push).toHaveBeenCalledWith({
@@ -91,6 +91,7 @@ describe('Home (A1–A3)', () => {
   it('"Pick something else" opens the workout modes', async () => {
     await adult();
     await render(<HomeScreen />);
+    await fireEvent.press(screen.getByRole('button', { name: 'More options' }));
     await fireEvent.press(screen.getByRole('button', { name: 'Pick something else' }));
     expect(router.push).toHaveBeenCalledWith('/workout/new');
   });

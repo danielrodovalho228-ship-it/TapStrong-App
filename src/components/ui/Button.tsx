@@ -3,6 +3,7 @@ import { ActivityIndicator, Pressable, View, type PressableProps } from 'react-n
 import { colors, makeStyles, radius, sizes, spacing, useColors } from '@/theme';
 
 import { AppText } from './AppText';
+import { noteTap } from '@/lib/usage';
 
 /**
  * primary: black, the default main button (Continue, Get started).
@@ -28,6 +29,8 @@ export type ButtonProps = Omit<PressableProps, 'children' | 'style'> & {
   variant?: ButtonVariant;
   loading?: boolean;
   fullWidth?: boolean;
+  /** "xl": the player's giant "Done" (Phase 27, A5). */
+  size?: 'normal' | 'xl';
 };
 
 export function Button({
@@ -36,6 +39,7 @@ export function Button({
   loading = false,
   disabled,
   fullWidth = true,
+  size = 'normal',
   ...rest
 }: ButtonProps) {
   const colors = useColors();
@@ -62,7 +66,10 @@ export function Button({
       hitSlop={4}
       style={({ pressed }) => [
         styles.base,
+        size === 'xl' && styles.xl,
         fullWidth && styles.fullWidth,
+        // A light "press in" on every button (Phase 27, B2).
+        pressed && !isDisabled && styles.pressIn,
         (variant === 'primary' || variant === 'accent') && {
           backgroundColor: pressed ? colors.accentPressed : colors.accent,
         },
@@ -75,12 +82,17 @@ export function Button({
         isDisabled && styles.disabled,
       ]}
       {...rest}
+      // Taps to the first set (Phase 27 "Measure"): a count, nothing else.
+      onPressIn={(e) => {
+        noteTap();
+        rest.onPressIn?.(e);
+      }}
     >
       <View style={styles.content}>
         {loading ? (
           <ActivityIndicator color={textColor} />
         ) : (
-          <AppText variant="button" color={textColor} numberOfLines={1}>
+          <AppText variant={size === 'xl' ? 'h2' : 'button'} color={textColor} numberOfLines={1}>
             {label}
           </AppText>
         )}
@@ -98,6 +110,8 @@ const useStyles = makeStyles(() => ({
     alignItems: 'center',
   },
   fullWidth: { alignSelf: 'stretch' },
+  xl: { minHeight: sizes.primaryButtonHeight * 1.6 },
+  pressIn: { transform: [{ scale: 0.98 }] },
   content: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   secondary: {
     backgroundColor: colors.surface,

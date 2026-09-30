@@ -4,10 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import { AppText, Button, Card, Chip, Icon, IconButton, Notice, Screen } from '@/components/ui';
-import { syncNow } from '@/features/account/cloud';
 import { MonthAutoNotice } from '@/features/month/components/MonthAutoNotice';
-import { canStartWorkout, currentPlan } from '@/features/billing/rules';
-import { useBillingStore } from '@/features/billing/store';
 import type { Exercise } from '@/features/exercises/types';
 import { dayName, sessionSummary } from '@/features/program/block';
 import { WeekStrip } from '@/features/program/components/WeekStrip';
@@ -48,11 +45,9 @@ import {
 } from '@/features/workout/hooks';
 import { isReviewed, withFocus } from '@/features/workout/plan';
 import { useWorkoutStore } from '@/features/workout/store';
+import { beginWorkout } from '@/features/workout/start';
 import { useTodayState } from '@/features/workout/useTodayState';
-import { track } from '@/lib/analytics';
 import { restFor, usePrefsStore } from '@/features/settings/store';
-import { clock } from '@/lib/clock';
-import { deviceWeekStart } from '@/lib/dates';
 import { colors, fonts, makeStyles, radius, spacing, useColors } from '@/theme';
 
 const SHORT_MINUTES = 15;
@@ -231,25 +226,10 @@ export default function WorkoutScreen() {
   };
 
   const start = () => {
-    if (planned) {
-      // Free plan: 3 workouts a week (SPEC §8); the finisher does not count.
-      const check =
-        workout.kind === 'regular'
-          ? canStartWorkout(
-              currentPlan(useBillingStore.getState().entitlement, clock.now()),
-              store.workouts,
-              clock.now(),
-              deviceWeekStart(),
-            )
-          : ({ allowed: true } as const);
-      if (!check.allowed) {
-        router.push({ pathname: '/paywall', params: { next: check.nextFreeDay } });
-        return;
-      }
-      store.start(workout.id);
-      track('workout_started');
-      // The server notes when it started (referral check, round 2 P3).
-      void syncNow();
+    const begun = beginWorkout(workout.id);
+    if (!begun.ok) {
+      router.push({ pathname: '/paywall', params: { next: begun.nextFreeDay } });
+      return;
     }
     router.push({ pathname: '/workout/[id]/play', params: { id: workout.id } });
   };
@@ -402,7 +382,7 @@ export default function WorkoutScreen() {
             })}
           </AppText>
           <Button
-            variant="accent"
+            variant="secondary"
             label={t('workout.spare.add')}
             accessibilityHint={t('workout.spare.long', {
               estimate: session.estimatedMinutes,

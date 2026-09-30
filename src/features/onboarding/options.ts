@@ -24,17 +24,25 @@ export type {
 export type Who = 'me' | 'child' | 'parent';
 export const WHO_OPTIONS: Who[] = ['me', 'child', 'parent'];
 
-/** Onboarding has 7 steps: age gate, 4 interview steps, safety, summary. */
-export const TOTAL_STEPS = 7;
+/**
+ * Onboarding has 5 steps before the first workout (Phase 27, A1): age gate,
+ * goals, schedule, body, safety. The focus muscles are asked later (the Body
+ * tab, or editing the profile), and the summary is no longer a step: after
+ * the safety check the first workout starts.
+ */
+export const TOTAL_STEPS = 5;
 export const STEP_NUMBER = {
   who: 1,
   goals: 2,
   schedule: 3,
   focus: 4,
-  body: 5,
-  safety: 6,
-  profile: 7,
+  body: 4,
+  safety: 5,
+  profile: 5,
 } as const;
+
+/** The interview steps asked before the first workout (Phase 27, A1). */
+export const FIRST_RUN_STEPS = ['goals', 'schedule', 'body'] as const;
 
 // Safety check (SPEC §2.2, mockup 04). Keys are stored in health_screen / restrictions.
 export const PAIN_AREAS = [

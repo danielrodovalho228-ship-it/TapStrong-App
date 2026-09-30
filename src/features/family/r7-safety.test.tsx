@@ -171,7 +171,7 @@ describe('R7 P2: legacy records and the PIN', () => {
       account.useAccountStore.getState().update({ saved: true, email: 'owner@example.test' });
     });
     await render(<ParentGate onPass={() => undefined} onCancel={() => undefined} />);
-    await fireEvent.press(screen.getByRole('button', { name: 'Set a PIN with the account email' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Create PIN by email' }));
     expect(screen.getByRole('button', { name: /code/i })).toBeTruthy();
   });
 

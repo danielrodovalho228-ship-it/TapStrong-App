@@ -14,7 +14,8 @@
     "edit": "Editar",
     "separator": " · ",
     "cancel": "Cancelar",
-    "and": "y"
+    "and": "y",
+    "moreOptions": "Más opciones"
   },
   "language": {
     "en": "English",
@@ -1515,7 +1516,7 @@
       "cues": "Sujeta la barra y cuélgate con los pies cerca de un escalón; apóyate antes de perder el agarre."
     },
     "single_leg_glute_bridge": {
-      "name": "Puente de glúteo unilateral",
+      "name": "Puente de glúteo a una pierna",
       "cues": "Acuéstate boca arriba, un pie apoyado y la otra pierna arriba; sube la cadera nivelada sin arquear."
     },
     "heel_dig_bridge": {
@@ -1543,7 +1544,7 @@
       "cues": "Sujeta una silla, rodillas juntas; dobla una rodilla para subir el talón y baja lento."
     },
     "supported_single_leg_rdl": {
-      "name": "Bisagra unilateral con apoyo",
+      "name": "Bisagra a una pierna con apoyo",
       "cues": "Sujeta una silla, rodilla suave; inclínate al frente mientras la otra pierna va atrás, espalda recta."
     },
     "bodyweight_good_morning": {
@@ -1607,7 +1608,7 @@
       "cues": "Desde un asiento alto, manos en los apoyabrazos si hace falta; inclínate, levántate y siéntate lento."
     },
     "supported_single_leg_calf_raise": {
-      "name": "Talón unilateral con apoyo",
+      "name": "Talón a una pierna con apoyo",
       "cues": "Sujétate de una mesada, de pie en una pierna; sube a la punta del pie y baja lento."
     },
     "seated_heel_raise": {
@@ -1747,7 +1748,7 @@
       "cues": "Pies abiertos, una mancuerna colgando entre las piernas; baja con las rodillas afuera y sube."
     },
     "dumbbell_single_leg_rdl": {
-      "name": "Peso muerto unilateral con mancuerna",
+      "name": "Peso muerto a una pierna con mancuerna",
       "cues": "Mancuerna en una mano, la otra en la pared; inclínate sobre una pierna con la espalda recta y sube."
     },
     "dumbbell_seated_calf_raise": {
@@ -3600,7 +3601,8 @@
       },
       "dayToday": "hoy",
       "dayYesterday": "ayer",
-      "supported": "opciones con apoyo"
+      "supported": "opciones con apoyo",
+      "balanceTitle": "Equilibrio corto"
     },
     "freezes_one": "{{count}} protección de racha guardada",
     "freezes_other": "{{count}} protecciones de racha guardadas",
@@ -3621,14 +3623,18 @@
     "freeDoneTitle_one": "Ya hiciste tu entrenamiento gratis de esta semana",
     "freeDoneTitle_other": "Ya hiciste tus {{count}} entrenamientos gratis de esta semana",
     "freeDoneBody": "Sigue moviéndote con una sesión corta de movilidad: es gratis y cuenta para tu racha. Tus entrenamientos vuelven la próxima semana.",
-    "freeDonePremium": "Premium: entrenar todos los días",
+    "freeDonePremium": "Premium: entrena cada día",
     "doneTitle": "El entrenamiento de hoy está hecho",
     "doneBody": "Buen trabajo. Tus músculos crecen mientras se recuperan: movilidad corta, equilibrio o descanso el resto del día.",
     "extra": "Entrenamiento extra",
     "extraWarning": "Un segundo entrenamiento completo hoy suma carga antes de recuperarte. Solo si te sientes fresco, y para si algo duele.",
     "extraStart": "Empezar entrenamiento extra",
     "weeklyCapTitle": "Llegaste al límite de esta semana",
-    "weeklyCapBody": "Los músculos de hoy ya hicieron sus series de esta semana. Movilidad corta, unos ejercicios de equilibrio o un día de descanso te mantienen en movimiento mientras se recuperan."
+    "weeklyCapBody": "Los músculos de hoy ya hicieron sus series de esta semana. Movilidad corta, unos ejercicios de equilibrio o un día de descanso te mantienen en movimiento mientras se recuperan.",
+    "trainNow": "Entrenar ahora",
+    "seeWorkout": "Ver entrenamiento",
+    "minutesShort": "{{minutes}} min",
+    "mobilityTitle": "Movilidad corta"
   },
   "workout": {
     "title": "Tu entrenamiento",
@@ -3707,7 +3713,7 @@
       "startTimer": "Iniciar temporizador",
       "doneStep": "Hecho",
       "warmupShorten": "Hoy hay trabajo con carga: puedes acortar el calentamiento, no saltarlo.",
-      "skipCooldown": "Saltar vuelta a la calma",
+      "skipCooldown": "Saltar enfriamiento",
       "skipCooldownConfirm": "¿Saltar la vuelta a la calma? Ayuda a recuperarte y cuenta para tu racha.",
       "keepCooldown": "Mantenerla",
       "setOf": "Serie {{n}} de {{total}}",
@@ -3836,12 +3842,12 @@
     "rampUp_other": "{{count}} series ligeras de aproximación",
     "minSec": "{{minutes}} min {{seconds}} s",
     "backToFull": "Volver al entrenamiento completo",
-    "restDay": "Tomar un día de descanso",
+    "restDay": "Descansar hoy",
     "spare": {
       "add": "¿Añadir 1 ejercicio?",
       "long": "Hay unos {{estimate}} de tus {{minutes}} min planificados."
     },
-    "deload": "Semana de descarga: menos series",
+    "deload": "Semana suave: menos series",
     "otherSide": "Otro lado"
   },
   "account": {
@@ -3893,7 +3899,7 @@
     "sets_other": "{{count}} series",
     "tagline": "Tap. Talk. Train. · tapstrong.app",
     "shareImage": "Compartir mi mapa",
-    "shareLink": "Enviar mi enlace de invitación",
+    "shareLink": "Enviar mi invitación",
     "inviteMessage": "Estoy entrenando con TapStrong. Únete: {{link}}",
     "saveForLink": "Guarda tu cuenta para tener tu propio enlace de invitación.",
     "failed": "No se pudo compartir la imagen en este dispositivo.",
@@ -4077,7 +4083,7 @@
       "childTeen": "Mi hijo o hija adolescente (13–17)"
     },
     "name": "Nombre",
-    "next": "Siguiente: consentimiento de los padres",
+    "next": "Siguiente: consentimiento parental",
     "create": "Crear perfil",
     "errors": {
       "full_one": "El plan Familia admite hasta {{count}} perfil.",
@@ -4141,7 +4147,7 @@
     "teenMobileOnly": "TapStrong para adolescentes está disponible en la app para móvil. En la web, TapStrong es para adultos.",
     "mobileOnlyTitle": "Los perfiles familiares están en la app para móvil",
     "teenMobileOnlyTitle": "TapStrong para adolescentes está en la app para móvil",
-    "changeDate": "Cambiar mi fecha de nacimiento",
+    "changeDate": "Cambiar fecha de nacimiento",
     "ownLogin": "Este adolescente tiene su propio inicio de sesión, así que solo esa persona puede cambiar o borrar su perfil. Se quitó solo de este teléfono.",
     "getIos": "Descárgala en la App Store",
     "getAndroid": "Descárgala en Google Play"
@@ -4153,7 +4159,7 @@
     "bodyLocal": "No tienes una cuenta guardada, así que tus datos están solo en este teléfono. Esto los elimina: perfiles, entrenamientos, restricciones y rachas. No se puede deshacer.",
     "storeTitle": "Tu suscripción es aparte",
     "storeBody": "Eliminar tu cuenta no cancela una suscripción. Apple y Google solo permiten cancelar en las suscripciones de la tienda, así que cancela allí primero para evitar cobros.",
-    "openStore": "Abrir mis suscripciones de la tienda",
+    "openStore": "Abrir suscripciones de tienda",
     "typeToConfirm": "Escribe {{word}} para confirmar",
     "confirm": "Eliminar mi cuenta",
     "confirmLocal": "Eliminar mis datos",
@@ -4297,7 +4303,7 @@
     "after": "Más reciente",
     "firstEmpty": "Toma tu primera foto. Misma posición y misma luz cada vez.",
     "latestEmpty": "Toma una nueva en unas semanas para comparar.",
-    "take": "Tomar la foto de hoy",
+    "take": "Tomar foto de hoy",
     "delete": "Eliminar la foto {{label}}",
     "shareMap": "Compartir progreso (mapa muscular)",
     "shareNote": "Al compartir se usa tu mapa muscular. Las fotos nunca se comparten.",
@@ -4342,8 +4348,8 @@
     },
     "notDiagnosis": "No es un diagnóstico. ¿Con dolor? Consulta a un fisioterapeuta.",
     "allGood": "Todas las pruebas están bien. Repite en 6 semanas para mantenerlo.",
-    "buildPlan": "Crear mi plan de reparación de 6 semanas",
-    "openPlan": "Abrir mi plan de reparación",
+    "buildPlan": "Crear plan de reparación",
+    "openPlan": "Abrir plan de reparación",
     "tests": {
       "squat": {
         "name": "Sentarse y levantarse (30 s)",
@@ -4380,7 +4386,7 @@
     "planTitle": "Tu plan de reparación de 6 semanas",
     "planIntro": "{{weeks}} semanas, {{times}} sesiones cortas por semana ({{minutes}} min), en las áreas que encontró la prueba.",
     "focus": "Enfoque",
-    "startSession": "Empezar sesión de reparación de {{minutes}} min",
+    "startSession": "Reparación · {{minutes}} min",
     "endPlan": "Terminar este plan",
     "sessionsDone": "{{done}} de {{total}} sesiones hechas",
     "retestOn": "Repetir la prueba el {{date}}.",
@@ -4466,7 +4472,7 @@
       "level": "Paso {{level}} de 6",
       "hurts": "Duele: {{list}}",
       "fine": "Sin dolor: {{list}}",
-      "start": "Empezar una sesión de recuperación de {{minutes}} min",
+      "start": "Recuperación · {{minutes}} min",
       "lightTitle": "Semáforo del dolor",
       "lightRule": "0–3 verde: avanzas. 4–5 amarillo: te mantienes. Más de 5, o claramente peor a la mañana siguiente: rojo, un paso atrás.",
       "lights": {
@@ -4477,13 +4483,13 @@
       "noLights": "Califica el dolor después de cada entrenamiento y a la mañana siguiente.",
       "rateNow": "Calificar ahora",
       "retest": "Reprueba semanal",
-      "retestDue": "Es hora de la reprueba de esta semana",
+      "retestDue": "Reprueba de la semana",
       "retestNext": "Próxima reprueba: {{date}}",
       "seePT": "Consulta a un fisioterapeuta",
       "seePTBody": "Tu dolor no mejoró en 3 semanas, o empeoró. Un fisioterapeuta puede encontrar la causa; TapStrong puede apoyar el plan que te dé.",
       "better": "Ya no duele",
       "chart": "Dolor en cada reprueba (0–10)",
-      "morningCheck": "Chequeo de la mañana: califícalo ahora"
+      "morningCheck": "Calificar ahora"
     },
     "check": {
       "after": "{{area}}: ¿cómo se siente ahora?",
@@ -4725,7 +4731,7 @@
     "mismatch": "Los PIN no coinciden. Inténtalo de nuevo.",
     "savePin": "Guardar PIN",
     "continue": "Confirmar",
-    "createWithEmail": "Crear un PIN con el correo de la cuenta",
+    "createWithEmail": "Crear PIN por correo",
     "noPinCreate": "Aún no hay PIN de padres. El titular de la cuenta puede crearlo ahora, con un código enviado al correo de la cuenta.",
     "offline": "No podemos comprobar el PIN ahora. Conéctate a internet e inténtalo de nuevo.",
     "offlineSave": "Conéctate a internet para cambiar el PIN, así todos los teléfonos usan el nuevo."
@@ -4737,13 +4743,13 @@
   "settings": {
     "title": "Ajustes",
     "open": "Ajustes y cuenta",
-    "account": "Cuenta e inicio de sesión",
+    "account": "Cuenta y acceso",
     "plan": "Plan y facturación",
     "restrictions": "Restricciones",
     "deleteNote": "Eliminar tu cuenta borra tus datos de nuestros servidores y limpia este teléfono, fotos incluidas. La siguiente pantalla explica cada paso.",
     "delete": "Eliminar cuenta",
-    "setPin": "Crear un PIN de padres",
-    "changePin": "Cambiar el PIN de padres",
+    "setPin": "Crear PIN de padres",
+    "changePin": "Cambiar PIN de padres",
     "pinSaved": "PIN de padres guardado.",
     "workout": "Preferencias de entrenamiento",
     "reminders": "Recordatorios",
@@ -4798,7 +4804,7 @@
   "day": {
     "sets_one": "{{count}} serie",
     "sets_other": "{{count}} series",
-    "start": "Empezar el entrenamiento de hoy",
+    "start": "Entrenar hoy",
     "nothing": "No hay entrenamiento registrado este día.",
     "preview": "Vista previa",
     "noPreview": "Todavía no se puede preparar una sesión para este día.",
@@ -4820,7 +4826,7 @@
     },
     "block": {
       "build": "Semana {{week}} de {{of}} · Progreso",
-      "deload": "Semana {{week}} de {{of}} · Descarga (más ligera)"
+      "deload": "Semana {{week}} de {{of}} · Semana suave"
     },
     "summary_one": "{{count}} ejercicio · {{minutes}} min",
     "summary_other": "{{count}} ejercicios · {{minutes}} min",
@@ -4831,10 +4837,10 @@
     "repsUp": "Busca {{reps}} repeticiones esta vez, con el mismo peso.",
     "up": "Sube un paso hoy: {{load}} {{unit}}.",
     "down": "Un paso más ligero hoy: {{load}} {{unit}}.",
-    "effort": "¿Qué tan dura fue la serie?",
-    "easy": "Fácil",
-    "solid": "Exigente",
-    "hard": "Muy dura",
+    "effort": "¿Cuánto te quedó en el tanque?",
+    "easy": "😄 Mucho",
+    "solid": "🙂 Un poco",
+    "hard": "😮‍💨 Nada",
     "repsUpBodyweight": "Intenta {{reps}} repeticiones esta vez.",
     "harder": "En lo más alto del rango 4 sesiones seguidas: toca una versión más difícil. Pulsa Cambiar para elegirla.",
     "easier": "Cuesta llegar a las repeticiones con el peso más ligero: prueba una versión más fácil. Pulsa Cambiar para elegirla."
@@ -4972,7 +4978,7 @@
     "showAll": "Ver los {{count}}",
     "notReviewed": "No revisado por un entrenador",
     "hideNotForYou": "Ocultar los ejercicios que no son para ti",
-    "showMore": "Ver {{count}} más (de {{total}})"
+    "showMore": "Ver {{count}} más"
   },
   "exercise": {
     "guidance": "Guía",

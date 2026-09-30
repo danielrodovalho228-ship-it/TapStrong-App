@@ -1,13 +1,30 @@
 appId: app.tapstrong
 name: The 4th workout of the week opens the paywall (development build)
 ---
+# Onboarding starts workout 1; log a set, end it, then two more from Home.
+# Warm-up countdowns run by themselves (Phase 27), so each waits for its
+# first set.
 - runFlow: _onboard_adult.yaml
-- repeat:
-    times: 3
+- extendedWaitUntil:
+    visible: 'Done with set'
+    timeout: 600000
+- tapOn: 'Done with set'
+- tapOn: 'End workout'
+- tapOn: 'Save & end'
+- runFlow:
+    when:
+      visible: 'Not now'
     commands:
-      - tapOn: 'Start · .* min'
-      - tapOn: 'Start with warm-up'
-      - tapOn: 'Done'
+      - tapOn: 'Not now'
+- tapOn: 'Home'
+- repeat:
+    times: 2
+    commands:
+      - tapOn: 'Train now.*'
+      - extendedWaitUntil:
+          visible: 'Done with set'
+          timeout: 600000
+      - tapOn: 'Done with set'
       - tapOn: 'End workout'
       - tapOn: 'Save & end'
       - runFlow:
@@ -16,6 +33,5 @@ name: The 4th workout of the week opens the paywall (development build)
           commands:
             - tapOn: 'Not now'
       - tapOn: 'Home'
-- tapOn: 'Start · .* min'
-- tapOn: 'Start with warm-up'
+- tapOn: 'Train now.*'
 - assertVisible: '.*[Cc]ancel.*'

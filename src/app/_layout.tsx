@@ -24,6 +24,7 @@ import { useWorkoutStore } from '@/features/workout/store';
 import { clock } from '@/lib/clock';
 import { localDate } from '@/lib/dates';
 import { startMonitoring } from '@/lib/monitoring';
+import { watchAppOpens } from '@/lib/usage';
 import { useColors, useScheme } from '@/theme';
 
 void SplashScreen.preventAutoHideAsync();
@@ -56,6 +57,9 @@ export default function RootLayout() {
     });
     return () => sub.remove();
   }, []);
+
+  // Anonymous usage marks (Phase 27 "Measure"): app opens, day 7 / day 30.
+  useEffect(() => watchAppOpens(), []);
 
   // Latest subscription state from the store (best effort, offline is fine).
   useEffect(() => {

@@ -11,6 +11,7 @@ const paths = {
   minus: 'M5 12 L19 12',
   check: 'M5 12.5 L10 17.5 L19 7',
   'chevron-down': 'M6 9 L12 15 L18 9',
+  'chevron-up': 'M6 15 L12 9 L18 15',
   'arrow-right': 'M5 12 L19 12 M13 6 L19 12 L13 18',
   send: 'M5 12 L19 12 M13 6 L19 12 L13 18',
   alert: 'M12 3 A9 9 0 1 1 11.99 3 Z M12 7.5 L12 13 M12 16.4 L12 16.6',

@@ -1,6 +1,8 @@
 appId: app.tapstrong
-name: Adult onboarding reaches home
+name: Adult onboarding reaches the first workout, then Home
 ---
 - runFlow: _onboard_adult.yaml
-- assertVisible: 'Today'
-- assertVisible: 'About .* min, warm-up and cool-down included.'
+- assertVisible: 'I feel pain'
+- runFlow: _to_home.yaml
+- assertVisible: 'Train now.*'
+- assertVisible: 'See workout'

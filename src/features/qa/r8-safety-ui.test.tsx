@@ -281,7 +281,7 @@ describe('family and teen screens', () => {
     await render(<ParentGate onPass={() => undefined} onCancel={() => undefined} />);
     expect(screen.queryByText(/Settings/)).toBeNull();
     expect(screen.getByText(/create one now/)).toBeTruthy();
-    await fireEvent.press(screen.getByRole('button', { name: 'Set a PIN with the account email' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Create PIN by email' }));
     expect(screen.getByText('Create the parent PIN')).toBeTruthy();
     expect(screen.queryByText('Reset the parent PIN')).toBeNull();
   });

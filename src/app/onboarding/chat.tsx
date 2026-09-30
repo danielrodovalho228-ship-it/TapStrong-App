@@ -21,6 +21,7 @@ import { allowsFreeText, isStepComplete } from '@/features/onboarding/interview'
 import {
   INTERVIEW_STEPS,
   MAX_USER_TEXT,
+  FIRST_RUN_STEPS,
   STEP_NUMBER,
   TOTAL_STEPS,
   type InterviewStep,
@@ -36,7 +37,7 @@ function isInterviewStep(value: unknown): value is InterviewStep {
   return typeof value === 'string' && (INTERVIEW_STEPS as readonly string[]).includes(value);
 }
 
-/** Mockup 03 — Coach interview (steps 2–5 of 7). */
+/** Mockup 03 — Coach interview (steps 2–4 of 5). */
 export default function ChatScreen() {
   const colors = useColors();
   const scheme = useScheme();
@@ -57,8 +58,8 @@ export default function ChatScreen() {
   const editing = !!params.edit && isInterviewStep(params.step);
   const current: InterviewStep | undefined = editing
     ? (params.step as InterviewStep)
-    : INTERVIEW_STEPS.find((step) => !s.completedSteps.includes(step));
-  const history = editing ? [] : INTERVIEW_STEPS.filter((step) => s.completedSteps.includes(step));
+    : FIRST_RUN_STEPS.find((step) => !s.completedSteps.includes(step));
+  const history = editing ? [] : FIRST_RUN_STEPS.filter((step) => s.completedSteps.includes(step));
   const allDone = !editing && !current;
   const stepNumber = STEP_NUMBER[current ?? 'body'];
   const canType = allowsFreeText(mode) && !!current;
@@ -81,6 +82,11 @@ export default function ChatScreen() {
       return;
     }
     if (step === 'body') {
+      // The focus is asked later (Phase 27, A1): the coach picks until then.
+      if (!s.completedSteps.includes('focus')) {
+        if (!s.muscleGoals.length) s.update({ focusDeferred: true });
+        s.completeStep('focus');
+      }
       track('chat_completed', { mode });
       router.push('/onboarding/safety');
     }
