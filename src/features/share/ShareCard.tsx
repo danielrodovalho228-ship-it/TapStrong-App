@@ -159,7 +159,9 @@ export function ShareCard({ data, chrome }: { data: CardData; chrome: CardChrome
         .split(/(?<=[.;!?])\s+|;\s*/)
         .map((s) => s.trim().replace(/[.;]$/, ''))
         .filter(Boolean)
-        .slice(0, 3);
+        .slice(0, 3)
+        // Each tip is its own line: it starts with a capital letter.
+        .map((s) => s.charAt(0).toLocaleUpperCase() + s.slice(1));
       body = (
         <>
           {eyebrow(tt('shareCards.exerciseEyebrow'))}

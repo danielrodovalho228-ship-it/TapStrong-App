@@ -100,7 +100,9 @@ function sampleCard(template: ShareTemplate): CardData | null {
     from: '2026-09-01',
     to: '2026-09-29',
     workouts: 13,
-    trainedDays: [],
+    trainedDays: ['01', '03', '05', '08', '10', '12', '15', '17', '19', '22', '24', '26', '29'].map(
+      (d) => `2026-09-${d}`,
+    ),
     minutes: 540,
     sets: { quads: 36, lats: 30, chest: 24, glutes: 28, hamstrings: 10 },
     prevSets: {},
