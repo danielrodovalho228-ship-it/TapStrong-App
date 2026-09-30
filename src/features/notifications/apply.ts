@@ -82,6 +82,16 @@ export async function applyPlan(plan: PlannedNotification[]): Promise<void> {
         },
         trigger: { type: N.SchedulableTriggerInputTypes.DATE, date: p.date },
       });
+    } else if (p.kind === 'month_closed') {
+      await N.scheduleNotificationAsync({
+        identifier: p.id,
+        content: {
+          title: i18n.t('month.notificationTitle'),
+          body: i18n.t('month.notificationBody'),
+          data: { url: '/home' },
+        },
+        trigger: { type: N.SchedulableTriggerInputTypes.DATE, date: p.date },
+      });
     } else if (p.kind === 'movement_check') {
       await N.scheduleNotificationAsync({
         identifier: p.id,

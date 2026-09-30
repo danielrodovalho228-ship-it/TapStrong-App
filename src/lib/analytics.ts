@@ -27,7 +27,12 @@ export type AnalyticsEvent =
   | 'subscription_cancelled'
   | 'streak_milestone'
   | 'checkin_completed'
-  | 'repair_test_completed';
+  | 'repair_test_completed'
+  // Phase 26: the monthly cycle (choice: continue / repeat / body / auto).
+  | 'month_closed'
+  | 'month_chosen'
+  | 'month_skipped'
+  | 'month_undone';
 
 type Props = {
   mode?: 'child' | 'teen' | 'adult' | 'senior';

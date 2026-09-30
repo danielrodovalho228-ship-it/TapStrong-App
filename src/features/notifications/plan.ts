@@ -24,6 +24,8 @@ export type PlannedNotification =
   /** Honest billing (SPEC §2.5): a reminder before a trial turns into a charge. */
   | { id: string; kind: 'trial'; date: Date; chargeOn: string }
   /** Pain traffic light (SPEC §8): the morning after a workout, rate the painful area. */
+  /** Phase 26: "Your month is closed" the day the block's summary opens. */
+  | { id: string; kind: 'month_closed'; date: Date }
   | {
       id: string;
       kind: 'movement_check';
@@ -81,6 +83,8 @@ export function planNotifications(input: {
   /** Trial end when it will renew into a charge; null otherwise. */
   trialChargeAt?: string | null;
   morningChecks?: PendingMorningCheck[];
+  /** The first day after the current block (Phase 26), or null without workouts. */
+  monthClosesOn?: string | null;
 }): PlannedNotification[] {
   const out: PlannedNotification[] = [];
   const { prefs, now } = input;
@@ -115,6 +119,15 @@ export function planNotifications(input: {
     // Today if nothing is logged yet and the time is still ahead; else tomorrow.
     const date = !activeToday && today > now ? today : new Date(today.getTime() + 86_400_000);
     out.push({ id: 'streak-saver', kind: 'streak_saver', date, streak: input.streak });
+  }
+
+  // The month closed (Phase 26, E): with the workout reminders on, at their
+  // time, the day the summary opens. No new permission, no new setting.
+  if (prefs.reminders && input.monthClosesOn) {
+    const { hour, minute } = parseTime(prefs.reminderTime);
+    const date = new Date(`${input.monthClosesOn}T00:00:00`);
+    date.setHours(hour, minute, 0, 0);
+    if (date > now) out.push({ id: 'month-closed', kind: 'month_closed', date });
   }
 
   // Always scheduled while a trial will renew, whatever the other toggles say.

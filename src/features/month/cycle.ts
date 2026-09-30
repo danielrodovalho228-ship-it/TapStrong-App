@@ -39,6 +39,13 @@ export function lastClosedBlock(
   return { blockNo, weeks: of, from, to: addDays(from, of * 7) };
 }
 
+/** The first day after the block that contains `today` (when its summary opens). */
+export function currentBlockEnd(anchor: LocalDate, today: LocalDate, weeks: number): LocalDate {
+  const of = blockWeeks(weeks);
+  const n = Math.floor(Math.max(0, daysBetween(anchor, today)) / (of * 7));
+  return addDays(anchor, (n + 1) * of * 7);
+}
+
 /** The block before `block` (for "vs last month"), or null. */
 export function previousBlock(block: BlockRange): BlockRange | null {
   if (block.blockNo === 0) return null;

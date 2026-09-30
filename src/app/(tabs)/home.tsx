@@ -10,8 +10,8 @@ import { MUSCLES, muscleByKey, muscleFamily } from '@/features/muscles';
 import { activeProfile, useFamilyStore } from '@/features/family/store';
 import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
-import { checkinDue } from '@/features/progress/checkin';
-import { useProgressStore } from '@/features/progress/store';
+import { MonthHomeCard } from '@/features/month/components/MonthHomeCard';
+import { useMonthClose } from '@/features/month/useMonthClose';
 import { SeniorHome } from '@/features/senior/SeniorHome';
 import { muscleLabel } from '@/features/onboarding/summaries';
 import { LegendRow, RecoveryBody, STATE_COLOR } from '@/features/workout/components/RecoveryBody';
@@ -57,10 +57,11 @@ export default function HomeScreen() {
   const derived = derive(profile);
   const library = useExerciseLibrary();
   const input = useGeneratorInput(library);
+  // The block closed: summary + next month, once (Phase 26).
+  useMonthClose(input, library);
   const { workouts, streak, nextFocus } = useWorkoutStore();
   const { states, activity } = useBodyStates();
   const member = useFamilyStore(activeProfile);
-  const checkins = useProgressStore((st) => st.checkins);
   const painReports = useMovementPainStore((st) => st.reports);
   const [resting, setResting] = useState(false);
   const [extraAsked, setExtraAsked] = useState(false);
@@ -390,24 +391,8 @@ export default function HomeScreen() {
         </Pressable>
       ) : null}
 
-      {checkinDue(workouts, checkins, now) ? (
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={t('home.checkinReady')}
-          onPress={() => router.push('/checkin')}
-          style={styles.checkin}
-        >
-          <View style={styles.flex}>
-            <AppText variant="bodyStrong" color={colors.teal}>
-              {t('home.checkinReady')}
-            </AppText>
-            <AppText variant="caption" color={colors.mutedStrong}>
-              {t('home.checkinBody')}
-            </AppText>
-          </View>
-          <Icon name="chevron-right" color={colors.teal} />
-        </Pressable>
-      ) : null}
+      {/* The month's summary replaces the 4-week check-in card (Phase 26). */}
+      <MonthHomeCard onStart={openWorkout} />
 
       {/* The body takes the full card width; the legend sits below it (QA O-1b). */}
       <Card style={styles.recovery}>

@@ -11,8 +11,7 @@ import { WeekStrip } from '@/features/program/components/WeekStrip';
 import { useBillingStore } from '@/features/billing/store';
 import { activeProfile, useFamilyStore } from '@/features/family/store';
 import { useOnboardingStore } from '@/features/onboarding/store';
-import { checkinDue } from '@/features/progress/checkin';
-import { useProgressStore } from '@/features/progress/store';
+import { MonthHomeCard } from '@/features/month/components/MonthHomeCard';
 import { easyDayKey } from '@/features/workout/secondWorkout';
 import { useWorkoutStore } from '@/features/workout/store';
 import { clock } from '@/lib/clock';
@@ -57,7 +56,6 @@ export function SeniorHome({
   const { t, i18n } = useTranslation();
   const profile = useOnboardingStore();
   const { workouts } = useWorkoutStore();
-  const checkins = useProgressStore((s) => s.checkins);
   const member = useFamilyStore(activeProfile);
   const owner = useFamilyStore((s) => s.profiles.find((p) => p.kind === 'self'));
   const plan = currentPlan(
@@ -190,13 +188,8 @@ export function SeniorHome({
         </>
       ) : null}
 
-      {checkinDue(workouts, checkins, now) ? (
-        <BigLink
-          icon="check"
-          label={t('home.checkinReady')}
-          onPress={() => router.push('/checkin')}
-        />
-      ) : null}
+      {/* The month's summary replaces the 4-week check-in link (Phase 26). */}
+      <MonthHomeCard onStart={onStart} />
       <BigLink
         icon="progress"
         label={t('home.senior.progress')}

@@ -136,6 +136,12 @@ export default function ProgressScreen() {
       <MovementPainEntry chart />
 
       <View style={styles.links}>
+        {/* Past month summaries (Phase 26, G). */}
+        <LinkRow
+          icon="check"
+          label={t('month.monthsTitle')}
+          onPress={() => router.push('/months')}
+        />
         <LinkRow
           icon="star"
           label={t('progress.links.badges')}

@@ -5,6 +5,7 @@ import { View } from 'react-native';
 
 import { AppText, Button, Card, Chip, Icon, IconButton, Notice, Screen } from '@/components/ui';
 import { syncNow } from '@/features/account/cloud';
+import { MonthAutoNotice } from '@/features/month/components/MonthAutoNotice';
 import { canStartWorkout, currentPlan } from '@/features/billing/rules';
 import { useBillingStore } from '@/features/billing/store';
 import type { Exercise } from '@/features/exercises/types';
@@ -343,6 +344,18 @@ export default function WorkoutScreen() {
       }
     >
       {workout.kind === 'regular' ? <WeekStrip /> : null}
+      {/* A new month started without a choice: "Renewed N exercises · Undo" (Phase 26). */}
+      {workout.kind === 'regular' ? (
+        <MonthAutoNotice
+          onUndone={() => {
+            // Not started yet: rebuilt from last month's plan on Home.
+            if (planned) {
+              useWorkoutStore.getState().discard(workout.id);
+              router.replace('/home');
+            }
+          }}
+        />
+      ) : null}
       {/* Saved places (improvements v1, C2): switch equipment for a planned workout. */}
       {planned && workout.kind === 'regular' && places.length > 1 ? (
         <View style={styles.places}>

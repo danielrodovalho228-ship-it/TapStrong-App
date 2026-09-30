@@ -9,7 +9,11 @@ import { currentPlan } from '../billing/rules';
 import { useBillingStore } from '../billing/store';
 import { pendingMorningChecks } from '../movement/progress';
 import { useMovementPainStore } from '../movement/store';
+import { currentBlockEnd, finished } from '../month/cycle';
+import { modeOf } from '../onboarding/derived';
 import { useOnboardingStore } from '../onboarding/store';
+import { blockAnchor, programStatus } from '../program/apply';
+import { useProgramStore } from '../program/store';
 import { streakToday } from '../workout/streak';
 import { useWorkoutStore } from '../workout/store';
 
@@ -26,6 +30,9 @@ export function useNotificationSync() {
   const locale = useOnboardingStore((s) => s.locale);
   const entitlement = useBillingStore((s) => s.entitlement);
   const reports = useMovementPainStore((s) => s.reports);
+  const workouts = useWorkoutStore((s) => s.workouts);
+  const program = useProgramStore();
+  const mode = modeOf(useOnboardingStore());
   const trialChargeAt =
     entitlement.status === 'trial' && entitlement.willRenew ? entitlement.trialEndsAt : null;
 
@@ -43,9 +50,31 @@ export function useNotificationSync() {
       now,
       trialChargeAt,
       morningChecks: pendingMorningChecks(reports),
+      // Phase 26: the day the current block's summary opens.
+      monthClosesOn: workouts.some(finished)
+        ? currentBlockEnd(
+            blockAnchor(program, workouts, localDate(now)),
+            localDate(now),
+            programStatus(program, workouts, localDate(now), mode).block.of,
+          )
+        : null,
     });
     void applyPlan(plan).catch(() => undefined);
-  }, [prefs, streak, daysPerWeek, locale, trialChargeAt, reports, freePlan]);
+    // Recomputed when a workout ends or the plan changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    prefs,
+    streak,
+    daysPerWeek,
+    locale,
+    trialChargeAt,
+    reports,
+    freePlan,
+    workouts.length,
+    program.startedAt,
+    program.planId,
+    mode,
+  ]);
 
   useEffect(() => onNotificationTap((url) => router.push(url as Href)), []);
 }

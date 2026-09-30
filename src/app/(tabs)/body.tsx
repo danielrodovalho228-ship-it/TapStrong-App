@@ -1,9 +1,9 @@
-import { Redirect, router } from 'expo-router';
+import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, useWindowDimensions, View } from 'react-native';
 
-import { AppText, Button, Chip, Header, Screen, Select } from '@/components/ui';
+import { AppText, Button, Chip, Header, Notice, Screen, Select } from '@/components/ui';
 import { AreaChip } from '@/features/bodymap/components/AreaChip';
 import { BodyMapCanvas } from '@/features/bodymap/components/BodyMapCanvas';
 import type { BodySex, BodyView } from '@/features/bodymap/images';
@@ -18,6 +18,7 @@ import { derive } from '@/features/onboarding/derived';
 import { defaultMuscleGoal } from '@/features/onboarding/options';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { muscleLabel } from '@/features/onboarding/summaries';
+import { muscleByKey, muscleFamily } from '@/features/muscles';
 import { recoveryFills } from '@/features/workout/components/RecoveryBody';
 import { useBodyStates } from '@/features/workout/hooks';
 import { track } from '@/lib/analytics';
@@ -33,6 +34,9 @@ export default function BodyMapScreen() {
   const derived = derive(s);
   const { states } = useBodyStates();
   const member = useFamilyStore(activeProfile);
+  // "Choose on the body" from the month summary (Phase 26): the suggested focus stands out.
+  const { focus } = useLocalSearchParams<{ focus?: string }>();
+  const suggested = (focus ?? '').split(',').filter((m) => !!muscleByKey(m));
 
   // Goals set on a parent (e.g. "chest") in the interview apply to its parts.
   useEffect(() => {
@@ -54,6 +58,12 @@ export default function BodyMapScreen() {
   };
 
   const openGoals = (muscle: string) => router.push({ pathname: '/goals', params: { muscle } });
+  const suggestedFills = Object.fromEntries(
+    suggested.flatMap((m) => [m, ...muscleFamily(m)]).map((k) => [k, colors.accent]),
+  );
+  const missing = suggested.filter(
+    (m) => !selected.some((k) => k === m || muscleByKey(k)?.parentKey === m),
+  );
 
   return (
     <Screen
@@ -108,13 +118,33 @@ export default function BodyMapScreen() {
         />
       </View>
 
+      {missing.length ? (
+        <Notice>
+          <View style={styles.suggest}>
+            <AppText>
+              {t('month.bodyNote', {
+                list: missing.map((m) => muscleLabel(t, m)).join(', '),
+              })}
+            </AppText>
+            {missing.map((m) => (
+              <Button
+                key={m}
+                variant="secondary"
+                label={t('month.addFocus', { muscle: muscleLabel(t, m) })}
+                onPress={() => toggle(m)}
+              />
+            ))}
+          </View>
+        </Notice>
+      ) : null}
+
       <View>
         <BodyMapCanvas
           band={band}
           sex={sex}
           view={s.bodyView}
           selected={selected}
-          recovery={recoveryFills(states)}
+          recovery={{ ...recoveryFills(states), ...suggestedFills }}
           onToggle={toggle}
           maxHeight={Math.max(360, Math.min(560, screenHeight * 0.58))}
         />
@@ -198,6 +228,7 @@ function ViewToggle({ value, onChange }: { value: BodyView; onChange: (v: BodyVi
 }
 
 const useStyles = makeStyles(() => ({
+  suggest: { gap: spacing.sm },
   header: { gap: 0 },
   subtitle: {
     marginLeft: sizes.touchTarget + spacing.lg + spacing.md,
