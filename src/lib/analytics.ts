@@ -44,6 +44,8 @@ export type AnalyticsEvent =
   | 'share_opened'
   | 'share_completed'
   | 'share_link_opened'
+  | 'share_offer_shown'
+  | 'share_offer_declined'
   | 'referral_signup';
 
 type Props = {

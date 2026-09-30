@@ -5474,5 +5474,10 @@
       "month": "Mês",
       "fun": "Divertido"
     }
+  },
+  "shareOffer": {
+    "text": "Quer uma versão bonita para postar?",
+    "create": "Criar card",
+    "close": "Fechar"
   }
 }

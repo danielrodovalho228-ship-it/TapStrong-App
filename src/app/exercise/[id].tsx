@@ -21,6 +21,7 @@ import { useLibraryStore } from '@/features/library/store';
 import { modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { openShare, useCanShare } from '@/features/share/open';
+import { useScreenshotOffer } from '@/features/share/screenshot';
 import { muscleLabel } from '@/features/onboarding/summaries';
 import { ExerciseDemo } from '@/features/workout/components/ExerciseDemo';
 import { exerciseCues, exerciseName } from '@/features/workout/format';
@@ -50,6 +51,8 @@ export default function ExerciseScreen() {
   const [tab, setTab] = useState<'guidance' | 'performance'>('guidance');
   const shareOk = useCanShare('exercise');
   const e = library.find((x) => x.id === id);
+  // A screenshot here offers the exercise sheet (Phase 28, C).
+  useScreenshotOffer(e && !e.custom ? { template: 'exercise', exercise: e.id } : null);
   if (!e) {
     return (
       <Screen header={<Header onBack={backOrHome} />}>

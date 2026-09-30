@@ -9,6 +9,7 @@ import { activeProfile, canShare, useFamilyStore } from '@/features/family/store
 import { modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { openShare } from '@/features/share/open';
+import { useScreenshotOffer } from '@/features/share/screenshot';
 import { badgeStatus, VOLUME_STEPS, type BadgeKey } from '@/features/workout/badges';
 import { repairPhaseDone } from '@/features/movement/progress';
 import { useMovementPainStore } from '@/features/movement/store';
@@ -52,6 +53,8 @@ export default function MilestoneScreen() {
   const { from } = useLocalSearchParams<{ from?: string }>();
   const celebrate = !!milestone || from !== 'badges';
   const member = useFamilyStore(activeProfile);
+  // A screenshot of the milestone offers "My week" (Phase 28, C).
+  useScreenshotOffer({ template: 'week' });
   const units = useOnboardingStore((s) => s.units);
   const reports = useMovementPainStore((s) => s.reports);
   const unit = units === 'imperial' ? 'lb' : 'kg';

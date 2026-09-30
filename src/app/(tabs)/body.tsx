@@ -21,6 +21,7 @@ import { muscleLabel } from '@/features/onboarding/summaries';
 import { muscleByKey, muscleFamily } from '@/features/muscles';
 import { recoveryFills } from '@/features/workout/components/RecoveryBody';
 import { useBodyStates } from '@/features/workout/hooks';
+import { useScreenshotOffer } from '@/features/share/screenshot';
 import { track } from '@/lib/analytics';
 import { colors, fonts, makeStyles, radius, sizes, spacing, useColors } from '@/theme';
 
@@ -36,6 +37,8 @@ export default function BodyMapScreen() {
   const member = useFamilyStore(activeProfile);
   // "Choose on the body" from the month summary (Phase 26): the suggested focus stands out.
   const { focus } = useLocalSearchParams<{ focus?: string }>();
+  // A screenshot of the map offers the "muscle of the day" card (Phase 28, C).
+  useScreenshotOffer({ template: 'muscle' });
   const suggested = (focus ?? '').split(',').filter((m) => !!muscleByKey(m));
 
   // Goals set on a parent (e.g. "chest") in the interview apply to its parts.

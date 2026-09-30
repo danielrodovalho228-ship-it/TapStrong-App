@@ -20,6 +20,7 @@ import { CaptchaHost } from '@/features/captcha/CaptchaHost';
 import { WebFamilyGate } from '@/features/family/components/WebMobileOnly';
 import { useNotificationSync } from '@/features/notifications/useNotificationSync';
 import { useSyncProfileSettings } from '@/features/onboarding/sync';
+import { ScreenshotOfferBar } from '@/features/share/ScreenshotOfferBar';
 import { useWorkoutStore } from '@/features/workout/store';
 import { clock } from '@/lib/clock';
 import { localDate } from '@/lib/dates';
@@ -77,6 +78,8 @@ export default function RootLayout() {
             <WebFamilyGate>
               <AppStack />
             </WebFamilyGate>
+            {/* "Want a nicer version to post?" after a screenshot (Phase 28, C). */}
+            <ScreenshotOfferBar />
             {/* Turnstile check for anonymous sign-in and email codes (S2-04). */}
             <CaptchaHost />
           </ThemeGate>

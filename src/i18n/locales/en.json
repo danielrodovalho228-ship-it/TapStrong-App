@@ -5413,5 +5413,10 @@
       "month": "Month",
       "fun": "Fun"
     }
+  },
+  "shareOffer": {
+    "text": "Want a nicer version to post?",
+    "create": "Create card",
+    "close": "Close"
   }
 }

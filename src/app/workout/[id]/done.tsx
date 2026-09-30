@@ -6,6 +6,7 @@ import { useWindowDimensions, View } from 'react-native';
 import { AppText, Button, Card, Icon, Notice, Screen } from '@/components/ui';
 import { MomentCard } from '@/features/moments/MomentCard';
 import { openShare } from '@/features/share/open';
+import { useScreenshotOffer } from '@/features/share/screenshot';
 import { useMoment } from '@/features/moments/useMoment';
 import { RatePainButtons } from '@/features/movement/Entry';
 import type { BodySex } from '@/features/bodymap/images';
@@ -52,6 +53,8 @@ export default function DoneScreen() {
   const endedOk = workout?.status === 'done';
   // A Moment, now and then (Phase 27, C): only here or on Home.
   const moment = useMoment('done', workout);
+  // A screenshot here offers this workout's card (Phase 28, C).
+  useScreenshotOffer(workout ? { template: 'workout', workout: workout.id } : null);
   useEffect(() => {
     if (endedOk) feel.finish();
   }, [endedOk]);

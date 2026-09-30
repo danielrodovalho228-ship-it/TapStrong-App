@@ -5413,5 +5413,10 @@
       "month": "Mes",
       "fun": "Divertido"
     }
+  },
+  "shareOffer": {
+    "text": "¿Quieres una versión bonita para publicar?",
+    "create": "Crear tarjeta",
+    "close": "Cerrar"
   }
 }

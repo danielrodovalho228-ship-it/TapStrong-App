@@ -14,6 +14,7 @@ import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { useProgressStore } from '@/features/progress/store';
 import { openShare, useCanShare } from '@/features/share/open';
+import { useScreenshotOffer } from '@/features/share/screenshot';
 import { useExerciseLibrary, useGeneratorInput } from '@/features/workout/hooks';
 import { useWorkoutStore } from '@/features/workout/store';
 import { track } from '@/lib/analytics';
@@ -42,6 +43,8 @@ export default function MonthScreen() {
   const entry = id
     ? history.find((h) => h.id === id)
     : history.find((h) => h.id === offer?.entryId);
+  // A screenshot of the summary offers "My month" (Phase 28, C).
+  useScreenshotOffer(entry ? { template: 'month', month: entry.id } : null);
   if (!derived || !entry) return <Redirect href="/home" />;
   const pending = !id && !!offer;
 
