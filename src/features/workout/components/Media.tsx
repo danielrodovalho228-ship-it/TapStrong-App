@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 
 import { AppText, Icon } from '@/components/ui';
-import { demoPoster, demoSexFor } from '@/features/exercises/videos';
+import { demoPoster, demoSexFor, type DemoMedia } from '@/features/exercises/videos';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import {
   bodyMapColors,
@@ -35,7 +35,7 @@ export function ExerciseThumb({ size = 56, slug }: { size?: number; slug?: strin
       {poster ? (
         <Image
           testID="exercise-thumb-poster"
-          source={poster}
+          source={typeof poster === 'string' ? { uri: poster } : poster}
           style={styles.thumbImage}
           contentFit="cover"
           contentPosition="top"
@@ -55,9 +55,9 @@ export function DemoLoop({
 }: {
   chips: { label: string; strong?: boolean }[];
   /** The profile's own-sex clip in development builds; null shows the neutral frame. */
-  video?: number | null;
+  video?: DemoMedia | null;
   /** The clip's starting image (same sex), shown until the first frame plays. */
-  poster?: number | null;
+  poster?: DemoMedia | null;
   /** One-sided move: the same clip mirrored shows the other side. */
   mirrorable?: boolean;
 }) {

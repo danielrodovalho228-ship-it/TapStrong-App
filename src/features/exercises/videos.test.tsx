@@ -21,6 +21,8 @@ jest.mock('../../../assets/prototype/videos.js', () => ({
   // A stray man's poster with no man's clip must never show.
   goblet_squat: { f: 303, poster: { f: 333, m: 999 } },
   single_leg_rdl: { f: 404, m: 505 },
+  // Web: bundled assets are URLs.
+  plank: { m: '/assets/plank.m.mp4', poster: { m: { uri: '/assets/posters/plank.m.webp' } } },
 }));
 jest.mock('@/features/workout/components/DemoVideo', () => ({
   DemoVideo: ({
@@ -28,8 +30,8 @@ jest.mock('@/features/workout/components/DemoVideo', () => ({
     poster,
     mirrored,
   }: {
-    source: number;
-    poster?: number | null;
+    source: unknown;
+    poster?: unknown;
     mirrored?: boolean;
   }) => {
     const { Text } = jest.requireActual('react-native');
@@ -61,6 +63,13 @@ describe('demoVideo', () => {
     expect(demoPoster('goblet_squat', 'm')).toBeNull();
     expect(demoPoster('single_leg_rdl', 'f')).toBeNull();
     expect(demoPoster('push_up', null)).toBeNull();
+  });
+
+  it('web: a bundled asset is a URL, same sex rule', () => {
+    expect(demoVideo('plank', 'm')).toBe('/assets/plank.m.mp4');
+    expect(demoPoster('plank', 'm')).toEqual({ uri: '/assets/posters/plank.m.webp' });
+    expect(demoVideo('plank', 'f')).toBeNull();
+    expect(demoPoster('plank', 'f')).toBeNull();
   });
 
   it('the profile sex first, then the body model; never guessed', () => {
@@ -117,6 +126,19 @@ describe('ExerciseDemo', () => {
     expect(screen.getByText('clip:101:poster:111')).toBeTruthy();
     await act(() => switchProfile('dad', { birthMonth: 1, birthYear: 1955, sex: 'm' }));
     expect(screen.getByText('clip:202:poster:222')).toBeTruthy();
+  });
+
+  it('teens and 60+ see the adult clip of their own sex, with its poster', async () => {
+    await as({ sex: 'm', birthYear: 2011 });
+    await render(<ExerciseDemo slug="push_up" chips={[]} />);
+    expect(screen.getByText('clip:202:poster:222')).toBeTruthy();
+    await as({ sex: 'f', birthYear: 1955 });
+    await render(<ExerciseDemo slug="push_up" chips={[]} />);
+    expect(screen.getByText('clip:101:poster:111')).toBeTruthy();
+    // A teen boy with no man's clip: coming soon, never the woman's.
+    await as({ sex: 'm', birthYear: 2011 });
+    await render(<ExerciseDemo slug="goblet_squat" chips={[]} />);
+    expect(screen.queryByText(/^clip:/)).toBeNull();
   });
 
   it('a one-sided move keeps the mirror for the other side', async () => {

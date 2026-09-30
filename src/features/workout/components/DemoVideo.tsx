@@ -3,6 +3,8 @@ import { useVideoPlayer, VideoView } from 'expo-video';
 import { useState } from 'react';
 import { StyleSheet } from 'react-native';
 
+import type { DemoMedia } from '@/features/exercises/videos';
+
 /**
  * Muted autoplay loop (SPEC §3: expo-video). The poster (the clip's starting
  * image, same sex) covers the view until the first frame is on screen.
@@ -12,8 +14,8 @@ export function DemoVideo({
   poster = null,
   mirrored = false,
 }: {
-  source: number;
-  poster?: number | null;
+  source: DemoMedia;
+  poster?: DemoMedia | null;
   mirrored?: boolean;
 }) {
   const [playing, setPlaying] = useState(false);
@@ -36,7 +38,7 @@ export function DemoVideo({
       {poster && !playing ? (
         <Image
           testID="demo-poster"
-          source={poster}
+          source={typeof poster === 'string' ? { uri: poster } : poster}
           style={[StyleSheet.absoluteFill, flip]}
           contentFit="contain"
           accessible={false}

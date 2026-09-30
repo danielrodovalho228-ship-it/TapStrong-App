@@ -32,6 +32,7 @@ const TYPES = {
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
   '.webp': 'image/webp',
+  '.mp4': 'video/mp4',
   '.ttf': 'font/ttf',
   '.json': 'application/json',
 };

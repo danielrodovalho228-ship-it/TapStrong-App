@@ -8,7 +8,13 @@ import type { BodySex } from '../bodymap/images';
  * release builds carry no clip until the reviewer approves (bundle:check).
  */
 export type DemoSex = BodySex;
-type Entry = { f?: number; m?: number; poster?: { f?: number; m?: number } };
+/** A bundled asset: a module id on native; on web a URL (video) or { uri } (image). */
+export type DemoMedia = number | string | { uri: string };
+type Entry = { f?: DemoMedia; m?: DemoMedia; poster?: { f?: DemoMedia; m?: DemoMedia } };
+const isMedia = (v: unknown): v is DemoMedia =>
+  typeof v === 'number' ||
+  (typeof v === 'string' && v !== '') ||
+  (typeof v === 'object' && v !== null && typeof (v as { uri?: unknown }).uri === 'string');
 type Manifest = Record<string, Entry | string>;
 
 function manifest(): Manifest {
@@ -20,23 +26,23 @@ function manifest(): Manifest {
 }
 
 /** The clip for this sex, or null. Never the other sex's clip. */
-export function demoVideo(slug: string, sex: DemoSex | null): number | null {
+export function demoVideo(slug: string, sex: DemoSex | null): DemoMedia | null {
   if (!sex || slug === '__label') return null;
   const entry = manifest()[slug];
   const source = typeof entry === 'object' ? entry[sex] : undefined;
-  return typeof source === 'number' ? source : null;
+  return isMedia(source) ? source : null;
 }
 
 /**
  * The clip's poster (its starting image) for this sex, or null. Only next to
  * a clip of the same sex: never the other sex's picture.
  */
-export function demoPoster(slug: string, sex: DemoSex | null): number | null {
+export function demoPoster(slug: string, sex: DemoSex | null): DemoMedia | null {
   if (!sex || slug === '__label') return null;
   const entry = manifest()[slug];
-  if (typeof entry !== 'object' || typeof entry[sex] !== 'number') return null;
+  if (typeof entry !== 'object' || !isMedia(entry[sex])) return null;
   const source = entry.poster?.[sex];
-  return typeof source === 'number' ? source : null;
+  return isMedia(source) ? source : null;
 }
 
 /**
