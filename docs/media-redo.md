@@ -67,11 +67,11 @@ Total: 83 clipes (64 de exercícios sem nenhum sexo, 19 de exercícios com só u
 | sl_supported_hip_hinge | f | faltando: não veio no lote 1–3 |
 | sl_supported_hip_hinge | m | faltando: não veio no lote 1–3 |
 | sl_seated_glute_squeeze_hold | f | faltando: nunca foi gerado |
-| sl_seated_glute_squeeze_hold | m | faltando: o Flow recusou por política (lote 4); refazer a imagem de partida |
+| sl_seated_glute_squeeze_hold | m | faltando: refeito no Flow (lote 4), aguardando upload |
 | sl_seated_knee_out_press_hold | f | faltando: nunca foi gerado |
-| sl_seated_knee_out_press_hold | m | faltando: o Flow recusou por política (lote 4); refazer a imagem de partida |
+| sl_seated_knee_out_press_hold | m | faltando: refeito no Flow (lote 4), aguardando upload |
 | sl_seated_clamshell | f | faltando: nunca foi gerado |
-| sl_seated_clamshell | m | faltando: o Flow recusou por política (lote 4); refazer a imagem de partida |
+| sl_seated_clamshell | m | faltando: refeito no Flow (lote 4), aguardando upload |
 | sl_seated_towel_heel_drag | f | só imagem: veio a imagem de partida, sem vídeo |
 | sl_seated_towel_heel_drag | m | faltando: nunca foi gerado |
 | sf_seated_back_arch_reach | f | só imagem: veio a imagem de partida, sem vídeo |
