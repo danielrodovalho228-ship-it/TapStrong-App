@@ -84,6 +84,7 @@ Migrações novas desde a Fase 22, em ordem:
 10. `20261019000200_security_r2_birth_date.sql` — adolescente não vira adulto mudando a data; registro das mudanças; modo 60+ só com 60+.
 11. `20261019000300_security_r2_p3.sql` — treino da indicação com horário do servidor; responsável não apaga perfil de adolescente com login próprio; `parent_pin_failed` só no servidor.
 12. `20261020000000_month_reviews.sql` — resumos dos meses fechados e a escolha do próximo mês (Fase 26).
+13. `20261021000000_moments.sql` — Momentos já mostrados (só id, tipo, data e a resposta ao coach), para nunca repetir (Fase 27).
 
 Depois do push: `npm run server:check` (com as variáveis do `.env`) deve dizer "OK". Se o app rodar contra um servidor sem essas funções, ele registra `server_missing:<função>` no Sentry.
 

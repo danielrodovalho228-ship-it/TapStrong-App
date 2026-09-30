@@ -7,6 +7,7 @@ import { initialOnboarding, useOnboardingStore, type OnboardingData } from '../o
 import { usePlacesStore, type Place } from '../equipment/store';
 import { initialLibrary, useLibraryStore, type LibraryData } from '../library/store';
 import { useProgramStore } from '../program/store';
+import { useMomentsStore, type StoredMoment } from '../moments/store';
 import { initialProgress, useProgressStore, type ProgressData } from '../progress/store';
 import { initialMonth, useMonthStore, type MonthData } from '../month/store';
 import { useRestrictionsStore, type Restriction } from '../restrictions/store';
@@ -32,6 +33,8 @@ type Snapshot = {
   prefs?: Prefs;
   body?: BodyEntry[];
   month?: MonthData;
+  /** Moments already shown (Phase 27, C): each profile has its own. */
+  moments?: StoredMoment[];
 };
 
 const key = (id: string) => `profile-snapshot:${id}`;
@@ -59,13 +62,15 @@ function capture(): Snapshot {
     streak: w.streak,
     nextFocus: w.nextFocus,
     restrictions: useRestrictionsStore.getState().items,
-    progress: (({ checkins, photos, repairResults, repairPlan, seniorPhotos }) => ({
+    progress: (({ checkins, photos, repairResults, repairEven, repairPlan, seniorPhotos }) => ({
       checkins,
       photos,
       repairResults,
+      repairEven,
       repairPlan,
       seniorPhotos,
     }))(useProgressStore.getState()),
+    moments: useMomentsStore.getState().shown,
     movementPain: useMovementPainStore.getState().reports,
     program: (({ planId, startedAt }) => ({ planId, startedAt }))(useProgramStore.getState()),
     library: (({ favourites, notes, goals, custom }) => ({ favourites, notes, goals, custom }))(
@@ -115,6 +120,7 @@ function load(snapshot: Snapshot | null, seed: Partial<OnboardingData>) {
   useRestrictionsStore.setState({ items: snapshot?.restrictions ?? [] });
   useProgressStore.setState({ ...initialProgress(), ...snapshot?.progress });
   useMonthStore.setState({ ...initialMonth(), ...snapshot?.month });
+  useMomentsStore.setState({ shown: snapshot?.moments ?? [] });
   useMovementPainStore.setState({ reports: snapshot?.movementPain ?? [] });
   useLibraryStore.setState({ ...initialLibrary(), ...snapshot?.library });
   usePrefsStore.setState({ ...initialPrefs(), ...snapshot?.prefs });

@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
@@ -13,6 +13,10 @@ import type { StrengthRow } from '@/features/progress/store';
 import { exerciseName } from '@/features/workout/format';
 import { LegendRow } from '@/features/workout/components/RecoveryBody';
 import type { Exercise } from '@/features/exercises/types';
+import { MomentCard } from '@/features/moments/MomentCard';
+import { monthHighlight } from '@/features/moments/engine';
+import { useMomentsStore } from '@/features/moments/store';
+import { clock } from '@/lib/clock';
 import { addDays } from '@/lib/dates';
 import { colors, makeStyles, radius, recoveryColors, spacing, useColors } from '@/theme';
 
@@ -80,6 +84,12 @@ export function MonthSummaryView({
     return `${v.value} s`;
   };
   const tappedMuscle = picked;
+  const highlight = summary.strong ? monthHighlight(summary.blockNo, summary.strong.muscle) : null;
+  const record = useMomentsStore((st) => st.record);
+  useEffect(() => {
+    // Kept in the Moments history (never shown twice as a surprise).
+    if (highlight) record(highlight, clock.now());
+  }, [highlight?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <View style={styles.wrap}>
@@ -250,16 +260,17 @@ export function MonthSummaryView({
         </Card>
       ) : null}
 
-      {summary.strong || summary.weak ? (
+      {summary.strong ? (
+        // The month's standout muscle as a special Moment, with its map lit (Phase 27, C3).
+        <MomentCard
+          moment={highlight!}
+          band={band}
+          sex={sex}
+          at={new Date(`${addDays(summary.to, -1)}T12:00:00`)}
+        />
+      ) : null}
+      {summary.weak ? (
         <Card style={styles.card}>
-          {summary.strong ? (
-            <AppText>
-              {t(summary.strong.kind === 'growth' ? 'month.strongGrowth' : 'month.strongMost', {
-                muscle: muscleLabel(t, summary.strong.muscle),
-                n: summary.strong.perWeek,
-              })}
-            </AppText>
-          ) : null}
           {summary.weak ? (
             <AppText color={colors.mutedStrong}>
               {t('month.weak', { muscle: muscleLabel(t, summary.weak.muscle) })}

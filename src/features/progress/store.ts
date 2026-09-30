@@ -54,6 +54,8 @@ export type ProgressData = {
   checkins: Checkin[];
   photos: ProgressPhoto[];
   repairResults: RepairResult[];
+  /** Tests where the weaker side caught up with the other (Phase 27, C1). */
+  repairEven: { testKey: string; side: 'left' | 'right'; at: string }[];
   repairPlan: RepairPlan | null;
   /** 60+ mode only: before/after photos are off until turned on (Daniel, Sep 2026). */
   seniorPhotos: boolean;
@@ -73,6 +75,7 @@ export const initialProgress = (): ProgressData => ({
   checkins: [],
   photos: [],
   repairResults: [],
+  repairEven: [],
   repairPlan: null,
   seniorPhotos: false,
 });
@@ -84,10 +87,22 @@ export const useProgressStore = create<State>()(
       addCheckin: (c) => set({ checkins: [...get().checkins, c] }),
       addPhoto: (p) => set({ photos: [...get().photos, p] }),
       removePhoto: (id) => set({ photos: get().photos.filter((p) => p.id !== id) }),
-      saveRepairResult: (r) =>
+      saveRepairResult: (r) => {
+        const before = get().repairResults.find((x) => x.testKey === r.testKey);
+        const side = evenedSide(before, r);
         set({
           repairResults: [...get().repairResults.filter((x) => x.testKey !== r.testKey), r],
-        }),
+          // The weaker side caught up: a Moment later (Phase 27, C1).
+          ...(side
+            ? {
+                repairEven: [
+                  ...get().repairEven.filter((x) => x.testKey !== r.testKey),
+                  { testKey: r.testKey, side, at: r.testedAt },
+                ],
+              }
+            : {}),
+        });
+      },
       setRepairPlan: (repairPlan) => set({ repairPlan }),
       setSeniorPhotos: (seniorPhotos) => set({ seniorPhotos }),
       reset: () => set(initialProgress()),
@@ -98,6 +113,7 @@ export const useProgressStore = create<State>()(
       storage: createJSONStorage(() => kvStorage),
       partialize: (s) => ({
         checkins: s.checkins,
+        repairEven: s.repairEven,
         photos: s.photos,
         repairResults: s.repairResults,
         repairPlan: s.repairPlan,
@@ -106,3 +122,22 @@ export const useProgressStore = create<State>()(
     },
   ),
 );
+
+/**
+ * The side that caught up, when the gap between left and right went from
+ * more than 15 % to 5 % or less.
+ */
+export function evenedSide(
+  before: RepairResult | undefined,
+  after: RepairResult,
+): 'left' | 'right' | null {
+  const gap = (r: RepairResult) =>
+    r.left != null && r.right != null
+      ? Math.abs(r.left - r.right) / Math.max(r.left, r.right, 1)
+      : null;
+  if (!before) return null;
+  const a = gap(before);
+  const b = gap(after);
+  if (a == null || b == null || a <= 0.15 || b > 0.05) return null;
+  return (before.left ?? 0) < (before.right ?? 0) ? 'left' : 'right';
+}

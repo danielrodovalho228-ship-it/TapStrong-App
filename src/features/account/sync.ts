@@ -1,9 +1,10 @@
+import type { StoredMoment } from '../moments/store';
 import type { MonthEntry } from '../month/store';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 import { clock } from '@/lib/clock';
 import { localDate } from '@/lib/dates';
-import { uuid } from '@/lib/uuid';
+import { isUuid, uuid } from '@/lib/uuid';
 
 import type { Exercise } from '../exercises/types';
 import { derive } from '../onboarding/derived';
@@ -39,6 +40,8 @@ export type SyncInput = {
   movementPain?: MovementPain[];
   /** Closed months (Phase 26): summary, choice and swaps. */
   months?: MonthEntry[];
+  /** Moments already shown (Phase 27): ids, kinds, dates and the coach's answer. */
+  moments?: StoredMoment[];
   /**
    * A family member the account holder manages on this phone (Phase 6):
    * the row has no login of its own and the account is its guardian.
@@ -77,6 +80,7 @@ export type SyncPlan = {
   repairPlans: Row[];
   movementPains: Row[];
   monthReviews: Row[];
+  moments: Row[];
   /** Finished workouts that use exercises the database does not release. */
   skipped: string[];
 };
@@ -324,6 +328,17 @@ export function buildSyncPlan(input: SyncInput): SyncPlan | PlanError {
     undo_until: m.undoUntil,
     created_at: m.createdAt,
   }));
+  // Moments: only the id, kind, date, workout and answer; never the text.
+  const moments = (input.moments ?? []).map((m) => ({
+    id: m.rowId,
+    profile_id: profileId,
+    moment_id: m.id.toLowerCase().slice(0, 80),
+    kind: m.kind,
+    shown_at: m.at,
+    workout_id: m.workoutId && isUuid(m.workoutId) ? m.workoutId : null,
+    answer: m.answer ?? null,
+    shared: !!m.shared,
+  }));
   const movementPains = (input.movementPain ?? []).map((r) => ({
     id: r.id,
     profile_id: profileId,
@@ -357,6 +372,7 @@ export function buildSyncPlan(input: SyncInput): SyncPlan | PlanError {
     repairPlans,
     movementPains,
     monthReviews,
+    moments,
     skipped,
   };
 }
@@ -479,6 +495,7 @@ export async function runSync(
     ['repair_plans', plan.repairPlans],
     ['movement_pains', plan.movementPains],
     ['month_reviews', plan.monthReviews],
+    ['moments', plan.moments],
   ] as const) {
     if (rows2.length) steps.push([table, () => supabase.from(table).upsert(rows2)]);
   }

@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { useWindowDimensions, View } from 'react-native';
 
 import { AppText, Button, Card, Icon, Notice, Screen } from '@/components/ui';
+import { MomentCard } from '@/features/moments/MomentCard';
+import { useMoment } from '@/features/moments/useMoment';
 import { RatePainButtons } from '@/features/movement/Entry';
 import type { BodySex } from '@/features/bodymap/images';
 import { displayBand } from '@/features/bodymap/selection';
@@ -47,6 +49,8 @@ export default function DoneScreen() {
   const [focusSaved, setFocusSaved] = useState(false);
   // A short chord at the end, if turned on (Phase 27, B2; off by default).
   const endedOk = workout?.status === 'done';
+  // A Moment, now and then (Phase 27, C): only here or on Home.
+  const moment = useMoment('done', workout);
   useEffect(() => {
     if (endedOk) feel.finish();
   }, [endedOk]);
@@ -239,6 +243,15 @@ export default function DoneScreen() {
           />
         ) : null}
       </View>
+
+      {moment && !stopped ? (
+        <MomentCard
+          moment={moment}
+          band={band}
+          sex={sex}
+          canShare={canShare(member, derived.mode)}
+        />
+      ) : null}
 
       {stopped ? <Notice tone="warning">{t('workout.done.stoppedBody')}</Notice> : null}
       {group && input && !stopped ? (

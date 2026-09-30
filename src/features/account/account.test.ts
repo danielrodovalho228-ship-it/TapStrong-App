@@ -92,6 +92,42 @@ function input(patch: Partial<SyncInput> = {}): SyncInput {
 }
 
 describe('sync plan', () => {
+  it('Moments (Phase 27): only ids, kinds, dates and the answer leave the phone', () => {
+    const plan = buildSyncPlan(
+      input({
+        moments: [
+          {
+            rowId: uuid(),
+            id: 'coach_pain:2026-09-24',
+            kind: 'coach_pain',
+            at: '2026-09-30T18:00:00.000Z',
+            workoutId: uuid(),
+            answer: 'good',
+            params: { area: 'knee' },
+            asks: true,
+          },
+        ],
+      }),
+    );
+    if (typeof plan === 'string') throw new Error(plan);
+    expect(plan.moments).toHaveLength(1);
+    expect(Object.keys(plan.moments[0]).sort()).toEqual(
+      [
+        'answer',
+        'id',
+        'kind',
+        'moment_id',
+        'profile_id',
+        'shared',
+        'shown_at',
+        'workout_id',
+      ].sort(),
+    );
+    expect(plan.moments[0]).toMatchObject({ moment_id: 'coach_pain:2026-09-24', answer: 'good' });
+    // The pain area stays on the phone.
+    expect(JSON.stringify(plan.moments)).not.toContain('knee');
+  });
+
   it('maps the profile, safety answers, goals and restrictions', () => {
     const plan = buildSyncPlan(input());
     if (typeof plan === 'string') throw new Error(plan);

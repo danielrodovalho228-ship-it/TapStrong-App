@@ -7,7 +7,9 @@ import { AppText, Button, Card, Icon, Screen, TextLink } from '@/components/ui';
 import type { BodySex } from '@/features/bodymap/images';
 import { displayBand } from '@/features/bodymap/selection';
 import { MUSCLES, muscleByKey, muscleFamily } from '@/features/muscles';
-import { activeProfile, useFamilyStore } from '@/features/family/store';
+import { activeProfile, canShare, useFamilyStore } from '@/features/family/store';
+import { MomentCard } from '@/features/moments/MomentCard';
+import { useMoment } from '@/features/moments/useMoment';
 import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { MonthHomeCard } from '@/features/month/components/MonthHomeCard';
@@ -73,6 +75,8 @@ export default function HomeScreen() {
   const programState = useProgramStore();
   const trainingDays = useTrainingDaysPerWeek();
   const entitlement = useBillingStore((st) => st.entitlement);
+  // Date Moments (birthday month, 1 month / 1 year of app), below the button (Phase 27, C).
+  const moment = useMoment('home');
   if (!profile.onboardingComplete || !derived) return <Redirect href="/welcome" />;
 
   const now = clock.now();
@@ -347,6 +351,15 @@ export default function HomeScreen() {
           </View>
         </View>
       )}
+
+      {moment ? (
+        <MomentCard
+          moment={moment}
+          band={band}
+          sex={sex}
+          canShare={canShare(member, derived.mode)}
+        />
+      ) : null}
 
       {morning ? (
         // Morning check after a recovery session, right on Home (QA round 2).
