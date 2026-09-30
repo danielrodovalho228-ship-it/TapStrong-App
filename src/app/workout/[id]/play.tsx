@@ -23,6 +23,7 @@ import { useNow } from '@/features/workout/components/TimerRing';
 import { UndoBar } from '@/features/workout/components/UndoBar';
 import {
   canEndTimedStep,
+  cooldownHold,
   currentStep,
   mainItems,
   stepAfter,
@@ -164,11 +165,12 @@ export default function PlayerScreen() {
         <SafetyCues exercise={exercise} />
       </View>
 
-      {stepKind(step.item) === 'timed' ? (
+      {stepKind(step.item) === 'timed' || cooldownHold(step.item) ? (
         <TimedStep
-          key={`${step.item.id}-${step.item.exerciseId}`}
+          key={`${step.item.id}-${step.setNo}-${step.item.exerciseId}`}
           workout={workout}
           step={step}
+          seconds={cooldownHold(step.item) ?? undefined}
           onSwap={() => setSheet('user_choice')}
         />
       ) : (
@@ -213,10 +215,13 @@ export default function PlayerScreen() {
 function TimedStep({
   workout,
   step,
+  seconds,
   onSwap,
 }: {
   workout: WorkoutRecord;
   step: Step;
+  /** A cool-down stretch hold counted down (Phase 27, A1). */
+  seconds?: number;
   onSwap: () => void;
 }) {
   const colors = useColors();
@@ -226,7 +231,7 @@ function TimedStep({
   const [startedAt] = useState(() => clock.now().getTime());
   const [confirmSkip, setConfirmSkip] = useState(false);
   const now = useNow(250);
-  const total = step.item.durationSeconds ?? 0;
+  const total = seconds ?? step.item.durationSeconds ?? 0;
   const elapsed = (now - startedAt) / 1000;
   const dayHasLoad = workout.session.items.some(
     (i) => i.role === 'main' && i.loadHint !== 'bodyweight',

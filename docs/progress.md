@@ -2642,3 +2642,151 @@ Limites deste teste:
 - **App:** 130 clipes em 75 exercícios; 45 suspeitos ficam fora.
 - **Lista de refazer:** caiu de 83 para 78 clipes (58 de exercícios sem nenhum sexo, 20 de exercícios com só um).
 - **Correção no script de import:** ele tratava o `.gitignore` da pasta como lixo e o apagaria na limpeza. Corrigido antes de apagar qualquer coisa.
+
+## Fase 27 — Regra dos 3 S (Simples, Sexy, Surpreendente)
+
+Três commits, na ordem pedida: A (`23cc4c9`), B (`0a9b2c1`) e C (`7e5426b`), mais o acabamento com os prints e este relatório. O texto da fase está em `docs/phase-27-three-s.md`.
+
+### Auditoria de toques (A.1): antes e depois
+
+"Primeira série" = a primeira série com repetições registrada. As contagens regressivas do aquecimento continuam existindo; elas só não pedem mais toque.
+
+| Caminho | Modo | Antes | Depois | Meta |
+|---|---|---|---|---|
+| Abrir o app → primeira série (com plano) | adulto | 7 toques, 3 telas (Home → prévia → player) | **2 toques**, 2 telas | ≤ 3 ✅ |
+| | adolescente | 9 toques, 3 telas | **2 toques**, 2 telas | ≤ 3 ✅ |
+| | 60+ | 9 toques, 3 telas | **2 toques**, 2 telas | ≤ 3 ✅ |
+| Instalar → primeiro exercício | todos | ~27 toques; 9 telas (boas-vindas, idade, entrevista com 4 passos, segurança, resumo, mapa do corpo, metas, prévia); 11 perguntas | **17 a 20 toques**; 5 telas até o player (boas-vindas, idade, entrevista com 3 passos, segurança) | ≤ 6 perguntas antes do treino (ver abaixo) |
+| | tempo estimado | 2 a 3 min | ~60 a 75 s (3–4 s por toque) | < 90 s ✅ (estimado; ver "Medir") |
+| Trocar um exercício | todos | 2 toques | **2 toques** ("Trocar" + a opção) | ≤ 2 ✅ |
+| Terminar o treino | todos | 0 toque no fim, mas cada item do desaquecimento pedia "Iniciar" + "Feito" (6–7 toques) | **0 toque**: o desaquecimento corre sozinho e abre a tela final | ≤ 1 ✅ |
+
+Os caminhos de 3 toques, da troca e do fim viraram testes automáticos (`src/features/home/phase27-simple.test.tsx`).
+
+**Sobre as "6 perguntas":** contando por tela, agora são 5 blocos antes do treino:
+1. quem é + data de nascimento;
+2. objetivo;
+3. local, minutos e dias;
+4. sexo do corpo, com altura e peso opcionais;
+5. segurança (dor, condições e posição).
+
+Contando campo por campo, ainda são uns 10. Não tirei nada da segurança. O foco muscular e o resumo saíram de antes do treino: o foco agora é escolhido depois, na aba Corpo, e o resumo continua acessível pela prévia. Ver pergunta 1.
+
+### A. Simples — feito
+- **Home com uma ação só:**
+  - No topo, o botão grande "Treinar agora · Glúteos e Peito médio · 39 min" abre o player direto.
+  - "Ver treino" é um link pequeno.
+  - Mobilidade, equilíbrio e "Escolher outro" ficam em "Mais opções" (recolhido).
+  - Nenhum card fica acima do botão. O card do mês aparece embaixo.
+  - Exceção: no primeiro treino de um mês novo, o botão abre a prévia, para a pessoa ver "Renovei N · Desfazer" antes de começar.
+- **60+:** o mesmo botão, verde e maior, e no máximo 3 coisas na tela:
+  - o botão, com a saudação;
+  - o card do mês ou o último treino;
+  - "Mais opções" (mobilidade, equilíbrio, semana, progresso).
+- **Onboarding:** a entrevista tem 3 passos. Depois da segurança, o primeiro treino abre sozinho, com um esqueleto na forma do player enquanto é montado. Com "sinal vermelho" na segurança, a pessoa cai na Home e começa quando quiser.
+- **Uma decisão por tela:**
+  - Rebaixei os botões cheios extras da tela final, da prévia, do check-in e das restrições.
+  - As configurações raras (vibração, sons) ficam em "Mais opções".
+  - Teste: Home nos 3 modos, prévia, player, descanso e tela final têm no máximo 1 botão cheio.
+- **Linguagem de gente:**
+  - "deload" → "semana leve";
+  - "quão pesada foi a série" → "quanto sobrou no tanque?", com rostinhos (😄 Muito / 🙂 Um pouco / 😮‍💨 Nada);
+  - "unilateral" → "com um braço / com uma perna" nos nomes em pt-BR e es.
+  - 23 rótulos de botão encurtados para no máximo 4 palavras nos 3 idiomas.
+  - Teste de jargão e de 4 palavras. Exceções documentadas no teste: os selos da App Store e do Google Play, que têm texto obrigatório, e o simulador de dev.
+- **Player simples:**
+  - "Feito" gigante, com repetições e carga já preenchidas.
+  - O aquecimento e o desaquecimento (inclusive os alongamentos) contam sozinhos e avançam sozinhos.
+  - O descanso já começava sozinho.
+  - "Trocar" é um link.
+  - "Sinto dor" fica no topo, em todo passo.
+
+### B. Sexy — feito
+- **O mapa que acende:**
+  - Na tela final, os músculos trabalhados acendem um a um: 150 ms entre eles, pulso coral e vibração leve em cada. Termina com "5 músculos · 42 min" e "Você acendeu todos eles hoje."
+  - Aparecem frente e costas lado a lado.
+  - Com "reduzir movimento": só o estado final.
+  - 60+: mais lento (320 ms) e letra maior.
+- **Sensação:**
+  - Vibração leve ao marcar série, mais forte ao completar o exercício, e de "sucesso" ao bater recorde (só adultos).
+  - Nada durante o descanso.
+  - Transição de 250 ms entre as telas do player; botões "afundam" ao toque.
+  - Sons opcionais (tic por série e acorde curto no fim), desligados por padrão. São sons nossos, gerados.
+  - Instalei o `expo-haptics` 57.0.3: pacote oficial da Expo, com 19 dias de publicação.
+- **Acabamento:**
+  - Esqueleto em vez de tela em branco.
+  - Números tabulares no tempo, nas séries e nos contadores.
+  - A cor do fundo do corpo atrás do vídeo: nunca uma caixa preta.
+  - Estado vazio desenhado no Progresso ("Seu gráfico começa no primeiro treino" + "Treinar agora") e no mapa da Home.
+- **Orgulho sem comparação:**
+  - Frase de identidade na Home e no card de compartilhar ("Você treinou 3 vezes esta semana. Isso é consistência."). Com zero treinos, nada aparece.
+  - O card mostra o total da semana, o mapa aceso e a sequência. Sem peso, medidas ou foto.
+  - Teste: nenhuma frase de culpa nos 3 idiomas.
+
+### C. Surpreendente — feito
+- **Motor de Momentos:** local, determinístico e testado (`src/features/moments`). São 16 tipos:
+  - primeiro treino, primeiro de costas, primeira mobilidade curta, primeira semana completa;
+  - músculo novo no mapa, todas as costas acesas no mês;
+  - 10º, 25º, 50º e 100º treino; 1.000 repetições; 100 séries;
+  - músculo de hoje (30 fatos revisados);
+  - o coach lembra da dor da semana passada e guarda a resposta;
+  - mês do aniversário, 1 mês e 1 ano de app;
+  - lado do Repair que alcançou o outro;
+  - destaque do mês.
+- **Regras:**
+  - No máximo 1 por treino; os pequenos aparecem em cerca de 1 a cada 3 treinos (sorteio com semente por pessoa, semana e treino); os marcos grandes aparecem sempre.
+  - Nunca repete.
+  - Nunca no meio do treino: só na tela final ou na Home.
+  - Sem pagamento, moeda, pressão ou notificação.
+  - Menores só recebem hábito, curiosidade e mapa.
+  - 60+: no máximo 1 por semana.
+  - Dá para desligar em Configurações → Treino → Surpresas.
+- **Destaque do mês:** no fechamento do mês, vira um Momento especial ("Seu músculo destaque de setembro: …") com o mapa aceso, na mesma tela.
+- **Dados:**
+  - Por perfil (cada membro da família tem os seus) e apagados junto com a conta.
+  - Tabela `moments` (migração `20261021000000_moments.sql`): só id, tipo, data, treino, resposta e "compartilhado". Nunca o texto nem a região da dor.
+  - RLS com WITH CHECK igual à do progresso; teste SQL com troca de usuário (`supabase/tests/local/moments.sql`, passa no `db:test`); sync; `server:check`; lista de migrações na `launch-readiness`.
+
+### Medir
+Eventos locais e anônimos, só contagens:
+- `first_set_logged` (toques até a primeira série);
+- `first_exercise_started` (instalação → primeiro exercício, em faixas de tempo);
+- `app_returned` (dia 7 e dia 30);
+- `moment_shown` e `moment_shared` (só o tipo).
+
+Os treinos por semana já vinham de `workout_completed`. **Os números reais de tempo só aparecem com gente usando o app** (PostHog). Os tempos da tabela são estimados pela contagem de toques.
+
+### Prints (`docs/screenshots/three-s/<modo>/<idioma>-*.jpg`)
+- Para cada modo (adolescente, adulto, 60+) e idioma (en, es, pt-BR):
+  - Home;
+  - player;
+  - tela final com o mapa acendendo, em 3 quadros (`light-1`, `light-2`, `light-3`);
+  - 3 Momentos (`moment-1..3`).
+- Os Momentos variam por modo:
+  - adolescente: marco, fato e músculo novo;
+  - adulto: marco, fato e o coach perguntando da dor;
+  - 60+: marco, fato e músculo novo.
+- Script: `node scripts/shoot-three-s.mjs`.
+- Adolescente não entra pelo web (Fase 24). Para os prints, o script tira a trava do web dentro da página de teste; o app continua bloqueando.
+- Encontrei e corrigi pelos prints: no 60+, "COMEÇAR" quebrava no meio da palavra no botão grande.
+
+### Como testar
+- **No celular (build de dev):**
+  1. Home → "Treinar agora" abre o player.
+  2. Espere o aquecimento correr sozinho e toque "Feito".
+  3. Termine: o desaquecimento corre sozinho e o mapa acende na tela final.
+  4. Configurações → Treino → Mais opções → Vibração e Sons de comemoração.
+  5. Desligue "Surpresas" e confira que nenhum Momento aparece.
+- **Checagens:** `npm test` (1.353 testes), `npm run lint`, `npx tsc --noEmit`, `npm run db:test`, `npm run security:check`, `npm run bundle:check`.
+- **E2E:** os fluxos Maestro foram atualizados para o onboarding novo (o primeiro treino abre sozinho).
+
+### O que ficou de fora
+- **"Primeiro exercício no chão":** o seed não tem uma marca de "no chão" (as posições são em pé, com apoio e sentado). Não inventei a marca no código; troquei por "primeira mobilidade curta".
+- **Momento de aniversário:** o app só sabe o mês de nascimento, então é "Feliz mês de aniversário", no primeiro dia de uso do mês.
+- **Momentos de data na Home do 60+:** não entram, para manter só 3 coisas na tela. Os Momentos da tela final valem para o 60+ normalmente.
+- **Vibração e animação de verdade:** só dá para sentir no celular. No web a vibração não existe e o print mostra a animação em quadros.
+
+### Perguntas
+1. **Onboarding:** hoje são 5 telas e cerca de 10 campos antes do primeiro treino, com a segurança inteira. Para chegar a 6 perguntas contando campo por campo, a opção seria perguntar "dias por semana" e "sexo do corpo" depois do primeiro treino (padrão de 3 dias; o sexo é perguntado pela demo quando precisar). **Recomendo aceitar a contagem por tela**, porque as perguntas de segurança não devem ir para depois do treino. Ou prefere que eu adie esses dois campos?
+2. **Primeiro treino depois do onboarding:** agora ele abre o player direto, com o aquecimento já correndo. **Recomendo manter.** A outra opção é abrir a prévia uma única vez, só no primeiro treino, para a pessoa ver o que vem (+1 toque).
+3. **Frequência dos Momentos:** fiz cerca de 1 a cada 3 treinos, com os marcos grandes sempre. **Recomendo manter e rever com os números de `moment_shown`** depois do teste com usuários. A outra opção é deixar mais raro (1 a cada 4).

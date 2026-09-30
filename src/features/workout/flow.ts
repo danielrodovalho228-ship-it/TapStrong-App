@@ -76,3 +76,13 @@ export function hasCooldownLeft(w: WorkoutRecord): boolean {
   const step = currentStep(w);
   return step?.item.role === 'cooldown';
 }
+
+/**
+ * A cool-down stretch hold runs as a countdown too, so the workout ends
+ * without a tap (Phase 27, A1): the prescribed hold (its lower bound), both
+ * sides for a one-sided stretch. Null for anything else.
+ */
+export function cooldownHold(item: SessionItem): number | null {
+  if (item.role !== 'cooldown' || stepKind(item) !== 'hold' || !item.holdSeconds) return null;
+  return item.holdSeconds[0] * (item.perSide ? 2 : 1);
+}

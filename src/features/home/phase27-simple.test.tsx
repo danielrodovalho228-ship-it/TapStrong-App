@@ -134,17 +134,15 @@ describe('A1 tap audit: open → first set', () => {
     expect(currentStep(workout())!.item.exerciseId).not.toBe(before);
   });
 
-  it('the end of the workout needs no tap: the last cool-down ends it', async () => {
+  it('the end of the workout needs no tap: the cool-down runs and ends it', async () => {
     await profile(1985);
     await render(<HomeScreen />);
     await fireEvent.press(screen.getByTestId('start-hero'));
     mockParams = { id: mockRouter.push.mock.calls.at(-1)![0].params.id };
     const w = workout();
-    const cooldowns = w.session.items.filter((i) => i.role === 'cooldown');
-    const last = cooldowns.at(-1)!;
     await act(() => {
       for (const item of w.session.items) {
-        if (item.id === last.id) continue;
+        if (item.role === 'cooldown') continue;
         for (let setNo = 1; setNo <= (item.durationSeconds ? 1 : item.sets); setNo++)
           useWorkoutStore.getState().logSet(w.id, {
             itemId: item.id,
@@ -155,12 +153,11 @@ describe('A1 tap audit: open → first set', () => {
       }
     });
     await render(<PlayerScreen />);
-    await wait(last.durationSeconds ?? 60);
-    for (let guard = 0; guard < 5 && workout().status === 'active'; guard++) {
+    // Every cool-down step (countdowns and stretch holds) ends by itself.
+    for (let guard = 0; guard < 20 && workout().status === 'active'; guard++) {
       const step = currentStep(workout());
       if (!step) break;
-      if (stepKind(step.item) === 'timed') await wait(step.item.durationSeconds ?? 60);
-      else await fireEvent.press(screen.getByRole('button', { name: 'Done with set' }));
+      await wait(step.item.durationSeconds ?? (step.item.holdSeconds?.[0] ?? 30) * 2);
     }
     expect(workout().status).toBe('done');
     expect(mockRouter.replace).toHaveBeenCalledWith({

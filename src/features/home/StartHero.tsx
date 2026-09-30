@@ -50,7 +50,8 @@ export function StartHero({
             {eyebrow}
           </AppText>
         ) : null}
-        <AppText variant={large ? 'display' : 'h1'} color={fg}>
+        {/* h1 in both: 60+ type is already larger, and display broke words (QA). */}
+        <AppText variant="h1" color={fg}>
           {title}
         </AppText>
         {detail ? (
