@@ -2422,3 +2422,185 @@ Texto salvo em `docs/phase-26-monthly-cycle.md`. Dois commits de código: A (ló
 3. Com menos de 4 treinos, só o card "Vamos retomar?".
 
 Já é o comportamento implementado; nada muda no código.
+
+## Mídia 1 — Importação dos vídeos do Flow (docs/media-import-1.md)
+
+### Feito
+- **Script reutilizável** `scripts/import-flow-media.mjs`:
+  - Lê `assets/prototype/` e fica com a tomada mais nova por slug + sexo + tipo.
+  - Descarta `x_bad_*`, `body-adult-*` e os nomes automáticos do Flow, e lista tudo no relatório.
+  - Reencoda os vídeos, gera os pôsteres e as tiras de QC (6 quadros, 1 a cada 1,3 s).
+  - Apaga os crus com `git rm`: sem reescrever histórico, sem force-push.
+  - Passo a passo para os próximos lotes: `assets/prototype/README.md`.
+- **Desvio pequeno do padrão pedido:** o script também aceita `_vN` antes do carimbo (`dead_bug.f_v2_…`), porque vieram refeitos assim: dead_bug, dead_bug_heel_tap, incline_plank e bird_dog.f. Vence o maior `vN`; depois, o carimbo mais novo.
+- **Vídeos:** `<slug>.<f|m>.mp4`, H.264, CRF 26, 720×1280, sem áudio, `+faststart`, 24 fps (as fontes vieram a 24 fps, 8 s).
+  - Tamanho: mínimo 233 KB, mediana 446 KB, máximo 789 KB. Nenhum passou de 1 MB.
+- **Pôsteres:** `posters/<slug>.<f|m>.webp`, feitos da imagem de partida, 480 px, q70, no máximo 19 KB.
+- **Tamanho total:** crus 315,6 MB → final 73,4 MB (165 clipes + pôsteres).
+- **Crus apagados** do repositório: 394 arquivos. `.gitignore` e README de `assets/prototype` explicam que só entram `<slug>.<f|m>.mp4`, `posters/` e os arquivos do manifesto.
+  - Atenção: o upload pelo site do GitHub ignora o `.gitignore`. Então, depois de cada upload, é só rodar o script de novo.
+- **Suspeitos fora do app:** ficam em `assets/prototype/qc.json` (slug.sexo → motivo). O arquivo continua na pasta, mas `npm run prototype:videos` não o coloca no `videos.js`. Quando o Moacir refizer, é só apagar a linha.
+- **App:**
+  - `videos.js` agora traz o pôster, só ao lado de um clipe do mesmo sexo.
+  - O pôster cobre o player até aparecer o primeiro quadro.
+  - O pôster também vira a miniatura do card do exercício: Biblioteca, treino, troca e dor.
+  - Nunca aparece o outro sexo: se falta o clipe, falta também o pôster.
+- **Correção de brinde:** no web, os arquivos chegam como endereço (e não como número), então o build de dev web nunca mostrava clipe desde a Fase 20. Corrigido e testado.
+- **`bundle:check`** continua passando e agora também falha se qualquer arquivo de `assets/prototype` (pôsteres incluídos) entrar num build de loja.
+
+### Números
+- 98 exercícios tinham algum arquivo neste lote:
+  - **53 com f + m** ok no app;
+  - **19 com só um sexo** ok;
+  - **26 sem nenhum** clipe utilizável (suspeito e/ou faltando).
+- Clipes: 125 no app, 40 suspeitos, 26 sexos só com imagem (sem vídeo).
+- Três que você citou **não vieram neste lote** (nem com nome certo): `seated_towel_press_up`, `downward_palm_press_hold` e `sl_supported_hip_hinge`. Estão como faltando.
+
+### Descartados (103)
+- **36 duplicados mais antigos:** o mesmo slug e sexo baixado de novo; ficou o mais novo.
+- **24 `x_bad_*`:** x_bad_bodyweight_good_morning_f_20260929175517.mp4, x_bad_chair_f_20260929051715.mp4, x_bad_chair_m_20260929051714.mp4, x_bad_crunch_f_20260929051708.mp4, x_bad_door_f_20260929051717.mp4, x_bad_door_m_20260929051718.mp4, x_bad_ksp_f_20260929051704.jpg, x_bad_ksp_m2_20260929051705.jpg, x_bad_ksp_m_20260929051705.jpg, x_bad_sb_m1_20260929051630.mp4, x_bad_sb_m1_20260929175520.mp4, x_bad_sb_m2_20260929051635.mp4, x_bad_sbd_m_20260929051705.jpg, x_bad_seated_side_bend_f_20260929175525.mp4, x_bad_squat_m_20260929051631.mp4, x_bad_ssc_f0_20260929051629.mp4, x_bad_ssc_f1_20260929051716.mp4, x_bad_ssc_m0_20260929051630.mp4, x_bad_ssc_m0_20260929175518.mp4, x_bad_ssc_m1_20260929051718.mp4, x_bad_standing_supported_bird_dog_f_20260929175529.mp4, x_bad_stray_manrow_20260930053310.mp4, x_bad_su_seated_air_row_m_noframes_20260930053309.mp4, x_bad_superman_m_20260929175555.mp4
+- **5 referências `body-adult-*`:** body-adult-f-front.jpg_20260929051611.jpg, body-adult-f-front.jpg_20260930053235.jpg, body-adult-m-front.webp_20260929051634.jpg, body-adult-m-front.webp_20260929175523.jpg, body-adult-m-front.webp_20260930053240.jpg
+- **38 nomes automáticos do Flow:** Man_demonstrating_bodyweight_squat_20260929051641.jpg, Man_demonstrating_seated_crunch_…_20260929051640.jpg, Man_demonstrating_standing_side_…_20260929051640.jpg, Man_lying_in_crunch_start_20260929051639.jpg, Man_performing_biceps_curl_20260929051625.mp4, Man_performing_biceps_curl_20260929175520.mp4, Man_performing_doorframe_biceps_…_20260929051628.mp4, Man_performing_doorframe_biceps_…_20260929175529.mp4, Man_performing_high_box_squat_20260929051650.jpg, Man_performing_low_step-up_20260929051717.mp4, Man_performing_reverse_curl_20260929051629.mp4, Man_performing_seated_knee-reach…_20260929051611.jpg, Man_performing_seated_leg_lift_20260929051628.mp4, Man_performing_seated_side_bend_20260929051643.jpg, Man_performing_self-resisted_ham…_20260929051628.mp4, Man_performing_self-resisted_ham…_20260929175523.mp4, Man_performing_supported_split_s…_20260929051717.mp4, Man_performing_towel_foot_curl_20260929051625.mp4, Man_sitting_for_abdominal_curl_20260929051643.jpg, Man_sitting_on_chair_20260929051641.jpg, Woman_demonstrating_bodyweight_s…_20260929051637.jpg, Woman_demonstrating_seated_crunc…_20260929051641.jpg, Woman_demonstrating_seated_knee_…_20260929051646.jpg, Woman_demonstrating_seated_side_…_20260929051644.jpg, Woman_demonstrating_standing_sid…_20260929051641.jpg, Woman_demonstrating_standing_sid…_20260929175449.jpg, Woman_lying_on_exercise_mat_20260929051640.jpg, Woman_performing_abdominal_crunc…_20260929051630.mp4, Woman_performing_biceps_curl_20260929051625.mp4, Woman_performing_biceps_curl_20260929175520.mp4, Woman_performing_doorframe_bicep…_20260929051630.mp4, Woman_performing_hammer_curl_exe…_20260929051707.mp4, Woman_performing_reverse_curl_20260929051625.mp4, Woman_performing_reverse_curl_20260929175517.mp4, Woman_performing_seated_leg-lift…_20260929051625.mp4, Woman_performing_supported_split…_20260929051629.mp4, Woman_performing_supported_split…_20260929175524.mp4, Woman_performing_towel_foot_curl_20260929051625.mp4
+- Fora de `assets/prototype`: 11 imagens com nome automático (`Man_performing_*`, `Woman_*`, `Child_anatomy_*`) estão na raiz do repositório desde 25/09. Não mexi nelas.
+
+### QC quadro a quadro (tabela para o Moacir)
+Faltando = não veio vídeo (em alguns casos veio só a imagem de partida).
+
+| slug | f | m | status |
+|---|---|---|---|
+| airplane_arm_hold | ok | ok | ok |
+| bal_chair_single_leg_hold | ok | ok | ok |
+| bal_seated_arms_up_hold | **suspeito** — hold que se mexe muito: braços balançam em vez de ficar parados no alto | **suspeito** — hold que se mexe muito: braços cruzam e descem, não ficam no alto | suspeito |
+| bal_seated_head_turns | **suspeito** — leva a mão ao queixo; giro de cabeça pouco visível | **suspeito** — leva a mão ao rosto; giro de cabeça pouco visível | suspeito |
+| bal_seated_knee_lift_hold | **suspeito** — joelho quase não sobe (fica perto da cadeira) | ok | suspeito |
+| bal_seated_reach_outs | ok | ok | ok |
+| bal_seated_trunk_control | ok | ok | ok |
+| bal_seated_weight_shifts | ok | faltando | faltando |
+| bal_sit_to_stand_hold | **suspeito** — "hold" vira movimento inteiro: levanta e senta de novo em 8 s | **suspeito** — "hold" vira movimento inteiro: levanta e senta de novo em 8 s | suspeito |
+| bal_supported_heel_toe_walk | **suspeito** — não anda calcanhar-ponta: fica quase parado, pés arrastam | **suspeito** — não anda calcanhar-ponta: fica quase parado | suspeito |
+| bal_supported_side_steps | ok | ok | ok |
+| bal_supported_tandem_stance | ok | **suspeito** — postura deveria ser parada; no início dá um passo/levanta o joelho | suspeito |
+| bird_dog | **suspeito** — câmera muda de zoom no meio (salto de enquadramento) | ok | suspeito |
+| bodyweight_good_morning | faltando (só imagem) | ok | faltando |
+| bodyweight_squat | ok | ok | ok |
+| bridge_pillow_squeeze | **suspeito** — movimento errado: em vários quadros o tronco sobe quase sentado em vez da ponte de quadril | faltando (só imagem) | suspeito + faltando |
+| chair_supported_squat | ok | ok | ok |
+| crunch | ok | ok | ok |
+| dead_bug | ok | ok | ok |
+| dead_bug_heel_tap | ok | ok | ok |
+| door_frame_squat_hold | ok | ok | ok |
+| doorframe_curl | faltando (só imagem) | faltando (só imagem) | faltando |
+| doorframe_grip_hold | ok | ok | ok |
+| doorframe_row | ok | **suspeito** — solta o batente no meio (mãos no ar, corpo inclinado para trás sem apoio) | suspeito |
+| fist_squeeze_hold | ok | ok | ok |
+| front_arm_hold | **suspeito** — hold que se mexe: braços vão da frente para os lados | ok | suspeito |
+| glute_bridge | faltando (só imagem) | faltando (só imagem) | faltando |
+| heel_dig_bridge | faltando (só imagem) | faltando (só imagem) | faltando |
+| incline_plank | ok | ok | ok |
+| knee_push_up | **suspeito** — quadril empinado e quase não desce o peito | **suspeito** — deita e sobe com quadril alto (parece "cobra"), não é flexão de joelhos | suspeito |
+| kneeling_side_plank | ok | ok | ok |
+| low_step_up | **suspeito** — perna duplicada/transparente num trecho (artefato) | ok | suspeito |
+| partial_sit_to_stand | **suspeito** — levanta por completo e balança os braços; deveria ser só metade do caminho | **suspeito** — levanta por completo; deveria ser só metade do caminho | suspeito |
+| partial_wall_sit | ok | ok | ok |
+| prone_back_extension | ok | ok | ok |
+| prone_lat_pulldown | **suspeito** — braços apontam para o teto; deveria puxar os cotovelos para os lados do corpo | **suspeito** — braços apontam para o teto; deveria puxar os cotovelos para os lados do corpo | suspeito |
+| prone_t_raise | **suspeito** — braços sobem para o teto em vez de abrir em T para os lados | **suspeito** — braços vão para a frente (tipo "super-homem"), não abrem em T | suspeito |
+| prone_w_raise | ok | **suspeito** — braços apontam para o teto em vez de formar o W junto ao corpo | suspeito |
+| rx_high_box_squat | ok | ok | ok |
+| rx_low_step_up | faltando (só imagem) | faltando (só imagem) | faltando |
+| scapular_squeeze | ok | ok | ok |
+| seated_arms_back_lift | ok | **suspeito** — braços sobem por cima da cabeça em vez de ir para trás | suspeito |
+| seated_crunch_brace | ok | ok | ok |
+| seated_elbow_drive | ok | ok | ok |
+| seated_lean_back_hold | ok | ok | ok |
+| seated_scapular_dip | ok | ok | ok |
+| seated_side_bend | ok | ok | ok |
+| seated_towel_row_hold | ok | ok | ok |
+| seated_w_squeeze | **suspeito** — braços esticados à frente; deveria dobrar os cotovelos em W e apertar as escápulas | ok | suspeito |
+| self_resisted_curl | faltando (só imagem) | faltando (só imagem) | faltando |
+| self_resisted_wrist_extension | ok | ok | ok |
+| self_resisted_wrist_flexion | ok | ok | ok |
+| sf_seated_back_arch_reach | faltando (só imagem) | faltando | faltando |
+| sf_seated_hip_hinge_lift | ok | ok | ok |
+| single_leg_balance | ok | ok | ok |
+| sit_to_stand | ok | ok | ok |
+| sl_seated_abdominal_thigh_press | ok | faltando (só imagem) | faltando |
+| sl_seated_backrest_press_hold | ok | ok | ok |
+| sl_seated_cross_knee_press_hold | ok | ok | ok |
+| sl_seated_crossed_ankle_curl_press | ok | ok | ok |
+| sl_seated_feet_hover_hold | ok | **suspeito** — hold que se mexe: os pés sobem e descem em vez de ficarem suspensos | suspeito |
+| sl_seated_heel_back_kicks | ok | ok | ok |
+| sl_seated_heel_dig_hold | ok | ok | ok |
+| sl_seated_heel_slides | faltando (só imagem) | faltando | faltando |
+| sl_seated_knee_reach_crunch | ok | ok | ok |
+| sl_seated_pelvic_tuck | ok | ok | ok |
+| sl_seated_shin_rotation_control | ok | ok | ok |
+| sl_seated_towel_heel_drag | faltando (só imagem) | faltando | faltando |
+| standing_oblique_crunch | ok | ok | ok |
+| standing_supported_bird_dog | **suspeito** — vira de frente para a câmera e abre os braços em T; perde o apoio na parede | ok | suspeito |
+| su_seated_air_row | **suspeito** — braços ficam esticados à frente; os cotovelos nunca puxam para trás (não é remada) | **suspeito** — braços ficam esticados à frente; os cotovelos nunca puxam para trás (não é remada) | suspeito |
+| su_seated_armrest_press_hold | ok | ok | ok |
+| su_seated_bent_t_raise | **suspeito** — braço sobe acima da cabeça (joinha) em vez de abrir em T para os lados | **suspeito** — braço sobe acima da cabeça em vez de abrir em T para os lados | suspeito |
+| su_seated_chair_grip_shrug_hold | ok | **suspeito** — solta o banco e mexe os braços no ar; deveria segurar o assento | suspeito |
+| su_seated_clasped_hands_squeeze | ok | **suspeito** — solta as mãos e leva os braços acima da cabeça; deveria manter as mãos entrelaçadas atrás | suspeito |
+| su_seated_diagonal_palm_press | ok | ok | ok |
+| su_seated_elbow_pull_back | **suspeito** — braços ficam esticados à frente; quase não puxa os cotovelos para trás | **suspeito** — punhos parados na frente do peito; os cotovelos não vão para trás | suspeito |
+| su_seated_elbow_squeeze_fly | ok | ok | ok |
+| su_seated_finger_spread_squeeze | ok | ok | ok |
+| su_seated_hammer_self_curl | faltando (só imagem) | faltando (só imagem) | faltando |
+| su_seated_leg_lift_curl | faltando (só imagem) | faltando (só imagem) | faltando |
+| su_seated_low_crossover | ok | ok | ok |
+| su_seated_palm_press_slide | ok | ok | ok |
+| su_seated_reverse_self_curl | faltando (só imagem) | faltando (só imagem) | faltando |
+| su_seated_scaption_raise | ok | faltando | faltando |
+| su_seated_self_resisted_palm_turn | ok | **suspeito** — leva a mão à boca no meio; o giro da palma não aparece | suspeito |
+| su_seated_table_edge_pull_hold | ok | ok | ok |
+| su_seated_towel_overhead_press | ok | ok | ok |
+| sumo_squat | ok | ok | ok |
+| superman | **suspeito** — faz flexão/"cobra" com as mãos no chão em vez de erguer braços e pernas; linhas verticais no canto | **suspeito** — faz flexão/prancha com as mãos no chão em vez de erguer braços e pernas | suspeito |
+| supported_split_squat | faltando (só imagem) | faltando (só imagem) | faltando |
+| towel_curl | faltando (só imagem) | faltando (só imagem) | faltando |
+| towel_pull_apart_hold | ok | ok | ok |
+| towel_wring | ok | ok | ok |
+| under_table_curl_hold | ok | ok | ok |
+| upward_palm_press_hold | ok | ok | ok |
+| wall_elbow_press_hold | ok | ok | ok |
+| wall_push_up | **suspeito** — dobra quadril e joelhos (agacha) em vez de manter o corpo reto | ok | suspeito |
+| seated_towel_press_up | faltando | faltando | faltando (não veio) |
+| downward_palm_press_hold | faltando | faltando | faltando (não veio) |
+| sl_supported_hip_hinge | faltando | faltando | faltando (não veio) |
+
+Os exercícios de chão ficam pequenos no quadro 9:16. Isso é do formato, não é defeito.
+
+### Teste no app (build de dev, web) e prints
+Rodei `node scripts/shoot-media.mjs` com 10 exercícios, em dois perfis: mulher 60+ e homem.
+- **Sentados:** su_seated_towel_overhead_press, bal_seated_reach_outs, sl_seated_heel_dig_hold.
+- **Chão:** dead_bug, incline_plank, prone_back_extension.
+- **Em pé:** sumo_squat, single_leg_balance, low_step_up, wall_push_up.
+
+O script confere sozinho:
+- o clipe e o pôster são do sexo do perfil;
+- o pôster aparece antes do play;
+- "Outro lado" espelha os unilaterais (dead_bug, heel_dig, single_leg_balance, low_step_up);
+- "demo em breve" aparece quando falta o clipe: low_step_up e wall_push_up para ela (o .f está suspeito) e push_up para os dois;
+- a Biblioteca mostra as miniaturas do sexo certo.
+
+Prints: `docs/screenshots/media/`, por exemplo:
+- `woman-60-dead_bug.jpg` e `woman-60-dead_bug-other-side.jpg`;
+- `woman-60-wall_push_up.jpg`;
+- `man-low_step_up-other-side.jpg`;
+- `woman-60-library.jpg` e `man-library.jpg`.
+
+Limites deste teste:
+- O Chromium daqui não toca H.264, então os prints mostram o pôster (o estado "antes do play"). O vídeo rodando precisa ser visto no celular com o build de dev.
+- **Adolescente:** no web o app é só para adultos desde a Fase 24. Por isso a regra do adolescente (clipe adulto do próprio sexo, com pôster; sem clipe do sexo = "demo em breve") está coberta por teste unitário, e não por print.
+
+### Como testar
+- `npx expo start` com o build de dev no celular. Perfil mulher → abra Dead bug: aparece o pôster, depois o vídeo; toque "Outro lado". Troque para um perfil homem e confira o clipe masculino.
+- Abra Wall push-up com perfil mulher: deve aparecer "demo em breve".
+- Checagens: `npm test`, `npm run lint`, `npx tsc --noEmit`, `npm run bundle:check`, `npm run security:check` e `node scripts/shoot-media.mjs`.
+
+### Perguntas
+1. **Os 38 nomes automáticos:** vários parecem ser justamente clipes que faltam (biceps curl, hammer curl, towel foot curl, supported split squat, seated leg lift…). **Recomendo que o Moacir exporte de novo com o slug certo** em vez de eu adivinhar o slug pelo nome. Ou você prefere que eu proponha um mapa nome → slug para você aprovar?
+2. **Rigor do QC:** marquei 40 suspeitos, contando os casos "movimento errado para o nome" (ex.: remada com os braços parados, T que vira braço para cima). **Recomendo manter esse rigor**, porque o vídeo ensina o movimento. Ou você prefere liberar os casos leves (ex.: bal_seated_head_turns, front_arm_hold.f) até o Moacir refazer?
+3. **As 11 imagens soltas na raiz do repositório** (de 25/09): **recomendo apagar** (são sobras com nome automático). Posso?
