@@ -2270,9 +2270,11 @@ Texto da rodada salvo em `docs/security-round-2.md`. Corrigi na ordem P1 → P2 
 ### Feito
 
 **P1**
+
 - **S2-P1-1 — corrida na trava do PIN:** a verificação agora trava a linha do contador antes de comparar o PIN e só solta no fim. O teste dispara 30 tentativas ao mesmo tempo e conta as comparações de verdade: no máximo 5 por janela. Sem a correção o mesmo teste via 21.
 
 **P2**
+
 - **S2-P2-1 — bloqueio web completo:** o aviso "O TapStrong para adolescentes fica no app para celular" agora fica na raiz do app, em qualquer endereço (`/settings`, `/workout/new`, `/programs`...). Só abrem: a data de nascimento, a Conta e a exclusão de conta. O teste percorre todas as rotas.
 - **S2-P2-2 — trocar o PIN:** acertar o PIN no portão não abre mais uma janela para trocá-lo. A troca exige o PIN atual ou o código do e-mail, que vale 10 minutos e uma vez só.
 - **S2-P2-3 — PIN depois da redefinição:** se a sessão não volta depois do código (`ok_signed_out`), o PIN novo fica guardado e vai para o servidor no próximo login da Conta. A cópia offline do celular também passa a seguir o PIN da conta: se o PIN mudou em outro aparelho, ela é refeita; se o servidor diz "errado", ela é apagada.
@@ -2287,6 +2289,7 @@ Texto da rodada salvo em `docs/security-round-2.md`. Corrigi na ordem P1 → P2 
 - **S2-P2-8 — captcha offline:** se o widget não aparece em 15 s, ou falha ao carregar, a verificação fecha na hora. Depois de uma falha ou de um cancelamento, o coach segue offline na sessão, com o aviso "Coach indisponível — seguindo offline".
 
 **P3**
+
 - **Orçamento do coach:** o IP vem só do cabeçalho da plataforma; IP vazio cai num balde "unknown"; o limite do usuário é cobrado antes dos orçamentos compartilhados.
 - **Treino falso na indicação:** o servidor marca quando o treino chega no início e quando chega concluído, e exige 10 minutos reais entre as duas marcas. Para isso, o app agora envia a sessão também quando o treino começa.
 - **Responsável × adolescente com login próprio:** o responsável não apaga mais esse perfil. A aba Família explica: "Este adolescente tem login próprio...".
@@ -2325,6 +2328,7 @@ Texto da rodada salvo em `docs/security-round-2.md`. Corrigi na ordem P1 → P2 
 ### O que depende de você
 
 A lista curta e em ordem está em `docs/launch-readiness.md`, em "Antes do próximo build de teste":
+
 1. `supabase db push` (4 migrações novas desta fase).
 2. `npm run server:check`.
 3. Site key do Turnstile no EAS e build de teste.
@@ -2334,7 +2338,7 @@ A lista curta e em ordem está em `docs/launch-readiness.md`, em "Antes do próx
 
 ### Perguntas em aberto
 
-1. **Indicação:** com a regra dos 10 minutos reais no servidor, o treino que alguém faz *antes* de salvar a conta não conta mais para a indicação (ele sobe de uma vez só). A semana grátis vem no primeiro treino feito já com a conta. Está bom assim?
+1. **Indicação:** com a regra dos 10 minutos reais no servidor, o treino que alguém faz _antes_ de salvar a conta não conta mais para a indicação (ele sobe de uma vez só). A semana grátis vem no primeiro treino feito já com a conta. Está bom assim?
 2. **Adolescente com login próprio e data errada para mais tarde:** o responsável não consegue editar esse perfil (regra da Fase 24), então a correção para mais cedo fica com o suporte. O aviso no app manda falar com o suporte. Ok?
 3. **Captcha e build de produção:** o build de produção agora trava enquanto o captcha estiver desligado no Supabase. Os builds de preview e de desenvolvimento não travam.
 
@@ -2353,6 +2357,7 @@ Texto salvo em `docs/phase-26-monthly-cycle.md`. Dois commits de código: A (ló
 ### Feito
 
 **Quando aparece**
+
 - O bloco padrão agora é de 4 semanas (3 normais + 1 leve) = "1 mês". Os planos de 5–6 semanas continuam valendo, e o resumo sai no fim do bloco que for.
 - Sem plano, conta a partir do 1º treino (a cada 28 dias).
 - Com 4 ou mais treinos no bloco: tela cheia "1 mês completo!" uma vez só, na primeira abertura depois da semana leve.
@@ -2362,6 +2367,7 @@ Texto salvo em `docs/phase-26-monthly-cycle.md`. Dois commits de código: A (ló
 - Notificação opcional "Seu mês fechou 🎉" no dia em que o resumo abre, no horário dos lembretes, só se os lembretes estiverem ligados. Não pede permissão nova.
 
 **A tela "Mês fechado"** (unificada com o check-in de 4 semanas: o card/atalho antigo de check-in saiu da Home e da Home 60+)
+
 - Treinos, dias treinados (calendário do bloco) e tempo total.
 - Corpo colorido pelas séries do mês, com legenda. Tocar em um músculo mostra as séries deste mês e as do mês anterior.
 - Força (semana 1 × última) e recordes do mês, respeitando a idade: 60+ só vê "maior carga", adolescente não vê nenhum dos dois.
@@ -2370,12 +2376,14 @@ Texto salvo em `docs/phase-26-monthly-cycle.md`. Dois commits de código: A (ló
 - Repair: se o reteste venceu, aparece primeiro "Refaça o teste de 2 minutos", sem bloquear nada.
 
 **"Seu próximo mês"** (mesma tela, uma escolha, com o padrão pronto)
+
 - **Continuar evoluindo (recomendado):** mostra a prévia (Mantém… · Troca: N exercícios · Foco novo…) e o porquê do foco em 1 linha. "Ver/ajustar" permite travar exercícios; travar = manter.
 - **Repetir igual:** os mesmos exercícios, exatamente.
 - **Escolher no corpo:** abre a aba Corpo com o foco sugerido destacado e botões "Adicionar …".
 - Sem resposta: ao começar um treino, a recomendação é aplicada e o treino mostra "Renovei N exercícios · Desfazer". O desfazer vale 7 dias e volta ao plano do mês anterior exatamente igual.
 
 **Regras de renovação e foco** (funções puras, testadas)
+
 - **Mantém** o composto que progrediu nas últimas 3 semanas.
 - **Troca** pelo menos metade dos acessórios por opções seguras do mesmo músculo, preferindo o que não foi feito nos últimos 2 blocos e outro ângulo.
 - **Troca** o que estagnou e o que doeu. Exercício com dor "sharp" nunca mais volta, nem com estrela.
@@ -2390,33 +2398,40 @@ Texto salvo em `docs/phase-26-monthly-cycle.md`. Dois commits de código: A (ló
   Ele soma às metas, nunca tira nenhuma. Vale +1 série por sessão (cerca de 2–3 por semana), dentro do limite semanal.
 
 **Dados**
+
 - Por perfil (família inclusa): resumo em JSON, escolha, trocas (de → para, motivo), desfazer e histórico.
 - Tabela `month_reviews`: RLS do dono ou responsável com WITH CHECK, e teste SQL com troca de usuário. Nada de medidas ou fotos nela.
 - Progresso › Meses lista os resumos antigos.
 
 ### Prints
+
 `docs/screenshots/month/`: `en-month.jpg`, `es-month.jpg`, `pt-BR-month.jpg` (a tela inteira) e `*-home-card.jpg` (o card na Home). O script `node scripts/shoot-month.mjs` gera tudo de novo.
 
 ### O que ficou de fora
+
 - **"Piscando" no corpo:** o foco sugerido aparece destacado na cor de destaque, com botão para adicionar, mas sem animação.
 - **Tocar no músculo dentro do desenho:** o toque é numa fileira de músculos logo abaixo do corpo. No modo tocável o desenho perde as cores das séries.
 - **Recordes:** só o de maior carga.
 
 ### Verificações
+
 - Lint e typecheck limpos; **1303 testes** passando, também em ordem aleatória.
 - `db:test` (com `month_reviews` e o catálogo de segurança), `functions:check`, `security:check`, `bundle:check`.
 - `theme:check`: 50 capturas.
 
 ### No caminho
+
 - Você subiu pelo GitHub 15 vídeos de equilíbrio (em `assets/prototype/`, com data no nome) e 10 imagens na raiz do projeto. Fiz merge sem mexer neles.
 - Os vídeos ainda não estão ligados ao app, porque o nome com data não bate com o padrão `slug.f.mp4`. Quando quiser, eu renomeio e ligo.
 
 ### Perguntas
-1. **Semana leve no bloco padrão:** agora quem não escolheu plano tem blocos de 4 semanas, e a semana leve (−40% de volume) vem a cada 4 semanas, e não mais a cada 5. Ok? *(Recomendado: sim, é o que faz "1 mês" fechar certinho.)*
-2. **Dor "sharp":** o exercício sai para sempre, mesmo com estrela. Ok? *(Recomendado: sim, segurança primeiro. Daria para liberar depois de um reteste de dor sem dor.)*
-3. **Menos de 4 treinos:** o card "Vamos retomar?" não traz resumo nem troca exercícios. Ok? *(Recomendado: sim, sem pressão.)*
+
+1. **Semana leve no bloco padrão:** agora quem não escolheu plano tem blocos de 4 semanas, e a semana leve (−40% de volume) vem a cada 4 semanas, e não mais a cada 5. Ok? _(Recomendado: sim, é o que faz "1 mês" fechar certinho.)_
+2. **Dor "sharp":** o exercício sai para sempre, mesmo com estrela. Ok? _(Recomendado: sim, segurança primeiro. Daria para liberar depois de um reteste de dor sem dor.)_
+3. **Menos de 4 treinos:** o card "Vamos retomar?" não traz resumo nem troca exercícios. Ok? _(Recomendado: sim, sem pressão.)_
 
 **Decisões do Daniel (Fase 26, aprovada):** seguir as recomendações:
+
 1. Semana leve a cada 4 semanas no bloco padrão.
 2. Dor "sharp" tira o exercício para sempre, mesmo com estrela.
 3. Com menos de 4 treinos, só o card "Vamos retomar?".
@@ -2426,6 +2441,7 @@ Já é o comportamento implementado; nada muda no código.
 ## Mídia 1 — Importação dos vídeos do Flow (docs/media-import-1.md)
 
 ### Feito
+
 - **Script reutilizável** `scripts/import-flow-media.mjs`:
   - Lê `assets/prototype/` e fica com a tomada mais nova por slug + sexo + tipo.
   - Descarta `x_bad_*`, `body-adult-*` e os nomes automáticos do Flow, e lista tudo no relatório.
@@ -2449,6 +2465,7 @@ Já é o comportamento implementado; nada muda no código.
 - **`bundle:check`** continua passando e agora também falha se qualquer arquivo de `assets/prototype` (pôsteres incluídos) entrar num build de loja.
 
 ### Números
+
 - 98 exercícios tinham algum arquivo neste lote:
   - **53 com f + m** ok no app;
   - **19 com só um sexo** ok;
@@ -2457,6 +2474,7 @@ Já é o comportamento implementado; nada muda no código.
 - Três que você citou **não vieram neste lote** (nem com nome certo): `seated_towel_press_up`, `downward_palm_press_hold` e `sl_supported_hip_hinge`. Estão como faltando.
 
 ### Descartados (103)
+
 - **36 duplicados mais antigos:** o mesmo slug e sexo baixado de novo; ficou o mais novo.
 - **24 `x_bad_*`:** x_bad_bodyweight_good_morning_f_20260929175517.mp4, x_bad_chair_f_20260929051715.mp4, x_bad_chair_m_20260929051714.mp4, x_bad_crunch_f_20260929051708.mp4, x_bad_door_f_20260929051717.mp4, x_bad_door_m_20260929051718.mp4, x_bad_ksp_f_20260929051704.jpg, x_bad_ksp_m2_20260929051705.jpg, x_bad_ksp_m_20260929051705.jpg, x_bad_sb_m1_20260929051630.mp4, x_bad_sb_m1_20260929175520.mp4, x_bad_sb_m2_20260929051635.mp4, x_bad_sbd_m_20260929051705.jpg, x_bad_seated_side_bend_f_20260929175525.mp4, x_bad_squat_m_20260929051631.mp4, x_bad_ssc_f0_20260929051629.mp4, x_bad_ssc_f1_20260929051716.mp4, x_bad_ssc_m0_20260929051630.mp4, x_bad_ssc_m0_20260929175518.mp4, x_bad_ssc_m1_20260929051718.mp4, x_bad_standing_supported_bird_dog_f_20260929175529.mp4, x_bad_stray_manrow_20260930053310.mp4, x_bad_su_seated_air_row_m_noframes_20260930053309.mp4, x_bad_superman_m_20260929175555.mp4
 - **5 referências `body-adult-*`:** body-adult-f-front.jpg_20260929051611.jpg, body-adult-f-front.jpg_20260930053235.jpg, body-adult-m-front.webp_20260929051634.jpg, body-adult-m-front.webp_20260929175523.jpg, body-adult-m-front.webp_20260930053240.jpg
@@ -2464,121 +2482,125 @@ Já é o comportamento implementado; nada muda no código.
 - Fora de `assets/prototype`: 11 imagens com nome automático (`Man_performing_*`, `Woman_*`, `Child_anatomy_*`) estão na raiz do repositório desde 25/09. Não mexi nelas.
 
 ### QC quadro a quadro (tabela para o Moacir)
+
 Faltando = não veio vídeo (em alguns casos veio só a imagem de partida).
 
-| slug | f | m | status |
-|---|---|---|---|
-| airplane_arm_hold | ok | ok | ok |
-| bal_chair_single_leg_hold | ok | ok | ok |
-| bal_seated_arms_up_hold | **suspeito** — hold que se mexe muito: braços balançam em vez de ficar parados no alto | **suspeito** — hold que se mexe muito: braços cruzam e descem, não ficam no alto | suspeito |
-| bal_seated_head_turns | **suspeito** — leva a mão ao queixo; giro de cabeça pouco visível | **suspeito** — leva a mão ao rosto; giro de cabeça pouco visível | suspeito |
-| bal_seated_knee_lift_hold | **suspeito** — joelho quase não sobe (fica perto da cadeira) | ok | suspeito |
-| bal_seated_reach_outs | ok | ok | ok |
-| bal_seated_trunk_control | ok | ok | ok |
-| bal_seated_weight_shifts | ok | faltando | faltando |
-| bal_sit_to_stand_hold | **suspeito** — "hold" vira movimento inteiro: levanta e senta de novo em 8 s | **suspeito** — "hold" vira movimento inteiro: levanta e senta de novo em 8 s | suspeito |
-| bal_supported_heel_toe_walk | **suspeito** — não anda calcanhar-ponta: fica quase parado, pés arrastam | **suspeito** — não anda calcanhar-ponta: fica quase parado | suspeito |
-| bal_supported_side_steps | ok | ok | ok |
-| bal_supported_tandem_stance | ok | **suspeito** — postura deveria ser parada; no início dá um passo/levanta o joelho | suspeito |
-| bird_dog | **suspeito** — câmera muda de zoom no meio (salto de enquadramento) | ok | suspeito |
-| bodyweight_good_morning | faltando (só imagem) | ok | faltando |
-| bodyweight_squat | ok | ok | ok |
-| bridge_pillow_squeeze | **suspeito** — movimento errado: em vários quadros o tronco sobe quase sentado em vez da ponte de quadril | faltando (só imagem) | suspeito + faltando |
-| chair_supported_squat | ok | ok | ok |
-| crunch | ok | ok | ok |
-| dead_bug | ok | ok | ok |
-| dead_bug_heel_tap | ok | ok | ok |
-| door_frame_squat_hold | ok | ok | ok |
-| doorframe_curl | faltando (só imagem) | faltando (só imagem) | faltando |
-| doorframe_grip_hold | ok | ok | ok |
-| doorframe_row | ok | **suspeito** — solta o batente no meio (mãos no ar, corpo inclinado para trás sem apoio) | suspeito |
-| fist_squeeze_hold | ok | ok | ok |
-| front_arm_hold | **suspeito** — hold que se mexe: braços vão da frente para os lados | ok | suspeito |
-| glute_bridge | faltando (só imagem) | faltando (só imagem) | faltando |
-| heel_dig_bridge | faltando (só imagem) | faltando (só imagem) | faltando |
-| incline_plank | ok | ok | ok |
-| knee_push_up | **suspeito** — quadril empinado e quase não desce o peito | **suspeito** — deita e sobe com quadril alto (parece "cobra"), não é flexão de joelhos | suspeito |
-| kneeling_side_plank | ok | ok | ok |
-| low_step_up | **suspeito** — perna duplicada/transparente num trecho (artefato) | ok | suspeito |
-| partial_sit_to_stand | **suspeito** — levanta por completo e balança os braços; deveria ser só metade do caminho | **suspeito** — levanta por completo; deveria ser só metade do caminho | suspeito |
-| partial_wall_sit | ok | ok | ok |
-| prone_back_extension | ok | ok | ok |
-| prone_lat_pulldown | **suspeito** — braços apontam para o teto; deveria puxar os cotovelos para os lados do corpo | **suspeito** — braços apontam para o teto; deveria puxar os cotovelos para os lados do corpo | suspeito |
-| prone_t_raise | **suspeito** — braços sobem para o teto em vez de abrir em T para os lados | **suspeito** — braços vão para a frente (tipo "super-homem"), não abrem em T | suspeito |
-| prone_w_raise | ok | **suspeito** — braços apontam para o teto em vez de formar o W junto ao corpo | suspeito |
-| rx_high_box_squat | ok | ok | ok |
-| rx_low_step_up | faltando (só imagem) | faltando (só imagem) | faltando |
-| scapular_squeeze | ok | ok | ok |
-| seated_arms_back_lift | ok | **suspeito** — braços sobem por cima da cabeça em vez de ir para trás | suspeito |
-| seated_crunch_brace | ok | ok | ok |
-| seated_elbow_drive | ok | ok | ok |
-| seated_lean_back_hold | ok | ok | ok |
-| seated_scapular_dip | ok | ok | ok |
-| seated_side_bend | ok | ok | ok |
-| seated_towel_row_hold | ok | ok | ok |
-| seated_w_squeeze | **suspeito** — braços esticados à frente; deveria dobrar os cotovelos em W e apertar as escápulas | ok | suspeito |
-| self_resisted_curl | faltando (só imagem) | faltando (só imagem) | faltando |
-| self_resisted_wrist_extension | ok | ok | ok |
-| self_resisted_wrist_flexion | ok | ok | ok |
-| sf_seated_back_arch_reach | faltando (só imagem) | faltando | faltando |
-| sf_seated_hip_hinge_lift | ok | ok | ok |
-| single_leg_balance | ok | ok | ok |
-| sit_to_stand | ok | ok | ok |
-| sl_seated_abdominal_thigh_press | ok | faltando (só imagem) | faltando |
-| sl_seated_backrest_press_hold | ok | ok | ok |
-| sl_seated_cross_knee_press_hold | ok | ok | ok |
-| sl_seated_crossed_ankle_curl_press | ok | ok | ok |
-| sl_seated_feet_hover_hold | ok | **suspeito** — hold que se mexe: os pés sobem e descem em vez de ficarem suspensos | suspeito |
-| sl_seated_heel_back_kicks | ok | ok | ok |
-| sl_seated_heel_dig_hold | ok | ok | ok |
-| sl_seated_heel_slides | faltando (só imagem) | faltando | faltando |
-| sl_seated_knee_reach_crunch | ok | ok | ok |
-| sl_seated_pelvic_tuck | ok | ok | ok |
-| sl_seated_shin_rotation_control | ok | ok | ok |
-| sl_seated_towel_heel_drag | faltando (só imagem) | faltando | faltando |
-| standing_oblique_crunch | ok | ok | ok |
-| standing_supported_bird_dog | **suspeito** — vira de frente para a câmera e abre os braços em T; perde o apoio na parede | ok | suspeito |
-| su_seated_air_row | **suspeito** — braços ficam esticados à frente; os cotovelos nunca puxam para trás (não é remada) | **suspeito** — braços ficam esticados à frente; os cotovelos nunca puxam para trás (não é remada) | suspeito |
-| su_seated_armrest_press_hold | ok | ok | ok |
-| su_seated_bent_t_raise | **suspeito** — braço sobe acima da cabeça (joinha) em vez de abrir em T para os lados | **suspeito** — braço sobe acima da cabeça em vez de abrir em T para os lados | suspeito |
-| su_seated_chair_grip_shrug_hold | ok | **suspeito** — solta o banco e mexe os braços no ar; deveria segurar o assento | suspeito |
-| su_seated_clasped_hands_squeeze | ok | **suspeito** — solta as mãos e leva os braços acima da cabeça; deveria manter as mãos entrelaçadas atrás | suspeito |
-| su_seated_diagonal_palm_press | ok | ok | ok |
-| su_seated_elbow_pull_back | **suspeito** — braços ficam esticados à frente; quase não puxa os cotovelos para trás | **suspeito** — punhos parados na frente do peito; os cotovelos não vão para trás | suspeito |
-| su_seated_elbow_squeeze_fly | ok | ok | ok |
-| su_seated_finger_spread_squeeze | ok | ok | ok |
-| su_seated_hammer_self_curl | faltando (só imagem) | faltando (só imagem) | faltando |
-| su_seated_leg_lift_curl | faltando (só imagem) | faltando (só imagem) | faltando |
-| su_seated_low_crossover | ok | ok | ok |
-| su_seated_palm_press_slide | ok | ok | ok |
-| su_seated_reverse_self_curl | faltando (só imagem) | faltando (só imagem) | faltando |
-| su_seated_scaption_raise | ok | faltando | faltando |
-| su_seated_self_resisted_palm_turn | ok | **suspeito** — leva a mão à boca no meio; o giro da palma não aparece | suspeito |
-| su_seated_table_edge_pull_hold | ok | ok | ok |
-| su_seated_towel_overhead_press | ok | ok | ok |
-| sumo_squat | ok | ok | ok |
-| superman | **suspeito** — faz flexão/"cobra" com as mãos no chão em vez de erguer braços e pernas; linhas verticais no canto | **suspeito** — faz flexão/prancha com as mãos no chão em vez de erguer braços e pernas | suspeito |
-| supported_split_squat | faltando (só imagem) | faltando (só imagem) | faltando |
-| towel_curl | faltando (só imagem) | faltando (só imagem) | faltando |
-| towel_pull_apart_hold | ok | ok | ok |
-| towel_wring | ok | ok | ok |
-| under_table_curl_hold | ok | ok | ok |
-| upward_palm_press_hold | ok | ok | ok |
-| wall_elbow_press_hold | ok | ok | ok |
-| wall_push_up | **suspeito** — dobra quadril e joelhos (agacha) em vez de manter o corpo reto | ok | suspeito |
-| seated_towel_press_up | faltando | faltando | faltando (não veio) |
-| downward_palm_press_hold | faltando | faltando | faltando (não veio) |
-| sl_supported_hip_hinge | faltando | faltando | faltando (não veio) |
+| slug                               | f                                                                                                                 | m                                                                                                        | status              |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ------------------- |
+| airplane_arm_hold                  | ok                                                                                                                | ok                                                                                                       | ok                  |
+| bal_chair_single_leg_hold          | ok                                                                                                                | ok                                                                                                       | ok                  |
+| bal_seated_arms_up_hold            | **suspeito** — hold que se mexe muito: braços balançam em vez de ficar parados no alto                            | **suspeito** — hold que se mexe muito: braços cruzam e descem, não ficam no alto                         | suspeito            |
+| bal_seated_head_turns              | **suspeito** — leva a mão ao queixo; giro de cabeça pouco visível                                                 | **suspeito** — leva a mão ao rosto; giro de cabeça pouco visível                                         | suspeito            |
+| bal_seated_knee_lift_hold          | **suspeito** — joelho quase não sobe (fica perto da cadeira)                                                      | ok                                                                                                       | suspeito            |
+| bal_seated_reach_outs              | ok                                                                                                                | ok                                                                                                       | ok                  |
+| bal_seated_trunk_control           | ok                                                                                                                | ok                                                                                                       | ok                  |
+| bal_seated_weight_shifts           | ok                                                                                                                | faltando                                                                                                 | faltando            |
+| bal_sit_to_stand_hold              | **suspeito** — "hold" vira movimento inteiro: levanta e senta de novo em 8 s                                      | **suspeito** — "hold" vira movimento inteiro: levanta e senta de novo em 8 s                             | suspeito            |
+| bal_supported_heel_toe_walk        | **suspeito** — não anda calcanhar-ponta: fica quase parado, pés arrastam                                          | **suspeito** — não anda calcanhar-ponta: fica quase parado                                               | suspeito            |
+| bal_supported_side_steps           | ok                                                                                                                | ok                                                                                                       | ok                  |
+| bal_supported_tandem_stance        | ok                                                                                                                | **suspeito** — postura deveria ser parada; no início dá um passo/levanta o joelho                        | suspeito            |
+| bird_dog                           | **suspeito** — câmera muda de zoom no meio (salto de enquadramento)                                               | ok                                                                                                       | suspeito            |
+| bodyweight_good_morning            | faltando (só imagem)                                                                                              | ok                                                                                                       | faltando            |
+| bodyweight_squat                   | ok                                                                                                                | ok                                                                                                       | ok                  |
+| bridge_pillow_squeeze              | **suspeito** — movimento errado: em vários quadros o tronco sobe quase sentado em vez da ponte de quadril         | faltando (só imagem)                                                                                     | suspeito + faltando |
+| chair_supported_squat              | ok                                                                                                                | ok                                                                                                       | ok                  |
+| crunch                             | ok                                                                                                                | ok                                                                                                       | ok                  |
+| dead_bug                           | ok                                                                                                                | ok                                                                                                       | ok                  |
+| dead_bug_heel_tap                  | ok                                                                                                                | ok                                                                                                       | ok                  |
+| door_frame_squat_hold              | ok                                                                                                                | ok                                                                                                       | ok                  |
+| doorframe_curl                     | faltando (só imagem)                                                                                              | faltando (só imagem)                                                                                     | faltando            |
+| doorframe_grip_hold                | ok                                                                                                                | ok                                                                                                       | ok                  |
+| doorframe_row                      | ok                                                                                                                | **suspeito** — solta o batente no meio (mãos no ar, corpo inclinado para trás sem apoio)                 | suspeito            |
+| fist_squeeze_hold                  | ok                                                                                                                | ok                                                                                                       | ok                  |
+| front_arm_hold                     | **suspeito** — hold que se mexe: braços vão da frente para os lados                                               | ok                                                                                                       | suspeito            |
+| glute_bridge                       | faltando (só imagem)                                                                                              | faltando (só imagem)                                                                                     | faltando            |
+| heel_dig_bridge                    | faltando (só imagem)                                                                                              | faltando (só imagem)                                                                                     | faltando            |
+| incline_plank                      | ok                                                                                                                | ok                                                                                                       | ok                  |
+| knee_push_up                       | **suspeito** — quadril empinado e quase não desce o peito                                                         | **suspeito** — deita e sobe com quadril alto (parece "cobra"), não é flexão de joelhos                   | suspeito            |
+| kneeling_side_plank                | ok                                                                                                                | ok                                                                                                       | ok                  |
+| low_step_up                        | **suspeito** — perna duplicada/transparente num trecho (artefato)                                                 | ok                                                                                                       | suspeito            |
+| partial_sit_to_stand               | **suspeito** — levanta por completo e balança os braços; deveria ser só metade do caminho                         | **suspeito** — levanta por completo; deveria ser só metade do caminho                                    | suspeito            |
+| partial_wall_sit                   | ok                                                                                                                | ok                                                                                                       | ok                  |
+| prone_back_extension               | ok                                                                                                                | ok                                                                                                       | ok                  |
+| prone_lat_pulldown                 | **suspeito** — braços apontam para o teto; deveria puxar os cotovelos para os lados do corpo                      | **suspeito** — braços apontam para o teto; deveria puxar os cotovelos para os lados do corpo             | suspeito            |
+| prone_t_raise                      | **suspeito** — braços sobem para o teto em vez de abrir em T para os lados                                        | **suspeito** — braços vão para a frente (tipo "super-homem"), não abrem em T                             | suspeito            |
+| prone_w_raise                      | ok                                                                                                                | **suspeito** — braços apontam para o teto em vez de formar o W junto ao corpo                            | suspeito            |
+| rx_high_box_squat                  | ok                                                                                                                | ok                                                                                                       | ok                  |
+| rx_low_step_up                     | faltando (só imagem)                                                                                              | faltando (só imagem)                                                                                     | faltando            |
+| scapular_squeeze                   | ok                                                                                                                | ok                                                                                                       | ok                  |
+| seated_arms_back_lift              | ok                                                                                                                | **suspeito** — braços sobem por cima da cabeça em vez de ir para trás                                    | suspeito            |
+| seated_crunch_brace                | ok                                                                                                                | ok                                                                                                       | ok                  |
+| seated_elbow_drive                 | ok                                                                                                                | ok                                                                                                       | ok                  |
+| seated_lean_back_hold              | ok                                                                                                                | ok                                                                                                       | ok                  |
+| seated_scapular_dip                | ok                                                                                                                | ok                                                                                                       | ok                  |
+| seated_side_bend                   | ok                                                                                                                | ok                                                                                                       | ok                  |
+| seated_towel_row_hold              | ok                                                                                                                | ok                                                                                                       | ok                  |
+| seated_w_squeeze                   | **suspeito** — braços esticados à frente; deveria dobrar os cotovelos em W e apertar as escápulas                 | ok                                                                                                       | suspeito            |
+| self_resisted_curl                 | faltando (só imagem)                                                                                              | faltando (só imagem)                                                                                     | faltando            |
+| self_resisted_wrist_extension      | ok                                                                                                                | ok                                                                                                       | ok                  |
+| self_resisted_wrist_flexion        | ok                                                                                                                | ok                                                                                                       | ok                  |
+| sf_seated_back_arch_reach          | faltando (só imagem)                                                                                              | faltando                                                                                                 | faltando            |
+| sf_seated_hip_hinge_lift           | ok                                                                                                                | ok                                                                                                       | ok                  |
+| single_leg_balance                 | ok                                                                                                                | ok                                                                                                       | ok                  |
+| sit_to_stand                       | ok                                                                                                                | ok                                                                                                       | ok                  |
+| sl_seated_abdominal_thigh_press    | ok                                                                                                                | faltando (só imagem)                                                                                     | faltando            |
+| sl_seated_backrest_press_hold      | ok                                                                                                                | ok                                                                                                       | ok                  |
+| sl_seated_cross_knee_press_hold    | ok                                                                                                                | ok                                                                                                       | ok                  |
+| sl_seated_crossed_ankle_curl_press | ok                                                                                                                | ok                                                                                                       | ok                  |
+| sl_seated_feet_hover_hold          | ok                                                                                                                | **suspeito** — hold que se mexe: os pés sobem e descem em vez de ficarem suspensos                       | suspeito            |
+| sl_seated_heel_back_kicks          | ok                                                                                                                | ok                                                                                                       | ok                  |
+| sl_seated_heel_dig_hold            | ok                                                                                                                | ok                                                                                                       | ok                  |
+| sl_seated_heel_slides              | faltando (só imagem)                                                                                              | faltando                                                                                                 | faltando            |
+| sl_seated_knee_reach_crunch        | ok                                                                                                                | ok                                                                                                       | ok                  |
+| sl_seated_pelvic_tuck              | ok                                                                                                                | ok                                                                                                       | ok                  |
+| sl_seated_shin_rotation_control    | ok                                                                                                                | ok                                                                                                       | ok                  |
+| sl_seated_towel_heel_drag          | faltando (só imagem)                                                                                              | faltando                                                                                                 | faltando            |
+| standing_oblique_crunch            | ok                                                                                                                | ok                                                                                                       | ok                  |
+| standing_supported_bird_dog        | **suspeito** — vira de frente para a câmera e abre os braços em T; perde o apoio na parede                        | ok                                                                                                       | suspeito            |
+| su_seated_air_row                  | **suspeito** — braços ficam esticados à frente; os cotovelos nunca puxam para trás (não é remada)                 | **suspeito** — braços ficam esticados à frente; os cotovelos nunca puxam para trás (não é remada)        | suspeito            |
+| su_seated_armrest_press_hold       | ok                                                                                                                | ok                                                                                                       | ok                  |
+| su_seated_bent_t_raise             | **suspeito** — braço sobe acima da cabeça (joinha) em vez de abrir em T para os lados                             | **suspeito** — braço sobe acima da cabeça em vez de abrir em T para os lados                             | suspeito            |
+| su_seated_chair_grip_shrug_hold    | ok                                                                                                                | **suspeito** — solta o banco e mexe os braços no ar; deveria segurar o assento                           | suspeito            |
+| su_seated_clasped_hands_squeeze    | ok                                                                                                                | **suspeito** — solta as mãos e leva os braços acima da cabeça; deveria manter as mãos entrelaçadas atrás | suspeito            |
+| su_seated_diagonal_palm_press      | ok                                                                                                                | ok                                                                                                       | ok                  |
+| su_seated_elbow_pull_back          | **suspeito** — braços ficam esticados à frente; quase não puxa os cotovelos para trás                             | **suspeito** — punhos parados na frente do peito; os cotovelos não vão para trás                         | suspeito            |
+| su_seated_elbow_squeeze_fly        | ok                                                                                                                | ok                                                                                                       | ok                  |
+| su_seated_finger_spread_squeeze    | ok                                                                                                                | ok                                                                                                       | ok                  |
+| su_seated_hammer_self_curl         | faltando (só imagem)                                                                                              | faltando (só imagem)                                                                                     | faltando            |
+| su_seated_leg_lift_curl            | faltando (só imagem)                                                                                              | faltando (só imagem)                                                                                     | faltando            |
+| su_seated_low_crossover            | ok                                                                                                                | ok                                                                                                       | ok                  |
+| su_seated_palm_press_slide         | ok                                                                                                                | ok                                                                                                       | ok                  |
+| su_seated_reverse_self_curl        | faltando (só imagem)                                                                                              | faltando (só imagem)                                                                                     | faltando            |
+| su_seated_scaption_raise           | ok                                                                                                                | faltando                                                                                                 | faltando            |
+| su_seated_self_resisted_palm_turn  | ok                                                                                                                | **suspeito** — leva a mão à boca no meio; o giro da palma não aparece                                    | suspeito            |
+| su_seated_table_edge_pull_hold     | ok                                                                                                                | ok                                                                                                       | ok                  |
+| su_seated_towel_overhead_press     | ok                                                                                                                | ok                                                                                                       | ok                  |
+| sumo_squat                         | ok                                                                                                                | ok                                                                                                       | ok                  |
+| superman                           | **suspeito** — faz flexão/"cobra" com as mãos no chão em vez de erguer braços e pernas; linhas verticais no canto | **suspeito** — faz flexão/prancha com as mãos no chão em vez de erguer braços e pernas                   | suspeito            |
+| supported_split_squat              | faltando (só imagem)                                                                                              | faltando (só imagem)                                                                                     | faltando            |
+| towel_curl                         | faltando (só imagem)                                                                                              | faltando (só imagem)                                                                                     | faltando            |
+| towel_pull_apart_hold              | ok                                                                                                                | ok                                                                                                       | ok                  |
+| towel_wring                        | ok                                                                                                                | ok                                                                                                       | ok                  |
+| under_table_curl_hold              | ok                                                                                                                | ok                                                                                                       | ok                  |
+| upward_palm_press_hold             | ok                                                                                                                | ok                                                                                                       | ok                  |
+| wall_elbow_press_hold              | ok                                                                                                                | ok                                                                                                       | ok                  |
+| wall_push_up                       | **suspeito** — dobra quadril e joelhos (agacha) em vez de manter o corpo reto                                     | ok                                                                                                       | suspeito            |
+| seated_towel_press_up              | faltando                                                                                                          | faltando                                                                                                 | faltando (não veio) |
+| downward_palm_press_hold           | faltando                                                                                                          | faltando                                                                                                 | faltando (não veio) |
+| sl_supported_hip_hinge             | faltando                                                                                                          | faltando                                                                                                 | faltando (não veio) |
 
 Os exercícios de chão ficam pequenos no quadro 9:16. Isso é do formato, não é defeito.
 
 ### Teste no app (build de dev, web) e prints
+
 Rodei `node scripts/shoot-media.mjs` com 10 exercícios, em dois perfis: mulher 60+ e homem.
+
 - **Sentados:** su_seated_towel_overhead_press, bal_seated_reach_outs, sl_seated_heel_dig_hold.
 - **Chão:** dead_bug, incline_plank, prone_back_extension.
 - **Em pé:** sumo_squat, single_leg_balance, low_step_up, wall_push_up.
 
 O script confere sozinho:
+
 - o clipe e o pôster são do sexo do perfil;
 - o pôster aparece antes do play;
 - "Outro lado" espelha os unilaterais (dead_bug, heel_dig, single_leg_balance, low_step_up);
@@ -2586,21 +2608,25 @@ O script confere sozinho:
 - a Biblioteca mostra as miniaturas do sexo certo.
 
 Prints: `docs/screenshots/media/`, por exemplo:
+
 - `woman-60-dead_bug.jpg` e `woman-60-dead_bug-other-side.jpg`;
 - `woman-60-wall_push_up.jpg`;
 - `man-low_step_up-other-side.jpg`;
 - `woman-60-library.jpg` e `man-library.jpg`.
 
 Limites deste teste:
+
 - O Chromium daqui não toca H.264, então os prints mostram o pôster (o estado "antes do play"). O vídeo rodando precisa ser visto no celular com o build de dev.
 - **Adolescente:** no web o app é só para adultos desde a Fase 24. Por isso a regra do adolescente (clipe adulto do próprio sexo, com pôster; sem clipe do sexo = "demo em breve") está coberta por teste unitário, e não por print.
 
 ### Como testar
+
 - `npx expo start` com o build de dev no celular. Perfil mulher → abra Dead bug: aparece o pôster, depois o vídeo; toque "Outro lado". Troque para um perfil homem e confira o clipe masculino.
 - Abra Wall push-up com perfil mulher: deve aparecer "demo em breve".
 - Checagens: `npm test`, `npm run lint`, `npx tsc --noEmit`, `npm run bundle:check`, `npm run security:check` e `node scripts/shoot-media.mjs`.
 
 ### Perguntas
+
 1. **Os 38 nomes automáticos:** vários parecem ser justamente clipes que faltam (biceps curl, hammer curl, towel foot curl, supported split squat, seated leg lift…). **Recomendo que o Moacir exporte de novo com o slug certo** em vez de eu adivinhar o slug pelo nome. Ou você prefere que eu proponha um mapa nome → slug para você aprovar?
 2. **Rigor do QC:** marquei 40 suspeitos, contando os casos "movimento errado para o nome" (ex.: remada com os braços parados, T que vira braço para cima). **Recomendo manter esse rigor**, porque o vídeo ensina o movimento. Ou você prefere liberar os casos leves (ex.: bal_seated_head_turns, front_arm_hold.f) até o Moacir refazer?
 3. **As 11 imagens soltas na raiz do repositório** (de 25/09): **recomendo apagar** (são sobras com nome automático). Posso?
@@ -2608,6 +2634,7 @@ Limites deste teste:
 ## Mídia 1 — Respostas do Daniel
 
 ### Feito
+
 - **Mapa dos nomes automáticos** (proposta, nada importado ainda): `docs/media-auto-map.md`. A tabela tem as colunas arquivo | slug | sexo | confiança, e um quadro de cada está em `docs/screenshots/media/auto-names.jpg`.
   - **Proponho mapear 10 vídeos:** `doorframe_curl`, `supported_split_squat` e `towel_curl` (confiança alta), mais `self_resisted_curl` e `su_seated_leg_lift_curl` (confiança média), mulher e homem em cada.
   - **Não mapeio os outros 28:** 4 cópias antigas, 7 vídeos com dúvida (curls em pé cujo exercício no seed é sentado, e um step-up ambíguo), 1 vídeo de crunch que já tem clipe no app e 16 imagens sem vídeo.
@@ -2620,10 +2647,12 @@ Limites deste teste:
   - Os três vídeos do homem que o Flow recusou no lote 4 (`sl_seated_clamshell`, `sl_seated_glute_squeeze_hold`, `sl_seated_knee_out_press_hold`) já estão na lista como faltando.
 
 ### Próximo
+
 - **Mapa:** quando você aprovar (tudo ou parte), eu restauro esses arquivos do histórico com o nome do slug e passo pelo mesmo import e pelo mesmo QC.
 - **Lote 4:** quando você subir, rodo o import, o QC, `npm run prototype:videos` e `npm run media:redo`.
 
 ### Pergunta
+
 1. **Aprova os 10 do mapa?** Recomendo aprovar todos. Os de confiança média ainda passam pelo QC, e se o movimento não bater eles caem como suspeitos.
 
 ## Mídia 1 — Mapa aprovado: import e QC dos 10 vídeos
@@ -2631,13 +2660,13 @@ Limites deste teste:
 - Restaurei do histórico os 10 vídeos aprovados em `docs/media-auto-map.md`, já com o nome do slug, e passei pelo mesmo import e pelo mesmo QC.
 - **Resultado:** 5 ok, 5 suspeitos. Os suspeitos ficam fora do app e entraram na `docs/media-redo.md`.
 
-| slug | f | m |
-|---|---|---|
-| towel_curl | ok | ok |
-| self_resisted_curl | ok | ok |
-| supported_split_squat | ok | **suspeito:** desce até o joelho quase tocar o chão; o exercício pede descer só um pouco |
-| doorframe_curl | **suspeito:** solta o batente e dobra os braços no ar; o corpo não é puxado até o batente | **suspeito:** solta o batente e dobra os braços no ar, inclinado para trás sem apoio |
-| su_seated_leg_lift_curl | **suspeito:** a perna não sobe e as mãos não seguram a coxa; vira rosca de braço no ar | **suspeito:** a perna sobe, mas as mãos não seguram a coxa; faz rosca de braço no ar |
+| slug                    | f                                                                                         | m                                                                                        |
+| ----------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| towel_curl              | ok                                                                                        | ok                                                                                       |
+| self_resisted_curl      | ok                                                                                        | ok                                                                                       |
+| supported_split_squat   | ok                                                                                        | **suspeito:** desce até o joelho quase tocar o chão; o exercício pede descer só um pouco |
+| doorframe_curl          | **suspeito:** solta o batente e dobra os braços no ar; o corpo não é puxado até o batente | **suspeito:** solta o batente e dobra os braços no ar, inclinado para trás sem apoio     |
+| su_seated_leg_lift_curl | **suspeito:** a perna não sobe e as mãos não seguram a coxa; vira rosca de braço no ar    | **suspeito:** a perna sobe, mas as mãos não seguram a coxa; faz rosca de braço no ar     |
 
 - **App:** 130 clipes em 75 exercícios; 45 suspeitos ficam fora.
 - **Lista de refazer:** caiu de 83 para 78 clipes (58 de exercícios sem nenhum sexo, 20 de exercícios com só um).
@@ -2651,19 +2680,20 @@ Três commits, na ordem pedida: A (`23cc4c9`), B (`0a9b2c1`) e C (`7e5426b`), ma
 
 "Primeira série" = a primeira série com repetições registrada. As contagens regressivas do aquecimento continuam existindo; elas só não pedem mais toque.
 
-| Caminho | Modo | Antes | Depois | Meta |
-|---|---|---|---|---|
-| Abrir o app → primeira série (com plano) | adulto | 7 toques, 3 telas (Home → prévia → player) | **2 toques**, 2 telas | ≤ 3 ✅ |
-| | adolescente | 9 toques, 3 telas | **2 toques**, 2 telas | ≤ 3 ✅ |
-| | 60+ | 9 toques, 3 telas | **2 toques**, 2 telas | ≤ 3 ✅ |
-| Instalar → primeiro exercício | todos | ~27 toques; 9 telas (boas-vindas, idade, entrevista com 4 passos, segurança, resumo, mapa do corpo, metas, prévia); 11 perguntas | **17 a 20 toques**; 5 telas até o player (boas-vindas, idade, entrevista com 3 passos, segurança) | ≤ 6 perguntas antes do treino (ver abaixo) |
-| | tempo estimado | 2 a 3 min | ~60 a 75 s (3–4 s por toque) | < 90 s ✅ (estimado; ver "Medir") |
-| Trocar um exercício | todos | 2 toques | **2 toques** ("Trocar" + a opção) | ≤ 2 ✅ |
-| Terminar o treino | todos | 0 toque no fim, mas cada item do desaquecimento pedia "Iniciar" + "Feito" (6–7 toques) | **0 toque**: o desaquecimento corre sozinho e abre a tela final | ≤ 1 ✅ |
+| Caminho                                  | Modo           | Antes                                                                                                                            | Depois                                                                                            | Meta                                       |
+| ---------------------------------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| Abrir o app → primeira série (com plano) | adulto         | 7 toques, 3 telas (Home → prévia → player)                                                                                       | **2 toques**, 2 telas                                                                             | ≤ 3 ✅                                     |
+|                                          | adolescente    | 9 toques, 3 telas                                                                                                                | **2 toques**, 2 telas                                                                             | ≤ 3 ✅                                     |
+|                                          | 60+            | 9 toques, 3 telas                                                                                                                | **2 toques**, 2 telas                                                                             | ≤ 3 ✅                                     |
+| Instalar → primeiro exercício            | todos          | ~27 toques; 9 telas (boas-vindas, idade, entrevista com 4 passos, segurança, resumo, mapa do corpo, metas, prévia); 11 perguntas | **17 a 20 toques**; 5 telas até o player (boas-vindas, idade, entrevista com 3 passos, segurança) | ≤ 6 perguntas antes do treino (ver abaixo) |
+|                                          | tempo estimado | 2 a 3 min                                                                                                                        | ~60 a 75 s (3–4 s por toque)                                                                      | < 90 s ✅ (estimado; ver "Medir")          |
+| Trocar um exercício                      | todos          | 2 toques                                                                                                                         | **2 toques** ("Trocar" + a opção)                                                                 | ≤ 2 ✅                                     |
+| Terminar o treino                        | todos          | 0 toque no fim, mas cada item do desaquecimento pedia "Iniciar" + "Feito" (6–7 toques)                                           | **0 toque**: o desaquecimento corre sozinho e abre a tela final                                   | ≤ 1 ✅                                     |
 
 Os caminhos de 3 toques, da troca e do fim viraram testes automáticos (`src/features/home/phase27-simple.test.tsx`).
 
 **Sobre as "6 perguntas":** contando por tela, agora são 5 blocos antes do treino:
+
 1. quem é + data de nascimento;
 2. objetivo;
 3. local, minutos e dias;
@@ -2673,6 +2703,7 @@ Os caminhos de 3 toques, da troca e do fim viraram testes automáticos (`src/fea
 Contando campo por campo, ainda são uns 10. Não tirei nada da segurança. O foco muscular e o resumo saíram de antes do treino: o foco agora é escolhido depois, na aba Corpo, e o resumo continua acessível pela prévia. Ver pergunta 1.
 
 ### A. Simples — feito
+
 - **Home com uma ação só:**
   - No topo, o botão grande "Treinar agora · Glúteos e Peito médio · 39 min" abre o player direto.
   - "Ver treino" é um link pequeno.
@@ -2702,6 +2733,7 @@ Contando campo por campo, ainda são uns 10. Não tirei nada da segurança. O fo
   - "Sinto dor" fica no topo, em todo passo.
 
 ### B. Sexy — feito
+
 - **O mapa que acende:**
   - Na tela final, os músculos trabalhados acendem um a um: 150 ms entre eles, pulso coral e vibração leve em cada. Termina com "5 músculos · 42 min" e "Você acendeu todos eles hoje."
   - Aparecem frente e costas lado a lado.
@@ -2724,6 +2756,7 @@ Contando campo por campo, ainda são uns 10. Não tirei nada da segurança. O fo
   - Teste: nenhuma frase de culpa nos 3 idiomas.
 
 ### C. Surpreendente — feito
+
 - **Motor de Momentos:** local, determinístico e testado (`src/features/moments`). São 16 tipos:
   - primeiro treino, primeiro de costas, primeira mobilidade curta, primeira semana completa;
   - músculo novo no mapa, todas as costas acesas no mês;
@@ -2748,7 +2781,9 @@ Contando campo por campo, ainda são uns 10. Não tirei nada da segurança. O fo
   - RLS com WITH CHECK igual à do progresso; teste SQL com troca de usuário (`supabase/tests/local/moments.sql`, passa no `db:test`); sync; `server:check`; lista de migrações na `launch-readiness`.
 
 ### Medir
+
 Eventos locais e anônimos, só contagens:
+
 - `first_set_logged` (toques até a primeira série);
 - `first_exercise_started` (instalação → primeiro exercício, em faixas de tempo);
 - `app_returned` (dia 7 e dia 30);
@@ -2757,6 +2792,7 @@ Eventos locais e anônimos, só contagens:
 Os treinos por semana já vinham de `workout_completed`. **Os números reais de tempo só aparecem com gente usando o app** (PostHog). Os tempos da tabela são estimados pela contagem de toques.
 
 ### Prints (`docs/screenshots/three-s/<modo>/<idioma>-*.jpg`)
+
 - Para cada modo (adolescente, adulto, 60+) e idioma (en, es, pt-BR):
   - Home;
   - player;
@@ -2771,6 +2807,7 @@ Os treinos por semana já vinham de `workout_completed`. **Os números reais de 
 - Encontrei e corrigi pelos prints: no 60+, "COMEÇAR" quebrava no meio da palavra no botão grande.
 
 ### Como testar
+
 - **No celular (build de dev):**
   1. Home → "Treinar agora" abre o player.
   2. Espere o aquecimento correr sozinho e toque "Feito".
@@ -2781,12 +2818,107 @@ Os treinos por semana já vinham de `workout_completed`. **Os números reais de 
 - **E2E:** os fluxos Maestro foram atualizados para o onboarding novo (o primeiro treino abre sozinho).
 
 ### O que ficou de fora
+
 - **"Primeiro exercício no chão":** o seed não tem uma marca de "no chão" (as posições são em pé, com apoio e sentado). Não inventei a marca no código; troquei por "primeira mobilidade curta".
 - **Momento de aniversário:** o app só sabe o mês de nascimento, então é "Feliz mês de aniversário", no primeiro dia de uso do mês.
 - **Momentos de data na Home do 60+:** não entram, para manter só 3 coisas na tela. Os Momentos da tela final valem para o 60+ normalmente.
 - **Vibração e animação de verdade:** só dá para sentir no celular. No web a vibração não existe e o print mostra a animação em quadros.
 
 ### Perguntas
+
 1. **Onboarding:** hoje são 5 telas e cerca de 10 campos antes do primeiro treino, com a segurança inteira. Para chegar a 6 perguntas contando campo por campo, a opção seria perguntar "dias por semana" e "sexo do corpo" depois do primeiro treino (padrão de 3 dias; o sexo é perguntado pela demo quando precisar). **Recomendo aceitar a contagem por tela**, porque as perguntas de segurança não devem ir para depois do treino. Ou prefere que eu adie esses dois campos?
 2. **Primeiro treino depois do onboarding:** agora ele abre o player direto, com o aquecimento já correndo. **Recomendo manter.** A outra opção é abrir a prévia uma única vez, só no primeiro treino, para a pessoa ver o que vem (+1 toque).
 3. **Frequência dos Momentos:** fiz cerca de 1 a cada 3 treinos, com os marcos grandes sempre. **Recomendo manter e rever com os números de `moment_shown`** depois do teste com usuários. A outra opção é deixar mais raro (1 a cada 4).
+
+## Fase 28 — Compartilhar bonito (cards, adesivos, print inteligente e conquistas)
+
+Commits: A (motor dos cards), B (entradas), C (print inteligente), D (link, página pública e deep link), E (idades, Configurações, prints e este relatório).
+
+### O que foi feito
+
+- **A. Motor de cards:**
+  - Um componente só (`ShareCard`) desenha 8 modelos fora da tela e gera PNG em 1080×1920 (Stories) ou 1080×1350 (feed).
+  - 3 fundos: claro (coral suave), escuro e transparente (adesivo).
+  - Rodapé: a marca TapStrong discreta e o link curto `tapstrong.app/c/<código>` (8 letras, sem letras parecidas). O nome só aparece com "Mostrar meu nome" ligado, e nunca o de um menor.
+  - Nunca entra no card: foto, peso, medidas, IMC, local, horário exato, dor, restrição ou nome de menor. Um teste varre os dados de todos os modelos; o banco também recusa esses campos.
+  - Botões: Stories do Instagram (direto com o App ID do Facebook; sem ele, a folha do sistema), WhatsApp, Salvar na galeria, Mais… e, no adesivo, Copiar adesivo.
+  - Salvar na galeria pede só a permissão de **gravar** fotos; o app nunca lê a galeria.
+- **B. Os modelos e onde aparecem:**
+  - Treino feito (tela final e histórico do dia);
+  - Adesivo (só o mapa aceso com 2 números);
+  - Músculo do dia;
+  - Ficha do exercício ("Salvar ficha" na tela do exercício e um botão em cada item da biblioteca);
+  - Conquista (o "Compartilhar" dos Momentos abre o card);
+  - Minha semana (e o marco da sequência);
+  - Meu mês ("Compartilhar meu mês" no resumo do mês);
+  - Comparação divertida: panda, piano, cavalo, carro, elefante, ônibus e baleia, arredondado para meio e só com carga registrada.
+- **C. Print inteligente:**
+  - Só em 5 telas: fim do treino, exercício, mapa do corpo, marco e resumo do mês.
+  - Barrinha por 5 s: "Quer uma versão bonita para postar?" [Criar card] [x]. "Criar card" abre o modelo daquela tela.
+  - No máximo 1 por sessão. Depois de 3 "x" seguidos, para (volta em Configurações).
+  - Nunca para menores, nunca sem permissão de compartilhar, nunca com as ofertas desligadas.
+  - Nada bloqueia o print (sem FLAG_SECURE, com teste).
+  - iPhone e Android 14+; no Android mais antigo não aparece, porque exigiria permissão de ler a galeria.
+- **D. Link e página pública:**
+  - Tabela `share_links`: código, modelo, dados do card, dono e contagem de aberturas.
+  - RLS: só o dono (ou responsável) vê e apaga. Só adultos e 60+ criam, pela idade do servidor. Ninguém altera a contagem. No máximo 100 links novos por dia por perfil. Apagar a conta apaga os links.
+  - Teste SQL com troca de usuário.
+  - A página `/c/<código>` mostra o card, "Treine com o TapStrong" e os botões das lojas.
+    - Não indexa (noindex) e não tem contador visível.
+    - Ela lê pela função `share-link`, sem login, com limite por IP (300 por dia; o IP é guardado só como hash).
+    - Um link feito à mão não consegue pôr texto próprio na página: tudo é reconstruído só com músculos, exercícios e números conhecidos.
+  - No app, o link da ficha abre direto o exercício.
+  - O link também carrega o convite do dono, na regra atual que você manteve: 1 semana para cada um depois do primeiro treino, no máximo 4 por ano.
+  - Eventos: `share_opened` (modelo e origem: botão ou print), `share_completed` (destino), `share_link_opened`, `referral_signup`, e ainda `share_offer_shown` e `share_offer_declined`.
+- **E. Idades e privacidade:**
+  - **Menores:** só Músculo do dia, Treino feito (sem carga), Adesivo e Conquistas de hábito, e só com o `canShare` do responsável. Sem nome, sem link, sem convite, sem página pública e sem barrinha de print.
+  - **60+:** os mesmos modelos dos adultos, letras 15% maiores e WhatsApp como primeiro botão.
+  - **Configurações → Treino:** "Mostrar meu nome nos cards" (desligado por padrão) e "Nunca mostrar ofertas de compartilhar". As duas só aparecem para adultos e 60+.
+  - Compartilhar nunca libera nada. Sem localização, nunca.
+
+### Prints (`docs/screenshots/share-cards/`)
+
+- Cada modelo em pt-BR, Stories e feed, nos 3 fundos: `<modelo>-<story|feed>-<light|dark|sticker>.jpg`. O adesivo aparece em cima de uma foto de exemplo sem pessoa (`scripts/fixtures/sample-photo.jpg`).
+- A tela de compartilhar nos 3 modos: `composer-teen.jpg`, `composer-adult.jpg`, `composer-senior.jpg`.
+- Script: `node scripts/shoot-share-cards.mjs`.
+  - Desenha os 8 modelos × 3 fundos × 3 idiomas × 2 formatos, em letra de adulto e de 60+ (288 cards).
+  - Falha se algum texto for cortado ou sair do card.
+  - Os que não entram no relatório vão para uma pasta temporária.
+
+### Como testar
+
+- **No celular (build de dev, precisa de build novo por causa dos módulos nativos):**
+  1. Termine um treino → "Compartilhar": troque modelo, fundo e formato e mande para o WhatsApp ou salve na galeria.
+  2. Abra um exercício → "Salvar ficha".
+  3. Tire print na tela final: a barrinha aparece uma vez.
+  4. Feche 3 vezes (reabrindo o app): ela para. Ligue de novo em Configurações → Treino.
+  5. Num perfil de adolescente sem permissão, nenhum botão de compartilhar aparece.
+- **Checagens:** `npm test`, `npm run lint`, `npx tsc --noEmit`, `npm run functions:check`, `npm run db:test`, `npm run security:check`.
+
+### O que ficou de fora
+
+- **"7 dias para os dois, 5 por mês":** não implementei. Mantive a regra atual (1 semana cada, depois do primeiro treino, até 4 por ano), como você decidiu.
+- **Imagem pública do card:** a página desenha o card a partir dos dados; não guardamos PNG no servidor (não precisa de bucket e não há imagem para apagar). A prévia do link no WhatsApp/Instagram mostra só o título, sem imagem.
+- **Link de quem ainda não salvou a conta:** o card sai com o link, mas ele só abre o card depois que a conta é salva (os dados sobem no sync). Antes disso, a página mostra "Este card não está mais aqui" e o convite para baixar.
+- **Print no Android 13 ou mais antigo:** não detectado (precisaria ler a galeria).
+- **Adolescente com conta própria (sem plano Família):** segue a regra que já existia, que permite compartilhar (só os modelos de menor, sem nome e sem link). O "desligado até o responsável ligar" vale para o adolescente do plano Família.
+
+### O que você precisa fazer
+
+1. **Facebook App ID:** criar em developers.facebook.com (tipo "Consumer", grátis) e pôr em `EXPO_PUBLIC_FACEBOOK_APP_ID` no EAS. Sem ele, o botão do Instagram abre a folha do sistema.
+2. **Migração e função:**
+   - `supabase db push` (aplica `20261022000000_share_links.sql`);
+   - `supabase functions deploy share-link --no-verify-jwt`;
+   - `npm run server:check`.
+3. **Domínio `tapstrong.app`:**
+   - Publicar a versão web com a regra `/c/*` → `c/[code].html` (e `/r/*` → `r/[code].html`).
+   - Pôr os dois arquivos de `docs/domain/.well-known/` no domínio, trocando `TEAMID` e a impressão digital da chave do Play.
+   - O `app.json` já pede os links.
+   - Tudo isso está na `launch-readiness`, item 19.
+4. **Lojas:** depois de publicar, `EXPO_PUBLIC_APP_STORE_URL` e `EXPO_PUBLIC_PLAY_STORE_URL` fazem os botões aparecerem na página.
+
+### Perguntas
+
+1. **Prévia do link no WhatsApp:** hoje a página não gera imagem de prévia (og:image). **Recomendo deixar assim no lançamento**, porque a imagem já vai junto no compartilhamento. A outra opção é gerar a imagem no servidor, o que exige um serviço de renderização a mais.
+2. **Botão "Salvar ficha" em cada item da biblioteca:** pus um ícone discreto ao lado da estrela. **Recomendo manter.** A outra opção é deixar só na tela do exercício, para a lista ficar mais limpa.
+3. **Adolescente com conta própria:** **recomendo manter a regra atual** (pode compartilhar os modelos de menor, sem nome e sem link). A outra opção é desligar por padrão também para ele, igual ao adolescente do plano Família.
