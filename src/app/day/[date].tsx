@@ -16,6 +16,7 @@ import {
   useGeneratorInput,
 } from '@/features/workout/hooks';
 import { useWorkoutStore } from '@/features/workout/store';
+import { openShare, useCanShare } from '@/features/share/open';
 import type { WorkoutRecord } from '@/features/workout/types';
 import { restFor, usePrefsStore } from '@/features/settings/store';
 import { clock } from '@/lib/clock';
@@ -40,6 +41,7 @@ export default function DayScreen() {
   const date = validDate(param) ? param : localDate(clock.now());
   const library = useExerciseLibrary();
   const workouts = useWorkoutStore((s) => s.workouts);
+  const shareOk = useCanShare('workout');
   const today = localDate(clock.now());
   const daysPerWeek = useTrainingDaysPerWeek();
   // A future day previews the plan day it will be (QA R4-08): every planned
@@ -124,6 +126,14 @@ export default function DayScreen() {
             </View>
           );
         })}
+        {shareOk && (w.status === 'done' || w.status === 'partial') ? (
+          // A past workout makes a card too (Phase 28, B1: "the end screen and history").
+          <Button
+            variant="ghost"
+            label={t('day.share')}
+            onPress={() => openShare({ template: 'workout', workout: w.id })}
+          />
+        ) : null}
       </Card>
     );
   };

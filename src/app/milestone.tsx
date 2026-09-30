@@ -8,6 +8,7 @@ import { useAccountStore } from '@/features/account/store';
 import { activeProfile, canShare, useFamilyStore } from '@/features/family/store';
 import { modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
+import { openShare } from '@/features/share/open';
 import { badgeStatus, VOLUME_STEPS, type BadgeKey } from '@/features/workout/badges';
 import { repairPhaseDone } from '@/features/movement/progress';
 import { useMovementPainStore } from '@/features/movement/store';
@@ -177,7 +178,7 @@ export default function MilestoneScreen() {
             label={t('milestone.share')}
             onPress={() => {
               update({ milestone: null });
-              router.replace('/share');
+              openShare({ template: 'week' }, true);
             }}
           />
         ) : null}

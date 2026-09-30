@@ -4819,7 +4819,8 @@
     "preview": "Vista previa",
     "noPreview": "Todavía no se puede preparar una sesión para este día.",
     "restTitle": "Día de descanso",
-    "restBody": "Tu plan deja este día libre. Una sesión corta de movilidad igual cuenta para tu racha."
+    "restBody": "Tu plan deja este día libre. Una sesión corta de movilidad igual cuenta para tu racha.",
+    "share": "Compartir este entrenamiento"
   },
   "program": {
     "day": {
@@ -4988,7 +4989,8 @@
     "showAll": "Ver los {{count}}",
     "notReviewed": "No revisado por un entrenador",
     "hideNotForYou": "Ocultar los ejercicios que no son para ti",
-    "showMore": "Ver {{count}} más"
+    "showMore": "Ver {{count}} más",
+    "saveCard": "Guardar ficha: {{name}}"
   },
   "exercise": {
     "guidance": "Guía",
@@ -5012,7 +5014,8 @@
     "notForYou": "Ahora no es para ti: {{reason}}.",
     "delete": "Eliminar este ejercicio",
     "labelled": "{{label}}: {{list}}",
-    "notFound": "Ejercicio no encontrado. Puede que se haya quitado de la biblioteca."
+    "notFound": "Ejercicio no encontrado. Puede que se haya quitado de la biblioteca.",
+    "saveCard": "Guardar ficha"
   },
   "mistakes": {
     "horizontal_push": "Arquear la zona lumbar o dejar caer la cadera. Abrir los codos hacia los lados.",
@@ -5254,7 +5257,8 @@
     "monthsRow": "{{from}} – {{to}} · {{count}} entrenamientos",
     "notificationTitle": "Tu mes está cerrado 🎉",
     "notificationBody": "Mira tu resumen y tu próximo mes.",
-    "strengthLine": "{{exercise}}: {{from}} → {{to}}"
+    "strengthLine": "{{exercise}}: {{from}} → {{to}}",
+    "share": "Compartir mi mes"
   },
   "moments": {
     "eyebrow": "Un momento",

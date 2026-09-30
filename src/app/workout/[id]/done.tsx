@@ -5,6 +5,7 @@ import { useWindowDimensions, View } from 'react-native';
 
 import { AppText, Button, Card, Icon, Notice, Screen } from '@/components/ui';
 import { MomentCard } from '@/features/moments/MomentCard';
+import { openShare } from '@/features/share/open';
 import { useMoment } from '@/features/moments/useMoment';
 import { RatePainButtons } from '@/features/movement/Entry';
 import type { BodySex } from '@/features/bodymap/images';
@@ -132,7 +133,7 @@ export default function DoneScreen() {
                 <Button
                   variant="secondary"
                   label={t('workout.done.share')}
-                  onPress={() => router.push('/share')}
+                  onPress={() => openShare({ template: 'workout', workout: workout?.id })}
                 />
               </View>
             ) : null}

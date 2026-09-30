@@ -13,6 +13,7 @@ import { useMonthStore } from '@/features/month/store';
 import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { useProgressStore } from '@/features/progress/store';
+import { openShare, useCanShare } from '@/features/share/open';
 import { useExerciseLibrary, useGeneratorInput } from '@/features/workout/hooks';
 import { useWorkoutStore } from '@/features/workout/store';
 import { track } from '@/lib/analytics';
@@ -37,6 +38,7 @@ export default function MonthScreen() {
   const seniorPhotos = useProgressStore((s) => s.seniorPhotos);
   const repairPlan = useProgressStore((s) => s.repairPlan);
   const { offer, history, choose, dismissCard } = useMonthStore();
+  const shareOk = useCanShare('month');
   const entry = id
     ? history.find((h) => h.id === id)
     : history.find((h) => h.id === offer?.entryId);
@@ -85,6 +87,14 @@ export default function MonthScreen() {
           seniorPhotos={seniorPhotos}
           retestDue={pending && retestDue}
         />
+        {shareOk ? (
+          // "My month", the most beautiful card (Phase 28, B5).
+          <Button
+            variant="secondary"
+            label={t('month.share')}
+            onPress={() => openShare({ template: 'month', month: entry.id })}
+          />
+        ) : null}
         {pending && offer ? (
           <NextMonthCard
             offer={offer}

@@ -1,11 +1,14 @@
 import { useTranslation } from 'react-i18next';
-import { Share, View } from 'react-native';
+import { View } from 'react-native';
 
 import { AppText, Chip, TextLink } from '@/components/ui';
 import type { BodySex } from '@/features/bodymap/images';
+import { modeOf } from '@/features/onboarding/derived';
+import { useOnboardingStore } from '@/features/onboarding/store';
 import type { BodyBand } from '@/features/profile/age';
+import { achievementCard, allowedCard } from '@/features/share/data';
+import { openShare } from '@/features/share/open';
 import { RecoveryBody } from '@/features/workout/components/RecoveryBody';
-import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
 import { colors, fonts, makeStyles, radius, spacing, useColors } from '@/theme';
 
@@ -35,20 +38,18 @@ export function MomentCard({
   const { t, i18n } = useTranslation();
   const c = useColors();
   const styles = useStyles();
-  const { answer, markShared } = useMomentsStore();
+  const answer = useMomentsStore((s) => s.answer);
+  const mode = useOnboardingStore(modeOf);
   const now = at ?? clock.now();
   const text = momentText(t, moment, i18n.language, now);
   const lit = moment.muscles?.length && moment.kind !== 'fact' ? moment.muscles : null;
 
-  const share = async () => {
-    try {
-      await Share.share({ message: `${text} · ${t('app.name')}` });
-      markShared(moment.id);
-      track('moment_shared', { kind: moment.kind });
-    } catch {
-      // Nothing to share with: the card stays as it is.
-    }
-  };
+  // "Share" opens the composer on this Moment's achievement card (Phase 28,
+  // B4); a minor only for the habit Moments (E).
+  const shareable =
+    canShare &&
+    !moment.asks &&
+    allowedCard(achievementCard({ ...moment, muscles: moment.muscles ?? [] }), mode);
 
   return (
     <View style={styles.card} testID={`moment-${moment.kind}`}>
@@ -77,9 +78,12 @@ export function MomentCard({
           </View>
         )
       ) : null}
-      {canShare && !moment.asks ? (
+      {shareable ? (
         <View style={styles.row}>
-          <TextLink label={t('moments.share')} onPress={share} />
+          <TextLink
+            label={t('moments.share')}
+            onPress={() => openShare({ template: 'achievement', moment: moment.id })}
+          />
         </View>
       ) : null}
     </View>

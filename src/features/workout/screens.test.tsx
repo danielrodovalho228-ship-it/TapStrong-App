@@ -427,7 +427,11 @@ describe('Exit (mockup 13) and Done (mockup 14)', () => {
       params: { from: 'done' },
     });
     await fireEvent.press(screen.getByRole('button', { name: 'Share my map' }));
-    expect(mockRouter.push).toHaveBeenCalledWith('/share');
+    // Phase 28: the composer opens on this workout's card.
+    expect(mockRouter.push).toHaveBeenCalledWith({
+      pathname: '/share',
+      params: { template: 'workout', workout: w.id },
+    });
     await fireEvent.press(screen.getByRole('button', { name: 'See my milestone' }));
     expect(mockRouter.push).toHaveBeenCalledWith('/milestone');
   });

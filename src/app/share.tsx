@@ -70,6 +70,7 @@ export default function ShareScreen() {
   const library = useExerciseLibrary();
   const { workouts, streak } = useWorkoutStore();
   const moments = useMomentsStore((s) => s.shown);
+  const markShared = useMomentsStore((s) => s.markShared);
   const history = useMonthStore((s) => s.history);
   const showName = usePrefsStore((s) => s.showNameOnCards);
   const addLink = useShareStore((s) => s.add);
@@ -94,9 +95,7 @@ export default function ShareScreen() {
     const days = streakToday(streak, localDate(now), deviceWeekStart());
     const exercise = params.exercise ? library.find((e) => e.id === params.exercise) : undefined;
     const moment = params.moment ? moments.find((m) => m.id === params.moment) : undefined;
-    const month = params.month
-      ? history.find((m) => String(m.blockNo) === params.month)
-      : undefined;
+    const month = params.month ? history.find((m) => m.id === params.month) : undefined;
     if (exercise && !exercise.custom) out.push(exerciseCard(exercise, demoSexFor(profile)));
     if (moment && moment.kind !== 'coach_pain') out.push(achievementCard(moment));
     if (month) out.push(monthCard(month.summary));
@@ -125,6 +124,7 @@ export default function ShareScreen() {
     params.range,
   ]);
 
+  const moment = params.moment ? moments.find((m) => m.id === params.moment) : undefined;
   const first = cards.find((c) => c.template === params.template) ?? cards[0];
   const [template, setTemplate] = useState<ShareTemplate | undefined>(first?.template);
   const card = cards.find((c) => c.template === template) ?? first;
@@ -178,9 +178,14 @@ export default function ShareScreen() {
       message: chrome.link ? `https://${chrome.link}` : undefined,
     });
     setBusy(null);
-    if (outcome === 'failed') setFailed(true);
+    if (outcome === 'failed') return setFailed(true);
+    if (outcome === 'cancelled') return;
     // The link's page draws this card (adults and 60+ only; never minors).
-    else if (outcome !== 'cancelled' && !minor) addLink(card, code, clock.now());
+    if (!minor) addLink(card, code, clock.now());
+    if (card.template === 'achievement' && moment) {
+      markShared(moment.id);
+      track('moment_shared', { kind: moment.kind });
+    }
   };
 
   const invite = async () => {

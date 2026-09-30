@@ -4819,7 +4819,8 @@
     "preview": "Preview",
     "noPreview": "No session can be built for this day yet.",
     "restTitle": "Rest day",
-    "restBody": "Your plan keeps this day free. A short mobility session still counts for your streak."
+    "restBody": "Your plan keeps this day free. A short mobility session still counts for your streak.",
+    "share": "Share this workout"
   },
   "program": {
     "day": {
@@ -4988,7 +4989,8 @@
     "showAll": "Show all {{count}}",
     "notReviewed": "Not reviewed by a coach",
     "hideNotForYou": "Hide exercises not for you",
-    "showMore": "Show {{count}} more"
+    "showMore": "Show {{count}} more",
+    "saveCard": "Save card: {{name}}"
   },
   "exercise": {
     "guidance": "Guidance",
@@ -5012,7 +5014,8 @@
     "notForYou": "Not for you right now: {{reason}}.",
     "delete": "Delete this exercise",
     "labelled": "{{label}}: {{list}}",
-    "notFound": "Exercise not found. It may have been removed from the library."
+    "notFound": "Exercise not found. It may have been removed from the library.",
+    "saveCard": "Save card"
   },
   "mistakes": {
     "horizontal_push": "Letting the lower back arch or the hips sag. Elbows flaring straight out to the sides.",
@@ -5254,7 +5257,8 @@
     "monthsRow": "{{from}} – {{to}} · {{count}} workouts",
     "notificationTitle": "Your month is closed 🎉",
     "notificationBody": "See your summary and your next month.",
-    "strengthLine": "{{exercise}}: {{from}} → {{to}}"
+    "strengthLine": "{{exercise}}: {{from}} → {{to}}",
+    "share": "Share my month"
   },
   "moments": {
     "eyebrow": "A moment",

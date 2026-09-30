@@ -20,6 +20,7 @@ import { exerciseRecords, visibleRecords } from '@/features/library/performance'
 import { useLibraryStore } from '@/features/library/store';
 import { modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
+import { openShare, useCanShare } from '@/features/share/open';
 import { muscleLabel } from '@/features/onboarding/summaries';
 import { ExerciseDemo } from '@/features/workout/components/ExerciseDemo';
 import { exerciseCues, exerciseName } from '@/features/workout/format';
@@ -47,6 +48,7 @@ export default function ExerciseScreen() {
   const workouts = useWorkoutStore((s) => s.workouts);
   const { favourites, toggleFavourite, notes, setNote, removeCustom } = useLibraryStore();
   const [tab, setTab] = useState<'guidance' | 'performance'>('guidance');
+  const shareOk = useCanShare('exercise');
   const e = library.find((x) => x.id === id);
   if (!e) {
     return (
@@ -141,6 +143,14 @@ export default function ExerciseScreen() {
               </AppText>
             ) : null}
           </Card>
+          {!e.custom && shareOk ? (
+            // "Save card": the exercise sheet to keep or send (Phase 28, B3).
+            <Button
+              variant="secondary"
+              label={t('exercise.saveCard')}
+              onPress={() => openShare({ template: 'exercise', exercise: e.id })}
+            />
+          ) : null}
           {e.custom ? (
             <Button
               variant="dangerText"

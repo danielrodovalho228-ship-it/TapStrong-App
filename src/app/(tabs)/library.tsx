@@ -24,6 +24,7 @@ import { POSITIONS } from '@/features/onboarding/options';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { muscleLabel } from '@/features/onboarding/summaries';
 import { PlansBrowser } from '@/features/program/components/PlansBrowser';
+import { openShare, useCanShare } from '@/features/share/open';
 import { exerciseName } from '@/features/workout/format';
 import { useExerciseLibrary, useGeneratorInput } from '@/features/workout/hooks';
 import { ExerciseThumb } from '@/features/workout/components/Media';
@@ -58,6 +59,7 @@ export default function LibraryScreen() {
   const mode = modeOf(useOnboardingStore());
   const senior = mode === 'senior';
   const { favourites, toggleFavourite } = useLibraryStore();
+  const shareOk = useCanShare('exercise');
   const [segment, setSegment] = useState<'exercises' | 'plans'>('exercises');
   const [filter, setFilter] = useState<LibraryFilter>({});
   const [showOut, setShowOut] = useState(false);
@@ -102,6 +104,14 @@ export default function LibraryScreen() {
             ) : null}
           </View>
         </Pressable>
+        {!e.custom && shareOk ? (
+          <IconButton
+            icon="send"
+            variant="outlined"
+            accessibilityLabel={t('library.saveCard', { name: name(e) })}
+            onPress={() => openShare({ template: 'exercise', exercise: e.id })}
+          />
+        ) : null}
         <IconButton
           icon="star"
           variant={starred ? 'filled' : 'outlined'}

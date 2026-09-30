@@ -4861,7 +4861,8 @@
     "preview": "Prévia",
     "noPreview": "Ainda não dá para montar uma sessão para este dia.",
     "restTitle": "Dia de descanso",
-    "restBody": "Seu plano deixa este dia livre. Uma sessão curta de mobilidade ainda conta para a sua sequência."
+    "restBody": "Seu plano deixa este dia livre. Uma sessão curta de mobilidade ainda conta para a sua sequência.",
+    "share": "Compartilhar este treino"
   },
   "program": {
     "day": {
@@ -5033,7 +5034,8 @@
     "showAll": "Ver todos os {{count}}",
     "notReviewed": "Não revisado por treinador",
     "hideNotForYou": "Esconder os exercícios que não são para você",
-    "showMore": "Ver mais {{count}}"
+    "showMore": "Ver mais {{count}}",
+    "saveCard": "Salvar ficha: {{name}}"
   },
   "exercise": {
     "guidance": "Orientação",
@@ -5057,7 +5059,8 @@
     "notForYou": "Não é para você agora: {{reason}}.",
     "delete": "Apagar este exercício",
     "labelled": "{{label}}: {{list}}",
-    "notFound": "Exercício não encontrado. Ele pode ter saído da biblioteca."
+    "notFound": "Exercício não encontrado. Ele pode ter saído da biblioteca.",
+    "saveCard": "Salvar ficha"
   },
   "mistakes": {
     "horizontal_push": "Arquear a lombar ou deixar o quadril cair. Abrir os cotovelos para os lados.",
@@ -5302,7 +5305,8 @@
     "notificationBody": "Veja seu resumo e seu próximo mês.",
     "previewSwap_zero": "Troca: {{count}} exercícios",
     "autoNotice_zero": "Renovei {{count}} exercícios para o seu novo mês.",
-    "strengthLine": "{{exercise}}: {{from}} → {{to}}"
+    "strengthLine": "{{exercise}}: {{from}} → {{to}}",
+    "share": "Compartilhar meu mês"
   },
   "moments": {
     "eyebrow": "Um momento",
