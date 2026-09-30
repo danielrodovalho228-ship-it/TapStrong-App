@@ -304,7 +304,8 @@ Physical therapists map the **movement**, not only the place ("which movement hu
 
 - Adults only.
 - Waist-to-height (WHtR) is the primary index; show BMI as secondary with its limits explained.
-- Check-in every 4 weeks. It shows:
+- **Month closed (Phase 26, `docs/phase-26-monthly-cycle.md`):** at the end of each block (4 weeks without a plan = 1 month; plans keep 5–6) a full-screen summary once, then a Home card for 7 days, ending with "Your next month" (keep progressing / repeat the same / choose on the body; no answer = the recommendation, with 7-day undo). It replaces the automatic 4-week check-in prompt; the check-in screen stays as the measurements entry. Past months: Progress > Months.
+- Check-in (measurements, opened from the month summary or Progress). It shows:
   - strength changes (load × reps, push-ups, plank);
   - body changes if entered;
   - a coach note.
@@ -351,6 +352,7 @@ Physical therapists map the **movement**, not only the place ("which movement hu
 | `/repair/plan`              | **NEW**             | Corrective plan built from results                                                                                       |
 | `/(tabs)/progress`          | 10 Progress         | Streak, workouts, sets, weekly chart, measurements                                                                       |
 | `/checkin`                  | 10b Check-in        | 4-week results, WHtR/BMI (adults)                                                                                        |
+| `/month`, `/months`         | Month closed        | Block summary + next month (Phase 26); past months                                                                       |
 | `/before-after`             | 10c Photos          | Adults only, on-device                                                                                                   |
 | `/milestone`                | 11b Celebration     | Streak, badges, freeze                                                                                                   |
 | `/(tabs)/family` / `/plans` | 11 Plans & family   | Plans, family members, add child (guardian consent flow)                                                                 |
@@ -369,7 +371,7 @@ Physical therapists map the **movement**, not only the place ("which movement hu
   - `workout_started`, `set_logged`, `exercise_swapped` (reason), `pain_reported` (type)
   - `workout_completed` / `workout_ended_early`
 - **Growth:** `share_card_shared` (target), `account_created` (method), `paywall_viewed`, `trial_started`, `subscription_started`, `subscription_cancelled`
-- **Retention:** `streak_milestone`, `checkin_completed`, `repair_test_completed`
+- **Retention:** `streak_milestone`, `checkin_completed`, `repair_test_completed`, `month_closed`, `month_chosen`, `month_skipped`, `month_undone`
 
 Never send health details, pain data or photos to analytics.
 

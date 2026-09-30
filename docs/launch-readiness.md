@@ -83,12 +83,13 @@ Migrações novas desde a Fase 22, em ordem:
 9. `20261019000100_security_r2_pin_change.sql` — trocar o PIN exige o PIN atual ou o código do e-mail (uso único, 10 min).
 10. `20261019000200_security_r2_birth_date.sql` — adolescente não vira adulto mudando a data; registro das mudanças; modo 60+ só com 60+.
 11. `20261019000300_security_r2_p3.sql` — treino da indicação com horário do servidor; responsável não apaga perfil de adolescente com login próprio; `parent_pin_failed` só no servidor.
+12. `20261020000000_month_reviews.sql` — resumos dos meses fechados e a escolha do próximo mês (Fase 26).
 
 Depois do push: `npm run server:check` (com as variáveis do `.env`) deve dizer "OK". Se o app rodar contra um servidor sem essas funções, ele registra `server_missing:<função>` no Sentry.
 
 ## Antes do próximo build de teste — sua lista, nesta ordem (Fase 25)
 
-1. **Migrações:** no terminal, na pasta do projeto, `supabase db push` (aplica as 11 da lista acima que ainda faltarem).
+1. **Migrações:** no terminal, na pasta do projeto, `supabase db push` (aplica as da lista acima que ainda faltarem).
 2. **Conferir o servidor:** `npm run server:check`. Ele deve dizer "OK" para as migrações. Nesta fase ele também **falha se o captcha estiver desligado**, então o passo 4 precisa vir antes do build de produção (builds de preview não travam por isso).
 3. **Turnstile (Cloudflare):** criar o site e colocar a *site key* no EAS como `EXPO_PUBLIC_TURNSTILE_SITE_KEY` (passo a passo em "Segurança" abaixo). Gerar o build de teste com essa chave.
 4. **Painel do Supabase → Authentication**, depois que os testadores tiverem o build com o Turnstile:

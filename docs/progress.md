@@ -2345,3 +2345,73 @@ A lista curta e em ordem está em `docs/launch-readiness.md`, em "Antes do próx
 - `functions:check`; `security:check` (0 alto/crítico, 16 moderados já conhecidos).
 - `bundle:check` sem segredos nem rascunhos; `web:check` (dev + produção); `tabs:check`; `theme:check` com 50 capturas. A de `/plans` mudou por causa do título.
 - **Pendente de antes:** o lote de vídeos (`videos-lote-1`) continua esperando o seu "subi".
+
+## Fase 26 — Fechamento do mês
+
+Texto salvo em `docs/phase-26-monthly-cycle.md`. Dois commits de código: A (lógica e dados) e B (telas).
+
+### Feito
+
+**Quando aparece**
+- O bloco padrão agora é de 4 semanas (3 normais + 1 leve) = "1 mês". Os planos de 5–6 semanas continuam valendo, e o resumo sai no fim do bloco que for.
+- Sem plano, conta a partir do 1º treino (a cada 28 dias).
+- Com 4 ou mais treinos no bloco: tela cheia "1 mês completo!" uma vez só, na primeira abertura depois da semana leve.
+- Com menos de 4 treinos: só o card leve "Vamos retomar?" na Home.
+- Nunca no meio de um treino, nem para perfil sem treinos.
+- Fechou ou pulou: vira o card "O resumo do seu mês" na Home por 7 dias.
+- Notificação opcional "Seu mês fechou 🎉" no dia em que o resumo abre, no horário dos lembretes, só se os lembretes estiverem ligados. Não pede permissão nova.
+
+**A tela "Mês fechado"** (unificada com o check-in de 4 semanas: o card/atalho antigo de check-in saiu da Home e da Home 60+)
+- Treinos, dias treinados (calendário do bloco) e tempo total.
+- Corpo colorido pelas séries do mês, com legenda. Tocar em um músculo mostra as séries deste mês e as do mês anterior.
+- Força (semana 1 × última) e recordes do mês, respeitando a idade: 60+ só vê "maior carga", adolescente não vê nenhum dos dois.
+- Medidas e fotos só para quem já podia ver: adultos; 60+ vê só as fotos, e só se ativou; menores nunca. O botão abre o check-in, que continua sendo a tela das medidas.
+- Destaques em 2 frases, sem culpa: um ponto forte e um a melhorar.
+- Repair: se o reteste venceu, aparece primeiro "Refaça o teste de 2 minutos", sem bloquear nada.
+
+**"Seu próximo mês"** (mesma tela, uma escolha, com o padrão pronto)
+- **Continuar evoluindo (recomendado):** mostra a prévia (Mantém… · Troca: N exercícios · Foco novo…) e o porquê do foco em 1 linha. "Ver/ajustar" permite travar exercícios; travar = manter.
+- **Repetir igual:** os mesmos exercícios, exatamente.
+- **Escolher no corpo:** abre a aba Corpo com o foco sugerido destacado e botões "Adicionar …".
+- Sem resposta: ao começar um treino, a recomendação é aplicada e o treino mostra "Renovei N exercícios · Desfazer". O desfazer vale 7 dias e volta ao plano do mês anterior exatamente igual.
+
+**Regras de renovação e foco** (funções puras, testadas)
+- **Mantém** o composto que progrediu nas últimas 3 semanas.
+- **Troca** pelo menos metade dos acessórios por opções seguras do mesmo músculo, preferindo o que não foi feito nos últimos 2 blocos e outro ângulo.
+- **Troca** o que estagnou e o que doeu. Exercício com dor "sharp" nunca mais volta, nem com estrela.
+- **Nunca troca** estrela nem travado.
+- **Limite de trocas:** até ~50% (adultos e teens); 2 por mês para 60+ e para quem tem cuidado articular.
+- As travas atuais continuam no gerador: limite semanal de séries por idade, orçamento articular, equipamento e restrições. O mês só diz o que preferir e o que deixar de fora.
+- **Foco:** no máximo 2 músculos, nesta ordem:
+  1. músculo marcado pela pessoa com menos de 4 séries por semana;
+  2. desequilíbrio: empurrar × puxar, quadríceps × posterior, ou lado "uneven" no Repair;
+  3. músculo grande sem treino há 14+ dias.
+
+  Ele soma às metas, nunca tira nenhuma. Vale +1 série por sessão (cerca de 2–3 por semana), dentro do limite semanal.
+
+**Dados**
+- Por perfil (família inclusa): resumo em JSON, escolha, trocas (de → para, motivo), desfazer e histórico.
+- Tabela `month_reviews`: RLS do dono ou responsável com WITH CHECK, e teste SQL com troca de usuário. Nada de medidas ou fotos nela.
+- Progresso › Meses lista os resumos antigos.
+
+### Prints
+`docs/screenshots/month/`: `en-month.jpg`, `es-month.jpg`, `pt-BR-month.jpg` (a tela inteira) e `*-home-card.jpg` (o card na Home). O script `node scripts/shoot-month.mjs` gera tudo de novo.
+
+### O que ficou de fora
+- **"Piscando" no corpo:** o foco sugerido aparece destacado na cor de destaque, com botão para adicionar, mas sem animação.
+- **Tocar no músculo dentro do desenho:** o toque é numa fileira de músculos logo abaixo do corpo. No modo tocável o desenho perde as cores das séries.
+- **Recordes:** só o de maior carga.
+
+### Verificações
+- Lint e typecheck limpos; **1303 testes** passando, também em ordem aleatória.
+- `db:test` (com `month_reviews` e o catálogo de segurança), `functions:check`, `security:check`, `bundle:check`.
+- `theme:check`: 50 capturas.
+
+### No caminho
+- Você subiu pelo GitHub 15 vídeos de equilíbrio (em `assets/prototype/`, com data no nome) e 10 imagens na raiz do projeto. Fiz merge sem mexer neles.
+- Os vídeos ainda não estão ligados ao app, porque o nome com data não bate com o padrão `slug.f.mp4`. Quando quiser, eu renomeio e ligo.
+
+### Perguntas
+1. **Semana leve no bloco padrão:** agora quem não escolheu plano tem blocos de 4 semanas, e a semana leve (−40% de volume) vem a cada 4 semanas, e não mais a cada 5. Ok? *(Recomendado: sim, é o que faz "1 mês" fechar certinho.)*
+2. **Dor "sharp":** o exercício sai para sempre, mesmo com estrela. Ok? *(Recomendado: sim, segurança primeiro. Daria para liberar depois de um reteste de dor sem dor.)*
+3. **Menos de 4 treinos:** o card "Vamos retomar?" não traz resumo nem troca exercícios. Ok? *(Recomendado: sim, sem pressão.)*

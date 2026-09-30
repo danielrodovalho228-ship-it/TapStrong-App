@@ -254,11 +254,16 @@ describe('the Month closed screen', () => {
     expect(router.replace).toHaveBeenCalledWith('/home');
   });
 
-  it('adults see strength, records and measurements', async () => {
+  it('adults see strength, records and measurements; tapping a muscle shows its sets', async () => {
     await open();
     expect(screen.getByText('Strength')).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Add measurements' })).toBeTruthy();
     expect(screen.queryByText('Your habit')).toBeNull();
+    // Tap a muscle: this month's sets (the first block has no "last month").
+    await fireEvent.press(screen.getByRole('button', { name: 'Quads' }));
+    expect(screen.getByTestId('month-muscle-compare')).toHaveTextContent(
+      /^Quads: \d+ sets this month$/,
+    );
   });
 
   it('teens: days, sets, the map and the habit; no weights, records, measurements or photos', async () => {

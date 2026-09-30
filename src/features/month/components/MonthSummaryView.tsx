@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
-import { AppText, Button, Card, Notice } from '@/components/ui';
+import { AppText, Button, Card, Chip, Notice } from '@/components/ui';
 import { BodyMapCanvas } from '@/features/bodymap/components/BodyMapCanvas';
 import type { BodySex, BodyView } from '@/features/bodymap/images';
 import { muscleLabel } from '@/features/onboarding/summaries';
@@ -65,8 +65,9 @@ export function MonthSummaryView({
   for (const m of Object.keys(summary.sets)) fills[m] = setsFill(perWeek(m));
   for (const key of ['upperChest', 'midChest', 'lowerChest']) fills[key] = fills.chest;
   for (const key of ['upperAbs', 'lowerAbs']) fills[key] = fills.abs;
-  const parentOfTap = (key: string) =>
-    key.endsWith('Chest') ? 'chest' : key.endsWith('Abs') ? 'abs' : key;
+  const trainedMuscles = Object.keys(summary.sets)
+    .filter((m) => (summary.sets[m] ?? 0) > 0)
+    .sort((a, b) => (summary.sets[b] ?? 0) - (summary.sets[a] ?? 0));
 
   const weeks = Array.from({ length: summary.weeks }, (_, w) =>
     Array.from({ length: 7 }, (_, d) => addDays(summary.from, w * 7 + d)),
@@ -78,7 +79,7 @@ export function MonthSummaryView({
     if (r.kind === 'reps') return t('workout.rest.reps', { count: v.value });
     return `${v.value} s`;
   };
-  const tappedMuscle = picked ? parentOfTap(picked) : null;
+  const tappedMuscle = picked;
 
   return (
     <View style={styles.wrap}>
@@ -138,14 +139,15 @@ export function MonthSummaryView({
           {t('month.bodyHint')}
         </AppText>
         <BodyMapCanvas
+          readOnly
           band={band}
           sex={sex}
           view={view}
-          selected={picked ? [picked] : []}
+          selected={[]}
           recovery={fills}
-          onToggle={(key) => setPicked(key === picked ? null : key)}
           maxHeight={420}
           accessibilityLabel={t('month.bodyTitle')}
+          dotTestID={(key) => `month-dot-${key}`}
         />
         <View style={styles.row}>
           {(['front', 'back'] as const).map((v) => (
@@ -154,6 +156,17 @@ export function MonthSummaryView({
               variant={v === view ? 'primary' : 'ghost'}
               label={t(`bodyMap.${v}`)}
               onPress={() => setView(v)}
+            />
+          ))}
+        </View>
+        {/* Tap a muscle: this month vs last month. */}
+        <View style={styles.chips}>
+          {trainedMuscles.map((m) => (
+            <Chip
+              key={m}
+              label={muscleLabel(t, m)}
+              selected={picked === m}
+              onPress={() => setPicked(picked === m ? null : m)}
             />
           ))}
         </View>
@@ -293,4 +306,5 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'center',
   },
   row: { flexDirection: 'row', gap: spacing.sm, justifyContent: 'center' },
+  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
 }));
