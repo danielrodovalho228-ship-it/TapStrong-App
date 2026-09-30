@@ -20,7 +20,7 @@
 //   --no-encode   keep the final files already made (e.g. to only --delete-raw)
 //   --delete-raw  git rm the raw files once processed (and the junk)
 // Then look at every QC strip, list the suspects in assets/prototype/qc.json
-// and run npm run prototype:videos.
+// and run npm run prototype:videos and npm run media:redo.
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -192,6 +192,20 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     done.push(entry);
   }
   const after = done.reduce((s, e) => s + (e.size ?? 0) + (e.poster ?? 0), 0);
+  // qc.json "missing": an image without its clip is still to make; a clip
+  // that arrived is no longer missing (the frame-by-frame check comes next).
+  if (!dryRun) {
+    const qcFile = join(DIR, 'qc.json');
+    const qc = existsSync(qcFile) ? JSON.parse(readFileSync(qcFile, 'utf8')) : {};
+    const missing = { ...qc.missing };
+    for (const e of done) {
+      if (e.video) delete missing[e.key];
+      else if (!existsSync(join(DIR, `${e.key}.mp4`)))
+        missing[e.key] = 'só imagem: veio a imagem de partida, sem vídeo';
+    }
+    qc.missing = Object.fromEntries(Object.entries(missing).sort());
+    writeFileSync(qcFile, `${JSON.stringify(qc, null, 2)}\n`);
+  }
   const report = { before, after, clips: done, unknown, discarded };
   if (reportFile) writeFileSync(reportFile, `${JSON.stringify(report, null, 2)}\n`);
 

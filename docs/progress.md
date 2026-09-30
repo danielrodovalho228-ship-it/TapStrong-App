@@ -2604,3 +2604,24 @@ Limites deste teste:
 1. **Os 38 nomes automáticos:** vários parecem ser justamente clipes que faltam (biceps curl, hammer curl, towel foot curl, supported split squat, seated leg lift…). **Recomendo que o Moacir exporte de novo com o slug certo** em vez de eu adivinhar o slug pelo nome. Ou você prefere que eu proponha um mapa nome → slug para você aprovar?
 2. **Rigor do QC:** marquei 40 suspeitos, contando os casos "movimento errado para o nome" (ex.: remada com os braços parados, T que vira braço para cima). **Recomendo manter esse rigor**, porque o vídeo ensina o movimento. Ou você prefere liberar os casos leves (ex.: bal_seated_head_turns, front_arm_hold.f) até o Moacir refazer?
 3. **As 11 imagens soltas na raiz do repositório** (de 25/09): **recomendo apagar** (são sobras com nome automático). Posso?
+
+## Mídia 1 — Respostas do Daniel
+
+### Feito
+- **Mapa dos nomes automáticos** (proposta, nada importado ainda): `docs/media-auto-map.md`. A tabela tem as colunas arquivo | slug | sexo | confiança, e um quadro de cada está em `docs/screenshots/media/auto-names.jpg`.
+  - **Proponho mapear 10 vídeos:** `doorframe_curl`, `supported_split_squat` e `towel_curl` (confiança alta), mais `self_resisted_curl` e `su_seated_leg_lift_curl` (confiança média), mulher e homem em cada.
+  - **Não mapeio os outros 28:** 4 cópias antigas, 7 vídeos com dúvida (curls em pé cujo exercício no seed é sentado, e um step-up ambíguo), 1 vídeo de crunch que já tem clipe no app e 16 imagens sem vídeo.
+- **Rigor do QC mantido:** nenhum caso leve foi liberado.
+- **As 11 imagens de 25/09** foram apagadas da raiz do repositório.
+- **Lista de refazer:** `docs/media-redo.md`, gerada por `npm run media:redo` a partir do `qc.json`.
+  - O `qc.json` agora tem, além de `suspect`, a lista `missing` (clipes que ainda faltam). O import atualiza essa lista sozinho a cada lote: imagem sem vídeo entra; clipe que chegou sai.
+  - **Ordem da lista:** primeiro os exercícios sem nenhum sexo, depois os que têm só um; dentro de cada grupo, a ordem do seed.
+  - **Hoje são 83 clipes a refazer:** 64 de exercícios sem nenhum sexo e 19 de exercícios com só um.
+  - Os três vídeos do homem que o Flow recusou no lote 4 (`sl_seated_clamshell`, `sl_seated_glute_squeeze_hold`, `sl_seated_knee_out_press_hold`) já estão na lista como faltando.
+
+### Próximo
+- **Mapa:** quando você aprovar (tudo ou parte), eu restauro esses arquivos do histórico com o nome do slug e passo pelo mesmo import e pelo mesmo QC.
+- **Lote 4:** quando você subir, rodo o import, o QC, `npm run prototype:videos` e `npm run media:redo`.
+
+### Pergunta
+1. **Aprova os 10 do mapa?** Recomendo aprovar todos. Os de confiança média ainda passam pelo QC, e se o movimento não bater eles caem como suspeitos.

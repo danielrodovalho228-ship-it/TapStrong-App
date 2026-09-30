@@ -27,6 +27,7 @@ node scripts/import-flow-media.mjs --qc <dir> --report <file>   # encode + QC st
 # look at every strip; list suspects in qc.json
 node scripts/import-flow-media.mjs --no-encode --delete-raw     # remove the raw files
 npm run prototype:videos
+npm run media:redo                                               # docs/media-redo.md
 ```
 
 The import keeps the newest take per slug + sex (highest `_vN`, then the
@@ -37,7 +38,10 @@ newest stamp) and drops `x_bad_*`, `body-adult-*` and Flow's automatic names.
 `qc.json` lists clips that failed the frame-by-frame check
 (`{ "suspect": { "<slug>.<f|m>": "reason" } }`). Their file stays, but
 `npm run prototype:videos` leaves them (and their poster) out of the manifest
-until they are remade; then delete the line.
+until they are remade; then delete the line. `qc.json` also lists clips still to
+make under `"missing"` (the import adds an image that came without its clip, and
+removes a clip once it arrives). `npm run media:redo` turns both lists into
+`docs/media-redo.md`, the redo list for Flow.
 
 ## The manifest
 

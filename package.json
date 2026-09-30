@@ -92,7 +92,8 @@
     "web:export": "npx expo export --platform web --output-dir dist && node scripts/web-headers.mjs dist && node scripts/security-check.mjs --bundle dist --no-history --offline",
     "security:check": "node scripts/security-check.mjs",
     "prepare": "node scripts/install-hooks.mjs",
-    "server:check": "node scripts/check-server.mjs"
+    "server:check": "node scripts/check-server.mjs",
+    "media:redo": "node scripts/media-redo.mjs"
   },
   "private": true
 }
