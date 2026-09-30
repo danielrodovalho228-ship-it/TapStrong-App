@@ -2922,3 +2922,48 @@ Commits: A (motor dos cards), B (entradas), C (print inteligente), D (link, pág
 1. **Prévia do link no WhatsApp:** hoje a página não gera imagem de prévia (og:image). **Recomendo deixar assim no lançamento**, porque a imagem já vai junto no compartilhamento. A outra opção é gerar a imagem no servidor, o que exige um serviço de renderização a mais.
 2. **Botão "Salvar ficha" em cada item da biblioteca:** pus um ícone discreto ao lado da estrela. **Recomendo manter.** A outra opção é deixar só na tela do exercício, para a lista ficar mais limpa.
 3. **Adolescente com conta própria:** **recomendo manter a regra atual** (pode compartilhar os modelos de menor, sem nome e sem link). A outra opção é desligar por padrão também para ele, igual ao adolescente do plano Família.
+
+## Mídia — Lote 4 e refazer 1
+
+### O que chegou
+
+O upload pelo GitHub **parou no meio**: vieram 75 arquivos, em ordem alfabética até `sl_seated_knee_circles.f`. Tudo o que vem depois disso não chegou. Importei os 35 clipes que vieram (55,1 MB brutos → 16,8 MB). Os 4 descartes foram as duas referências `body-adult-*` e duas imagens repetidas mais antigas; não veio nenhum `x_bad_*`. Nenhum slug desconhecido. Os brutos foram apagados.
+
+### QC quadro a quadro (6 quadros por vídeo)
+
+| slug                             | mulher                                                               | homem                                                                 |
+| -------------------------------- | -------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| glute_bridge                     | ok                                                                   | ok                                                                    |
+| heel_dig_bridge                  | ok                                                                   | suspeito: levanta uma perna esticada para o teto (ponte de uma perna) |
+| bridge_pillow_squeeze            | (não veio)                                                           | suspeito: a almofada fica no ar, acima dos joelhos                    |
+| clamshell                        | suspeito: a abertura do joelho quase não aparece                     | suspeito: pernas se cruzam, abertura não fica clara                   |
+| downward_palm_press_hold         | ok (mãos baixas)                                                     | ok (mãos baixas)                                                      |
+| rx_low_step_up                   | suspeito: solta o apoio, braço acima da cabeça, degrau muda de lugar | ok (sobe e desce segurando o apoio)                                   |
+| seated_knee_raise                | ok                                                                   | suspeito: meio agachado na frente da cadeira, não sentado             |
+| seated_march_hold                | ok                                                                   | ok                                                                    |
+| seated_pillow_squeeze            | suspeito: almofada pendurada ao lado dos joelhos                     | suspeito: almofada pendurada na frente das canelas                    |
+| seated_towel_press_up            | ok                                                                   | suspeito: a toalha sai do quadro presa em algo                        |
+| sf_seated_back_arch_reach        | suspeito: alterna braços à frente e acima da cabeça                  | ok                                                                    |
+| sf_seated_fist_knee_squeeze      | ok                                                                   | ok                                                                    |
+| side_lying_adductor_raise        | suspeito: levanta a perna de cima (abdução)                          | suspeito: levanta a perna de cima dobrada                             |
+| side_lying_leg_raise             | suspeito: chuta a perna quase na vertical                            | suspeito: chuta até a vertical, pernas embolam                        |
+| sl_seated_clamshell              | ok                                                                   | suspeito: vista de lado, a abertura dos joelhos não aparece           |
+| sl_seated_glute_squeeze_hold     | ok                                                                   | ok                                                                    |
+| sl_seated_hands_out_knee_squeeze | suspeito: mãos por cima/fora dos joelhos, uma mão sai                | ok                                                                    |
+| sl_seated_heel_slides            | suspeito: o calcanhar desliza pouco, a perna não chega a esticar     | continua faltando (o Flow recusou)                                    |
+| sl_seated_knee_circles           | ok                                                                   | não chegou no upload                                                  |
+
+- **Resultado:** 18 ok (entraram no app) e 17 suspeitos (ficam fora do `videos.js` até refazer). No app agora: **148 clipes em 88 exercícios** (antes 130 em 75).
+- Do refazer 1 ficaram ok: `glute_bridge` (os dois), `heel_dig_bridge.f`, `downward_palm_press_hold` (os dois, mãos baixas), `rx_low_step_up.m`, `seated_towel_press_up.f`, `sf_seated_back_arch_reach.m`, `sl_seated_clamshell.f` e `sl_seated_glute_squeeze_hold` (os dois).
+
+### Não chegou no upload (marcado como faltando)
+
+`sl_seated_knee_out_press_hold.m`, `sl_seated_towel_ankle_squeeze.f` (a da toalha enrolada), `su_seated_reverse_self_curl` e `su_seated_hammer_self_curl` (os dois sexos), `sl_seated_towel_heel_drag` (os dois), `sl_supported_hip_hinge` (os dois), `sl_seated_knee_circles.m` e o resto do lote 4 depois de `sl_seated_knee_circles.f` na ordem alfabética.
+
+### Lista de refazer (`docs/media-redo.md`)
+
+**Total: 80 clipes** (52 de exercícios sem nenhum sexo no app, 28 de exercícios com só um). Antes eram 78 (58 + 20). O total subiu porque os 10 arquivos do refazer que não chegaram continuam na lista e o QC achou 17 suspeitos novos.
+
+### O que você precisa fazer
+
+- **Subir de novo o que faltou.** O envio pelo site do GitHub para em 100 arquivos por vez. Suba em partes menores (por exemplo, de `sl_seated_knee_circles.m` em diante) ou compacte num `.zip`, que eu abro aqui.
