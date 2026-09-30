@@ -1,8 +1,11 @@
+import { Image } from 'expo-image';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 
 import { AppText, Icon } from '@/components/ui';
+import { demoPoster, demoSexFor } from '@/features/exercises/videos';
+import { useOnboardingStore } from '@/features/onboarding/store';
 import {
   bodyMapColors,
   colors,
@@ -18,14 +21,28 @@ import {
 /**
  * Exercise media placeholders. Production loops come from the licensed 3D
  * library (SPEC §6) and play through expo-video; until an exercise has
- * licensed media we show a neutral frame, never a prototype clip.
+ * licensed media we show a neutral frame, never a prototype clip. In
+ * development builds the thumb shows the prototype poster of the profile's
+ * own sex, when that sex has a clip.
  */
-export function ExerciseThumb({ size = 56 }: { size?: number }) {
+export function ExerciseThumb({ size = 56, slug }: { size?: number; slug?: string }) {
   const colors = useColors();
   const styles = useStyles();
+  const sex = useOnboardingStore((s) => demoSexFor(s));
+  const poster = slug ? demoPoster(slug, sex) : null;
   return (
     <View testID="exercise-thumb" style={[styles.thumb, { width: size, height: size }]} aria-hidden>
-      <Icon name="play" size={size * 0.34} color={colors.onCanvasMuted} />
+      {poster ? (
+        <Image
+          testID="exercise-thumb-poster"
+          source={poster}
+          style={styles.thumbImage}
+          contentFit="cover"
+          contentPosition="top"
+        />
+      ) : (
+        <Icon name="play" size={size * 0.34} color={colors.onCanvasMuted} />
+      )}
     </View>
   );
 }
@@ -33,11 +50,14 @@ export function ExerciseThumb({ size = 56 }: { size?: number }) {
 export function DemoLoop({
   chips,
   video = null,
+  poster = null,
   mirrorable = false,
 }: {
   chips: { label: string; strong?: boolean }[];
   /** The profile's own-sex clip in development builds; null shows the neutral frame. */
   video?: number | null;
+  /** The clip's starting image (same sex), shown until the first frame plays. */
+  poster?: number | null;
   /** One-sided move: the same clip mirrored shows the other side. */
   mirrorable?: boolean;
 }) {
@@ -51,7 +71,7 @@ export function DemoLoop({
     const { DemoVideo } = require('./DemoVideo') as typeof import('./DemoVideo');
     return (
       <View style={styles.demo}>
-        <DemoVideo source={video} mirrored={mirrored} />
+        <DemoVideo source={video} poster={poster} mirrored={mirrored} />
         <View style={styles.demoTop}>
           <AppText variant="caption" color={colors.onCanvasMuted} style={styles.demoLabel}>
             {t('workout.demoPrototype')}
@@ -146,7 +166,9 @@ const useStyles = makeStyles(() => ({
     borderRadius: radius.chip,
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
   },
+  thumbImage: { width: '100%', height: '100%' },
   demo: {
     backgroundColor: colors.bodyCanvas,
     borderRadius: radius.card,

@@ -90,7 +90,7 @@ export default function LibraryScreen() {
           onPress={() => router.push({ pathname: '/exercise/[id]', params: { id: e.id } })}
           style={styles.cardMain}
         >
-          <ExerciseThumb size={senior ? 64 : 48} />
+          <ExerciseThumb size={senior ? 64 : 48} slug={e.slug} />
           <View style={styles.flex}>
             <AppText variant={senior ? 'h3' : 'bodyStrong'} numberOfLines={senior ? 3 : 2}>
               {name(e)}

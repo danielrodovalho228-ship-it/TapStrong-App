@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import { AppText, Button, Card } from '@/components/ui';
-import { demoSexFor, demoVideo, type DemoSex } from '@/features/exercises/videos';
+import { demoPoster, demoSexFor, demoVideo, type DemoSex } from '@/features/exercises/videos';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { makeStyles, spacing, useColors } from '@/theme';
 
@@ -26,7 +26,14 @@ export function ExerciseDemo({
   const sex = useOnboardingStore((s) => demoSexFor(s));
   if (!sex) return <DemoSexQuestion />;
   const video = demoVideo(slug, sex);
-  return <DemoLoop video={video} chips={chips} mirrorable={unilateral && !!video} />;
+  return (
+    <DemoLoop
+      video={video}
+      poster={demoPoster(slug, sex)}
+      chips={chips}
+      mirrorable={unilateral && !!video}
+    />
+  );
 }
 
 function DemoSexQuestion() {

@@ -3,6 +3,10 @@
 // Files: <slug>.f.mp4 and <slug>.m.mp4 in assets/prototype (made in Google
 // Flow from body-adult-f-front / body-adult-m-front). Older ex-*.mp4 files
 // are mapped in map.json as { "ex-name.mp4": { "slug": "push_up", "sex": "f" } }.
+// Posters: posters/<slug>.<f|m>.webp (the clip's starting image), listed as
+// poster: { f, m } and only next to a clip of the same sex.
+// QC suspects in qc.json ({ "suspect": { "<slug>.<f|m>": "reason" } }) keep
+// their file but stay out of the manifest until remade (media-import-1).
 // Development builds only until the reviewer approves (SPEC §6).
 // Run: npm run prototype:videos
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -11,6 +15,8 @@ import { fileURLToPath } from 'node:url';
 
 const dir = join(dirname(fileURLToPath(import.meta.url)), '..', 'assets', 'prototype');
 const map = JSON.parse(readFileSync(join(dir, 'map.json'), 'utf8'));
+const qcFile = join(dir, 'qc.json');
+const suspect = existsSync(qcFile) ? (JSON.parse(readFileSync(qcFile, 'utf8')).suspect ?? {}) : {};
 const root = join(dir, '..', '..');
 const slugs = new Set(
   JSON.parse(readFileSync(join(root, 'supabase', 'seed', 'exercises.json'), 'utf8')).exercises.map(
@@ -24,10 +30,16 @@ if (existsSync(repairFile))
 
 /** slug → { f?: file, m?: file } */
 const clips = {};
+const skipped = [];
 const put = (slug, sex, file) => {
   if (!slugs.has(slug)) throw new Error(`${file}: unknown exercise "${slug}"`);
   if (sex !== 'f' && sex !== 'm') throw new Error(`${file}: sex must be "f" or "m"`);
+  if (suspect[`${slug}.${sex}`]) return void skipped.push(`${slug}.${sex}`);
   clips[slug] = { ...clips[slug], [sex]: file };
+};
+const poster = (slug, sex) => {
+  const file = `posters/${slug}.${sex}.webp`;
+  return existsSync(join(dir, file)) ? file : null;
 };
 for (const file of readdirSync(dir).sort()) {
   const named = file.match(/^(.+)\.(f|m)\.mp4$/);
@@ -48,6 +60,10 @@ const lines = Object.keys(clips)
     const sexes = ['f', 'm']
       .filter((s) => clips[slug][s])
       .map((s) => `${s}: require(${JSON.stringify(`./${clips[slug][s]}`)})`);
+    const posters = ['f', 'm']
+      .filter((s) => clips[slug][s] && poster(slug, s))
+      .map((s) => `${s}: require(${JSON.stringify(`./${poster(slug, s)}`)})`);
+    if (posters.length) sexes.push(`poster: { ${posters.join(', ')} }`);
     return `  ${JSON.stringify(slug)}: { ${sexes.join(', ')} },`;
   });
 writeFileSync(
@@ -64,4 +80,9 @@ writeFileSync(
   ].join('\n'),
 );
 const pairs = Object.values(clips).reduce((n, c) => n + Object.keys(c).length, 0);
-console.log(`wrote ${pairs} clips for ${lines.length} exercises to assets/prototype/videos.js`);
+for (const key of Object.keys(suspect))
+  if (!skipped.includes(key)) console.warn(`qc.json lists ${key}, which has no clip`);
+console.log(
+  `wrote ${pairs} clips for ${lines.length} exercises to assets/prototype/videos.js` +
+    ` (${skipped.length} QC suspects left out)`,
+);

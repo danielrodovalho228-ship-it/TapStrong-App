@@ -278,7 +278,7 @@ export default function WorkoutScreen() {
         return (
           <View key={item.id} style={styles.phaseRow}>
             {/* Every item has a demo, warm-up and cool-down too (QA O-2). */}
-            <ExerciseThumb size={44} />
+            <ExerciseThumb size={44} slug={item.exerciseId} />
             <View style={styles.rowText}>
               <AppText variant="bodyStrong">{exerciseName(t, e, item.exerciseId)}</AppText>
               {e?.custom ? (
@@ -425,7 +425,7 @@ export default function WorkoutScreen() {
         const skipped = workout.skipped.includes(item.id);
         return (
           <Card key={item.id} style={[styles.exercise, skipped && styles.skipped]}>
-            <ExerciseThumb />
+            <ExerciseThumb slug={item.exerciseId} />
             <View style={styles.rowText}>
               <AppText variant="bodyStrong">{exerciseName(t, e, item.exerciseId)}</AppText>
               {e?.custom ? (

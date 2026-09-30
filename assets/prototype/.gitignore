@@ -1,0 +1,16 @@
+# Only final media is committed here (docs/media-import-1.md):
+# <slug>.<f|m>.mp4, posters/<slug>.<f|m>.webp and the manifest files.
+# Raw Google Flow downloads are imported with scripts/import-flow-media.mjs.
+*
+!.gitignore
+!README.md
+!map.json
+!qc.json
+!videos.js
+!*.f.mp4
+!*.m.mp4
+!ex-*.mp4
+!posters/
+posters/*
+!posters/*.f.webp
+!posters/*.m.webp

@@ -125,7 +125,7 @@ export function SwapSheet({
             options.map((e) => (
               <Card key={e.id} style={styles.option}>
                 <View style={styles.optionRow}>
-                  <ExerciseThumb size={72} />
+                  <ExerciseThumb size={72} slug={e.slug} />
                   <View style={styles.optionText}>
                     <AppText variant="bodyStrong">{exerciseName(t, e, e.id)}</AppText>
                     <AppText variant="caption" color={colors.mutedStrong}>

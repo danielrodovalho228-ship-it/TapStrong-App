@@ -48,9 +48,16 @@ if find "$OUT" -iname '*.mp4' | grep -q .; then
   find "$OUT" -iname '*.mp4' >&2
   exit 1
 fi
+# Media import 1: the prototype posters (and anything else from
+# assets/prototype) are development-only too.
+if find "$OUT" -path '*prototype*' | grep -q . || grep -rl 'assets/prototype' "$OUT" >/dev/null; then
+  echo "FAIL: a release bundle contains prototype media (assets/prototype)" >&2
+  find "$OUT" -path '*prototype*' >&2
+  exit 1
+fi
 # Security round 2 (P3): no secret in any release bundle.
 node scripts/security-check.mjs --bundle "$OUT" --no-history --offline >/dev/null || {
   node scripts/security-check.mjs --bundle "$OUT" --no-history --offline >&2
   exit 1
 }
-echo "OK: no draft exercises, draft Repair tests, the draft movement catalog, prototype videos, purchase simulator, dev-only warnings, personal contact or secrets in release bundles"
+echo "OK: no draft exercises, draft Repair tests, the draft movement catalog, prototype videos or posters, purchase simulator, dev-only warnings, personal contact or secrets in release bundles"
