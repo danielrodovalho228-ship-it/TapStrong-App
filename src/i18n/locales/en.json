@@ -3567,7 +3567,7 @@
       "never_other": "{{muscles}} · not trained yet",
       "ready": "White dots · recovered / ready"
     },
-    "recoveryEmpty": "Your first workout colors the muscles you train.",
+    "recoveryEmpty": "Your map starts to light up at your first workout.",
     "recoveryNote": "Colors fade as you recover. White dots are ready; grey-blue means 5 or more days since you trained it.",
     "openBody": "Open full body map",
     "trainingAs": "Training as {{name}}",
@@ -3634,7 +3634,12 @@
     "trainNow": "Train now",
     "seeWorkout": "See workout",
     "minutesShort": "{{minutes}} min",
-    "mobilityTitle": "Short mobility"
+    "mobilityTitle": "Short mobility",
+    "identity": {
+      "one": "You trained this week. Every start counts.",
+      "two": "You trained twice this week. That's a rhythm.",
+      "many": "You trained {{count}} times this week. That's consistency."
+    }
   },
   "workout": {
     "title": "Your workout",
@@ -3791,7 +3796,10 @@
       "mobilityEyebrow": "Short mobility · complete",
       "mobilityTitle": "Mobility done!",
       "balanceEyebrow": "Short balance · complete",
-      "balanceTitle": "Balance done!"
+      "balanceTitle": "Balance done!",
+      "lightTotal_one": "{{count}} muscle · {{minutes}} min",
+      "lightTotal_other": "{{count}} muscles · {{minutes}} min",
+      "lightNote": "You lit them up today."
     },
     "legend": {
       "main": "Main target today",
@@ -3906,7 +3914,9 @@
     "title4w": "Share my 4 weeks",
     "eyebrow4w": "Last 4 weeks · {{date}}",
     "cardTitle4w": "My 4 weeks",
-    "teenOff": "Sharing is off for this profile. A parent can turn it on in Family."
+    "teenOff": "Sharing is off for this profile. A parent can turn it on in Family.",
+    "weekWorkouts_one": "{{count}} workout this week",
+    "weekWorkouts_other": "{{count}} workouts this week"
   },
   "milestone": {
     "eyebrow": "New milestone",
@@ -4177,7 +4187,7 @@
     "days_other": "{{count}} days",
     "chart": {
       "title": "Weekly sets by muscle",
-      "empty": "Finish a workout to see your weekly sets.",
+      "empty": "Your chart starts at your first workout.",
       "week_one": "W{{n}} · {{count}}",
       "week_other": "W{{n}} · {{count}}",
       "barLabel_one": "Week {{n}}: {{count}} set",
@@ -5119,7 +5129,13 @@
     },
     "experienceNote": "\"New to training\" keeps to easier moves, one step above beginner at most.",
     "sounds": "Sounds",
-    "soundsDetail": "A short chime when a timer ends. Follows your phone's silent switch."
+    "soundsDetail": "A short chime when a timer ends. Follows your phone's silent switch.",
+    "surprises": "Surprises",
+    "surprisesDetail": "Now and then, a small Moment at the end of a workout. Never paid, never pressure.",
+    "haptics": "Vibration",
+    "hapticsDetail": "A light tap when you log a set, finish an exercise or set a record.",
+    "celebrationSounds": "Celebration sounds",
+    "celebrationSoundsDetail": "A \"tic\" on each set and a short chord at the end."
   },
   "reminders": {
     "title": "Reminders",

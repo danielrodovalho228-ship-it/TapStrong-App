@@ -12,6 +12,7 @@ import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { MonthHomeCard } from '@/features/month/components/MonthHomeCard';
 import { useMonthStore } from '@/features/month/store';
+import { identityKey, workoutsThisWeekDone } from '@/features/home/identity';
 import { MoreOptions } from '@/features/home/MoreOptions';
 import { StartHero } from '@/features/home/StartHero';
 import { useMonthClose } from '@/features/month/useMonthClose';
@@ -236,6 +237,8 @@ export default function HomeScreen() {
     );
 
   const easyKey = easyDayKey({ stoppedToday, doneToday, weeklyCap });
+  const weekDone = workoutsThisWeekDone(workouts, now, deviceWeekStart());
+  const identity = identityKey(weekDone);
   const heroDetail = [
     goals.length ? listText(goals, t('common.and')) : t('home.fullBody'),
     t('home.minutesShort', { minutes: cardMinutes }),
@@ -368,6 +371,12 @@ export default function HomeScreen() {
       ) : null}
 
       <WeekStrip />
+      {identity ? (
+        // Identity, not guilt (Phase 27, B4).
+        <AppText color={colors.teal} style={styles.center} testID="home-identity">
+          {t(identity, { count: weekDone })}
+        </AppText>
+      ) : null}
 
       {/* Less common choices, collapsed (Phase 27, A3). Short mobility stays
           free and counts for the streak (decision 1, QA round 2). */}

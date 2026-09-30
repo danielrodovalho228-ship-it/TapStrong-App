@@ -12,7 +12,9 @@ import type { Exercise } from '@/features/exercises/types';
 import { isMachine } from '@/features/generator/filters';
 import type { SessionItem } from '@/features/generator/types';
 import { sameMuscleGroup } from '@/features/muscles';
+import { modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
+import { exerciseBest } from '@/features/progress/activity';
 import { RangeNote } from '@/features/movement/RangeNote';
 import { ExerciseDemo } from '@/features/workout/components/ExerciseDemo';
 import { SafetyCues } from '@/features/workout/components/SafetyCues';
@@ -28,6 +30,7 @@ import {
   type Step,
 } from '@/features/workout/flow';
 import { clockText, exerciseCues, exerciseName, targetText } from '@/features/workout/format';
+import { feel } from '@/features/workout/feel';
 import { endWorkout, useSafetyRefresh, useWorkout } from '@/features/workout/hooks';
 import { LOAD_STEP, targetRange } from '@/features/workout/progression';
 import { playTimerEnd } from '@/features/workout/sound';
@@ -230,16 +233,15 @@ function TimedStep({
   );
   const canEnd = canEndTimedStep(step.item, elapsed, dayHasLoad);
 
-  const done = useCallback(
-    () =>
-      logSet(workout.id, {
-        itemId: step.item.id,
-        exerciseId: step.item.exerciseId,
-        setNo: step.setNo,
-        seconds: Math.round(Math.min(elapsed, total) || total),
-      }),
-    [logSet, workout.id, step.item.id, step.item.exerciseId, step.setNo, elapsed, total],
-  );
+  const done = useCallback(() => {
+    feel.set();
+    logSet(workout.id, {
+      itemId: step.item.id,
+      exerciseId: step.item.exerciseId,
+      setNo: step.setNo,
+      seconds: Math.round(Math.min(elapsed, total) || total),
+    });
+  }, [logSet, workout.id, step.item.id, step.item.exerciseId, step.setNo, elapsed, total]);
   // Time's up: one chime (D4 "Sounds") and the next step, once.
   const timeUp = total > 0 && elapsed >= total;
   const ended = useRef(false);
@@ -364,7 +366,14 @@ function SetStep({
   const askEffort = loaded && item.role === 'main' && !hold;
   const valueStep = hold ? 5 : 1;
 
+  const mode = useOnboardingStore((st) => modeOf(st));
   const done = () => {
+    // Feel (Phase 27, B2): a light tap per set, a stronger one when the
+    // exercise is complete, a success tap for a new best load (adults only).
+    const best = loaded ? exerciseBest(workouts, item.exerciseId, unit).max : 0;
+    feel.set();
+    if (step.setNo >= item.sets) feel.exercise();
+    if (mode === 'adult' && loaded && best > 0 && load > best) feel.record();
     logSet(workout.id, {
       itemId: item.id,
       exerciseId: item.exerciseId,
@@ -537,7 +546,9 @@ function Counter({
         onPress={() => onChange(value - step)}
       />
       <View style={styles.counterValue} accessible accessibilityLabel={`${label}: ${value}`}>
-        <AppText variant="h1">{value}</AppText>
+        <AppText variant="h1" style={styles.num}>
+          {value}
+        </AppText>
       </View>
       <IconButton
         icon="plus"

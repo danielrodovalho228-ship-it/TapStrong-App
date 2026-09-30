@@ -116,6 +116,7 @@ export default function RestScreen() {
             <AppText
               variant="display"
               color={colors.dark.text}
+              style={styles.num}
               accessibilityLabel={t('workout.player.timeLeft', { time: clockText(left) })}
             >
               {clockText(left)}
@@ -187,6 +188,7 @@ const useStyles = makeStyles(() => ({
   center: { alignItems: 'center', paddingVertical: spacing.lg },
   row: { flexDirection: 'row', gap: spacing.sm },
   flex: { flex: 1 },
+  num: { fontVariant: ['tabular-nums'] },
   card: {
     borderWidth: 1,
     borderColor: colors.mutedStrong,

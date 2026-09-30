@@ -3567,7 +3567,7 @@
       "never_other": "{{muscles}} · sin entrenar aún",
       "ready": "Puntos blancos · recuperado / listo"
     },
-    "recoveryEmpty": "Tu primer entrenamiento colorea los músculos que trabajes.",
+    "recoveryEmpty": "Tu mapa empieza a encenderse con tu primer entrenamiento.",
     "recoveryNote": "Los colores se desvanecen al recuperarte. Los puntos blancos están listos; gris azulado significa 5 días o más sin entrenarlo.",
     "openBody": "Abrir mapa del cuerpo",
     "trainingAs": "Entrenando como {{name}}",
@@ -3634,7 +3634,12 @@
     "trainNow": "Entrenar ahora",
     "seeWorkout": "Ver entrenamiento",
     "minutesShort": "{{minutes}} min",
-    "mobilityTitle": "Movilidad corta"
+    "mobilityTitle": "Movilidad corta",
+    "identity": {
+      "one": "Entrenaste esta semana. Cada comienzo cuenta.",
+      "two": "Entrenaste 2 veces esta semana. Eso es ritmo.",
+      "many": "Entrenaste {{count}} veces esta semana. Eso es constancia."
+    }
   },
   "workout": {
     "title": "Tu entrenamiento",
@@ -3791,7 +3796,10 @@
       "mobilityEyebrow": "Movilidad corta · completada",
       "mobilityTitle": "¡Movilidad hecha!",
       "balanceEyebrow": "Equilibrio corto · completado",
-      "balanceTitle": "¡Equilibrio hecho!"
+      "balanceTitle": "¡Equilibrio hecho!",
+      "lightTotal_one": "{{count}} músculo · {{minutes}} min",
+      "lightTotal_other": "{{count}} músculos · {{minutes}} min",
+      "lightNote": "Hoy los encendiste todos."
     },
     "legend": {
       "main": "Objetivo principal hoy",
@@ -3906,7 +3914,9 @@
     "title4w": "Compartir mis 4 semanas",
     "eyebrow4w": "Últimas 4 semanas · {{date}}",
     "cardTitle4w": "Mis 4 semanas",
-    "teenOff": "Compartir está desactivado en este perfil. Un padre o madre puede activarlo en Familia."
+    "teenOff": "Compartir está desactivado en este perfil. Un padre o madre puede activarlo en Familia.",
+    "weekWorkouts_one": "{{count}} entrenamiento esta semana",
+    "weekWorkouts_other": "{{count}} entrenamientos esta semana"
   },
   "milestone": {
     "eyebrow": "Nuevo logro",
@@ -4177,7 +4187,7 @@
     "days_other": "{{count}} días",
     "chart": {
       "title": "Series por semana y músculo",
-      "empty": "Termina un entrenamiento para ver tus series de la semana.",
+      "empty": "Tu gráfico empieza con tu primer entrenamiento.",
       "week_one": "S{{n}} · {{count}}",
       "week_other": "S{{n}} · {{count}}",
       "barLabel_one": "Semana {{n}}: {{count}} serie",
@@ -5119,7 +5129,13 @@
     },
     "experienceNote": "\"Empiezo a entrenar\" usa ejercicios más fáciles, como mucho un paso por encima de principiante.",
     "sounds": "Sonidos",
-    "soundsDetail": "Un tono corto al terminar un temporizador. Respeta el modo silencio del teléfono."
+    "soundsDetail": "Un tono corto al terminar un temporizador. Respeta el modo silencio del teléfono.",
+    "surprises": "Sorpresas",
+    "surprisesDetail": "De vez en cuando, un pequeño Momento al final del entrenamiento. Nunca de pago, nunca presión.",
+    "haptics": "Vibración",
+    "hapticsDetail": "Un toque suave al marcar una serie, terminar un ejercicio o lograr un récord.",
+    "celebrationSounds": "Sonidos de celebración",
+    "celebrationSoundsDetail": "Un \"tic\" en cada serie y un acorde corto al final."
   },
   "reminders": {
     "title": "Recordatorios",

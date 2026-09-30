@@ -10,6 +10,7 @@ import { modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { REST_PRESETS, usePrefsStore, type Experience } from '@/features/settings/store';
 import { spacing, useColors } from '@/theme';
+import { MoreOptions } from '@/features/home/MoreOptions';
 
 const EXPERIENCE: Experience[] = ['new', 'some', 'experienced'];
 
@@ -93,7 +94,32 @@ export default function WorkoutPrefsScreen() {
           value={prefs.voice}
           onChange={(voice) => prefs.set({ voice })}
         />
+        {/* Moments (Phase 27, C): small surprises, easy to turn off. */}
+        <ToggleRow
+          label={t('prefs.surprises')}
+          detail={t('prefs.surprisesDetail')}
+          value={prefs.surprises}
+          onChange={(surprises) => prefs.set({ surprises })}
+        />
       </Card>
+
+      {/* Rare settings, collapsed (Phase 27, A3). */}
+      <MoreOptions>
+        <Card>
+          <ToggleRow
+            label={t('prefs.haptics')}
+            detail={t('prefs.hapticsDetail')}
+            value={prefs.haptics}
+            onChange={(haptics) => prefs.set({ haptics })}
+          />
+          <ToggleRow
+            label={t('prefs.celebrationSounds')}
+            detail={t('prefs.celebrationSoundsDetail')}
+            value={prefs.celebrationSounds}
+            onChange={(celebrationSounds) => prefs.set({ celebrationSounds })}
+          />
+        </Card>
+      </MoreOptions>
 
       <Card style={styles.card}>
         <AppText variant="h3">{t('prefs.warmup')}</AppText>

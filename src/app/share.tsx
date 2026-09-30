@@ -14,6 +14,7 @@ import { muscleByKey } from '@/features/muscles';
 import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { muscleLabel } from '@/features/onboarding/summaries';
+import { identityKey, workoutsThisWeekDone } from '@/features/home/identity';
 import { LegendRow, RecoveryBody, STATE_COLOR } from '@/features/workout/components/RecoveryBody';
 import { CHECKIN_DAYS } from '@/features/progress/checkin';
 import { rangeTotals, trainedMuscles, workoutMinutes } from '@/features/progress/stats';
@@ -57,13 +58,16 @@ export default function ShareScreen() {
   const finished = workouts.filter((w) => w.status === 'done' || w.status === 'partial');
   const last = finished.at(-1);
   const month = rangeTotals(workouts, now, CHECKIN_DAYS);
+  // The week's total, not an all-time count (Phase 27, B4).
+  const week = workoutsThisWeekDone(workouts, now, deviceWeekStart());
   const stats = fourWeeks
     ? { workouts: month.workouts.length, minutes: month.minutes, sets: month.sets }
     : {
-        workouts: finished.length,
+        workouts: week,
         minutes: last ? workoutMinutes(last, now) : 0,
         sets: last ? mainSetCounts(last).done : 0,
       };
+  const identity = fourWeeks ? null : identityKey(week);
   const band = displayBand(profile.bodyModel.band, derived.band, derived.mode);
   const sex: BodySex = profile.bodyModel.sex ?? (profile.sex === 'f' ? 'f' : 'm');
   // Muscles actually trained, most sets first — not catalog order (QA round 1).
@@ -81,7 +85,9 @@ export default function ShareScreen() {
 
   const textSummary = [
     title,
-    t('share.workouts', { count: stats.workouts }),
+    fourWeeks
+      ? t('share.workouts', { count: stats.workouts })
+      : t('share.weekWorkouts', { count: stats.workouts }),
     t('workout.minutes', { value: stats.minutes }),
     t('share.sets', { count: stats.sets }),
     t('share.tagline'),
@@ -156,6 +162,11 @@ export default function ShareScreen() {
               </AppText>
             </View>
           </View>
+          {identity ? (
+            <AppText variant="bodyStrong" color={colors.accentText} testID="share-identity">
+              {t(identity, { count: week })}
+            </AppText>
+          ) : null}
           <RecoveryBody band={band} sex={sex} states={states} views="both" />
           <View style={styles.legend}>
             {names('fresh') ? <LegendRow color={STATE_COLOR.fresh} label={names('fresh')} /> : null}
@@ -167,7 +178,11 @@ export default function ShareScreen() {
             <LegendRow color={STATE_COLOR.neglected} label={t('workout.legend.notYet')} />
           </View>
           <View style={styles.stats}>
-            <AppText variant="bodyStrong">{t('share.workouts', { count: stats.workouts })}</AppText>
+            <AppText variant="bodyStrong">
+              {fourWeeks
+                ? t('share.workouts', { count: stats.workouts })
+                : t('share.weekWorkouts', { count: stats.workouts })}
+            </AppText>
             <AppText variant="bodyStrong">{t('workout.minutes', { value: stats.minutes })}</AppText>
             <AppText variant="bodyStrong">{t('share.sets', { count: stats.sets })}</AppText>
           </View>

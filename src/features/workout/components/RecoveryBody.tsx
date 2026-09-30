@@ -38,12 +38,15 @@ export function RecoveryBody({
   states,
   maxHeight = 640,
   views = 'toggle',
+  pulse,
 }: {
   band: BodyBand;
   sex: BodySex;
   states: Record<string, RecoveryState>;
   maxHeight?: number;
   views?: 'toggle' | 'both';
+  /** Muscles that just lit up (the end-of-workout map, Phase 27 B1). */
+  pulse?: string[];
 }) {
   const { t } = useTranslation();
   const [view, setView] = useState<BodyView>('front');
@@ -59,6 +62,7 @@ export function RecoveryBody({
       maxHeight={maxHeight}
       accessibilityLabel={`${t('workout.bodyNow')}, ${t(`bodyMap.${v}`)}`}
       dotTestID={(key) => `recovery-${key}-${states[key] ?? 'neutral'}`}
+      pulse={pulse}
     />
   );
   if (views === 'both') {

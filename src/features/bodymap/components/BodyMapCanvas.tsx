@@ -1,9 +1,10 @@
 import { Image } from 'expo-image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useTranslation } from 'react-i18next';
 import {
+  Animated as RNAnimated,
   Platform,
   Pressable,
   StyleSheet,
@@ -13,7 +14,16 @@ import {
 } from 'react-native';
 
 import { IconButton } from '@/components/ui/IconButton';
-import { bodyMapColors, colors, dotColors, makeStyles, radius, sizes, spacing } from '@/theme';
+import {
+  bodyMapColors,
+  colors,
+  dotColors,
+  makeStyles,
+  radius,
+  sizes,
+  spacing,
+  useColors,
+} from '@/theme';
 
 import { muscleByKey } from '../../muscles';
 import type { BodyBand } from '../../profile/age';
@@ -70,7 +80,33 @@ export type BodyMapCanvasProps = {
   accessibilityLabel?: string;
   /** Read-only: a test id per dot, e.g. "recovery-glutes-fresh". */
   dotTestID?: (muscleKey: string) => string;
+  /** Read-only: muscles that just lit up get one soft coral pulse (Phase 27, B1). */
+  pulse?: string[];
 };
+
+/** One soft coral pulse around a dot that just lit up (Phase 27, B1). */
+function PulseRing({ style }: { style: object }) {
+  const accent = useColors().accent;
+  const [grow] = useState(() => new RNAnimated.Value(0));
+  useEffect(() => {
+    RNAnimated.timing(grow, { toValue: 1, duration: 450, useNativeDriver: true }).start();
+  }, [grow]);
+  return (
+    <RNAnimated.View
+      testID="light-pulse"
+      pointerEvents="none"
+      style={[
+        StyleSheet.absoluteFill,
+        style,
+        {
+          backgroundColor: accent,
+          opacity: grow.interpolate({ inputRange: [0, 1], outputRange: [0.55, 0] }),
+          transform: [{ scale: grow.interpolate({ inputRange: [0, 1], outputRange: [0.6, 1.4] }) }],
+        },
+      ]}
+    />
+  );
+}
 
 /** Body image with tappable muscle dots (mockup 08). */
 export function BodyMapCanvas({
@@ -84,6 +120,7 @@ export function BodyMapCanvas({
   readOnly = false,
   accessibilityLabel,
   dotTestID,
+  pulse = [],
 }: BodyMapCanvasProps) {
   const styles = useStyles();
   const { t } = useTranslation();
@@ -225,6 +262,13 @@ export function BodyMapCanvas({
               alt=""
             />
             {halos}
+            {hotspots
+              .filter((h) => pulse.includes(h.key))
+              .flatMap((h) =>
+                h.points.map(([x, y], i) => (
+                  <PulseRing key={`pulse-${h.key}-${i}`} style={place(x, y, geo.halo * 1.6)} />
+                )),
+              )}
             {hotspots.flatMap((h) =>
               h.points.map(([x, y], i) => (
                 <View

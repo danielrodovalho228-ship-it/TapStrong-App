@@ -14,6 +14,7 @@ import {
   ToggleRow,
   type IconName,
 } from '@/components/ui';
+import { EmptyState } from '@/features/home/EmptyState';
 import { MovementPainEntry } from '@/features/movement/Entry';
 import { modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
@@ -94,7 +95,11 @@ export default function ProgressScreen() {
               <WeekChart bars={weeklySets(workouts, library, selected, now, deviceWeekStart())} />
             </>
           ) : (
-            <AppText color={colors.mutedStrong}>{t('progress.chart.empty')}</AppText>
+            <EmptyState
+              icon="progress"
+              title={t('progress.chart.empty')}
+              action={{ label: t('home.trainNow'), onPress: () => router.push('/home') }}
+            />
           )}
         </Card>
       )}

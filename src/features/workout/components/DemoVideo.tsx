@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { StyleSheet } from 'react-native';
 
 import type { DemoMedia } from '@/features/exercises/videos';
+import { useColors } from '@/theme';
 
 /**
  * Muted autoplay loop (SPEC §3: expo-video). The poster (the clip's starting
@@ -18,6 +19,7 @@ export function DemoVideo({
   poster?: DemoMedia | null;
   mirrored?: boolean;
 }) {
+  const colors = useColors();
   const [playing, setPlaying] = useState(false);
   const player = useVideoPlayer(source, (p) => {
     p.loop = true;
@@ -30,7 +32,8 @@ export function DemoVideo({
     <>
       <VideoView
         player={player}
-        style={[StyleSheet.absoluteFill, flip]}
+        // The body canvas color behind the clip: never a black box (Phase 27, B3).
+        style={[StyleSheet.absoluteFill, { backgroundColor: colors.bodyCanvas }, flip]}
         contentFit="contain"
         nativeControls={false}
         onFirstFrameRender={() => setPlaying(true)}

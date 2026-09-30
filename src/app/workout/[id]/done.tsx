@@ -1,5 +1,5 @@
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useWindowDimensions, View } from 'react-native';
 
@@ -13,7 +13,10 @@ import { generateSession } from '@/features/generator';
 import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { muscleLabel } from '@/features/onboarding/summaries';
+import { LightUpBody } from '@/features/workout/components/LightUpBody';
 import { LegendRow, RecoveryBody, STATE_COLOR } from '@/features/workout/components/RecoveryBody';
+import { feel } from '@/features/workout/feel';
+import { lightOrder } from '@/features/workout/lightOrder';
 import { mainSetCounts } from '@/features/workout/flow';
 import { useWorkout } from '@/features/workout/hooks';
 import { stoppedForPain } from '@/features/workout/safety';
@@ -42,6 +45,11 @@ export default function DoneScreen() {
   const account = useAccountStore();
   const member = useFamilyStore(activeProfile);
   const [focusSaved, setFocusSaved] = useState(false);
+  // A short chord at the end, if turned on (Phase 27, B2; off by default).
+  const endedOk = workout?.status === 'done';
+  useEffect(() => {
+    if (endedOk) feel.finish();
+  }, [endedOk]);
   const { width } = useWindowDimensions();
   const derived = derive(profile);
   if (!workout || !derived) return <Redirect href="/home" />;
@@ -79,6 +87,7 @@ export default function DoneScreen() {
     ),
   );
   const { done: sets } = mainSetCounts(workout);
+  const lit = lightOrder(workout, library).filter((k) => states[k] && states[k] !== 'neutral');
   const perMuscle = new Map<string, number>();
   for (const log of workout.logs) {
     const item = workout.session.items.find((i) => i.id === log.itemId);
@@ -190,7 +199,19 @@ export default function DoneScreen() {
       {/* Full-width body, legend below (QA O-1b). */}
       <View style={styles.bodyRow}>
         <AppText variant="h3">{t('workout.bodyNow')}</AppText>
-        <RecoveryBody band={band} sex={sex} states={states} />
+        {stopped || !lit.length ? (
+          <RecoveryBody band={band} sex={sex} states={states} />
+        ) : (
+          // The muscles worked light up one by one (Phase 27, B1).
+          <LightUpBody
+            band={band}
+            sex={sex}
+            states={states}
+            order={lit}
+            minutes={minutes}
+            senior={derived.mode === 'senior'}
+          />
+        )}
         <View style={styles.legend}>
           <LegendRow color={STATE_COLOR.fresh} label={t('workout.legend.main')} />
           <LegendRow color={STATE_COLOR.recovering} label={t('workout.legend.also')} />
@@ -269,7 +290,9 @@ function Stat({ value, label, wide }: { value: string; label: string; wide?: boo
   const styles = useStyles();
   return (
     <View style={[styles.stat, wide && styles.statWide]}>
-      <AppText variant="h2">{value}</AppText>
+      <AppText variant="h2" style={styles.num}>
+        {value}
+      </AppText>
       <AppText variant="caption" color={colors.muted} style={styles.caps} numberOfLines={2}>
         {label}
       </AppText>
@@ -283,6 +306,7 @@ const useStyles = makeStyles(() => ({
   head: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-end', gap: spacing.md },
   headTitle: { flexGrow: 1, flexShrink: 1, flexBasis: 220 },
   flex: { flex: 1 },
+  num: { fontVariant: ['tabular-nums'] },
   caps: { textTransform: 'uppercase', letterSpacing: 1.2, fontFamily: fonts.headingSemi },
   streak: {
     flexDirection: 'row',

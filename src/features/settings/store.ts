@@ -16,6 +16,12 @@ export type Prefs = {
   restHold: number;
   sounds: boolean;
   voice: boolean;
+  /** Light vibrations on a set, an exercise and a record (Phase 27, B2). */
+  haptics: boolean;
+  /** A "tic" on each set and a short chord at the end: off by default (B2). */
+  celebrationSounds: boolean;
+  /** Moments, the small surprises (Phase 27, C): on by default. */
+  surprises: boolean;
   warmup: 'standard' | 'short';
   experience: Experience;
 };
@@ -25,6 +31,9 @@ export const initialPrefs = (): Prefs => ({
   restHold: 30,
   sounds: true,
   voice: false,
+  haptics: true,
+  celebrationSounds: false,
+  surprises: true,
   warmup: 'standard',
   experience: 'some',
 });
@@ -42,11 +51,24 @@ export const usePrefsStore = create<State>()(
       name: 'prefs',
       version: 1,
       storage: createJSONStorage(() => kvStorage),
-      partialize: ({ restStrength, restHold, sounds, voice, warmup, experience }) => ({
+      partialize: ({
         restStrength,
         restHold,
         sounds,
         voice,
+        haptics,
+        celebrationSounds,
+        surprises,
+        warmup,
+        experience,
+      }) => ({
+        restStrength,
+        restHold,
+        sounds,
+        voice,
+        haptics,
+        celebrationSounds,
+        surprises,
         warmup,
         experience,
       }),
