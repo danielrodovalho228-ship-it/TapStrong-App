@@ -78,6 +78,35 @@ export const recoveryColors = {
 } as const;
 export const dotColors = { untrained: '#FFFFFF', ring: '#333333' } as const;
 /**
+ * Share cards (Phase 28) keep their own colors whatever the app theme: soft
+ * coral, dark, or a transparent sticker whose white text has a soft shadow
+ * so it reads on any photo.
+ */
+export const shareCardColors = {
+  light: {
+    background: '#FFE3DC',
+    ink: '#1E1C1A',
+    muted: '#57504A',
+    accent: '#C43E1C',
+    panel: '#FFFFFF',
+  },
+  dark: {
+    background: '#1B1A19',
+    ink: '#FFFFFF',
+    muted: '#D8D2CC',
+    accent: '#FF7A63',
+    panel: '#2A2623',
+  },
+  transparent: {
+    background: 'transparent',
+    ink: '#FFFFFF',
+    muted: '#FFFFFF',
+    accent: '#FF7A63',
+    panel: 'rgba(0, 0, 0, 0.35)',
+  },
+  shadow: 'rgba(0, 0, 0, 0.55)',
+} as const;
+/**
  * The body map sits on its own light card in both modes (theme v2), so its
  * marks never follow the palette: a selected dot is the "fresh" red with a
  * white ring, halos are that red at low opacity.

@@ -5,6 +5,7 @@ import { useFamilyStore } from '../family/store';
 import { useParentPinStore } from '../family/parentPin';
 import { clearSnapshots } from '../family/switch';
 import { useMomentsStore } from '../moments/store';
+import { useShareStore } from '../share/store';
 import { useMonthStore } from '../month/store';
 import { useOnboardingStore } from '../onboarding/store';
 import { deleteAllPhotos } from '../progress/photos';
@@ -30,6 +31,7 @@ export function wipeLocalData() {
   useMovementPainStore.getState().reset();
   useMonthStore.getState().reset();
   useMomentsStore.getState().reset();
+  useShareStore.getState().reset();
   deleteAllPhotos();
   useAccountStore.getState().reset();
 }

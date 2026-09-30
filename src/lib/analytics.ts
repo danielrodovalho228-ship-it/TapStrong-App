@@ -39,12 +39,18 @@ export type AnalyticsEvent =
   | 'first_exercise_started'
   | 'app_returned'
   | 'moment_shown'
-  | 'moment_shared';
+  | 'moment_shared'
+  // Phase 28: sharing (the card's template, where it came from, where it went).
+  | 'share_opened'
+  | 'share_completed'
+  | 'share_link_opened'
+  | 'referral_signup';
 
 type Props = {
   mode?: 'child' | 'teen' | 'adult' | 'senior';
   locale?: string;
-  source?: 'coach' | 'chips';
+  source?: 'coach' | 'chips' | 'button' | 'screenshot';
+  template?: string;
   reason?: string;
   type?: string;
   target?: string;

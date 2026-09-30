@@ -6,7 +6,7 @@
  */
 import '@/i18n';
 
-import { act, render, screen } from '@testing-library/react-native';
+import { act, fireEvent, render, screen, within } from '@testing-library/react-native';
 import { createAudioPlayer } from 'expo-audio';
 import * as Haptics from 'expo-haptics';
 import { AccessibilityInfo } from 'react-native';
@@ -212,9 +212,12 @@ describe('B4 pride without comparison', () => {
     });
     const week = workoutsThisWeekDone(useWorkoutStore.getState().workouts, NOW, 0);
     await render(<ShareScreen />);
-    expect(screen.getByTestId('share-card')).toBeTruthy();
-    expect(screen.getByText(`${week} workouts this week`)).toBeTruthy();
-    expect(screen.getByTestId('share-identity')).toHaveTextContent(
+    // Phase 28: the week's total and the identity line live on "My week".
+    expect(screen.getAllByTestId('share-card-workout').length).toBeGreaterThan(0);
+    await fireEvent.press(screen.getByRole('button', { name: 'Week' }));
+    const card = screen.getAllByTestId('share-card-week')[0];
+    expect(within(card).getByText(`${week} workouts`)).toBeTruthy();
+    expect(within(card).getByTestId('card-identity')).toHaveTextContent(
       `You trained ${week} times this week. That's consistency.`,
     );
     expect(screen.queryByText(/\bkg\b|\blb\b|cm\b/)).toBeNull();

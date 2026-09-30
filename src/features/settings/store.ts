@@ -22,6 +22,12 @@ export type Prefs = {
   celebrationSounds: boolean;
   /** Moments, the small surprises (Phase 27, C): on by default. */
   surprises: boolean;
+  /** "Show my name" on shared cards (Phase 28, A2): off by default; never minors. */
+  showNameOnCards: boolean;
+  /** Share offers, like the screenshot bar (Phase 28, E): "Never show" turns them off. */
+  shareOffers: boolean;
+  /** Screenshot bar closed in a row; after 3 it stops (Phase 28, C). */
+  shareOfferDeclines: number;
   warmup: 'standard' | 'short';
   experience: Experience;
 };
@@ -34,6 +40,9 @@ export const initialPrefs = (): Prefs => ({
   haptics: true,
   celebrationSounds: false,
   surprises: true,
+  showNameOnCards: false,
+  shareOffers: true,
+  shareOfferDeclines: 0,
   warmup: 'standard',
   experience: 'some',
 });
@@ -59,6 +68,9 @@ export const usePrefsStore = create<State>()(
         haptics,
         celebrationSounds,
         surprises,
+        showNameOnCards,
+        shareOffers,
+        shareOfferDeclines,
         warmup,
         experience,
       }) => ({
@@ -69,6 +81,9 @@ export const usePrefsStore = create<State>()(
         haptics,
         celebrationSounds,
         surprises,
+        showNameOnCards,
+        shareOffers,
+        shareOfferDeclines,
         warmup,
         experience,
       }),

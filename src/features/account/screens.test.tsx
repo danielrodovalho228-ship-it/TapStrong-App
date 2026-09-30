@@ -131,25 +131,24 @@ describe('Save progress (mockup 16)', () => {
 });
 
 describe('Share card (mockup 15)', () => {
-  it('shows the card; the invite link needs a saved account', async () => {
+  it('before any workout: nothing to share yet; the invite link needs a saved account', async () => {
     await render(<ShareScreen />);
-    expect(screen.getByText('My muscle map')).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Share my map' })).toBeTruthy();
-    expect(screen.queryByRole('button', { name: 'Send my invite link' })).toBeNull();
+    expect(screen.getByText(/Nothing to share yet/)).toBeTruthy();
+    expect(screen.queryByRole('link', { name: 'Send my invite link' })).toBeNull();
     expect(screen.getByText(/Save your account to get your own invite link/)).toBeTruthy();
   });
 
-  it('offers the invite link once saved', async () => {
+  it('offers the invite link once saved ("Share with friends" = the invite)', async () => {
     await act(() => useAccountStore.getState().update({ saved: true, referralCode: 'AB3DEF7' }));
     await render(<ShareScreen />);
-    expect(screen.getByRole('button', { name: 'Send my invite link' })).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'Send my invite link' })).toBeTruthy();
   });
 
   it('is hidden in child mode (no social sharing under 13)', async () => {
     await act(() => useOnboardingStore.getState().update({ birthYear: 2015 }));
     await render(<ShareScreen />);
     expect(screen.getByText('redirect:/home')).toBeTruthy();
-    expect(screen.queryByText('My muscle map')).toBeNull();
+    expect(screen.queryByText(/Nothing to share yet/)).toBeNull();
   });
 });
 

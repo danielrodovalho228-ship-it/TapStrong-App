@@ -33,7 +33,7 @@ export type MomentKind =
   | 'month_highlight';
 
 /** Habit, curiosity and map: the only Moments minors get (no weight, record or body). */
-const MINOR_KINDS: readonly MomentKind[] = [
+export const MINOR_MOMENT_KINDS: readonly MomentKind[] = [
   'first_workout',
   'first_back',
   'first_mobility',
@@ -293,7 +293,7 @@ export function pickMoment(ctx: MomentContext): Moment | null {
   }
 
   const list = candidates(ctx).filter(
-    (m) => !shownIds.has(m.id) && (!minor || MINOR_KINDS.includes(m.kind)),
+    (m) => !shownIds.has(m.id) && (!minor || MINOR_MOMENT_KINDS.includes(m.kind)),
   );
   if (!list.length) return null;
   const big = list.find((m) => BIG_KINDS.includes(m.kind));

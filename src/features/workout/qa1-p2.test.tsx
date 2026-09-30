@@ -2,7 +2,7 @@
  * QA round 1 — P2 polish (docs/qa-round-1.md §3), plus the owner decision
  * that minors only see kid and teen body models.
  */
-import { act, fireEvent, render, screen } from '@testing-library/react-native';
+import { act, fireEvent, render, screen, within } from '@testing-library/react-native';
 
 import GoalsScreen from '@/app/goals';
 import PaywallScreen from '@/app/paywall';
@@ -253,9 +253,10 @@ describe('Share', () => {
     expect(month.minutes).toBe(90);
     mockParams = { range: '4w' };
     await render(<ShareScreen />);
-    expect(screen.getByText('My 4 weeks')).toBeTruthy();
-    expect(screen.getByText('3 workouts')).toBeTruthy();
-    expect(screen.getByText('90 min')).toBeTruthy();
+    // Phase 28: the 4 weeks are the month card (3 workouts, 90 min).
+    const card = screen.getAllByTestId('share-card-month')[0];
+    expect(within(card).getAllByText('3').length).toBeGreaterThan(0);
+    expect(within(card).getByText('90 min')).toBeTruthy();
   });
 
   it('lists the most-trained muscles first, not catalog order', () => {

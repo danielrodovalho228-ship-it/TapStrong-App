@@ -5326,5 +5326,88 @@
       "ankle_foot": "your ankle or foot",
       "recent_surgery": "the area of your surgery"
     }
+  },
+  "shareCards": {
+    "workoutEyebrow": "Workout done",
+    "minutes": "minutes",
+    "exercises_one": "exercise",
+    "exercises_other": "exercises",
+    "sets_one": "set",
+    "sets_other": "sets",
+    "streak_one": "🔥 {{count}}-day streak",
+    "streak_other": "🔥 {{count}}-day streak",
+    "minValue": "{{minutes}} min",
+    "time": "time",
+    "muscleEyebrow": "Muscle of the day",
+    "muscleTitle": "Today I trained: {{muscle}} 🔥",
+    "exerciseEyebrow": "Try this one",
+    "primary": "Works: {{muscles}}",
+    "secondary": "also {{muscles}}",
+    "achievementEyebrow": "Achievement",
+    "weekEyebrow": "My week",
+    "weekTitle_one": "{{count}} workout",
+    "weekTitle_other": "{{count}} workouts",
+    "monthEyebrow": "My {{month}}",
+    "monthTitle": "{{month}} done",
+    "monthHighlight": "Standout: {{muscle}}",
+    "workouts_one": "workout",
+    "workouts_other": "workouts",
+    "days_one": "day",
+    "days_other": "days",
+    "hours": "{{hours}} h",
+    "funEyebrow": "This week",
+    "funTitle": "I lifted the equivalent of {{thing}}",
+    "funNote": "Load × reps, all sets this week.",
+    "things": {
+      "panda_one": "{{count}} giant panda 🐼",
+      "panda_other": "{{count}} giant pandas 🐼",
+      "piano_one": "{{count}} piano 🎹",
+      "piano_other": "{{count}} pianos 🎹",
+      "horse_one": "{{count}} horse 🐎",
+      "horse_other": "{{count}} horses 🐎",
+      "car_one": "{{count}} small car 🚗",
+      "car_other": "{{count}} small cars 🚗",
+      "elephant_one": "{{count}} elephant 🐘",
+      "elephant_other": "{{count}} elephants 🐘",
+      "bus_one": "{{count}} city bus 🚌",
+      "bus_other": "{{count}} city buses 🚌",
+      "whale_one": "{{count}} blue whale 🐋",
+      "whale_other": "{{count}} blue whales 🐋"
+    },
+    "cue": "{{n}}. {{cue}}"
+  },
+  "shareSheet": {
+    "title": "Share",
+    "nothing": "Nothing to share yet. Your first workout makes your first card.",
+    "preview": "Card preview",
+    "background": "Background",
+    "format": "Format",
+    "backgrounds": {
+      "light": "Light",
+      "dark": "Dark",
+      "transparent": "Sticker"
+    },
+    "formats": {
+      "story": "Stories",
+      "feed": "Feed"
+    },
+    "targets": {
+      "instagram": "Instagram Stories",
+      "whatsapp": "WhatsApp",
+      "save": "Save to photos",
+      "more": "More…",
+      "copy": "Copy sticker"
+    },
+    "webNote": "On the web, a short text is shared. The picture comes with the app.",
+    "templates": {
+      "workout": "Workout",
+      "sticker": "Sticker",
+      "muscle": "Muscle",
+      "exercise": "Exercise",
+      "achievement": "Achievement",
+      "week": "Week",
+      "month": "Month",
+      "fun": "Fun"
+    }
   }
 }

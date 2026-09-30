@@ -11,7 +11,8 @@
       "bundleIdentifier": "app.tapstrong",
       "supportsTablet": false,
       "infoPlist": {
-        "CFBundleAllowMixedLocalizations": true
+        "CFBundleAllowMixedLocalizations": true,
+        "LSApplicationQueriesSchemes": ["instagram", "instagram-stories", "whatsapp"]
       },
       "config": {
         "usesNonExemptEncryption": false
@@ -28,7 +29,10 @@
       "blockedPermissions": [
         "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.WRITE_EXTERNAL_STORAGE",
-        "android.permission.SYSTEM_ALERT_WINDOW"
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.READ_MEDIA_VIDEO",
+        "android.permission.ACCESS_MEDIA_LOCATION"
       ]
     },
     "web": {
@@ -61,7 +65,12 @@
         }
       ],
       "@sentry/react-native",
-      ["expo-secure-store", { "faceIDPermission": false }],
+      [
+        "expo-secure-store",
+        {
+          "faceIDPermission": false
+        }
+      ],
       [
         "expo-audio",
         {
@@ -70,7 +79,22 @@
           "enableBackgroundPlayback": false
         }
       ],
-      "expo-asset"
+      "expo-asset",
+      [
+        "expo-media-library",
+        {
+          "photosPermission": false,
+          "savePhotosPermission": "TapStrong saves your share cards to your photos. It never reads your photos.",
+          "isAccessMediaLocationEnabled": false,
+          "granularPermissions": ["photo"]
+        }
+      ],
+      [
+        "./plugins/withShareTargets",
+        {
+          "packages": ["com.instagram.android", "com.whatsapp"]
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

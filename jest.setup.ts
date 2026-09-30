@@ -52,6 +52,40 @@ jest.mock('expo-haptics', () => ({
   ImpactFeedbackStyle: { Light: 'light', Medium: 'medium', Heavy: 'heavy', Soft: 'soft' },
   NotificationFeedbackType: { Success: 'success', Warning: 'warning', Error: 'error' },
 }));
+// Sharing (Phase 28): native modules stubbed; the tests check what is sent.
+jest.mock('react-native-share', () => ({
+  __esModule: true,
+  default: {
+    shareSingle: jest.fn(async () => ({ success: true })),
+    open: jest.fn(async () => ({ success: true })),
+    Social: { INSTAGRAM_STORIES: 'instagramstories', WHATSAPP: 'whatsapp' },
+  },
+}));
+jest.mock('expo-media-library', () => ({
+  requestPermissionsAsync: jest.fn(async () => ({ granted: true })),
+  saveToLibraryAsync: jest.fn(async () => undefined),
+}));
+jest.mock('expo-clipboard', () => ({ setImageAsync: jest.fn(async () => true) }));
+jest.mock('expo-screen-capture', () => {
+  const listeners = new Set<() => void>();
+  return {
+    addScreenshotListener: jest.fn((fn: () => void) => {
+      listeners.add(fn);
+      return { remove: () => listeners.delete(fn) };
+    }),
+    /** Test helper: "the person took a screenshot". */
+    __takeScreenshot: () => listeners.forEach((fn) => fn()),
+  };
+});
+jest.mock('react-native-view-shot', () => ({
+  captureRef: jest.fn(async (_ref: unknown, o?: { result?: string }) =>
+    o?.result === 'base64' ? 'iVBORw0KGgo=' : '/tmp/card.png',
+  ),
+}));
+jest.mock('expo-sharing', () => ({
+  isAvailableAsync: jest.fn(async () => true),
+  shareAsync: jest.fn(async () => undefined),
+}));
 jest.mock('expo-speech', () => ({
   speak: jest.fn(),
   stop: jest.fn(async () => undefined),

@@ -8,6 +8,7 @@ import { usePlacesStore, type Place } from '../equipment/store';
 import { initialLibrary, useLibraryStore, type LibraryData } from '../library/store';
 import { useProgramStore } from '../program/store';
 import { useMomentsStore, type StoredMoment } from '../moments/store';
+import { useShareStore, type ShareLink } from '../share/store';
 import { initialProgress, useProgressStore, type ProgressData } from '../progress/store';
 import { initialMonth, useMonthStore, type MonthData } from '../month/store';
 import { useRestrictionsStore, type Restriction } from '../restrictions/store';
@@ -35,6 +36,8 @@ type Snapshot = {
   month?: MonthData;
   /** Moments already shown (Phase 27, C): each profile has its own. */
   moments?: StoredMoment[];
+  /** Shared cards' links (Phase 28). */
+  shareLinks?: ShareLink[];
 };
 
 const key = (id: string) => `profile-snapshot:${id}`;
@@ -71,6 +74,7 @@ function capture(): Snapshot {
       seniorPhotos,
     }))(useProgressStore.getState()),
     moments: useMomentsStore.getState().shown,
+    shareLinks: useShareStore.getState().links,
     movementPain: useMovementPainStore.getState().reports,
     program: (({ planId, startedAt }) => ({ planId, startedAt }))(useProgramStore.getState()),
     library: (({ favourites, notes, goals, custom }) => ({ favourites, notes, goals, custom }))(
@@ -85,6 +89,9 @@ function capture(): Snapshot {
       haptics,
       celebrationSounds,
       surprises,
+      showNameOnCards,
+      shareOffers,
+      shareOfferDeclines,
       warmup,
       experience,
     }) => ({
@@ -95,6 +102,9 @@ function capture(): Snapshot {
       haptics,
       celebrationSounds,
       surprises,
+      showNameOnCards,
+      shareOffers,
+      shareOfferDeclines,
       warmup,
       experience,
     }))(usePrefsStore.getState()),
@@ -121,6 +131,7 @@ function load(snapshot: Snapshot | null, seed: Partial<OnboardingData>) {
   useProgressStore.setState({ ...initialProgress(), ...snapshot?.progress });
   useMonthStore.setState({ ...initialMonth(), ...snapshot?.month });
   useMomentsStore.setState({ shown: snapshot?.moments ?? [] });
+  useShareStore.setState({ links: snapshot?.shareLinks ?? [] });
   useMovementPainStore.setState({ reports: snapshot?.movementPain ?? [] });
   useLibraryStore.setState({ ...initialLibrary(), ...snapshot?.library });
   usePrefsStore.setState({ ...initialPrefs(), ...snapshot?.prefs });

@@ -5326,5 +5326,88 @@
       "ankle_foot": "tu tobillo o pie",
       "recent_surgery": "la zona de tu cirugía"
     }
+  },
+  "shareCards": {
+    "workoutEyebrow": "Entrenamiento hecho",
+    "minutes": "minutos",
+    "exercises_one": "ejercicio",
+    "exercises_other": "ejercicios",
+    "sets_one": "serie",
+    "sets_other": "series",
+    "streak_one": "🔥 {{count}} día seguido",
+    "streak_other": "🔥 {{count}} días seguidos",
+    "minValue": "{{minutes}} min",
+    "time": "tiempo",
+    "muscleEyebrow": "Músculo del día",
+    "muscleTitle": "Hoy entrené: {{muscle}} 🔥",
+    "exerciseEyebrow": "Prueba este",
+    "primary": "Trabaja: {{muscles}}",
+    "secondary": "también {{muscles}}",
+    "achievementEyebrow": "Logro",
+    "weekEyebrow": "Mi semana",
+    "weekTitle_one": "{{count}} entrenamiento",
+    "weekTitle_other": "{{count}} entrenamientos",
+    "monthEyebrow": "Mi {{month}}",
+    "monthTitle": "{{month}} completo",
+    "monthHighlight": "Destacado: {{muscle}}",
+    "workouts_one": "entrenamiento",
+    "workouts_other": "entrenamientos",
+    "days_one": "día",
+    "days_other": "días",
+    "hours": "{{hours}} h",
+    "funEyebrow": "Esta semana",
+    "funTitle": "Levanté el equivalente a {{thing}}",
+    "funNote": "Carga × repeticiones, todas las series de la semana.",
+    "things": {
+      "panda_one": "{{count}} panda gigante 🐼",
+      "panda_other": "{{count}} pandas gigantes 🐼",
+      "piano_one": "{{count}} piano 🎹",
+      "piano_other": "{{count}} pianos 🎹",
+      "horse_one": "{{count}} caballo 🐎",
+      "horse_other": "{{count}} caballos 🐎",
+      "car_one": "{{count}} auto pequeño 🚗",
+      "car_other": "{{count}} autos pequeños 🚗",
+      "elephant_one": "{{count}} elefante 🐘",
+      "elephant_other": "{{count}} elefantes 🐘",
+      "bus_one": "{{count}} autobús 🚌",
+      "bus_other": "{{count}} autobuses 🚌",
+      "whale_one": "{{count}} ballena azul 🐋",
+      "whale_other": "{{count}} ballenas azules 🐋"
+    },
+    "cue": "{{n}}. {{cue}}"
+  },
+  "shareSheet": {
+    "title": "Compartir",
+    "nothing": "Nada para compartir todavía. Tu primer entrenamiento hace tu primera tarjeta.",
+    "preview": "Vista previa",
+    "background": "Fondo",
+    "format": "Formato",
+    "backgrounds": {
+      "light": "Claro",
+      "dark": "Oscuro",
+      "transparent": "Sticker"
+    },
+    "formats": {
+      "story": "Stories",
+      "feed": "Feed"
+    },
+    "targets": {
+      "instagram": "Stories de Instagram",
+      "whatsapp": "WhatsApp",
+      "save": "Guardar en fotos",
+      "more": "Más…",
+      "copy": "Copiar sticker"
+    },
+    "webNote": "En la web se comparte un texto corto. La imagen viene con la app.",
+    "templates": {
+      "workout": "Entreno",
+      "sticker": "Sticker",
+      "muscle": "Músculo",
+      "exercise": "Ejercicio",
+      "achievement": "Logro",
+      "week": "Semana",
+      "month": "Mes",
+      "fun": "Divertido"
+    }
   }
 }
