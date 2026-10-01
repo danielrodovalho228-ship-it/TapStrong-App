@@ -3005,3 +3005,49 @@ O upload pelo GitHub **parou no meio**: vieram 75 arquivos, em ordem alfabética
 ### Lista de refazer (`docs/media-redo.md`)
 
 **Total: 67 clipes** (32 de exercícios sem nenhum sexo no app, 35 de exercícios com só um). Antes eram 80.
+
+## Mídia — Projeto "set. 30 - 19:31" (refazer 3 e 4)
+
+### O que chegou (70 arquivos, todos em `assets/prototype/`, nada na raiz)
+
+- 25 vídeos e 11 imagens sem vídeo, do projeto "set. 30 - 19:31".
+- Descartados: 7 `x_bad_*` e 2 `body-adult-*`.
+- **Não chegou de novo:** o resto do lote 4 e do refazer 1 (de `sl_seated_knee_circles.m` em diante, projeto "set. 30 - 05:45").
+
+### QC quadro a quadro
+
+| slug                             | f                                             | m                                      | status    |
+| -------------------------------- | --------------------------------------------- | -------------------------------------- | --------- |
+| bridge_pillow_squeeze            | ok                                            | ok                                     | no app    |
+| heel_dig_bridge                  | (já estava ok)                                | ok (de camiseta)                       | no app    |
+| seated_knee_raise                | (já estava ok)                                | ok                                     | no app    |
+| seated_pillow_squeeze            | ok                                            | ok                                     | no app    |
+| seated_towel_press_up            | (já estava ok)                                | ok                                     | no app    |
+| sf_seated_back_arch_reach        | ok                                            | (já estava ok)                         | no app    |
+| sl_seated_clamshell              | (já estava ok)                                | ok (de camiseta)                       | no app    |
+| sl_seated_heel_slides            | ok                                            | (já estava ok)                         | no app    |
+| side_lying_leg_raise             | ok                                            | ok                                     | no app    |
+| clamshell                        | suspeito: levanta a perna esticada            | suspeito: perna dobrada até a vertical | refazer   |
+| side_lying_adductor_raise        | suspeito: continua levantando a perna de cima | suspeito: perna de cima                | refazer   |
+| sl_seated_hands_out_knee_squeeze | suspeito: mãos por fora das coxas             | (já estava ok)                         | refazer f |
+| bal_supported_tandem_stance      | (já estava ok)                                | ok                                     | no app    |
+| bird_dog                         | suspeito: só o braço estende                  | (já estava ok)                         | refazer f |
+| bodyweight_good_morning          | ok                                            | (já estava ok)                         | no app    |
+| prone_w_raise                    | (já estava ok)                                | suspeito: mãos no chão, tipo cobra     | refazer m |
+| seated_arms_back_lift            | (já estava ok)                                | ok                                     | no app    |
+| seated_w_squeeze                 | suspeito: braços sobem em vez do W            | (já estava ok)                         | refazer f |
+| sl_seated_knee_out_press_hold    | ok                                            | (não chegou)                           | f no app  |
+| su_seated_scaption_raise         | (já estava ok)                                | suspeito: braços acima da cabeça       | refazer m |
+
+- **Resultado:** 16 ok e 9 suspeitos. No app agora: **177 clipes em 102 exercícios** (antes 161 em 98).
+- **Imagens sem vídeo (refazer 4):** bal_seated_knee_lift_hold.f, bal_seated_weight_shifts.m, doorframe_row.m, front_arm_hold.f, sl_seated_abdominal_thigh_press.m, sl_seated_feet_hover_hold.m, sl_seated_towel_ankle_squeeze.m, su_seated_chair_grip_shrug_hold.m, su_seated_clasped_hands_squeeze.m, su_seated_self_resisted_palm_turn.m e supported_split_squat.m. As que não tinham vídeo ficam como "só imagem"; as que tinham vídeo errado continuam suspeitas, agora com "imagem nova pronta, aguardando o vídeo".
+
+### Recusados pelo Flow (com alternativa)
+
+- **wall_push_up.f:** vista de lado, mulher de camiseta e legging, mãos na parede na altura do peito, corpo reto. Se recusar de novo, fica só o vídeo do homem.
+- **standing_supported_bird_dog.f:** vista de lado, de camiseta, uma mão no encosto de uma cadeira, braço oposto à frente e perna para trás, só um pouco.
+- **low_step_up.f e rx_low_step_up.f:** um vídeo só, vista de lado, mulher de camiseta, step baixo de academia e mão no corrimão. O mesmo vídeo serve para os dois slugs, porque o movimento é o mesmo. A camiseta foi o que resolveu as recusas do homem.
+
+### Lista de refazer (`docs/media-redo.md`)
+
+**Total: 51 clipes** (24 de exercícios sem nenhum sexo no app, 27 de exercícios com só um). Antes eram 67.
