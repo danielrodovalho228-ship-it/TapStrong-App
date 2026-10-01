@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
   "installCommand": "npm ci",
-  "buildCommand": "EXPO_NO_DOTENV=1 EXPO_OFFLINE=1 CI=1 npx expo export --dev --platform web --output-dir dist-preview && node scripts/preview-routes.mjs dist-preview",
+  "buildCommand": "EXPO_PUBLIC_DEMO_MEDIA=1 EXPO_NO_DOTENV=1 EXPO_OFFLINE=1 CI=1 npx expo export --dev --platform web --output-dir dist-preview && node scripts/preview-routes.mjs dist-preview",
   "outputDirectory": "dist-preview",
   "cleanUrls": true,
   "git": {

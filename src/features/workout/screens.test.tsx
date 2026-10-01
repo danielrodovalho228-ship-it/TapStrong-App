@@ -58,7 +58,13 @@ beforeAll(() => {
   clock.now = () => new Date('2026-09-26T12:00:00Z');
 });
 
-async function setUp(place: 'gym' | 'home' = 'gym', exercisesPerSession = 3, minutes = 40) {
+async function setUp(
+  place: 'gym' | 'home' = 'gym',
+  exercisesPerSession = 3,
+  minutes = 40,
+  /** An earlier finished workout (nothing logged), so this one is not the first. */
+  prior = false,
+) {
   await act(() => {
     profile().reset();
     profile().update({
@@ -76,6 +82,12 @@ async function setUp(place: 'gym' | 'home' = 'gym', exercisesPerSession = 3, min
     useRestrictionsStore.getState().reset();
   });
   const input = inputFromProfile(profile(), LIBRARY, true)!;
+  if (prior) {
+    await act(() => {
+      const before = workouts().create(generateSession(input));
+      workouts().finish(before, 'done');
+    });
+  }
   const id = workouts().create(generateSession(input));
   mockParams = { id };
   return input;
@@ -392,9 +404,7 @@ describe('Exit (mockup 13) and Done (mockup 14)', () => {
     expect(mockRouter.replace).toHaveBeenCalledWith('/home');
   });
 
-  it('celebrates, shows the streak and suggests the untrained group', async () => {
-    // One exercise in a 10-minute session: chest only, so legs stay untrained
-    // (a longer session would be filled up to its time, QA R3 P2).
+  it('the first workout: no "Finish strong", the muscles worked as painted areas', async () => {
     await setUp('gym', 1, 10);
     const w = current();
     const main = w.session.items.filter((i) => i.role === 'main');
@@ -405,6 +415,25 @@ describe('Exit (mockup 13) and Done (mockup 14)', () => {
     });
     await render(<DoneScreen />);
     expect(screen.getByText('First one done!')).toBeTruthy();
+    expect(screen.queryByText('Finish strong')).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Add 10 min' })).toBeNull();
+    expect(screen.getByText('Muscles worked')).toBeTruthy();
+    expect(screen.getByTestId('muscle-area-map')).toBeTruthy();
+  });
+
+  it('celebrates, shows the streak and suggests the untrained group', async () => {
+    // One exercise in a 10-minute session: chest only, so legs stay untrained
+    // (a longer session would be filled up to its time, QA R3 P2).
+    await setUp('gym', 1, 10, true);
+    const w = current();
+    const main = w.session.items.filter((i) => i.role === 'main');
+    await act(() => {
+      for (const m of main)
+        workouts().logSet(w.id, { itemId: m.id, exerciseId: m.exerciseId, setNo: 1, reps: 10 });
+      workouts().finish(w.id, 'partial');
+    });
+    await render(<DoneScreen />);
+    expect(screen.getByText('Finish strong')).toBeTruthy();
     expect(screen.getByText('Day 1 streak')).toBeTruthy();
     expect(screen.getByText('Main target today')).toBeTruthy();
 
@@ -446,7 +475,7 @@ describe('Exit (mockup 13) and Done (mockup 14)', () => {
   it('"Add 10 min" creates a short finisher with warm-up and cool-down', async () => {
     // One exercise in a 10-minute session: chest only, so legs stay untrained
     // (a longer session would be filled up to its time, QA R3 P2).
-    await setUp('gym', 1, 10);
+    await setUp('gym', 1, 10, true);
     const w = current();
     const main = w.session.items.filter((i) => i.role === 'main');
     await act(() => {

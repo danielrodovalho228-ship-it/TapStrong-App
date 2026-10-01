@@ -3672,8 +3672,6 @@
     "machineTaken": "Máquina ocupada",
     "reviewed": "Cada movimiento lo revisa un entrenador certificado",
     "draftBadge": "Versión de desarrollo: ejercicios en borrador, aún sin revisar. Nunca llegan a los usuarios.",
-    "demoLoop": "Demo · bucle",
-    "demoPending": "El video de demostración llega con la biblioteca de ejercicios con licencia.",
     "bodyNow": "Tu cuerpo ahora",
     "finisher": {
       "finisher_cardio": "Final de cardio",
@@ -3692,18 +3690,22 @@
     },
     "swap": {
       "open": "Cambiar {{name}}",
-      "eyebrow": "Cambiar · mismo músculo",
       "machineEyebrow": "Máquina ocupada",
       "title": "En lugar de {{name}}",
       "whichMachine": "¿Qué máquina está ocupada?",
       "empty": "Ahora no hay otra opción segura para este ejercicio.",
-      "replace": "Reemplazar",
       "replaceWith": "Reemplazar por {{name}}",
       "remainingOnly": "Las series ya registradas se quedan igual; el cambio cubre las series que faltan.",
       "done": "Cambiado por {{name}}",
       "undo": "Deshacer",
       "missingEquipment": "También parecidos, pero necesitan equipo que no tienes: {{names}}",
-      "editEquipment": "Editar mi equipo"
+      "editEquipment": "Editar mi equipo",
+      "sameMuscle": "Mismo músculo · más fácil / igual / más difícil",
+      "level": {
+        "easier": "Más fácil",
+        "same": "Igual",
+        "harder": "Más difícil"
+      }
     },
     "player": {
       "progress": "{{n}} / {{total}}",
@@ -3827,7 +3829,7 @@
       }
     },
     "restFor": "descanso {{seconds}} s",
-    "demoPrototype": "Demo de prototipo · solo desarrollo",
+    "demoPrototype": "Prototipo",
     "range": {
       "reduced": "Rango corto: para antes de que duela",
       "isometric": "Contracción suave: empuja sin moverte, sin dolor"
@@ -3856,7 +3858,9 @@
       "long": "Hay unos {{estimate}} de tus {{minutes}} min planificados."
     },
     "deload": "Semana suave: menos series",
-    "otherSide": "Otro lado"
+    "otherSide": "Otro lado",
+    "demoSoon": "Demostración próximamente",
+    "worked": "Músculos trabajados"
   },
   "account": {
     "eyebrow": "Tu cuenta",
@@ -3895,7 +3899,8 @@
     },
     "planBilling": "Plan y facturación",
     "deleteAccount": "Eliminar cuenta",
-    "signInAgain": "Este teléfono cerró la sesión. Escribe tu correo para volver a iniciar sesión."
+    "signInAgain": "Este teléfono cerró la sesión. Escribe tu correo para volver a iniciar sesión.",
+    "remindersAppOnly": "Los recordatorios de entrenamiento están disponibles en la app."
   },
   "share": {
     "title": "Compartir hoy",

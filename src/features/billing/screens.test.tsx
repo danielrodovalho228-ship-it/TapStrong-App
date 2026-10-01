@@ -41,6 +41,7 @@ jest.mock('expo-router', () => ({
   Redirect: () => null,
 }));
 jest.mock('@/features/notifications/apply', () => ({
+  remindersAvailable: true,
   requestPermission: async () => true,
   applyPlan: async () => undefined,
 }));

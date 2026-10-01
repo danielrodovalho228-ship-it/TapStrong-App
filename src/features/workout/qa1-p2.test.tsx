@@ -59,6 +59,7 @@ jest.mock('@/features/account/cloud', () => ({
   referralLink: (code: string) => `tapstrong://r/${code}`,
 }));
 jest.mock('@/features/notifications/apply', () => ({
+  remindersAvailable: true,
   requestPermission: async () => true,
   applyPlan: async () => undefined,
 }));

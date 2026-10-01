@@ -18,6 +18,12 @@ function load(): NotificationsModule | null {
   }
 }
 
+/**
+ * Reminders need the app: the web preview has no notifications, so there the
+ * switches are hidden and a line says "available in the app" (Phase 29, A5).
+ */
+export const remindersAvailable = Platform.OS !== 'web';
+
 /** Asks for permission when the user turns a notification on. */
 export async function requestPermission(): Promise<boolean> {
   const N = load();

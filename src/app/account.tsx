@@ -19,7 +19,7 @@ import { LegalLinks } from '@/features/legal/LegalLinks';
 import { sendEmailCode, signOut, verifyEmailCode, type EmailMode } from '@/features/account/auth';
 import { afterAccountSaved, syncNow } from '@/features/account/cloud';
 import { useAccountStore } from '@/features/account/store';
-import { requestPermission } from '@/features/notifications/apply';
+import { remindersAvailable, requestPermission } from '@/features/notifications/apply';
 import { parseTime, trainingWeekdays } from '@/features/notifications/plan';
 import { useTrainingDaysPerWeek } from '@/features/program/useTrainingDays';
 import { modeOf } from '@/features/onboarding/derived';
@@ -240,26 +240,34 @@ function AccountScreenInner() {
 
       {message ? <Notice tone="warning">{message}</Notice> : null}
 
-      <Card style={styles.toggles}>
-        <ToggleRow
-          label={t('account.reminders')}
-          detail={t('account.remindersDetail', {
-            days: dayNames.join(' · '),
-            time: timeText(account.notifications.reminderTime),
-          })}
-          value={account.notifications.reminders}
-          onChange={(v) => void toggle('reminders', v)}
-        />
-        <View style={styles.divider} />
-        <ToggleRow
-          label={t('account.streakSaver')}
-          detail={t('account.streakSaverDetail', {
-            time: timeText(account.notifications.streakSaverTime),
-          })}
-          value={account.notifications.streakSaver}
-          onChange={(v) => void toggle('streakSaver', v)}
-        />
-      </Card>
+      {/* The warning shows only after turning a reminder on was refused
+          (Phase 29, A5); on the web, reminders are app-only. */}
+      {remindersAvailable ? (
+        <Card style={styles.toggles}>
+          <ToggleRow
+            label={t('account.reminders')}
+            detail={t('account.remindersDetail', {
+              days: dayNames.join(' · '),
+              time: timeText(account.notifications.reminderTime),
+            })}
+            value={account.notifications.reminders}
+            onChange={(v) => void toggle('reminders', v)}
+          />
+          <View style={styles.divider} />
+          <ToggleRow
+            label={t('account.streakSaver')}
+            detail={t('account.streakSaverDetail', {
+              time: timeText(account.notifications.streakSaverTime),
+            })}
+            value={account.notifications.streakSaver}
+            onChange={(v) => void toggle('streakSaver', v)}
+          />
+        </Card>
+      ) : (
+        <AppText variant="caption" color={colors.mutedStrong} testID="reminders-app-only">
+          {t('account.remindersAppOnly')}
+        </AppText>
+      )}
       {permissionDenied ? <Notice tone="warning">{t('account.permissionDenied')}</Notice> : null}
 
       {/* Under-13 profiles are off at launch: no note about them (QA R7 P2). */}

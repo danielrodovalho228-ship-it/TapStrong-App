@@ -31,3 +31,33 @@ export function lightOrder(workout: WorkoutRecord, library: Exercise[]): string[
     (k) => (muscleByKey(k)?.views.length ?? 0) > 0,
   );
 }
+
+/**
+ * The muscles the logged exercises worked (Phase 29, A4): primary, and the
+ * secondary ones that were not also primary. Only muscles drawn on the body.
+ */
+export function workedMuscles(
+  workout: WorkoutRecord,
+  library: Exercise[],
+): { primary: string[]; secondary: string[] } {
+  const byId = new Map(library.map((e) => [e.id, e]));
+  const exercises = workout.logs
+    .map((l) => byId.get(l.exerciseId))
+    .filter((e): e is Exercise => !!e);
+  const onBody = (k: string) => (muscleByKey(k)?.views.length ?? 0) > 0;
+  const primary = [
+    ...new Set(
+      exercises.flatMap((e) =>
+        e.muscles.filter((m) => m.role === 'primary').map((m) => m.muscleKey),
+      ),
+    ),
+  ].filter(onBody);
+  const secondary = [
+    ...new Set(
+      exercises.flatMap((e) =>
+        e.muscles.filter((m) => m.role === 'secondary').map((m) => m.muscleKey),
+      ),
+    ),
+  ].filter((k) => onBody(k) && !primary.includes(k));
+  return { primary, secondary };
+}

@@ -42,6 +42,7 @@ jest.mock('@/features/account/cloud', () => ({
 }));
 const mockPermission = jest.fn(async () => true);
 jest.mock('@/features/notifications/apply', () => ({
+  remindersAvailable: true,
   requestPermission: () => mockPermission(),
   applyPlan: async () => undefined,
 }));
@@ -114,6 +115,8 @@ describe('Save progress (mockup 16)', () => {
   it('turning on reminders asks for permission and keeps them off if denied', async () => {
     await render(<AccountScreen />);
     expect(screen.getByText(/at 6:30/)).toBeTruthy();
+    // Phase 29, A5: no warning before anyone tried to turn a reminder on.
+    expect(screen.queryByText(/Turn them on in your phone's settings/)).toBeNull();
     await fireEvent.press(screen.getByRole('switch', { name: 'Workout reminders' }));
     expect(useAccountStore.getState().notifications.reminders).toBe(true);
     mockPermission.mockImplementationOnce(async () => false);

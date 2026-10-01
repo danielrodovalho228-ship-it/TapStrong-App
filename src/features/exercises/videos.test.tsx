@@ -93,9 +93,9 @@ describe('ExerciseDemo', () => {
     await as({ sex: 'm' });
     await render(<ExerciseDemo slug="goblet_squat" chips={[]} />);
     expect(screen.queryByText(/^clip:/)).toBeNull();
-    expect(
-      screen.getByText('The demo video arrives with the licensed exercise library.'),
-    ).toBeTruthy();
+    // Phase 29, A1: the body with the exercise's muscles lit, and "Demo coming soon".
+    expect(screen.getByText('Demo coming soon')).toBeTruthy();
+    expect(screen.queryByText(/licensed/)).toBeNull();
   });
 
   it('no sex set: asks once, stores the answer, then shows that clip', async () => {

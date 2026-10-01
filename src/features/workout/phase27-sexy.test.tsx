@@ -109,7 +109,7 @@ beforeEach(() => {
 });
 afterEach(() => jest.useRealTimers());
 
-const STATES = { quads: 'fresh', glutes: 'fresh', lats: 'recovering' } as const;
+const WORKED = { primary: ['quads', 'glutes'], secondary: ['lats'] };
 const ORDER = ['quads', 'glutes', 'lats'];
 
 async function tick(ms: number) {
@@ -120,7 +120,7 @@ async function tick(ms: number) {
 
 describe('B1 the map that lights up', () => {
   it('lights the muscles one by one, 150 ms apart, a haptic each, then the big total', async () => {
-    await render(<LightUpBody band="adult" sex="f" states={STATES} order={ORDER} minutes={42} />);
+    await render(<LightUpBody band="adult" sex="f" {...WORKED} order={ORDER} minutes={42} />);
     expect(screen.getByTestId('light-up-running')).toBeTruthy();
     await tick(LIGHT_STEP_MS);
     expect(Haptics.selectionAsync).toHaveBeenCalledTimes(1);
@@ -133,7 +133,7 @@ describe('B1 the map that lights up', () => {
 
   it('"reduce motion": no animation and no haptics, only the final state', async () => {
     reduceMotion = true;
-    await render(<LightUpBody band="adult" sex="f" states={STATES} order={ORDER} minutes={42} />);
+    await render(<LightUpBody band="adult" sex="f" {...WORKED} order={ORDER} minutes={42} />);
     await tick(0);
     expect(screen.getByTestId('light-up-done')).toBeTruthy();
     expect(screen.queryAllByTestId('light-pulse')).toHaveLength(0);
@@ -143,7 +143,7 @@ describe('B1 the map that lights up', () => {
 
   it('60+: slower', async () => {
     await render(
-      <LightUpBody band="senior" sex="f" states={STATES} order={ORDER} minutes={30} senior />,
+      <LightUpBody band="senior" sex="f" {...WORKED} order={ORDER} minutes={30} senior />,
     );
     for (let i = 0; i < 3; i++) await tick(LIGHT_STEP_MS);
     expect(screen.getByTestId('light-up-running')).toBeTruthy();

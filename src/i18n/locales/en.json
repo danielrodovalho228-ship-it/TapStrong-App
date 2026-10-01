@@ -3672,8 +3672,6 @@
     "machineTaken": "Machine is taken",
     "reviewed": "Every move is checked by a certified coach",
     "draftBadge": "Development build: draft exercises, not reviewed yet. They never reach users.",
-    "demoLoop": "Demo · loop",
-    "demoPending": "The demo video arrives with the licensed exercise library.",
     "bodyNow": "Your body now",
     "finisher": {
       "finisher_cardio": "Cardio finisher",
@@ -3692,18 +3690,22 @@
     },
     "swap": {
       "open": "Swap {{name}}",
-      "eyebrow": "Swap · same muscle",
       "machineEyebrow": "Machine is taken",
       "title": "Instead of {{name}}",
       "whichMachine": "Which machine is taken?",
       "empty": "No other safe option for this move right now.",
-      "replace": "Replace",
       "replaceWith": "Replace with {{name}}",
       "remainingOnly": "Sets you already logged stay as they are; the swap covers the remaining sets.",
       "done": "Swapped to {{name}}",
       "undo": "Undo",
       "missingEquipment": "Also close, but need equipment you don't have: {{names}}",
-      "editEquipment": "Edit my equipment"
+      "editEquipment": "Edit my equipment",
+      "sameMuscle": "Same muscle · easier / same / harder",
+      "level": {
+        "easier": "Easier",
+        "same": "Same level",
+        "harder": "Harder"
+      }
     },
     "player": {
       "progress": "{{n}} / {{total}}",
@@ -3827,7 +3829,7 @@
       }
     },
     "restFor": "rest {{seconds}} s",
-    "demoPrototype": "Prototype demo · dev build only",
+    "demoPrototype": "Prototype",
     "range": {
       "reduced": "Shorter range: stop before it hurts",
       "isometric": "Gentle hold: push without moving, no pain"
@@ -3856,7 +3858,9 @@
       "long": "About {{estimate}} of your {{minutes}} min are planned."
     },
     "deload": "Light week: fewer sets",
-    "otherSide": "Other side"
+    "otherSide": "Other side",
+    "demoSoon": "Demo coming soon",
+    "worked": "Muscles worked"
   },
   "account": {
     "eyebrow": "Your account",
@@ -3895,7 +3899,8 @@
     },
     "planBilling": "Plan & billing",
     "deleteAccount": "Delete account",
-    "signInAgain": "This phone was signed out. Enter your email to sign in again."
+    "signInAgain": "This phone was signed out. Enter your email to sign in again.",
+    "remindersAppOnly": "Workout reminders are available in the app."
   },
   "share": {
     "title": "Share today",

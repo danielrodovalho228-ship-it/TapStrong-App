@@ -165,14 +165,16 @@ describe('second workout: every path follows the rule', () => {
   });
 
   it('60+ done screen: no "Add 10 min", "Push next time" stays', async () => {
+    // Not the first workout: the first one never shows "Finish strong" (Phase 29, A4).
+    const earlier = { ...doneToday('t0'), logs: [] };
     await profile(1958);
-    await act(() => useWorkoutStore.setState({ workouts: [doneToday()] }));
+    await act(() => useWorkoutStore.setState({ workouts: [earlier, doneToday()] }));
     mockParams = { id: 't1' };
     await render(<DoneScreen />);
     expect(screen.queryByRole('button', { name: /Add 10 min/ })).toBeNull();
     expect(screen.getByRole('button', { name: /next time/i })).toBeTruthy();
     await profile(1990);
-    await act(() => useWorkoutStore.setState({ workouts: [doneToday()] }));
+    await act(() => useWorkoutStore.setState({ workouts: [earlier, doneToday()] }));
     await render(<DoneScreen />);
     expect(screen.getByRole('button', { name: /Add 10 min/ })).toBeTruthy();
   });

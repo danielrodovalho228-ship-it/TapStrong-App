@@ -116,6 +116,9 @@ export const bodyMapColors = {
   selectedHalo: 'rgba(196, 62, 28, 0.25)',
   workedHalo: 'rgba(196, 62, 28, 0.35)',
   highlight: 'rgba(196, 62, 28, 0.45)',
+  /** "Muscles worked" areas (Phase 29, A4): primary strong, secondary light. */
+  areaPrimary: recoveryColors.fresh,
+  areaSecondary: recoveryColors.almost,
 } as const;
 
 export const radius = {

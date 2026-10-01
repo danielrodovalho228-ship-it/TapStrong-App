@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Modal, Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { AppText, Button, Card, IconButton, Notice, TextLink } from '@/components/ui';
+import { AppText, Button, Icon, IconButton, Notice, TextLink } from '@/components/ui';
 import type { Exercise } from '@/features/exercises/types';
 import { getAlternatives, missingEquipmentOptions, swapItem } from '@/features/generator';
 import { isMachine } from '@/features/generator/filters';
@@ -43,9 +43,20 @@ export function machineItems(workout: WorkoutRecord, byId: Map<string, Exercise>
   );
 }
 
+const LEVELS = ['easier', 'same', 'harder'] as const;
+type Level = (typeof LEVELS)[number];
+
+/** Easier, same or harder than the exercise it replaces (by library level). */
+export function levelOf(e: Exercise, current: Exercise | undefined): Level {
+  if (!current || e.level === current.level) return 'same';
+  return e.level < current.level ? 'easier' : 'harder';
+}
+
 /**
  * Swap sheet (SPEC §8 "Swap"): up to 5 safe alternatives for the same
- * primary muscle, each with its demo loop; "Replace" swaps in place.
+ * primary muscle, grouped easier / same / harder. Each is one light row
+ * (poster of the profile's sex, name, a one-line tip); tapping the row
+ * swaps in place (Phase 29, A3).
  */
 export function SwapSheet({
   visible,
@@ -97,7 +108,9 @@ export function SwapSheet({
           <View style={styles.headText}>
             <AppText variant="caption" color={colors.mutedStrong} style={styles.eyebrow}>
               {t(
-                reason === 'machine_taken' ? 'workout.swap.machineEyebrow' : 'workout.swap.eyebrow',
+                reason === 'machine_taken'
+                  ? 'workout.swap.machineEyebrow'
+                  : 'workout.swap.sameMuscle',
               )}
             </AppText>
             <AppText variant="h2" accessibilityRole="header">
@@ -122,27 +135,41 @@ export function SwapSheet({
           ) : options.length === 0 ? (
             <Notice icon>{t('workout.swap.empty')}</Notice>
           ) : (
-            options.map((e) => (
-              <Card key={e.id} style={styles.option}>
-                <View style={styles.optionRow}>
-                  <ExerciseThumb size={72} slug={e.slug} />
-                  <View style={styles.optionText}>
-                    <AppText variant="bodyStrong">{exerciseName(t, e, e.id)}</AppText>
-                    <AppText variant="caption" color={colors.mutedStrong}>
-                      {exerciseCues(t, e)}
-                    </AppText>
-                  </View>
+            LEVELS.map((level) => {
+              const group = options.filter((e) => levelOf(e, current) === level);
+              if (!group.length) return null;
+              return (
+                <View key={level} style={styles.group} testID={`swap-group-${level}`}>
+                  <AppText variant="label" color={colors.mutedStrong}>
+                    {t(`workout.swap.level.${level}`)}
+                  </AppText>
+                  {group.map((e) => (
+                    // One row per option: tap the row to swap (Phase 29, A3).
+                    <Pressable
+                      key={e.id}
+                      testID="swap-option"
+                      accessibilityRole="button"
+                      accessibilityLabel={t('workout.swap.replaceWith', {
+                        name: exerciseName(t, e, e.id),
+                      })}
+                      onPress={() => replace(e)}
+                      style={({ pressed }) => [styles.optionRow, pressed && styles.optionPressed]}
+                    >
+                      <ExerciseThumb size={64} slug={e.slug} />
+                      <View style={styles.optionText}>
+                        <AppText variant="bodyStrong" numberOfLines={2}>
+                          {exerciseName(t, e, e.id)}
+                        </AppText>
+                        <AppText variant="caption" color={colors.mutedStrong} numberOfLines={1}>
+                          {exerciseCues(t, e)}
+                        </AppText>
+                      </View>
+                      <Icon name="swap" size={20} color={colors.mutedStrong} />
+                    </Pressable>
+                  ))}
                 </View>
-                <Button
-                  variant="primary"
-                  label={t('workout.swap.replace')}
-                  accessibilityLabel={t('workout.swap.replaceWith', {
-                    name: exerciseName(t, e, e.id),
-                  })}
-                  onPress={() => replace(e)}
-                />
-              </Card>
-            ))
+              );
+            })
           )}
           {missing.length ? (
             <View style={styles.missing} testID="swap-missing-equipment">
@@ -192,7 +219,16 @@ const useStyles = makeStyles(() => ({
   headText: { flex: 1, gap: spacing.xs },
   eyebrow: { textTransform: 'uppercase', letterSpacing: 1.2 },
   list: { paddingHorizontal: spacing.xl, gap: spacing.md, paddingBottom: spacing.lg },
-  option: { gap: spacing.md },
-  optionRow: { flexDirection: 'row', gap: spacing.md },
+  group: { gap: spacing.xs },
+  optionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    minHeight: 72,
+    padding: spacing.xs,
+    borderRadius: radius.card,
+    backgroundColor: colors.surface,
+  },
+  optionPressed: { backgroundColor: colors.line },
   optionText: { flex: 1, gap: spacing.xxs },
 }));

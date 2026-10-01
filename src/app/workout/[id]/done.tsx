@@ -20,7 +20,7 @@ import { muscleLabel } from '@/features/onboarding/summaries';
 import { LightUpBody } from '@/features/workout/components/LightUpBody';
 import { LegendRow, RecoveryBody, STATE_COLOR } from '@/features/workout/components/RecoveryBody';
 import { feel } from '@/features/workout/feel';
-import { lightOrder } from '@/features/workout/lightOrder';
+import { lightOrder, workedMuscles } from '@/features/workout/lightOrder';
 import { mainSetCounts } from '@/features/workout/flow';
 import { useWorkout } from '@/features/workout/hooks';
 import { stoppedForPain } from '@/features/workout/safety';
@@ -35,7 +35,7 @@ import { useWorkoutStore } from '@/features/workout/store';
 import { streakToday } from '@/features/workout/streak';
 import { clock } from '@/lib/clock';
 import { deviceWeekStart, localDate } from '@/lib/dates';
-import { colors, fonts, makeStyles, radius, spacing, useColors } from '@/theme';
+import { bodyMapColors, colors, fonts, makeStyles, radius, spacing, useColors } from '@/theme';
 
 /** Mockup 14 — done: the body turns red, stats, a finisher suggestion. */
 export default function DoneScreen() {
@@ -95,7 +95,10 @@ export default function DoneScreen() {
     ),
   );
   const { done: sets } = mainSetCounts(workout);
-  const lit = lightOrder(workout, library).filter((k) => states[k] && states[k] !== 'neutral');
+  const worked = workedMuscles(workout, library);
+  const lit = lightOrder(workout, library).filter(
+    (k) => worked.primary.includes(k) || worked.secondary.includes(k),
+  );
   const perMuscle = new Map<string, number>();
   for (const log of workout.logs) {
     const item = workout.session.items.find((i) => i.id === log.itemId);
@@ -205,31 +208,40 @@ export default function DoneScreen() {
       </View>
 
       {/* Full-width body, legend below (QA O-1b). */}
-      <View style={styles.bodyRow}>
-        <AppText variant="h3">{t('workout.bodyNow')}</AppText>
-        {stopped || !lit.length ? (
+      {stopped || !lit.length ? (
+        <View style={styles.bodyRow}>
+          <AppText variant="h3">{t('workout.bodyNow')}</AppText>
           <RecoveryBody band={band} sex={sex} states={states} />
-        ) : (
-          // The muscles worked light up one by one (Phase 27, B1).
+          <View style={styles.legend}>
+            <LegendRow color={STATE_COLOR.fresh} label={t('workout.legend.main')} />
+            <LegendRow color={STATE_COLOR.recovering} label={t('workout.legend.also')} />
+            <LegendRow color={STATE_COLOR.neglected} label={t('workout.legend.notYet')} />
+            <LegendRow label={t('home.recovery.ready')} />
+            <AppText variant="caption" color={colors.muted}>
+              {t(derived.mode === 'senior' ? 'workout.legend.fadeSenior' : 'workout.legend.fade')}
+            </AppText>
+          </View>
+        </View>
+      ) : (
+        <View style={styles.bodyRow}>
+          <AppText variant="h3">{t('workout.worked')}</AppText>
+          {/* The muscles worked light up one by one (Phase 27, B1), as painted
+              areas, front and back side by side (Phase 29, A4). */}
           <LightUpBody
             band={band}
             sex={sex}
-            states={states}
+            primary={worked.primary}
+            secondary={worked.secondary}
             order={lit}
             minutes={minutes}
             senior={derived.mode === 'senior'}
           />
-        )}
-        <View style={styles.legend}>
-          <LegendRow color={STATE_COLOR.fresh} label={t('workout.legend.main')} />
-          <LegendRow color={STATE_COLOR.recovering} label={t('workout.legend.also')} />
-          <LegendRow color={STATE_COLOR.neglected} label={t('workout.legend.notYet')} />
-          <LegendRow label={t('home.recovery.ready')} />
-          <AppText variant="caption" color={colors.muted}>
-            {t(derived.mode === 'senior' ? 'workout.legend.fadeSenior' : 'workout.legend.fade')}
-          </AppText>
+          <View style={styles.legend}>
+            <LegendRow color={bodyMapColors.areaPrimary} label={t('workout.legend.main')} />
+            <LegendRow color={bodyMapColors.areaSecondary} label={t('workout.legend.also')} />
+          </View>
         </View>
-      </View>
+      )}
 
       {/* Narrow or 60+: the tiles wrap 2 + 1, so no value breaks mid-word (QA R8 P2). */}
       <View style={[styles.stats, stackFooter && styles.statsWrap]}>
@@ -258,7 +270,8 @@ export default function DoneScreen() {
       ) : null}
 
       {stopped ? <Notice tone="warning">{t('workout.done.stoppedBody')}</Notice> : null}
-      {group && input && !stopped ? (
+      {/* Never after the very first workout: they just started (Phase 29, A4). */}
+      {group && input && !stopped && number > 1 ? (
         <Card tone="dark" style={styles.finish}>
           <AppText variant="caption" color={colors.dark.accentSoft} style={styles.caps}>
             {t('workout.finish.eyebrow')}

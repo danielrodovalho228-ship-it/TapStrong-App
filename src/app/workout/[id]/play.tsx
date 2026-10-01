@@ -1,9 +1,9 @@
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
-import { AppText, Button, Card, Chip, IconButton, Screen, TextLink } from '@/components/ui';
+import { AppText, Button, Card, Chip, Icon, IconButton, Screen, TextLink } from '@/components/ui';
 import { MoreOptions } from '@/features/home/MoreOptions';
 import { adviceForItem, adviceLoad, advisedReps } from '@/features/workout/loads';
 import { restFor, usePrefsStore } from '@/features/settings/store';
@@ -119,22 +119,31 @@ export default function PlayerScreen() {
           <AppText variant="label" style={styles.progress}>
             {progressLabel}
           </AppText>
-          {/* "I feel pain" stays one tap away on every step (SPEC safety). */}
-          <Button
-            variant="dangerText"
-            fullWidth={false}
-            label={t('workout.player.pain')}
+          {/* "I feel pain" stays one tap away on every step (SPEC safety), in
+              the secondary text color with an icon so it never outshouts the
+              exercise (Phase 29, A6). */}
+          <Pressable
+            testID="pain-button"
+            accessibilityRole="button"
+            accessibilityLabel={t('workout.player.pain')}
+            hitSlop={4}
             onPress={() =>
               router.push({ pathname: '/workout/[id]/pain', params: { id: workout.id } })
             }
-          />
+            style={({ pressed }) => [styles.pain, pressed && styles.painPressed]}
+          >
+            <Icon name="bandage" size={18} color={colors.mutedStrong} />
+            <AppText variant="label" color={colors.mutedStrong}>
+              {t('workout.player.pain')}
+            </AppText>
+          </Pressable>
         </View>
       }
-      footer={<UndoBar message={undoMessage} onDone={clearUndo} />}
     >
       <ExerciseDemo
         slug={exercise?.slug ?? ''}
         unilateral={!!exercise?.unilateral}
+        muscles={exercise?.muscles}
         chips={[
           { label: targetText(t, step.item, exercise), strong: true },
           ...(exercise?.muscles ?? [])
@@ -165,6 +174,8 @@ export default function PlayerScreen() {
         <SafetyCues exercise={exercise} />
       </View>
 
+      {/* Right above "Done", never on top of it (Phase 29, A6). */}
+      <UndoBar message={undoMessage} onDone={clearUndo} />
       {stepKind(step.item) === 'timed' || cooldownHold(step.item) ? (
         <TimedStep
           key={`${step.item.id}-${step.setNo}-${step.item.exerciseId}`}
@@ -580,6 +591,15 @@ const useStyles = makeStyles(() => ({
   segment: { flex: 1, height: 4, borderRadius: 2, backgroundColor: colors.line },
   segmentOn: { backgroundColor: colors.ink },
   progress: { minWidth: 48, textAlign: 'right' },
+  pain: {
+    minHeight: sizes.touchTarget,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    paddingHorizontal: spacing.xs,
+    borderRadius: radius.chip,
+  },
+  painPressed: { backgroundColor: colors.line },
   titleBlock: { gap: spacing.xs },
   setCard: { gap: spacing.md },
   caps: { textTransform: 'uppercase', letterSpacing: 1, fontFamily: fonts.headingSemi },

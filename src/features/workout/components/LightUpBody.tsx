@@ -3,15 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import { AppText } from '@/components/ui';
+import { MuscleAreaMap } from '@/features/bodymap/components/MuscleAreaMap';
 import type { BodySex } from '@/features/bodymap/images';
 import type { BodyBand } from '@/features/profile/age';
 import { useReducedMotion } from '@/lib/motion';
 import { fonts, makeStyles, spacing, useColors } from '@/theme';
 
 import { feel } from '../feel';
-import type { RecoveryState } from '../recovery';
-
-import { RecoveryBody } from './RecoveryBody';
 
 /** Milliseconds between two muscles lighting up; 60+ get it slower. */
 export const LIGHT_STEP_MS = 150;
@@ -19,23 +17,26 @@ export const LIGHT_STEP_SENIOR_MS = 320;
 
 /**
  * The end-of-workout signature (Phase 27, B1): the muscles worked light up
- * on the body one by one, a soft coral pulse and a light haptic each, then
- * the big "8 muscles · 42 min". With "reduce motion" on, the final state
- * shows straight away. 60+: slower, and bigger type.
+ * on the body one by one, with a light haptic each, then the big
+ * "8 muscles · 42 min". Painted areas, front and back side by side, primary
+ * strong and secondary light (Phase 29, A4). With "reduce motion" on, the
+ * final state shows straight away. 60+: slower, and bigger type.
  */
 export function LightUpBody({
   band,
   sex,
-  states,
+  primary,
+  secondary,
   order,
   minutes,
   senior = false,
-  maxHeight = 380,
+  maxHeight = 320,
 }: {
   band: BodyBand;
   sex: BodySex;
-  /** The final colors. */
-  states: Record<string, RecoveryState>;
+  /** The muscles the exercises worked as primary / as secondary. */
+  primary: string[];
+  secondary: string[];
   /** The muscles worked, in the order they light up. */
   order: string[];
   minutes: number;
@@ -62,20 +63,16 @@ export function LightUpBody({
   }, [lit, order.length, reduced, senior]);
 
   const unlit = new Set(order.slice(count));
-  const shown = Object.fromEntries(
-    Object.entries(states).map(([k, v]) => [k, unlit.has(k) ? ('neutral' as const) : v]),
-  );
   const done = count >= order.length;
 
   return (
     <View style={styles.wrap} testID={done ? 'light-up-done' : 'light-up-running'}>
-      <RecoveryBody
+      <MuscleAreaMap
         band={band}
         sex={sex}
-        states={shown}
-        views="both"
+        primary={primary.filter((k) => !unlit.has(k))}
+        secondary={secondary.filter((k) => !unlit.has(k))}
         maxHeight={maxHeight}
-        pulse={!reduced && count > 0 && !done ? [order[count - 1]] : []}
       />
       <View style={[styles.total, !done && styles.hidden]} aria-hidden={!done}>
         <AppText

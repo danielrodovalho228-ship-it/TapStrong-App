@@ -2,7 +2,10 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import { AppText, Button, Card } from '@/components/ui';
+import { displayBand } from '@/features/bodymap/selection';
+import type { ExerciseMuscle } from '@/features/exercises/types';
 import { demoPoster, demoSexFor, demoVideo, type DemoSex } from '@/features/exercises/videos';
+import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { makeStyles, spacing, useColors } from '@/theme';
 
@@ -12,26 +15,43 @@ import { DemoLoop } from './Media';
  * The exercise demo in the profile's own sex (Daniel, Phase 20). With no sex
  * and no body model yet (neutral body), it asks once and saves the answer as
  * the profile's body model, which Body → Body model can change later. A
- * missing clip shows the "demo coming soon" frame, never the other sex.
+ * missing clip shows the body with the exercise's muscles lit and "Demo
+ * coming soon" (Phase 29, A1), never the other sex.
  */
 export function ExerciseDemo({
   slug,
   unilateral = false,
   chips,
+  muscles = [],
 }: {
   slug: string;
   unilateral?: boolean;
   chips: { label: string; strong?: boolean }[];
+  /** The exercise's muscles: lit on the body when there is no clip yet. */
+  muscles?: ExerciseMuscle[];
 }) {
-  const sex = useOnboardingStore((s) => demoSexFor(s));
+  const profile = useOnboardingStore();
+  const sex = demoSexFor(profile);
   if (!sex) return <DemoSexQuestion />;
   const video = demoVideo(slug, sex);
+  const derived = derive(profile);
+  const band = displayBand(
+    profile.bodyModel.band,
+    derived?.band ?? 'adult',
+    derived?.mode ?? 'adult',
+  );
   return (
     <DemoLoop
       video={video}
       poster={demoPoster(slug, sex)}
       chips={chips}
       mirrorable={unilateral && !!video}
+      muscles={{
+        band,
+        sex: profile.bodyModel.sex ?? sex,
+        primary: muscles.filter((m) => m.role === 'primary').map((m) => m.muscleKey),
+        secondary: muscles.filter((m) => m.role !== 'primary').map((m) => m.muscleKey),
+      }}
     />
   );
 }

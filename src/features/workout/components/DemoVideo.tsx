@@ -36,6 +36,8 @@ export function DemoVideo({
         style={[StyleSheet.absoluteFill, { backgroundColor: colors.bodyCanvas }, flip]}
         contentFit="contain"
         nativeControls={false}
+        // iPhone Safari only autoplays a muted clip inline (Phase 29, A1).
+        playsInline
         onFirstFrameRender={() => setPlaying(true)}
       />
       {poster && !playing ? (

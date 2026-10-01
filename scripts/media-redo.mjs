@@ -37,7 +37,9 @@ const slugs = new Set([...usable, ...Object.keys(suspect), ...Object.keys(missin
 for (const slug of slugs)
   if (!order.has(slug)) throw new Error(`qc.json: unknown exercise "${slug}"`);
 
-const rows = { none: [], one: [] };
+/** Phase 29: clips a first workout can show come before everything else. */
+const FIRST = 'prioridade alta';
+const rows = { first: [], none: [], one: [] };
 for (const slug of [...slugs].sort((a, b) => order.get(a) - order.get(b))) {
   const ok = ['f', 'm'].filter((s) => usable.has(`${slug}.${s}`));
   if (ok.length === 2) continue;
@@ -47,7 +49,8 @@ for (const slug of [...slugs].sort((a, b) => order.get(a) - order.get(b))) {
     const reason = suspect[key]
       ? `suspeito: ${suspect[key]}`
       : (missing[key] ?? 'faltando: nunca foi gerado');
-    rows[ok.length ? 'one' : 'none'].push(`| ${slug} | ${sex} | ${reason} |`);
+    const group = reason.includes(FIRST) ? 'first' : ok.length ? 'one' : 'none';
+    rows[group].push(`| ${slug} | ${sex} | ${reason} |`);
   }
 }
 const table = (list) =>
@@ -63,8 +66,16 @@ writeFileSync(
     'Sexo: f = mulher, m = homem. Nome do arquivo no Flow: `<slug>.<f|m>` (o import',
     'aceita `_v2`, `_v3`… para refeitos).',
     '',
-    `Total: ${rows.none.length + rows.one.length} clipes ` +
-      `(${rows.none.length} de exercícios sem nenhum sexo, ${rows.one.length} de exercícios com só um).`,
+    `Total: ${rows.first.length + rows.none.length + rows.one.length} clipes ` +
+      `(${rows.first.length} do primeiro treino, ${rows.none.length} de exercícios sem nenhum sexo, ` +
+      `${rows.one.length} de exercícios com só um).`,
+    '',
+    '## 0. Aparecem no primeiro treino (prioridade alta)',
+    '',
+    'Aquecimento, principais e desaquecimento que o primeiro treino pode mostrar, em qualquer perfil',
+    '(teste `first-workout-media.test.ts`).',
+    '',
+    table(rows.first),
     '',
     '## 1. Exercícios sem nenhum sexo no app (prioridade)',
     '',
@@ -90,4 +101,6 @@ writeFileSync(
     '',
   ].join('\n'),
 );
-console.log(`docs/media-redo.md: ${rows.none.length} + ${rows.one.length} clips to redo`);
+console.log(
+  `docs/media-redo.md: ${rows.first.length} + ${rows.none.length} + ${rows.one.length} clips to redo`,
+);

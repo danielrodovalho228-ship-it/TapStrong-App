@@ -5,7 +5,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { AppText, Card, Chip, Header, Notice, Screen, ToggleRow } from '@/components/ui';
 import { useAccountStore } from '@/features/account/store';
-import { requestPermission } from '@/features/notifications/apply';
+import { remindersAvailable, requestPermission } from '@/features/notifications/apply';
 import { parseTime, trainingWeekdays } from '@/features/notifications/plan';
 import { useTrainingDaysPerWeek } from '@/features/program/useTrainingDays';
 import { clock } from '@/lib/clock';
@@ -50,62 +50,72 @@ export default function RemindersScreen() {
   return (
     <Screen header={<Header onBack={() => router.back()} title={t('reminders.title')} />}>
       {denied ? <Notice>{t('account.permissionDenied')}</Notice> : null}
-      <Card style={styles.card}>
-        <ToggleRow
-          label={t('account.reminders')}
-          detail={t('account.remindersDetail', {
-            days: days.map(dayName).join(', '),
-            time: timeText(notifications.reminderTime),
-          })}
-          value={notifications.reminders}
-          onChange={(v) => void toggle('reminders', v)}
-        />
-        {notifications.reminders ? (
-          <>
-            <AppText variant="h3">{t('reminders.time')}</AppText>
-            <View style={styles.chips}>
-              {TIMES.map((time) => (
-                <Chip
-                  key={time}
-                  label={timeText(time)}
-                  selected={notifications.reminderTime === time}
-                  onPress={() => setNotifications({ reminderTime: time })}
-                />
-              ))}
-            </View>
-            <AppText variant="h3">{t('reminders.days')}</AppText>
-            <View style={styles.chips}>
-              {WEEK.map((day) => (
-                <Chip
-                  key={day}
-                  label={dayName(day)}
-                  accessibilityLabel={t('reminders.dayLabel', { day: dayName(day) })}
-                  selected={days.includes(day)}
-                  onPress={() => flipDay(day)}
-                />
-              ))}
-              <Chip
-                label={t('reminders.daysAuto')}
-                selected={!notifications.reminderDays?.length}
-                onPress={() => setNotifications({ reminderDays: undefined })}
-              />
-            </View>
-          </>
-        ) : null}
-      </Card>
-      <Card style={styles.card}>
-        <AppText variant="caption" color={colors.mutedStrong}>
-          {t('reminders.motivation')}
+      {/* Web preview: no notifications there (Phase 29, A5). */}
+      {!remindersAvailable ? (
+        <AppText color={colors.mutedStrong} testID="reminders-app-only">
+          {t('account.remindersAppOnly')}
         </AppText>
-        <ToggleRow
-          label={t('account.streakSaver')}
-          detail={t('account.streakSaverDetail', {
-            time: timeText(notifications.streakSaverTime),
-          })}
-          value={notifications.streakSaver}
-          onChange={(v) => void toggle('streakSaver', v)}
-        />
-      </Card>
+      ) : null}
+      {remindersAvailable ? (
+        <Card style={styles.card}>
+          <ToggleRow
+            label={t('account.reminders')}
+            detail={t('account.remindersDetail', {
+              days: days.map(dayName).join(', '),
+              time: timeText(notifications.reminderTime),
+            })}
+            value={notifications.reminders}
+            onChange={(v) => void toggle('reminders', v)}
+          />
+          {notifications.reminders ? (
+            <>
+              <AppText variant="h3">{t('reminders.time')}</AppText>
+              <View style={styles.chips}>
+                {TIMES.map((time) => (
+                  <Chip
+                    key={time}
+                    label={timeText(time)}
+                    selected={notifications.reminderTime === time}
+                    onPress={() => setNotifications({ reminderTime: time })}
+                  />
+                ))}
+              </View>
+              <AppText variant="h3">{t('reminders.days')}</AppText>
+              <View style={styles.chips}>
+                {WEEK.map((day) => (
+                  <Chip
+                    key={day}
+                    label={dayName(day)}
+                    accessibilityLabel={t('reminders.dayLabel', { day: dayName(day) })}
+                    selected={days.includes(day)}
+                    onPress={() => flipDay(day)}
+                  />
+                ))}
+                <Chip
+                  label={t('reminders.daysAuto')}
+                  selected={!notifications.reminderDays?.length}
+                  onPress={() => setNotifications({ reminderDays: undefined })}
+                />
+              </View>
+            </>
+          ) : null}
+        </Card>
+      ) : null}
+      {remindersAvailable ? (
+        <Card style={styles.card}>
+          <AppText variant="caption" color={colors.mutedStrong}>
+            {t('reminders.motivation')}
+          </AppText>
+          <ToggleRow
+            label={t('account.streakSaver')}
+            detail={t('account.streakSaverDetail', {
+              time: timeText(notifications.streakSaverTime),
+            })}
+            value={notifications.streakSaver}
+            onChange={(v) => void toggle('streakSaver', v)}
+          />
+        </Card>
+      ) : null}
     </Screen>
   );
 }
