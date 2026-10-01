@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
   "installCommand": "npm ci",
-  "buildCommand": "EXPO_NO_DOTENV=1 EXPO_OFFLINE=1 CI=1 npx expo export --dev --platform web --output-dir dist-preview",
+  "buildCommand": "EXPO_NO_DOTENV=1 EXPO_OFFLINE=1 CI=1 npx expo export --dev --platform web --output-dir dist-preview && node scripts/preview-routes.mjs dist-preview",
   "outputDirectory": "dist-preview",
   "cleanUrls": true,
   "git": {
@@ -11,14 +11,41 @@
     }
   },
   "rewrites": [
-    { "source": "/c/:code", "destination": "/c/[code].html" },
-    { "source": "/r/:code", "destination": "/r/[code].html" },
-    { "source": "/day/:date", "destination": "/day/[date].html" },
-    { "source": "/exercise/:id", "destination": "/exercise/[id].html" },
-    { "source": "/movement-pain/:id", "destination": "/movement-pain/[id].html" },
-    { "source": "/program/:id", "destination": "/program/[id].html" },
-    { "source": "/repair/test/:key", "destination": "/repair/test/[key].html" },
-    { "source": "/workout/:id", "destination": "/workout/[id]/index.html" },
-    { "source": "/workout/:id/:screen", "destination": "/workout/[id]/:screen.html" }
+    {
+      "source": "/c/:code",
+      "destination": "/c/_code"
+    },
+    {
+      "source": "/r/:code",
+      "destination": "/r/_code"
+    },
+    {
+      "source": "/day/:date",
+      "destination": "/day/_date"
+    },
+    {
+      "source": "/exercise/:id",
+      "destination": "/exercise/_id"
+    },
+    {
+      "source": "/movement-pain/:id",
+      "destination": "/movement-pain/_id"
+    },
+    {
+      "source": "/program/:id",
+      "destination": "/program/_id"
+    },
+    {
+      "source": "/repair/test/:key",
+      "destination": "/repair/test/_key"
+    },
+    {
+      "source": "/workout/:id",
+      "destination": "/workout/_id/index"
+    },
+    {
+      "source": "/workout/:id/:screen",
+      "destination": "/workout/_id/:screen"
+    }
   ]
 }
