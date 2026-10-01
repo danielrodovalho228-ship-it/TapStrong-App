@@ -304,7 +304,7 @@ describe('B2 a record: a success haptic for adults only', () => {
     // Raise the load well past 10 kg.
     for (let i = 0; i < 10; i++)
       await fireEvent.press(screen.getByRole('button', { name: /^Increase Load/ }));
-    await fireEvent.press(screen.getByRole('button', { name: 'Done with set' }));
+    await fireEvent.press(screen.getByRole('button', { name: /^(Done with set|Done · )/ }));
     expect(Haptics.notificationAsync).toHaveBeenCalledTimes(calls);
   });
 });

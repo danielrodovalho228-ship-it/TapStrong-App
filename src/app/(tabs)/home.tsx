@@ -17,6 +17,7 @@ import { useMonthStore } from '@/features/month/store';
 import { identityKey, workoutsThisWeekDone } from '@/features/home/identity';
 import { MoreOptions } from '@/features/home/MoreOptions';
 import { StartHero } from '@/features/home/StartHero';
+import { WorkoutPreview } from '@/features/home/WorkoutPreview';
 import { useMonthClose } from '@/features/month/useMonthClose';
 import { SeniorHome } from '@/features/senior/SeniorHome';
 import { muscleLabel } from '@/features/onboarding/summaries';
@@ -142,6 +143,7 @@ export default function HomeScreen() {
     const id = createBalanceWorkout(input);
     router.push({ pathname: '/workout/[id]', params: { id: id ?? 'unavailable' } });
   };
+  const byId = new Map(library.map((e) => [e.id, e]));
   const band = displayBand(profile.bodyModel.band, derived.band, derived.mode);
   const sex: BodySex = profile.bodyModel.sex ?? (profile.sex === 'f' ? 'f' : 'm');
 
@@ -290,7 +292,9 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      {/* The one action, at the top (Phase 27, A2); nothing above it. */}
+      {/* The week on top (Phase 29, B2): today marked, a dot on trained days,
+          tap a day for that day. Then the one action (Phase 27, A2). */}
+      <WeekStrip />
       {easyDay ? (
         <View style={styles.today} testID={doneToday ? 'done-today' : undefined}>
           <AppText variant="h2" accessibilityRole="header">
@@ -335,16 +339,24 @@ export default function HomeScreen() {
             detail={heroDetail}
             onPress={trainNow}
           />
-          {/* "6 exercises · 45 min" (+ kcal for adults only, never teens). */}
-          {summary ? (
-            <AppText variant="caption" color={colors.mutedStrong} style={styles.center}>
-              {[
-                t('program.summary', { count: summary.exercises, minutes: summary.minutes }),
-                summary.kcal ? t('program.kcal', { kcal: summary.kcal }) : null,
-              ]
-                .filter(Boolean)
-                .join(' · ')}
-            </AppText>
+          {/* The workout with a poster per exercise (Phase 29, B1): "6 exercises
+              · 45 min" on top (+ kcal for adults only, never teens), then the list. */}
+          {preview ? (
+            <WorkoutPreview
+              session={preview}
+              byId={byId}
+              summary={
+                summary
+                  ? [
+                      t('program.summary', { count: summary.exercises, minutes: summary.minutes }),
+                      summary.kcal ? t('program.kcal', { kcal: summary.kcal }) : null,
+                    ]
+                      .filter(Boolean)
+                      .join(' · ')
+                  : null
+              }
+              onSwap={openWorkout}
+            />
           ) : null}
           <View style={styles.links}>
             <TextLink label={t('home.seeWorkout')} onPress={openWorkout} />
@@ -383,7 +395,6 @@ export default function HomeScreen() {
         </Pressable>
       ) : null}
 
-      <WeekStrip />
       {identity ? (
         // Identity, not guilt (Phase 27, B4).
         <AppText color={colors.teal} style={styles.center} testID="home-identity">

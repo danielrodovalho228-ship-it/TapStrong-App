@@ -14,11 +14,12 @@ import {
   SegmentedControl,
   TextField,
 } from '@/components/ui';
-import { BodyPicker } from '@/features/bodymap/components/BodyPicker';
+import { MuscleAreaMap } from '@/features/bodymap/components/MuscleAreaMap';
+import { displayBand } from '@/features/bodymap/selection';
 import { libraryView } from '@/features/library/browse';
 import { exerciseRecords, visibleRecords } from '@/features/library/performance';
 import { useLibraryStore } from '@/features/library/store';
-import { modeOf } from '@/features/onboarding/derived';
+import { derive, modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { openShare, useCanShare } from '@/features/share/open';
 import { useScreenshotOffer } from '@/features/share/screenshot';
@@ -45,6 +46,9 @@ export default function ExerciseScreen() {
   const input = useGeneratorInput(library);
   const profile = useOnboardingStore();
   const mode = modeOf(profile);
+  const minor = mode === 'child' || mode === 'teen';
+  const derived = derive(profile);
+  const band = displayBand(profile.bodyModel.band, derived?.band ?? 'adult', mode);
   const unit: LoadUnit = profile.units === 'imperial' ? 'lb' : 'kg';
   const workouts = useWorkoutStore((s) => s.workouts);
   const { favourites, toggleFavourite, notes, setNote, removeCustom } = useLibraryStore();
@@ -111,7 +115,9 @@ export default function ExerciseScreen() {
       />
       {tab === 'guidance' ? (
         <>
-          {!e.custom ? <ExerciseDemo slug={e.slug} unilateral={e.unilateral} chips={[]} /> : null}
+          {!e.custom ? (
+            <ExerciseDemo slug={e.slug} unilateral={e.unilateral} chips={[]} muscles={e.muscles} />
+          ) : null}
           {!e.custom ? (
             <Card style={styles.card}>
               <AppText variant="h3">{t('exercise.cues')}</AppText>
@@ -122,14 +128,13 @@ export default function ExerciseScreen() {
           ) : null}
           <Card style={styles.card}>
             <AppText variant="h3">{t('exercise.worked')}</AppText>
-            <BodyPicker
-              selected={primary}
-              outlined={secondary}
-              readOnly
-              maxHeight={320}
-              accessibilityLabel={[...primary, ...secondary]
-                .map((m) => muscleLabel(t, m))
-                .join(', ')}
+            {/* Painted areas, front and back side by side (Phase 29, B3). */}
+            <MuscleAreaMap
+              band={band}
+              sex={profile.bodyModel.sex ?? (profile.sex === 'f' ? 'f' : 'm')}
+              primary={primary}
+              secondary={secondary}
+              maxHeight={300}
             />
             <AppText variant="caption">
               {t('exercise.labelled', {
@@ -223,9 +228,11 @@ export default function ExerciseScreen() {
                       <AppText color={colors.mutedStrong}>
                         {t('exercise.sessionLine', {
                           sets: s.sets,
-                          best: s.bestLoad
-                            ? `${s.bestLoad.toLocaleString(i18n.language)} ${unitLabel}`
-                            : t('workout.rest.reps', { count: s.bestReps ?? 0 }),
+                          // Minors see reps only, never a load (Phase 29, B3).
+                          best:
+                            s.bestLoad && !minor
+                              ? `${s.bestLoad.toLocaleString(i18n.language)} ${unitLabel}`
+                              : t('workout.rest.reps', { count: s.bestReps ?? 0 }),
                         })}
                       </AppText>
                     </View>

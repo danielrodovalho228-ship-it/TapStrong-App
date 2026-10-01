@@ -435,7 +435,8 @@
     "boy": "Menino",
     "girl": "Menina",
     "frontView": "Vista de frente",
-    "backView": "Vista de costas"
+    "backView": "Vista de costas",
+    "rotate": "Girar o corpo"
   },
   "goalsSheet": {
     "goalFor": "Objetivo para esta área",
@@ -3652,6 +3653,11 @@
       "one": "Você treinou esta semana. Todo começo conta.",
       "two": "Você treinou 2 vezes esta semana. Isso é ritmo.",
       "many": "Você treinou {{count}} vezes esta semana. Isso é consistência."
+    },
+    "preview": {
+      "sets_one": "{{count}} série × {{reps}}",
+      "sets_other": "{{count}} séries × {{reps}}",
+      "sets_zero": "{{count}} séries × {{reps}}"
     }
   },
   "workout": {
@@ -3668,7 +3674,7 @@
       "title": "Descanso",
       "eyebrow": "Exercício {{n}} de {{total}} · série {{set}} feita",
       "of": "de {{total}}",
-      "more": "+30 s",
+      "more": "+15 s",
       "skip": "Pular descanso",
       "logged": "Registrado",
       "reps_one": "{{count}} repetição",
@@ -3676,7 +3682,9 @@
       "reps_other": "{{count}} repetições",
       "lastSession": "Última sessão: {{value}}",
       "upNext": "A seguir",
-      "progressUp": "Você chegou ao topo da faixa duas vezes. Tente +{{step}}."
+      "progressUp": "Você chegou ao topo da faixa duas vezes. Tente +{{step}}.",
+      "less": "−15 s",
+      "tapToSkip": "Toque para pular"
     },
     "warmup": "Aquecimento · {{minutes}} min",
     "cooldown": "Desaquecimento · {{minutes}} min",
@@ -3787,13 +3795,18 @@
       "cancel": "Voltar à série"
     },
     "exit": {
-      "open": "Encerrar treino",
-      "title": "Encerrar treino?",
+      "open": "Menu do treino",
+      "title": "Treino",
       "body": "Você fez {{done}} de {{total}} séries. Vamos salvá-las e colorir os músculos que você trabalhou. Sua sequência continua valendo.",
-      "bodyEmpty": "Nada registrado ainda. Continue, ou descarte este treino.",
-      "keepGoing": "Continuar",
-      "saveEnd": "Salvar e encerrar",
-      "discard": "Descartar treino"
+      "bodyEmpty": "Nada registrado ainda.",
+      "keepGoing": "Voltar ao treino",
+      "saveEnd": "Concluir treino",
+      "discard": "Descartar treino",
+      "pause": "Pausar treino",
+      "discardTitle": "Descartar este treino?",
+      "discardBody": "As séries registradas nele são apagadas e ele não conta para a sua sequência.",
+      "discardYes": "Sim, descartar",
+      "discardNo": "Voltar"
     },
     "done": {
       "eyebrow": "Treino {{n}} · concluído",
@@ -3878,7 +3891,14 @@
     "deload": "Semana leve: menos séries",
     "otherSide": "Outro lado",
     "demoSoon": "Demonstração em breve",
-    "worked": "Músculos trabalhados"
+    "worked": "Músculos trabalhados",
+    "ramp": {
+      "title": "Aquecimento · {{name}}",
+      "scheme": "10 reps leve · 5 reps médio · 3 reps quase lá",
+      "note": "O mesmo exercício, subindo até a carga de hoje. Descanse um pouco entre elas.",
+      "done": "Feito",
+      "skip": "Pular"
+    }
   },
   "account": {
     "eyebrow": "Sua conta",
@@ -4902,7 +4922,12 @@
     "hard": "😮‍💨 Nada",
     "repsUpBodyweight": "Tente {{reps}} repetições desta vez.",
     "harder": "No topo da faixa por 4 sessões seguidas: hora de uma versão mais difícil. Toque em Trocar para escolher.",
-    "easier": "As repetições estão difíceis com o peso mais leve: tente uma versão mais fácil. Toque em Trocar para escolher."
+    "easier": "As repetições estão difíceis com o peso mais leve: tente uma versão mais fácil. Toque em Trocar para escolher.",
+    "suggested": "Sugerido: {{load}} {{unit}} × {{reps}}",
+    "lastTime": "Da última vez: {{load}} × {{reps}}",
+    "chart": "Melhor carga por treino, máximo {{max}} {{unit}}",
+    "recordGoal": "Bata {{load}} {{unit}} para superar a sua marca",
+    "doneWith": "Feito · {{load}} {{unit}} × {{reps}}"
   },
   "plans": {
     "title": "Planos prontos",
@@ -5043,8 +5068,8 @@
     "saveCard": "Salvar ficha: {{name}}"
   },
   "exercise": {
-    "guidance": "Orientação",
-    "performance": "Desempenho",
+    "guidance": "Como fazer",
+    "performance": "Meu histórico",
     "cues": "Como fazer",
     "mistakes": "Erros comuns",
     "worked": "Músculos trabalhados",
@@ -5158,7 +5183,9 @@
       "homeGym": "Academia em casa",
       "bodyweight": "Só peso do corpo",
       "hotel": "Hotel"
-    }
+    },
+    "home": "Casa",
+    "gym": "Academia"
   },
   "prefs": {
     "title": "Preferências de treino",

@@ -1,7 +1,7 @@
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText, Button } from '@/components/ui';
@@ -19,9 +19,9 @@ import type { SetLog } from '@/features/workout/types';
 import { clock } from '@/lib/clock';
 import { colors, fonts, makeStyles, radius, spacing, useColors } from '@/theme';
 
-const EXTRA_SECONDS = 30;
+const EXTRA_SECONDS = 15;
 
-/** Mockup 12 — rest between sets: timer, +30 s, skip, last-time comparison. */
+/** Mockup 12 — rest between sets: timer (tap to skip), −15 s / +15 s, last-time comparison. */
 export default function RestScreen() {
   const colors = useColors();
   const styles = useStyles();
@@ -41,7 +41,8 @@ export default function RestScreen() {
   const restItem = lastItem?.role === 'main' ? lastItem : next?.item;
   // The rest default from Settings replaces the timer's starting value (D4).
   const prefs = usePrefsStore();
-  const total = (restItem ? restFor(restItem, prefs) : 60) + extra;
+  const base = restItem ? restFor(restItem, prefs) : 60;
+  const total = base + extra;
   const elapsed = (now - startedAt) / 1000;
   const left = total - elapsed;
 
@@ -106,7 +107,14 @@ export default function RestScreen() {
             : t('workout.rest.title')}
         </AppText>
 
-        <View style={styles.center}>
+        {/* Tap the ring to skip (Phase 29, B6). */}
+        <Pressable
+          style={styles.center}
+          accessibilityRole="button"
+          accessibilityLabel={t('workout.rest.skip')}
+          onPress={() => router.back()}
+          testID="rest-ring"
+        >
           <TimerRing
             size={220}
             progress={elapsed / total}
@@ -125,18 +133,26 @@ export default function RestScreen() {
               {t('workout.rest.of', { total: clockText(total) })}
             </AppText>
           </TimerRing>
-        </View>
+          <AppText variant="caption" color={colors.dark.accentSoft}>
+            {t('workout.rest.tapToSkip')}
+          </AppText>
+        </Pressable>
 
         <View style={styles.row}>
+          <View style={styles.flex}>
+            <Button
+              variant="onDark"
+              label={t('workout.rest.less')}
+              // Never below 15 s of rest in total.
+              onPress={() => setExtra(Math.max(EXTRA_SECONDS - base, extra - EXTRA_SECONDS))}
+            />
+          </View>
           <View style={styles.flex}>
             <Button
               variant="onDark"
               label={t('workout.rest.more')}
               onPress={() => setExtra(extra + EXTRA_SECONDS)}
             />
-          </View>
-          <View style={styles.flex}>
-            <Button variant="accent" label={t('workout.rest.skip')} onPress={() => router.back()} />
           </View>
         </View>
 

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PanResponder, StyleSheet, View } from 'react-native';
 
-import { SegmentedControl } from '@/components/ui';
+import { IconButton, SegmentedControl } from '@/components/ui';
 import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { bodyMapColors, spacing } from '@/theme';
@@ -77,17 +77,40 @@ export function BodyPicker({
           maxHeight={maxHeight}
         />
       </View>
-      <SegmentedControl
-        accessibilityLabel={t('bodyMap.view')}
-        value={view}
-        onChange={setView}
-        options={[
-          { value: 'front', label: t('bodyMap.front'), accessibilityLabel: t('bodyMap.frontView') },
-          { value: 'back', label: t('bodyMap.back'), accessibilityLabel: t('bodyMap.backView') },
-        ]}
-      />
+      <View style={styles.row}>
+        <View style={styles.flex}>
+          <SegmentedControl
+            accessibilityLabel={t('bodyMap.view')}
+            value={view}
+            onChange={setView}
+            options={[
+              {
+                value: 'front',
+                label: t('bodyMap.front'),
+                accessibilityLabel: t('bodyMap.frontView'),
+              },
+              {
+                value: 'back',
+                label: t('bodyMap.back'),
+                accessibilityLabel: t('bodyMap.backView'),
+              },
+            ]}
+          />
+        </View>
+        {/* One tap turns the body around (Phase 29, B10). */}
+        <IconButton
+          icon="rotate"
+          variant="outlined"
+          accessibilityLabel={t('bodyMap.rotate')}
+          onPress={() => setView((v) => (v === 'front' ? 'back' : 'front'))}
+        />
+      </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({ wrap: { gap: spacing.sm } });
+const styles = StyleSheet.create({
+  wrap: { gap: spacing.sm },
+  row: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  flex: { flex: 1 },
+});

@@ -19,7 +19,7 @@ export type ButtonVariant =
   | 'danger'
   /** Accent text only: "Discard workout" (mockup 13). */
   | 'dangerText'
-  /** Light outline on dark screens: "+30 s" (mockup 12). */
+  /** Light outline on dark screens: "+15 s" (mockup 12). */
   | 'onDark'
   /** Teal fill: the 60+ home "Start" (mockup 23). */
   | 'teal';

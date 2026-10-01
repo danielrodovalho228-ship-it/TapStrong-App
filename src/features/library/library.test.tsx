@@ -299,7 +299,7 @@ describe('Library screen and exercise page', () => {
     await render(<ExerciseScreen />);
     expect(screen.getByText('Common mistakes')).toBeTruthy();
     expect(screen.getByText('Muscles worked')).toBeTruthy();
-    await fireEvent.press(screen.getByRole('radio', { name: 'Performance' }));
+    await fireEvent.press(screen.getByRole('radio', { name: 'My history' }));
     expect(screen.getByText('Estimated 1-rep max')).toBeTruthy();
     expect(screen.getByText(/Not done yet/)).toBeTruthy();
   });

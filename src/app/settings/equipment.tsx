@@ -6,6 +6,7 @@ import { StyleSheet, View } from 'react-native';
 import { AppText, Button, Card, Chip, Header, Screen, TextField, ToggleRow } from '@/components/ui';
 import {
   EQUIPMENT_GROUPS,
+  HOME_ITEMS,
   normalizeEquipment,
   PRESET_KEYS,
   PRESETS,
@@ -98,19 +99,42 @@ export default function EquipmentScreen() {
       <AppText variant="caption" color={colors.mutedStrong}>
         {t('equipmentSettings.count', { count: items.length })}
       </AppText>
-      {(Object.keys(EQUIPMENT_GROUPS) as EquipmentGroup[]).map((g) => (
-        <Card key={g} style={styles.card}>
-          <AppText variant="h3">{t(`equipmentSettings.groups.${g}`)}</AppText>
-          {(EQUIPMENT_GROUPS[g] as readonly EquipmentItem[]).map((item) => (
-            <ToggleRow
-              key={item}
-              label={t(`equipment.${item}`)}
-              value={items.includes(item)}
-              onChange={(on) => toggle(item, on)}
-            />
-          ))}
-        </Card>
-      ))}
+      {/* Home first, then the gym groups (Phase 29, B9). */}
+      <AppText variant="h2" accessibilityRole="header">
+        {t('equipmentSettings.home')}
+      </AppText>
+      <Card style={styles.card} testID="equipment-home">
+        {HOME_ITEMS.map((item) => (
+          <ToggleRow
+            key={item}
+            label={t(`equipment.${item}`)}
+            value={items.includes(item)}
+            onChange={(on) => toggle(item, on)}
+          />
+        ))}
+      </Card>
+      <AppText variant="h2" accessibilityRole="header">
+        {t('equipmentSettings.gym')}
+      </AppText>
+      {(Object.keys(EQUIPMENT_GROUPS) as EquipmentGroup[]).map((g) => {
+        const list = (EQUIPMENT_GROUPS[g] as readonly EquipmentItem[]).filter(
+          (item) => !(HOME_ITEMS as readonly string[]).includes(item),
+        );
+        if (!list.length) return null;
+        return (
+          <Card key={g} style={styles.card}>
+            <AppText variant="h3">{t(`equipmentSettings.groups.${g}`)}</AppText>
+            {list.map((item) => (
+              <ToggleRow
+                key={item}
+                label={t(`equipment.${item}`)}
+                value={items.includes(item)}
+                onChange={(on) => toggle(item, on)}
+              />
+            ))}
+          </Card>
+        );
+      })}
     </Screen>
   );
 }

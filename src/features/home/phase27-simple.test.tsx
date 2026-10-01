@@ -115,7 +115,7 @@ describe('A1 tap audit: open → first set', () => {
         await wait(step.item.durationSeconds ?? 0);
       } else {
         taps += 1;
-        await fireEvent.press(screen.getByRole('button', { name: 'Done with set' }));
+        await fireEvent.press(screen.getByRole('button', { name: /^(Done with set|Done · .*|Done)$/ }));
       }
     }
     expect(workout().logs.some((l) => l.reps != null)).toBe(true);

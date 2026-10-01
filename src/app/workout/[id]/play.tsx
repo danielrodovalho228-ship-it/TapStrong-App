@@ -18,6 +18,7 @@ import { exerciseBest } from '@/features/progress/activity';
 import { RangeNote } from '@/features/movement/RangeNote';
 import { ExerciseDemo } from '@/features/workout/components/ExerciseDemo';
 import { SafetyCues } from '@/features/workout/components/SafetyCues';
+import { SetSuggestion } from '@/features/workout/components/SetSuggestion';
 import { SwapSheet, type SwapReasonUi } from '@/features/workout/components/SwapSheet';
 import { useNow } from '@/features/workout/components/TimerRing';
 import { UndoBar } from '@/features/workout/components/UndoBar';
@@ -97,8 +98,9 @@ export default function PlayerScreen() {
     <Screen
       header={
         <View style={styles.top}>
+          {/* "⋯": pause, finish or discard (Phase 29, B7). */}
           <IconButton
-            icon="close"
+            icon="more"
             accessibilityLabel={t('workout.exit.open')}
             onPress={() =>
               router.push({ pathname: '/workout/[id]/exit', params: { id: workout.id } })
@@ -176,7 +178,14 @@ export default function PlayerScreen() {
 
       {/* Right above "Done", never on top of it (Phase 29, A6). */}
       <UndoBar message={undoMessage} onDone={clearUndo} />
-      {stepKind(step.item) === 'timed' || cooldownHold(step.item) ? (
+      {step.item.part === 'ramp_up' && step.item.loadHint === 'ramp' ? (
+        <RampCard
+          key={`${step.item.id}-ramp`}
+          workout={workout}
+          step={step}
+          name={exerciseName(t, exercise, step.item.exerciseId)}
+        />
+      ) : stepKind(step.item) === 'timed' || cooldownHold(step.item) ? (
         <TimedStep
           key={`${step.item.id}-${step.setNo}-${step.item.exerciseId}`}
           workout={workout}
@@ -336,6 +345,51 @@ function TimedStep({
   );
 }
 
+/** Warm-up sets before the first loaded lift, as one card (Phase 29, B5). */
+export const RAMP_REPS = [10, 5, 3];
+
+/**
+ * "Warm-up: 10 light · 5 medium · 3 almost there" (adults with weights;
+ * teens keep their single light set). "Done" logs the warm-up sets in one
+ * tap; "Skip" leaves them out.
+ */
+function RampCard({ workout, step, name }: { workout: WorkoutRecord; step: Step; name: string }) {
+  const colors = useColors();
+  const styles = useStyles();
+  const { t } = useTranslation();
+  const { logSet, skipItem } = useWorkoutStore();
+  const done = () => {
+    feel.set();
+    for (let setNo = step.setNo; setNo <= step.item.sets; setNo++)
+      logSet(workout.id, {
+        itemId: step.item.id,
+        exerciseId: step.item.exerciseId,
+        setNo,
+        reps: RAMP_REPS[setNo - 1] ?? RAMP_REPS.at(-1),
+      });
+  };
+  return (
+    <View style={styles.setStack} testID="ramp-card">
+      <Button size="xl" label={t('workout.ramp.done')} onPress={done} />
+      <View style={styles.links}>
+        <TextLink
+          label={t('workout.ramp.skip')}
+          onPress={() => skipItem(workout.id, step.item.id)}
+        />
+      </View>
+      <Card style={styles.setCard}>
+        <AppText variant="caption" color={colors.muted} style={styles.caps}>
+          {t('workout.ramp.title', { name })}
+        </AppText>
+        <AppText variant="h3">{t('workout.ramp.scheme')}</AppText>
+        <AppText variant="caption" color={colors.mutedStrong}>
+          {t('workout.ramp.note')}
+        </AppText>
+      </Card>
+    </View>
+  );
+}
+
 /** A set of a main exercise (or ramp-up / stretch hold): reps or seconds, and load. */
 function SetStep({
   workout,
@@ -360,7 +414,10 @@ function SetStep({
   const item: SessionItem = step.item;
   const hold = stepKind(item) === 'hold';
   const range = targetRange(item) ?? [8, 12];
-  const loaded = !!exercise?.loaded && item.loadHint !== 'bodyweight';
+  const mode = useOnboardingStore((st) => modeOf(st));
+  // Minors log reps only: no load, no record (Phase 29, B4).
+  const minor = mode === 'child' || mode === 'teen';
+  const loaded = !!exercise?.loaded && item.loadHint !== 'bodyweight' && !minor;
 
   const generator = useWorkout(workout.id).input;
   const advice = generator
@@ -382,7 +439,6 @@ function SetStep({
   const askEffort = loaded && item.role === 'main' && !hold;
   const valueStep = hold ? 5 : 1;
 
-  const mode = useOnboardingStore((st) => modeOf(st));
   const done = () => {
     // Feel (Phase 27, B2): a light tap per set, a stronger one when the
     // exercise is complete, a success tap for a new best load (adults only).
@@ -424,9 +480,21 @@ function SetStep({
   // Keyboard and switch users reach "Done with set" first (QA R5 P2: it took
   // 12–14 tabs): it comes first in the tree and the column is reversed, so
   // it still sits at the bottom of the screen.
+  // A working set with a load to suggest: one big tap logs what is shown
+  // ("Done · 80 lb × 10"); adjusting stays optional (Phase 29, B4).
+  const suggest = loaded && item.role === 'main' && item.part !== 'ramp_up' && !hold && load > 0;
+  const repsText = shown[0] === shown[1] ? `${shown[0]}` : `${shown[0]}–${shown[1]}`;
   return (
     <View style={styles.setStack}>
-      <Button size="xl" label={t('workout.player.doneSet')} onPress={done} />
+      <Button
+        size="xl"
+        label={
+          suggest
+            ? t('load.doneWith', { load, unit: t(`workout.units.${unit}`), reps: value })
+            : t('workout.player.doneSet')
+        }
+        onPress={done}
+      />
       {/* Swap: one tap, then the pick (Phase 27, A1: at most 2 taps). */}
       {item.part !== 'ramp_up' ? (
         <View style={styles.links}>
@@ -459,6 +527,17 @@ function SetStep({
         <AppText variant="caption" color={colors.mutedStrong}>
           {targetLine}
         </AppText>
+        {suggest ? (
+          <SetSuggestion
+            workouts={workouts}
+            workoutId={workout.id}
+            exerciseId={item.exerciseId}
+            unit={unit}
+            load={adviceLoad(advice) ?? load}
+            reps={repsText}
+            showRecord={mode === 'adult'}
+          />
+        ) : null}
         <Counter
           label={t(hold ? 'workout.player.seconds' : 'workout.player.reps')}
           value={value}

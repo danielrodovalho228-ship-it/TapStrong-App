@@ -434,7 +434,8 @@
     "boy": "Boy",
     "girl": "Girl",
     "frontView": "Front view",
-    "backView": "Back view"
+    "backView": "Back view",
+    "rotate": "Turn the body around"
   },
   "goalsSheet": {
     "goalFor": "Goal for this area",
@@ -3639,6 +3640,11 @@
       "one": "You trained this week. Every start counts.",
       "two": "You trained twice this week. That's a rhythm.",
       "many": "You trained {{count}} times this week. That's consistency."
+    },
+    "preview": {
+      "sets_one": "{{count}} set × {{reps}}",
+      "sets_other": "{{count}} sets × {{reps}}",
+      "sets_zero": "{{count}} sets × {{reps}}"
     }
   },
   "workout": {
@@ -3654,14 +3660,16 @@
       "title": "Rest",
       "eyebrow": "Exercise {{n}} of {{total}} · set {{set}} done",
       "of": "of {{total}}",
-      "more": "+30 s",
+      "more": "+15 s",
       "skip": "Skip rest",
       "logged": "Logged",
       "reps_one": "{{count}} rep",
       "reps_other": "{{count}} reps",
       "lastSession": "Last session: {{value}}",
       "upNext": "Up next",
-      "progressUp": "You hit the top of the range twice. Try +{{step}}."
+      "progressUp": "You hit the top of the range twice. Try +{{step}}.",
+      "less": "−15 s",
+      "tapToSkip": "Tap to skip"
     },
     "warmup": "Warm-up · {{minutes}} min",
     "cooldown": "Cool-down · {{minutes}} min",
@@ -3772,13 +3780,18 @@
       "cancel": "Back to my set"
     },
     "exit": {
-      "open": "End workout",
-      "title": "End workout?",
+      "open": "Workout menu",
+      "title": "Workout",
       "body": "You've done {{done}} of {{total}} sets. We'll save them and color the muscles you worked. Your streak still counts.",
-      "bodyEmpty": "Nothing is logged yet. Keep going, or discard this workout.",
-      "keepGoing": "Keep going",
-      "saveEnd": "Save & end",
-      "discard": "Discard workout"
+      "bodyEmpty": "Nothing is logged yet.",
+      "keepGoing": "Back to the workout",
+      "saveEnd": "Finish workout",
+      "discard": "Discard workout",
+      "pause": "Pause workout",
+      "discardTitle": "Discard this workout?",
+      "discardBody": "The sets logged in it are deleted and it won't count for your streak.",
+      "discardYes": "Yes, discard",
+      "discardNo": "Back"
     },
     "done": {
       "eyebrow": "Workout {{n}} · complete",
@@ -3860,7 +3873,14 @@
     "deload": "Light week: fewer sets",
     "otherSide": "Other side",
     "demoSoon": "Demo coming soon",
-    "worked": "Muscles worked"
+    "worked": "Muscles worked",
+    "ramp": {
+      "title": "Warm-up sets · {{name}}",
+      "scheme": "10 reps light · 5 reps medium · 3 reps almost there",
+      "note": "Same move, building up to today's weight. Rest a little between them.",
+      "done": "Done",
+      "skip": "Skip"
+    }
   },
   "account": {
     "eyebrow": "Your account",
@@ -4859,7 +4879,12 @@
     "hard": "😮‍💨 Nothing",
     "repsUpBodyweight": "Aim for {{reps}} reps this time.",
     "harder": "Top of the range 4 sessions in a row: time for a harder version. Tap Swap to pick one.",
-    "easier": "Reps are hard at the lightest weight: try an easier version. Tap Swap to pick one."
+    "easier": "Reps are hard at the lightest weight: try an easier version. Tap Swap to pick one.",
+    "suggested": "Suggested: {{load}} {{unit}} × {{reps}}",
+    "lastTime": "Last time: {{load}} × {{reps}}",
+    "chart": "Best load per session, top {{max}} {{unit}}",
+    "recordGoal": "Lift {{load}} {{unit}} to beat your best",
+    "doneWith": "Done · {{load}} {{unit}} × {{reps}}"
   },
   "plans": {
     "title": "Ready-made plans",
@@ -4998,8 +5023,8 @@
     "saveCard": "Save card: {{name}}"
   },
   "exercise": {
-    "guidance": "Guidance",
-    "performance": "Performance",
+    "guidance": "How to",
+    "performance": "My history",
     "cues": "How to do it",
     "mistakes": "Common mistakes",
     "worked": "Muscles worked",
@@ -5112,7 +5137,9 @@
       "homeGym": "Home gym",
       "bodyweight": "Bodyweight only",
       "hotel": "Hotel"
-    }
+    },
+    "home": "Home",
+    "gym": "Gym"
   },
   "prefs": {
     "title": "Workout preferences",

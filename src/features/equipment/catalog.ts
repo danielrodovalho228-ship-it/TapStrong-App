@@ -64,6 +64,27 @@ export const EQUIPMENT_GROUPS = {
 } as const;
 
 export type EquipmentGroup = keyof typeof EQUIPMENT_GROUPS;
+
+/**
+ * What a home usually has (Phase 29, B9): shown first under "Home"; every
+ * other item stays in its group under "Gym". Display only: the generator
+ * still reads the person's exact list.
+ */
+export const HOME_ITEMS = [
+  'chair',
+  'towel',
+  'wall',
+  'mat',
+  'long_bands',
+  'mini_bands',
+  'dumbbells',
+  'kettlebells',
+  'step',
+  'jump_rope',
+  'stability_ball',
+  'foam_roller',
+  'yoga_block',
+] as const satisfies readonly (typeof EQUIPMENT_GROUPS)[EquipmentGroup][number][];
 export type EquipmentItem = (typeof EQUIPMENT_GROUPS)[EquipmentGroup][number];
 export const ALL_EQUIPMENT: EquipmentItem[] = Object.values(
   EQUIPMENT_GROUPS,

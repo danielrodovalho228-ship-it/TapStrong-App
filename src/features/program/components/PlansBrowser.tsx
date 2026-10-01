@@ -3,7 +3,11 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, View } from 'react-native';
 
-import { AppText, Card, Chip } from '@/components/ui';
+import { Image } from 'expo-image';
+
+import { AppText, Card, Chip, Icon } from '@/components/ui';
+import { demoPoster, demoSexFor } from '@/features/exercises/videos';
+import { useOnboardingStore } from '@/features/onboarding/store';
 import type { AppMode } from '@/features/profile/age';
 import { colors, fonts, makeStyles, radius, spacing, useColors } from '@/theme';
 
@@ -27,6 +31,38 @@ const GOALS: PlanGoal[] = [
 const SPLITS: PlanSplit[] = ['fullBody', 'upperLower', 'ppl'];
 const DAYS = [2, 3, 4, 5, 6];
 
+/** One of our exercise posters per goal (no gym photos, no logos). */
+export const GOAL_POSTER: Record<PlanGoal, string> = {
+  shape: 'glute_bridge',
+  muscle: 'wall_push_up',
+  strength: 'bodyweight_squat',
+  weightLoss: 'low_step_up',
+  mobilityBalance: 'standing_supported_bird_dog',
+  seniorSteady: 'sit_to_stand',
+};
+
+/** The plan's picture: the poster in the profile's sex, or a quiet panel. */
+function PlanPicture({ goal }: { goal: PlanGoal }) {
+  const colors = useColors();
+  const styles = useStyles();
+  const sex = useOnboardingStore((s) => demoSexFor(s));
+  const poster = demoPoster(GOAL_POSTER[goal], sex);
+  return (
+    <View style={styles.picture} aria-hidden>
+      {poster ? (
+        <Image
+          source={typeof poster === 'string' ? { uri: poster } : poster}
+          style={styles.pictureImage}
+          contentFit="cover"
+          contentPosition="top"
+        />
+      ) : (
+        <Icon name="body" size={40} color={colors.onCanvasMuted} />
+      )}
+    </View>
+  );
+}
+
 /**
  * Ready-made plans (improvements v1, A5; mockup 19 cards): "My plan" first,
  * then plans for this age mode with day, goal, split and length filters.
@@ -49,20 +85,30 @@ export function PlansBrowser({ mode }: { mode: AppMode }) {
       accessibilityLabel={`${t(`plans.goals.${p.goal}`)}, ${t(`plans.splits.${p.split}`)}, ${t('plans.meta', { days: p.daysPerWeek, minutes: p.minutes })}`}
       onPress={() => router.push({ pathname: '/program/[id]', params: { id: p.id } })}
     >
-      <Card style={[styles.card, activeId === p.id && styles.active]}>
-        <View style={styles.row}>
-          <AppText variant="bodyStrong" style={styles.flex}>
-            {[t(`plans.goals.${p.goal}`), t(`plans.splits.${p.split}`)].join(' · ')}
-          </AppText>
-          {activeId === p.id ? (
-            <AppText variant="caption" color={colors.teal} style={styles.caps}>
-              {t('plans.active')}
+      {/* Large card with our own poster and the goal (Phase 29, B8). */}
+      <Card
+        style={[styles.card, styles.big, activeId === p.id && styles.active]}
+        testID="plan-card"
+      >
+        <PlanPicture goal={p.goal} />
+        <View style={styles.bigText}>
+          <View style={styles.row}>
+            <AppText variant="h3" style={styles.flex}>
+              {t(`plans.goals.${p.goal}`)}
             </AppText>
-          ) : null}
+            {activeId === p.id ? (
+              <AppText variant="caption" color={colors.teal} style={styles.caps}>
+                {t('plans.active')}
+              </AppText>
+            ) : null}
+          </View>
+          <AppText color={colors.mutedStrong}>
+            {[
+              t(`plans.splits.${p.split}`),
+              t('plans.meta', { days: p.daysPerWeek, minutes: p.minutes }),
+            ].join(' · ')}
+          </AppText>
         </View>
-        <AppText color={colors.mutedStrong}>
-          {t('plans.meta', { days: p.daysPerWeek, minutes: p.minutes })}
-        </AppText>
       </Card>
     </Pressable>
   );
@@ -184,6 +230,15 @@ const useStyles = makeStyles(() => ({
     borderRadius: radius.card,
   },
   active: { borderColor: colors.teal },
+  big: { padding: 0, overflow: 'hidden', gap: 0 },
+  bigText: { padding: spacing.md, gap: spacing.xxs },
+  picture: {
+    height: 150,
+    backgroundColor: colors.bodyCanvas,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  pictureImage: { width: '100%', height: '100%' },
   row: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   flex: { flex: 1 },
   caps: { textTransform: 'uppercase', letterSpacing: 1.2, fontFamily: fonts.headingSemi },

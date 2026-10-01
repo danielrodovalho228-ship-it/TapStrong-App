@@ -248,8 +248,11 @@ describe('Player (mockup 11) and rest (mockup 12)', () => {
     const total = step.item.restSeconds;
     const fmt = (s: number) => `of ${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
     expect(screen.getByText(fmt(total))).toBeTruthy();
-    await fireEvent.press(screen.getByRole('button', { name: '+30 s' }));
-    expect(screen.getByText(fmt(total + 30))).toBeTruthy();
+    await fireEvent.press(screen.getByRole('button', { name: '+15 s' }));
+    expect(screen.getByText(fmt(total + 15))).toBeTruthy();
+    await fireEvent.press(screen.getByRole('button', { name: '−15 s' }));
+    await fireEvent.press(screen.getByRole('button', { name: '−15 s' }));
+    expect(screen.getByText(fmt(total - 15))).toBeTruthy();
     await fireEvent.press(screen.getByRole('button', { name: 'Skip rest' }));
     expect(mockRouter.back).toHaveBeenCalled();
   });
@@ -379,7 +382,7 @@ describe('Pain swap (mockup 21)', () => {
 });
 
 describe('Exit (mockup 13) and Done (mockup 14)', () => {
-  it('"Save & end" keeps the logged sets and counts the streak', async () => {
+  it('"Finish workout" keeps the logged sets and counts the streak', async () => {
     await setUp();
     const w = current();
     const main = w.session.items.find((i) => i.role === 'main')!;
@@ -389,7 +392,7 @@ describe('Exit (mockup 13) and Done (mockup 14)', () => {
     await render(<ExitScreen />);
     const total = w.session.items.filter((i) => i.role === 'main').reduce((n, i) => n + i.sets, 0);
     expect(screen.getByText(new RegExp(`You've done 1 of ${total} sets`))).toBeTruthy();
-    await fireEvent.press(screen.getByRole('button', { name: 'Save & end' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Finish workout' }));
     expect(current().status).toBe('partial');
     expect(workouts().streak.current).toBe(1);
     expect(events.map((e) => e.event)).toContain('workout_ended_early');
@@ -398,9 +401,24 @@ describe('Exit (mockup 13) and Done (mockup 14)', () => {
   it('"Discard workout" deletes it', async () => {
     await setUp();
     await render(<ExitScreen />);
-    expect(screen.queryByRole('button', { name: 'Save & end' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Finish workout' })).toBeNull();
     await fireEvent.press(screen.getByRole('button', { name: 'Discard workout' }));
+    // Phase 29, B7: it asks first.
+    expect(workouts().workouts).toHaveLength(1);
+    await fireEvent.press(screen.getByRole('button', { name: 'Back' }));
+    expect(workouts().workouts).toHaveLength(1);
+    await fireEvent.press(screen.getByRole('button', { name: 'Discard workout' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Yes, discard' }));
     expect(workouts().workouts).toHaveLength(0);
+    expect(mockRouter.replace).toHaveBeenCalledWith('/home');
+  });
+
+  it('"Pause workout" goes Home and keeps the workout open', async () => {
+    await setUp();
+    await act(() => workouts().start(current().id));
+    await render(<ExitScreen />);
+    await fireEvent.press(screen.getByRole('button', { name: 'Pause workout' }));
+    expect(current().status).toBe('active');
     expect(mockRouter.replace).toHaveBeenCalledWith('/home');
   });
 

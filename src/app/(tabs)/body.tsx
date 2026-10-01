@@ -1,9 +1,9 @@
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, useWindowDimensions, View } from 'react-native';
+import { PanResponder, Pressable, useWindowDimensions, View } from 'react-native';
 
-import { AppText, Button, Chip, Header, Notice, Screen, Select } from '@/components/ui';
+import { AppText, Button, Chip, Header, Icon, Notice, Screen, Select } from '@/components/ui';
 import { AreaChip } from '@/features/bodymap/components/AreaChip';
 import { BodyMapCanvas } from '@/features/bodymap/components/BodyMapCanvas';
 import type { BodySex, BodyView } from '@/features/bodymap/images';
@@ -46,6 +46,18 @@ export default function BodyMapScreen() {
     const expanded = expandToHotspots(s.muscleGoals);
     if (expanded.length !== s.muscleGoals.length) s.update({ muscleGoals: expanded });
   }, [s]);
+
+  // Swipe sideways to turn the body 180° (Phase 29, B10; like BodyPicker).
+  const [turn] = useState(() =>
+    PanResponder.create({
+      onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dx) > 24 && Math.abs(g.dy) < 20,
+      onPanResponderRelease: (_, g) => {
+        if (Math.abs(g.dx) <= 60) return;
+        const store = useOnboardingStore.getState();
+        store.update({ bodyView: store.bodyView === 'front' ? 'back' : 'front' });
+      },
+    }),
+  );
 
   if (!derived) return <Redirect href="/onboarding/who" />;
 
@@ -141,7 +153,8 @@ export default function BodyMapScreen() {
         </Notice>
       ) : null}
 
-      <View>
+      {/* A sideways swipe turns the body 180° (Phase 29, B10). */}
+      <View {...turn.panHandlers}>
         <BodyMapCanvas
           band={band}
           sex={sex}
@@ -207,6 +220,16 @@ function ViewToggle({ value, onChange }: { value: BodyView; onChange: (v: BodyVi
       accessibilityLabel={t('bodyMap.view')}
       style={styles.toggle}
     >
+      {/* One tap turns the body around (Phase 29, B10). */}
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={t('bodyMap.rotate')}
+        onPress={() => onChange(value === 'front' ? 'back' : 'front')}
+        style={styles.toggleItem}
+        testID="body-rotate"
+      >
+        <Icon name="rotate" size={20} color={colors.mutedStrong} />
+      </Pressable>
       {(['front', 'back'] as const).map((v) => {
         const on = v === value;
         return (
