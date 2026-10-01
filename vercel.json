@@ -1,0 +1,24 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "npm ci",
+  "buildCommand": "EXPO_NO_DOTENV=1 EXPO_OFFLINE=1 CI=1 npx expo export --dev --platform web --output-dir dist-preview",
+  "outputDirectory": "dist-preview",
+  "cleanUrls": true,
+  "git": {
+    "deploymentEnabled": {
+      "dependabot/*": false
+    }
+  },
+  "rewrites": [
+    { "source": "/c/:code", "destination": "/c/[code].html" },
+    { "source": "/r/:code", "destination": "/r/[code].html" },
+    { "source": "/day/:date", "destination": "/day/[date].html" },
+    { "source": "/exercise/:id", "destination": "/exercise/[id].html" },
+    { "source": "/movement-pain/:id", "destination": "/movement-pain/[id].html" },
+    { "source": "/program/:id", "destination": "/program/[id].html" },
+    { "source": "/repair/test/:key", "destination": "/repair/test/[key].html" },
+    { "source": "/workout/:id", "destination": "/workout/[id]/index.html" },
+    { "source": "/workout/:id/:screen", "destination": "/workout/[id]/:screen.html" }
+  ]
+}
