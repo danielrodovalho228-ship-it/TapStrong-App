@@ -3060,3 +3060,118 @@ A pedido do Daniel (01/10), `wall_push_up.f`, `standing_supported_bird_dog.f`, `
 - A `docs/media-redo.md` lista esses 4 numa seção própria ("Recusados pelo Flow: usam o clipe do outro sexo"), fora do total.
 - **Lista de refazer: 47 clipes** (24 de exercícios sem nenhum sexo, 23 com só um). No app: 181 entradas de clipe em 102 exercícios (177 clipes próprios e os 4 emprestados).
 - Os 9 suspeitos novos (clamshell f/m, side_lying_adductor_raise f/m, sl_seated_hands_out_knee_squeeze.f, bird_dog.f, prone_w_raise.m, seated_w_squeeze.f, su_seated_scaption_raise.m) continuam na lista para o próximo lote.
+
+## Fase 29 — Correções do teste no celular + o que aprender com o Gymverse
+
+Três commits: **A** `4ed9968` (bugs do teste), **B** `7bbda94` (Gymverse adaptado), **C** (tema, modo escuro, prints e este relatório).
+
+**Link do preview para testar de novo:** https://tapstrong-preview.vercel.app (login na Vercel, como antes). Ele monta sozinho a cada push, em uns 5 minutos.
+
+### A. Bugs do teste no celular
+
+1. **Vídeos no preview.**
+   - Havia duas causas:
+     - No iPhone, o Safari só toca vídeo dentro da página com `playsInline`, que não estava ligado. Por isso ficava o pôster parado ("Sentar e levantar").
+     - Quase todos os exercícios do primeiro treino (aquecimento e desaquecimento) não têm clipe.
+   - Agora:
+     - o preview liga os nossos clipes com `EXPO_PUBLIC_DEMO_MEDIA=1` (no `vercel.json`). A versão de loja continua bloqueada pelo `bundle:check`;
+     - sem clipe, aparece o corpo com os músculos do exercício pintados e "Demonstração em breve";
+     - a frase "biblioteca licenciada" saiu.
+2. **Mídia num quadro.**
+   - Clipe, pôster ou corpo ficam sempre num quadro 4:5 no topo, com cantos arredondados, `contain`, e no máximo um terço da tela.
+   - As etiquetas de músculo e o "outro lado" ficam embaixo do quadro.
+   - O selo "Protótipo" é pequeno, fica no canto e só aparece na build de desenvolvimento. No preview ele some.
+   - Dois testes automáticos:
+     - Jest: nenhum texto dentro do quadro;
+     - navegador (`scripts/shoot-phone-test.mjs`): mede na tela que nenhum texto encosta na mídia. Passou nos 7 perfis, claro e escuro.
+3. **Folha Trocar.**
+   - Cada opção virou uma linha: pôster (sexo do perfil), nome e uma linha de dica. Tocar na linha troca.
+   - Não há mais botão vermelho.
+   - No topo: "Mesmo músculo · mais fácil / igual / mais difícil", com as opções agrupadas por nível.
+4. **Fim do treino.**
+   - Novo mapa por áreas pintadas, frente e costas lado a lado: primário em cor forte, secundário em cor clara (`MuscleAreaMap`). Ele também é usado na tela do exercício e no quadro sem vídeo.
+   - "Termine forte" não aparece no 1º treino.
+5. **Aviso de notificações.**
+   - Ele só aparece depois de uma permissão negada (já era assim no código; agora tem teste).
+   - Na web, os lembretes ficam escondidos e aparece "Os lembretes de treino estão disponíveis no app". Isso explica o aviso que você viu no iPhone: na web, qualquer toque no interruptor dava "negado".
+6. **Detalhes.**
+   - "Sinto dor" agora usa a cor do texto secundário, com ícone, sem caixa alta vermelha.
+   - O aviso "Trocado por… · Desfazer" fica logo acima do FEITO, nunca por cima dele.
+
+### Exercícios do primeiro treino sem clipe
+
+Gerei o primeiro treino de 5.184 perfis (idades, sexo, casa/academia, equipamentos, tempo, objetivo, posição, músculos). **98 exercícios** podem aparecer sem clipe. Eles estão no topo da `docs/media-redo.md` como "faltando, prioridade alta: aparece no primeiro treino". O teste `first-workout-media.test.ts` mantém essa lista completa a cada mudança do gerador.
+
+- **Os que mais aparecem:**
+  - aquecimento: fc_fast_march, fc_low_impact_jacks, hip_circles, wu_mini_squats, wu_arm_hug_swings, wu_seated_elbow_openers, wu_seated_knee_lifts, cat_cow, leg_swings, arm_circles;
+  - desaquecimento: cw_arm_swing_walk, box_breathing, standing_quad_stretch, doorway_chest_stretch, seated_hamstring_stretch, st_wall_lat_stretch;
+  - principais: push_up, wide_incline_push_up, single_leg_glute_bridge, dumbbell_romanian_deadlift, lat_pulldown, leg_press.
+- **Lista completa:** arm_circles, assisted_pull_up_machine, band_chest_fly, band_lat_pulldown, band_overhead_press, band_pull_apart, band_seated_leg_press, barbell_hip_thrust, box_breathing, bridge_floor_press, brisk_walk, cable_chest_fly, cable_pallof_press, cable_woodchop, cat_cow, cw_arm_swing_walk, cw_easy_bike, cw_seated_ankle_pumps, doorway_chest_stretch, dumbbell_dead_bug, dumbbell_floor_fly, dumbbell_romanian_deadlift, dumbbell_seated_calf_raise, dumbbell_shoulder_press, dumbbell_split_squat, dumbbell_suitcase_carry, dumbbell_sumo_squat, fc_bike_intervals, fc_fast_march, fc_low_impact_jacks, fc_seated_fast_march, fc_seated_jacks, goblet_squat, hip_abduction_machine, hip_adduction_machine, hip_circles, incline_machine_press, lat_pulldown, leg_press, leg_swings, machine_ab_crunch, machine_chest_fly, machine_leg_extension, overhead_triceps_stretch, push_up, reverse_lunge, seated_band_pulldown, seated_calf_raise_machine, seated_figure_four_stretch, seated_hamstring_stretch, seated_leg_curl_machine, sf_seated_prayer_press_pulses, side_plank, single_arm_band_incline_press, single_arm_bridge_floor_press, single_arm_cable_pulldown, single_arm_high_to_low_band_fly, single_arm_high_to_low_cable_fly, single_leg_glute_bridge, sl_seated_abdominal_thigh_press (só o m), sl_seated_band_leg_back_pull, sl_seated_double_leg_extension, sl_seated_hand_pressed_heel_raise, sl_seated_seat_hover_hold, st_neck_diagonal_stretch, st_seated_calf_stretch, st_seated_forward_fold, st_seated_hip_flexor_stretch, st_seated_wide_leg_stretch, st_wall_front_shoulder_stretch, st_wall_lat_stretch, standing_quad_stretch, su_seated_band_overhead_pulldown, supported_hip_extension, supported_single_leg_rdl, sv_cs_arms_up_arch, sv_cs_hands_behind_head_chest, sv_cs_palms_up_overhead, sv_cs_side_lean_lat, sv_cs_side_sit_quad, sv_mo_chair_cat_cow, sv_mo_crossed_arm_rotations, sv_seated_backrest_chest_opener, sv_seated_hands_on_knees_lift, towel_lat_pulldown, wide_incline_push_up, wu_ankle_rocks, wu_arm_hug_swings, wu_hip_gate_openers, wu_inchworm_lite, wu_lateral_leg_swings, wu_mini_squats, wu_seated_elbow_openers, wu_seated_knee_extensions, wu_seated_knee_lifts, wu_seated_reach_ups, wu_seated_shoulder_rolls, wu_seated_side_bends.
+- A `media-redo.md` agora tem **194 + 24 + 23 clipes** (primeiro treino, sem nenhum sexo, com só um).
+
+### B. O que veio do Gymverse (adaptado)
+
+1. **Prévia na Home:** pôster por exercício (sexo do perfil), "3 séries × 8–12", ícone de trocar (abre o treino, onde fica a troca) e o resumo "N exercícios · M min" no topo. A Home 60+ continua com o botão grande só, como na Fase 27.
+2. **Semana no topo da Home:** a faixa já existia (commit `803fdeb`); agora ela vem antes do botão Treinar. Isso muda a regra da Fase 27 de "nada acima do botão".
+3. **Tela do exercício:** as abas já existiam (commit `7931fb3`, "Orientação/Desempenho").
+   - Agora se chamam "Como fazer" e "Meu histórico".
+   - Os músculos aparecem pintados, frente e costas.
+   - Menores não veem carga nem no histórico (antes ainda aparecia em "sessões").
+4. **Sugestão por série (adultos com carga):**
+   - "Sugerido: 25 kg × 8–12", "Da última vez: 20 × 12", mini gráfico da melhor carga por treino e "Bata 27,5 kg para superar a sua marca" (o recorde só para adultos abaixo de 60).
+   - O botão grande vira "Feito · 25 kg × 8" e registra com 1 toque; ajustar continua opcional.
+   - Menores: só repetições, sem campo de carga e sem recorde.
+5. **Aquecimento por exercício:** o aquecimento com carga já existia (2 séries leves). Agora vira um card: "10 reps leve · 5 reps médio · 3 reps quase lá", com Feito (registra as séries de uma vez) ou Pular. Adolescentes continuam com 1 série leve normal.
+6. **Descanso:** o timer circular já existia. Agora tem −15 s / +15 s e "Toque para pular" no círculo (nunca menos de 15 s).
+7. **Menu "⋯" no player:** Pausar treino (volta para a Home e o treino fica aberto), Concluir treino e Descartar treino (pede confirmação).
+8. **Programas:** cards grandes com um pôster nosso por objetivo e o objetivo em destaque. O filtro de dias já existia (2 a 6 dias, inclui 3/4/5).
+9. **Equipamentos que eu tenho:** já existia (commit `7f490ed`, Ajustes → Equipamentos, com interruptores; o gerador só usa o que está ligado). Agora começa por "Casa" (cadeira, toalha, parede, colchonete, elásticos, halteres…) e depois "Academia" (bancos, pesos, cabos, máquinas, cardio).
+10. **Corpo que gira:** botão 180° na aba Corpo e no mapa da biblioteca, e arrastar para o lado na aba Corpo.
+
+Não copiei: fotos de academia com marca, calorias novas e ranking. As calorias que já existiam na Home (só adultos) ficaram.
+
+### C. Tema e acabamento
+
+- **Botões principais:** usam o token do tema (`colors.accent`): **#E8573F** no claro e **#FF7A63** no escuro, o coral aprovado no tema v2 (`docs/theme-v2.md`; não existe `docs/theme-coral`). Não há #E2463A no código.
+  - Teste novo: `src/theme/p29-theme.test.tsx` confere o botão principal nos dois modos e que nenhum vermelho fixo aparece.
+- **Modo escuro:** mesmo roteiro (Home, player, Trocar, fim do treino, menu, descanso, exercício, programas, equipamentos, Corpo) em adolescente, adulto e 60+. Nada sobreposto à mídia, nenhum texto ilegível.
+
+### Prints
+
+- **Antes/depois** (adulto, mulher): `docs/screenshots/phone-test/compare/`
+  - `player-warmup.jpg`, `player-clip.jpg`, `swap.jpg`, `done-first.jpg`, `home.jpg`.
+- **Todos** em `docs/screenshots/phone-test/<modo>-<claro|escuro>-<sexo>-<tela>.jpg`:
+  - modos: teen, adult, senior;
+  - claro e escuro, mais o adulto homem;
+  - telas: home, player-warmup, player-clip, swap, done-first, done-later, menu, rest, exercise, plans, equipment, body.
+- Para refazer: `node scripts/shoot-phone-test.mjs`.
+
+### Como testar
+
+1. No iPhone, abra o link do preview e crie uma mulher adulta. Toque em Treinar agora.
+2. Aquecimento sem clipe: o corpo com os músculos pintados e "Demonstração em breve". Num exercício com clipe (por exemplo, Sentar e levantar), o vídeo deve tocar dentro do quadro.
+3. Toque em Trocar e escolha uma linha: o aviso aparece acima do FEITO.
+4. Termine o 1º treino: músculos pintados, sem "Termine forte".
+5. "⋯" → Pausar: a Home mostra Continuar.
+
+### Testes
+
+1.443 testes passando: lint, tipos, `security:check`. Os novos:
+
+- `p29-a.test.tsx` (18);
+- `p29-b.test.tsx` (9);
+- `first-workout-media.test.ts`;
+- `p29-theme.test.tsx` (3);
+- atualizações em `screens.test.tsx`, `account/screens.test.tsx` e outros.
+
+### Perguntas (no máximo 3)
+
+1. **Cor dos botões:** o coral #E8573F é o aprovado no tema v2, mas no celular pareceu vermelho forte.
+   - **(Recomendado)** Mudar para um coral mais suave, #F07A64 (o mesmo do botão pressionado), com texto escuro, que passa no contraste.
+   - Ou manter #E8573F.
+2. **Ordem dos clipes faltando:** são 98 exercícios do primeiro treino sem clipe.
+   - **(Recomendado)** Mandar primeiro para o Flow os 22 que mais aparecem (lista "Os que mais aparecem" acima).
+   - Ou seguir a ordem da `media-redo.md`.
+3. **Mapa por áreas:** hoje as áreas são elipses desenhadas por cima do corpo (sem arte nova).
+   - **(Recomendado)** Manter assim agora e encomendar depois uma arte com os músculos recortados, frente e costas, para cada modelo de corpo.
+   - Ou voltar às bolinhas no fim do treino.

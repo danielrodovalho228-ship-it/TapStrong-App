@@ -1,6 +1,7 @@
 // Phase 29 (the phone test): the player (warm-up without a clip, an exercise
 // with a clip), the swap sheet, the end of the first and of a later workout
-// and Home, in teen, adult and 60+ mode, light and dark, as the preview link
+// and Home, the workout menu, rest, the exercise page, plans, equipment and
+// the Body tab, in teen, adult and 60+ mode, light and dark, as the preview link
 // builds them (EXPO_PUBLIC_DEMO_MEDIA=1). It also measures, in the browser,
 // that no text of the player sits on the media frame.
 // Output: <out>/<mode>-<scheme>-<sex>-<name>.jpg (default docs/screenshots/phone-test)
@@ -216,6 +217,33 @@ try {
     await go(`/workout/${LAST}/done`);
     await page.waitForTimeout(2500);
     await page.screenshot({ path: name('done-later'), type: 'jpeg', quality: 70, fullPage: true });
+
+    // Package B screens: the workout menu, rest, the exercise page, plans,
+    // equipment and the Body tab.
+    const live = workout(0, LIVE, false);
+    live.logs = [
+      {
+        itemId: 'i0',
+        exerciseId: 'sit_to_stand',
+        setNo: 1,
+        reps: 10,
+        loggedAt: `${day(0)}T09:10:00`,
+      },
+    ];
+    await put([live]);
+    await go(`/workout/${LIVE}/exit`);
+    await page.screenshot({ path: name('menu'), type: 'jpeg', quality: 70 });
+    await go(`/workout/${LIVE}/rest`);
+    await page.screenshot({ path: name('rest'), type: 'jpeg', quality: 70 });
+    for (const [shot, path] of [
+      ['exercise', '/exercise/sit_to_stand'],
+      ['plans', '/programs'],
+      ['equipment', '/settings/equipment'],
+      ['body', '/body'],
+    ]) {
+      await go(path);
+      await page.screenshot({ path: name(shot), type: 'jpeg', quality: 70 });
+    }
 
     await context.close();
   }
