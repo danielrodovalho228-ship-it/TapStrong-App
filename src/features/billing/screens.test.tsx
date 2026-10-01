@@ -25,6 +25,9 @@ import { setBilling } from './provider';
 import { PRODUCTS } from './rules';
 import { FREE, useBillingStore } from './store';
 
+// A full screen renders in ~3 s on its own; a busy machine can double that.
+const SLOW_RENDER_MS = 20_000;
+
 let mockParams: Record<string, string> = {};
 jest.mock('expo-router', () => ({
   router: {
@@ -100,23 +103,27 @@ function startedWorkout(dayOfMonth: number) {
 }
 
 describe('Free plan limit', () => {
-  it('sends the 4th workout of the week to the paywall', async () => {
-    await act(() => {
-      startedWorkout(21);
-      startedWorkout(23);
-      startedWorkout(25);
-    });
-    const input = inputFromProfile(useOnboardingStore.getState(), devLibrary(), true)!;
-    const id = useWorkoutStore.getState().create(generateSession(input));
-    mockParams = { id };
-    await render(<WorkoutScreen />);
-    await fireEvent.press(screen.getByRole('button', { name: 'Start with warm-up' }));
-    expect(mockRouter.push).toHaveBeenCalledWith({
-      pathname: '/paywall',
-      params: { next: '2026-09-27' },
-    });
-    expect(useWorkoutStore.getState().workouts.find((w) => w.id === id)!.status).toBe('planned');
-  });
+  it(
+    'sends the 4th workout of the week to the paywall',
+    async () => {
+      await act(() => {
+        startedWorkout(21);
+        startedWorkout(23);
+        startedWorkout(25);
+      });
+      const input = inputFromProfile(useOnboardingStore.getState(), devLibrary(), true)!;
+      const id = useWorkoutStore.getState().create(generateSession(input));
+      mockParams = { id };
+      await render(<WorkoutScreen />);
+      await fireEvent.press(screen.getByRole('button', { name: 'Start with warm-up' }));
+      expect(mockRouter.push).toHaveBeenCalledWith({
+        pathname: '/paywall',
+        params: { next: '2026-09-27' },
+      });
+      expect(useWorkoutStore.getState().workouts.find((w) => w.id === id)!.status).toBe('planned');
+    },
+    SLOW_RENDER_MS,
+  );
 
   it('Premium starts it', async () => {
     await act(() => {

@@ -24,6 +24,9 @@ import { SwapSheet } from './components/SwapSheet';
 import { allSteps, currentStep } from './flow';
 import { useWorkoutStore } from './store';
 
+// A full screen renders in ~3 s on its own; a busy machine can double that.
+const SLOW_RENDER_MS = 20_000;
+
 let mockParams: Record<string, string> = {};
 jest.mock('expo-router', () => ({
   router: {
@@ -86,21 +89,25 @@ beforeEach(() => {
 });
 
 describe('Workout list (mockup 10)', () => {
-  it('shows warm-up first, the exercises, cool-down last and the draft badge', async () => {
-    await setUp();
-    await render(<WorkoutScreen />);
-    expect(screen.getByText(/^Warm-up · \d+ min$/)).toBeTruthy();
-    expect(screen.getByText(/^Cool-down · \d+ min$/)).toBeTruthy();
-    expect(screen.getByText(/draft exercises, not reviewed yet/)).toBeTruthy();
-    expect(screen.getByText('Upper chest · Grow')).toBeTruthy();
-    await fireEvent.press(screen.getByRole('button', { name: 'Start with warm-up' }));
-    expect(current().status).toBe('active');
-    expect(events.map((e) => e.event)).toContain('workout_started');
-    expect(mockRouter.push).toHaveBeenCalledWith({
-      pathname: '/workout/[id]/play',
-      params: { id: mockParams.id },
-    });
-  });
+  it(
+    'shows warm-up first, the exercises, cool-down last and the draft badge',
+    async () => {
+      await setUp();
+      await render(<WorkoutScreen />);
+      expect(screen.getByText(/^Warm-up · \d+ min$/)).toBeTruthy();
+      expect(screen.getByText(/^Cool-down · \d+ min$/)).toBeTruthy();
+      expect(screen.getByText(/draft exercises, not reviewed yet/)).toBeTruthy();
+      expect(screen.getByText('Upper chest · Grow')).toBeTruthy();
+      await fireEvent.press(screen.getByRole('button', { name: 'Start with warm-up' }));
+      expect(current().status).toBe('active');
+      expect(events.map((e) => e.event)).toContain('workout_started');
+      expect(mockRouter.push).toHaveBeenCalledWith({
+        pathname: '/workout/[id]/play',
+        params: { id: mockParams.id },
+      });
+    },
+    SLOW_RENDER_MS,
+  );
 
   it('swaps an exercise in place, logs the reason, and undoes it', async () => {
     await setUp();

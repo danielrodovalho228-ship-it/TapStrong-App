@@ -17,6 +17,9 @@ import { devLibrary } from '../exercises/library';
 
 import { useWorkoutStore } from './store';
 
+// A full screen renders in ~3 s on its own; a busy machine can double that.
+const SLOW_RENDER_MS = 20_000;
+
 let mockParams: Record<string, string> = {};
 jest.mock('expo-router', () => ({
   router: { push: jest.fn(), back: jest.fn(), replace: jest.fn(), canGoBack: () => true },
@@ -60,14 +63,18 @@ async function setUp(minutes: number, exercisesPerSession: number, birthYear = 1
 }
 
 describe('spare time', () => {
-  it('keeps 3 exercises in 60 minutes and offers one more; the person decides', async () => {
-    await setUp(60, 3);
-    expect(mainCount()).toBe(3);
-    await render(<WorkoutScreen />);
-    expect(screen.getByText(/of your 60 min are planned/)).toBeTruthy();
-    await fireEvent.press(screen.getByRole('button', { name: 'Add 1 exercise?' }));
-    expect(mainCount()).toBe(4);
-  });
+  it(
+    'keeps 3 exercises in 60 minutes and offers one more; the person decides',
+    async () => {
+      await setUp(60, 3);
+      expect(mainCount()).toBe(3);
+      await render(<WorkoutScreen />);
+      expect(screen.getByText(/of your 60 min are planned/)).toBeTruthy();
+      await fireEvent.press(screen.getByRole('button', { name: 'Add 1 exercise?' }));
+      expect(mainCount()).toBe(4);
+    },
+    SLOW_RENDER_MS,
+  );
 
   it('no offer when the session already fills its time', async () => {
     await setUp(20, 5);
