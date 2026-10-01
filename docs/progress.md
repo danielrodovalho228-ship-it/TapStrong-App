@@ -2967,3 +2967,41 @@ O upload pelo GitHub **parou no meio**: vieram 75 arquivos, em ordem alfabética
 ### O que você precisa fazer
 
 - **Subir de novo o que faltou.** O envio pelo site do GitHub para em 100 arquivos por vez. Suba em partes menores (por exemplo, de `sl_seated_knee_circles.m` em diante) ou compacte num `.zip`, que eu abro aqui.
+
+## Mídia — Refazer 2 e imagens do refazer 3
+
+### O que chegou (2 envios, 78 arquivos)
+
+- **Refazer 2: completo.** Vídeos f/m de superman, knee_push_up, prone_t_raise, prone_lat_pulldown, partial_sit_to_stand, bal_seated_arms_up_hold, bal_seated_head_turns, bal_sit_to_stand_hold, bal_supported_heel_toe_walk, su_seated_air_row, su_seated_bent_t_raise, su_seated_elbow_pull_back e su_seated_leg_lift_curl, mais doorframe_curl.m e sl_seated_heel_slides.m.
+- **Refazer 3: só as 17 imagens novas**, sem vídeo.
+- **Não chegou:** o resto do lote 4 e do refazer 1, de `sl_seated_knee_circles.m` em diante.
+- **Atenção:** 51 dos 78 arquivos foram parar na raiz do repositório, não em `assets/prototype/`. Eu os movi antes do import.
+- Descartados: 3 `x_bad_*` (as imagens antigas do homem deitado de lado) e as 2 referências `body-adult-*`. Os brutos foram apagados; as imagens do refazer 3 estão no Flow e voltam junto com os vídeos.
+
+### QC quadro a quadro
+
+| slug                        | f                                                | m                                          | status                                         |
+| --------------------------- | ------------------------------------------------ | ------------------------------------------ | ---------------------------------------------- |
+| superman                    | suspeito: flexão com as mãos no chão             | ok                                         | m no app                                       |
+| knee_push_up                | ok                                               | suspeito: de quatro, peito quase não desce | f no app                                       |
+| prone_t_raise               | suspeito: braços sobem até o teto                | ok                                         | m no app                                       |
+| prone_lat_pulldown          | suspeito: um braço aponta para o teto            | suspeito: braços para cima e para trás     | refazer                                        |
+| partial_sit_to_stand        | suspeito: levanta por completo                   | ok                                         | m no app                                       |
+| bal_seated_arms_up_hold     | ok                                               | ok                                         | no app                                         |
+| bal_seated_head_turns       | suspeito: em pé, gira o corpo todo               | suspeito: em pé, mexe os braços            | refazer                                        |
+| bal_sit_to_stand_hold       | ok                                               | ok                                         | no app (equilíbrio em pé na frente da cadeira) |
+| bal_supported_heel_toe_walk | ok                                               | suspeito: quase parado, vira de costas     | f no app                                       |
+| doorframe_curl              | (imagem recusada pelo Flow)                      | suspeito: solta o batente com uma mão      | refazer                                        |
+| sl_seated_heel_slides       | imagem nova (refazer 3)                          | ok                                         | m no app                                       |
+| su_seated_air_row           | ok                                               | suspeito: cotovelos nunca puxam para trás  | f no app                                       |
+| su_seated_bent_t_raise      | suspeito: braços acima da cabeça                 | suspeito: braços em V acima da cabeça      | refazer                                        |
+| su_seated_elbow_pull_back   | suspeito: braços esticados, cotovelos não dobram | suspeito: abre os braços em vez de puxar   | refazer                                        |
+| su_seated_leg_lift_curl     | ok                                               | ok                                         | no app                                         |
+
+- **Resultado:** 13 ok e 15 ainda errados. No app agora: **161 clipes em 98 exercícios** (antes 148 em 88).
+- **Refazer 3** (imagens prontas, aguardando vídeo): bridge_pillow_squeeze f/m, clamshell f/m, heel_dig_bridge.m, seated_knee_raise.m, seated_pillow_squeeze f/m, seated_towel_press_up.m, sf_seated_back_arch_reach.f, side_lying_adductor_raise f/m, side_lying_leg_raise f/m, sl_seated_clamshell.m, sl_seated_hands_out_knee_squeeze.f e sl_seated_heel_slides.f. Eles continuam suspeitos até o vídeo novo chegar.
+- `rx_low_step_up.f` e `doorframe_curl.f`: o Flow recusou a imagem nova 2x por política; continuam na lista.
+
+### Lista de refazer (`docs/media-redo.md`)
+
+**Total: 67 clipes** (32 de exercícios sem nenhum sexo no app, 35 de exercícios com só um). Antes eram 80.
