@@ -6,7 +6,7 @@ Gerado por `npm run media:redo` a partir de `assets/prototype/qc.json` e dos cli
 Sexo: f = mulher, m = homem. Nome do arquivo no Flow: `<slug>.<f|m>` (o import
 aceita `_v2`, `_v3`… para refeitos).
 
-Total: 51 clipes (24 de exercícios sem nenhum sexo, 27 de exercícios com só um).
+Total: 47 clipes (24 de exercícios sem nenhum sexo, 23 de exercícios com só um).
 
 ## 1. Exercícios sem nenhum sexo no app (prioridade)
 
@@ -41,7 +41,6 @@ Total: 51 clipes (24 de exercícios sem nenhum sexo, 27 de exercícios com só u
 
 | slug | sexo | motivo |
 |---|---|---|
-| wall_push_up | f | suspeito: recusado pelo Flow (imagem nova). Alternativa: vista de lado, mulher de camiseta e legging, mãos na parede na altura do peito, corpo reto como prancha. Se recusar de novo, fica só o vídeo do homem |
 | superman | f | suspeito: refazer 2 ainda errado: faz flexão com as mãos no chão em vez de erguer braços e pernas |
 | bird_dog | f | suspeito: refazer 4: estende só o braço; a perna oposta não sai do chão |
 | knee_push_up | m | suspeito: refazer 2 ainda errado: fica de quatro (quadril sobre os joelhos), sem linha joelho-cabeça; o peito quase não desce |
@@ -50,13 +49,10 @@ Total: 51 clipes (24 de exercícios sem nenhum sexo, 27 de exercícios com só u
 | prone_w_raise | m | suspeito: refazer 4: mãos apoiadas no chão empurrando o peito (tipo cobra); os braços não formam o W no ar |
 | front_arm_hold | f | suspeito: refazer 4: imagem nova pronta, aguardando o vídeo (antes: hold que se mexe: braços vão da frente para os lados) |
 | supported_split_squat | m | suspeito: refazer 4: imagem nova pronta, aguardando o vídeo (antes: desce até o joelho quase tocar o chão; o exercício pede descer só um pouco) |
-| low_step_up | f | suspeito: recusado pelo Flow (imagem nova). Alternativa: vista de lado, mulher de camiseta e legging, step baixo de academia e mão no corrimão; o mesmo vídeo serve para rx_low_step_up.f |
 | partial_sit_to_stand | f | suspeito: refazer 2 ainda errado: levanta por completo em dois quadros; deveria subir só até a metade |
-| standing_supported_bird_dog | f | suspeito: recusado pelo Flow (imagem nova). Alternativa: vista de lado, mulher de camiseta e legging, uma mão no encosto de uma cadeira, braço oposto à frente e perna para trás, só um pouco |
 | bal_seated_weight_shifts | m | só imagem: veio a imagem de partida, sem vídeo |
 | bal_seated_knee_lift_hold | f | suspeito: refazer 4: imagem nova pronta, aguardando o vídeo (antes: joelho quase não sobe (fica perto da cadeira)) |
 | bal_supported_heel_toe_walk | m | suspeito: refazer 2 ainda errado: quase parado e num quadro vira de costas; não anda calcanhar-ponta |
-| rx_low_step_up | f | suspeito: recusado pelo Flow (imagem nova, 3x). Alternativa: usar o mesmo vídeo novo de low_step_up.f (mulher de camiseta, step baixo, mão no corrimão), que mostra o mesmo movimento |
 | seated_w_squeeze | f | suspeito: refazer 4: os braços sobem à frente e acima da cabeça em vez de formar o W e puxar os cotovelos para baixo e para trás |
 | su_seated_chair_grip_shrug_hold | m | suspeito: refazer 4: imagem nova pronta, aguardando o vídeo (antes: solta o banco e mexe os braços no ar; deveria segurar o assento) |
 | su_seated_scaption_raise | m | suspeito: refazer 4: os braços sobem acima da cabeça e para os lados; deveriam subir à frente, em ângulo, só até a altura do ombro |
@@ -68,3 +64,14 @@ Total: 51 clipes (24 de exercícios sem nenhum sexo, 27 de exercícios com só u
 | sl_seated_knee_circles | m | lote 4: não chegou no upload do GitHub (parou em sl_seated_knee_circles.f) |
 | sl_seated_hands_out_knee_squeeze | f | suspeito: refazer 3 ainda errado: as mãos ficam por fora das coxas; deveriam empurrar por dentro dos joelhos |
 | sl_seated_knee_out_press_hold | m | feito no Flow (refazer 1), mas não chegou no upload do GitHub (parou em sl_seated_knee_circles.f) |
+
+## 3. Recusados pelo Flow: usam o clipe do outro sexo
+
+Não entram no total. O app mostra o clipe do outro sexo só nestes (decisão do Daniel, 01/10).
+
+| slug | sexo | motivo |
+|---|---|---|
+| wall_push_up | f | recusado pelo Flow, usa o clipe do outro sexo |
+| low_step_up | f | recusado pelo Flow, usa o clipe do outro sexo |
+| standing_supported_bird_dog | f | recusado pelo Flow, usa o clipe do outro sexo |
+| rx_low_step_up | f | recusado pelo Flow, usa o clipe do outro sexo |

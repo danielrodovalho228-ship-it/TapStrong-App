@@ -3051,3 +3051,12 @@ O upload pelo GitHub **parou no meio**: vieram 75 arquivos, em ordem alfabética
 ### Lista de refazer (`docs/media-redo.md`)
 
 **Total: 51 clipes** (24 de exercícios sem nenhum sexo no app, 27 de exercícios com só um). Antes eram 67.
+
+## Mídia — Recusados pelo Flow usam o clipe do homem
+
+A pedido do Daniel (01/10), `wall_push_up.f`, `standing_supported_bird_dog.f`, `low_step_up.f` e `rx_low_step_up.f` agora mostram o clipe (e o pôster) do homem: o Flow recusou de novo a mulher, mesmo de camiseta e legging.
+
+- Fica registrado em `qc.json` como `otherSex` ("recusado pelo Flow, usa o clipe do outro sexo"). É a única exceção à regra "cada sexo vê o seu" (Fase 20). O código do app não mudou; o gerador do `videos.js` preenche só essas chaves.
+- A `docs/media-redo.md` lista esses 4 numa seção própria ("Recusados pelo Flow: usam o clipe do outro sexo"), fora do total.
+- **Lista de refazer: 47 clipes** (24 de exercícios sem nenhum sexo, 23 com só um). No app: 181 entradas de clipe em 102 exercícios (177 clipes próprios e os 4 emprestados).
+- Os 9 suspeitos novos (clamshell f/m, side_lying_adductor_raise f/m, sl_seated_hands_out_knee_squeeze.f, bird_dog.f, prone_w_raise.m, seated_w_squeeze.f, su_seated_scaption_raise.m) continuam na lista para o próximo lote.

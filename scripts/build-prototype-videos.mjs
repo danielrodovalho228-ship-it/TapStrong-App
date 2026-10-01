@@ -7,6 +7,9 @@
 // poster: { f, m } and only next to a clip of the same sex.
 // QC suspects in qc.json ({ "suspect": { "<slug>.<f|m>": "reason" } }) keep
 // their file but stay out of the manifest until remade (media-import-1).
+// The one exception to "never the other sex": qc.json "otherSex" lists the
+// clips Google Flow refused again and again; Daniel decided (Oct 1, 2026)
+// that those show the other sex's clip and poster. Nothing else does.
 // Development builds only until the reviewer approves (SPEC §6).
 // Run: npm run prototype:videos
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -16,7 +19,10 @@ import { fileURLToPath } from 'node:url';
 const dir = join(dirname(fileURLToPath(import.meta.url)), '..', 'assets', 'prototype');
 const map = JSON.parse(readFileSync(join(dir, 'map.json'), 'utf8'));
 const qcFile = join(dir, 'qc.json');
-const suspect = existsSync(qcFile) ? (JSON.parse(readFileSync(qcFile, 'utf8')).suspect ?? {}) : {};
+const qc = existsSync(qcFile) ? JSON.parse(readFileSync(qcFile, 'utf8')) : {};
+const suspect = qc.suspect ?? {};
+/** "<slug>.<f|m>" → reason: show the other sex's clip (refused by Flow). */
+const otherSex = qc.otherSex ?? {};
 const root = join(dir, '..', '..');
 const slugs = new Set(
   JSON.parse(readFileSync(join(root, 'supabase', 'seed', 'exercises.json'), 'utf8')).exercises.map(
@@ -34,7 +40,8 @@ const skipped = [];
 const put = (slug, sex, file) => {
   if (!slugs.has(slug)) throw new Error(`${file}: unknown exercise "${slug}"`);
   if (sex !== 'f' && sex !== 'm') throw new Error(`${file}: sex must be "f" or "m"`);
-  if (suspect[`${slug}.${sex}`]) return void skipped.push(`${slug}.${sex}`);
+  if (suspect[`${slug}.${sex}`] || otherSex[`${slug}.${sex}`])
+    return void skipped.push(`${slug}.${sex}`);
   clips[slug] = { ...clips[slug], [sex]: file };
 };
 const poster = (slug, sex) => {
@@ -51,6 +58,20 @@ for (const file of readdirSync(dir).sort()) {
     else console.warn(`skip ${file}: map.json needs { "slug": …, "sex": "f" | "m" }`);
   }
 }
+/** slug → sexes that borrow the other sex's clip and poster. */
+const borrowed = {};
+for (const key of Object.keys(otherSex)) {
+  const [, slug, sex] = key.match(/^(.+)\.(f|m)$/) ?? [];
+  if (!slug) throw new Error(`qc.json otherSex: bad key "${key}"`);
+  const other = sex === 'f' ? 'm' : 'f';
+  if (!clips[slug]?.[other]) {
+    console.warn(`otherSex ${key}: no usable ${other} clip, nothing shown`);
+    continue;
+  }
+  clips[slug][sex] = clips[slug][other];
+  borrowed[slug] = [...(borrowed[slug] ?? []), sex];
+}
+const posterSex = (slug, s) => (borrowed[slug]?.includes(s) ? (s === 'f' ? 'm' : 'f') : s);
 for (const file of Object.keys(map))
   if (!existsSync(join(dir, file))) console.warn(`map.json lists ${file}, which is missing`);
 
@@ -61,8 +82,8 @@ const lines = Object.keys(clips)
       .filter((s) => clips[slug][s])
       .map((s) => `${s}: require(${JSON.stringify(`./${clips[slug][s]}`)})`);
     const posters = ['f', 'm']
-      .filter((s) => clips[slug][s] && poster(slug, s))
-      .map((s) => `${s}: require(${JSON.stringify(`./${poster(slug, s)}`)})`);
+      .filter((s) => clips[slug][s] && poster(slug, posterSex(slug, s)))
+      .map((s) => `${s}: require(${JSON.stringify(`./${poster(slug, posterSex(slug, s))}`)})`);
     if (posters.length) sexes.push(`poster: { ${posters.join(', ')} }`);
     return `  ${JSON.stringify(slug)}: { ${sexes.join(', ')} },`;
   });

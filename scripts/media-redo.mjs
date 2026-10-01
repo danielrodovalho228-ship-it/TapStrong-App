@@ -13,6 +13,8 @@ const dir = join(root, 'assets', 'prototype');
 const qc = JSON.parse(readFileSync(join(dir, 'qc.json'), 'utf8'));
 const suspect = qc.suspect ?? {};
 const missing = qc.missing ?? {};
+/** Refused by Flow: shown with the other sex's clip (Daniel, Oct 1, 2026). */
+const otherSex = qc.otherSex ?? {};
 const seed = JSON.parse(
   readFileSync(join(root, 'supabase', 'seed', 'exercises.json'), 'utf8'),
 ).exercises.map((e) => e.slug);
@@ -28,6 +30,9 @@ const usable = new Set(
     .filter((k) => k && !suspect[k]),
 );
 const keyOf = (k) => k.slice(0, -2);
+const flip = (k) => `${keyOf(k)}.${k.endsWith('.f') ? 'm' : 'f'}`;
+const borrowed = Object.keys(otherSex).filter((k) => usable.has(flip(k)));
+for (const k of borrowed) usable.add(k);
 const slugs = new Set([...usable, ...Object.keys(suspect), ...Object.keys(missing)].map(keyOf));
 for (const slug of slugs)
   if (!order.has(slug)) throw new Error(`qc.json: unknown exercise "${slug}"`);
@@ -68,6 +73,20 @@ writeFileSync(
     '## 2. Exercícios com só um sexo no app',
     '',
     table(rows.one),
+    '',
+    '## 3. Recusados pelo Flow: usam o clipe do outro sexo',
+    '',
+    'Não entram no total. O app mostra o clipe do outro sexo só nestes (decisão do Daniel, 01/10).',
+    '',
+    borrowed.length
+      ? [
+          '| slug | sexo | motivo |',
+          '|---|---|---|',
+          ...borrowed
+            .sort((a, b) => order.get(keyOf(a)) - order.get(keyOf(b)))
+            .map((k) => `| ${keyOf(k)} | ${k.slice(-1)} | ${otherSex[k]} |`),
+        ].join('\n')
+      : 'Nada.',
     '',
   ].join('\n'),
 );
