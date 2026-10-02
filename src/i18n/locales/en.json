@@ -5681,6 +5681,11 @@
       "stretch": "Stretches",
       "sleeper": "Sleeper break"
     },
-    "numbered": "{{n}}. {{name}}"
+    "numbered": "{{n}}. {{name}}",
+    "dose": {
+      "full": "Full dose (from your physio)",
+      "reduced": "Reduced dose to fit your day. Follow the dose your physio gives you.",
+      "fullOn": "Full dose: the program’s doses, nothing reduced. The sleeper stretch is in the session too."
+    }
   }
 }

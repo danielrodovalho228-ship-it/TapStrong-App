@@ -5681,6 +5681,11 @@
       "stretch": "Estiramientos",
       "sleeper": "Pausa de sleeper"
     },
-    "numbered": "{{n}}. {{name}}"
+    "numbered": "{{n}}. {{name}}",
+    "dose": {
+      "full": "Dosis completa (de tu fisioterapeuta)",
+      "reduced": "Dosis reducida para que quepa en el día. Sigue la dosis que indique tu fisioterapeuta.",
+      "fullOn": "Dosis completa: las dosis del programa, sin reducir. El sleeper stretch también va en la sesión."
+    }
   }
 }

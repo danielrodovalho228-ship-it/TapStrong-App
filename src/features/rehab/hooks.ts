@@ -61,7 +61,7 @@ export function useRehabRun(programId: string) {
   const dailyDone = dailyDoneToday(workouts, programId, today);
   const dailySession =
     program && daily
-      ? buildProgramSession(program, dailyLayout(program, daily), {
+      ? buildProgramSession(program, dailyLayout(program, daily, !!run?.fullDose), {
           library,
           affected: run?.side ?? 'right',
           week,
@@ -98,7 +98,7 @@ export function useRehabRun(programId: string) {
     dailyDone,
     dailyMinutes: dailySession?.minutes ?? 0,
     counts,
-    startDaily: () => program && daily && launch(dailyLayout(program, daily)),
+    startDaily: () => program && daily && launch(dailyLayout(program, daily, !!run?.fullDose)),
     /** Do the other block today instead (§6.2); the rest of the week re-plans. */
     swapBlock: (block: DailyBlock) => useRehabStore.getState().pickBlock(programId, today, block),
     startSleeper: () => program && launch(sleeperLayout(program)),

@@ -37,6 +37,11 @@ export type ProgramExercise = {
   /** Light weights (kg): where to start and the most to use. Bands go by band strength. */
   load?: { startKg: [number, number]; maxKg: [number, number] };
   noteKey?: string;
+  /**
+   * The "day's dose" of the daily rhythm (Daniel, Oct 2): a smaller dose so
+   * the day fits in 15–20 min. Unset = the section 4 dose with fewer sets.
+   */
+  reduced?: { dose?: ProgramDose; sides?: ProgramExercise['sides']; skip?: boolean };
 };
 
 export type ProgramSessionKey = 'A' | 'B' | 'C';
@@ -77,10 +82,14 @@ export type RehabProgram = {
     cap: number;
     /** Sleeper stretch breaks, local hours (§6.2). */
     sleeperHours: number[];
+    /** The day's dose: strength sets, rest between sets (s) and warm-up (min, shortened, never removed). */
+    reduced: { sets: number; rest: number; warmupMinutes: number };
   };
 };
 
 const STRETCH_HOLD: ProgramDose = { kind: 'hold', sets: 4, seconds: 30, restSeconds: 30 };
+/** The day's dose of stretches 2–4: 2 holds of 30 s, affected side only. */
+const DAY_HOLD: ProgramDose = { kind: 'hold', sets: 2, seconds: 30, restSeconds: 30 };
 const BAND: ProgramDose = {
   kind: 'reps',
   sets: 3,
@@ -108,6 +117,7 @@ export const SHOULDER_PROGRAM: RehabProgram = {
     perWeek: 3,
     cap: 12,
     sleeperHours: [9, 15, 21],
+    reduced: { sets: 2, rest: 30, warmupMinutes: 3 },
   },
   exercises: [
     // Stretches (1–5)
@@ -119,6 +129,11 @@ export const SHOULDER_PROGRAM: RehabProgram = {
       daysPerWeek: [5, 6],
       sides: 'both',
       noteKey: 'rehab.notes.pendulum',
+      // The day's dose: 1 minute.
+      reduced: {
+        dose: { kind: 'hold', sets: 1, seconds: 60, restSeconds: 0 },
+        sides: 'affected',
+      },
     },
     {
       n: 2,
@@ -127,6 +142,7 @@ export const SHOULDER_PROGRAM: RehabProgram = {
       dose: STRETCH_HOLD,
       daysPerWeek: [5, 6],
       sides: 'both',
+      reduced: { dose: DAY_HOLD, sides: 'affected' },
     },
     {
       n: 3,
@@ -135,6 +151,7 @@ export const SHOULDER_PROGRAM: RehabProgram = {
       dose: STRETCH_HOLD,
       daysPerWeek: [5, 6],
       sides: 'both',
+      reduced: { dose: DAY_HOLD, sides: 'affected' },
     },
     {
       n: 4,
@@ -143,6 +160,7 @@ export const SHOULDER_PROGRAM: RehabProgram = {
       dose: STRETCH_HOLD,
       daysPerWeek: [5, 6],
       sides: 'both',
+      reduced: { dose: DAY_HOLD, sides: 'affected' },
     },
     {
       n: 5,
@@ -152,6 +170,8 @@ export const SHOULDER_PROGRAM: RehabProgram = {
       daysPerWeek: [7, 7],
       sides: 'affected',
       noteKey: 'rehab.notes.sleeper',
+      // The day's dose: only in the 3 breaks a day, not in the session.
+      reduced: { skip: true },
     },
     // Band strengthening (6–9)
     {
@@ -298,16 +318,23 @@ export function sidesFor(ex: ProgramExercise, affected: AffectedSide): ProgramSi
   return [affected, affected === 'right' ? 'left' : 'right'];
 }
 
-/** The dose for today: after the person raised the load, fewer reps (Phase 30, §3). */
-export function doseFor(ex: ProgramExercise, increased: boolean): ProgramDose {
-  if (ex.dose.kind === 'reps' && increased) return { ...ex.dose, ...ex.dose.afterIncrease };
-  return ex.dose;
+/**
+ * The dose for today: after the person raised the load, fewer reps (Phase 30,
+ * §3). The day's dose (`maxSets`) caps the strength sets.
+ */
+export function doseFor(ex: ProgramExercise, increased: boolean, maxSets?: number): ProgramDose {
+  let dose = ex.dose;
+  if (dose.kind === 'reps' && increased) dose = { ...dose, ...dose.afterIncrease };
+  if (dose.kind === 'reps' && maxSets) dose = { ...dose, sets: Math.min(dose.sets, maxSets) };
+  return dose;
 }
 
 /** What one session holds: warm-up or not, then program numbers by block, in order. */
 export type SessionLayout = {
   key: ProgramPlanKey;
   warmup: boolean;
+  /** The day's dose instead of the section 4 dose (daily rhythm, unless "Full dose"). */
+  reduced?: boolean;
   groups: { block: NonNullable<SessionItem['block']>; numbers: number[] }[];
 };
 
@@ -345,14 +372,17 @@ export function buildProgramSession(
   const bySlug = new Map(o.library.map((e) => [e.slug, e]));
   const missing: string[] = [];
   const items: SessionItem[] = [];
+  const day = layout.reduced ? program.daily.reduced : null;
   const add = (ex: ProgramExercise, block: NonNullable<SessionItem['block']>) => {
+    if (day && ex.reduced?.skip) return;
     const e = bySlug.get(ex.slug);
     if (!e) {
       if (!missing.includes(ex.slug)) missing.push(ex.slug);
       return;
     }
-    const dose = doseFor(ex, !!o.increased?.[ex.slug]);
-    const sides = sidesFor(ex, o.affected);
+    const dose = (day && ex.reduced?.dose) || doseFor(ex, !!o.increased?.[ex.slug], day?.sets);
+    const sides = sidesFor({ ...ex, sides: (day && ex.reduced?.sides) || ex.sides }, o.affected);
+    const rest = day?.rest ?? program.strengthRest;
     const sets = dose.sets * (sides?.length ?? 1);
     const primary = e.muscles.find((m) => m.role === 'primary')?.muscleKey ?? null;
     const base = {
@@ -375,18 +405,21 @@ export function buildProgramSession(
         countdown: true,
         restSeconds: dose.restSeconds,
         loadHint: null,
-        estSeconds: sets * (dose.seconds + dose.restSeconds),
+        // No rest after the last hold.
+        estSeconds: sets * dose.seconds + (sets - 1) * dose.restSeconds,
       });
     } else {
       items.push({
         ...base,
         reps: dose.reps,
-        restSeconds: program.strengthRest,
+        restSeconds: rest,
         loadHint: ex.block === 'stretch' ? null : 'light',
-        estSeconds: sets * (dose.reps[1] * 4 + program.strengthRest),
+        // About 4 s a rep; no rest after the last set.
+        estSeconds: sets * dose.reps[1] * 4 + (sets - 1) * rest,
       });
     }
   };
+  const warmupMinutes = day?.warmupMinutes ?? program.warmupMinutes[0];
   if (layout.warmup) {
     const walk = bySlug.get(program.warmupSlug);
     if (walk) {
@@ -398,11 +431,11 @@ export function buildProgramSession(
         targetMuscle: null,
         goal: null,
         sets: 1,
-        durationSeconds: program.warmupMinutes[0] * 60,
+        durationSeconds: warmupMinutes * 60,
         restSeconds: 0,
         perSide: false,
         loadHint: null,
-        estSeconds: program.warmupMinutes[0] * 60,
+        estSeconds: warmupMinutes * 60,
         block: 'warmup',
       });
     } else missing.push(program.warmupSlug);
@@ -418,7 +451,7 @@ export function buildProgramSession(
   return {
     items,
     minutes,
-    warmupMinutes: layout.warmup ? program.warmupMinutes[0] : 0,
+    warmupMinutes: layout.warmup ? warmupMinutes : 0,
     cooldownMinutes: Math.round(
       items.filter((i) => i.role === 'cooldown').reduce((n, i) => n + i.estSeconds, 0) / 60,
     ),

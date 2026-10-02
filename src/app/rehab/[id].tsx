@@ -242,6 +242,15 @@ export default function RehabProgramScreen() {
           <AppText variant="caption" color={colors.mutedStrong}>
             {t('rehab.daily.rhythm')}
           </AppText>
+          {/* The day's dose by default; the physio's full dose on request (Daniel, Oct 2). */}
+          <ToggleRow
+            label={t('rehab.dose.full')}
+            value={!!run.fullDose}
+            onChange={(v) => store.setFullDose(program.id, v)}
+          />
+          <AppText variant="caption" color={colors.mutedStrong} testID="rehab-dose-note">
+            {t(run.fullDose ? 'rehab.dose.fullOn' : 'rehab.dose.reduced')}
+          </AppText>
         </Card>
       ) : (
         <Card style={styles.card} testID="rehab-today">

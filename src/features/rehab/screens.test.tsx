@@ -130,6 +130,11 @@ describe('Rehabilitation and the program', () => {
     expect(within(checklist).getAllByText('0 of 3')).toHaveLength(13);
     expect(within(screen.getByTestId('rehab-calendar')).getAllByText(/^W\d$/)).toHaveLength(6);
     expect(screen.getByTestId('rehab-care-off')).toBeTruthy();
+    // The day's dose by default, the physio's full dose on request.
+    expect(screen.getByTestId('rehab-dose-note')).toHaveTextContent(/Reduced dose to fit your day/);
+    await fireEvent.press(screen.getByRole('switch', { name: 'Full dose (from your physio)' }));
+    expect(useRehabStore.getState().runs[P.id].fullDose).toBe(true);
+    await fireEvent.press(screen.getByRole('switch', { name: 'Full dose (from your physio)' }));
     await fireEvent.press(screen.getByRole('button', { name: 'Safety rules' }));
     expect(mockRouter.push).toHaveBeenCalledWith({
       pathname: '/rehab/safety',

@@ -3401,3 +3401,28 @@ Brief completo em `docs/phase-30-shoulder-program.md`.
 
 - **Tempo da sessão:** com as doses da seção 4 (4 × 30 s + 30 s de descanso, dos dois lados nos alongamentos 2–4), só os alongamentos levam cerca de 34 min, não 8. O dia do Bloco A fica em cerca de 76 min estimados. Para chegar aos "8 min" do adendo, uma opção é, no ritmo diário, fazer 2 repetições em vez de 4, ou alongar só o lado afetado. Prefiro não mexer na dose sem a sua confirmação ou a do fisioterapeuta.
 - **Lado bom:** "unilateral só no lado bom" ainda não existe no gerador. Hoje o modo protegido vale para o ombro inteiro, dos dois lados.
+
+## Fase 30 — Decisões do Daniel (02/10): dose do dia
+
+- **Dose do dia (padrão no ritmo diário):**
+  - alongamentos 2, 3 e 4: 2 × 30 s, só no lado afetado (com os dois ombros afetados, nos dois);
+  - pêndulo: 1 minuto;
+  - o sleeper sai da sessão e fica só nos 3 lembretes do dia;
+  - Blocos A e B: 2 séries em vez de 3, com 30 s de descanso;
+  - aquecimento de 3 min (encurtado, nunca removido) e o pêndulo de novo no fim, como desaquecimento.
+- **Interruptor "Dose completa (do fisioterapeuta)"** no cartão de hoje: volta às doses da seção 4. Embaixo aparece o texto "Dose reduzida para caber no dia. Siga a dose que o seu fisioterapeuta indicar."
+- **Tempo estimado** no cartão "Ombro hoje" (na Home e no programa). A estimativa agora não conta descanso depois da última série.
+  - Bloco A: cerca de 22 min;
+  - Bloco B: cerca de 26 min;
+  - dose completa: mais que o dobro.
+  - A conta é conservadora: 4 s por repetição, sempre no número maior de repetições (por exemplo, 12 em 8–12).
+- **Vídeos de ombro reprovados (22):** todos seguem em `docs/media-redo.md`. Sem clipe aprovado, o app não usa o vídeo nem o pôster: mostra o corpo com os músculos e os passos em texto (há teste para isso).
+- **Lado bom no gerador:** fica para uma próxima fase, com prioridade baixa. Por agora, o ombro protegido vale para os dois lados.
+- **Testes:** 1488 ok, além de lint, typecheck, `security:check` e `db:test`. Duas telas antigas (mês e Fase 27) às vezes passam do tempo limite com a máquina carregada; sozinhas, passam.
+
+### Perguntas em aberto
+
+- **Bloco B passa da meta (cerca de 26 min):** são 7 exercícios, dois com 20 repetições. Para caber em 20 min, dá para:
+  - descansar 20 s em vez de 30;
+  - fazer os exercícios 12 e 16 com 2 × 15;
+  - ou passar o 13 (escápulas de bruços) para o Bloco A.

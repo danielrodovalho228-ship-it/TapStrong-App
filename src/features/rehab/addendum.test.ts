@@ -16,7 +16,9 @@ import { safetyRefresh, workoutInput } from '../workout/safety';
 import type { WorkoutRecord } from '../workout/types';
 import { addDays } from '@/lib/dates';
 
+import qc from '../../../assets/prototype/qc.json';
 import catalog from '../../../supabase/seed/joint_movements.json';
+import { demoPoster, demoVideo } from '../exercises/videos';
 
 import { dailyLayout, dailyPlan, weekCounts, weekdayIndex } from './daily';
 import { buildProgramSession, SHOULDER_PROGRAM as P } from './programs';
@@ -109,7 +111,7 @@ describe('the daily rhythm (§6.2)', () => {
     expect(counts.sleeper_stretch).toBe(7);
   });
 
-  it('the session: warm-up, stretches 1–5, the block, then pendulum and sleeper again', () => {
+  it('the session: warm-up, stretches, the block, then the pendulum again (sleeper in its breaks)', () => {
     const s = buildProgramSession(P, dailyLayout(P, dailyPlan(P, MONDAY, {})), {
       library: LIBRARY,
       affected: 'right',
@@ -118,7 +120,7 @@ describe('the daily rhythm (§6.2)', () => {
     expect(s.missing).toEqual([]);
     expect(s.items[0].block).toBe('warmup');
     expect(s.items.at(-1)!.role).toBe('cooldown');
-    expect(s.items.filter((i) => i.block === 'stretch_end')).toHaveLength(2);
+    expect(s.items.filter((i) => i.block === 'stretch_end')).toHaveLength(1);
     expect(s.program).toEqual({ id: P.id, session: 'standing', week: 1 });
   });
 
@@ -133,6 +135,60 @@ describe('the daily rhythm (§6.2)', () => {
     expect(dailyPlan(P, MONDAY, {}, 'floor').block).toBe('floor');
     const floor = Object.fromEntries([12, 13, 14, 15, 16, 17, 18].map((n) => [slugOfN(n), 1]));
     expect(dailyPlan(P, addDays(MONDAY, 1), floor).block).toBe('standing');
+  });
+});
+
+describe("the day's dose (Daniel, Oct 2)", () => {
+  const counts = (ns: number[]) => Object.fromEntries(ns.map((n) => [slugOfN(n), 1]));
+  const day = (
+    date: string,
+    done: Record<string, number>,
+    full = false,
+    affected: 'right' | 'both' = 'right',
+  ) =>
+    buildProgramSession(P, dailyLayout(P, dailyPlan(P, date, done), full), {
+      library: LIBRARY,
+      affected,
+      week: 1,
+    });
+  const item = (s: ReturnType<typeof day>, slug: string) =>
+    s.items.filter((i) => i.exerciseId === bySlug.get(slug)!.id);
+
+  it('stretches 2–4: 2 holds of 30 s, affected side only; pendulum 1 min; no sleeper', () => {
+    const s = day(MONDAY, {});
+    for (const slug of [
+      'crossover_arm_stretch',
+      'stick_internal_rotation_stretch',
+      'stick_external_rotation_stretch',
+    ]) {
+      const [x] = item(s, slug);
+      expect([slug, x.sets, x.holdSeconds, x.sides]).toEqual([slug, 2, [30, 30], ['right']]);
+    }
+    const [pendulum] = item(s, 'pendulum_swing');
+    expect([pendulum.sets, pendulum.holdSeconds, pendulum.sides]).toEqual([1, [60, 60], ['right']]);
+    expect(item(s, 'sleeper_stretch')).toEqual([]);
+    // Both shoulders affected: both sides, still 2 holds each.
+    expect(item(day(MONDAY, {}, false, 'both'), 'crossover_arm_stretch')[0].sets).toBe(4);
+  });
+
+  it('blocks A and B: 2 sets instead of 3; a warm-up first, a cool-down last', () => {
+    for (const s of [day(MONDAY, {}), day(addDays(MONDAY, 1), counts([6, 7, 8, 9, 10, 11]))]) {
+      const strength = s.items.filter((i) => i.block === 'band' || i.block === 'dumbbell');
+      for (const i of strength) if (i.reps) expect(i.sets / (i.sides?.length ?? 1)).toBe(2);
+      expect(s.items[0].role).toBe('warmup');
+      expect(s.items.at(-1)!.role).toBe('cooldown');
+    }
+  });
+
+  it('about a third of the full dose: ~22 min for block A, ~26 for block B (estimate shown on the card)', () => {
+    const a = day(MONDAY, {});
+    const b = day(addDays(MONDAY, 1), counts([6, 7, 8, 9, 10, 11]));
+    expect(a.minutes).toBe(22);
+    expect(b.minutes).toBe(26);
+    const full = day(MONDAY, {}, true);
+    expect(item(full, 'sleeper_stretch')).toHaveLength(2);
+    expect(item(full, 'crossover_arm_stretch')[0].sets).toBe(8);
+    expect(full.minutes).toBeGreaterThan(2 * a.minutes);
   });
 });
 
@@ -282,5 +338,18 @@ describe('sleeper reminders (§6.2)', () => {
       careStretch: [{ programId: P.id, hours: P.daily.sleeperHours }],
     });
     expect(plan.map((p) => p.kind === 'care_stretch' && p.hour)).toEqual([9, 15, 21]);
+  });
+});
+
+describe('shoulder clips that failed QC (Daniel, Oct 2)', () => {
+  it('never reach the app: no clip and no poster, so the player shows the body map and the steps', () => {
+    const shoulder = Object.keys(qc.suspect).filter((k) =>
+      P.exercises.some((x) => k.startsWith(`${x.slug}.`)),
+    );
+    expect(shoulder).toHaveLength(22);
+    for (const key of shoulder) {
+      const [slug, sex] = key.split('.') as [string, 'f' | 'm'];
+      expect([key, demoVideo(slug, sex), demoPoster(slug, sex)]).toEqual([key, null, null]);
+    }
   });
 });

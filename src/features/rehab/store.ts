@@ -27,6 +27,8 @@ export type ProgramRun = {
   releasedAt: LocalDate | null;
   /** Sleeper stretch reminders, 3 times a day (§6.2). */
   sleeperReminders: boolean;
+  /** "Full dose (from the physio)": the section 4 doses in the daily rhythm. */
+  fullDose?: boolean;
   /** The daily block picked for a day instead of the suggested one (§6.2). */
   pick?: { date: LocalDate; block: DailyBlock };
 };
@@ -45,6 +47,7 @@ type State = RehabData & {
   release: (programId: string, today: LocalDate) => void;
   setSleeperReminders: (programId: string, on: boolean) => void;
   pickBlock: (programId: string, date: LocalDate, block: DailyBlock) => void;
+  setFullDose: (programId: string, on: boolean) => void;
   setSide: (programId: string, side: AffectedSide) => void;
   setMaintenance: (programId: string, on: boolean) => void;
   raiseLoad: (programId: string, slug: string) => void;
@@ -90,6 +93,7 @@ export const useRehabStore = create<State>()(
         release: (id, today) => patch(id, () => ({ releasedAt: today, maintenance: true })),
         setSleeperReminders: (id, on) => patch(id, () => ({ sleeperReminders: on })),
         pickBlock: (id, date, block) => patch(id, () => ({ pick: { date, block } })),
+        setFullDose: (id, on) => patch(id, () => ({ fullDose: on })),
         raiseLoad: (id, slug) =>
           patch(id, (r) => ({
             increased: { ...r.increased, [slug]: (r.increased[slug] ?? 0) + 1 },

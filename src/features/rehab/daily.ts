@@ -124,8 +124,12 @@ export function dailyPlan(
   };
 }
 
-/** The daily plan as a session: warm-up on strengthening days, stretches, the exercises, stretches again. */
-export function dailyLayout(program: RehabProgram, plan: DailyPlan): SessionLayout {
+/**
+ * The daily plan as a session: warm-up on strengthening days, stretches, the
+ * exercises, stretches again. By default the day's dose (Daniel, Oct 2: 15–20
+ * min, sleeper only in its 3 breaks); `full` = the section 4 dose.
+ */
+export function dailyLayout(program: RehabProgram, plan: DailyPlan, full = false): SessionLayout {
   const byN = new Map(program.exercises.map((x) => [x.n, x]));
   const stretch = program.exercises.filter((x) => x.block === 'stretch').map((x) => x.n);
   const band = plan.numbers.filter((n) => byN.get(n)!.block === 'band');
@@ -135,7 +139,7 @@ export function dailyLayout(program: RehabProgram, plan: DailyPlan): SessionLayo
   if (dumbbell.length) groups.push({ block: 'dumbbell', numbers: dumbbell });
   if (plan.numbers.length)
     groups.push({ block: 'stretch_end', numbers: program.daily.endStretches });
-  return { key: plan.block, warmup: plan.numbers.length > 0, groups };
+  return { key: plan.block, warmup: plan.numbers.length > 0, reduced: !full, groups };
 }
 
 /** A sleeper stretch break, outside the session (§6.2: 3 times a day, 2 min). */
