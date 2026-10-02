@@ -154,3 +154,36 @@ Elástico preso a uma maçaneta ou ponto firme (laço de cerca de 90 cm). Dose: 
 8. Sem login para testar no preview.
 
 Ao terminar, me mande o relatório e a lista dos slugs que ainda estão sem clipe.
+
+---
+## 6. ADENDO — Como o programa de ombro convive com o treino normal (academia/casa)
+Caso real: minha esposa treina na academia e às vezes em casa, e precisa fazer TODOS os exercícios do ombro congelado de forma contínua, com poucos exercícios por dia, sem perder a lista normal de treinos.
+
+### 6.1 Dois trilhos ao mesmo tempo
+- O usuário passa a ter **Plano principal** (academia, casa ou misto, como já existe) e **Programas de cuidado** (o de ombro agora; no futuro joelho, lombar etc.).
+- Na Home aparecem **dois cartões**: "Treino de hoje" (plano principal) e "Ombro hoje — 15 a 20 min". Um não substitui o outro, e cada um tem o seu progresso.
+- O programa de cuidado pode ser feito em casa ou na academia. Se for no dia de academia, o app sugere fazer **antes do treino**, como aquecimento.
+
+### 6.2 Divisão: poucos por dia, todos na semana
+Cada fortalecimento precisa acontecer 3 vezes por semana, então divido os 13 em **dois blocos que alternam**:
+- **Todo dia (cerca de 8 min):** alongamentos 1–5 (pêndulo, cruzado, bastão interna, bastão externa, sleeper), no início da sessão. Repetir o sleeper e o pêndulo no fim, se der tempo.
+- **Bloco A — em pé, elástico e halter (6 exercícios, cerca de 10 min):** 6 remada, 7 rotação externa a 90°, 8 rotação interna com elástico, 9 rotação externa com elástico, 10 rosca, 11 extensão de tríceps.
+- **Bloco B — banco e colchonete (7 exercícios, cerca de 12 min):** 12 elevação com polegar para cima, 13 escápulas de bruços, 14 retração na mesa, 15 abdução horizontal, 16 rotação deitado de costas, 17 rotação externa de lado, 18 rotação interna de lado.
+- **Semana padrão:** seg A, ter B, qua A, qui B, sex A, sáb B, dom só alongamentos. Resultado: cada exercício 3 vezes por semana, nunca mais de cerca de 12 exercícios por dia.
+- **Sleeper stretch 3 vezes por dia:** lembretes de manhã, à tarde e à noite (2 min cada), separados da sessão.
+- O usuário pode trocar o dia (por exemplo, fazer o B no dia de academia, porque lá tem banco), e o app reorganiza o resto da semana mantendo 3 vezes cada.
+
+### 6.3 Exercício perdido
+- **Checklist semanal:** cada exercício mostra "x de 3 nesta semana".
+- Se um dia ficar sem fazer, os exercícios pendentes passam para o próximo dia, mas com **teto de 12 exercícios por dia**. O que não couber fica para a próxima semana, sem culpa e sem dobrar a carga.
+
+### 6.4 Proteção no treino normal (modo "ombro protegido")
+- Enquanto o programa de ombro estiver ativo, o gerador do treino principal entra em **modo ombro protegido** para o lado afetado:
+  - **Evitar (não sugerir):** desenvolvimento acima da cabeça, elevação lateral acima do ombro, supino pesado, barra fixa, mergulho, puxada por trás da nuca, kipping e arremessos.
+  - **Trocar por versão segura:** amplitude até a altura do ombro, carga leve, unilateral só no lado bom, ou máquina guiada.
+- Pergunta única no início: "O seu fisioterapeuta liberou treino de ombro e braço?". Se responder **não**, o treino principal remove os exercícios que carregam o ombro afetado e mantém pernas, core e o lado bom. Se responder **sim**, aplica as trocas acima.
+- **Sem duplicar:** se o treino da academia já tiver um exercício igual ao do programa (por exemplo, remada com elástico ou rosca), ele conta para os dois.
+- Se o usuário apertar SINTO DOR num exercício de ombro do treino normal, o app marca, avisa o programa de cuidado e sugere falar com o fisioterapeuta.
+
+### 6.5 Fim do programa
+- Depois de 4 a 6 semanas, o app pergunta: "Liberado pelo fisioterapeuta?". Se a resposta for sim, o programa vira **manutenção (2 a 3 vezes por semana)**, o modo ombro protegido sai e o treino principal volta ao normal aos poucos.

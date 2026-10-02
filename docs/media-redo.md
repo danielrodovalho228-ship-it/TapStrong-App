@@ -6,7 +6,7 @@ Gerado por `npm run media:redo` a partir de `assets/prototype/qc.json` e dos cli
 Sexo: f = mulher, m = homem. Nome do arquivo no Flow: `<slug>.<f|m>` (o import
 aceita `_v2`, `_v3`… para refeitos).
 
-Total: 245 clipes (188 do primeiro treino, 32 de exercícios sem nenhum sexo, 25 de exercícios com só um).
+Total: 275 clipes (188 do primeiro treino, 60 de exercícios sem nenhum sexo, 27 de exercícios com só um).
 
 ## 0. Aparecem no primeiro treino (prioridade alta)
 
@@ -208,8 +208,14 @@ Aquecimento, principais e desaquecimento que o primeiro treino pode mostrar, em 
 
 | slug | sexo | motivo |
 |---|---|---|
+| band_row | f | faltando: programa de ombro (Fase 30), exercício 6 |
+| band_row | m | faltando: programa de ombro (Fase 30), exercício 6 |
+| overhead_dumbbell_triceps_extension | f | faltando: programa de ombro (Fase 30), exercício 11 |
+| overhead_dumbbell_triceps_extension | m | faltando: programa de ombro (Fase 30), exercício 11 |
 | wall_tibialis_raise | f | suspeito: a parede apareceu, mas chuta a perna; deveria só erguer as pontas dos pés com as costas na parede |
 | wall_tibialis_raise | m | suspeito: a parede apareceu, mas chuta a perna; deveria só erguer as pontas dos pés com as costas na parede |
+| band_external_rotation | f | suspeito: no 2º quadro o braço estica reto e passa pelo elástico (cotovelo sai dos 90°) |
+| band_external_rotation | m | suspeito: elástico preso do mesmo lado (vira rotação interna); cor no bíceps e no antebraço |
 | seated_push_up | f | suspeito: estica os braços à frente em vez de empurrar o assento |
 | seated_push_up | m | suspeito: aparece texto com nomes de músculos no começo do vídeo |
 | seated_high_to_low_band_fly | f | suspeito: os seios brilham de laranja por cima do top (roupa pintada) |
@@ -226,6 +232,8 @@ Aquecimento, principais e desaquecimento que o primeiro treino pode mostrar, em 
 | supported_toe_raise | m | suspeito: levanta o joelho (marcha) em vez das pontas dos pés |
 | band_glute_bridge | f | suspeito: levanta um braço para o teto no meio da ponte |
 | band_glute_bridge | m | suspeito: chama/brilho na cabeça e o tronco sobe como prancha invertida |
+| rx_side_lying_er | f | faltando: programa de ombro (Fase 30), exercício 17 |
+| rx_side_lying_er | m | faltando: programa de ombro (Fase 30), exercício 17 |
 | su_seated_reverse_self_curl | f | feito no Flow (refazer 1), mas não chegou no upload do GitHub (parou em sl_seated_knee_circles.f) |
 | su_seated_reverse_self_curl | m | feito no Flow (refazer 1), mas não chegou no upload do GitHub (parou em sl_seated_knee_circles.f) |
 | su_seated_hammer_self_curl | f | feito no Flow (refazer 1), mas não chegou no upload do GitHub (parou em sl_seated_knee_circles.f) |
@@ -240,6 +248,26 @@ Aquecimento, principais e desaquecimento que o primeiro treino pode mostrar, em 
 | sl_supported_hip_hinge | m | feito no Flow (refazer 1), mas não chegou no upload do GitHub (parou em sl_seated_knee_circles.f) |
 | sl_seated_towel_heel_drag | f | feito no Flow (refazer 1), mas não chegou no upload do GitHub (parou em sl_seated_knee_circles.f) |
 | sl_seated_towel_heel_drag | m | feito no Flow (refazer 1), mas não chegou no upload do GitHub (parou em sl_seated_knee_circles.f) |
+| stick_external_rotation_stretch | f | faltando: programa de ombro (Fase 30); no lote 8 só vieram imagens x_bad |
+| stick_external_rotation_stretch | m | faltando: programa de ombro (Fase 30); no lote 8 só vieram imagens x_bad |
+| sleeper_stretch | f | suspeito: o braço fica erguido e a outra mão não empurra o antebraço; cor no braço, não atrás do ombro |
+| sleeper_stretch | m | suspeito: o braço fica erguido e a outra mão não empurra o antebraço; cor no braço, não atrás do ombro |
+| band_external_rotation_90 | f | suspeito: dois elásticos: um sai do ombro até o pé do poste e cruza o corpo |
+| band_external_rotation_90 | m | suspeito: o elástico não está na mão (fica solto atrás); cor no peito e no bíceps, não no manguito |
+| band_internal_rotation | f | suspeito: a mão do elástico fica parada e o outro braço mexe; cor nos dois peitorais e ombros |
+| band_internal_rotation | m | suspeito: elástico preso do lado errado e um segundo elástico até o pé do poste |
+| kneeling_thumbs_up_raise | f | suspeito: leva o halter acima da cabeça com o cotovelo dobrado, em vez de abrir para o lado até a altura do ombro |
+| kneeling_thumbs_up_raise | m | suspeito: leva o halter acima da cabeça com o cotovelo dobrado, em vez de abrir para o lado até a altura do ombro |
+| prone_scapula_setting | f | suspeito: braços abertos em T, não ao lado do corpo; o top brilha de laranja (roupa pintada) |
+| prone_scapula_setting | m | suspeito: levanta os braços; cor pintada sobre a camiseta |
+| prone_table_scapular_retraction | f | suspeito: dobra o cotovelo (vira rosca); o cotovelo deveria ficar esticado |
+| prone_table_scapular_retraction | m | suspeito: o braço balança como pêndulo, sem retração da escápula; cor no deltoide pintada sobre a manga |
+| prone_horizontal_abduction | f | suspeito: levanta o braço na vertical, até o teto, em vez de abrir para o lado até a altura dos olhos |
+| prone_horizontal_abduction | m | suspeito: levanta o braço na vertical, até o teto, em vez de abrir para o lado até a altura dos olhos |
+| supine_shoulder_rotation_90 | f | suspeito: cor no braço inteiro, até o antebraço (manga pintada); o braço desce ao lado do corpo |
+| supine_shoulder_rotation_90 | m | suspeito: peito pintado de laranja sobre a camiseta (roupa pintada) |
+| side_lying_internal_rotation | f | suspeito: levanta o halter com o braço esticado até o teto, em vez de girar o antebraço; cor no antebraço |
+| side_lying_internal_rotation | m | suspeito: usa o braço de cima (deveria ser o de baixo); cor no braço inteiro e pintada na manga |
 
 ## 2. Exercícios com só um sexo no app
 
@@ -270,6 +298,8 @@ Aquecimento, principais e desaquecimento que o primeiro treino pode mostrar, em 
 | sl_seated_inward_toe_lifts | f | suspeito: num trecho as duas pernas sobem até o rosto |
 | sl_seated_heel_walks | f | suspeito: chuta a perna alto em vez de andar com os calcanhares |
 | sl_seated_knee_out_press_hold | m | feito no Flow (refazer 1), mas não chegou no upload do GitHub (parou em sl_seated_knee_circles.f) |
+| pendulum_swing | f | suspeito: as duas mãos ficam na mesa: o braço não fica solto nem balança (movimento errado) |
+| stick_internal_rotation_stretch | f | suspeito: texto no vídeo ("Stick Internal Rotation stretch") |
 
 ## 3. Recusados pelo Flow: usam o clipe do outro sexo
 

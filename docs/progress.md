@@ -3319,3 +3319,30 @@ Brief completo em `docs/phase-30-shoulder-program.md`.
 - **Exercícios quase iguais:** já existiam `rx_band_internal_rotation` e `rp_band_er_90`. Mantive os slugs novos porque o Moacir gera mídia com eles. Unificar depois?
 - **node-forge:** quando sair a correção, atualizamos o Expo e tiramos a exceção.
 - **Clipes:** faltam para os exercícios do programa (lista no relatório da conversa).
+
+## Mídia — Lote 8 "out. 02 - 15:14" (programa de ombro)
+
+- **Chegaram:** 26 vídeos de 13 slugs, com as imagens de partida.
+  - Descartados: 15 `x_bad_*` e 2 referências `body-adult-*`.
+  - stick_external_rotation_stretch: só vieram imagens `x_bad`, sem vídeo.
+  - Tamanho: de 42 MB brutos para 11,2 MB finais.
+- **Conferência quadro a quadro** (movimento do brief, anatomia e roupa): **4 ok e 22 suspeitos.**
+- **Ok (4):** pendulum_swing.m, crossover_arm_stretch f/m, stick_internal_rotation_stretch.m.
+- **Suspeitos (22), não entram no app** (motivo de cada um em `docs/media-redo.md`):
+  - **movimento:**
+    - pendulum_swing.f: as duas mãos na mesa;
+    - sleeper_stretch f/m: ninguém empurra o antebraço;
+    - kneeling_thumbs_up_raise f/m: halter acima da cabeça;
+    - prone_horizontal_abduction f/m: braço até o teto;
+    - prone_table_scapular_retraction f/m: rosca ou pêndulo;
+    - side_lying_internal_rotation f/m;
+    - prone_scapula_setting f/m: braços em T ou levantados.
+  - **elástico:** band_external_rotation f/m, band_external_rotation_90 f/m e band_internal_rotation f/m (elástico do lado errado, duplicado ou fora da mão).
+  - **cor ou roupa:** supine_shoulder_rotation_90 f/m (manga e camiseta pintadas).
+  - **texto no vídeo:** stick_internal_rotation_stretch.f.
+- **Também na lista de refazer**, como "faltando", os slugs do programa que nunca foram gerados: stick_external_rotation_stretch, band_row, overhead_dumbbell_triceps_extension e rx_side_lying_er.
+- **No app:** 275 entradas de clipe em 151 exercícios (antes 271 em 148).
+- **Lista de refazer:** 275 clipes.
+  - 188 do primeiro treino;
+  - 60 de exercícios sem nenhum sexo;
+  - 27 de exercícios com só um.
