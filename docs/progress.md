@@ -3175,3 +3175,41 @@ Não copiei: fotos de academia com marca, calorias novas e ranking. As calorias 
 3. **Mapa por áreas:** hoje as áreas são elipses desenhadas por cima do corpo (sem arte nova).
    - **(Recomendado)** Manter assim agora e encomendar depois uma arte com os músculos recortados, frente e costas, para cada modelo de corpo.
    - Ou voltar às bolinhas no fim do treino.
+
+## Mídia — Lote "out. 01 - 05:23" (90 vídeos)
+
+- **Chegaram:** 190 arquivos em 5 uploads.
+  - 74 caíram na raiz e foram movidos para `assets/prototype/`. Um deles veio duplicado, idêntico.
+  - Descartados: os `x_bad_*` (6) e as referências `body-adult-*` (2).
+- **Importados:** 90 clipes, todos com o mesmo carimbo de data, então não houve versões repetidas.
+  - `short_arc_quad.m` veio só com a imagem de partida: continua faltando (recusado pelo Flow).
+  - Tamanho: de 144,6 MB brutos para 44,5 MB finais.
+- **Conferência quadro a quadro (6 quadros por clipe):** 60 ok e 30 suspeitos.
+- **Corrigidos neste lote (saíram da lista de suspeitos):**
+  - bird_dog.f, clamshell f/m, side_lying_adductor_raise.m, sl_seated_hands_out_knee_squeeze.f;
+  - bal_seated_head_turns.f, bal_seated_knee_lift_hold.f, bal_supported_heel_toe_walk.m;
+  - doorframe_curl.m, doorframe_row.m, front_arm_hold.f, knee_push_up.m, prone_lat_pulldown.m;
+  - sl_seated_feet_hover_hold.m, su_seated_clasped_hands_squeeze.m, su_seated_elbow_pull_back.f;
+  - su_seated_self_resisted_palm_turn.m, supported_split_squat.m.
+- **wall_tibialis_raise:** a parede agora aparece, mas a pessoa chuta a perna (f e m) e deveria só erguer as pontas dos pés com as costas na parede. Ficou suspeito.
+- **Suspeitos novos ou que continuam** (motivo de cada um na `docs/media-redo.md`):
+  - balanço: bal_seated_head_turns.m;
+  - sentar e levantar: partial_sit_to_stand.f (texto "5cm" no vídeo);
+  - de bruços: prone_lat_pulldown.f, prone_t_raise.f, prone_w_raise.m, superman.f;
+  - flexão sentado: seated_push_up f/m (m com texto de músculos);
+  - pontas dos pés: seated_toe_raise f/m, supported_toe_raise f/m, wall_tibialis_raise f/m;
+  - braços em W: seated_w_squeeze.f;
+  - pernas: short_arc_quad.f, side_lying_adductor_raise.f;
+  - sentado, pernas e tronco: sl_seated_heel_walks.f, sl_seated_inward_toe_lifts.f, sl_seated_torso_twist.m;
+  - sentado, braços: su_seated_air_kickback f/m, su_seated_air_row.m, su_seated_bent_t_raise f/m, su_seated_chair_grip_shrug_hold.m, su_seated_elbow_pull_back.m, su_seated_scaption_raise.m;
+  - toalha: su_seated_towel_overhead_extension f/m (em pé em vez de sentado).
+- **Não chegou:** o resto de "set. 30 - 05:45".
+  - sl_seated_knee_circles.m, sl_seated_knee_out_press_hold.m, sl_seated_towel_ankle_squeeze.f;
+  - sl_seated_towel_heel_drag f/m, sl_supported_hip_hinge f/m;
+  - su_seated_hammer_self_curl f/m, su_seated_reverse_self_curl f/m.
+  - Só sl_seated_towel_ankle_squeeze.m veio.
+- **No app:** 241 entradas de clipe em 130 exercícios (antes 181 em 102).
+- **Lista de refazer:** 235 clipes.
+  - 192 do primeiro treino;
+  - 24 de exercícios sem nenhum sexo;
+  - 19 de exercícios com só um.
