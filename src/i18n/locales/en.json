@@ -5617,6 +5617,70 @@
       "dumbbell": "Strength with light dumbbells",
       "stretch_end": "Stretches again"
     },
-    "painNote": "Stop this exercise. Next time, use a smaller range or less weight. We marked it to review with your doctor or physical therapist."
+    "painNote": "Stop this exercise. Next time, use a smaller range or less weight. We marked it to review with your doctor or physical therapist.",
+    "care": {
+      "question": "Did your physio clear shoulder and arm training?",
+      "yes": "Yes",
+      "no": "No / not sure",
+      "note": "Your regular workout protects the shoulder while the program runs. You can change this answer later.",
+      "title": "Your regular workout",
+      "off": "Protected shoulder: your regular workout leaves out exercises that move the shoulder. Legs, core and the rest stay.",
+      "protected": "Protected shoulder: no overhead or behind-the-back moves, pull-ups or dips; side raises only up to shoulder height; light loads on every shoulder move.",
+      "returning": "Coming back gradually: the protected-shoulder rules stay until {{date}}.",
+      "change": "Change answer",
+      "painMain": "We marked this exercise in your shoulder program for review. Talk to your physio before doing it again."
+    },
+    "daily": {
+      "title": "Shoulder today",
+      "minutes": "About {{count}} min",
+      "blocks": {
+        "standing": "Block A — standing, band and dumbbell",
+        "floor": "Block B — bench and mat",
+        "stretch": "Stretches only"
+      },
+      "catchUp_one": "Includes {{count}} exercise left behind this week.",
+      "catchUp_other": "Includes {{count}} exercises left behind this week.",
+      "nextWeek": "What didn’t fit moves to next week, with no double load.",
+      "swap": "Do {{block}} today instead",
+      "done": "Done for today. Nice work!",
+      "start": "Start today’s shoulder session",
+      "gymHint": "Training at the gym today? Do it before your workout, as a warm-up.",
+      "rhythm": "Stretches every day; the two blocks take turns, so each exercise is done 3 times a week."
+    },
+    "checklist": {
+      "title": "This week",
+      "of": "{{n}} of {{total}}",
+      "hint": "A matching exercise in your regular workout counts here too."
+    },
+    "sleeper": {
+      "title": "Sleeper stretch, 3 times a day",
+      "body": "2 minutes in the morning, afternoon and evening, apart from the session.",
+      "today": "{{n}} of 3 today",
+      "start": "Stretch now (2 min)",
+      "reminders": "Morning, afternoon and evening reminders",
+      "appOnly": "Reminders work in the app.",
+      "notifTitle": "Stretch time (2 min)",
+      "notifBody": "A quick, pain-free stretch break."
+    },
+    "release": {
+      "question": "You’re past week 4. Has your physio released you?",
+      "body": "If yes, the program becomes maintenance (2 to 3 times a week) and your regular workout comes back gradually over 2 weeks.",
+      "yes": "Yes, I was released",
+      "no": "Not yet"
+    },
+    "home": {
+      "title": "{{name}} today",
+      "done": "{{name}}: done for today"
+    },
+    "short": {
+      "shoulder_mobility_strength": "Shoulder"
+    },
+    "sessionNames": {
+      "standing": "Block A",
+      "floor": "Block B",
+      "stretch": "Stretches",
+      "sleeper": "Sleeper break"
+    },
+    "numbered": "{{n}}. {{name}}"
   }
 }

@@ -14,6 +14,8 @@ import { modeOf } from '../onboarding/derived';
 import { useOnboardingStore } from '../onboarding/store';
 import { blockAnchor, programStatus } from '../program/apply';
 import { useProgramStore } from '../program/store';
+import { programById } from '../rehab/programs';
+import { useRehabStore } from '../rehab/store';
 import { streakToday } from '../workout/streak';
 import { useWorkoutStore } from '../workout/store';
 
@@ -33,6 +35,7 @@ export function useNotificationSync() {
   const workouts = useWorkoutStore((s) => s.workouts);
   const program = useProgramStore();
   const mode = modeOf(useOnboardingStore());
+  const careRuns = useRehabStore((s) => s.runs);
   const trialChargeAt =
     entitlement.status === 'trial' && entitlement.willRenew ? entitlement.trialEndsAt : null;
 
@@ -58,6 +61,12 @@ export function useNotificationSync() {
             programStatus(program, workouts, localDate(now), mode).block.of,
           )
         : null,
+      careStretch: Object.entries(careRuns)
+        .filter(([, run]) => run.sleeperReminders)
+        .map(([programId]) => ({
+          programId,
+          hours: programById(programId)?.daily.sleeperHours ?? [],
+        })),
     });
     void applyPlan(plan).catch(() => undefined);
     // Recomputed when a workout ends or the plan changes.
@@ -74,6 +83,7 @@ export function useNotificationSync() {
     program.startedAt,
     program.planId,
     mode,
+    careRuns,
   ]);
 
   useEffect(() => onNotificationTap((url) => router.push(url as Href)), []);

@@ -39,8 +39,14 @@ export type ProgramExercise = {
   noteKey?: string;
 };
 
+export type ProgramSessionKey = 'A' | 'B' | 'C';
+/** The daily rhythm (Phase 30 addendum §6.2): stretches every day, two alternating blocks. */
+export type DailyBlock = 'standing' | 'floor';
+/** Any session the player can start: A/B/C, a daily block day, Sunday stretches or a sleeper break. */
+export type ProgramPlanKey = ProgramSessionKey | DailyBlock | 'stretch' | 'sleeper';
+
 export type ProgramSessionDef = {
-  key: 'A' | 'B' | 'C';
+  key: ProgramSessionKey;
   warmup: boolean;
   blocks: ('stretch' | 'band' | 'dumbbell' | 'stretch_end')[];
   daysPerWeek: [number, number];
@@ -56,6 +62,22 @@ export type RehabProgram = {
   warmupMinutes: [number, number];
   /** Rest between strength sets, seconds. */
   strengthRest: number;
+  /** The joint area the main workout protects while the program runs (§6.4). */
+  area: string;
+  /** Daily rhythm (§6.2): program numbers per block and the standard week (Monday first). */
+  daily: {
+    blocks: Record<DailyBlock, number[]>;
+    /** Repeated at the end of every daily session, if there is time. */
+    endStretches: number[];
+    /** Monday … Sunday. */
+    week: (DailyBlock | 'stretch')[];
+    /** Times a week each strengthening exercise is done. */
+    perWeek: number;
+    /** Never more exercises than this in one day (§6.3). */
+    cap: number;
+    /** Sleeper stretch breaks, local hours (§6.2). */
+    sleeperHours: number[];
+  };
 };
 
 const STRETCH_HOLD: ProgramDose = { kind: 'hold', sets: 4, seconds: 30, restSeconds: 30 };
@@ -78,6 +100,15 @@ export const SHOULDER_PROGRAM: RehabProgram = {
   warmupSlug: 'brisk_walk',
   warmupMinutes: [5, 10],
   strengthRest: 45,
+  area: 'shoulder',
+  daily: {
+    blocks: { standing: [6, 7, 8, 9, 10, 11], floor: [12, 13, 14, 15, 16, 17, 18] },
+    endStretches: [1, 5],
+    week: ['standing', 'floor', 'standing', 'floor', 'standing', 'floor', 'stretch'],
+    perWeek: 3,
+    cap: 12,
+    sleeperHours: [9, 15, 21],
+  },
   exercises: [
     // Stretches (1–5)
     {
@@ -273,6 +304,26 @@ export function doseFor(ex: ProgramExercise, increased: boolean): ProgramDose {
   return ex.dose;
 }
 
+/** What one session holds: warm-up or not, then program numbers by block, in order. */
+export type SessionLayout = {
+  key: ProgramPlanKey;
+  warmup: boolean;
+  groups: { block: NonNullable<SessionItem['block']>; numbers: number[] }[];
+};
+
+/** The layout of a fixed session (A, B or C). */
+export function sessionLayout(program: RehabProgram, key: ProgramSessionKey): SessionLayout {
+  const def = program.sessions.find((s) => s.key === key)!;
+  return {
+    key,
+    warmup: def.warmup,
+    groups: def.blocks.map((block) => {
+      const from = block === 'stretch_end' ? 'stretch' : block;
+      return { block, numbers: program.exercises.filter((x) => x.block === from).map((x) => x.n) };
+    }),
+  };
+}
+
 /**
  * One program session as a workout the player already knows how to run:
  * warm-up (5 min walk, B and C), stretches 1–5, the band or dumbbell block,
@@ -281,7 +332,7 @@ export function doseFor(ex: ProgramExercise, increased: boolean): ProgramDose {
  */
 export function buildProgramSession(
   program: RehabProgram,
-  key: 'A' | 'B' | 'C',
+  key: ProgramSessionKey | SessionLayout,
   o: {
     library: Exercise[];
     affected: AffectedSide;
@@ -290,7 +341,7 @@ export function buildProgramSession(
     increased?: Record<string, boolean>;
   },
 ): GeneratedSession & { missing: string[] } {
-  const def = program.sessions.find((s) => s.key === key)!;
+  const layout = typeof key === 'string' ? sessionLayout(program, key) : key;
   const bySlug = new Map(o.library.map((e) => [e.slug, e]));
   const missing: string[] = [];
   const items: SessionItem[] = [];
@@ -336,7 +387,7 @@ export function buildProgramSession(
       });
     }
   };
-  if (def.warmup) {
+  if (layout.warmup) {
     const walk = bySlug.get(program.warmupSlug);
     if (walk) {
       items.push({
@@ -356,22 +407,24 @@ export function buildProgramSession(
       });
     } else missing.push(program.warmupSlug);
   }
-  for (const block of def.blocks) {
-    const from = block === 'stretch_end' ? 'stretch' : block;
-    for (const ex of program.exercises.filter((x) => x.block === from)) add(ex, block);
-  }
+  const byNumber = new Map(program.exercises.map((x) => [x.n, x]));
+  for (const group of layout.groups)
+    for (const n of group.numbers) {
+      const ex = byNumber.get(n);
+      if (ex) add(ex, group.block);
+    }
   const seconds = items.reduce((n, i) => n + i.estSeconds, 0);
   const minutes = Math.max(1, Math.round(seconds / 60));
   return {
     items,
     minutes,
-    warmupMinutes: def.warmup ? program.warmupMinutes[0] : 0,
+    warmupMinutes: layout.warmup ? program.warmupMinutes[0] : 0,
     cooldownMinutes: Math.round(
       items.filter((i) => i.role === 'cooldown').reduce((n, i) => n + i.estSeconds, 0) / 60,
     ),
     estimatedMinutes: minutes,
     notes: [],
-    program: { id: program.id, session: key, week: o.week },
+    program: { id: program.id, session: layout.key, week: o.week },
     missing,
   };
 }

@@ -5,9 +5,27 @@ import { useOnboardingStore } from '@/features/onboarding/store';
 import { useExerciseLibrary } from '@/features/workout/hooks';
 import { useWorkoutStore } from '@/features/workout/store';
 import { clock } from '@/lib/clock';
-import { localDate } from '@/lib/dates';
+import { addDays, localDate } from '@/lib/dates';
 
-import { buildProgramSession, programById, programWeek, suggestedSession } from './programs';
+import {
+  dailyDoneToday,
+  dailyLayout,
+  dailyPlan,
+  programWeekStart,
+  sleeperBreaksToday,
+  sleeperLayout,
+  weekCounts,
+} from './daily';
+import {
+  buildProgramSession,
+  programById,
+  programWeek,
+  suggestedSession,
+  type DailyBlock,
+  type ProgramSessionKey,
+  type SessionLayout,
+} from './programs';
+import { careMode } from './protect';
 import { useRehabStore } from './store';
 
 /** Everything a program screen needs about the person's run (Phase 30). */
@@ -20,6 +38,7 @@ export function useRehabRun(programId: string) {
   const mode = useOnboardingStore((s) => derive(s)?.mode ?? 'adult');
   const today = localDate(clock.now());
   const week = run ? programWeek(run.startedAt, today) : 1;
+  // Maintenance after the release: B or C 2–3 times a week (§1, §6.5).
   const suggestion =
     program && run ? suggestedSession(program, run.startedAt, today, run.maintenance) : null;
   // Exercises not in this build's library (not released yet): the program can't start.
@@ -32,12 +51,29 @@ export function useRehabRun(programId: string) {
     (w) => w.session.program?.id === programId && (w.status === 'done' || w.status === 'partial'),
   );
 
-  const start = (key: 'A' | 'B' | 'C') => {
+  // The daily rhythm (addendum §6.2–6.3): planned from what was done this
+  // week before today, so finishing today's session doesn't change today's plan.
+  const monday = programWeekStart(today);
+  const before = program ? weekCounts(workouts, program, library, monday, today) : {};
+  const counts = program ? weekCounts(workouts, program, library, monday, addDays(today, 1)) : {};
+  const pick = run?.pick?.date === today ? run.pick.block : undefined;
+  const daily = program && run && !run.maintenance ? dailyPlan(program, today, before, pick) : null;
+  const dailyDone = dailyDoneToday(workouts, programId, today);
+  const dailySession =
+    program && daily
+      ? buildProgramSession(program, dailyLayout(program, daily), {
+          library,
+          affected: run?.side ?? 'right',
+          week,
+        })
+      : null;
+
+  const launch = (layout: ProgramSessionKey | SessionLayout) => {
     if (!program || !run) return;
     const increased = Object.fromEntries(
       Object.entries(run.increased).map(([slug, n]) => [slug, n > 0]),
     );
-    const session = buildProgramSession(program, key, {
+    const session = buildProgramSession(program, layout, {
       library,
       affected: run.side,
       week,
@@ -57,6 +93,18 @@ export function useRehabRun(programId: string) {
     done,
     today,
     minor: mode === 'child' || mode === 'teen',
-    start,
+    start: (key: ProgramSessionKey) => launch(key),
+    daily,
+    dailyDone,
+    dailyMinutes: dailySession?.minutes ?? 0,
+    counts,
+    startDaily: () => program && daily && launch(dailyLayout(program, daily)),
+    /** Do the other block today instead (§6.2); the rest of the week re-plans. */
+    swapBlock: (block: DailyBlock) => useRehabStore.getState().pickBlock(programId, today, block),
+    startSleeper: () => program && launch(sleeperLayout(program)),
+    sleeperToday: sleeperBreaksToday(workouts, programId, today),
+    care: run ? careMode(run, today) : 'none',
+    /** From week 4 (§1: 4–6 weeks), ask whether the physio released the program. */
+    askRelease: !!program && !!run && !run.releasedAt && week > program.weeks[0],
   };
 }

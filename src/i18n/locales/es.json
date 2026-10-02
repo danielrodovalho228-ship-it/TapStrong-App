@@ -5617,6 +5617,70 @@
       "dumbbell": "Fuerza con mancuerna ligera",
       "stretch_end": "Estiramientos otra vez"
     },
-    "painNote": "Para este ejercicio. La próxima vez, usa menos amplitud o menos peso. Lo marcamos para revisar con tu médico o fisioterapeuta."
+    "painNote": "Para este ejercicio. La próxima vez, usa menos amplitud o menos peso. Lo marcamos para revisar con tu médico o fisioterapeuta.",
+    "care": {
+      "question": "¿Tu fisioterapeuta liberó el entrenamiento de hombro y brazo?",
+      "yes": "Sí",
+      "no": "No / no sé",
+      "note": "Tu entrenamiento normal protege el hombro mientras dure el programa. Puedes cambiar esta respuesta después.",
+      "title": "Tu entrenamiento normal",
+      "off": "Hombro protegido: tu entrenamiento normal deja fuera los ejercicios que mueven el hombro. Piernas, core y el resto siguen.",
+      "protected": "Hombro protegido: sin movimientos por encima de la cabeza ni por detrás de la espalda, dominadas ni fondos; elevaciones laterales solo hasta la altura del hombro; carga ligera en todo movimiento del hombro.",
+      "returning": "Volviendo poco a poco: las reglas de hombro protegido siguen hasta el {{date}}.",
+      "change": "Cambiar respuesta",
+      "painMain": "Marcamos este ejercicio en tu programa de hombro para revisar. Habla con tu fisioterapeuta antes de repetirlo."
+    },
+    "daily": {
+      "title": "Hombro hoy",
+      "minutes": "Unos {{count}} min",
+      "blocks": {
+        "standing": "Bloque A — de pie, banda y mancuerna",
+        "floor": "Bloque B — banco y colchoneta",
+        "stretch": "Solo estiramientos"
+      },
+      "catchUp_one": "Incluye {{count}} ejercicio pendiente de esta semana.",
+      "catchUp_other": "Incluye {{count}} ejercicios pendientes de esta semana.",
+      "nextWeek": "Lo que no cupo pasa a la próxima semana, sin doblar la carga.",
+      "swap": "Hacer el {{block}} hoy",
+      "done": "Listo por hoy. ¡Buen trabajo!",
+      "start": "Empezar sesión de hoy",
+      "gymHint": "¿Hoy entrenas en el gimnasio? Hazlo antes del entrenamiento, como calentamiento.",
+      "rhythm": "Estiramientos todos los días; los dos bloques se alternan, así cada ejercicio se hace 3 veces por semana."
+    },
+    "checklist": {
+      "title": "Esta semana",
+      "of": "{{n}} de {{total}}",
+      "hint": "Un ejercicio igual en tu entrenamiento normal también cuenta aquí."
+    },
+    "sleeper": {
+      "title": "Sleeper stretch, 3 veces al día",
+      "body": "2 minutos por la mañana, la tarde y la noche, aparte de la sesión.",
+      "today": "{{n}} de 3 hoy",
+      "start": "Hacerlo ahora (2 min)",
+      "reminders": "Recordatorios de mañana, tarde y noche",
+      "appOnly": "Los recordatorios funcionan en la app.",
+      "notifTitle": "Hora de estirar (2 min)",
+      "notifBody": "Una pausa rápida para estirar, sin dolor."
+    },
+    "release": {
+      "question": "Ya pasaste la semana 4. ¿Tu fisioterapeuta te dio el alta?",
+      "body": "Si es así, el programa pasa a mantenimiento (2 a 3 veces por semana) y tu entrenamiento normal vuelve poco a poco en 2 semanas.",
+      "yes": "Sí, tengo el alta",
+      "no": "Todavía no"
+    },
+    "home": {
+      "title": "{{name}} hoy",
+      "done": "{{name}}: listo por hoy"
+    },
+    "short": {
+      "shoulder_mobility_strength": "Hombro"
+    },
+    "sessionNames": {
+      "standing": "Bloque A",
+      "floor": "Bloque B",
+      "stretch": "Estiramientos",
+      "sleeper": "Pausa de sleeper"
+    },
+    "numbered": "{{n}}. {{name}}"
   }
 }

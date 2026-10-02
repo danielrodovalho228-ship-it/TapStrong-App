@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppText, Button, Card, Checkbox, Chip, Notice } from '@/components/ui';
 import { swapItem } from '@/features/generator';
+import { programById } from '@/features/rehab/programs';
 import { useRehabStore } from '@/features/rehab/store';
 import { useRestrictionsStore } from '@/features/restrictions/store';
 import { ExerciseThumb } from '@/features/workout/components/Media';
@@ -34,6 +35,7 @@ export default function PainScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { workout, input, byId } = useWorkout(id);
   const markReview = useRehabStore((s) => s.markReview);
+  const careRuns = useRehabStore((s) => s.runs);
   const store = useWorkoutStore();
   const addRestriction = useRestrictionsStore((s) => s.add);
   const [spotKey, setSpotKey] = useState<string | null>(null);
@@ -52,6 +54,12 @@ export default function PainScreen() {
     spot && plan === 'swap' && !program
       ? painSwap(workout.session, step.item.id, input, spot.area)
       : null;
+  // Pain in that joint during the regular workout tells its care program (addendum §6.4).
+  const careProgram = !program
+    ? Object.keys(careRuns)
+        .map(programById)
+        .find((p) => !!p && !!spot && p.area === spot.area)
+    : undefined;
   const canSave = !!spot && spot.area !== 'other' && plan !== 'rest';
   const spotLabel = spot ? t(`workout.pain.spots.${spot.key as 'neck'}`) : '';
 
@@ -66,7 +74,8 @@ export default function PainScreen() {
       action,
     });
     const slug = byId.get(step.item.exerciseId)?.slug;
-    if (program && slug) markReview(program.id, slug, clock.now().toISOString());
+    const reviewIn = program?.id ?? careProgram?.id;
+    if (reviewIn && slug) markReview(reviewIn, slug, clock.now().toISOString());
     // Health details never go to analytics — only the pain type (SPEC §10).
     track('pain_reported', { type });
     if (canSave && save && spot.area !== 'other') {
@@ -145,6 +154,11 @@ export default function PainScreen() {
           ) : null}
 
           {spot && type && program ? <Notice tone="warning">{t('rehab.painNote')}</Notice> : null}
+          {spot && type && careProgram ? (
+            <View testID="care-pain-note">
+              <Notice tone="warning">{t('rehab.care.painMain')}</Notice>
+            </View>
+          ) : null}
 
           {spot && plan === 'swap' && !program ? (
             swap ? (

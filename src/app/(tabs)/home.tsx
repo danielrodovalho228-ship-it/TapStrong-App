@@ -25,6 +25,7 @@ import { LegendRow, RecoveryBody, STATE_COLOR } from '@/features/workout/compone
 import { generateBalanceSession, MOBILITY_MINUTES } from '@/features/generator';
 import { programStatus } from '@/features/program/apply';
 import { dayName, sessionSummary } from '@/features/program/block';
+import { CareHomeCards } from '@/features/rehab/CareHomeCard';
 import { WeekStrip } from '@/features/program/components/WeekStrip';
 import { useTrainingDaysPerWeek } from '@/features/program/useTrainingDays';
 import { plannedDaysBetween } from '@/features/program/week';
@@ -363,6 +364,9 @@ export default function HomeScreen() {
           </View>
         </View>
       )}
+
+      {/* "Shoulder today" next to today's workout (Phase 30 addendum §6.1). */}
+      <CareHomeCards />
 
       {moment ? (
         <MomentCard

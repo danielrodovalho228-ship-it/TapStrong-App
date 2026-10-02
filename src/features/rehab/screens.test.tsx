@@ -1,8 +1,10 @@
 /**
  * Phase 30 screens: Rehabilitation → "Shoulder: mobility and strength",
- * the safety rules before the first session with the side question, the
- * program (today, calendar, maintenance, review), and the player: stretch
- * timer with 30 s rest, the side of each set, "I feel pain" in a program.
+ * the safety rules before the first session with the side and physio
+ * questions, the program (today's block, the week checklist, sleeper breaks,
+ * the regular workout's protection, calendar, release, review), the Home
+ * card, and the player: stretch timer with 30 s rest, the side of each set,
+ * "I feel pain" in a program and in the regular workout.
  */
 import '@/i18n';
 
@@ -14,6 +16,7 @@ import RehabSafetyScreen from '@/app/rehab/safety';
 import PainScreen from '@/app/workout/[id]/pain';
 import PlayerScreen from '@/app/workout/[id]/play';
 import { useOnboardingStore } from '@/features/onboarding/store';
+import { CareHomeCards } from '@/features/rehab/CareHomeCard';
 import { useRestrictionsStore } from '@/features/restrictions/store';
 import { clock } from '@/lib/clock';
 
@@ -94,10 +97,15 @@ describe('Rehabilitation and the program', () => {
     const accept = screen.getByRole('button', { name: 'I understand, start' });
     expect(accept.props.accessibilityState?.disabled).toBe(true);
     await fireEvent.press(screen.getByRole('radio', { name: 'Left' }));
+    // Addendum §6.4: one question about the regular workout, required too.
+    expect(accept.props.accessibilityState?.disabled).toBe(true);
+    expect(screen.getByText('Did your physio clear shoulder and arm training?')).toBeTruthy();
+    await fireEvent.press(screen.getByRole('radio', { name: 'No / not sure' }));
     await fireEvent.press(screen.getByRole('button', { name: 'I understand, start' }));
     const run = useRehabStore.getState().runs[P.id];
     expect(run.side).toBe('left');
     expect(run.startedAt).toBe(TODAY);
+    expect(run.cleared).toBe(false);
   });
 
   it('teens see "use it with guidance from your physical therapist"', async () => {
@@ -108,35 +116,94 @@ describe('Rehabilitation and the program', () => {
     expect(screen.getByText(/Based on the AAOS shoulder conditioning program/)).toBeTruthy();
   });
 
-  it('the program: today B on day 1, the 6 weeks, the "?" rules, starting a session', async () => {
+  it('the program: Monday is block A, the week checklist, the 6 weeks, the "?" rules', async () => {
     await as();
     await act(() => useRehabStore.getState().start(P.id, 'right', TODAY, 'now'));
     mockParams = { id: P.id };
     await render(<RehabProgramScreen />);
-    expect(within(screen.getByTestId('rehab-today')).getByText('Today: session B')).toBeTruthy();
+    const today = screen.getByTestId('rehab-today');
+    expect(within(today).getByText('Shoulder today')).toBeTruthy();
+    expect(within(today).getByText('Block A — standing, band and dumbbell')).toBeTruthy();
+    expect(within(today).getAllByText(/^\d+\. /)).toHaveLength(6);
     expect(screen.getByText('Week 1 of 6')).toBeTruthy();
+    const checklist = screen.getByTestId('rehab-checklist');
+    expect(within(checklist).getAllByText('0 of 3')).toHaveLength(13);
     expect(within(screen.getByTestId('rehab-calendar')).getAllByText(/^W\d$/)).toHaveLength(6);
+    expect(screen.getByTestId('rehab-care-off')).toBeTruthy();
     await fireEvent.press(screen.getByRole('button', { name: 'Safety rules' }));
     expect(mockRouter.push).toHaveBeenCalledWith({
       pathname: '/rehab/safety',
       params: { id: P.id, mode: 'help' },
     });
-    await fireEvent.press(screen.getByRole('button', { name: 'Start session B' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Start today’s shoulder session' }));
     const w = useWorkoutStore.getState().workouts.at(-1)!;
     expect(w.kind).toBe('repair');
-    expect(w.session.program).toEqual({ id: P.id, session: 'B', week: 1 });
+    expect(w.session.program).toEqual({ id: P.id, session: 'standing', week: 1 });
     expect(w.session.items[0].block).toBe('warmup');
   });
 
-  it('after week 6: offers maintenance, 2–3 times a week', async () => {
+  it('swap today to block B; the fixed sessions A, B and C stay available', async () => {
+    await as();
+    await act(() => useRehabStore.getState().start(P.id, 'right', TODAY, 'now'));
+    mockParams = { id: P.id };
+    await render(<RehabProgramScreen />);
+    await fireEvent.press(screen.getByText('Do Block B today instead'));
+    const today = screen.getByTestId('rehab-today');
+    expect(within(today).getByText('Block B — bench and mat')).toBeTruthy();
+    expect(within(today).getAllByText(/^\d+\. /)).toHaveLength(7);
+    await fireEvent.press(screen.getByRole('button', { name: 'Start session C' }));
+    expect(useWorkoutStore.getState().workouts.at(-1)!.session.program?.session).toBe('C');
+  });
+
+  it('the regular workout: changing the physio answer switches the protection', async () => {
+    await as();
+    await act(() => useRehabStore.getState().start(P.id, 'right', TODAY, 'now', false));
+    mockParams = { id: P.id };
+    await render(<RehabProgramScreen />);
+    const care = screen.getByTestId('rehab-care');
+    expect(within(care).getByText(/leaves out exercises that move the shoulder/)).toBeTruthy();
+    await fireEvent.press(within(care).getByRole('radio', { name: 'Yes' }));
+    expect(useRehabStore.getState().runs[P.id].cleared).toBe(true);
+    expect(within(care).getByText(/side raises only up to shoulder height/)).toBeTruthy();
+  });
+
+  it('a sleeper break: 2 min, apart from the session; reminders are app-only on the web', async () => {
+    await as();
+    await act(() => useRehabStore.getState().start(P.id, 'right', TODAY, 'now'));
+    mockParams = { id: P.id };
+    await render(<RehabProgramScreen />);
+    const card = screen.getByTestId('rehab-sleeper');
+    expect(within(card).getByText('0 of 3 today')).toBeTruthy();
+    await fireEvent.press(within(card).getByRole('button', { name: 'Stretch now (2 min)' }));
+    const w = useWorkoutStore.getState().workouts.at(-1)!;
+    expect(w.session.program?.session).toBe('sleeper');
+    expect(w.session.items).toHaveLength(1);
+  });
+
+  it('after week 4: "has your physio released you?" — yes turns on maintenance', async () => {
     await as();
     await act(() => useRehabStore.getState().start(P.id, 'right', '2026-08-01', 'now'));
     mockParams = { id: P.id };
     await render(<RehabProgramScreen />);
-    const offer = screen.getByTestId('rehab-maintenance-offer');
-    await fireEvent.press(within(offer).getByRole('button', { name: 'Keep going in maintenance' }));
-    expect(useRehabStore.getState().runs[P.id].maintenance).toBe(true);
+    const ask = screen.getByTestId('rehab-release');
+    await fireEvent.press(within(ask).getByRole('button', { name: 'Yes, I was released' }));
+    const run = useRehabStore.getState().runs[P.id];
+    expect(run.maintenance).toBe(true);
+    expect(run.releasedAt).toBe(TODAY);
     expect(screen.getByText('Maintenance: 2 to 3 times a week.')).toBeTruthy();
+    expect(screen.getByTestId('rehab-care-returning')).toBeTruthy();
+    expect(screen.queryByTestId('rehab-checklist')).toBeNull();
+  });
+
+  it('Home: "Shoulder today" next to the workout; done after today’s session', async () => {
+    await as();
+    await act(() => useRehabStore.getState().start(P.id, 'right', TODAY, 'now'));
+    await render(<CareHomeCards />);
+    const card = screen.getByTestId(`care-home-${P.id}`);
+    expect(within(card).getByText('Shoulder today')).toBeTruthy();
+    expect(within(card).getByText(/Block A — standing/)).toBeTruthy();
+    await fireEvent.press(card);
+    expect(mockRouter.push).toHaveBeenCalledWith({ pathname: '/rehab/[id]', params: { id: P.id } });
   });
 });
 
@@ -181,5 +248,49 @@ describe('the player in a program', () => {
     await fireEvent.press(screen.getByRole('button', { name: 'Skip this exercise' }));
     expect(Object.keys(useRehabStore.getState().runs[P.id].review)).toEqual(['pendulum_swing']);
     expect(useWorkoutStore.getState().workouts.find((w) => w.id === id)!.pains).toHaveLength(1);
+  });
+
+  it('shoulder pain in the regular workout tells the program (addendum §6.4)', async () => {
+    await as();
+    await act(() => useRehabStore.getState().start(P.id, 'right', TODAY, 'now', true));
+    const row = LIBRARY.find((e) => e.slug === 'band_row')!;
+    const session = {
+      items: [
+        {
+          id: 'main-1',
+          role: 'main' as const,
+          part: 'main' as const,
+          exerciseId: row.id,
+          targetMuscle: 'upperBack',
+          goal: null,
+          sets: 3,
+          reps: [10, 12] as [number, number],
+          restSeconds: 60,
+          perSide: false,
+          loadHint: null,
+          estSeconds: 300,
+        },
+      ],
+      minutes: 10,
+      warmupMinutes: 0,
+      cooldownMinutes: 0,
+      estimatedMinutes: 10,
+      notes: [],
+    };
+    let id = '';
+    await act(() => {
+      id = useWorkoutStore.getState().create(session, 'regular');
+      useWorkoutStore.getState().start(id);
+    });
+    mockParams = { id };
+    await render(<PainScreen />);
+    await fireEvent.press(screen.getByRole('button', { name: 'Right shoulder' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Dull / pinch' }));
+    expect(screen.getByTestId('care-pain-note')).toBeTruthy();
+    await fireEvent.press(
+      screen.queryByRole('button', { name: 'Accept swap' }) ??
+        screen.getByRole('button', { name: 'Skip this exercise' }),
+    );
+    expect(Object.keys(useRehabStore.getState().runs[P.id].review)).toEqual(['band_row']);
   });
 });

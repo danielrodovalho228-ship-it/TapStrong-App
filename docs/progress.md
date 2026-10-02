@@ -3346,3 +3346,58 @@ Brief completo em `docs/phase-30-shoulder-program.md`.
   - 188 do primeiro treino;
   - 60 de exercícios sem nenhum sexo;
   - 27 de exercícios com só um.
+
+## Fase 30 — Adendo: o programa de ombro junto com o treino normal (§6)
+
+### Feito
+
+- **Dois trilhos (§6.1):**
+  - na Home, inclusive na Home 60+, aparece o cartão "Ombro hoje", com o bloco e os minutos, ao lado do "Treino de hoje";
+  - um não substitui o outro, e cada um tem o seu progresso;
+  - em dia de academia: "Faça antes do treino, como aquecimento".
+- **Ritmo diário (§6.2):**
+  - alongamentos 1–5 todo dia;
+  - Bloco A (em pé: 6–11) e Bloco B (banco e colchonete: 12–18) se alternam: seg A, ter B, qua A, qui B, sex A, sáb B, dom só alongamentos;
+  - no fim de cada sessão, pêndulo e sleeper de novo (dá para pular);
+  - "Fazer o Bloco B hoje" troca o dia, e o app reorganiza o resto da semana mantendo 3 vezes cada;
+  - as sessões A, B e C continuam disponíveis em "Outras sessões".
+- **Sleeper 3 vezes por dia:**
+  - cartão com "Alongar agora (2 min)" e "x de 3 hoje";
+  - lembretes diários às 9h, 15h e 21h (só no app; na prévia web aparece "funcionam no app");
+  - o texto da notificação não fala de ombro.
+- **Exercício perdido (§6.3):**
+  - lista "x de 3 nesta semana" para cada exercício (alongamentos: x de 6, sleeper x de 7);
+  - o que ficou para trás entra nos próximos dias, com teto de 12 exercícios por dia;
+  - o que não couber fica para a semana seguinte, sem dobrar a carga.
+- **Ombro protegido no treino normal (§6.4):** a pergunta "O seu fisioterapeuta liberou treino de ombro e braço?" entra na tela de segurança, antes da 1ª sessão, e dá para mudar a resposta na tela do programa.
+  - **Não, ou sem resposta:** o treino normal tira todo exercício que mexe o ombro. Pernas, core e o resto continuam.
+  - **Sim:**
+    - sai tudo acima da cabeça ou por trás das costas (desenvolvimento, barra fixa, puxada, mergulho);
+    - elevação lateral só até a altura do ombro;
+    - carga leve em todo movimento do ombro.
+  - Usa as marcações de movimento do banco. Nada foi inventado no código.
+  - As sessões do próprio programa nunca são afetadas.
+- **Sem duplicar:** um exercício do programa feito no treino normal (por exemplo, remada com elástico ou rosca) conta na lista da semana.
+- **SINTO DOR no treino normal:** dor no ombro marca o exercício em "Para revisar" no programa e mostra o aviso para falar com o fisioterapeuta.
+- **Fim do programa (§6.5):**
+  - a partir da semana 5, o app pergunta "O seu fisioterapeuta liberou você?";
+  - com "sim", o programa vira manutenção (2–3×/semana) e o ombro protegido continua por mais 2 semanas, para o treino normal voltar aos poucos;
+  - essa pergunta substitui a oferta de manutenção depois da semana 6.
+- **Testes:**
+  - 15 de lógica: ritmo, semana padrão com 3 de cada e ≤ 12 por dia, troca de dia, dias perdidos, domingo, sem duplicar, os dois modos de ombro protegido no gerador, sessões do programa intocadas, volta aos poucos, lembretes;
+  - 6 de tela: troca de bloco, resposta do fisioterapeuta, sleeper, liberação, cartão da Home e dor no treino normal.
+  - Resultado: 1484 testes ok, além de lint, typecheck, `security:check` e `db:test`.
+
+### Como testar
+
+1. Abra a prévia, vá em Progresso → Reabilitação → Ombro e comece o programa.
+2. Responda as duas perguntas: o lado e a liberação do fisioterapeuta.
+3. Volte à Home e veja o cartão "Ombro hoje".
+4. Gere um treino normal de ombros:
+   - com "Não", não entra nada de ombro;
+   - com "Sim", não aparece desenvolvimento nem barra fixa.
+
+### Perguntas em aberto
+
+- **Tempo da sessão:** com as doses da seção 4 (4 × 30 s + 30 s de descanso, dos dois lados nos alongamentos 2–4), só os alongamentos levam cerca de 34 min, não 8. O dia do Bloco A fica em cerca de 76 min estimados. Para chegar aos "8 min" do adendo, uma opção é, no ritmo diário, fazer 2 repetições em vez de 4, ou alongar só o lado afetado. Prefiro não mexer na dose sem a sua confirmação ou a do fisioterapeuta.
+- **Lado bom:** "unilateral só no lado bom" ainda não existe no gerador. Hoje o modo protegido vale para o ombro inteiro, dos dois lados.

@@ -26,6 +26,8 @@ export type PlannedNotification =
   /** Pain traffic light (SPEC §8): the morning after a workout, rate the painful area. */
   /** Phase 26: "Your month is closed" the day the block's summary opens. */
   | { id: string; kind: 'month_closed'; date: Date }
+  /** Phase 30 addendum §6.2: sleeper stretch breaks, every day at set hours. */
+  | { id: string; kind: 'care_stretch'; hour: number; programId: string }
   | {
       id: string;
       kind: 'movement_check';
@@ -85,6 +87,8 @@ export function planNotifications(input: {
   morningChecks?: PendingMorningCheck[];
   /** The first day after the current block (Phase 26), or null without workouts. */
   monthClosesOn?: string | null;
+  /** Care programs with the stretch-break reminders on (Phase 30 addendum §6.2). */
+  careStretch?: { programId: string; hours: number[] }[];
 }): PlannedNotification[] {
   const out: PlannedNotification[] = [];
   const { prefs, now } = input;
@@ -140,6 +144,16 @@ export function planNotifications(input: {
       chargeOn: input.trialChargeAt,
     });
   }
+
+  // Turned on in the program itself, so not tied to the workout reminder toggle.
+  for (const c of input.careStretch ?? [])
+    for (const hour of c.hours)
+      out.push({
+        id: `care-${c.programId}-${hour}`,
+        kind: 'care_stretch',
+        hour,
+        programId: c.programId,
+      });
 
   // Part of a plan the person started, so not tied to the reminder toggles.
   for (const c of input.morningChecks ?? []) {

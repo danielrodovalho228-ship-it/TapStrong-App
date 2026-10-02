@@ -1,6 +1,7 @@
 import { getAlternatives, swapItem } from '../generator/alternatives';
 import { blockReason } from '../generator/filters';
 import type { GeneratedSession, GeneratorInput } from '../generator/types';
+import { withoutCare } from '../rehab/protect';
 
 import { localDate } from '@/lib/dates';
 
@@ -34,10 +35,14 @@ export type SafetyRefresh =
  * plan left out.
  */
 export function workoutInput(
-  w: { kind?: WorkoutRecord['kind'] } | undefined,
+  w:
+    | { kind?: WorkoutRecord['kind']; session?: Pick<WorkoutRecord['session'], 'program'> }
+    | undefined,
   input: GeneratorInput,
 ): GeneratorInput {
-  return w?.kind === 'repair' ? { ...input, rehab: true, allowReducedRange: false } : input;
+  // A care program's own session trains the protected joint on purpose (Phase 30, §6.4).
+  const base = w?.session?.program ? withoutCare(input) : input;
+  return w?.kind === 'repair' ? { ...base, rehab: true, allowReducedRange: false } : base;
 }
 
 /**

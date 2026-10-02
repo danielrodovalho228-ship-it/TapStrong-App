@@ -23,6 +23,8 @@ import { limitFrom } from '../movement/progress';
 import { activeReports, useMovementPainStore } from '../movement/store';
 import { modeOf } from '../onboarding/derived';
 import { useOnboardingStore } from '../onboarding/store';
+import { careProtection, withCare } from '../rehab/protect';
+import { useRehabStore } from '../rehab/store';
 import { activeAreas, doctorFirstAreas, useRestrictionsStore } from '../restrictions/store';
 
 import { customToExercise } from '../library/custom';
@@ -72,6 +74,7 @@ export function useGeneratorInput(
   const experience = usePrefsStore((s) => s.experience);
   const monthPlan = useMonthStore((s) => s.plan);
   const banned = useMonthStore((s) => s.banned);
+  const careRuns = useRehabStore((s) => s.runs);
   const today = localDate(clock.now());
   const laterDay = !!ahead && ahead.date > today;
   const base = inputFromProfile(profile, library, __DEV__, {
@@ -98,10 +101,19 @@ export function useGeneratorInput(
   // A ready-made plan and the deload week apply on top (improvements v1, A2/A5).
   // Starred exercises are preferred when safe (B4).
   // This month's plan (Phase 26): kept and new moves, focus, sharp-pain bans.
+  // A running care program protects its joint in the main plan (Phase 30, §6.4).
+  const care = careProtection(careRuns, today);
   return base
     ? withMonth(
         {
-          ...withProgram(base, library, workouts, program, ahead?.date ?? today, ahead?.days ?? 0),
+          ...withProgram(
+            withCare(base, care),
+            library,
+            workouts,
+            program,
+            ahead?.date ?? today,
+            ahead?.days ?? 0,
+          ),
           favourites,
           shortWarmup,
           experience,
@@ -244,8 +256,12 @@ export function useWorkout(id: string | undefined) {
   const byId = useMemo(() => new Map(library.map((e) => [e.id, e])), [library]);
   const base = useGeneratorInput(library);
   const kind = workout?.kind;
+  const program = workout?.session.program;
   // Swaps and safety checks on this workout use its own rules (QA R3-07).
-  const input = useMemo(() => (base ? workoutInput({ kind }, base) : base), [base, kind]);
+  const input = useMemo(
+    () => (base ? workoutInput({ kind, session: { program } }, base) : base),
+    [base, kind, program],
+  );
   return { workout, library, byId, input };
 }
 

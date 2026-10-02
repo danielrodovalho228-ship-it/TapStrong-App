@@ -24,6 +24,7 @@ export default function RehabSafetyScreen() {
   const { minor, today } = useRehabRun(id);
   const start = useRehabStore((s) => s.start);
   const [side, setSide] = useState<AffectedSide | null>(null);
+  const [cleared, setCleared] = useState<boolean | null>(null);
   const starting = mode === 'start';
 
   return (
@@ -33,10 +34,10 @@ export default function RehabSafetyScreen() {
         starting ? (
           <Button
             label={t('rehab.safety.accept')}
-            disabled={!side}
+            disabled={!side || cleared === null}
             onPress={() => {
-              if (!side) return;
-              start(id, side, today, clock.now().toISOString());
+              if (!side || cleared === null) return;
+              start(id, side, today, clock.now().toISOString(), cleared);
               router.replace({ pathname: '/rehab/[id]', params: { id } });
             }}
           />
@@ -77,6 +78,29 @@ export default function RehabSafetyScreen() {
           </View>
           <AppText variant="caption" color={colors.mutedStrong}>
             {t('rehab.sideNote')}
+          </AppText>
+        </Card>
+      ) : null}
+      {starting ? (
+        // Addendum §6.4: one question, how the main workout treats the shoulder.
+        <Card style={styles.card}>
+          <AppText variant="h3" accessibilityRole="header">
+            {t('rehab.care.question')}
+          </AppText>
+          <View style={styles.chips} accessibilityRole="radiogroup">
+            {([true, false] as const).map((v) => (
+              <Chip
+                key={String(v)}
+                label={t(v ? 'rehab.care.yes' : 'rehab.care.no')}
+                selected={cleared === v}
+                accessibilityRole="radio"
+                accessibilityState={{ checked: cleared === v }}
+                onPress={() => setCleared(v)}
+              />
+            ))}
+          </View>
+          <AppText variant="caption" color={colors.mutedStrong}>
+            {t('rehab.care.note')}
           </AppText>
         </Card>
       ) : null}

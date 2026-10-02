@@ -14,6 +14,7 @@ import { useOnboardingStore } from '@/features/onboarding/store';
 import { MonthHomeCard, useMonthCardVisible } from '@/features/month/components/MonthHomeCard';
 import { MoreOptions } from '@/features/home/MoreOptions';
 import { StartHero } from '@/features/home/StartHero';
+import { CareHomeCards } from '@/features/rehab/CareHomeCard';
 import { easyDayKey } from '@/features/workout/secondWorkout';
 import { useWorkoutStore } from '@/features/workout/store';
 import { clock } from '@/lib/clock';
@@ -178,6 +179,9 @@ export function SeniorHome({
           </>
         )}
       </View>
+
+      {/* A care program's own card (Phase 30 addendum §6.1). */}
+      <CareHomeCards />
 
       {/* 2. The month's summary (Phase 26), else the last workout. */}
       {month ? (

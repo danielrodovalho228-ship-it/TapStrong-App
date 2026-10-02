@@ -98,6 +98,17 @@ export async function applyPlan(plan: PlannedNotification[]): Promise<void> {
         },
         trigger: { type: N.SchedulableTriggerInputTypes.DATE, date: p.date },
       });
+    } else if (p.kind === 'care_stretch') {
+      // No health detail on the lock screen (SPEC §10): just "stretch time".
+      await N.scheduleNotificationAsync({
+        identifier: p.id,
+        content: {
+          title: i18n.t('rehab.sleeper.notifTitle'),
+          body: i18n.t('rehab.sleeper.notifBody'),
+          data: { url: `/rehab/${p.programId}` },
+        },
+        trigger: { type: N.SchedulableTriggerInputTypes.DAILY, hour: p.hour, minute: 0 },
+      });
     } else if (p.kind === 'movement_check') {
       await N.scheduleNotificationAsync({
         identifier: p.id,

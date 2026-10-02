@@ -5678,6 +5678,71 @@
       "dumbbell": "Fortalecimento com halter leve",
       "stretch_end": "Alongamentos de novo"
     },
-    "painNote": "Pare este exercício. Na próxima vez, diminua a amplitude ou o peso. Marcamos o exercício para revisar com o seu médico ou fisioterapeuta."
+    "painNote": "Pare este exercício. Na próxima vez, diminua a amplitude ou o peso. Marcamos o exercício para revisar com o seu médico ou fisioterapeuta.",
+    "care": {
+      "question": "O seu fisioterapeuta liberou treino de ombro e braço?",
+      "yes": "Sim",
+      "no": "Não / não sei",
+      "note": "O seu treino normal protege o ombro enquanto o programa durar. Dá para mudar esta resposta depois.",
+      "title": "O seu treino normal",
+      "off": "Ombro protegido: o treino normal deixa de fora os exercícios que mexem o ombro. Pernas, core e o resto continuam.",
+      "protected": "Ombro protegido: nada acima da cabeça ou por trás das costas, nem barra fixa ou mergulho; elevação lateral só até a altura do ombro; carga leve em todo movimento do ombro.",
+      "returning": "Voltando aos poucos: as regras de ombro protegido seguem até {{date}}.",
+      "change": "Mudar resposta",
+      "painMain": "Marcamos este exercício no seu programa de ombro para revisar. Fale com o seu fisioterapeuta antes de repetir."
+    },
+    "daily": {
+      "title": "Ombro hoje",
+      "minutes": "Cerca de {{count}} min",
+      "blocks": {
+        "standing": "Bloco A — em pé, elástico e halter",
+        "floor": "Bloco B — banco e colchonete",
+        "stretch": "Só alongamentos"
+      },
+      "catchUp_one": "Inclui {{count}} exercício que ficou para trás nesta semana.",
+      "catchUp_other": "Inclui {{count}} exercícios que ficaram para trás nesta semana.",
+      "nextWeek": "O que não coube fica para a próxima semana, sem dobrar a carga.",
+      "swap": "Fazer o {{block}} hoje",
+      "done": "Feito por hoje. Bom trabalho!",
+      "start": "Começar sessão de hoje",
+      "gymHint": "Hoje é dia de academia? Faça antes do treino, como aquecimento.",
+      "rhythm": "Alongamentos todo dia; os dois blocos se alternam, então cada exercício é feito 3 vezes por semana.",
+      "catchUp_zero": "Inclui {{count}} exercícios que ficaram para trás nesta semana."
+    },
+    "checklist": {
+      "title": "Nesta semana",
+      "of": "{{n}} de {{total}}",
+      "hint": "Um exercício igual no seu treino normal também conta aqui."
+    },
+    "sleeper": {
+      "title": "Sleeper stretch, 3 vezes por dia",
+      "body": "2 minutos de manhã, à tarde e à noite, fora da sessão.",
+      "today": "{{n}} de 3 hoje",
+      "start": "Fazer agora (2 min)",
+      "reminders": "Lembretes de manhã, à tarde e à noite",
+      "appOnly": "Os lembretes funcionam no app.",
+      "notifTitle": "Hora do alongamento (2 min)",
+      "notifBody": "Uma pausa rápida para alongar, sem dor."
+    },
+    "release": {
+      "question": "Você já passou da semana 4. O seu fisioterapeuta liberou você?",
+      "body": "Se sim, o programa vira manutenção (2 a 3 vezes por semana) e o seu treino normal volta aos poucos, em 2 semanas.",
+      "yes": "Sim, fui liberado",
+      "no": "Ainda não"
+    },
+    "home": {
+      "title": "{{name}} hoje",
+      "done": "{{name}}: feito por hoje"
+    },
+    "short": {
+      "shoulder_mobility_strength": "Ombro"
+    },
+    "sessionNames": {
+      "standing": "Bloco A",
+      "floor": "Bloco B",
+      "stretch": "Alongamentos",
+      "sleeper": "Pausa do sleeper"
+    },
+    "numbered": "{{n}}. {{name}}"
   }
 }

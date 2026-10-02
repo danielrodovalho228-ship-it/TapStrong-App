@@ -4,7 +4,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import type { LocalDate } from '@/lib/dates';
 import { kvStorage } from '@/lib/storage';
 
-import type { AffectedSide } from './programs';
+import type { AffectedSide, DailyBlock } from './programs';
 
 /** One person's run of a rehab program (Phase 30). Kept per profile. */
 export type ProgramRun = {
@@ -18,12 +18,33 @@ export type ProgramRun = {
   increased: Record<string, number>;
   /** Exercises marked for review after "I feel pain" (slug → when). */
   review: Record<string, string>;
+  /**
+   * "Did your physio clear shoulder and arm training?" (addendum §6.4). null
+   * = not answered: the main plan stays fully protected, as with "no".
+   */
+  cleared: boolean | null;
+  /** The physio released the program (§6.5): maintenance, main plan back gradually. */
+  releasedAt: LocalDate | null;
+  /** Sleeper stretch reminders, 3 times a day (§6.2). */
+  sleeperReminders: boolean;
+  /** The daily block picked for a day instead of the suggested one (§6.2). */
+  pick?: { date: LocalDate; block: DailyBlock };
 };
 
 export type RehabData = { runs: Record<string, ProgramRun> };
 
 type State = RehabData & {
-  start: (programId: string, side: AffectedSide, today: LocalDate, now: string) => void;
+  start: (
+    programId: string,
+    side: AffectedSide,
+    today: LocalDate,
+    now: string,
+    cleared?: boolean | null,
+  ) => void;
+  setCleared: (programId: string, cleared: boolean) => void;
+  release: (programId: string, today: LocalDate) => void;
+  setSleeperReminders: (programId: string, on: boolean) => void;
+  pickBlock: (programId: string, date: LocalDate, block: DailyBlock) => void;
   setSide: (programId: string, side: AffectedSide) => void;
   setMaintenance: (programId: string, on: boolean) => void;
   raiseLoad: (programId: string, slug: string) => void;
@@ -45,7 +66,7 @@ export const useRehabStore = create<State>()(
         });
       return {
         ...initialRehab(),
-        start: (id, side, today, now) =>
+        start: (id, side, today, now, cleared = null) =>
           set((s) => ({
             runs: {
               ...s.runs,
@@ -56,11 +77,19 @@ export const useRehabStore = create<State>()(
                 maintenance: false,
                 increased: {},
                 review: {},
+                cleared,
+                releasedAt: null,
+                sleeperReminders: false,
               },
             },
           })),
         setSide: (id, side) => patch(id, () => ({ side })),
         setMaintenance: (id, on) => patch(id, () => ({ maintenance: on })),
+        setCleared: (id, cleared) => patch(id, () => ({ cleared })),
+        // Released by the physio: maintenance 2–3 times a week (§6.5).
+        release: (id, today) => patch(id, () => ({ releasedAt: today, maintenance: true })),
+        setSleeperReminders: (id, on) => patch(id, () => ({ sleeperReminders: on })),
+        pickBlock: (id, date, block) => patch(id, () => ({ pick: { date, block } })),
         raiseLoad: (id, slug) =>
           patch(id, (r) => ({
             increased: { ...r.increased, [slug]: (r.increased[slug] ?? 0) + 1 },
@@ -83,7 +112,17 @@ export const useRehabStore = create<State>()(
     },
     {
       name: 'rehab',
-      version: 1,
+      version: 2,
+      // v2 (addendum §6): physio clearance, release, sleeper reminders.
+      migrate: (persisted) => {
+        const state = persisted as RehabData;
+        for (const run of Object.values(state.runs ?? {})) {
+          run.cleared ??= null;
+          run.releasedAt ??= null;
+          run.sleeperReminders ??= false;
+        }
+        return state as State;
+      },
       storage: createJSONStorage(() => kvStorage),
       partialize: ({ runs }) => ({ runs }),
     },

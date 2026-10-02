@@ -109,6 +109,11 @@ export type GeneratorInput = {
    * by movement instead of as a whole.
    */
   movementLimits?: MovementLimit[];
+  /**
+   * Internal (Phase 30 addendum §6.4): what a running care program added to
+   * `hardRestrictions` and `movementLimits`, so its own sessions can drop it.
+   */
+  care?: { hard: string[]; limits: MovementLimit[] };
   /** Shorter pain-free range allowed (default true; recovery phases 1–2 set false). */
   allowReducedRange?: boolean;
   /** A Repair recovery session: recovery-only exercises may be used. */
