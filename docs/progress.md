@@ -3426,3 +3426,36 @@ Brief completo em `docs/phase-30-shoulder-program.md`.
   - descansar 20 s em vez de 30;
   - fazer os exercícios 12 e 16 com 2 × 15;
   - ou passar o 13 (escápulas de bruços) para o Bloco A.
+
+## Mídia — Lote 9 "out. 02 - 15:20" (itens 200–221)
+
+- **Chegaram:** 12 vídeos e 31 imagens de partida.
+  - Os 12 vídeos e a imagem band_lateral_raise.m vieram com nome automático do Flow (`Man_performing_…`, `Woman_performing_…`). Renomeei pelo conteúdo antes do import; não houve cópia duplicada do band_lateral_raise.f.
+  - **Descartados:** 7 `x_bad_*`, 2 `body-adult-*` e 2 imagens automáticas:
+    - outra band_wrist_curl.m, repetida;
+    - dumbbell_seated_calf_raise.m, reprovada: segura os halteres ao lado do quadril, e não sobre os joelhos.
+  - **Tamanho:** de 37,4 MB brutos para 7,7 MB finais.
+- **Vídeos, conferência quadro a quadro: 4 ok e 8 suspeitos.**
+  - **Ok:** band_high_pull.f, band_lateral_raise.f, band_y_raise f/m.
+  - **Suspeitos:**
+    - band_front_raise f/m: elevação lateral, não frontal;
+    - band_high_pull.m: cor no peito;
+    - band_shrug f/m: remada alta ou rosca, em vez de encolher;
+    - dumbbell_front_raise.f: vira rosca;
+    - rx_side_lying_er f/m: braço esticado até o teto ou braço livre acima da cabeça.
+- **Imagens como pôster (pedido do Daniel):** um exercício sem clipe aprovado agora mostra a imagem de partida conferida, sempre do mesmo sexo, até o clipe chegar.
+  - Das 31 imagens, 28 entraram.
+  - **Reprovadas (3)**, ficam em `qc.json` → `posterSuspect` e na lista de refazer:
+    - band_seated_hamstring_curl.f: cor na frente da coxa;
+    - incline_prone_y_raise.m: cor sobre a camiseta;
+    - seated_dumbbell_lateral_raise.m: em pé, não sentado.
+  - A imagem de um vídeo reprovado nunca vira pôster.
+- **Scripts:**
+  - o import gera o pôster da imagem sem vídeo e não apaga mais a marca "prioridade alta";
+  - o manifesto lista os pôsteres que chegam antes do clipe.
+  - Testes conferem que nenhum pôster reprovado ou de vídeo reprovado chega ao app.
+- **No app:** 279 entradas de clipe em 154 exercícios, mais 28 pôsteres sem clipe.
+- **Lista de refazer:** 311 clipes.
+  - 188 do primeiro treino;
+  - 94 de exercícios sem nenhum sexo;
+  - 29 de exercícios com só um.

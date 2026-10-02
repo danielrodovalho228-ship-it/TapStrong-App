@@ -6,7 +6,7 @@ Gerado por `npm run media:redo` a partir de `assets/prototype/qc.json` e dos cli
 Sexo: f = mulher, m = homem. Nome do arquivo no Flow: `<slug>.<f|m>` (o import
 aceita `_v2`, `_v3`… para refeitos).
 
-Total: 275 clipes (188 do primeiro treino, 60 de exercícios sem nenhum sexo, 27 de exercícios com só um).
+Total: 311 clipes (188 do primeiro treino, 94 de exercícios sem nenhum sexo, 29 de exercícios com só um).
 
 ## 0. Aparecem no primeiro treino (prioridade alta)
 
@@ -95,7 +95,7 @@ Aquecimento, principais e desaquecimento que o primeiro treino pode mostrar, em 
 | dumbbell_split_squat | m | faltando, prioridade alta: aparece no primeiro treino |
 | dumbbell_sumo_squat | f | faltando, prioridade alta: aparece no primeiro treino |
 | dumbbell_sumo_squat | m | faltando, prioridade alta: aparece no primeiro treino |
-| dumbbell_seated_calf_raise | f | faltando, prioridade alta: aparece no primeiro treino |
+| dumbbell_seated_calf_raise | f | só imagem: veio a imagem de partida, sem vídeo; faltando, prioridade alta: aparece no primeiro treino |
 | dumbbell_seated_calf_raise | m | faltando, prioridade alta: aparece no primeiro treino |
 | dumbbell_suitcase_carry | f | faltando, prioridade alta: aparece no primeiro treino |
 | dumbbell_suitcase_carry | m | faltando, prioridade alta: aparece no primeiro treino |
@@ -208,10 +208,16 @@ Aquecimento, principais e desaquecimento que o primeiro treino pode mostrar, em 
 
 | slug | sexo | motivo |
 |---|---|---|
+| band_front_raise | f | suspeito: abre os braços para o lado e leva acima da cabeça: é elevação lateral, não frontal |
+| band_front_raise | m | suspeito: abre os braços para o lado: é elevação lateral, não frontal |
 | band_row | f | faltando: programa de ombro (Fase 30), exercício 6 |
 | band_row | m | faltando: programa de ombro (Fase 30), exercício 6 |
+| dumbbell_shrug | f | só imagem: veio a imagem de partida, sem vídeo |
+| dumbbell_shrug | m | só imagem: veio a imagem de partida, sem vídeo |
 | overhead_dumbbell_triceps_extension | f | faltando: programa de ombro (Fase 30), exercício 11 |
 | overhead_dumbbell_triceps_extension | m | faltando: programa de ombro (Fase 30), exercício 11 |
+| dumbbell_wrist_curl | f | só imagem: veio a imagem de partida, sem vídeo |
+| dumbbell_wrist_curl | m | só imagem: veio a imagem de partida, sem vídeo |
 | wall_tibialis_raise | f | suspeito: a parede apareceu, mas chuta a perna; deveria só erguer as pontas dos pés com as costas na parede |
 | wall_tibialis_raise | m | suspeito: a parede apareceu, mas chuta a perna; deveria só erguer as pontas dos pés com as costas na parede |
 | band_external_rotation | f | suspeito: no 2º quadro o braço estica reto e passa pelo elástico (cotovelo sai dos 90°) |
@@ -224,16 +230,42 @@ Aquecimento, principais e desaquecimento que o primeiro treino pode mostrar, em 
 | seated_band_decline_press | m | suspeito: as pernas acendem de laranja (músculo errado) |
 | single_arm_high_to_low_band_fly | f | suspeito: brilho laranja nos seios por cima do top e o braço quase não se move |
 | single_arm_high_to_low_band_fly | m | suspeito: o elástico sai da mão e o braço sobe acima da cabeça |
+| seated_band_lateral_raise | f | só imagem: veio a imagem de partida, sem vídeo |
+| seated_band_lateral_raise | m | só imagem: veio a imagem de partida, sem vídeo |
+| band_shrug | f | suspeito: sentada, puxa as mãos até o rosto (remada alta), sem encolher os ombros |
+| band_shrug | m | suspeito: faz rosca e pose de bíceps em vez de encolher os ombros; cor nos antebraços e no peito |
+| band_wrist_extension | f | só imagem: veio a imagem de partida, sem vídeo |
+| band_wrist_extension | m | só imagem: veio a imagem de partida, sem vídeo |
+| band_wrist_curl | f | só imagem: veio a imagem de partida, sem vídeo |
+| band_wrist_curl | m | só imagem: veio a imagem de partida, sem vídeo |
+| band_wrist_rotation | f | só imagem: veio a imagem de partida, sem vídeo |
+| band_wrist_rotation | m | só imagem: veio a imagem de partida, sem vídeo |
+| dumbbell_lateral_raise | f | só imagem: veio a imagem de partida, sem vídeo |
+| dumbbell_lateral_raise | m | só imagem: veio a imagem de partida, sem vídeo |
+| seated_dumbbell_lateral_raise | f | só imagem: veio a imagem de partida, sem vídeo |
+| seated_dumbbell_lateral_raise | m | imagem reprovada: em pé na frente do banco; o exercício é sentado |
+| dumbbell_front_raise | f | suspeito: dobra os cotovelos (vira rosca) em vez de subir os braços esticados à frente |
+| dumbbell_front_raise | m | só imagem: veio a imagem de partida, sem vídeo |
+| dumbbell_farmer_hold | f | só imagem: veio a imagem de partida, sem vídeo |
+| dumbbell_farmer_hold | m | só imagem: veio a imagem de partida, sem vídeo |
+| incline_prone_y_raise | f | só imagem: veio a imagem de partida, sem vídeo |
+| incline_prone_y_raise | m | imagem reprovada: cor do ombro pintada sobre a camiseta |
+| dumbbell_wrist_extension | f | só imagem: veio a imagem de partida, sem vídeo |
+| dumbbell_wrist_extension | m | só imagem: veio a imagem de partida, sem vídeo |
 | short_arc_quad | f | suspeito: levanta a perna inteira até a vertical; deveria só esticar o joelho sobre o rolo |
 | short_arc_quad | m | recusado pelo Flow: veio só a imagem de partida |
 | seated_toe_raise | f | suspeito: levanta a perna inteira em vez de só as pontas dos pés |
 | seated_toe_raise | m | suspeito: levanta a perna inteira em vez de só as pontas dos pés |
 | supported_toe_raise | f | suspeito: levanta o joelho (marcha) em vez das pontas dos pés |
 | supported_toe_raise | m | suspeito: levanta o joelho (marcha) em vez das pontas dos pés |
+| band_seated_hamstring_curl | f | imagem reprovada: cor na frente da coxa (quadríceps); o exercício é para o posterior |
+| band_seated_hamstring_curl | m | só imagem: veio a imagem de partida, sem vídeo |
+| band_seated_calf_press | f | só imagem: veio a imagem de partida, sem vídeo |
+| band_seated_calf_press | m | só imagem: veio a imagem de partida, sem vídeo |
 | band_glute_bridge | f | suspeito: levanta um braço para o teto no meio da ponte |
 | band_glute_bridge | m | suspeito: chama/brilho na cabeça e o tronco sobe como prancha invertida |
-| rx_side_lying_er | f | faltando: programa de ombro (Fase 30), exercício 17 |
-| rx_side_lying_er | m | faltando: programa de ombro (Fase 30), exercício 17 |
+| rx_side_lying_er | f | suspeito: estica o braço até o teto em vez de girar o antebraço com o cotovelo colado |
+| rx_side_lying_er | m | suspeito: o halter quase não gira e o outro braço sobe acima da cabeça |
 | su_seated_reverse_self_curl | f | feito no Flow (refazer 1), mas não chegou no upload do GitHub (parou em sl_seated_knee_circles.f) |
 | su_seated_reverse_self_curl | m | feito no Flow (refazer 1), mas não chegou no upload do GitHub (parou em sl_seated_knee_circles.f) |
 | su_seated_hammer_self_curl | f | feito no Flow (refazer 1), mas não chegou no upload do GitHub (parou em sl_seated_knee_circles.f) |
@@ -248,6 +280,8 @@ Aquecimento, principais e desaquecimento que o primeiro treino pode mostrar, em 
 | sl_supported_hip_hinge | m | feito no Flow (refazer 1), mas não chegou no upload do GitHub (parou em sl_seated_knee_circles.f) |
 | sl_seated_towel_heel_drag | f | feito no Flow (refazer 1), mas não chegou no upload do GitHub (parou em sl_seated_knee_circles.f) |
 | sl_seated_towel_heel_drag | m | feito no Flow (refazer 1), mas não chegou no upload do GitHub (parou em sl_seated_knee_circles.f) |
+| sl_seated_band_heel_dig_hold | f | só imagem: veio a imagem de partida, sem vídeo |
+| sl_seated_band_heel_dig_hold | m | só imagem: veio a imagem de partida, sem vídeo |
 | stick_external_rotation_stretch | f | faltando: programa de ombro (Fase 30); no lote 8 só vieram imagens x_bad |
 | stick_external_rotation_stretch | m | faltando: programa de ombro (Fase 30); no lote 8 só vieram imagens x_bad |
 | sleeper_stretch | f | suspeito: o braço fica erguido e a outra mão não empurra o antebraço; cor no braço, não atrás do ombro |
@@ -284,6 +318,8 @@ Aquecimento, principais e desaquecimento que o primeiro treino pode mostrar, em 
 | band_chest_press | f | suspeito: o top fica pintado de laranja por cima (roupa pintada) |
 | band_chest_fly | f | suspeito: o top some: o peito aparece pintado, com mamilos (corpo sem roupa) |
 | band_close_grip_press | f | suspeito: aparece texto com nomes de músculos no vídeo |
+| band_lateral_raise | m | só imagem: veio a imagem de partida, sem vídeo |
+| band_high_pull | m | suspeito: cor no peito, que não trabalha na remada alta |
 | partial_sit_to_stand | f | suspeito: aparece o texto "5cm / 6cm" no vídeo |
 | bal_seated_head_turns | m | suspeito: gira o tronco inteiro e a imagem fica transparente (fantasma) |
 | rx_suitcase_hold | f | suspeito: no meio dobra o braço e levanta o halter (é isometria) |

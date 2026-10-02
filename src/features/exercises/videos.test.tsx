@@ -18,8 +18,9 @@ import { demoPoster, demoSexFor, demoVideo } from './videos';
 jest.mock('../../../assets/prototype/videos.js', () => ({
   __label: 'Prototype exercise videos',
   push_up: { f: 101, m: 202, poster: { f: 111, m: 222 } },
-  // A stray man's poster with no man's clip must never show.
-  goblet_squat: { f: 303, poster: { f: 333, m: 999 } },
+  goblet_squat: { f: 303, poster: { f: 333 } },
+  // Daniel, Oct 2: a checked starting image shows alone until its clip is made.
+  band_shrug: { poster: { m: 777 } },
   single_leg_rdl: { f: 404, m: 505 },
   // Web: bundled assets are URLs.
   plank: { m: '/assets/plank.m.mp4', poster: { m: { uri: '/assets/posters/plank.m.webp' } } },
@@ -57,10 +58,13 @@ describe('demoVideo', () => {
     expect(demoVideo('__label', 'f')).toBeNull();
   });
 
-  it('the poster follows the same sex rule, and only next to a clip', () => {
+  it('the poster follows the same sex rule; it can come before its clip', () => {
     expect(demoPoster('push_up', 'f')).toBe(111);
     expect(demoPoster('push_up', 'm')).toBe(222);
     expect(demoPoster('goblet_squat', 'm')).toBeNull();
+    expect(demoPoster('band_shrug', 'm')).toBe(777);
+    expect(demoVideo('band_shrug', 'm')).toBeNull();
+    expect(demoPoster('band_shrug', 'f')).toBeNull();
     expect(demoPoster('single_leg_rdl', 'f')).toBeNull();
     expect(demoPoster('push_up', null)).toBeNull();
   });

@@ -89,6 +89,7 @@ function knownSlugs() {
   return slugs;
 }
 
+const IMAGE_ONLY = 'só imagem: veio a imagem de partida, sem vídeo';
 const ff = (...a) => execFileSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', ...a]);
 const probe = (file) =>
   execFileSync(
@@ -193,6 +194,22 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       encodePoster(join(DIR, c.jpg ?? c.mp4), join(DIR, 'posters', `${key}.webp`), !c.jpg);
       if (qcDir) qcStrip(join(DIR, `${key}.mp4`), join(qcDir, `${key}.jpg`));
     }
+    // An image without its clip (Daniel, Oct 2): its poster shows until the
+    // clip arrives, after the same check (qc.json "posterSuspect" keeps a bad
+    // one out). Never over a clip that is already there.
+    if (encode && !c.mp4 && c.jpg && !existsSync(join(DIR, `${key}.mp4`))) {
+      encodePoster(join(DIR, c.jpg), join(DIR, 'posters', `${key}.webp`), false);
+      if (qcDir)
+        ff(
+          '-i',
+          join(DIR, c.jpg),
+          '-vf',
+          'scale=240:-2',
+          '-q:v',
+          '5',
+          join(qcDir, `${key}.img.jpg`),
+        );
+    }
     if (!dryRun && c.mp4 && existsSync(join(DIR, `${key}.mp4`))) {
       entry.size = bytes(`${key}.mp4`);
       entry.poster = statSync(join(DIR, 'posters', `${key}.webp`)).size;
@@ -208,8 +225,13 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     const missing = { ...qc.missing };
     for (const e of done) {
       if (e.video) delete missing[e.key];
+      else if (qc.posterSuspect?.[e.key])
+        missing[e.key] = `imagem reprovada: ${qc.posterSuspect[e.key]}`;
       else if (!existsSync(join(DIR, `${e.key}.mp4`)))
-        missing[e.key] = 'só imagem: veio a imagem de partida, sem vídeo';
+        // Keep "prioridade alta" (first workout) so media:redo still ranks it first.
+        missing[e.key] = missing[e.key]?.includes('prioridade alta')
+          ? `${IMAGE_ONLY}; ${missing[e.key].replace(`${IMAGE_ONLY}; `, '')}`
+          : IMAGE_ONLY;
     }
     qc.missing = Object.fromEntries(Object.entries(missing).sort());
     writeFileSync(qcFile, `${JSON.stringify(qc, null, 2)}\n`);

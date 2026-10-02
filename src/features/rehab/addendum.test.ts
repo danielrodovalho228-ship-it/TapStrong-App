@@ -16,9 +16,11 @@ import { safetyRefresh, workoutInput } from '../workout/safety';
 import type { WorkoutRecord } from '../workout/types';
 import { addDays } from '@/lib/dates';
 
+import { readFileSync } from 'fs';
+import { join } from 'path';
+
 import qc from '../../../assets/prototype/qc.json';
 import catalog from '../../../supabase/seed/joint_movements.json';
-import { demoPoster, demoVideo } from '../exercises/videos';
 
 import { dailyLayout, dailyPlan, weekCounts, weekdayIndex } from './daily';
 import { buildProgramSession, SHOULDER_PROGRAM as P } from './programs';
@@ -341,15 +343,42 @@ describe('sleeper reminders (§6.2)', () => {
   });
 });
 
+/** What the manifest gives each slug and sex: the clip and poster files (assets are stubs in Jest). */
+const MANIFEST = readFileSync(join(__dirname, '../../../assets/prototype/videos.js'), 'utf8');
+function shown(slug: string, sex: 'f' | 'm') {
+  const line = MANIFEST.split('\n').find((l) => l.startsWith(`  ${JSON.stringify(slug)}:`)) ?? '';
+  return {
+    clip: line.includes(`${sex}: require("./${slug}.`),
+    poster: line.includes(`${sex}: require("./posters/`),
+  };
+}
+
 describe('shoulder clips that failed QC (Daniel, Oct 2)', () => {
   it('never reach the app: no clip and no poster, so the player shows the body map and the steps', () => {
     const shoulder = Object.keys(qc.suspect).filter((k) =>
       P.exercises.some((x) => k.startsWith(`${x.slug}.`)),
     );
-    expect(shoulder).toHaveLength(22);
+    expect(shoulder.length).toBeGreaterThanOrEqual(22);
     for (const key of shoulder) {
       const [slug, sex] = key.split('.') as [string, 'f' | 'm'];
-      expect([key, demoVideo(slug, sex), demoPoster(slug, sex)]).toEqual([key, null, null]);
+      expect([key, shown(slug, sex)]).toEqual([key, { clip: false, poster: false }]);
     }
+  });
+});
+
+describe('posters before the clip (Daniel, Oct 2)', () => {
+  it('a checked image shows alone; a rejected image or a failed clip never does', () => {
+    const { posterSuspect, suspect } = qc as {
+      posterSuspect: Record<string, string>;
+      suspect: Record<string, string>;
+    };
+    expect(Object.keys(posterSuspect).length).toBeGreaterThan(0);
+    for (const key of [...Object.keys(posterSuspect), ...Object.keys(suspect)]) {
+      const [slug, sex] = key.split('.') as [string, 'f' | 'm'];
+      const s = shown(slug, sex);
+      if (!s.clip) expect([key, s.poster]).toEqual([key, false]);
+    }
+    // band_lateral_raise.m: the image came in this batch, the clip did not.
+    expect(shown('band_lateral_raise', 'm')).toEqual({ clip: false, poster: true });
   });
 });

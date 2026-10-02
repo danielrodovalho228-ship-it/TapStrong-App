@@ -37,13 +37,14 @@ export function demoVideo(slug: string, sex: DemoSex | null): DemoMedia | null {
 }
 
 /**
- * The clip's poster (its starting image) for this sex, or null. Only next to
- * a clip of the same sex: never the other sex's picture.
+ * The clip's poster (its starting image) for this sex, or null. Never the
+ * other sex's picture. An exercise whose clip is not made yet can have the
+ * poster alone (Daniel, Oct 2); the manifest only lists checked images.
  */
 export function demoPoster(slug: string, sex: DemoSex | null): DemoMedia | null {
   if (!sex || slug === '__label') return null;
   const entry = manifest()[slug];
-  if (typeof entry !== 'object' || !isMedia(entry[sex])) return null;
+  if (typeof entry !== 'object') return null;
   const source = entry.poster?.[sex];
   return isMedia(source) ? source : null;
 }
