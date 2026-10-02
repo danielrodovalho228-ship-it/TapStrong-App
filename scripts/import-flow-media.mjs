@@ -21,6 +21,14 @@
 //   --delete-raw  git rm the raw files once processed (and the junk)
 // Then look at every QC strip, list the suspects in assets/prototype/qc.json
 // and run npm run prototype:videos and npm run media:redo.
+//
+// The frame-by-frame check: one person, the profile's model (real head and
+// face), the right sex and the move in the cue (pt-BR exercises.<slug>.cues),
+// the equipment it names, no text or labels on the video, no ghosting. Anatomy
+// (Daniel, Oct 2): colour only on the muscles worked, never a painted sleeve
+// or clothing; limbs attached and in proportion; for curls the arm muscle that
+// the variation targets (hammer curl: brachioradialis). Any miss = suspect,
+// never shown in the app.
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
