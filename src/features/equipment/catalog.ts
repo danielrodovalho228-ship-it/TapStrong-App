@@ -59,6 +59,7 @@ export const EQUIPMENT_GROUPS = {
     'yoga_block',
     'jump_rope',
     'towel',
+    'stick',
   ],
   cardio: ['treadmill', 'exercise_bike', 'rower', 'elliptical', 'stair_climber'],
 } as const;
@@ -84,6 +85,7 @@ export const HOME_ITEMS = [
   'stability_ball',
   'foam_roller',
   'yoga_block',
+  'stick',
 ] as const satisfies readonly (typeof EQUIPMENT_GROUPS)[EquipmentGroup][number][];
 export type EquipmentItem = (typeof EQUIPMENT_GROUPS)[EquipmentGroup][number];
 export const ALL_EQUIPMENT: EquipmentItem[] = Object.values(

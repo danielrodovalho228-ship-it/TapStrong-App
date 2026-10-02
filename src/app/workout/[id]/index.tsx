@@ -400,45 +400,55 @@ export default function WorkoutScreen() {
 
       {phaseCard(warm, 'workout.warmup', blockMinutes(warm))}
 
-      {main.map((item) => {
+      {main.map((item, n) => {
         const e = byId.get(item.exerciseId);
         const skipped = workout.skipped.includes(item.id);
+        // A rehab program shows its blocks (Phase 30): stretches, bands, dumbbells.
+        const header =
+          session.program && item.block && item.block !== main[n - 1]?.block ? item.block : null;
         return (
-          <Card key={item.id} style={[styles.exercise, skipped && styles.skipped]}>
-            <ExerciseThumb slug={item.exerciseId} />
-            <View style={styles.rowText}>
-              <AppText variant="bodyStrong">{exerciseName(t, e, item.exerciseId)}</AppText>
-              {e?.custom ? (
-                <AppText variant="caption" color={colors.mutedStrong}>
-                  {t('library.notReviewed')}
-                </AppText>
-              ) : null}
-              <AppText variant="caption" color={colors.mutedStrong}>
-                {skipped
-                  ? t('workout.skipped')
-                  : [doseFor(item, e), loadLabel(item, e)].filter(Boolean).join(' · ')}
+          <View key={item.id} style={styles.block}>
+            {header ? (
+              <AppText variant="h3" accessibilityRole="header">
+                {t(`rehab.blocks.${header}`)}
               </AppText>
-              {/* The same hint as the player, on the list too (QA R8 P2). */}
-              {!skipped && easierFor(item, e) ? (
+            ) : null}
+            <Card style={[styles.exercise, skipped && styles.skipped]}>
+              <ExerciseThumb slug={item.exerciseId} />
+              <View style={styles.rowText}>
+                <AppText variant="bodyStrong">{exerciseName(t, e, item.exerciseId)}</AppText>
+                {e?.custom ? (
+                  <AppText variant="caption" color={colors.mutedStrong}>
+                    {t('library.notReviewed')}
+                  </AppText>
+                ) : null}
                 <AppText variant="caption" color={colors.mutedStrong}>
-                  {t('load.easier')}
+                  {skipped
+                    ? t('workout.skipped')
+                    : [doseFor(item, e), loadLabel(item, e)].filter(Boolean).join(' · ')}
                 </AppText>
-              ) : null}
-              <RangeNote exercise={e} />
-              <Tag
-                label={targetText(t, item, e)}
-                tone={item.role === 'finisher' ? 'teal' : 'accent'}
-              />
-            </View>
-            {swapButton(item, e)}
-          </Card>
+                {/* The same hint as the player, on the list too (QA R8 P2). */}
+                {!skipped && easierFor(item, e) ? (
+                  <AppText variant="caption" color={colors.mutedStrong}>
+                    {t('load.easier')}
+                  </AppText>
+                ) : null}
+                <RangeNote exercise={e} />
+                <Tag
+                  label={targetText(t, item, e)}
+                  tone={item.role === 'finisher' ? 'teal' : 'accent'}
+                />
+              </View>
+              {session.program ? null : swapButton(item, e)}
+            </Card>
+          </View>
         );
       })}
 
       {phaseCard(cool, 'workout.cooldown', blockMinutes(cool))}
 
       <View style={styles.actions}>
-        {planned && session.minutes > SHORT_MINUTES ? (
+        {planned && session.minutes > SHORT_MINUTES && !session.program ? (
           <View style={styles.action}>
             <Button variant="secondary" label={t('workout.only15')} onPress={onlyFifteen} />
           </View>
@@ -520,6 +530,7 @@ const useStyles = makeStyles(() => ({
   phase: { gap: spacing.sm },
   phaseRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   rowText: { flex: 1, gap: spacing.xxs },
+  block: { gap: spacing.sm },
   exercise: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   skipped: { opacity: 0.5 },
   actions: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },

@@ -18499,6 +18499,326 @@
       ],
       "joints": [["lower_back", "extension", "partial"]],
       "rangeLimit": []
+    },
+    {
+      "slug": "pendulum_swing",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "teen",
+      "positions": ["standing", "with_support"],
+      "contraindications": ["recent_surgery"],
+      "pattern": "mobility",
+      "parts": ["main", "warmup_mobility"],
+      "dose": "reps",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["rotatorCuff", "primary", 0.7],
+        ["shoulders", "secondary", 0.5]
+      ],
+      "joints": [
+        ["shoulder", "flexion", "partial"],
+        ["shoulder", "abduction", "partial"]
+      ],
+      "rangeLimit": [],
+      "rehab": true
+    },
+    {
+      "slug": "crossover_arm_stretch",
+      "equipment": [],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "teen",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": ["recent_surgery"],
+      "pattern": "stretch",
+      "parts": ["main", "cooldown_stretch"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["rearDelts", "primary", 0.8],
+        ["rotatorCuff", "secondary", 0.4]
+      ],
+      "joints": [["shoulder", "flexion", "partial"]],
+      "rangeLimit": ["shoulder.flexion"],
+      "rehab": true
+    },
+    {
+      "slug": "stick_internal_rotation_stretch",
+      "equipment": ["stick"],
+      "location": ["home", "gym"],
+      "level": 1,
+      "minAgeBand": "teen",
+      "positions": ["standing", "with_support"],
+      "contraindications": ["recent_surgery"],
+      "pattern": "stretch",
+      "parts": ["main", "cooldown_stretch"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["rotatorCuff", "primary", 0.8],
+        ["shoulders", "secondary", 0.4]
+      ],
+      "joints": [
+        ["shoulder", "internal_rotation", "partial"],
+        ["shoulder", "reach_behind", "partial"]
+      ],
+      "rangeLimit": ["shoulder.internal_rotation"],
+      "rehab": true
+    },
+    {
+      "slug": "stick_external_rotation_stretch",
+      "equipment": ["stick"],
+      "location": ["home", "gym"],
+      "level": 1,
+      "minAgeBand": "teen",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": ["recent_surgery"],
+      "pattern": "stretch",
+      "parts": ["main", "cooldown_stretch"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["rotatorCuff", "primary", 0.8],
+        ["rearDelts", "secondary", 0.3]
+      ],
+      "joints": [["shoulder", "external_rotation", "partial"]],
+      "rangeLimit": ["shoulder.external_rotation"],
+      "rehab": true
+    },
+    {
+      "slug": "sleeper_stretch",
+      "equipment": ["mat"],
+      "location": ["home", "gym"],
+      "level": 1,
+      "minAgeBand": "teen",
+      "positions": ["with_support", "standing"],
+      "contraindications": ["recent_surgery"],
+      "pattern": "stretch",
+      "parts": ["main", "cooldown_stretch"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["rotatorCuff", "primary", 0.8],
+        ["rearDelts", "secondary", 0.5]
+      ],
+      "joints": [["shoulder", "internal_rotation", "partial"]],
+      "rangeLimit": ["shoulder.internal_rotation"],
+      "rehab": true
+    },
+    {
+      "slug": "band_external_rotation_90",
+      "equipment": ["long_bands"],
+      "location": ["home", "gym", "outdoors"],
+      "level": 2,
+      "minAgeBand": "teen",
+      "positions": ["standing", "with_support"],
+      "contraindications": ["recent_surgery"],
+      "pattern": "shoulder_isolation",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["rotatorCuff", "primary", 0.8],
+        ["rearDelts", "secondary", 0.4]
+      ],
+      "joints": [
+        ["shoulder", "external_rotation", "partial"],
+        ["shoulder", "abduction", "isometric"],
+        ["wrist", "grip", "isometric"]
+      ],
+      "rangeLimit": ["shoulder.external_rotation"],
+      "rehab": true
+    },
+    {
+      "slug": "band_internal_rotation",
+      "equipment": ["long_bands"],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "teen",
+      "positions": ["standing", "with_support", "seated_only"],
+      "contraindications": ["recent_surgery"],
+      "pattern": "shoulder_isolation",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": false,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["rotatorCuff", "primary", 0.8],
+        ["chest", "secondary", 0.3]
+      ],
+      "joints": [
+        ["shoulder", "internal_rotation", "partial"],
+        ["wrist", "grip", "partial"]
+      ],
+      "rangeLimit": ["shoulder.internal_rotation"],
+      "rehab": true
+    },
+    {
+      "slug": "kneeling_thumbs_up_raise",
+      "equipment": ["dumbbells"],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "teen",
+      "positions": ["with_support", "standing"],
+      "contraindications": ["recent_surgery"],
+      "pattern": "shoulder_isolation",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": true,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["shoulders", "primary", 0.7],
+        ["rearDelts", "primary", 0.6],
+        ["rotatorCuff", "secondary", 0.5],
+        ["traps", "secondary", 0.4]
+      ],
+      "joints": [
+        ["shoulder", "abduction", "partial"],
+        ["wrist", "grip", "partial"]
+      ],
+      "rangeLimit": ["shoulder.abduction"],
+      "rehab": true
+    },
+    {
+      "slug": "prone_scapula_setting",
+      "equipment": ["mat"],
+      "location": ["home", "gym"],
+      "level": 1,
+      "minAgeBand": "teen",
+      "positions": ["with_support", "standing"],
+      "contraindications": ["recent_surgery"],
+      "pattern": "shoulder_isolation",
+      "parts": ["main"],
+      "dose": "time",
+      "loaded": false,
+      "unilateral": false,
+      "impact": 0,
+      "muscles": [
+        ["upperBack", "primary", 0.7],
+        ["traps", "secondary", 0.5]
+      ],
+      "joints": [["shoulder", "pull", "isometric"]],
+      "rangeLimit": [],
+      "rehab": true
+    },
+    {
+      "slug": "prone_table_scapular_retraction",
+      "equipment": ["dumbbells"],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "teen",
+      "positions": ["with_support", "standing"],
+      "contraindications": ["recent_surgery"],
+      "pattern": "horizontal_pull",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": true,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["upperBack", "primary", 0.8],
+        ["traps", "secondary", 0.5]
+      ],
+      "joints": [
+        ["shoulder", "pull", "partial"],
+        ["wrist", "grip", "partial"]
+      ],
+      "rangeLimit": ["shoulder.pull"],
+      "rehab": true
+    },
+    {
+      "slug": "prone_horizontal_abduction",
+      "equipment": ["dumbbells"],
+      "location": ["home", "gym", "outdoors"],
+      "level": 1,
+      "minAgeBand": "teen",
+      "positions": ["with_support", "standing"],
+      "contraindications": ["recent_surgery"],
+      "pattern": "shoulder_isolation",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": true,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["rearDelts", "primary", 0.8],
+        ["upperBack", "primary", 0.6],
+        ["rotatorCuff", "secondary", 0.4]
+      ],
+      "joints": [
+        ["shoulder", "abduction", "partial"],
+        ["wrist", "grip", "partial"]
+      ],
+      "rangeLimit": ["shoulder.abduction"],
+      "rehab": true
+    },
+    {
+      "slug": "supine_shoulder_rotation_90",
+      "equipment": ["dumbbells", "mat"],
+      "location": ["home", "gym"],
+      "level": 1,
+      "minAgeBand": "teen",
+      "positions": ["with_support", "standing"],
+      "contraindications": ["recent_surgery"],
+      "pattern": "shoulder_isolation",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": true,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["rotatorCuff", "primary", 0.8],
+        ["rearDelts", "secondary", 0.3],
+        ["chest", "secondary", 0.2]
+      ],
+      "joints": [
+        ["shoulder", "external_rotation", "partial"],
+        ["shoulder", "internal_rotation", "partial"],
+        ["shoulder", "abduction", "isometric"],
+        ["wrist", "grip", "partial"]
+      ],
+      "rangeLimit": ["shoulder.external_rotation", "shoulder.internal_rotation"],
+      "rehab": true
+    },
+    {
+      "slug": "side_lying_internal_rotation",
+      "equipment": ["dumbbells", "mat"],
+      "location": ["home", "gym"],
+      "level": 1,
+      "minAgeBand": "teen",
+      "positions": ["with_support", "standing"],
+      "contraindications": ["recent_surgery"],
+      "pattern": "shoulder_isolation",
+      "parts": ["main"],
+      "dose": "reps",
+      "loaded": true,
+      "unilateral": true,
+      "impact": 0,
+      "muscles": [
+        ["rotatorCuff", "primary", 0.8],
+        ["chest", "secondary", 0.2]
+      ],
+      "joints": [
+        ["shoulder", "internal_rotation", "partial"],
+        ["wrist", "grip", "partial"]
+      ],
+      "rangeLimit": ["shoulder.internal_rotation"],
+      "rehab": true
     }
   ]
 }

@@ -143,7 +143,17 @@ export type SessionItem = {
   range?: 'reduced' | 'isometric';
   /** Sets already done with earlier exercises before a swap. */
   replaced?: { exerciseId: string; setsDone: number }[];
+  /** A fixed program (Phase 30): each hold set runs as a countdown, then `restSeconds`. */
+  countdown?: boolean;
+  /** One-sided program work, in order; `sets` is split evenly between them. */
+  sides?: ProgramSideKey[];
+  /** A program note under the cues (i18n key), e.g. "only if you can lift the arm". */
+  noteKey?: string;
+  /** Program block, for the headers in the workout list. */
+  block?: 'warmup' | 'stretch' | 'band' | 'dumbbell' | 'stretch_end';
 };
+
+export type ProgramSideKey = 'right' | 'left';
 
 export type GeneratorNote =
   | { key: 'generator.notes.balance'; groups: MovementGroup[] }
@@ -185,6 +195,8 @@ export type GeneratedSession = {
   addedExercises?: number;
   /** "Legs next time" chosen when this workout was built; "+1" and rebuilds keep it (QA R10 P2). */
   groupFocus?: MovementGroup;
+  /** A session of a fixed program (Phase 30): which one, and the week it belongs to. */
+  program?: { id: string; session: string; week: number };
   /** Set when no safe session can be built. */
   error?: 'no_library' | 'no_warmup' | 'no_cooldown' | 'no_main' | 'all_recovering' | 'weekly_cap';
 };

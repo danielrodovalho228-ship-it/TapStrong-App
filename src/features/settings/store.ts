@@ -105,9 +105,12 @@ export function restFor(
     holdSeconds?: [number, number];
     restSeconds: number;
     role: string;
+    countdown?: boolean;
   },
   prefs: Pick<Prefs, 'restStrength' | 'restHold'>,
 ): number {
+  // A program stretch keeps its prescribed rest (Phase 30: 30 s hold, 30 s rest).
+  if (item.countdown) return item.restSeconds;
   if (item.role !== 'main' || item.restSeconds <= 0) return item.restSeconds;
   if (item.holdSeconds && !item.reps) return prefs.restHold;
   return prefs.restStrength ?? item.restSeconds;

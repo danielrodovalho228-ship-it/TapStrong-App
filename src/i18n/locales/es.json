@@ -266,7 +266,8 @@
     "exercise_bike": "Bicicleta estática",
     "rower": "Remo ergómetro",
     "elliptical": "Elíptica",
-    "stair_climber": "Escaladora"
+    "stair_climber": "Escaladora",
+    "stick": "Bastón ligero (palo de escoba)"
   },
   "sex": {
     "m": "Hombre",
@@ -3511,6 +3512,58 @@
     "st_seated_behind_back_triceps": {
       "name": "Estiramiento de tríceps sentado detrás de la espalda",
       "cues": "Siéntate erguido, apoya el dorso de una mano en la zona lumbar y lleva ese codo suavemente hacia delante con la otra mano. Respira; cambia de lado."
+    },
+    "pendulum_swing": {
+      "name": "Péndulo",
+      "cues": "Inclínate hacia delante con una mano apoyada en una mesa y deja el otro brazo colgando suelto. Mueve el cuerpo para que el brazo se balancee despacio hacia delante y atrás, luego de lado y en pequeños círculos; cambia de brazo. Espalda recta y rodillas un poco flexionadas."
+    },
+    "crossover_arm_stretch": {
+      "name": "Estiramiento cruzado del brazo",
+      "cues": "Relaja los hombros. Con la otra mano en el brazo, justo encima del codo, lleva el brazo cruzando el pecho hasta sentir el estiramiento detrás del hombro. Mantén 30 s, suelta 30 s. No tires del codo."
+    },
+    "stick_internal_rotation_stretch": {
+      "name": "Rotación interna pasiva con bastón",
+      "cues": "Sujeta un bastón ligero detrás de la espalda, a la altura de la cadera, con las dos manos. Con la mano del lado sano, tira del bastón hacia el lado hasta sentir un tirón suave, sin dolor, en el hombro afectado. Mantén 30 s, suelta 30 s. No inclines ni gires el tronco."
+    },
+    "stick_external_rotation_stretch": {
+      "name": "Rotación externa pasiva con bastón",
+      "cues": "Codo del lado afectado pegado al cuerpo y doblado a 90°. Sujeta un extremo de un bastón ligero con esa mano y el otro con la mano sana. Empuja el bastón hacia el lado afectado, girando el antebrazo hacia fuera, hasta sentir un tirón suave, sin dolor. Mantén 30 s, suelta 30 s. Cadera mirando al frente."
+    },
+    "sleeper_stretch": {
+      "name": "Estiramiento del durmiente",
+      "cues": "Túmbate sobre el lado afectado con una almohada bajo la cabeza. Brazo de abajo delante, codo doblado a 90° y mano hacia arriba. Con la otra mano, empuja despacio el antebrazo hacia el suelo hasta sentir el estiramiento detrás del hombro. Mantén 30 s, suelta 30 s. Empuja el antebrazo, nunca la muñeca, y no dobles la muñeca."
+    },
+    "band_external_rotation_90": {
+      "name": "Rotación externa con el brazo a 90°",
+      "cues": "Banda sujeta delante. Brazo separado a la altura del hombro, codo a 90° y mano hacia delante. Gira la mano hacia arriba hasta quedar en línea con la cabeza, sin bajar el codo; vuelve despacio. El codo siempre a la altura del hombro."
+    },
+    "band_internal_rotation": {
+      "name": "Rotación interna con banda, codo pegado",
+      "cues": "Banda sujeta al lado, a la altura del codo. Codo pegado al cuerpo y doblado a 90°. Lleva la mano hacia dentro, por delante del abdomen; vuelve despacio. Mantén el codo apretado contra el cuerpo."
+    },
+    "kneeling_thumbs_up_raise": {
+      "name": "Elevación lateral con pulgar arriba en banco",
+      "cues": "Una rodilla y una mano apoyadas en un banco o silla, espalda recta. El otro brazo cuelga con una mancuerna ligera. Sube el brazo hacia el lado hasta la altura del hombro, girando la mano hasta que el pulgar quede arriba; baja en 5 tiempos. Usa un peso que haga difíciles las últimas repeticiones, pero sin dolor."
+    },
+    "prone_scapula_setting": {
+      "name": "Activación de escápulas boca abajo",
+      "cues": "Túmbate boca abajo con los brazos a los lados (almohada en la frente si hace falta). Junta las escápulas y llévalas hacia abajo, suelta hasta la mitad y mantén 10 s; relaja y repite. No tenses el cuello."
+    },
+    "prone_table_scapular_retraction": {
+      "name": "Retracción escapular boca abajo en la cama",
+      "cues": "Túmbate boca abajo en una cama o mesa firme con el brazo afectado colgando por el borde, codo estirado. Sube el peso solo juntando la escápula hacia la columna; baja despacio. No subas el hombro hacia la oreja."
+    },
+    "prone_horizontal_abduction": {
+      "name": "Abducción horizontal boca abajo",
+      "cues": "Túmbate boca abajo en una cama o mesa con el brazo afectado colgando. Con el brazo estirado, súbelo hacia el lado hasta la altura de los ojos; baja despacio y con control."
+    },
+    "supine_shoulder_rotation_90": {
+      "name": "Rotación de hombro boca arriba a 90°",
+      "cues": "Boca arriba, brazo separado a la altura del hombro, codo a 90° y dedos hacia arriba. Con el codo en el suelo, gira el antebrazo hacia delante y atrás en un arco. Si a 90° duele, baja el codo a 45°. Usa un peso que haga difíciles las últimas repeticiones, pero sin dolor."
+    },
+    "side_lying_internal_rotation": {
+      "name": "Rotación interna de lado",
+      "cues": "Túmbate sobre el lado afectado con una almohada o toalla doblada bajo la cabeza. Codo de abajo junto al cuerpo y doblado a 90°. Gira el antebrazo hacia arriba, hacia el abdomen, hasta quedar vertical; baja despacio. No dejes que el cuerpo ruede hacia atrás."
     }
   },
   "generator": {
@@ -5463,5 +5516,107 @@
     "appStore": "Descargar en App Store",
     "playStore": "Disponible en Google Play",
     "open": "Abrir TapStrong"
+  },
+  "rehab": {
+    "category": "Rehabilitación",
+    "categoryBody": "Programas guiados para volver a moverte con seguridad.",
+    "entryBody": "Hombro: movilidad y fuerza",
+    "notes": {
+      "pendulum": "Haz 10 en cada dirección: adelante y atrás, de lado y en círculos.",
+      "sleeper": "Lo ideal es 3 veces al día, todos los días.",
+      "cable": "También puedes hacerlo en la máquina de poleas del gimnasio, con orientación.",
+      "overhead": "Hazlo solo si puedes levantar el brazo sin dolor.",
+      "supine": "Si duele con el brazo a 90°, baja el codo a 45°."
+    },
+    "side": {
+      "right": "Lado derecho",
+      "left": "Lado izquierdo"
+    },
+    "player": {
+      "sideSet": "{{side}} · {{n}} de {{total}}",
+      "holdOf": "Mantén {{n}} de {{total}}"
+    },
+    "load": {
+      "start": "Empieza con la banda más suave o con 0,5 a 1 kg (1 a 2 lb). Marca “Fácil” solo si la serie fue fácil y sin dolor.",
+      "easyHint": "Marca “Fácil” si la serie fue fácil y sin dolor. Dos sesiones así permiten un poco más de carga.",
+      "raise": "Dos sesiones fáciles y sin dolor: puedes subir unos 0,5 kg (1 lb) y volver a {{reps}} repeticiones.",
+      "raiseBand": "Dos sesiones fáciles y sin dolor: puedes usar una banda un poco más fuerte y volver a {{reps}} repeticiones.",
+      "raiseButton": "Subí la carga",
+      "raiseBandButton": "Cambié la banda",
+      "raised": "Hecho: desde ahora, {{reps}} repeticiones con la carga nueva.",
+      "pain": "Sentiste dolor esta semana: mantén la misma carga y habla con tu médico o fisioterapeuta."
+    },
+    "programs": {
+      "shoulder_mobility_strength": {
+        "title": "Hombro: movilidad y fuerza",
+        "body": "Estiramientos y fortalecimiento suave para el hombro, durante 4 a 6 semanas.",
+        "source": "Basado en el programa de acondicionamiento de hombro de la AAOS — OrthoInfo."
+      }
+    },
+    "tags": {
+      "frozen": "Hombro congelado",
+      "capsulitis": "Capsulitis adhesiva",
+      "cuff": "Manguito rotador",
+      "injury": "Tras una lesión"
+    },
+    "safety": {
+      "title": "Antes de empezar",
+      "followUp": "Este programa debe hacerse con el seguimiento de tu médico o fisioterapeuta. Pregúntale qué ejercicios son para ti.",
+      "noPain": "No debe doler. Si duele durante el ejercicio, para y habla con tu médico o fisioterapeuta.",
+      "load": "Empieza con la banda más suave o con 0,5 a 1 kg (1 a 2 lb). Sube poco a poco (unos 0,5 kg cada vez) solo cuando las series sean fáciles y sin dolor. Al subir la carga, vuelve al número menor de repeticiones.",
+      "painButton": "Cada ejercicio tiene el botón “Siento dolor”: pausa, sugiere menos amplitud o menos peso y marca el ejercicio para revisar.",
+      "accept": "Entendido, empezar",
+      "close": "Cerrar"
+    },
+    "educational": "Este contenido es educativo y no sustituye la orientación de tu médico o fisioterapeuta.",
+    "minor": "Úsalo con la orientación de tu fisioterapeuta.",
+    "help": "Reglas de seguridad",
+    "sideQuestion": "¿Qué hombro está afectado?",
+    "sideOptions": {
+      "right": "Derecho",
+      "left": "Izquierdo",
+      "both": "Los dos"
+    },
+    "sideNote": "Los ejercicios de un brazo usan solo este lado. Los estiramientos 1–4 se hacen en los dos lados.",
+    "sideCurrent": "Hombro afectado: {{side}}",
+    "changeSide": "Cambiar",
+    "week": "Semana {{week}} de {{total}}",
+    "calendar": "Tus semanas",
+    "calendarWeek": "S{{n}}",
+    "calendarDone": "{{count}} sesiones hechas",
+    "today": "Hoy: sesión {{session}}",
+    "restToday": "Hoy toca descanso. Aun así puedes hacer una sesión si quieres.",
+    "sessions": {
+      "A": {
+        "title": "A — Movilidad",
+        "body": "Solo estiramientos 1–5 · 5 a 6 días por semana"
+      },
+      "B": {
+        "title": "B — Fuerza con banda",
+        "body": "Calentamiento, estiramientos, banda 6–9, estiramientos · 3 días por semana"
+      },
+      "C": {
+        "title": "C — Fuerza con mancuerna ligera",
+        "body": "Calentamiento, estiramientos, mancuerna 10–18, estiramientos · 3 días por semana"
+      }
+    },
+    "startSession": "Empezar la sesión {{session}}",
+    "otherSessions": "Otras sesiones",
+    "startProgram": "Empezar el programa",
+    "maintenanceOffer": "Completaste las 6 semanas. ¿Sigues en modo mantenimiento, 2 a 3 veces por semana?",
+    "maintenanceYes": "Seguir en mantenimiento",
+    "maintenanceOn": "Mantenimiento: 2 a 3 veces por semana.",
+    "review": "Para revisar con tu fisioterapeuta",
+    "reviewDone": "Revisado",
+    "unavailable": "Algunos ejercicios de este programa siguen en revisión, así que todavía no puede empezar.",
+    "stop": "Dejar el programa",
+    "blocks": {
+      "warmup": "Calentamiento",
+      "stretch": "Estiramientos",
+      "band": "Fuerza con banda",
+      "dumbbell": "Fuerza con mancuerna ligera",
+      "stretch_end": "Estiramientos otra vez"
+    },
+    "painNote": "Para este ejercicio. La próxima vez, usa menos amplitud o menos peso. Lo marcamos para revisar con tu médico o fisioterapeuta."
   }
 }

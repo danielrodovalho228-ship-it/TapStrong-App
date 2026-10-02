@@ -157,6 +157,8 @@ export default function ProgressScreen() {
           label={t('progress.links.repair')}
           onPress={() => router.push('/repair')}
         />
+        {/* Rehabilitation programs (Phase 30): "Shoulder: mobility and strength". */}
+        <LinkRow icon="body" label={t('rehab.category')} onPress={() => router.push('/rehab')} />
         <LinkRow
           icon="alert"
           label={t('progress.links.restrictions')}

@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppText, Button, Card, Checkbox, Chip, Notice } from '@/components/ui';
 import { swapItem } from '@/features/generator';
+import { useRehabStore } from '@/features/rehab/store';
 import { useRestrictionsStore } from '@/features/restrictions/store';
 import { ExerciseThumb } from '@/features/workout/components/Media';
 import { currentStep, setsLogged } from '@/features/workout/flow';
@@ -21,6 +22,7 @@ import {
 import { useWorkoutStore } from '@/features/workout/store';
 import type { PainAction, PainType } from '@/features/workout/types';
 import { track } from '@/lib/analytics';
+import { clock } from '@/lib/clock';
 import { colors, fonts, makeStyles, radius, spacing, useColors } from '@/theme';
 
 /** Mockup 21 — pain during a set (SPEC §2.2, §9 /workout/[id]/pain). */
@@ -30,7 +32,8 @@ export default function PainScreen() {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { workout, input } = useWorkout(id);
+  const { workout, input, byId } = useWorkout(id);
+  const markReview = useRehabStore((s) => s.markReview);
   const store = useWorkoutStore();
   const addRestriction = useRestrictionsStore((s) => s.add);
   const [spotKey, setSpotKey] = useState<string | null>(null);
@@ -42,8 +45,13 @@ export default function PainScreen() {
 
   const spot = PAIN_SPOTS.find((s) => s.key === spotKey);
   const plan = type ? planFor(type) : null;
+  // A rehab program (Phase 30) keeps its exercises: no swap, the exercise is
+  // marked to review and the person is told to use less range or weight.
+  const program = workout.session.program;
   const swap =
-    spot && plan === 'swap' ? painSwap(workout.session, step.item.id, input, spot.area) : null;
+    spot && plan === 'swap' && !program
+      ? painSwap(workout.session, step.item.id, input, spot.area)
+      : null;
   const canSave = !!spot && spot.area !== 'other' && plan !== 'rest';
   const spotLabel = spot ? t(`workout.pain.spots.${spot.key as 'neck'}`) : '';
 
@@ -57,6 +65,8 @@ export default function PainScreen() {
       type,
       action,
     });
+    const slug = byId.get(step.item.exerciseId)?.slug;
+    if (program && slug) markReview(program.id, slug, clock.now().toISOString());
     // Health details never go to analytics — only the pain type (SPEC §10).
     track('pain_reported', { type });
     if (canSave && save && spot.area !== 'other') {
@@ -134,7 +144,9 @@ export default function PainScreen() {
             </Notice>
           ) : null}
 
-          {spot && plan === 'swap' ? (
+          {spot && type && program ? <Notice tone="warning">{t('rehab.painNote')}</Notice> : null}
+
+          {spot && plan === 'swap' && !program ? (
             swap ? (
               <>
                 <AppText variant="caption" style={styles.caps}>

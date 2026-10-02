@@ -7,6 +7,7 @@ import { initialOnboarding, useOnboardingStore, type OnboardingData } from '../o
 import { usePlacesStore, type Place } from '../equipment/store';
 import { initialLibrary, useLibraryStore, type LibraryData } from '../library/store';
 import { useProgramStore } from '../program/store';
+import { useRehabStore, type RehabData } from '../rehab/store';
 import { useMomentsStore, type StoredMoment } from '../moments/store';
 import { useShareStore, type ShareLink } from '../share/store';
 import { initialProgress, useProgressStore, type ProgressData } from '../progress/store';
@@ -29,6 +30,7 @@ type Snapshot = {
   progress?: ProgressData;
   movementPain?: MovementPain[];
   program?: { planId: string | null; startedAt: string | null };
+  rehab?: RehabData['runs'];
   library?: LibraryData;
   places?: { places: Place[]; activeId: string | null };
   prefs?: Prefs;
@@ -77,6 +79,7 @@ function capture(): Snapshot {
     shareLinks: useShareStore.getState().links,
     movementPain: useMovementPainStore.getState().reports,
     program: (({ planId, startedAt }) => ({ planId, startedAt }))(useProgramStore.getState()),
+    rehab: useRehabStore.getState().runs,
     library: (({ favourites, notes, goals, custom }) => ({ favourites, notes, goals, custom }))(
       useLibraryStore.getState(),
     ),
@@ -144,6 +147,7 @@ function load(snapshot: Snapshot | null, seed: Partial<OnboardingData>) {
     planId: snapshot?.program?.planId ?? null,
     startedAt: snapshot?.program?.startedAt ?? null,
   });
+  useRehabStore.setState({ runs: snapshot?.rehab ?? {} });
 }
 
 /** The owner's own profile, registered the first time the family is used. */

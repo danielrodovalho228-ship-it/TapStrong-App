@@ -15,11 +15,14 @@ const range = ([a, b]: [number, number]) => (a === b ? `${a}` : `${a}–${b}`);
 
 /** "3 × 8–10", "2 × 30–45 s each side", "3 min". */
 export function doseText(t: TFunction, item: SessionItem): string {
-  const side = item.perSide ? ` ${t('workout.eachSide')}` : '';
-  if (item.reps) return `${item.sets} × ${range(item.reps)}${side}`;
+  // A program item split by side (Phase 30): "4 × 30 s each side".
+  const sides = item.sides?.length ?? 1;
+  const side = item.perSide || sides > 1 ? ` ${t('workout.eachSide')}` : '';
+  const setCount = Math.round(item.sets / sides);
+  if (item.reps) return `${setCount} × ${range(item.reps)}${side}`;
   if (item.holdSeconds) {
     const hold = t('workout.seconds', { value: range(item.holdSeconds) });
-    return item.sets > 1 ? `${item.sets} × ${hold}${side}` : `${hold}${side}`;
+    return setCount > 1 ? `${setCount} × ${hold}${side}` : `${hold}${side}`;
   }
   return durationText(t, item.durationSeconds ?? 0);
 }

@@ -10,7 +10,9 @@ import { useMonthStore } from '../month/store';
 import { useOnboardingStore } from '../onboarding/store';
 import { deleteAllPhotos } from '../progress/photos';
 import { useMovementPainStore } from '../movement/store';
+import { useProgramStore } from '../program/store';
 import { useProgressStore } from '../progress/store';
+import { useRehabStore } from '../rehab/store';
 import { useRestrictionsStore } from '../restrictions/store';
 import { useWorkoutStore } from '../workout/store';
 
@@ -29,6 +31,9 @@ export function wipeLocalData() {
   useBillingStore.getState().reset();
   useProgressStore.getState().reset();
   useMovementPainStore.getState().reset();
+  // Rehab programs are health data too (Phase 30); the ready plan with them.
+  useRehabStore.getState().reset();
+  useProgramStore.getState().reset();
   useMonthStore.getState().reset();
   useMomentsStore.getState().reset();
   useShareStore.getState().reset();

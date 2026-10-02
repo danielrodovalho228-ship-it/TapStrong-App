@@ -266,7 +266,8 @@
     "exercise_bike": "Bicicleta ergométrica",
     "rower": "Remo ergômetro",
     "elliptical": "Elíptico",
-    "stair_climber": "Simulador de escada"
+    "stair_climber": "Simulador de escada",
+    "stick": "Bastão leve (cabo de vassoura)"
   },
   "sex": {
     "m": "Homem",
@@ -3512,6 +3513,58 @@
     "st_seated_behind_back_triceps": {
       "name": "Alongamento de tríceps sentado atrás das costas",
       "cues": "Sente-se ereto, apoie o dorso de uma mão na lombar e leve esse cotovelo para a frente com a outra mão, com suavidade. Respire; troque de lado."
+    },
+    "pendulum_swing": {
+      "name": "Pêndulo",
+      "cues": "Incline o tronco à frente com uma mão apoiada na mesa e deixe o outro braço pendurado e solto. Mova o corpo para o braço balançar devagar para frente e para trás, depois de lado e em pequenos círculos; troque de braço. Costas retas e joelhos levemente dobrados."
+    },
+    "crossover_arm_stretch": {
+      "name": "Alongamento cruzado do braço",
+      "cues": "Ombros relaxados. Com a outra mão no braço, logo acima do cotovelo, leve o braço cruzando o peito até sentir o alongamento atrás do ombro. Segure 30 s, solte 30 s. Não puxe pelo cotovelo."
+    },
+    "stick_internal_rotation_stretch": {
+      "name": "Rotação interna passiva com bastão",
+      "cues": "Segure um bastão leve atrás das costas, na altura do quadril, com as duas mãos. Com a mão do lado bom, puxe o bastão para o lado até sentir um puxão leve, sem dor, no ombro afetado. Segure 30 s, solte 30 s. Não incline nem gire o tronco."
+    },
+    "stick_external_rotation_stretch": {
+      "name": "Rotação externa passiva com bastão",
+      "cues": "Cotovelo do lado afetado colado ao corpo e dobrado a 90°. Segure uma ponta do bastão com essa mão e a outra ponta com a mão do lado bom. Empurre o bastão para o lado afetado, girando o antebraço para fora, até sentir um puxão leve, sem dor. Segure 30 s, solte 30 s. Quadril virado para frente, sem girar o tronco."
+    },
+    "sleeper_stretch": {
+      "name": "Sleeper stretch (alongamento deitado de lado)",
+      "cues": "Deite sobre o lado afetado, com travesseiro sob a cabeça. Braço de baixo à frente, com o cotovelo dobrado a 90° e a mão para cima. Com a outra mão, empurre devagar o antebraço para baixo, em direção ao chão, até sentir o alongamento atrás do ombro. Segure 30 s, solte 30 s. Empurre pelo antebraço, nunca pelo punho, e não dobre o punho."
+    },
+    "band_external_rotation_90": {
+      "name": "Rotação externa com o braço a 90°",
+      "cues": "Elástico preso à frente. Braço afastado do corpo na altura do ombro, cotovelo a 90° e mão para frente. Gire a mão para cima até ficar na linha da cabeça, sem baixar o cotovelo; volte devagar. O cotovelo fica sempre na linha do ombro."
+    },
+    "band_internal_rotation": {
+      "name": "Rotação interna com elástico, cotovelo colado",
+      "cues": "Elástico preso ao lado, na altura do cotovelo. Cotovelo colado ao corpo e dobrado a 90°. Leve a mão para dentro, na frente da barriga; volte devagar. Cotovelo pressionado contra o corpo."
+    },
+    "kneeling_thumbs_up_raise": {
+      "name": "Elevação com polegar para cima no banco",
+      "cues": "Um joelho e uma mão apoiados no banco ou cadeira, costas retas. O outro braço pendurado, segurando o halter leve. Levante o braço para o lado até a altura do ombro, girando a mão até o polegar ficar para cima; desça em 5 tempos. Use um peso que deixe as últimas repetições difíceis, mas sem dor."
+    },
+    "prone_scapula_setting": {
+      "name": "Ativação das escápulas, deitado de bruços",
+      "cues": "Deitado de bruços, braços ao lado do corpo (travesseiro na testa, se precisar). Aproxime as escápulas e leve-as para baixo; relaxe até a metade e segure 10 s; relaxe e repita. Não tensione o pescoço."
+    },
+    "prone_table_scapular_retraction": {
+      "name": "Retração da escápula deitado na cama",
+      "cues": "Deitado de bruços numa cama ou mesa firme, com o braço afetado pendurado para fora e o cotovelo esticado. Levante o peso só apertando a escápula em direção à coluna; volte devagar. Não encolha o ombro em direção à orelha."
+    },
+    "prone_horizontal_abduction": {
+      "name": "Abdução horizontal deitado de bruços",
+      "cues": "Deitado de bruços na cama ou mesa, com o braço afetado pendurado. Braço esticado, levante-o para o lado até a altura dos olhos; desça devagar, controlando a descida."
+    },
+    "supine_shoulder_rotation_90": {
+      "name": "Rotação do ombro deitado de costas a 90°",
+      "cues": "Deitado de costas, braço afastado na altura do ombro, cotovelo dobrado a 90° e dedos para cima. Mantendo o cotovelo no chão, gire o antebraço para frente e para trás num arco; se doer a 90°, baixe o cotovelo para 45°. Use um peso que deixe as últimas repetições difíceis, mas sem dor."
+    },
+    "side_lying_internal_rotation": {
+      "name": "Rotação interna deitado de lado",
+      "cues": "Deitado sobre o lado afetado, com travesseiro ou toalha dobrada sob a cabeça. Cotovelo de baixo junto ao corpo e dobrado a 90°. Gire o antebraço para cima, em direção à barriga, até ficar na vertical; desça devagar. Não deixe o corpo rolar para trás."
     }
   },
   "generator": {
@@ -5524,5 +5577,107 @@
     "appStore": "Baixar na App Store",
     "playStore": "Disponível no Google Play",
     "open": "Abrir o TapStrong"
+  },
+  "rehab": {
+    "category": "Reabilitação",
+    "categoryBody": "Programas guiados para voltar a se mexer com segurança.",
+    "entryBody": "Ombro: mobilidade e força",
+    "notes": {
+      "pendulum": "Faça 10 em cada direção: frente e trás, de lado e em círculos.",
+      "sleeper": "O ideal é 3 vezes por dia, todos os dias.",
+      "cable": "Pode fazer também na máquina de cabos da academia, com orientação.",
+      "overhead": "Faça só se conseguir levantar o braço sem dor.",
+      "supine": "Se doer com o braço a 90°, baixe o cotovelo para 45°."
+    },
+    "side": {
+      "right": "Lado direito",
+      "left": "Lado esquerdo"
+    },
+    "player": {
+      "sideSet": "{{side}} · {{n}} de {{total}}",
+      "holdOf": "Segure {{n}} de {{total}}"
+    },
+    "load": {
+      "start": "Comece com o elástico mais leve ou com 0,5 a 1 kg (1 a 2 lb). Marque “Fácil” só se a série foi fácil e sem dor.",
+      "easyHint": "Marque “Fácil” se a série foi fácil e sem dor. Duas sessões assim liberam um pouco mais de carga.",
+      "raise": "Duas sessões fáceis e sem dor: pode subir cerca de 0,5 kg (1 lb) e voltar para {{reps}} repetições.",
+      "raiseBand": "Duas sessões fáceis e sem dor: pode usar um elástico um pouco mais forte e voltar para {{reps}} repetições.",
+      "raiseButton": "Subi a carga",
+      "raiseBandButton": "Troquei o elástico",
+      "raised": "Combinado: a partir de agora, {{reps}} repetições com a carga nova.",
+      "pain": "Você sentiu dor nesta semana: mantenha a mesma carga e fale com o seu médico ou fisioterapeuta."
+    },
+    "programs": {
+      "shoulder_mobility_strength": {
+        "title": "Ombro: mobilidade e força",
+        "body": "Alongamentos e fortalecimento leve para o ombro, de 4 a 6 semanas.",
+        "source": "Baseado no programa de condicionamento de ombro da AAOS — OrthoInfo."
+      }
+    },
+    "tags": {
+      "frozen": "Ombro congelado",
+      "capsulitis": "Capsulite adesiva",
+      "cuff": "Manguito rotador",
+      "injury": "Pós-lesão"
+    },
+    "safety": {
+      "title": "Antes de começar",
+      "followUp": "Este programa deve ser feito com acompanhamento do seu médico ou fisioterapeuta. Pergunte a ele quais exercícios são para você.",
+      "noPain": "Não deve doer. Se doer durante o exercício, pare e fale com o seu médico ou fisioterapeuta.",
+      "load": "Comece com o elástico mais leve ou com 0,5 a 1 kg (1 a 2 lb). Suba aos poucos (cerca de 0,5 kg por vez) só quando as séries ficarem fáceis e sem dor. Ao subir a carga, volte ao número menor de repetições.",
+      "painButton": "Em todo exercício há o botão “Sinto dor”: ele pausa, sugere diminuir a amplitude ou o peso e marca o exercício para revisar.",
+      "accept": "Entendi, começar",
+      "close": "Fechar"
+    },
+    "educational": "Este conteúdo é educativo e não substitui a orientação do seu médico ou fisioterapeuta.",
+    "minor": "Use com orientação do fisioterapeuta.",
+    "help": "Regras de segurança",
+    "sideQuestion": "Qual ombro é o afetado?",
+    "sideOptions": {
+      "right": "Direito",
+      "left": "Esquerdo",
+      "both": "Os dois"
+    },
+    "sideNote": "Os exercícios de um braço usam só esse lado. Os alongamentos 1–4 são feitos dos dois lados.",
+    "sideCurrent": "Ombro afetado: {{side}}",
+    "changeSide": "Trocar",
+    "week": "Semana {{week}} de {{total}}",
+    "calendar": "Suas semanas",
+    "calendarWeek": "S{{n}}",
+    "calendarDone": "{{count}} sessões feitas",
+    "today": "Hoje: sessão {{session}}",
+    "restToday": "Hoje é dia de descanso. Se quiser, pode fazer uma sessão mesmo assim.",
+    "sessions": {
+      "A": {
+        "title": "A — Mobilidade",
+        "body": "Só os alongamentos 1–5 · 5 a 6 dias por semana"
+      },
+      "B": {
+        "title": "B — Força com elástico",
+        "body": "Aquecimento, alongamentos, elástico 6–9 e alongamentos · 3 dias por semana"
+      },
+      "C": {
+        "title": "C — Força com halter leve",
+        "body": "Aquecimento, alongamentos, halter 10–18 e alongamentos · 3 dias por semana"
+      }
+    },
+    "startSession": "Começar a sessão {{session}}",
+    "otherSessions": "Outras sessões",
+    "startProgram": "Começar o programa",
+    "maintenanceOffer": "Você completou as 6 semanas. Quer seguir no modo manutenção, 2 a 3 vezes por semana?",
+    "maintenanceYes": "Seguir na manutenção",
+    "maintenanceOn": "Modo manutenção: 2 a 3 vezes por semana.",
+    "review": "Para revisar com o seu fisioterapeuta",
+    "reviewDone": "Revisado",
+    "unavailable": "Alguns exercícios deste programa ainda estão em revisão, então ele ainda não pode começar.",
+    "stop": "Parar o programa",
+    "blocks": {
+      "warmup": "Aquecimento",
+      "stretch": "Alongamentos",
+      "band": "Fortalecimento com elástico",
+      "dumbbell": "Fortalecimento com halter leve",
+      "stretch_end": "Alongamentos de novo"
+    },
+    "painNote": "Pare este exercício. Na próxima vez, diminua a amplitude ou o peso. Marcamos o exercício para revisar com o seu médico ou fisioterapeuta."
   }
 }

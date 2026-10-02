@@ -150,6 +150,12 @@ const SUPPORTED_OR_ONE_HAND = new Set([
   'dumbbell_wrist_extension',
   'dumbbell_wrist_rotation',
   'incline_prone_y_raise',
+  // Phase 30 shoulder program: one arm, lying or kneeling on a bench or bed.
+  'kneeling_thumbs_up_raise',
+  'prone_horizontal_abduction',
+  'prone_table_scapular_retraction',
+  'side_lying_internal_rotation',
+  'supine_shoulder_rotation_90',
   'lat_pulldown',
   'leaning_lateral_raise',
   'one_arm_dumbbell_row',

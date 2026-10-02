@@ -79,3 +79,27 @@ it('round 2 P3: the hook installer never replaces another core.hooksPath', () =>
     ),
   ).toEqual(['install', 'already', 'keep']);
 });
+
+describe('npm audit tracking', () => {
+  function untracked(report: unknown): string[] {
+    const code = `import('./scripts/security-check.mjs').then((m) => process.stdout.write(JSON.stringify(m.untrackedSevere(${JSON.stringify(report)}))))`;
+    return JSON.parse(
+      execFileSync('node', ['--input-type=module', '-e', code], { cwd: ROOT, encoding: 'utf8' }),
+    );
+  }
+  const advisory = (id: string, severity: string) => ({
+    vulnerabilities: {
+      pkg: { via: [{ severity, url: `https://github.com/advisories/${id}` }] },
+      parent: { via: ['pkg'] },
+    },
+  });
+
+  it('lets only tracked high advisories through', () => {
+    expect(untracked(advisory('GHSA-86w9-cpqp-85rv', 'high'))).toEqual([]);
+    expect(untracked(advisory('GHSA-xxxx-yyyy-zzzz', 'high'))).toEqual(['GHSA-xxxx-yyyy-zzzz']);
+    expect(untracked(advisory('GHSA-xxxx-yyyy-zzzz', 'critical'))).toEqual([
+      'GHSA-xxxx-yyyy-zzzz',
+    ]);
+    expect(untracked(advisory('GHSA-xxxx-yyyy-zzzz', 'moderate'))).toEqual([]);
+  });
+});

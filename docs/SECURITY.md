@@ -147,6 +147,14 @@ Automatic checks:
   (`decode-uri-component` via expo-router / query-string, `uuid` via xcode /
   `@expo/config-plugins`) are tracked; npm's suggested "fix" is a downgrade of
   Expo packages and isn't applied.
+- Tracked high advisory with no patched release (Phase 30, 2026-10-02):
+  `node-forge` <=1.4.0, GHSA-86w9-cpqp-85rv (RSA PKCS#1 v1.5 signature
+  verification), via `expo` → `@expo/cli` (+ `@expo/code-signing-certificates`).
+  It is CLI tooling (dev server, update code signing) and is not in the app
+  bundle; 1.4.0 is the latest release, and npm's "fix" is an Expo downgrade.
+  Listed in `TRACKED_ADVISORIES` in `scripts/security-check.mjs`, so the check
+  warns instead of failing; any other high/critical advisory still fails it.
+  Remove the entry once node-forge ships a fix and bump Expo.
 - Checked by: `security:check` (lockfile integrity, audit).
 
 ## Known gaps (tracked)

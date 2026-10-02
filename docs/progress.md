@@ -3249,3 +3249,73 @@ Não copiei: fotos de academia com marca, calorias novas e ranking. As calorias 
   - 32 de exercícios sem nenhum sexo;
   - 25 de exercícios com só um.
 - **Testes:** dois testes de tela demorados (Biblioteca e toques da Home) ganharam 20 s de limite. Com mais pôsteres, passavam um pouco dos 5 s do Jest numa máquina carregada.
+
+## Fase 30 — Ombro: mobilidade e força
+
+Brief completo em `docs/phase-30-shoulder-program.md`.
+
+### Feito
+
+- **Biblioteca:** 13 exercícios novos (rascunho, `rehab`, a partir de adolescente, contraindicação "cirurgia recente"), com nome e dicas próprios nos 3 idiomas.
+  - pendulum_swing;
+  - crossover_arm_stretch, stick_internal_rotation_stretch, stick_external_rotation_stretch e sleeper_stretch (alongamentos por tempo);
+  - band_external_rotation_90 e band_internal_rotation;
+  - kneeling_thumbs_up_raise, prone_table_scapular_retraction, prone_horizontal_abduction, supine_shoulder_rotation_90 e side_lying_internal_rotation;
+  - prone_scapula_setting.
+  - Equipamento novo: "Bastão leve (cabo de vassoura)".
+  - Também atualizados: `seed.sql` (767 exercícios) e a planilha de revisão.
+- **Categoria Reabilitação** (Progresso → Reabilitação):
+  - card do programa "Ombro: mobilidade e força" com as tags ombro congelado, capsulite adesiva, manguito rotador e pós-lesão;
+  - texto educativo e crédito "baseado no programa de condicionamento de ombro da AAOS — OrthoInfo" (texto nosso, sem copiar o folheto).
+- **Antes da 1ª sessão:**
+  - tela de segurança com a pergunta do lado afetado (direito, esquerdo ou ambos);
+  - o botão "Entendi, começar" só libera depois da escolha;
+  - as mesmas regras ficam no botão "?" do programa.
+- **Sessões:**
+  - A = alongamentos 1–5;
+  - B = aquecimento + 1–5 + elástico 6–9 + 1–5;
+  - C = aquecimento + 1–5 + halteres 10–18 + 1–5.
+  - Os alongamentos 2–4 são feitos dos dois lados; os de força seguem o lado escolhido.
+  - Cada sessão tem cabeçalhos por bloco.
+- **Player:**
+  - alongamentos: 30 s segurando e 30 s de descanso, com contagem;
+  - exercício 13: segura 10 s;
+  - mostra o lado de cada série ("Direito · 1 de 2");
+  - não aparecem a troca de exercício nem o "Só 15 min".
+- **Carga:**
+  - depois de 2 sessões seguidas marcadas como "fácil e sem dor", sugere subir a carga e voltar a menos repetições;
+  - nunca sugere se houve SINTO DOR na semana.
+  - SINTO DOR num exercício do programa o coloca em "Para revisar" na tela do programa.
+- **Tela do programa:**
+  - semana atual e sessão sugerida de hoje;
+  - calendário de 6 semanas, com os dias feitos em verde-água;
+  - troca de lado, outras sessões e "Parar programa".
+  - Depois de 6 semanas, oferece a manutenção (2–3×/semana).
+- **Menores:** aviso "use com orientação do fisioterapeuta".
+- **Sem DB nova:** as sessões usam o tipo `repair` existente e o progresso do programa fica no aparelho. Entra na troca de perfil da Família e na exclusão de conta. Nenhum dado de saúde vai para a análise de uso.
+- **Release:** os exercícios ainda são rascunho, então na loja o programa aparece como "indisponível" até serem liberados. Nunca inventa exercício.
+- **Segurança:**
+  - o `npm audit` passou a acusar 5 high por um alerta novo do `node-forge` (GHSA-86w9-cpqp-85rv), que vem de `expo` → `@expo/cli`;
+  - não existe versão corrigida (1.4.0 é a última) e o pacote não vai no app;
+  - ficou registrado em `docs/SECURITY.md` e numa lista de alertas rastreados do `security:check`, que só avisa sobre ele. Qualquer outro high ou critical continua bloqueando.
+  - Sem troca de stack.
+- **Testes:**
+  - 13 de lógica (sessões, doses, lados, cronograma, carga);
+  - 7 de tela (categoria, segurança + lado, aviso de menor, programa/hoje/calendário/ajuda, manutenção, contagem + descanso, dor → revisão);
+  - 1 do audit rastreado.
+  - Resultado: 1464 testes ok, além de lint, typecheck, `security:check` e `db:test`.
+
+### Como testar
+
+1. Abra a prévia https://tapstrong-preview.vercel.app (não precisa de login).
+2. Vá em Progresso → Reabilitação → Ombro: mobilidade e força.
+3. Toque em "Começar o programa", escolha o lado e confirme.
+4. Comece a sessão de hoje. Nas semanas 1–2 é a B.
+5. Teste o "?", a troca de lado e um SINTO DOR (o exercício vai para "Para revisar").
+
+### Perguntas em aberto
+
+- **Sessão A sem aquecimento:** segui o brief (só os alongamentos 1–5). Quer um aquecimento curto nela também?
+- **Exercícios quase iguais:** já existiam `rx_band_internal_rotation` e `rp_band_er_90`. Mantive os slugs novos porque o Moacir gera mídia com eles. Unificar depois?
+- **node-forge:** quando sair a correção, atualizamos o Expo e tiramos a exceção.
+- **Clipes:** faltam para os exercícios do programa (lista no relatório da conversa).

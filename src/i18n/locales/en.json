@@ -266,7 +266,8 @@
     "exercise_bike": "Exercise bike",
     "rower": "Rowing machine",
     "elliptical": "Elliptical",
-    "stair_climber": "Stair climber"
+    "stair_climber": "Stair climber",
+    "stick": "Light stick (broom handle)"
   },
   "sex": {
     "m": "Man",
@@ -3511,6 +3512,58 @@
     "st_seated_behind_back_triceps": {
       "name": "Seated behind-the-back triceps stretch",
       "cues": "Sit tall, rest the back of one hand on your lower back, then gently draw that elbow forward with the other hand. Breathe; switch sides."
+    },
+    "pendulum_swing": {
+      "name": "Pendulum swing",
+      "cues": "Lean forward with one hand on a table and let the other arm hang loose. Move your body so the arm swings gently forward and back, then side to side, then in small circles; switch arms. Keep your back straight and knees slightly bent."
+    },
+    "crossover_arm_stretch": {
+      "name": "Crossover arm stretch",
+      "cues": "Relax your shoulders. With the other hand on your arm, just above the elbow, bring the arm across your chest until you feel the stretch at the back of the shoulder. Hold 30 s, release 30 s. Don't pull on the elbow itself."
+    },
+    "stick_internal_rotation_stretch": {
+      "name": "Stick internal rotation stretch",
+      "cues": "Hold a light stick behind your back at hip height with both hands. With the hand on your good side, pull the stick to the side until you feel a gentle, painless pull in the affected shoulder. Hold 30 s, release 30 s. Don't lean or twist your body."
+    },
+    "stick_external_rotation_stretch": {
+      "name": "Stick external rotation stretch",
+      "cues": "Keep the elbow of the affected side against your body, bent to 90°. Hold one end of a light stick with that hand and the other end with your good hand. Push the stick toward the affected side, turning the forearm out, until you feel a gentle, painless pull. Hold 30 s, release 30 s. Keep your hips facing forward."
+    },
+    "sleeper_stretch": {
+      "name": "Sleeper stretch",
+      "cues": "Lie on the affected side with a pillow under your head. Put the bottom arm in front of you, elbow bent to 90° and hand pointing up. With the other hand, slowly push the forearm down toward the floor until you feel the stretch at the back of the shoulder. Hold 30 s, release 30 s. Push on the forearm, never the wrist, and don't bend the wrist."
+    },
+    "band_external_rotation_90": {
+      "name": "Band external rotation with the arm at 90°",
+      "cues": "Anchor the band in front of you. Lift the arm out to shoulder height, elbow bent to 90° and hand pointing forward. Turn the hand up until it's in line with your head, without dropping the elbow; return slowly. Keep the elbow level with the shoulder."
+    },
+    "band_internal_rotation": {
+      "name": "Band internal rotation, elbow at your side",
+      "cues": "Anchor the band at your side, at elbow height. Keep the elbow against your body, bent to 90°. Bring the hand in across the front of your belly; return slowly. Keep pressing the elbow into your side."
+    },
+    "kneeling_thumbs_up_raise": {
+      "name": "Thumbs-up side raise on a bench",
+      "cues": "One knee and one hand on a bench or chair, back flat. Let the other arm hang holding a light dumbbell. Raise the arm out to the side to shoulder height, turning the hand until the thumb points up; lower over 5 counts. Pick a weight that makes the last reps hard but never painful."
+    },
+    "prone_scapula_setting": {
+      "name": "Shoulder blade setting, face down",
+      "cues": "Lie face down with your arms by your sides (a pillow under the forehead if needed). Draw your shoulder blades together and down, ease off halfway and hold 10 s; relax and repeat. Keep your neck relaxed."
+    },
+    "prone_table_scapular_retraction": {
+      "name": "Shoulder blade squeeze, face down on a bed",
+      "cues": "Lie face down on a firm bed or table with the affected arm hanging off the edge, elbow straight. Lift the weight only by squeezing the shoulder blade toward your spine; lower slowly. Don't shrug toward your ear."
+    },
+    "prone_horizontal_abduction": {
+      "name": "Face-down side arm raise",
+      "cues": "Lie face down on a bed or table with the affected arm hanging down. With the arm straight, raise it out to the side to eye level; lower slowly and under control."
+    },
+    "supine_shoulder_rotation_90": {
+      "name": "Lying shoulder rotation at 90°",
+      "cues": "Lie on your back with the arm out at shoulder height, elbow bent to 90° and fingers pointing up. Keeping the elbow on the floor, turn the forearm forward and back in an arc. If 90° hurts, lower the elbow to 45°. Pick a weight that makes the last reps hard but never painful."
+    },
+    "side_lying_internal_rotation": {
+      "name": "Side-lying internal rotation",
+      "cues": "Lie on the affected side with a pillow or folded towel under your head. Keep the bottom elbow by your side, bent to 90°. Turn the forearm up toward your belly until it's vertical; lower slowly. Don't let your body roll back."
     }
   },
   "generator": {
@@ -5463,5 +5516,107 @@
     "appStore": "Download on the App Store",
     "playStore": "Get it on Google Play",
     "open": "Open TapStrong"
+  },
+  "rehab": {
+    "category": "Rehabilitation",
+    "categoryBody": "Guided programs to move again, safely.",
+    "entryBody": "Shoulder: mobility and strength",
+    "notes": {
+      "pendulum": "Do 10 in each direction: forward and back, side to side, then circles.",
+      "sleeper": "Best done 3 times a day, every day.",
+      "cable": "You can also do it on a gym cable machine, with guidance.",
+      "overhead": "Only do it if you can lift your arm without pain.",
+      "supine": "If it hurts with the arm at 90°, lower the elbow to 45°."
+    },
+    "side": {
+      "right": "Right side",
+      "left": "Left side"
+    },
+    "player": {
+      "sideSet": "{{side}} · {{n}} of {{total}}",
+      "holdOf": "Hold {{n}} of {{total}}"
+    },
+    "load": {
+      "start": "Start with the lightest band or 0.5–1 kg (1–2 lb). Tap “Easy” only if the set was easy and painless.",
+      "easyHint": "Tap “Easy” if the set was easy and painless. Two sessions like that unlock a little more load.",
+      "raise": "Two easy, painless sessions: you can add about 0.5 kg (1 lb) and go back to {{reps}} reps.",
+      "raiseBand": "Two easy, painless sessions: you can use a slightly stronger band and go back to {{reps}} reps.",
+      "raiseButton": "I raised the load",
+      "raiseBandButton": "I changed the band",
+      "raised": "Done: from now on, {{reps}} reps with the new load.",
+      "pain": "You felt pain this week: keep the same load and talk to your doctor or physical therapist."
+    },
+    "programs": {
+      "shoulder_mobility_strength": {
+        "title": "Shoulder: mobility and strength",
+        "body": "Stretches and light strengthening for the shoulder, for 4 to 6 weeks.",
+        "source": "Based on the AAOS shoulder conditioning program — OrthoInfo."
+      }
+    },
+    "tags": {
+      "frozen": "Frozen shoulder",
+      "capsulitis": "Adhesive capsulitis",
+      "cuff": "Rotator cuff",
+      "injury": "After an injury"
+    },
+    "safety": {
+      "title": "Before you start",
+      "followUp": "Do this program with your doctor or physical therapist following you. Ask them which exercises are right for you.",
+      "noPain": "It should not hurt. If it hurts during an exercise, stop and talk to your doctor or physical therapist.",
+      "load": "Start with the lightest band or 0.5–1 kg (1–2 lb). Go up slowly (about 0.5 kg at a time) only when the sets feel easy and painless. When you go up, go back to the lower number of reps.",
+      "painButton": "Every exercise has the “I feel pain” button: it pauses, suggests a smaller range or less weight and marks the exercise to review.",
+      "accept": "I understand, start",
+      "close": "Close"
+    },
+    "educational": "This content is educational and does not replace guidance from your doctor or physical therapist.",
+    "minor": "Use it with guidance from your physical therapist.",
+    "help": "Safety rules",
+    "sideQuestion": "Which shoulder is affected?",
+    "sideOptions": {
+      "right": "Right",
+      "left": "Left",
+      "both": "Both"
+    },
+    "sideNote": "One-arm exercises use only this side. Stretches 1–4 are done on both sides.",
+    "sideCurrent": "Affected shoulder: {{side}}",
+    "changeSide": "Change",
+    "week": "Week {{week}} of {{total}}",
+    "calendar": "Your weeks",
+    "calendarWeek": "W{{n}}",
+    "calendarDone": "{{count}} sessions done",
+    "today": "Today: session {{session}}",
+    "restToday": "Today is a rest day. You can still do a session if you like.",
+    "sessions": {
+      "A": {
+        "title": "A — Mobility",
+        "body": "Stretches 1–5 only · 5 to 6 days a week"
+      },
+      "B": {
+        "title": "B — Strength with a band",
+        "body": "Warm-up, stretches, bands 6–9, stretches · 3 days a week"
+      },
+      "C": {
+        "title": "C — Strength with light dumbbells",
+        "body": "Warm-up, stretches, dumbbells 10–18, stretches · 3 days a week"
+      }
+    },
+    "startSession": "Start session {{session}}",
+    "otherSessions": "Other sessions",
+    "startProgram": "Start the program",
+    "maintenanceOffer": "You finished the 6 weeks. Keep going in maintenance, 2 to 3 times a week?",
+    "maintenanceYes": "Keep going in maintenance",
+    "maintenanceOn": "Maintenance: 2 to 3 times a week.",
+    "review": "To review with your physical therapist",
+    "reviewDone": "Reviewed",
+    "unavailable": "Some exercises of this program are still under review, so it can't start yet.",
+    "stop": "Stop the program",
+    "blocks": {
+      "warmup": "Warm-up",
+      "stretch": "Stretches",
+      "band": "Strength with a band",
+      "dumbbell": "Strength with light dumbbells",
+      "stretch_end": "Stretches again"
+    },
+    "painNote": "Stop this exercise. Next time, use a smaller range or less weight. We marked it to review with your doctor or physical therapist."
   }
 }

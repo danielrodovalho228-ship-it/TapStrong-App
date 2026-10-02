@@ -166,6 +166,26 @@ function scanLockfile() {
 }
 
 // --- (f) npm audit -----------------------------------------------------------
+// High/critical advisories with no patched release yet, each tracked in
+// docs/SECURITY.md with its path and why it doesn't reach the app bundle.
+// Remove an entry as soon as a fixed version ships.
+export const TRACKED_ADVISORIES = new Set([
+  // node-forge <=1.4.0 via @expo/cli (dev server / update signing, not bundled)
+  'GHSA-86w9-cpqp-85rv',
+]);
+
+/** High/critical advisory IDs in an `npm audit --json` report that aren't tracked. */
+export function untrackedSevere(report) {
+  const ids = new Set();
+  for (const pkg of Object.values(report.vulnerabilities ?? {}))
+    for (const via of pkg.via ?? [])
+      if (typeof via === 'object' && (via.severity === 'high' || via.severity === 'critical')) {
+        const id = String(via.url ?? '').split('/').pop() || String(via.source);
+        if (!TRACKED_ADVISORIES.has(id)) ids.add(id);
+      }
+  return [...ids];
+}
+
 function audit() {
   let out;
   try {
@@ -174,13 +194,20 @@ function audit() {
     out = e.stdout?.toString() ?? '';
   }
   try {
-    const v = JSON.parse(out).metadata?.vulnerabilities;
+    const report = JSON.parse(out);
+    const v = report.metadata?.vulnerabilities;
     if (!v) throw new Error('no report');
-    if ((v.high ?? 0) + (v.critical ?? 0) > 0)
+    const severe = (v.high ?? 0) + (v.critical ?? 0);
+    const untracked = severe ? untrackedSevere(report) : [];
+    if (untracked.length)
       failed.push(
-        `npm audit: ${v.critical ?? 0} critical, ${v.high ?? 0} high (npm audit --omit=dev)`,
+        `npm audit: ${v.critical ?? 0} critical, ${v.high ?? 0} high (npm audit --omit=dev): ${untracked.join(', ')}`,
       );
-    else if (v.moderate)
+    else if (severe)
+      warnings.push(
+        `npm audit: ${severe} high/critical, all tracked advisories with no fix yet (docs/SECURITY.md)`,
+      );
+    if (!untracked.length && v.moderate)
       warnings.push(`npm audit: ${v.moderate} moderate (tracked in docs/SECURITY.md)`);
   } catch {
     // Offline-safe (round 2, P3): a warning on a laptop; in CI an audit that

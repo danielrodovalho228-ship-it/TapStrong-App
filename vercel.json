@@ -32,6 +32,10 @@
       "destination": "/movement-pain/_id"
     },
     {
+      "source": "/rehab/:id",
+      "destination": "/rehab/_id"
+    },
+    {
       "source": "/program/:id",
       "destination": "/program/_id"
     },

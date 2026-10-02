@@ -30,6 +30,8 @@ export default function RepairPlanScreen() {
   const done = workouts.filter(
     (w) =>
       w.kind === 'repair' &&
+      // Rehab program sessions (Phase 30) count for their own program only.
+      !w.session.program &&
       (w.status === 'done' || w.status === 'partial') &&
       (w.endedAt ?? '') >= plan.createdAt,
   ).length;

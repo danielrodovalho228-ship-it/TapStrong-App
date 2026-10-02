@@ -6,6 +6,9 @@ import { Pressable, View } from 'react-native';
 import { AppText, Button, Card, Chip, Icon, IconButton, Screen, TextLink } from '@/components/ui';
 import { MoreOptions } from '@/features/home/MoreOptions';
 import { adviceForItem, adviceLoad, advisedReps } from '@/features/workout/loads';
+import { programById } from '@/features/rehab/programs';
+import { programLoadAdvice } from '@/features/rehab/progress';
+import { useRehabStore } from '@/features/rehab/store';
 import { restFor, usePrefsStore } from '@/features/settings/store';
 import * as Speech from 'expo-speech';
 import type { Exercise } from '@/features/exercises/types';
@@ -28,6 +31,7 @@ import {
   currentStep,
   mainItems,
   stepAfter,
+  sideSet,
   stepKind,
   type Step,
 } from '@/features/workout/flow';
@@ -174,6 +178,11 @@ export default function PlayerScreen() {
         <AppText color={colors.mutedStrong}>{exerciseCues(t, exercise)}</AppText>
         <RangeNote exercise={exercise} />
         <SafetyCues exercise={exercise} />
+        {step.item.noteKey ? (
+          <AppText variant="caption" color={colors.teal} testID="program-note">
+            {t(step.item.noteKey as 'rehab.notes.cable')}
+          </AppText>
+        ) : null}
       </View>
 
       {/* Right above "Done", never on top of it (Phase 29, A6). */}
@@ -257,6 +266,7 @@ function TimedStep({
     (i) => i.role === 'main' && i.loadHint !== 'bodyweight',
   );
   const canEnd = canEndTimedStep(step.item, elapsed, dayHasLoad);
+  const split = sideSet(step.item, step.setNo);
 
   const done = useCallback(() => {
     feel.set();
@@ -266,7 +276,12 @@ function TimedStep({
       setNo: step.setNo,
       seconds: Math.round(Math.min(elapsed, total) || total),
     });
-  }, [logSet, workout.id, step.item.id, step.item.exerciseId, step.setNo, elapsed, total]);
+    // A program stretch (Phase 30): 30 s hold, then 30 s rest before the next one.
+    const next = stepAfter(workout, step);
+    if (step.item.countdown && step.item.restSeconds > 0 && next?.item.id === step.item.id) {
+      router.push({ pathname: '/workout/[id]/rest', params: { id: workout.id } });
+    }
+  }, [logSet, workout, step, elapsed, total]);
   // Time's up: one chime (D4 "Sounds") and the next step, once.
   const timeUp = total > 0 && elapsed >= total;
   const ended = useRef(false);
@@ -287,10 +302,13 @@ function TimedStep({
   return (
     <View style={styles.setStack}>
       <Button size="xl" label={t('workout.player.doneStep')} disabled={!canEnd} onPress={done} />
-      {/* Swap: one tap, then the pick (Phase 27, A1: at most 2 taps). */}
-      <View style={styles.links}>
-        <TextLink label={t('workout.player.swap')} onPress={onSwap} />
-      </View>
+      {/* Swap: one tap, then the pick (Phase 27, A1: at most 2 taps). A
+          program's exercises are fixed (Phase 30). */}
+      {!workout.session.program ? (
+        <View style={styles.links}>
+          <TextLink label={t('workout.player.swap')} onPress={onSwap} />
+        </View>
+      ) : null}
       {step.item.role === 'cooldown' ? (
         <MoreOptions>
           {confirmSkip ? (
@@ -324,7 +342,15 @@ function TimedStep({
       ) : null}
       <Card style={styles.setCard}>
         <AppText variant="caption" color={colors.muted} style={styles.caps}>
-          {t(`workout.player.phase.${step.item.role}`)}
+          {split
+            ? t('rehab.player.sideSet', {
+                side: t(`rehab.side.${split.side}`),
+                n: split.n,
+                total: split.total,
+              })
+            : step.item.countdown && step.item.sets > 1
+              ? t('rehab.player.holdOf', { n: step.setNo, total: step.item.sets })
+              : t(`workout.player.phase.${step.item.role}`)}
         </AppText>
         <AppText
           variant="display"
@@ -420,15 +446,24 @@ function SetStep({
   const loaded = !!exercise?.loaded && item.loadHint !== 'bodyweight' && !minor;
 
   const generator = useWorkout(workout.id).input;
-  const advice = generator
-    ? adviceForItem({ workouts, workoutId: workout.id, item, exercise, unit, generator })
-    : null;
+  // A rehab program (Phase 30) has its own load rules: no generic advice.
+  const program = workout.session.program;
+  const programItem = !!program && (item.block === 'band' || item.block === 'dumbbell');
+  const advice =
+    generator && !program
+      ? adviceForItem({ workouts, workoutId: workout.id, item, exercise, unit, generator })
+      : null;
   // Only this exercise's own sets: after a swap the old load doesn't carry over (QA P2).
   const earlier = workout.logs
     .filter((l) => l.itemId === item.id && l.exerciseId === item.exerciseId && l.load != null)
     .pop();
   // A "+1 rep" day keeps the last load (QA R4-10).
-  const initialLoad = earlier?.load ?? adviceLoad(advice) ?? 0;
+  const initialLoad =
+    earlier?.load ??
+    adviceLoad(advice) ??
+    (program && loaded
+      ? (lastLoad(workouts, item.exerciseId, workout.id) ?? PROGRAM_START[unit])
+      : 0);
 
   // The stepper starts at the day's target (QA R5-02): the advised reps on a
   // "+1 rep" day, else the bottom of the range.
@@ -436,7 +471,10 @@ function SetStep({
   const [load, setLoad] = useState(initialLoad);
   // How hard the set felt (A4): Easy 6, Solid 8, Very hard 10.
   const [rpe, setRpe] = useState<number | undefined>(undefined);
-  const askEffort = loaded && item.role === 'main' && !hold;
+  // Program strength sets always ask: "Easy" (and no pain) twice in a row
+  // unlocks a heavier load (Phase 30, §5.4).
+  const askEffort = ((loaded && item.role === 'main') || programItem) && !hold;
+  const loadStep = program ? PROGRAM_STEP[unit] : LOAD_STEP[unit];
   const valueStep = hold ? 5 : 1;
 
   const done = () => {
@@ -482,7 +520,9 @@ function SetStep({
   // it still sits at the bottom of the screen.
   // A working set with a load to suggest: one big tap logs what is shown
   // ("Done · 80 lb × 10"); adjusting stays optional (Phase 29, B4).
-  const suggest = loaded && item.role === 'main' && item.part !== 'ramp_up' && !hold && load > 0;
+  const suggest =
+    !program && loaded && item.role === 'main' && item.part !== 'ramp_up' && !hold && load > 0;
+  const split = sideSet(item, step.setNo);
   const repsText = shown[0] === shown[1] ? `${shown[0]}` : `${shown[0]}–${shown[1]}`;
   return (
     <View style={styles.setStack}>
@@ -496,7 +536,7 @@ function SetStep({
         onPress={done}
       />
       {/* Swap: one tap, then the pick (Phase 27, A1: at most 2 taps). */}
-      {item.part !== 'ramp_up' ? (
+      {item.part !== 'ramp_up' && !program ? (
         <View style={styles.links}>
           <TextLink label={t('workout.player.swap')} onPress={onSwap} />
         </View>
@@ -522,7 +562,13 @@ function SetStep({
       ) : null}
       <Card style={styles.setCard}>
         <AppText variant="h3">
-          {t('workout.player.setOf', { n: step.setNo, total: item.sets })}
+          {split
+            ? t('rehab.player.sideSet', {
+                side: t(`rehab.side.${split.side}`),
+                n: split.n,
+                total: split.total,
+              })
+            : t('workout.player.setOf', { n: step.setNo, total: item.sets })}
         </AppText>
         <AppText variant="caption" color={colors.mutedStrong}>
           {targetLine}
@@ -549,7 +595,16 @@ function SetStep({
             label={t('workout.player.load', { unit: t(`workout.units.${unit}`) })}
             value={load}
             onChange={(v) => setLoad(Math.max(0, Math.min(1000, v)))}
-            step={LOAD_STEP[unit]}
+            step={loadStep}
+          />
+        ) : null}
+        {programItem && exercise && program ? (
+          <ProgramLoadNote
+            programId={program.id}
+            exercise={exercise}
+            workoutId={workout.id}
+            loaded={loaded}
+            onRaised={() => loaded && setLoad(load + loadStep)}
           />
         ) : null}
         {advice?.kind === 'first' && !earlier ? (
@@ -613,6 +668,85 @@ function SetStep({
         ) : null}
       </Card>
     </View>
+  );
+}
+
+/** Program loads (Phase 30, §3): start at 0.5 kg / 1 lb and go up by about that much. */
+const PROGRAM_START: Record<LoadUnit, number> = { kg: 0.5, lb: 1 };
+const PROGRAM_STEP: Record<LoadUnit, number> = { kg: 0.5, lb: 1 };
+
+/** The last load used on this exercise in another workout, if any. */
+function lastLoad(workouts: WorkoutRecord[], exerciseId: string, except: string) {
+  for (const w of [...workouts].reverse()) {
+    if (w.id === except) continue;
+    const log = [...w.logs].reverse().find((l) => l.exerciseId === exerciseId && l.load != null);
+    if (log) return log.load;
+  }
+  return undefined;
+}
+
+/**
+ * The program's load note (Phase 30, §3): raise only after two sessions in a
+ * row "easy and painless", then back to fewer reps; never after "I feel pain"
+ * this week. The first time: start with the lightest band or 0.5–1 kg.
+ */
+function ProgramLoadNote({
+  programId,
+  exercise,
+  workoutId,
+  loaded,
+  onRaised,
+}: {
+  programId: string;
+  exercise: Exercise;
+  workoutId: string;
+  loaded: boolean;
+  onRaised: () => void;
+}) {
+  const colors = useColors();
+  const { t } = useTranslation();
+  const workouts = useWorkoutStore((s) => s.workouts);
+  const raised = useRehabStore((s) => s.runs[programId]?.increased[exercise.slug] ?? 0);
+  const raiseLoad = useRehabStore((s) => s.raiseLoad);
+  const [done, setDone] = useState(false);
+  const def = programById(programId)?.exercises.find((e) => e.slug === exercise.slug);
+  const others = workouts.filter((w) => w.id !== workoutId);
+  const first = !others.some((w) => w.logs.some((l) => l.exerciseId === exercise.id));
+  const advice = programLoadAdvice({ workouts: others, programId, exercise, now: clock.now() });
+  const fewer = def?.dose.kind === 'reps' ? def.dose.afterIncrease.reps[0] : null;
+  if (done)
+    return (
+      <AppText variant="caption" color={colors.teal}>
+        {t('rehab.load.raised', { reps: fewer ?? '' })}
+      </AppText>
+    );
+  if (advice.kind === 'raise')
+    return (
+      <View style={{ gap: spacing.xs }} testID="program-load-raise">
+        <AppText variant="caption" color={colors.teal}>
+          {t(loaded ? 'rehab.load.raise' : 'rehab.load.raiseBand', { reps: fewer ?? '' })}
+        </AppText>
+        <Button
+          variant="secondary"
+          label={t(loaded ? 'rehab.load.raiseButton' : 'rehab.load.raiseBandButton')}
+          onPress={() => {
+            raiseLoad(programId, exercise.slug);
+            setDone(true);
+            onRaised();
+          }}
+        />
+      </View>
+    );
+  if (advice.reason === 'pain')
+    return (
+      <AppText variant="caption" color={colors.mutedStrong} testID="program-load-pain">
+        {t('rehab.load.pain')}
+      </AppText>
+    );
+  return (
+    <AppText variant="caption" color={colors.mutedStrong}>
+      {first && !raised ? t('rehab.load.start') : t('rehab.load.easyHint')}
+    </AppText>
   );
 }
 

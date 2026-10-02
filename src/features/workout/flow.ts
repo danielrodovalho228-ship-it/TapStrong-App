@@ -83,6 +83,26 @@ export function hasCooldownLeft(w: WorkoutRecord): boolean {
  * sides for a one-sided stretch. Null for anything else.
  */
 export function cooldownHold(item: SessionItem): number | null {
+  // Program holds (Phase 30) count down too, one side per set.
+  if (item.countdown && item.holdSeconds) return item.holdSeconds[0];
   if (item.role !== 'cooldown' || stepKind(item) !== 'hold' || !item.holdSeconds) return null;
   return item.holdSeconds[0] * (item.perSide ? 2 : 1);
+}
+
+/** The side a program set is for (Phase 30): sets are split evenly between `sides`. */
+export function sideOf(item: SessionItem, setNo: number): 'right' | 'left' | null {
+  if (!item.sides?.length) return null;
+  const perSide = Math.max(1, Math.round(item.sets / item.sides.length));
+  return item.sides[Math.min(item.sides.length - 1, Math.floor((setNo - 1) / perSide))];
+}
+
+/** "Right side · set 2 of 4" for a program set split by side (Phase 30). */
+export function sideSet(
+  item: SessionItem,
+  setNo: number,
+): { side: 'right' | 'left'; n: number; total: number } | null {
+  const side = sideOf(item, setNo);
+  if (!side) return null;
+  const perSide = Math.max(1, Math.round(item.sets / item.sides!.length));
+  return { side, n: ((setNo - 1) % perSide) + 1, total: perSide };
 }
