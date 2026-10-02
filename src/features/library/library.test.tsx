@@ -82,6 +82,8 @@ async function adult(extra: Record<string, unknown> = {}) {
   Object.values(router).forEach((m) => m.mockClear?.());
 }
 
+const SLOW_RENDER_MS = 20_000;
+
 describe('browse (B1, B2)', () => {
   it('a muscle dot lists exercises whose primary muscle is that muscle (chest includes its parts)', () => {
     const view = libraryView(base, { muscle: 'chest' }, name);
@@ -276,22 +278,27 @@ describe('custom exercises (B5)', () => {
 });
 
 describe('Library screen and exercise page', () => {
-  it('search, star, open; 60+ get area buttons instead of the body map', async () => {
-    await adult();
-    await render(<LibraryScreen />);
-    await fireEvent.changeText(screen.getByLabelText('Search exercises'), 'Barbell bench press');
-    await fireEvent.press(screen.getByRole('button', { name: 'Star Barbell bench press' }));
-    expect(useLibraryStore.getState().favourites).toContain('barbell_bench_press');
-    await fireEvent.press(screen.getByRole('button', { name: 'Barbell bench press' }));
-    expect(router.push).toHaveBeenCalledWith({
-      pathname: '/exercise/[id]',
-      params: { id: 'barbell_bench_press' },
-    });
-    expect(screen.getByRole('button', { name: 'Create exercise' })).toBeTruthy();
-    await adult({ birthYear: 1950 });
-    await render(<LibraryScreen />);
-    expect(screen.getByRole('button', { name: 'Legs' })).toBeTruthy();
-  });
+  // The whole library with its posters: slow on a busy machine.
+  it(
+    'search, star, open; 60+ get area buttons instead of the body map',
+    async () => {
+      await adult();
+      await render(<LibraryScreen />);
+      await fireEvent.changeText(screen.getByLabelText('Search exercises'), 'Barbell bench press');
+      await fireEvent.press(screen.getByRole('button', { name: 'Star Barbell bench press' }));
+      expect(useLibraryStore.getState().favourites).toContain('barbell_bench_press');
+      await fireEvent.press(screen.getByRole('button', { name: 'Barbell bench press' }));
+      expect(router.push).toHaveBeenCalledWith({
+        pathname: '/exercise/[id]',
+        params: { id: 'barbell_bench_press' },
+      });
+      expect(screen.getByRole('button', { name: 'Create exercise' })).toBeTruthy();
+      await adult({ birthYear: 1950 });
+      await render(<LibraryScreen />);
+      expect(screen.getByRole('button', { name: 'Legs' })).toBeTruthy();
+    },
+    SLOW_RENDER_MS,
+  );
 
   it('Guidance shows cues, mistakes and muscles worked; Performance shows records', async () => {
     await adult();

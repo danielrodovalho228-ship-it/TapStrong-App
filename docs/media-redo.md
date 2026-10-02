@@ -6,7 +6,7 @@ Gerado por `npm run media:redo` a partir de `assets/prototype/qc.json` e dos cli
 Sexo: f = mulher, m = homem. Nome do arquivo no Flow: `<slug>.<f|m>` (o import
 aceita `_v2`, `_v3`… para refeitos).
 
-Total: 235 clipes (192 do primeiro treino, 24 de exercícios sem nenhum sexo, 19 de exercícios com só um).
+Total: 245 clipes (188 do primeiro treino, 32 de exercícios sem nenhum sexo, 25 de exercícios com só um).
 
 ## 0. Aparecem no primeiro treino (prioridade alta)
 
@@ -61,10 +61,6 @@ Aquecimento, principais e desaquecimento que o primeiro treino pode mostrar, em 
 | towel_lat_pulldown | m | faltando, prioridade alta: aparece no primeiro treino |
 | single_arm_band_incline_press | f | faltando, prioridade alta: aparece no primeiro treino |
 | single_arm_band_incline_press | m | faltando, prioridade alta: aparece no primeiro treino |
-| band_chest_fly | f | faltando, prioridade alta: aparece no primeiro treino |
-| band_chest_fly | m | faltando, prioridade alta: aparece no primeiro treino |
-| single_arm_high_to_low_band_fly | f | faltando, prioridade alta: aparece no primeiro treino |
-| single_arm_high_to_low_band_fly | m | faltando, prioridade alta: aparece no primeiro treino |
 | band_overhead_press | f | faltando, prioridade alta: aparece no primeiro treino |
 | band_overhead_press | m | faltando, prioridade alta: aparece no primeiro treino |
 | band_lat_pulldown | f | faltando, prioridade alta: aparece no primeiro treino |
@@ -216,12 +212,20 @@ Aquecimento, principais e desaquecimento que o primeiro treino pode mostrar, em 
 | wall_tibialis_raise | m | suspeito: a parede apareceu, mas chuta a perna; deveria só erguer as pontas dos pés com as costas na parede |
 | seated_push_up | f | suspeito: estica os braços à frente em vez de empurrar o assento |
 | seated_push_up | m | suspeito: aparece texto com nomes de músculos no começo do vídeo |
+| seated_high_to_low_band_fly | f | suspeito: os seios brilham de laranja por cima do top (roupa pintada) |
+| seated_high_to_low_band_fly | m | suspeito: puxa o elástico atrás da cabeça (puxada), não é crucifixo |
+| seated_band_decline_press | f | suspeito: as pernas acendem de laranja (músculo errado) |
+| seated_band_decline_press | m | suspeito: as pernas acendem de laranja (músculo errado) |
+| single_arm_high_to_low_band_fly | f | suspeito: brilho laranja nos seios por cima do top e o braço quase não se move |
+| single_arm_high_to_low_band_fly | m | suspeito: o elástico sai da mão e o braço sobe acima da cabeça |
 | short_arc_quad | f | suspeito: levanta a perna inteira até a vertical; deveria só esticar o joelho sobre o rolo |
 | short_arc_quad | m | recusado pelo Flow: veio só a imagem de partida |
 | seated_toe_raise | f | suspeito: levanta a perna inteira em vez de só as pontas dos pés |
 | seated_toe_raise | m | suspeito: levanta a perna inteira em vez de só as pontas dos pés |
 | supported_toe_raise | f | suspeito: levanta o joelho (marcha) em vez das pontas dos pés |
 | supported_toe_raise | m | suspeito: levanta o joelho (marcha) em vez das pontas dos pés |
+| band_glute_bridge | f | suspeito: levanta um braço para o teto no meio da ponte |
+| band_glute_bridge | m | suspeito: chama/brilho na cabeça e o tronco sobe como prancha invertida |
 | su_seated_reverse_self_curl | f | feito no Flow (refazer 1), mas não chegou no upload do GitHub (parou em sl_seated_knee_circles.f) |
 | su_seated_reverse_self_curl | m | feito no Flow (refazer 1), mas não chegou no upload do GitHub (parou em sl_seated_knee_circles.f) |
 | su_seated_hammer_self_curl | f | feito no Flow (refazer 1), mas não chegou no upload do GitHub (parou em sl_seated_knee_circles.f) |
@@ -247,8 +251,14 @@ Aquecimento, principais e desaquecimento que o primeiro treino pode mostrar, em 
 | prone_t_raise | f | suspeito: os braços sobem até a vertical; deveria abrir em T rente ao chão |
 | prone_w_raise | m | suspeito: continua sem o W: mãos no chão, como numa flexão |
 | doorframe_curl | f | suspeito: solta o batente e dobra os braços no ar; o corpo não é puxado até o batente; o Flow recusou a imagem nova 2x por política |
+| low_to_high_band_fly | f | suspeito: o top some: o peito aparece pintado de laranja (corpo sem roupa) |
+| seated_band_incline_press | f | suspeito: os braços sobem até acima da cabeça |
+| band_chest_press | f | suspeito: o top fica pintado de laranja por cima (roupa pintada) |
+| band_chest_fly | f | suspeito: o top some: o peito aparece pintado, com mamilos (corpo sem roupa) |
+| band_close_grip_press | f | suspeito: aparece texto com nomes de músculos no vídeo |
 | partial_sit_to_stand | f | suspeito: aparece o texto "5cm / 6cm" no vídeo |
 | bal_seated_head_turns | m | suspeito: gira o tronco inteiro e a imagem fica transparente (fantasma) |
+| rx_suitcase_hold | f | suspeito: no meio dobra o braço e levanta o halter (é isometria) |
 | seated_w_squeeze | f | suspeito: continua sem o W: um braço sobe, como acenando |
 | su_seated_chair_grip_shrug_hold | m | suspeito: faz pose de bíceps em vez de segurar a cadeira e encolher os ombros |
 | su_seated_scaption_raise | m | suspeito: continua com os braços acima da cabeça |
@@ -268,6 +278,7 @@ Não entram no total. O app mostra o clipe do outro sexo só nestes (decisão do
 | slug | sexo | motivo |
 |---|---|---|
 | wall_push_up | f | recusado pelo Flow, usa o clipe do outro sexo |
+| high_to_low_band_fly | f | não existe: usa o clipe do homem (Daniel, 02/10) |
 | low_step_up | f | recusado pelo Flow, usa o clipe do outro sexo |
 | standing_supported_bird_dog | f | recusado pelo Flow, usa o clipe do outro sexo |
 | rx_low_step_up | f | recusado pelo Flow, usa o clipe do outro sexo |

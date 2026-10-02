@@ -90,39 +90,46 @@ async function wait(seconds: number) {
   });
 }
 
+// Home → player renders the whole session; slow on a busy machine.
+const SLOW_RENDER_MS = 20_000;
+
 describe('A1 tap audit: open → first set', () => {
   it.each([
     ['adult', 1985],
     ['teen', 2011],
     ['60+', 1956],
-  ])('%s: at most 3 taps from Home to the first logged set', async (_, year) => {
-    await profile(year);
-    let taps = 0;
-    await render(<HomeScreen />);
-    taps += 1;
-    await fireEvent.press(screen.getByTestId('start-hero'));
-    const call = mockRouter.push.mock.calls.at(-1)![0];
-    expect(call.pathname).toBe('/workout/[id]/play');
-    mockParams = { id: call.params.id };
-    expect(workout().status).toBe('active');
+  ])(
+    '%s: at most 3 taps from Home to the first logged set',
+    async (_, year) => {
+      await profile(year);
+      let taps = 0;
+      await render(<HomeScreen />);
+      taps += 1;
+      await fireEvent.press(screen.getByTestId('start-hero'));
+      const call = mockRouter.push.mock.calls.at(-1)![0];
+      expect(call.pathname).toBe('/workout/[id]/play');
+      mockParams = { id: call.params.id };
+      expect(workout().status).toBe('active');
 
-    await render(<PlayerScreen />);
-    // Warm-up countdowns start and end by themselves; sets need one "Done".
-    for (let guard = 0; guard < 20; guard++) {
-      if (workout().logs.some((l) => l.reps != null)) break;
-      const step = currentStep(workout())!;
-      if (stepKind(step.item) === 'timed') {
-        await wait(step.item.durationSeconds ?? 0);
-      } else {
-        taps += 1;
-        await fireEvent.press(
-          screen.getByRole('button', { name: /^(Done with set|Done · .*|Done)$/ }),
-        );
+      await render(<PlayerScreen />);
+      // Warm-up countdowns start and end by themselves; sets need one "Done".
+      for (let guard = 0; guard < 20; guard++) {
+        if (workout().logs.some((l) => l.reps != null)) break;
+        const step = currentStep(workout())!;
+        if (stepKind(step.item) === 'timed') {
+          await wait(step.item.durationSeconds ?? 0);
+        } else {
+          taps += 1;
+          await fireEvent.press(
+            screen.getByRole('button', { name: /^(Done with set|Done · .*|Done)$/ }),
+          );
+        }
       }
-    }
-    expect(workout().logs.some((l) => l.reps != null)).toBe(true);
-    expect(taps).toBeLessThanOrEqual(3);
-  });
+      expect(workout().logs.some((l) => l.reps != null)).toBe(true);
+      expect(taps).toBeLessThanOrEqual(3);
+    },
+    SLOW_RENDER_MS,
+  );
 
   it('a swap takes at most 2 taps', async () => {
     await profile(1985);

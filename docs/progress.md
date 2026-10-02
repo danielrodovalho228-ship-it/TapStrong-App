@@ -3213,3 +3213,39 @@ Não copiei: fotos de academia com marca, calorias novas e ranking. As calorias 
   - 192 do primeiro treino;
   - 24 de exercícios sem nenhum sexo;
   - 19 de exercícios com só um.
+
+## Mídia — Lote 7 "out. 01 - 20:05" (itens 178–199)
+
+- **Chegaram:** 43 vídeos com as imagens de partida.
+  - Descartados: 14 `x_bad_*`, 4 referências `body-adult-*`, 2 cópias "_2" de imagem e 42 imagens antigas, substituídas pelas versões novas.
+  - Valeram as versões novas de band_glute_bridge.m (com camiseta), seated_band_chest_press f/m, seated_band_incline_press f/m (cadeira com encosto) e dumbbell_curl.m.
+  - Tamanho: de 91,8 MB brutos para 22 MB finais.
+- **high_to_low_band_fly.f:** entrou no `otherSex` e usa o clipe do homem (Daniel, 02/10).
+- **Conferência quadro a quadro**, com os critérios de anatomia (cor só no músculo, membros presos) e de roupa (corpo sem roupa ou roupa pintada é suspeito): **29 ok e 14 suspeitos.**
+- **Ok (29):**
+  - band_chest_fly.m, band_chest_press.m, band_close_grip_press.m;
+  - band_decline_press f/m, band_incline_press f/m;
+  - dumbbell_concentration_curl f/m, dumbbell_curl f/m, dumbbell_hammer_curl f/m, dumbbell_reverse_curl f/m;
+  - high_to_low_band_fly.m, low_to_high_band_fly.m;
+  - rx_front_rack_hold f/m, rx_suitcase_hold.m;
+  - seated_band_chest_press f/m, seated_band_curl f/m, seated_band_incline_press.m;
+  - seated_low_to_high_band_fly f/m, short_range_incline_push_up f/m.
+- **Suspeitos (14), não entram no app:**
+  - **roupa:**
+    - band_chest_fly.f: o top some e o peito aparece pintado, com mamilos;
+    - band_chest_press.f, low_to_high_band_fly.f, seated_high_to_low_band_fly.f e single_arm_high_to_low_band_fly.f: o top fica pintado ou brilha de laranja.
+  - **anatomia:** seated_band_decline_press f/m: as pernas acendem de laranja.
+  - **texto no vídeo:** band_close_grip_press.f, com nomes de músculos.
+  - **movimento:**
+    - band_glute_bridge.f: levanta um braço;
+    - band_glute_bridge.m: brilho de chama na cabeça e o tronco sobe como prancha;
+    - rx_suitcase_hold.f: dobra o braço numa isometria;
+    - seated_band_incline_press.f: braços acima da cabeça;
+    - seated_high_to_low_band_fly.m: puxa atrás da cabeça, como uma puxada;
+    - single_arm_high_to_low_band_fly.m: o elástico sai da mão.
+- **No app:** 271 entradas de clipe em 148 exercícios (antes 241 em 130).
+- **Lista de refazer:** 245 clipes.
+  - 188 do primeiro treino;
+  - 32 de exercícios sem nenhum sexo;
+  - 25 de exercícios com só um.
+- **Testes:** dois testes de tela demorados (Biblioteca e toques da Home) ganharam 20 s de limite. Com mais pôsteres, passavam um pouco dos 5 s do Jest numa máquina carregada.
