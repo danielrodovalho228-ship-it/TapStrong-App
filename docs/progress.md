@@ -3362,7 +3362,7 @@ Brief completo em `docs/phase-30-shoulder-program.md`.
   - "Fazer o Bloco B hoje" troca o dia, e o app reorganiza o resto da semana mantendo 3 vezes cada;
   - as sessões A, B e C continuam disponíveis em "Outras sessões".
 - **Sleeper 3 vezes por dia:**
-  - cartão com "Alongar agora (2 min)" e "x de 3 hoje";
+  - cartão com "Fazer agora (2 min)" e "x de 3 hoje";
   - lembretes diários às 9h, 15h e 21h (só no app; na prévia web aparece "funcionam no app");
   - o texto da notificação não fala de ombro.
 - **Exercício perdido (§6.3):**
