@@ -99,7 +99,8 @@
     "prepare": "node scripts/install-hooks.mjs",
     "server:check": "node scripts/check-server.mjs",
     "media:redo": "node scripts/media-redo.mjs",
-    "launch-set": "WRITE_LAUNCH_SET=1 jest scripts/launch-set.test.ts"
+    "launch-set": "WRITE_LAUNCH_SET=1 jest scripts/launch-set.test.ts",
+    "legal:check": "node scripts/build-legal.mjs --check"
   },
   "private": true
 }

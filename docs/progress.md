@@ -3694,3 +3694,76 @@ Na prévia (https://tapstrong-preview.vercel.app), com um plano de 3 dias (seg, 
 2. A Home mostra "Ombro hoje · Só alongamentos" com "Antes do treino: só os alongamentos, como aquecimento".
 3. Faça o treino normal. No fim aparece "Termine com o ombro (~N min)".
 4. Na tela do programa, ligue "Fortalecimento antes do treino": a sessão inteira volta para antes.
+
+## Fase 32 — Lançamento com biblioteca menor, revisada e com vídeo (decisões do Daniel, 03/10)
+
+### Feito
+
+- **Conjunto de lançamento (launch set): 243 exercícios** em `supabase/seed/launch_set.json`.
+  - 124 têm clipe aprovado nos dois sexos.
+  - 103 podem aparecer num primeiro treino: adultos, adolescentes e 60+, em casa e na academia, incluindo aquecimento e alongamento.
+  - 16 são do programa de ombro (os outros 2 já estavam na lista).
+  - **Cobertura:** cada músculo do mapa já tem 3 opções em casa e 3 na academia, então não precisou de nenhum extra. Há teste para isso.
+  - Ficou acima dos 150–200 porque os critérios pedem todos os exercícios do primeiro treino, para todos os perfis.
+  - `npm run launch-set` refaz a lista. O teste falha se ela ficar desatualizada.
+- **Planilha do revisor:** `docs/review/launch-set.xlsx`.
+  - Por exercício: nome, vídeo mulher/homem, músculos, equipamento, onde, nível, idade mínima, posições, contraindicações, dica, uso e movimentos das articulações.
+  - Duas colunas amarelas: Decisão (Approve / Adjust / Reject) e Comentário.
+  - Na aba de instruções: nome, credencial e data do revisor, e a contagem de progresso.
+  - Depois do upload dos vídeos, `python3 scripts/build-launch-sheet.py --media-base <URL do bucket>` coloca links "watch" para o revisor assistir.
+- **Lista para o Moacir:** `docs/review/launch-set-flow.md`, em ordem de prioridade.
+  - São 232 clipes em 119 exercícios.
+  - 202 clipes (103 exercícios) aparecem no primeiro treino; 30 clipes (16 exercícios) são do ombro.
+- **Problema que achei e corrigi:** o app nunca carregava do Supabase a biblioteca liberada. Um build de loja abriria sem exercícios, mesmo depois da revisão.
+  - Agora o app carrega os exercícios `released` ao abrir, guarda no celular (funciona offline) e mantém a última cópia boa se a internet falhar.
+  - No build de desenvolvimento, o exercício liberado substitui o rascunho sem perder o histórico.
+  - `EXPO_PUBLIC_LIBRARY_SCOPE=launch` limita a prévia ao conjunto de lançamento, para você ver como a loja vai ficar.
+- **Só exercícios liberados:**
+  - na loja, o gerador e a troca só enxergam o que o Supabase devolve, e ele só devolve `released`;
+  - um músculo com menos de 3 opções mostra "Mais opções para este músculo em breve. Aqui só aparecem exercícios conferidos";
+  - a troca com poucas opções mostra um aviso parecido;
+  - "Cada movimento é conferido por um treinador certificado" só aparece quando todos os exercícios do treino estão `released` (teste novo).
+- **Script de liberação:** `scripts/release-launch-set.py` lê as planilhas devolvidas e gera o SQL em `supabase/release/`.
+  - Libera só o que as duas revisões aprovaram e que tem clipe nos dois sexos.
+  - Os aprovados sem clipe ficam esperando: é só rodar de novo quando os clipes chegarem.
+  - "Adjust" e "Reject" aparecem com o comentário e continuam em rascunho.
+  - **Testado num banco novo** (migrations + seed + SQL gerado): a trava do banco aceitou, 123 viraram `released` e o público (`anon`) vê só esses 123.
+- **Vídeos pelo Storage do Supabase:**
+  - bucket `exercise-media`, público só para leitura (MP4 e WebP, até 2 MB);
+  - sem nenhuma regra de escrita: só a chave de serviço envia arquivos;
+  - teste SQL com troca de papel (anônimo e usuário logado não conseguem enviar nem renomear);
+  - o app toca o clipe do sexo do perfil direto do bucket e guarda no celular (cache do expo-video e do expo-image);
+  - nada vai dentro do app (`bundle:check` OK);
+  - **Upload:** `node scripts/upload-exercise-media.mjs`, rodado no seu terminal. A chave fica só no ambiente do terminal e nunca é impressa.
+  - O conjunto de lançamento hoje dá 496 arquivos, 115,5 MB.
+- **SPEC §6** registra a decisão: os clipes do Flow vão para a loja com `media_provider = 'google_flow'`. A biblioteca 3D pode entrar depois.
+- **Páginas de Termos, Privacidade e Suporte** (en/es/pt-BR) em `public/legal/`, geradas por `node scripts/build-legal.mjs`.
+  - Saem junto com o site da Vercel. Conferi que o export web copia os arquivos e que nenhuma regra da Vercel captura esses endereços.
+  - Os textos seguem o inventário de dados do app (`docs/store/privacy-labels.md`): sem venda de dados, sem anúncios, fotos só no celular, dados de saúde só para o app funcionar, regras para adolescentes, exclusão da conta e os prestadores.
+  - **Faltam duas lacunas suas** (nome legal e lei aplicável). `npm run legal:check` falha enquanto elas existirem.
+- **Testes:**
+  - 1557 testes passando, incluindo os novos do conjunto de lançamento, da biblioteca liberada, do aviso de poucas opções e dos vídeos remotos;
+  - `tsc`, `lint`, `security:check`, `bundle:check` e `db:test` passando.
+
+### URLs para o EAS (depois de preencher as lacunas e publicar)
+
+Hoje o site está em `https://tapstrong-preview.vercel.app`:
+
+- `EXPO_PUBLIC_TERMS_URL` = `https://tapstrong-preview.vercel.app/legal/terms`
+- `EXPO_PUBLIC_PRIVACY_URL` = `https://tapstrong-preview.vercel.app/legal/privacy`
+- página de suporte (para as lojas) = `https://tapstrong-preview.vercel.app/legal/support`
+
+Com o domínio `tapstrong.app` ligado ao projeto na Vercel, troque o começo para `https://tapstrong.app`. Esse também é o valor de `EXPO_PUBLIC_SHARE_BASE_URL`.
+
+### O que isso significa para o lançamento
+
+- **Os 119 exercícios aprovados sem clipe ficam de fora**, porque o clipe e o pôster são sempre do sexo do perfil. Entre eles estão todos os aquecimentos e alongamentos do primeiro treino e quase todo o programa de ombro.
+- **Sem eles o gerador não monta um treino completo.** Por isso a lista do Moacir começa pelo primeiro treino. A revisão e os clipes podem andar em paralelo.
+- **Custo do Storage:** o plano grátis do Supabase cobre o armazenamento (cerca de 115 MB de 1 GB). A transferência mensal grátis é limitada (confira no painel). Com muitos usuários, pode ser preciso o plano pago. Aviso antes de chegar perto.
+- **Termos de uso do Google Flow:** confirme que os vídeos gerados podem ser usados num app comercial.
+
+### Perguntas (no máximo 3)
+
+1. **Segunda revisão independente:** o banco exige, além do profissional certificado, uma segunda conferência dos músculos feita por outra pessoa (SPEC §2.1). **Recomendado:** um fisioterapeuta como segundo revisor, só de músculos e segurança, usando a mesma planilha (é mais rápido e mais barato). Ou o mesmo freelancer traz um colega.
+2. **Nome legal e lei aplicável dos Termos:** quem opera o app (você como pessoa física ou uma empresa) e qual lei vale. **Recomendado:** abrir uma LLC nos EUA antes de lançar, porque o lançamento é nos EUA. Até lá, você pode usar seu nome. Um advogado deve revisar os textos.
+3. **Tamanho do conjunto (243):** **Recomendado:** manter. Tirar exercícios do primeiro treino faria o gerador escolher outros, que também precisariam de revisão.
