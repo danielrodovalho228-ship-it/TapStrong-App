@@ -135,6 +135,30 @@ it('a heavier set shows its record, and 🏆 counts it on top (adults)', async (
   expect(screen.getByTestId('counter-records')).toBeTruthy();
 });
 
+it('the same heavier load again is not a second record', async () => {
+  await as(1990);
+  await player([record('past', { done: true, date: '2026-09-28' }), record('now')], 'now');
+  await fireEvent.press(screen.getByTestId('current-load'));
+  for (let i = 0; i < 6; i++)
+    await fireEvent.press(screen.getByRole('button', { name: /^Increase Load/ }));
+  await fireEvent.press(screen.getByRole('button', { name: 'Done with set' }));
+  const load = now().logs[0].load;
+  await act(() =>
+    useWorkoutStore.setState((st) => ({
+      workouts: st.workouts.map((w) =>
+        w.id === 'now'
+          ? {
+              ...w,
+              logs: [...w.logs, { ...w.logs[0], setNo: 2, load, loggedAt: '2026-10-01T09:20:00' }],
+            }
+          : w,
+      ),
+    })),
+  );
+  expect(screen.getAllByText('Highest load ever lifted!')).toHaveLength(1);
+  expect(within(screen.getByTestId('counter-records')).getByText('🏆 1')).toBeTruthy();
+});
+
 it('a teen: no load, no record, no trophy', async () => {
   await as(new Date().getFullYear() - 15);
   await player([record('past', { done: true, date: '2026-09-28' }), record('now')], 'now');

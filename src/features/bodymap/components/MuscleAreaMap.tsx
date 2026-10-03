@@ -185,7 +185,8 @@ function AreaBody({
 }
 
 const styles = StyleSheet.create({
-  row: { flexDirection: 'row', gap: spacing.xs },
+  // Stretch so a centred parent cannot collapse the halves to zero width.
+  row: { flexDirection: 'row', gap: spacing.xs, alignSelf: 'stretch' },
   half: { flex: 1 },
   canvas: { width: '100%', alignItems: 'center' },
   body: { borderRadius: radius.bodyCard, overflow: 'hidden' },

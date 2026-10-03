@@ -4453,7 +4453,15 @@
       "yourWorkouts": "Seus treinos",
       "graphs": "Gráficos de exercício",
       "goalTitle": "Meta",
-      "currentMax": "Carga máx. atual"
+      "currentMax": "Carga máx. atual",
+      "mobilityLine": "Sessões de mobilidade: {{n}}",
+      "rangeShort": {
+        "7d": "7 d",
+        "30d": "30 d",
+        "6m": "6 m",
+        "12m": "12 m",
+        "all": "Tudo"
+      }
     },
     "body": {
       "whtr": "Relação cintura-altura",

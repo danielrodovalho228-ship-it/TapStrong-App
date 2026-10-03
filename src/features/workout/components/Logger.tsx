@@ -108,10 +108,12 @@ export function CountersRow({
   // New bests in this workout, adults only (Phase 31, G): "🏆 2".
   const others = useWorkoutStore((st) => st.workouts).filter((w) => w.id !== workout.id);
   const records = showVolume
-    ? mainLogs.filter((l) => {
+    ? mainLogs.filter((l, i) => {
         if (!l.load) return false;
-        const best = bestsOf(others, l.exerciseId, unit).load;
-        return best > 0 && convertLoad(l.load, l.unit ?? unit, unit) > best;
+        const past = bestsOf(others, l.exerciseId, unit).load;
+        const earlier = bestsOf([{ ...workout, logs: mainLogs.slice(0, i) }], l.exerciseId, unit);
+        const kg = convertLoad(l.load, l.unit ?? unit, unit);
+        return past > 0 && kg > Math.max(past, earlier.load);
       }).length
     : 0;
   const cells = [
@@ -343,9 +345,19 @@ export function LoggerStep({
   const prsOf = (l: SetLog, isLastLogged: boolean): string[] => {
     if (!before || !l.load || mode !== 'adult') return [];
     const kg = convertLoad(l.load, l.unit ?? unit, unit);
+    // A record beats past workouts and this workout's earlier sets too.
+    const earlier = bestsOf(
+      [{ ...workout, logs: logsOf.filter((x) => x.setNo < l.setNo) }],
+      item.exerciseId,
+      unit,
+    );
+    const best = {
+      load: Math.max(before.load, earlier.load),
+      oneRm: Math.max(before.oneRm, earlier.oneRm),
+    };
     const out: string[] = [];
-    if (before.load > 0 && kg > before.load) out.push(t('workout.logger.prLoad'));
-    if (before.oneRm > 0 && epley(kg, l.reps ?? 0) > before.oneRm)
+    if (before.load > 0 && kg > best.load) out.push(t('workout.logger.prLoad'));
+    if (before.oneRm > 0 && epley(kg, l.reps ?? 0) > best.oneRm)
       out.push(t('workout.logger.prOneRm'));
     if (isLastLogged && before.volume > 0) {
       const volume = logsOf.reduce(

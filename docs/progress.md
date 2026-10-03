@@ -3570,3 +3570,71 @@ Brief em `docs/phase-31-gymverse-flow.md`. Um commit por pacote, todos no branch
 1. **Prints lado a lado:** você manda as capturas do Gymverse para eu montar a comparação? **Recomendado:** sim, coloque em `docs/reference/gymverse/` com os nomes das telas; eu monto e confiro.
 2. **Apple Saúde / Health Connect:** fazemos agora? **Recomendado:** depois do lançamento. Precisa de módulo nativo e build de desenvolvimento; até lá fica "Em breve".
 3. **60+ e o novo "Meu plano":** **Recomendado:** manter a tela simples do 60+ e só aumentar os cartões. Ou o 60+ passa a usar o "Meu plano" também?
+
+## Fase 31 — Pacote G: igual à referência, tela por tela
+
+### O que foi feito
+
+Com as capturas do Gymverse que você mandou (`docs/reference/gymverse/`), ajustei cada tela para ficar com o mesmo desenho, mantendo as nossas regras (sem calorias, sem ranking, menores sem carga, "Sinto dor" sempre, aquecimento e alongamento nunca somem).
+
+- **G1 — Meu plano:**
+  - cabeçalho com compartilhar, calendário e "Editar";
+  - semana sem caixas: ✓ nos dias treinados e ponto coral nos planejados;
+  - "Semana 1/4 · Evolução" e o nome do treino em itálico;
+  - linha "⚡ 6 exercícios ⏱ 39 min";
+  - cartões grandes com o corpinho do músculo, o botão de troca quadrado e o 🏆 quando a carga de hoje é um recorde (só adultos);
+  - "Começar treino" flutuando sobre a lista.
+- **G2 — Registro das séries:**
+  - séries como cartões cheios em 3 colunas: carga | reps | Fiz/Refazer;
+  - abaixo da série registrada aparecem os recordes ("Maior carga que você já levantou!", "Novo 1RM estimado!", "Maior volume total!");
+  - a série atual mostra "Sugerido 9 kg (última 8 kg)" e "10–12 reps (última 12)";
+  - as próximas séries aparecem apagadas, com ▶;
+  - uma pergunta por exercício: "Quantas reps a mais você faria?" (0 / 1 / 2 / 3+). A resposta ajusta a próxima sugestão;
+  - o chip do músculo usa a cor do grupo (empurrar/puxar/pernas/core);
+  - contador 🏆 de recordes no topo (só adultos);
+  - gráfico "Carga máxima" com a meta;
+  - descanso só com o círculo: "Toque para pular", −15/+15 dentro e o lápis para mudar o tempo;
+  - prévia do próximo exercício com "Começar exercício".
+- **G3 — Aquecimento, alongamento e fim:**
+  - aquecimento e alongamento em tela cheia, com o texto sobre um degradê escuro (como você aprovou);
+  - os pontinhos dos passos, "Prepare-se" nos 3 primeiros segundos, e um toque pausa;
+  - o fim tem "Fechar | TapStrong | Compartilhar", os 3 números (exercícios, volume ou séries, tempo) e o cartão "Levantei o peso de 1,5 cavalo" (só adultos com carga).
+- **G4 — Exercícios, Biblioteca, Progresso e Ajustes:**
+  - **Exercícios:**
+    - corpo grande, com um ponto coral por grupo muscular e uma linha pontilhada até o nome;
+    - Cardio com coração;
+    - "Deslize 180°" com os botões de modelo e de girar.
+  - **Biblioteca:** cartões de largura total com foto, o objetivo em itálico e "Corpo inteiro · 50 min"; filtros "Equipamentos (8) ▾" / "Músculos (0) ▾".
+  - **Progresso:** "Atividade" com 7 d / 30 d / 6 m / 12 m / Tudo e 3 números grandes, "Seus treinos" com o calendário, conquistas e gráficos com a caixa da meta.
+  - **Ajustes:** cartão do plano como cartão de sócio, cartão do perfil com "Minha conta · Gerenciar", e cada item em seu próprio cartão.
+- **Problemas que encontrei comparando os prints, já corrigidos:**
+  - na tela Exercícios, nomes se sobrepunham ("Ombros" sobre "Peito") e o texto branco sumia na imagem clara. Agora os nomes ficam em etiquetas escuras e se afastam só o necessário;
+  - a 2ª série com a mesma carga aparecia de novo como recorde. Agora só conta como recorde se superar também as séries anteriores do mesmo treino (teste novo);
+  - o mapa de músculos ficava em branco no cartão do plano e no aquecimento sem vídeo (largura zero). Corrigido;
+  - números grandes estouravam a caixa no Progresso. Agora são 3 números (o volume vira "1,5 mil" quando passa de 10 mil), e as sessões de mobilidade ficam numa linha abaixo;
+  - a tela final não mostra mais "0 dias seguidos".
+
+### Como testar
+
+- **Prévia:** https://tapstrong-preview.vercel.app (atualiza sozinha a cada push).
+- **Comparação lado a lado** (Gymverse à esquerda, TapStrong à direita): `docs/screenshots/p31-compare/` (plano, aquecimento, registro, descanso, fim, exercícios, biblioteca, progresso e ajustes).
+- **Prints:** `docs/screenshots/p31/`. Para gerar de novo: `node scripts/shoot-p31.mjs`. O script agora confere "nenhum texto sobre o vídeo" no registro; no aquecimento o texto sobre o degradê é o desenho combinado.
+- **Verificações:**
+  - `npm test`: 1539 testes passando;
+  - testes novos em `src/features/p31/g-*.test.tsx` e `e-explore.test.tsx`;
+  - `tsc`, `lint` e `security:check` limpos.
+
+### Diferenças que ficaram (de propósito)
+
+- Sem calorias e sem ranking (regra do app). No lugar do ranking ficam as conquistas.
+- Apple Saúde / Health Connect continua "Em breve".
+- O gráfico de exercício continua em barras, não em área.
+- O aquecimento com carga tem 2 séries, não 4 (SPEC §8).
+- Medidas com barras e o cartão antes/depois no Progresso › Corpo ainda não seguem o desenho da referência.
+- O fim tem dois botões (Compartilhar meu mapa / Salvar meu progresso), porque salvar o progresso é o nosso convite para criar conta.
+
+### Perguntas (no máximo 3)
+
+1. **Apple Saúde / Health Connect:** **Recomendado:** depois do lançamento. Precisa de módulo nativo, o que é mudança de stack.
+2. **60+:** **Recomendado:** manter a tela inicial simples própria, ou o 60+ passa a usar o "Meu plano"?
+3. **Bloco B da Fase 30** (~26 min): continua em aberto. **Recomendado:** encaixar como sessão separada de "cuidado" nos dias de descanso.

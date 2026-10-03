@@ -80,7 +80,7 @@ export function ActivityCard({ mode, unit }: { mode: AppMode; unit: 'lb' | 'kg' 
           {
             key: 'volume',
             label: t('progress.activity.volume', { unit: t(`workout.units.${unit}`) }),
-            value: totals.volume.toLocaleString(i18n.language),
+            value: compact(totals.volume, i18n.language),
           },
         ]
       : []),
@@ -118,19 +118,25 @@ export function ActivityCard({ mode, unit }: { mode: AppMode; unit: 'lb' | 'kg' 
                 variant="bodyStrong"
                 color={r === range ? colors.onAccent : colors.accentText}
               >
-                {t(`progress.activity.range.${r}`)}
+                {t(`progress.activity.rangeShort.${r}`)}
               </AppText>
             </Pressable>
           ))}
         </View>
         <View style={styles.tiles}>
-          {tiles.map((tile, n) => (
+          {tiles.slice(0, 3).map((tile, n) => (
             <View
               key={tile.key}
               style={[styles.tile, n > 0 && styles.tileDivider]}
               testID={`activity-${tile.key}`}
             >
-              <AppText variant="display" color={colors.accentText} style={styles.big}>
+              <AppText
+                variant="display"
+                color={colors.accentText}
+                style={styles.big}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+              >
                 {String(tile.value)}
               </AppText>
               <AppText color={colors.mutedStrong} style={styles.center} numberOfLines={2}>
@@ -139,6 +145,16 @@ export function ActivityCard({ mode, unit }: { mode: AppMode; unit: 'lb' | 'kg' 
             </View>
           ))}
         </View>
+        {/* Three big numbers, like the reference; a fourth goes on one line. */}
+        {tiles[3] ? (
+          <AppText
+            color={colors.mutedStrong}
+            style={styles.center}
+            testID={`activity-${tiles[3].key}`}
+          >
+            {t('progress.activity.mobilityLine', { n: tiles[3].value })}
+          </AppText>
+        ) : null}
       </View>
 
       {/* "Your workouts": the month calendar. */}
@@ -382,8 +398,8 @@ const useStyles = makeStyles(() => ({
   },
   ranges: { flexDirection: 'row', justifyContent: 'space-between' },
   range: {
+    flex: 1,
     minHeight: 36,
-    minWidth: 52,
     paddingHorizontal: spacing.sm,
     borderRadius: radius.chip,
     alignItems: 'center',
@@ -430,3 +446,10 @@ const useStyles = makeStyles(() => ({
     borderColor: colors.teal,
   },
 }));
+
+/** "1.5K" / "1,5 mil" once a number gets long, so it fits its tile. */
+function compact(n: number, locale: string) {
+  return n >= 10_000
+    ? new Intl.NumberFormat(locale, { notation: 'compact', maximumFractionDigits: 1 }).format(n)
+    : n.toLocaleString(locale);
+}

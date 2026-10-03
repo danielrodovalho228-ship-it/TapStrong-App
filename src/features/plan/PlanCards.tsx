@@ -173,6 +173,7 @@ function MuscleAvatar({ exercise, band }: { exercise: Exercise | undefined; band
         sex={sex as BodySex}
         primary={exercise.muscles.filter((m) => m.role === 'primary').map((m) => m.muscleKey)}
         secondary={[]}
+        views={['front']}
         maxHeight={40}
       />
     </View>
@@ -259,9 +260,10 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'center',
     overflow: 'hidden',
   },
+  // Above the dose badge, never under it.
   soon: {
     position: 'absolute',
-    bottom: spacing.sm,
+    bottom: spacing.sm + sizes.touchTarget,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xxs,

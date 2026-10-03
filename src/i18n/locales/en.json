@@ -4414,7 +4414,15 @@
       "yourWorkouts": "Your workouts",
       "graphs": "Exercise graphs",
       "goalTitle": "Goal",
-      "currentMax": "Current max"
+      "currentMax": "Current max",
+      "mobilityLine": "Mobility sessions: {{n}}",
+      "rangeShort": {
+        "7d": "7D",
+        "30d": "30D",
+        "6m": "6M",
+        "12m": "12M",
+        "all": "All"
+      }
     },
     "body": {
       "whtr": "Waist-to-height ratio",

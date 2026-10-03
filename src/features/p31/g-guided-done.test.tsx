@@ -166,6 +166,8 @@ it('end: three numbers and the fun comparison for an adult with loads', async ()
   expect(screen.getByText('I lifted the weight of')).toBeTruthy();
   expect(screen.queryByText(/kcal|calorie/i)).toBeNull();
   expect(screen.getByRole('button', { name: 'Close' })).toBeTruthy();
+  // No streak recorded yet: no "0 days in a row" chip.
+  expect(screen.queryByText(/^0 days/)).toBeNull();
 });
 
 it('end for a teen: sets, no load, no comparison', async () => {

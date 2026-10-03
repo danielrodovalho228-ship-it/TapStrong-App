@@ -3,7 +3,7 @@
 // a muscle grid), the Library, Library equipment, Progress (Activity, Body)
 // and Settings — teen, adult and 60+, dark by default (plus adult light), as
 // the preview link builds them (EXPO_PUBLIC_DEMO_MEDIA=1). It also checks that
-// no text sits on the player's media frame.
+// no text sits on the logger's media frame (the warm-up puts text on a fade).
 // Output: <out>/<mode>-<scheme>-<name>.jpg (default docs/screenshots/p31)
 // Run: node scripts/shoot-p31.mjs [exportDir] [outDir]
 import { execSync } from 'node:child_process';
@@ -183,7 +183,13 @@ try {
               muscleGoals: [{ muscleKey: 'biceps', goal: 'grow' }],
             }),
           ),
-          JSON.stringify({ state: { workouts }, version: 2 }),
+          JSON.stringify({
+            state: {
+              workouts,
+              streak: { current: 4, best: 6, freezes: 0, lastActive: day(0), restDays: [] },
+            },
+            version: 2,
+          }),
           JSON.stringify({ state: { appearance: scheme }, version: 2 }),
         ],
       );
@@ -211,14 +217,15 @@ try {
     // The warm-up, full screen.
     await put([workout(-3, IDS.past, { done: true }), workout(0, IDS.warm, { warmup: true })]);
     await go(`/workout/${IDS.warm}/play`);
+    // Text over the dark fade is the warm-up design (Phase 31, G): no check here.
     await shot('03-warmup');
-    const o = await overlaps(page);
-    if (o.length) failed.push(`${mode.id}/${scheme} warm-up: text on media: ${o}`);
 
     // The set logger with two sets done, then rest over it.
     await put([workout(-3, IDS.past, { done: true }), workout(0, IDS.live, { logged: 2 })]);
     await go(`/workout/${IDS.live}/play`);
     await shot('04-logger', true);
+    const o = await overlaps(page);
+    if (o.length) failed.push(`${mode.id}/${scheme} logger: text on media: ${o}`);
     await go(`/workout/${IDS.live}/rest`);
     await shot('05-rest');
     await go(`/workout/${IDS.live}/exit`);

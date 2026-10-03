@@ -7,7 +7,7 @@ import '@/i18n';
 
 import { act, fireEvent, render, screen, within } from '@testing-library/react-native';
 
-import ExercisesScreen, { GROUP_DOTS } from '@/app/(tabs)/body';
+import ExercisesScreen, { GROUP_DOTS, spreadLabels } from '@/app/(tabs)/body';
 import MuscleExercisesScreen from '@/app/muscle/[key]';
 import { hotspotsFor } from '@/features/bodymap/hotspots';
 import { useLibraryStore } from '@/features/library/store';
@@ -159,4 +159,15 @@ it('Cardio lists only cardio moves', async () => {
   expect(ids.length).toBeGreaterThan(0);
   const byId = new Map(LIBRARY.map((e) => [e.id, e]));
   for (const id of ids) expect(byId.get(id)!.parts.some((p) => p.includes('cardio'))).toBe(true);
+});
+
+it('side names never overlap: each moves only as far as it must', () => {
+  const ys = spreadLabels([100, 105, 110, 300], 34, 400);
+  for (let i = 1; i < ys.length; i++) expect(ys[i] - ys[i - 1]).toBeGreaterThanOrEqual(34);
+  expect(ys[0]).toBe(100);
+  expect(ys[3]).toBe(300);
+  // Crowded at the bottom: pushed back up, still inside the picture.
+  const low = spreadLabels([390, 395], 34, 400);
+  expect(low[1]).toBeLessThanOrEqual(400 - 17);
+  expect(low[1] - low[0]).toBeGreaterThanOrEqual(34);
 });

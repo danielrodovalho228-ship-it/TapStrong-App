@@ -3,6 +3,7 @@ import { Redirect, router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PanResponder, Pressable, useWindowDimensions, View } from 'react-native';
+import Svg, { Circle, Line } from 'react-native-svg';
 
 import { AppText, Button, Chip, Icon, IconButton, Screen, TextLink } from '@/components/ui';
 import { FRAME, hotspotsFor } from '@/features/bodymap/hotspots';
@@ -47,8 +48,22 @@ export const GROUP_DOTS: Record<BodyView, GroupDot[]> = {
   ],
 };
 
-const LABEL_GAP = 4;
 const DOT = 18;
+
+/**
+ * Label heights on one side, top to bottom, at least `gap` apart and inside
+ * `[gap / 2, height - gap / 2]`: each starts at its dot and only moves as far
+ * as it must, so names never overlap.
+ */
+export function spreadLabels(ys: number[], gap: number, height: number): number[] {
+  const out: number[] = [];
+  ys.forEach((y, i) => out.push(Math.max(y, gap / 2, i ? out[i - 1] + gap : -Infinity)));
+  for (let i = out.length - 1; i >= 0; i--) {
+    const cap = i === out.length - 1 ? height - gap / 2 : out[i + 1] - gap;
+    out[i] = Math.min(out[i], cap);
+  }
+  return out;
+}
 
 /**
  * Exercises tab (Phase 31, E and G): the profile's own body (sex and age
@@ -91,9 +106,20 @@ export default function ExercisesScreen() {
   const scale = imageWidth / FRAME.width;
   const left = (areaWidth - imageWidth) / 2;
   const spots = new Map(hotspotsFor(band, sex, view).map((h) => [h.key, h.points]));
-  const dots = GROUP_DOTS[view].flatMap((g) => {
+  const placed = GROUP_DOTS[view].flatMap((g) => {
     const p = spots.get(g.hotspot)?.[g.point] ?? spots.get(g.hotspot)?.[0];
     return p ? [{ ...g, x: left + p[0] * scale, y: p[1] * scale }] : [];
+  });
+  // Names stack on each side without overlapping; Cardio keeps its slot on the right.
+  const gap = senior ? 44 : 34;
+  const pill = gap - 4;
+  const slop = { top: (sizes.touchTarget - pill) / 2, bottom: (sizes.touchTarget - pill) / 2 };
+  const cardioY = imageHeight * 0.12;
+  const dots = (['left', 'right'] as const).flatMap((side) => {
+    const group = placed.filter((d) => d.side === side).sort((a, b) => a.y - b.y);
+    const fixed = side === 'right' && view === 'front' ? [cardioY] : [];
+    const ys = spreadLabels([...fixed, ...group.map((d) => d.y)], gap, imageHeight);
+    return group.map((d, i) => ({ ...d, labelY: ys[i + fixed.length] }));
   });
 
   const open = (key: string) => {
@@ -139,45 +165,67 @@ export default function ExercisesScreen() {
           contentFit="contain"
           accessible={false}
         />
+        {/* Dotted leader lines from each name to its dot. */}
+        <Svg width={areaWidth} height={imageHeight} style={styles.fill} pointerEvents="none">
+          {dots.map((d) => (
+            <Line
+              key={d.hotspot}
+              x1={d.side === 'left' ? 0 : areaWidth}
+              y1={d.labelY}
+              x2={d.x}
+              y2={d.y}
+              stroke={colors.mutedStrong}
+              strokeWidth={1.5}
+              strokeDasharray="4 4"
+            />
+          ))}
+          {dots.map((d) => (
+            <Circle key={d.hotspot} cx={d.x} cy={d.y} r={DOT / 2} fill={colors.accent} />
+          ))}
+        </Svg>
         {view === 'front' ? (
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={t('explore.openMuscle', { muscle: t('explore.cardio') })}
             onPress={() => open('cardio')}
-            style={[styles.cardio, { top: imageHeight * 0.18 }]}
+            style={[styles.label, styles.cardio, { top: cardioY - pill / 2, height: pill }]}
+            hitSlop={slop}
             testID="explore-cardio"
           >
-            <Icon name="heart" size={22} color={colors.accent} />
+            <Icon name="heart" size={20} color={colors.accent} />
             <AppText variant="bodyStrong">{t('explore.cardio')}</AppText>
           </Pressable>
         ) : null}
         {dots.map((d) => {
           const name = muscleLabel(t, d.open);
-          const lineStyle =
-            d.side === 'left'
-              ? { left: 0, width: Math.max(0, d.x) }
-              : { left: d.x, width: Math.max(0, areaWidth - d.x) };
           return (
-            <Pressable
-              key={d.hotspot}
-              accessibilityRole="button"
-              accessibilityLabel={t('explore.openMuscle', { muscle: name })}
-              onPress={() => open(d.open)}
-              style={[styles.leader, lineStyle, { top: d.y - sizes.touchTarget + LABEL_GAP }]}
-              testID="side-label"
-            >
-              <AppText
-                variant={senior ? 'h3' : 'bodyStrong'}
-                style={d.side === 'left' ? styles.labelLeft : styles.labelRight}
-                numberOfLines={1}
-              >
-                {name}
-              </AppText>
-              <View style={styles.dashed} />
-              <View
-                style={[styles.dot, d.side === 'left' ? { right: -DOT / 2 } : { left: -DOT / 2 }]}
+            <View key={d.hotspot}>
+              {/* The dot itself is a big touch target too (same action as its name). */}
+              <Pressable
+                accessible={false}
+                onPress={() => open(d.open)}
+                style={[
+                  styles.dotHit,
+                  { left: d.x - sizes.touchTarget / 2, top: d.y - sizes.touchTarget / 2 },
+                ]}
               />
-            </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={t('explore.openMuscle', { muscle: name })}
+                onPress={() => open(d.open)}
+                style={[
+                  styles.label,
+                  d.side === 'left' ? { left: 0 } : { right: 0 },
+                  { top: d.labelY - pill / 2, height: pill, maxWidth: areaWidth * 0.46 },
+                ]}
+                hitSlop={slop}
+                testID="side-label"
+              >
+                <AppText variant={senior ? 'h3' : 'bodyStrong'} numberOfLines={1}>
+                  {name}
+                </AppText>
+              </Pressable>
+            </View>
           );
         })}
       </View>
@@ -249,31 +297,17 @@ const useStyles = makeStyles(() => ({
     paddingBottom: spacing.xs,
   },
   searchRow: { flexDirection: 'row', marginLeft: -spacing.sm },
-  cardio: {
+  fill: { position: 'absolute', left: 0, top: 0 },
+  // A dark pill so names stay readable over the light body picture.
+  label: {
     position: 'absolute',
-    right: 0,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-    minHeight: sizes.touchTarget,
+    justifyContent: 'center',
+    paddingHorizontal: spacing.sm,
+    borderRadius: radius.chip,
+    backgroundColor: colors.surface,
   },
-  leader: { position: 'absolute', height: sizes.touchTarget, justifyContent: 'flex-end' },
-  labelLeft: { position: 'absolute', left: 0, bottom: LABEL_GAP + 2 },
-  labelRight: { position: 'absolute', right: 0, bottom: LABEL_GAP + 2 },
-  dashed: {
-    borderBottomWidth: 1.5,
-    borderStyle: 'dashed',
-    borderColor: colors.mutedStrong,
-    marginBottom: LABEL_GAP,
-  },
-  dot: {
-    position: 'absolute',
-    bottom: LABEL_GAP - DOT / 2,
-    width: DOT,
-    height: DOT,
-    borderRadius: DOT / 2,
-    backgroundColor: colors.accent,
-  },
+  cardio: { right: 0, flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
+  dotHit: { position: 'absolute', width: sizes.touchTarget, height: sizes.touchTarget },
   controls: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   round: {
     width: sizes.touchTarget + spacing.md,

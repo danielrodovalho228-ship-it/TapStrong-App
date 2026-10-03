@@ -131,6 +131,7 @@ export default function DoneScreen() {
     router.dismissAll();
     router.replace('/home');
   };
+  const streakDays = streakToday(streak, localDate(now), deviceWeekStart());
 
   return (
     <Screen
@@ -232,16 +233,17 @@ export default function DoneScreen() {
                 ? t('workout.done.firstTitle')
                 : t('workout.done.title')}
         </AppText>
-        <View style={styles.streak}>
-          <View style={styles.flame}>
-            <Icon name="flame" size={18} color={colors.onAccent} />
+        {/* No "0 days in a row" chip (Phase 31, G). */}
+        {streakDays > 0 ? (
+          <View style={styles.streak}>
+            <View style={styles.flame}>
+              <Icon name="flame" size={18} color={colors.onAccent} />
+            </View>
+            <AppText variant="button" color={colors.onInk}>
+              {t('workout.done.streak', { count: streakDays })}
+            </AppText>
           </View>
-          <AppText variant="button" color={colors.onInk}>
-            {t('workout.done.streak', {
-              count: streakToday(streak, localDate(now), deviceWeekStart()),
-            })}
-          </AppText>
-        </View>
+        ) : null}
       </View>
 
       <View style={styles.stats} testID="done-stats">
