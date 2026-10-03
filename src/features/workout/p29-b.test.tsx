@@ -178,9 +178,11 @@ describe('B4: the per-set suggestion', () => {
     await as(1990);
     await player([record('past', { done: true, date: '2026-09-28' }), record('now')], 'now');
     const row = screen.getByTestId('set-current');
-    expect(within(row).getByText('Suggested (last 20 kg)')).toBeTruthy();
+    // Phase 31, G: "Suggested · 22.5 kg · (last 20 kg)" and "8–12 reps · (last 12)".
     expect(within(row).getByText(/^\d+(\.\d+)? kg$/)).toBeTruthy();
-    expect(within(row).getByText('8–12 reps (last 12) · now 8')).toBeTruthy();
+    expect(within(row).getByText('(last 20 kg)')).toBeTruthy();
+    expect(within(row).getByText('(last 12)')).toBeTruthy();
+    expect(within(row).getByText('8–12 reps')).toBeTruthy();
     expect(screen.getByTestId('max-load-chart')).toBeTruthy();
     await fireEvent.press(screen.getByRole('button', { name: 'Done with set' }));
     const log = useWorkoutStore.getState().workouts.find((w) => w.id === 'now')!.logs[0];

@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import Svg, { Line, Path } from 'react-native-svg';
 
 import { AppText } from '@/components/ui';
-import { makeStyles, spacing, useColors } from '@/theme';
+import { colors, makeStyles, spacing, useColors } from '@/theme';
 
 /**
  * "Max load" (Phase 31, D): a small area chart of the best load of each past
@@ -14,19 +14,22 @@ export function MaxLoadChart({
   points,
   goal,
   unitLabel,
-  width = 300,
-  height = 72,
+  best: top3 = null,
+  width = 220,
+  height = 96,
 }: {
   /** Best load per session, oldest first, in the person's unit. */
   points: number[];
   goal?: number | null;
   unitLabel: string;
+  /** The heaviest set so far: load, reps and date, shown on the left. */
+  best?: { load: number; reps: number | null; date: string } | null;
   width?: number;
   height?: number;
 }) {
   const colors = useColors();
   const styles = useStyles();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   if (!points.length) return null;
   const top = Math.max(...points, goal ?? 0) * 1.1 || 1;
   const x = (i: number) => (points.length === 1 ? width / 2 : (i / (points.length - 1)) * width);
@@ -37,13 +40,26 @@ export function MaxLoadChart({
   const bestText = `${best} ${unitLabel}`;
   return (
     <View style={styles.wrap} testID="max-load-chart">
-      <View style={styles.head}>
-        <AppText variant="label" color={colors.mutedStrong}>
-          {t('workout.logger.maxLoad')}
-        </AppText>
-        <AppText variant="bodyStrong">{bestText}</AppText>
+      {/* Phase 31, G: the record on the left, the chart on the right. */}
+      <View style={styles.left}>
+        <AppText variant="bodyStrong">{t('workout.logger.maxLoad')}</AppText>
+        <AppText>{top3 ? `${top3.load} ${unitLabel}` : bestText}</AppText>
+        {top3?.reps ? (
+          <AppText>{t('workout.logger.repsValue', { count: top3.reps })}</AppText>
+        ) : null}
+        {top3 ? (
+          <AppText color={colors.mutedStrong}>
+            {new Date(top3.date).toLocaleDateString(i18n.language)}
+          </AppText>
+        ) : null}
+        {goal ? (
+          <AppText color={colors.accentText}>
+            {t('workout.logger.goalShort', { load: `${goal} ${unitLabel}` })}
+          </AppText>
+        ) : null}
       </View>
       <View
+        style={styles.chart}
         accessible
         accessibilityLabel={t('workout.logger.maxLoadA11y', {
           best: `${best} ${unitLabel}`,
@@ -77,6 +93,14 @@ export function MaxLoadChart({
 }
 
 const useStyles = makeStyles(() => ({
-  wrap: { gap: spacing.xs },
-  head: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
+  wrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    paddingBottom: spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.line,
+  },
+  left: { gap: spacing.xxs, minWidth: 120 },
+  chart: { flex: 1 },
 }));

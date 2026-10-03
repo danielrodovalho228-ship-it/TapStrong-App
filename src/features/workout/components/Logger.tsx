@@ -8,8 +8,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppText, Button, Chip, Icon, IconButton, TextLink } from '@/components/ui';
 import type { Exercise } from '@/features/exercises/types';
 import type { SessionItem } from '@/features/generator/types';
-import { exerciseRecords } from '@/features/library/performance';
+import { epley, exerciseRecords, type SessionPoint } from '@/features/library/performance';
+import { muscleByKey } from '@/features/muscles';
 import { modeOf } from '@/features/onboarding/derived';
+import { muscleLabel } from '@/features/onboarding/summaries';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { exerciseBest } from '@/features/progress/activity';
 import { programById } from '@/features/rehab/programs';
@@ -103,6 +105,15 @@ export function CountersRow({
       0,
     ),
   );
+  // New bests in this workout, adults only (Phase 31, G): "🏆 2".
+  const others = useWorkoutStore((st) => st.workouts).filter((w) => w.id !== workout.id);
+  const records = showVolume
+    ? mainLogs.filter((l) => {
+        if (!l.load) return false;
+        const best = bestsOf(others, l.exerciseId, unit).load;
+        return best > 0 && convertLoad(l.load, l.unit ?? unit, unit) > best;
+      }).length
+    : 0;
   const cells = [
     { key: 'time', label: t('workout.logger.time'), value: clockText((now - started) / 1000) },
     showVolume
@@ -113,6 +124,9 @@ export function CountersRow({
         }
       : { key: 'sets', label: t('workout.logger.sets'), value: `${mainLogs.length}` },
     { key: 'reps', label: t('workout.logger.reps'), value: `${reps}` },
+    ...(records
+      ? [{ key: 'records', label: t('workout.logger.records'), value: `🏆 ${records}` }]
+      : []),
   ];
   return (
     <View style={styles.counters} testID="logger-counters">
@@ -160,9 +174,21 @@ export function ExerciseHeader({
           <AppText variant="h2" accessibilityRole="header" numberOfLines={2}>
             {name}
           </AppText>
-          <View style={styles.muscleChip}>
-            <AppText variant="caption" color={colors.accentText}>
-              {targetText(t, item, exercise)}
+          {/* The muscle chip in its group's colour (Phase 31, G). */}
+          <View
+            style={[
+              styles.muscleChip,
+              {
+                backgroundColor:
+                  colors.group[muscleByKey(item.targetMuscle ?? '')?.movementGroup ?? 'push'],
+              },
+            ]}
+            testID="muscle-chip"
+          >
+            <AppText variant="caption" color={colors.onGroup} style={styles.caps}>
+              {item.targetMuscle
+                ? muscleLabel(t, item.targetMuscle)
+                : targetText(t, item, exercise)}
             </AppText>
           </View>
         </View>
@@ -241,7 +267,6 @@ export function LoggerStep({
   const [adjust, setAdjust] = useState(false);
   const [rpe, setRpe] = useState<number | undefined>(undefined);
   const [customize, setCustomize] = useState(false);
-  const askEffort = ((loaded && item.role === 'main') || programItem) && !hold;
   const loadStep = program ? PROGRAM_STEP[unit] : LOAD_STEP[unit];
   const current = ramp ? null : step.setNo;
   const nextMain = nextMainAfter(workout, item);
@@ -258,7 +283,7 @@ export function LoggerStep({
       setNo,
       ...(hold ? { seconds: reps } : { reps }),
       ...(loaded ? { load, unit } : {}),
-      ...(askEffort && rpe ? { rpe } : {}),
+      ...(programItem && rpe ? { rpe } : {}),
     });
     setRpe(undefined);
     setAdjust(false);
@@ -301,144 +326,234 @@ export function LoggerStep({
     .map((s) => s.bestLoad ?? 0)
     .filter((v) => v > 0)
     .slice(-8);
+  const heaviestSet = (() => {
+    const top = (records?.sessions ?? []).reduce<SessionPoint | null>(
+      (m, x) => ((x.bestLoad ?? 0) > (m?.bestLoad ?? 0) ? x : m),
+      null,
+    );
+    return top?.bestLoad ? { load: top.bestLoad, reps: top.bestReps, date: top.date } : null;
+  })();
   const doseLine = hold
     ? t('workout.logger.nextHold', { count: item.sets, range: rangeText(shown) })
     : t('plan.badge', { count: item.sets, reps: rangeText(shown) });
 
+  // Records of a logged set against every other workout (adults only).
+  const others = workouts.filter((w) => w.id !== workout.id);
+  const before = loaded && !minor ? bestsOf(others, item.exerciseId, unit) : null;
+  const prsOf = (l: SetLog, isLastLogged: boolean): string[] => {
+    if (!before || !l.load || mode !== 'adult') return [];
+    const kg = convertLoad(l.load, l.unit ?? unit, unit);
+    const out: string[] = [];
+    if (before.load > 0 && kg > before.load) out.push(t('workout.logger.prLoad'));
+    if (before.oneRm > 0 && epley(kg, l.reps ?? 0) > before.oneRm)
+      out.push(t('workout.logger.prOneRm'));
+    if (isLastLogged && before.volume > 0) {
+      const volume = logsOf.reduce(
+        (n, x) => n + (x.load ? convertLoad(x.load, x.unit ?? unit, unit) * (x.reps ?? 0) : 0),
+        0,
+      );
+      if (volume > before.volume) out.push(t('workout.logger.prVolume'));
+    }
+    return out;
+  };
+  const tip = [
+    loaded && exercise?.equipment.includes('barbell') ? t('workout.logger.barPlates') : null,
+    loaded && exercise?.equipment.includes('dumbbells')
+      ? item.perSide || exercise?.unilateral
+        ? t('workout.logger.oneDumbbellOneSide')
+        : t('workout.logger.oneDumbbell')
+      : null,
+  ].find(Boolean);
+  const lastLogged = logsOf.reduce((m, l) => Math.max(m, l.setNo), 0);
+  const allLogged = logsOf.length >= item.sets;
+  const rated = logsOf.some((l) => l.rpe != null);
+  const askRir = !programItem && !hold && logsOf.length > 0 && !minor;
+
   return (
     <View style={styles.stack}>
       {points.length && mode === 'adult' ? (
-        <MaxLoadChart points={points} goal={goal ?? adviceLoad(advice)} unitLabel={unitLabel} />
+        <MaxLoadChart
+          points={points}
+          goal={goal ?? adviceLoad(advice)}
+          unitLabel={unitLabel}
+          best={heaviestSet}
+        />
       ) : null}
 
       {ramp ? (
+        // The exercise's warm-up sets: one filled coral card, "Done" on the side.
         <View style={styles.warmCard} testID="ramp-card">
-          <View style={styles.flex}>
-            <AppText variant="bodyStrong">{t('workout.logger.warmupTitle')}</AppText>
-            <AppText variant="caption" color={colors.mutedStrong}>
+          <View style={styles.warmText}>
+            <AppText variant="h2" color={colors.onAccent}>
+              {t('workout.logger.warmupTitle')}
+            </AppText>
+            <AppText variant="bodyStrong" color={colors.onAccent}>
               {rampScheme(t, ramp, !!exercise?.equipment.includes('barbell'))}
             </AppText>
-            <TextLink
-              label={t('workout.ramp.skip')}
+            <Pressable
+              accessibilityRole="link"
+              accessibilityLabel={t('workout.ramp.skip')}
               onPress={() => skipItem(workout.id, ramp.id)}
-            />
+            >
+              <AppText variant="caption" color={colors.onAccent} style={styles.underline}>
+                {t('workout.ramp.skip')}
+              </AppText>
+            </Pressable>
           </View>
-          <Button label={t('workout.logger.did')} onPress={doRamp} testID="ramp-done" />
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('workout.logger.did')}
+            onPress={doRamp}
+            style={styles.action}
+            testID="ramp-done"
+          >
+            <AppText variant="bodyStrong" color={colors.onAccent}>
+              {t('workout.logger.did')}
+            </AppText>
+          </Pressable>
         </View>
       ) : null}
 
-      <AppText variant="label" color={colors.mutedStrong} testID="logger-next">
+      <AppText variant="bodyStrong" color={colors.accentText} testID="logger-next">
         {t('workout.logger.next', { dose: doseLine })}
       </AppText>
-
-      {goal ? (
-        <View style={styles.goal} testID="logger-goal">
-          <Icon name="flame" size={18} color={colors.accentText} />
-          <AppText variant="caption" color={colors.accentText} style={styles.flex}>
-            {t('workout.logger.goal', { load: `${goal} ${unitLabel}` })}
-          </AppText>
-        </View>
-      ) : null}
 
       <View style={styles.sets} testID="logger-sets">
         {Array.from({ length: item.sets }, (_, n) => n + 1).map((setNo) => {
           const logged = logsOf.find((l) => l.setNo === setNo);
           const split = sideSet(item, setNo);
-          const label = split
+          const sideLabel = split
             ? t('rehab.player.sideSet', {
                 side: t(`rehab.side.${split.side}`),
                 n: split.n,
                 total: split.total,
               })
-            : t('workout.logger.setRow', { n: setNo });
-          if (logged)
+            : null;
+          const label = sideLabel ?? t('workout.logger.setRow', { n: setNo });
+          if (logged) {
+            const prs = prsOf(logged, setNo === lastLogged);
             return (
-              <View key={setNo} style={styles.loggedRow} testID="set-logged">
-                <AppText variant="caption" color={colors.mutedStrong} style={styles.setLabel}>
-                  {label}
-                </AppText>
-                <AppText variant="bodyStrong" style={styles.flex}>
-                  {[
-                    loadShown(logged),
-                    logged.seconds != null && logged.reps == null
-                      ? t('workout.logger.seconds', { count: logged.seconds })
-                      : t('workout.logger.repsValue', { count: logged.reps ?? 0 }),
-                  ]
-                    .filter(Boolean)
-                    .join(' | ')}
-                </AppText>
-                <Icon name="check" size={18} color={colors.teal} />
-                <TextLink
-                  label={t('workout.logger.redo')}
+              <View key={setNo} style={[styles.setCard, styles.filled]} testID="set-logged">
+                <View style={styles.setMain}>
+                  <View style={styles.setCols} accessible accessibilityLabel={label}>
+                    {loadShown(logged) ? (
+                      <SetValue big={big} value={loadShown(logged)!} tone="onAccent" />
+                    ) : null}
+                    <SetValue
+                      big={big}
+                      value={
+                        logged.seconds != null && logged.reps == null
+                          ? t('workout.logger.seconds', { count: logged.seconds })
+                          : t('workout.logger.repsValue', { count: logged.reps ?? 0 })
+                      }
+                      tone="onAccent"
+                      divider={!!loadShown(logged)}
+                    />
+                  </View>
+                  {prs.map((pr) => (
+                    <View key={pr} style={styles.prRow} testID="set-pr">
+                      <Icon name="trophy" size={16} color={colors.onAccent} />
+                      <AppText variant="bodyStrong" color={colors.onAccent}>
+                        {pr}
+                      </AppText>
+                    </View>
+                  ))}
+                </View>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={t('workout.logger.redoA11y', { set: label })}
                   onPress={() => unlogSet(workout.id, item.id, setNo)}
-                />
+                  style={styles.action}
+                >
+                  <Icon name="check" size={22} color={colors.onAccent} />
+                  <AppText variant="bodyStrong" color={colors.onAccent}>
+                    {t('workout.logger.redo')}
+                  </AppText>
+                </Pressable>
               </View>
             );
+          }
           if (setNo === current) {
             const prev = lastLog(setNo);
+            const repsLine = hold
+              ? t('workout.logger.secondsRange', { range: rangeText(shown) })
+              : t('workout.logger.repsRange', { range: rangeText(shown) });
             return (
-              <View key={setNo} style={styles.currentRow} testID="set-current">
-                <View style={styles.currentTop}>
-                  <View style={styles.flex}>
-                    <AppText variant="caption" color={colors.accentText} style={styles.caps}>
-                      {label}
-                    </AppText>
-                    {loaded ? (
+              <View key={setNo} style={styles.currentWrap}>
+                <View style={[styles.setCard, styles.filled]} testID="set-current">
+                  <View style={styles.setMain}>
+                    {sideLabel ? (
+                      <AppText variant="caption" color={colors.onAccent} style={styles.caps}>
+                        {sideLabel}
+                      </AppText>
+                    ) : null}
+                    <View style={styles.setCols}>
+                      {loaded ? (
+                        <Pressable
+                          accessibilityRole="button"
+                          accessibilityLabel={t('workout.logger.adjustLoad')}
+                          onPress={() => setAdjust((v) => !v)}
+                          style={styles.col}
+                          testID="current-load"
+                        >
+                          <AppText variant="caption" color={colors.onAccent}>
+                            {t('workout.logger.suggestedNoLast')}
+                          </AppText>
+                          <AppText variant={big} color={colors.onAccent} style={styles.num}>
+                            {loadText}
+                          </AppText>
+                          {prev?.load ? (
+                            <AppText variant="caption" color={colors.onAccent}>
+                              {t('workout.logger.lastValue', { value: loadShown(prev) ?? '' })}
+                            </AppText>
+                          ) : null}
+                        </Pressable>
+                      ) : null}
                       <Pressable
                         accessibilityRole="button"
-                        accessibilityLabel={t('workout.logger.adjustLoad')}
-                        onPress={() => setAdjust((a) => !a)}
-                        testID="current-load"
+                        accessibilityLabel={t('workout.logger.adjustReps')}
+                        onPress={() => setAdjust((v) => !v)}
+                        style={[styles.col, loaded && styles.colDivider]}
+                        testID="current-reps"
                       >
-                        <AppText variant="caption" color={colors.mutedStrong}>
-                          {prev?.load
-                            ? t('workout.logger.suggested', { last: loadShown(prev) })
-                            : t('workout.logger.suggestedNoLast')}
+                        <AppText variant="caption" color={colors.onAccent}>
+                          {t('workout.logger.now', { value: reps })}
                         </AppText>
-                        <AppText variant={big} style={styles.num}>
-                          {loadText}
+                        <AppText variant={big} color={colors.onAccent} style={styles.num}>
+                          {repsLine}
                         </AppText>
+                        {prev?.reps ? (
+                          <AppText variant="caption" color={colors.onAccent}>
+                            {t('workout.logger.lastValue', { value: prev.reps })}
+                          </AppText>
+                        ) : null}
                       </Pressable>
-                    ) : null}
-                    <Pressable
-                      accessibilityRole="button"
-                      accessibilityLabel={t('workout.logger.adjustReps')}
-                      onPress={() => setAdjust((a) => !a)}
-                      testID="current-reps"
-                    >
-                      <AppText
-                        variant={loaded ? 'bodyStrong' : big}
-                        style={styles.num}
-                        color={loaded ? colors.mutedStrong : colors.ink}
-                      >
-                        {hold
-                          ? t('workout.logger.holdLine', { range: rangeText(shown), value: reps })
-                          : prev?.reps
-                            ? t('workout.logger.repsLine', {
-                                range: rangeText(shown),
-                                value: reps,
-                                last: prev.reps,
-                              })
-                            : t('workout.logger.repsLineNoLast', {
-                                range: rangeText(shown),
-                                value: reps,
-                              })}
+                    </View>
+                    {goal ? (
+                      <View style={styles.goalPill} testID="logger-goal">
+                        <Icon name="trophy" size={16} color={colors.onAccent} />
+                        <AppText variant="bodyStrong" color={colors.onAccent}>
+                          {t('workout.logger.goal', { load: `${goal} ${unitLabel}` })}
+                        </AppText>
+                      </View>
+                    ) : tip ? (
+                      <AppText variant="bodyStrong" color={colors.onAccent}>
+                        {tip}
                       </AppText>
-                    </Pressable>
+                    ) : null}
                   </View>
-                  <Button
-                    size={senior ? 'xl' : undefined}
-                    label={t('workout.logger.did')}
+                  <Pressable
+                    accessibilityRole="button"
                     accessibilityLabel={t('workout.logger.didA11y')}
                     onPress={() => log(setNo, true)}
+                    style={[styles.action, senior && styles.actionBig]}
                     testID="set-done"
-                  />
+                  >
+                    <AppText variant={senior ? 'h3' : 'bodyStrong'} color={colors.onAccent}>
+                      {t('workout.logger.did')}
+                    </AppText>
+                  </Pressable>
                 </View>
-                {loaded && exercise?.equipment.includes('barbell') ? (
-                  <AppText variant="caption" color={colors.mutedStrong}>
-                    {t('workout.logger.barPlates')}
-                  </AppText>
-                ) : null}
                 {adjust ? (
                   <View style={styles.adjust} testID="quick-adjust">
                     <Counter
@@ -457,7 +572,7 @@ export function LoggerStep({
                     ) : null}
                   </View>
                 ) : null}
-                {askEffort ? (
+                {programItem ? (
                   <View
                     accessibilityRole="radiogroup"
                     accessibilityLabel={t('load.effort')}
@@ -496,56 +611,111 @@ export function LoggerStep({
             );
           }
           return (
-            <View key={setNo} style={styles.futureRow} testID="set-future">
-              <AppText variant="caption" color={colors.muted} style={styles.setLabel}>
-                {label}
-              </AppText>
-              <AppText color={colors.muted} style={styles.flex}>
-                {[
-                  loaded && load ? `${load} ${unitLabel}` : null,
-                  t('workout.logger.repsValue', { count: shown[0] }),
-                ]
-                  .filter(Boolean)
-                  .join(' | ')}
-              </AppText>
-              <Icon name="play" size={14} color={colors.muted} />
+            <View key={setNo} style={[styles.setCard, styles.future]} testID="set-future">
+              <View style={styles.setMain}>
+                <View style={styles.setCols} accessible accessibilityLabel={label}>
+                  {loaded && load ? (
+                    <View style={styles.col}>
+                      <AppText variant="caption" color={colors.muted}>
+                        {t('workout.logger.suggestedNoLast')}
+                      </AppText>
+                      <AppText variant={big} color={colors.muted} style={styles.num}>
+                        {loadText}
+                      </AppText>
+                    </View>
+                  ) : null}
+                  <View style={[styles.col, loaded && !!load && styles.colDividerMuted]}>
+                    <AppText variant={big} color={colors.muted} style={styles.num}>
+                      {hold
+                        ? t('workout.logger.secondsRange', { range: rangeText(shown) })
+                        : t('workout.logger.repsRange', { range: rangeText(shown) })}
+                    </AppText>
+                  </View>
+                </View>
+              </View>
+              <View style={[styles.action, styles.actionMuted]}>
+                <Icon name="play" size={22} color={colors.muted} />
+              </View>
             </View>
           );
         })}
       </View>
 
+      {askRir && !rated ? (
+        // One question per exercise instead of a chip per set (Phase 31, G).
+        <View style={styles.rir} testID="rir-card">
+          <AppText variant="bodyStrong" style={styles.centerText}>
+            {t('workout.logger.rirQuestion')}
+          </AppText>
+          <View style={styles.rirRow} accessibilityRole="radiogroup">
+            {RIR.map(([label, value]) => (
+              <Pressable
+                key={label}
+                accessibilityRole="radio"
+                accessibilityLabel={
+                  label === '3+'
+                    ? t('workout.logger.rirOptionMore')
+                    : t('workout.logger.rirOption', { count: Number(label) })
+                }
+                onPress={() => useWorkoutStore.getState().rateItem(workout.id, item.id, value)}
+                style={styles.rirButton}
+              >
+                <AppText variant="bodyStrong">{label}</AppText>
+              </Pressable>
+            ))}
+          </View>
+        </View>
+      ) : null}
+
       <View style={styles.actions}>
-        <Button variant="secondary" label={t('workout.logger.logAll')} onPress={logAll} />
+        {!allLogged ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('workout.logger.logAll')}
+            onPress={logAll}
+            style={styles.logAll}
+          >
+            <AppText variant="bodyStrong" color={colors.mutedStrong}>
+              {t('workout.logger.logAll')}
+            </AppText>
+          </Pressable>
+        ) : null}
         {!program ? (
-          <Button
-            variant="ghost"
+          <TextLink
             label={t('workout.logger.customize')}
+            accessibilityRole="button"
             onPress={() => setCustomize(true)}
           />
         ) : null}
         {onMachineTaken ? (
-          <Button variant="ghost" label={t('workout.machineTaken')} onPress={onMachineTaken} />
+          <TextLink
+            label={t('workout.machineTaken')}
+            accessibilityRole="button"
+            onPress={onMachineTaken}
+          />
         ) : null}
       </View>
 
       {nextMain ? (
-        <View style={styles.nextCard} testID="logger-next-exercise">
-          <ExerciseThumb size={48} slug={nextExercise?.slug} />
-          <View style={styles.flex}>
-            <AppText variant="caption" color={colors.mutedStrong} style={styles.caps}>
-              {t('workout.logger.nextExercise')}
-            </AppText>
-            <AppText variant="bodyStrong">
-              {exerciseName(t, nextExercise, nextMain.exerciseId)}
-            </AppText>
-            <AppText variant="caption" color={colors.mutedStrong}>
-              {nextMain.reps
-                ? t('plan.badge', { count: nextMain.sets, reps: rangeText(nextMain.reps) })
-                : t('workout.logger.nextHold', {
-                    count: nextMain.sets,
-                    range: rangeText(nextMain.holdSeconds ?? [30, 30]),
-                  })}
-            </AppText>
+        <View style={styles.section}>
+          <AppText variant="bodyStrong" color={colors.accentText}>
+            {t('workout.logger.nextExercise')}
+          </AppText>
+          <View style={styles.nextCard} testID="logger-next-exercise">
+            <ExerciseThumb size={64} slug={nextExercise?.slug} />
+            <View style={styles.flex}>
+              <AppText variant="bodyStrong">
+                {exerciseName(t, nextExercise, nextMain.exerciseId)}
+              </AppText>
+              <AppText color={colors.mutedStrong}>
+                {nextMain.reps
+                  ? t('plan.badge', { count: nextMain.sets, reps: rangeText(nextMain.reps) })
+                  : t('workout.logger.nextHold', {
+                      count: nextMain.sets,
+                      range: rangeText(nextMain.holdSeconds ?? [30, 30]),
+                    })}
+              </AppText>
+            </View>
           </View>
         </View>
       ) : null}
@@ -561,6 +731,60 @@ export function LoggerStep({
           }}
         />
       ) : null}
+    </View>
+  );
+}
+
+/** "How many more reps could you do?": 0 → very hard … 3+ → easy (RPE). */
+const RIR: [string, number][] = [
+  ['0', 10],
+  ['1', 9],
+  ['2', 8],
+  ['3+', 7],
+];
+
+/** Best load, estimated 1RM and session volume of an exercise in these workouts. */
+function bestsOf(workouts: WorkoutRecord[], exerciseId: string, unit: LoadUnit) {
+  let load = 0;
+  let oneRm = 0;
+  let volume = 0;
+  for (const w of workouts) {
+    let v = 0;
+    for (const l of w.logs) {
+      if (l.exerciseId !== exerciseId || !l.load) continue;
+      const kg = convertLoad(l.load, l.unit ?? unit, unit);
+      load = Math.max(load, kg);
+      oneRm = Math.max(oneRm, epley(kg, l.reps ?? 0));
+      v += kg * (l.reps ?? 0);
+    }
+    volume = Math.max(volume, v);
+  }
+  return { load, oneRm, volume };
+}
+
+/** One column of a set card: a big number with its caption. */
+function SetValue({
+  value,
+  big,
+  tone,
+  divider = false,
+}: {
+  value: string;
+  big: 'h1' | 'h2';
+  tone: 'onAccent' | 'muted';
+  divider?: boolean;
+}) {
+  const colors = useColors();
+  const styles = useStyles();
+  return (
+    <View style={[styles.col, divider && styles.colDivider]}>
+      <AppText
+        variant={big}
+        color={tone === 'onAccent' ? colors.onAccent : colors.muted}
+        style={styles.num}
+      >
+        {value}
+      </AppText>
     </View>
   );
 }
@@ -761,6 +985,7 @@ export function NextPreview({
       ? adviceForItem({ workouts, workoutId: workout.id, item, exercise, unit, generator })
       : null;
   const load = loaded ? adviceLoad(advice) : null;
+  const previewLoad = `${load} ${unitLabel}`;
   const range = targetRange(item) ?? [8, 12];
   const records = loaded ? exerciseRecords(workouts, item.exerciseId, unit) : null;
   const points = (records?.sessions ?? [])
@@ -774,31 +999,33 @@ export function NextPreview({
       </View>
       <ExerciseHeader exercise={exercise} item={item} />
       {points.length && mode === 'adult' ? (
-        <MaxLoadChart points={points} goal={load} unitLabel={unitLabel} />
+        <MaxLoadChart points={points} goal={load} unitLabel={unitLabel} best={null} />
       ) : null}
       <View style={styles.sets}>
         {Array.from({ length: item.sets }, (_, n) => (
-          <View key={n} style={styles.futureRow}>
-            <AppText variant="caption" color={colors.muted} style={styles.setLabel}>
-              {t('workout.logger.setRow', { n: n + 1 })}
-            </AppText>
-            <AppText color={colors.muted} style={styles.flex}>
-              {[
-                load ? `${load} ${unitLabel}` : null,
-                t('workout.logger.repsValue', { count: range[0] }),
-              ]
-                .filter(Boolean)
-                .join(' | ')}
-            </AppText>
+          <View key={n} style={[styles.setCard, styles.future]} testID="preview-set">
+            <View style={styles.setMain}>
+              <View style={styles.setCols}>
+                {load ? (
+                  <View style={styles.col}>
+                    <AppText variant="caption" color={colors.muted}>
+                      {t('workout.logger.suggestedNoLast')}
+                    </AppText>
+                    <AppText variant="h2" color={colors.muted} style={styles.num}>
+                      {previewLoad}
+                    </AppText>
+                  </View>
+                ) : null}
+                <View style={[styles.col, !!load && styles.colDividerMuted]}>
+                  <AppText variant="h2" color={colors.muted} style={styles.num}>
+                    {t('workout.logger.repsRange', { range: rangeText(range) })}
+                  </AppText>
+                </View>
+              </View>
+            </View>
           </View>
         ))}
       </View>
-      <Button
-        variant="accent"
-        label={t('workout.logger.startExercise')}
-        onPress={onStart}
-        testID="start-exercise"
-      />
     </View>
   );
 }
@@ -1000,19 +1227,75 @@ const useStyles = makeStyles(() => ({
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xxs,
     borderRadius: radius.chip,
-    backgroundColor: colors.primarySoft,
     marginTop: spacing.xxs,
   },
   warmCard: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    padding: spacing.md,
     borderRadius: radius.card,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.line,
+    overflow: 'hidden',
+    backgroundColor: colors.accent,
   },
+  warmText: { flex: 1, gap: spacing.xs, padding: spacing.lg },
+  underline: { textDecorationLine: 'underline' },
+  setCard: { flexDirection: 'row', borderRadius: radius.card, overflow: 'hidden', minHeight: 72 },
+  filled: { backgroundColor: colors.accent },
+  future: { backgroundColor: colors.sunken },
+  setMain: { flex: 1, justifyContent: 'center', gap: spacing.xs, padding: spacing.sm },
+  setCols: { flexDirection: 'row', alignItems: 'center' },
+  col: { flex: 1, alignItems: 'center', gap: 2 },
+  colDivider: { borderLeftWidth: 1, borderLeftColor: colors.onAccent },
+  colDividerMuted: { borderLeftWidth: 1, borderLeftColor: colors.line },
+  prRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, paddingLeft: spacing.sm },
+  goalPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    alignSelf: 'flex-start',
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xxs,
+    borderRadius: radius.chip,
+    backgroundColor: colors.accentPressed,
+  },
+  action: {
+    width: 88,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.xxs,
+    borderLeftWidth: 1,
+    borderLeftColor: colors.onAccent,
+  },
+  actionBig: { width: 104 },
+  actionMuted: { borderLeftColor: colors.line },
+  currentWrap: { gap: spacing.sm },
+  rir: {
+    gap: spacing.md,
+    padding: spacing.lg,
+    borderRadius: radius.card,
+    borderWidth: 1,
+    borderColor: colors.accent,
+    backgroundColor: colors.sunken,
+  },
+  rirRow: { flexDirection: 'row', justifyContent: 'center', gap: spacing.sm },
+  rirButton: {
+    minWidth: 64,
+    minHeight: sizes.touchTarget,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: sizes.touchTarget / 2,
+    borderWidth: 1,
+    borderColor: colors.mutedStrong,
+  },
+  centerText: { textAlign: 'center' },
+  logAll: {
+    alignSelf: 'center',
+    minWidth: 200,
+    minHeight: sizes.touchTarget + spacing.xs,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: radius.button,
+    backgroundColor: colors.sunken,
+  },
+  section: { gap: spacing.sm },
   goal: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1051,7 +1334,7 @@ const useStyles = makeStyles(() => ({
   },
   adjust: { gap: spacing.sm },
   effort: { flexDirection: 'row', gap: spacing.sm, flexWrap: 'wrap' },
-  actions: { gap: spacing.sm },
+  actions: { gap: spacing.md, alignItems: 'center' },
   nextCard: {
     flexDirection: 'row',
     alignItems: 'center',

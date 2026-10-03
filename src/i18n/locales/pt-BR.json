@@ -3738,7 +3738,11 @@
       "upNext": "A seguir",
       "progressUp": "Você chegou ao topo da faixa duas vezes. Tente +{{step}}.",
       "less": "−15 s",
-      "tapToSkip": "Toque para pular"
+      "tapToSkip": "Toque para pular",
+      "ofTotal": "Descanso: {{total}}",
+      "lessShort": "−15",
+      "moreShort": "+15",
+      "edit": "Mudar o tempo de descanso"
     },
     "warmup": "Aquecimento · {{minutes}} min",
     "cooldown": "Desaquecimento · {{minutes}} min",
@@ -4013,7 +4017,24 @@
       "startExercise": "Começar exercício",
       "setsDone": "{{done}}/{{total}} séries",
       "maxLoad": "Carga máxima",
-      "maxLoadA11y": "Gráfico de carga máxima. Melhor {{best}}, meta {{goal}}."
+      "maxLoadA11y": "Gráfico de carga máxima. Melhor {{best}}, meta {{goal}}.",
+      "prLoad": "Maior carga que você já levantou!",
+      "prOneRm": "Novo 1RM estimado!",
+      "prVolume": "Maior volume total!",
+      "oneDumbbell": "Peso de um halter",
+      "oneDumbbellOneSide": "Peso de um halter, reps de um lado",
+      "redoA11y": "Refazer {{set}}",
+      "repsRange": "{{range}} reps",
+      "secondsRange": "{{range}} s",
+      "lastValue": "(última {{value}})",
+      "now": "Agora {{value}}",
+      "rirQuestion": "Quantas reps a mais você faria? Isso ajusta o próximo treino.",
+      "rirOption_zero": "{{count}} reps a mais",
+      "rirOption_one": "{{count}} rep a mais",
+      "rirOption_other": "{{count}} reps a mais",
+      "goalShort": "Meta: {{load}}",
+      "records": "Recordes",
+      "rirOptionMore": "3 reps ou mais"
     },
     "guided": {
       "exerciseOf": "Exercício {{n}}/{{total}}",

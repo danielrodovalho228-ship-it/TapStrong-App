@@ -44,6 +44,9 @@ export type Palette = {
   tabBar: string;
   /** A panel one step below the background: the plan's list (Phase 31, G). */
   sunken: string;
+  /** Muscle chips by movement group (Phase 31, G), with dark text on them. */
+  group: { push: string; pull: string; legs: string; core: string };
+  onGroup: string;
   /** Backdrop behind sheets and dialogs: black at 50% in both modes. */
   scrim: string;
   /** Snackbars and toasts (swap Undo): a raised panel with its own text. */
@@ -88,6 +91,8 @@ export const PALETTES: Record<Scheme, Palette> = {
     onTeal: '#FFFFFF',
     tabBar: '#FFFFFF',
     sunken: '#F1ECE6',
+    group: { push: '#7CC4F2', pull: '#7DD3A8', legs: '#F2D04C', core: '#B59CF2' },
+    onGroup: '#14161A',
     scrim: 'rgba(0, 0, 0, 0.5)',
     surfaceRaised: '#2A2623',
     onSurfaceRaised: '#FFFFFF',
@@ -124,6 +129,8 @@ export const PALETTES: Record<Scheme, Palette> = {
     onTeal: '#0E1A15',
     tabBar: '#1B1D22',
     sunken: '#0E1013',
+    group: { push: '#7CC4F2', pull: '#7DD3A8', legs: '#F2D04C', core: '#B59CF2' },
+    onGroup: '#14161A',
     scrim: 'rgba(0, 0, 0, 0.5)',
     surfaceRaised: '#353A42',
     onSurfaceRaised: '#F1EEEA',

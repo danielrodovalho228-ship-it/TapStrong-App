@@ -3723,7 +3723,11 @@
       "upNext": "Up next",
       "progressUp": "You hit the top of the range twice. Try +{{step}}.",
       "less": "−15 s",
-      "tapToSkip": "Tap to skip"
+      "tapToSkip": "Tap to skip",
+      "ofTotal": "Rest: {{total}}",
+      "lessShort": "−15",
+      "moreShort": "+15",
+      "edit": "Change the rest time"
     },
     "warmup": "Warm-up · {{minutes}} min",
     "cooldown": "Cool-down · {{minutes}} min",
@@ -3992,7 +3996,23 @@
       "startExercise": "Start exercise",
       "setsDone": "{{done}}/{{total}} sets",
       "maxLoad": "Max load",
-      "maxLoadA11y": "Max load chart. Best {{best}}, goal {{goal}}."
+      "maxLoadA11y": "Max load chart. Best {{best}}, goal {{goal}}.",
+      "prLoad": "Highest load ever lifted!",
+      "prOneRm": "New estimated 1-rep max!",
+      "prVolume": "Highest total volume!",
+      "oneDumbbell": "Weight of one dumbbell",
+      "oneDumbbellOneSide": "Weight of one dumbbell, reps of one side",
+      "redoA11y": "Redo {{set}}",
+      "repsRange": "{{range}} reps",
+      "secondsRange": "{{range}} s",
+      "lastValue": "(last {{value}})",
+      "now": "Now {{value}}",
+      "rirQuestion": "How many more reps could you do? It tunes your next workout.",
+      "rirOption_one": "{{count}} more rep",
+      "rirOption_other": "{{count}} more reps",
+      "goalShort": "Goal: {{load}}",
+      "records": "Records",
+      "rirOptionMore": "3 or more reps"
     },
     "guided": {
       "exerciseOf": "Exercise {{n}}/{{total}}",

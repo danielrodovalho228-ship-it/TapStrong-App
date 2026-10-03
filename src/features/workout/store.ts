@@ -49,6 +49,8 @@ type Actions = {
   skipItem: (id: string, itemId: string) => void;
   /** "Redo" a logged set (Phase 31, D): it is to do again. */
   unlogSet: (id: string, itemId: string, setNo: number) => void;
+  /** "How many more reps could you do?" (Phase 31, G): the effort of every set of an item. */
+  rateItem: (id: string, itemId: string, rpe: number) => void;
   /** "Exercises" in the player (Phase 31, D): this exercise next. */
   setFocus: (id: string, itemId: string | null) => void;
   /** "Customize exercise" (Phase 31, D): sets and reps of one item. */
@@ -137,6 +139,11 @@ export const useWorkoutStore = create<Data & Actions>()(
             ],
           })),
 
+        rateItem: (id, itemId, rpe) =>
+          update(id, (w) => ({
+            ...w,
+            logs: w.logs.map((l) => (l.itemId === itemId ? { ...l, rpe } : l)),
+          })),
         unlogSet: (id, itemId, setNo) =>
           update(id, (w) => ({
             ...w,

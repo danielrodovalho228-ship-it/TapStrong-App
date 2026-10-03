@@ -229,7 +229,8 @@ describe('Player (mockup 11) and rest (mockup 12)', () => {
     }
     const step = currentStep(current())!;
     expect(step.item.role).toBe('main');
-    expect(within(screen.getByTestId('set-current')).getByText('Set 1')).toBeTruthy();
+    // Phase 31, G: the current set is the filled card with "Done".
+    expect(within(screen.getByTestId('set-current')).getByText('Done')).toBeTruthy();
     // Tap the value for the quick adjust.
     await fireEvent.press(screen.getByTestId('current-reps'));
     await fireEvent.press(
@@ -247,10 +248,10 @@ describe('Player (mockup 11) and rest (mockup 12)', () => {
     });
 
     await render(<RestScreen />);
-    expect(screen.getByText('Logged')).toBeTruthy();
-    expect(screen.getByText('Up next')).toBeTruthy();
+    // Phase 31, G: only the circle, "Rest: 1:30" inside.
+    expect(screen.getByText('Tap to skip')).toBeTruthy();
     const total = step.item.restSeconds;
-    const fmt = (s: number) => `of ${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+    const fmt = (s: number) => `Rest: ${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
     expect(screen.getByText(fmt(total))).toBeTruthy();
     await fireEvent.press(screen.getByRole('button', { name: '+15 s' }));
     expect(screen.getByText(fmt(total + 15))).toBeTruthy();

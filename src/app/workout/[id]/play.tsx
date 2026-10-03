@@ -150,7 +150,19 @@ export default function PlayerScreen() {
   );
 
   return (
-    <Screen header={header}>
+    <Screen
+      header={header}
+      // "Start exercise" stays at the bottom of the preview (Phase 31, G).
+      footer={
+        preview ? (
+          <Button
+            label={t('workout.logger.startExercise')}
+            onPress={() => setSeen((s) => [...s, item.id])}
+            testID="start-exercise"
+          />
+        ) : undefined
+      }
+    >
       {/* "I feel pain" stays one tap away on every step (SPEC safety), in the
           secondary text color with an icon so it never outshouts the exercise
           (Phase 29, A6). */}

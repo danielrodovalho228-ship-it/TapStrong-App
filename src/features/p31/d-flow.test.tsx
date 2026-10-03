@@ -246,6 +246,6 @@ it('a teen never sees a load, even on sets logged with one before', async () => 
   expect(screen.getByTestId('set-logged')).toBeTruthy();
   expect(screen.queryByText(/\b(kg|lb)\b/)).toBeNull();
   await render(<RestScreen />);
-  expect(screen.getByText('Logged')).toBeTruthy();
+  expect(screen.getByTestId('rest-overlay')).toBeTruthy();
   expect(screen.queryByText(/\b(kg|lb)\b/)).toBeNull();
 });

@@ -4,42 +4,32 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AppText, Button } from '@/components/ui';
+import { AppText, IconButton } from '@/components/ui';
 import { restFor, usePrefsStore } from '@/features/settings/store';
-import { modeOf } from '@/features/onboarding/derived';
-import { useOnboardingStore } from '@/features/onboarding/store';
 import { TimerRing, useNow } from '@/features/workout/components/TimerRing';
-import { currentStep, mainItems } from '@/features/workout/flow';
-import { clockText, exerciseName } from '@/features/workout/format';
+import { currentStep } from '@/features/workout/flow';
+import { clockText } from '@/features/workout/format';
 import { feel } from '@/features/workout/feel';
 import { useWorkout } from '@/features/workout/hooks';
-import { adviceForItem, convertLoad } from '@/features/workout/loads';
-import { pastSessions } from '@/features/workout/progression';
 import { playTimerEnd } from '@/features/workout/sound';
-import { useWorkoutStore } from '@/features/workout/store';
-import type { SetLog } from '@/features/workout/types';
 import { clock } from '@/lib/clock';
-import { colors, fonts, makeStyles, radius, spacing, useColors } from '@/theme';
+import { colors, fonts, makeStyles, sizes, spacing, useColors } from '@/theme';
 
 const EXTRA_SECONDS = 15;
+const SIZE = 300;
 
 /**
- * Rest between sets (mockup 12; Phase 31, D): an overlay over the logger
- * with the circle "Rest 1:29" (tap to skip), −15 s / +15 s and the
- * last-time comparison. It buzzes and chimes at the end. The time comes
- * from Settings.
+ * Rest between sets (mockup 12; Phase 31, D and G): only a circle over the
+ * set rows — "Tap to skip", "Rest: 1:30", the time left, −15 / +15 inside
+ * the circle and a pencil for the rest time in Settings. It buzzes and
+ * chimes at the end.
  */
 export default function RestScreen() {
   const colors = useColors();
   const styles = useStyles();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string; manual?: string }>();
-  const { workout, byId, input } = useWorkout(id);
-  const workouts = useWorkoutStore((s) => s.workouts);
-  const units = useOnboardingStore((s) => s.units);
-  const unit = units === 'imperial' ? 'lb' : 'kg';
-  const mode = useOnboardingStore((s) => modeOf(s));
-  const minor = mode === 'child' || mode === 'teen';
+  const { workout } = useWorkout(id);
   const [startedAt] = useState(() => clock.now().getTime());
   const [extra, setExtra] = useState(0);
   const now = useNow(250);
@@ -70,168 +60,89 @@ export default function RestScreen() {
   // An unknown workout goes Home, like the player and done screens (QA R7 P2).
   if (!workout) return <Redirect href="/home" />;
 
-  const mains = mainItems(workout);
-  const logText = (l: SetLog) =>
-    [
-      l.reps != null ? t('workout.rest.reps', { count: l.reps }) : null,
-      l.seconds != null && l.reps == null ? t('workout.seconds', { value: l.seconds }) : null,
-      // Shown in the person's unit, with the one rounding rule (QA R4 P2).
-      // Minors never see a load (Phase 29, B4).
-      l.load && !minor
-        ? `${convertLoad(l.load, l.unit ?? 'lb', unit)} ${t(`workout.units.${unit}`)}`
-        : null,
-    ]
-      .filter(Boolean)
-      .join(' · ');
-
-  const lastTime = last ? pastSessions(workouts, last.exerciseId, workout.id)[0] : undefined;
-  const lastTimeLog = lastTime?.logs.find((l) => l.setNo === last?.setNo) ?? lastTime?.logs.at(-1);
-  const nextExercise = next ? byId.get(next.item.exerciseId) : undefined;
-  // The same advice as the player (QA R5-02): one source, and only before
-  // the exercise's first set, so a session never gets a second increase.
-  const nextAdvice =
-    next && next.setNo === 1 && input
-      ? adviceForItem({
-          workouts,
-          workoutId: workout.id,
-          item: next.item,
-          exercise: nextExercise,
-          unit,
-          generator: { ...input, deload: workout.session.deload },
-        })
-      : null;
-  // The step from the advice's own base load, so it matches the player
-  // after a unit switch (QA R8 P2).
-  const upStep =
-    nextAdvice?.kind === 'load' && nextAdvice.change === 'up'
-      ? nextAdvice.load - (nextAdvice.from ?? nextAdvice.load)
-      : 0;
-
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
-      <View style={styles.content} testID="rest-overlay">
-        <AppText variant="caption" color={colors.mutedStrong} style={styles.caps}>
-          {lastItem && last
-            ? t('workout.rest.eyebrow', {
-                n: Math.max(1, mains.findIndex((i) => i.id === lastItem.id) + 1),
-                total: mains.length,
-                set: last.setNo,
-              })
-            : t('workout.rest.title')}
-        </AppText>
-
-        {/* Tap the ring to skip (Phase 29, B6). */}
-        <Pressable
-          style={styles.center}
-          accessibilityRole="button"
-          accessibilityLabel={t('workout.rest.skip')}
-          onPress={() => router.back()}
-          testID="rest-ring"
-        >
-          <TimerRing
-            size={220}
-            progress={elapsed / total}
-            track={colors.line}
-            color={colors.accent}
+      <View style={styles.circle} testID="rest-overlay">
+        <TimerRing size={SIZE} progress={elapsed / total} track={colors.line} color={colors.accent}>
+          {/* Tap the circle to skip (Phase 29, B6). */}
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('workout.rest.skip')}
+            onPress={() => router.back()}
+            style={styles.inner}
+            testID="rest-ring"
           >
-            <AppText variant="label" color={colors.mutedStrong} style={styles.caps}>
-              {t('workout.rest.title')}
+            <AppText variant="bodyStrong" color={colors.accentText}>
+              {t('workout.rest.tapToSkip')}
+            </AppText>
+            <AppText variant="bodyStrong">
+              {t('workout.rest.ofTotal', { total: clockText(total) })}
             </AppText>
             <AppText
               variant="display"
-              color={colors.ink}
+              color={colors.accentText}
               style={styles.num}
               accessibilityLabel={t('workout.player.timeLeft', { time: clockText(left) })}
             >
               {clockText(left)}
             </AppText>
-            <AppText variant="caption" color={colors.mutedStrong}>
-              {t('workout.rest.of', { total: clockText(total) })}
-            </AppText>
-          </TimerRing>
-          <AppText variant="caption" color={colors.mutedStrong}>
-            {t('workout.rest.tapToSkip')}
-          </AppText>
-        </Pressable>
-
-        <View style={styles.row}>
-          <View style={styles.flex}>
-            <Button
-              variant="secondary"
-              label={t('workout.rest.less')}
+          </Pressable>
+          <View style={[styles.side, styles.left]}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={t('workout.rest.less')}
               // Never below 15 s of rest in total.
               onPress={() => setExtra(Math.max(EXTRA_SECONDS - base, extra - EXTRA_SECONDS))}
-            />
+              style={styles.small}
+            >
+              <AppText variant="bodyStrong">{t('workout.rest.lessShort')}</AppText>
+            </Pressable>
           </View>
-          <View style={styles.flex}>
-            <Button
-              variant="secondary"
-              label={t('workout.rest.more')}
+          <View style={[styles.side, styles.right]}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={t('workout.rest.more')}
               onPress={() => setExtra(extra + EXTRA_SECONDS)}
+              style={styles.small}
+            >
+              <AppText variant="bodyStrong">{t('workout.rest.moreShort')}</AppText>
+            </Pressable>
+          </View>
+          <View style={styles.pencil}>
+            <IconButton
+              icon="edit"
+              accessibilityLabel={t('workout.rest.edit')}
+              onPress={() => router.push('/settings/workout')}
             />
           </View>
-        </View>
-
-        {last ? (
-          <View style={styles.card}>
-            <AppText variant="caption" color={colors.mutedStrong} style={styles.caps}>
-              {t('workout.rest.logged')}
-            </AppText>
-            <AppText variant="bodyStrong" color={colors.ink}>
-              {logText(last)}
-            </AppText>
-            {lastTimeLog ? (
-              <AppText variant="caption" color={colors.mutedStrong}>
-                {t('workout.rest.lastSession', { value: logText(lastTimeLog) })}
-              </AppText>
-            ) : null}
-          </View>
-        ) : null}
-
-        {next ? (
-          <View style={styles.card}>
-            <AppText variant="caption" color={colors.mutedStrong} style={styles.caps}>
-              {t('workout.rest.upNext')}
-            </AppText>
-            <AppText variant="bodyStrong" color={colors.ink}>
-              {exerciseName(t, nextExercise, next.item.exerciseId)}
-              {next.item.sets > 1
-                ? ` · ${t('workout.player.setOf', { n: next.setNo, total: next.item.sets })}`
-                : ''}
-            </AppText>
-            {upStep > 0 && !minor ? (
-              <AppText variant="caption" color={colors.mutedStrong}>
-                {t('workout.rest.progressUp', {
-                  step: `${upStep.toLocaleString(i18n.language)} ${t(`workout.units.${unit}`)}`,
-                })}
-              </AppText>
-            ) : null}
-          </View>
-        ) : null}
+        </TimerRing>
       </View>
     </SafeAreaView>
   );
 }
 
 const useStyles = makeStyles(() => ({
-  safe: { flex: 1, backgroundColor: colors.scrim, justifyContent: 'center' },
-  content: {
-    margin: spacing.lg,
-    padding: spacing.xl,
-    gap: spacing.lg,
-    borderRadius: radius.card * 2,
-    backgroundColor: colors.background,
+  safe: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  circle: {
+    width: SIZE + spacing.md,
+    height: SIZE + spacing.md,
+    borderRadius: (SIZE + spacing.md) / 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.sunken,
   },
-  caps: { textTransform: 'uppercase', letterSpacing: 1.2, fontFamily: fonts.headingSemi },
-  center: { alignItems: 'center', paddingVertical: spacing.lg },
-  row: { flexDirection: 'row', gap: spacing.sm },
-  flex: { flex: 1 },
-  num: { fontVariant: ['tabular-nums'] },
-  card: {
-    borderWidth: 1,
-    borderColor: colors.line,
-    borderRadius: radius.card,
-    padding: spacing.lg,
-    gap: spacing.xs,
+  inner: { alignItems: 'center', gap: spacing.xs, paddingHorizontal: spacing.xxxl },
+  num: { fontVariant: ['tabular-nums'], fontFamily: fonts.heading },
+  side: { position: 'absolute', top: SIZE / 2 - sizes.touchTarget / 2 },
+  left: { left: spacing.md },
+  right: { right: spacing.md },
+  small: {
+    width: sizes.touchTarget + spacing.xs,
+    height: sizes.touchTarget + spacing.xs,
+    borderRadius: (sizes.touchTarget + spacing.xs) / 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.surface,
   },
+  pencil: { position: 'absolute', bottom: spacing.lg, alignSelf: 'center' },
 }));
