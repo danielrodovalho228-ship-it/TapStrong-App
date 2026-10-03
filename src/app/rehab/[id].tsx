@@ -16,7 +16,6 @@ import {
   ToggleRow,
 } from '@/components/ui';
 import { remindersAvailable, requestPermission } from '@/features/notifications/apply';
-import { useOnboardingStore } from '@/features/onboarding/store';
 import { weeklyTarget } from '@/features/rehab/daily';
 import { RETURN_DAYS } from '@/features/rehab/protect';
 import i18n from '@/i18n';
@@ -56,7 +55,12 @@ export default function RehabProgramScreen() {
     start,
     daily,
     dailyDone,
+    firstDone,
     dailyMinutes,
+    finish,
+    inWorkout,
+    trainingDay,
+    setTiming,
     counts,
     startDaily,
     swapBlock,
@@ -67,7 +71,6 @@ export default function RehabProgramScreen() {
   } = useRehabRun(id);
   const store = useRehabStore();
   const library = useExerciseLibrary();
-  const location = useOnboardingStore((s) => s.location);
   const [notYet, setNotYet] = useState(false);
   if (!program) return <Redirect href="/rehab" />;
   const returnDate = run?.releasedAt
@@ -148,12 +151,15 @@ export default function RehabProgramScreen() {
   const bySlug = new Map(library.map((e) => [e.slug, e]));
   const byN = new Map(program.exercises.map((x) => [x.n, x]));
   const nameOf = (slug: string) => exerciseName(t, bySlug.get(slug), slug);
-  const otherBlock = daily?.block === 'standing' ? 'floor' : 'standing';
-  const gymDay = location === 'gym';
+  // On a training day the block's strengthening can come after the workout (Daniel, Oct 3).
+  const block = finish?.block ?? daily?.block;
+  const otherBlock = block === 'standing' ? 'floor' : 'standing';
 
   const footer = daily ? (
-    !dailyDone && available ? (
+    !available || dailyDone ? undefined : !firstDone ? (
       <Button label={t('rehab.daily.start')} onPress={startDaily} />
+    ) : finish ? (
+      <Button label={t('rehab.split.startAfter')} onPress={finish.start} />
     ) : undefined
   ) : todayKey && available ? (
     <Button
@@ -199,7 +205,7 @@ export default function RehabProgramScreen() {
       {daily ? (
         <Card style={styles.card} testID="rehab-today">
           <AppText variant="h2">{t('rehab.daily.title')}</AppText>
-          <AppText variant="bodyStrong">{t(`rehab.daily.blocks.${daily.block}`)}</AppText>
+          <AppText variant="bodyStrong">{t(`rehab.daily.blocks.${block ?? daily.block}`)}</AppText>
           {dailyDone ? (
             <AppText color={colors.teal} testID="rehab-today-done">
               {t('rehab.daily.done')}
@@ -209,11 +215,28 @@ export default function RehabProgramScreen() {
               <AppText variant="caption" color={colors.mutedStrong}>
                 {t('rehab.daily.minutes', { count: dailyMinutes })}
               </AppText>
-              {daily.numbers.map((n) => (
+              {finish ? (
+                <AppText variant="caption" color={colors.mutedStrong} testID="rehab-split-first">
+                  {t('rehab.split.stretchFirst')}
+                </AppText>
+              ) : null}
+              {finish ? (
+                <AppText variant="caption" testID="rehab-split-after">
+                  {t('rehab.split.after', { block: t(`rehab.daily.blocks.${finish.block}`) })}
+                </AppText>
+              ) : null}
+              {(finish?.numbers ?? daily.numbers).map((n) => (
                 <AppText key={n} variant="caption">
                   {t('rehab.numbered', { n, name: nameOf(byN.get(n)!.slug) })}
                 </AppText>
               ))}
+              {inWorkout.length ? (
+                <AppText variant="caption" color={colors.mutedStrong} testID="rehab-in-workout">
+                  {t('rehab.split.inWorkout', {
+                    names: inWorkout.map((n) => nameOf(byN.get(n)!.slug)).join(', '),
+                  })}
+                </AppText>
+              ) : null}
               {daily.catchUp.length ? (
                 <AppText variant="caption" color={colors.mutedStrong}>
                   {t('rehab.daily.catchUp', { count: daily.catchUp.length })}
@@ -224,12 +247,12 @@ export default function RehabProgramScreen() {
                   {t('rehab.daily.nextWeek')}
                 </AppText>
               ) : null}
-              {gymDay && daily.numbers.length ? (
+              {trainingDay && !finish && daily.numbers.length ? (
                 <AppText variant="caption" color={colors.mutedStrong}>
                   {t('rehab.daily.gymHint')}
                 </AppText>
               ) : null}
-              {daily.block !== 'stretch' ? (
+              {block && block !== 'stretch' ? (
                 <TextLink
                   label={t('rehab.daily.swap', {
                     block: t(`rehab.sessionNames.${otherBlock}`),
@@ -250,6 +273,15 @@ export default function RehabProgramScreen() {
           />
           <AppText variant="caption" color={colors.mutedStrong} testID="rehab-dose-note">
             {t(run.fullDose ? 'rehab.dose.fullOn' : 'rehab.dose.reduced')}
+          </AppText>
+          {/* After the workout by default; "before" on request (Daniel, Oct 3). */}
+          <ToggleRow
+            label={t('rehab.split.timing')}
+            value={run.strengthTiming === 'before'}
+            onChange={(v) => setTiming(v ? 'before' : 'after')}
+          />
+          <AppText variant="caption" color={colors.mutedStrong}>
+            {t('rehab.split.timingNote')}
           </AppText>
         </Card>
       ) : (

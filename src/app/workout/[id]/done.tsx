@@ -9,6 +9,7 @@ import { funComparison, THINGS } from '@/features/share/fun';
 import { openShare } from '@/features/share/open';
 import { useScreenshotOffer } from '@/features/share/screenshot';
 import { useMoment } from '@/features/moments/useMoment';
+import { CareFinishCards } from '@/features/rehab/CareHomeCard';
 import { RatePainButtons } from '@/features/movement/Entry';
 import type { BodySex } from '@/features/bodymap/images';
 import { displayBand } from '@/features/bodymap/selection';
@@ -349,6 +350,10 @@ export default function DoneScreen() {
       ) : null}
 
       {stopped ? <Notice tone="warning">{t('workout.done.stoppedBody')}</Notice> : null}
+      {/* A care program's strengthening comes after the workout (Daniel, Oct 3). */}
+      {(workout.kind === 'regular' || workout.kind === 'finisher') && !stopped ? (
+        <CareFinishCards />
+      ) : null}
       {/* Never after the very first workout: they just started (Phase 29, A4). */}
       {group && input && !stopped && number > 1 ? (
         <Card tone="dark" style={styles.finish}>

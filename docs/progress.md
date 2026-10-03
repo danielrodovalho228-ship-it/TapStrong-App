@@ -3657,3 +3657,40 @@ Você seguiu as três recomendações:
 ### Como testar
 
 Na prévia (https://tapstrong-preview.vercel.app), com um plano de 3 dias (seg, qua, sex), o cartão "Ombro hoje" mostra o Bloco A na segunda e o Bloco B na terça.
+
+## Fase 30 — Ajuste do Daniel (03/10): fortalecimento depois do treino
+
+### Feito
+
+- **Dias de treino:** antes do treino, o cartão "Ombro hoje" agora mostra só os alongamentos diários (cerca de 6 a 8 min), como aquecimento. O fortalecimento do bloco do dia não vai mais antes.
+- **"Termine com o ombro (~14 min)":**
+  - o fortalecimento do bloco aparece num cartão no fim de todo treino normal;
+  - aparece também na Home, se o treino do dia já acabou e o fortalecimento não foi feito;
+  - um toque começa a sessão;
+  - logo depois do treino não há aquecimento (o corpo já está quente). Se for feito em outro horário, o aquecimento curto entra primeiro;
+  - os alongamentos finais entram sempre como desaquecimento.
+- **Ajuste na tela do programa:**
+  - "Fortalecimento antes do treino", desligado por padrão (depois do treino);
+  - ligado, volta a sessão inteira antes do treino;
+  - logo abaixo vem a explicação do porquê.
+- **Sem repetir:** um exercício do programa que já está no treino do dia (por exemplo, remada ou rosca) conta para os dois, sai da sessão do ombro e aparece numa linha "Já está no treino de hoje e conta aqui também".
+- **Continua igual:**
+  - 3 vezes cada exercício por semana;
+  - teto de 12 exercícios por dia;
+  - "Fazer o Bloco B hoje";
+  - exercícios perdidos;
+  - Bloco B nos dias sem treino;
+  - dose reduzida ou completa.
+- **Dia de treino**, para o app: um dia planejado pelo plano principal ou um dia com treino normal começado ou feito.
+- **Testes:**
+  - 3 de lógica: dia de treino dividido; "antes" ou dia livre com sessão inteira; exercício repetido fora;
+  - 2 de tela novos: troca para "antes"; cartão "Termine com o ombro" sem aquecimento e sem o exercício que já estava no treino;
+  - 2 de tela atualizados.
+  - Total: 1547 testes passando, com `tsc` e `lint` limpos.
+
+### Como testar
+
+1. Na prévia, comece o programa de ombro numa segunda-feira com plano de 3 dias.
+2. A Home mostra "Ombro hoje · Só alongamentos" com "Antes do treino: só os alongamentos, como aquecimento".
+3. Faça o treino normal. No fim aparece "Termine com o ombro (~N min)".
+4. Na tela do programa, ligue "Fortalecimento antes do treino": a sessão inteira volta para antes.

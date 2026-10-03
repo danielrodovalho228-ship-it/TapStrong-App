@@ -22,7 +22,7 @@ import { join } from 'path';
 import qc from '../../../assets/prototype/qc.json';
 import catalog from '../../../supabase/seed/joint_movements.json';
 
-import { careWeek, dailyLayout, dailyPlan, weekCounts, weekdayIndex } from './daily';
+import { careDay, careWeek, dailyLayout, dailyPlan, weekCounts, weekdayIndex } from './daily';
 import { buildProgramSession, SHOULDER_PROGRAM as P } from './programs';
 import { careMode, careProtection, SHOULDER_MOVES, withCare, withoutCare } from './protect';
 import type { ProgramRun } from './store';
@@ -424,5 +424,37 @@ describe('the longer block on rest days (Daniel, Oct 3)', () => {
     expect(days[1].block).toBe('standing');
     for (const x of STRENGTH) expect(counts[x.slug]).toBe(3);
     for (const d of days) expect(d.size).toBeLessThanOrEqual(P.daily.cap);
+  });
+});
+
+describe('strengthening after the workout on training days (Daniel, Oct 3)', () => {
+  const plan = dailyPlan(P, MONDAY, {});
+  const none = new Set<string>();
+
+  it('a training day: stretches first, the block after', () => {
+    const day = careDay(P, plan, { trainingDay: true, workoutSlugs: none });
+    expect(day.first.block).toBe('stretch');
+    expect(day.first.numbers).toEqual([]);
+    expect(day.after).toEqual(plan.numbers);
+  });
+
+  it('"before", or a day without training: the whole block in one session', () => {
+    for (const o of [
+      { trainingDay: true, timing: 'before' as const },
+      { trainingDay: false, timing: 'after' as const },
+    ]) {
+      const day = careDay(P, plan, { ...o, workoutSlugs: none });
+      expect(day.first.numbers).toEqual(plan.numbers);
+      expect(day.after).toEqual([]);
+    }
+  });
+
+  it('an exercise already in today’s workout is left out, never twice', () => {
+    const shared = slugOfN(plan.numbers[0]);
+    for (const timing of ['before', 'after'] as const) {
+      const day = careDay(P, plan, { trainingDay: true, timing, workoutSlugs: new Set([shared]) });
+      expect(day.inWorkout).toEqual([plan.numbers[0]]);
+      expect([...day.first.numbers, ...day.after]).not.toContain(plan.numbers[0]);
+    }
   });
 });

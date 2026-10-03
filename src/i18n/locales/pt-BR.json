@@ -5918,6 +5918,16 @@
       "full": "Dose completa (do fisioterapeuta)",
       "reduced": "Dose reduzida para caber no dia. Siga a dose que o seu fisioterapeuta indicar.",
       "fullOn": "Dose completa: as doses do programa, sem redução. O sleeper stretch também entra na sessão."
+    },
+    "split": {
+      "stretchFirst": "Antes do treino: só os alongamentos, como aquecimento.",
+      "after": "Depois do treino (ou em outro horário do dia): {{block}}",
+      "inWorkout": "Já está no treino de hoje e conta aqui também: {{names}}",
+      "timing": "Fortalecimento antes do treino",
+      "timingNote": "Desligado (padrão): depois do treino. Fortalecer antes os músculos pequenos do ombro cansa justo os que estabilizam o ombro durante o treino.",
+      "startAfter": "Começar fortalecimento",
+      "finishTitle": "Termine com o ombro (~{{minutes}} min)",
+      "finishBody": "{{block}}, depois do treino de hoje."
     }
   },
   "plan": {

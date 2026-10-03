@@ -22,6 +22,7 @@ import { clock } from '@/lib/clock';
 
 import { devLibrary } from '../exercises/library';
 import { useWorkoutStore } from '../workout/store';
+import type { WorkoutRecord } from '../workout/types';
 
 import { buildProgramSession, SHOULDER_PROGRAM as P } from './programs';
 import { useRehabStore } from './store';
@@ -47,6 +48,38 @@ const mockRouter = jest.requireMock('expo-router').router as Record<string, jest
 jest.setTimeout(20_000);
 
 const LIBRARY = devLibrary();
+
+/** Marks a workout finished today. */
+const finish = (id: string) =>
+  useWorkoutStore.setState((st) => ({
+    workouts: st.workouts.map((w) =>
+      w.id === id ? { ...w, status: 'done' as const, endedAt: `${TODAY}T12:00:00` } : w,
+    ),
+  }));
+
+/** Today's finished gym workout with one exercise logged. */
+function gymWorkout(exerciseId: string): WorkoutRecord {
+  return {
+    id: 'gym-today',
+    kind: 'regular',
+    createdAt: `${TODAY}T10:00:00`,
+    startedAt: `${TODAY}T10:00:00`,
+    endedAt: `${TODAY}T11:00:00`,
+    status: 'done',
+    session: {
+      items: [],
+      minutes: 45,
+      warmupMinutes: 5,
+      cooldownMinutes: 5,
+      estimatedMinutes: 45,
+      notes: [],
+    },
+    logs: [{ itemId: 'x', exerciseId, setNo: 1, reps: 10, loggedAt: `${TODAY}T10:30:00` }],
+    skipped: [],
+    swaps: [],
+    pains: [],
+  };
+}
 const TODAY = '2026-10-05';
 
 beforeAll(() => {
@@ -125,6 +158,9 @@ describe('Rehabilitation and the program', () => {
     expect(within(today).getByText('Shoulder today')).toBeTruthy();
     expect(within(today).getByText('Block A — standing, band and dumbbell')).toBeTruthy();
     expect(within(today).getAllByText(/^\d+\. /)).toHaveLength(6);
+    // Monday is a training day: stretches first, strengthening after (Daniel, Oct 3).
+    expect(within(today).getByTestId('rehab-split-first')).toBeTruthy();
+    expect(within(today).getByTestId('rehab-split-after')).toBeTruthy();
     expect(screen.getByText('Week 1 of 6')).toBeTruthy();
     const checklist = screen.getByTestId('rehab-checklist');
     expect(within(checklist).getAllByText('0 of 3')).toHaveLength(13);
@@ -143,8 +179,55 @@ describe('Rehabilitation and the program', () => {
     await fireEvent.press(screen.getByRole('button', { name: 'Start today’s shoulder session' }));
     const w = useWorkoutStore.getState().workouts.at(-1)!;
     expect(w.kind).toBe('repair');
-    expect(w.session.program).toEqual({ id: P.id, session: 'standing', week: 1 });
+    // Before the workout: only the daily stretches.
+    expect(w.session.program).toEqual({ id: P.id, session: 'stretch', week: 1 });
+    expect(w.session.items.every((i) => i.block === 'stretch')).toBe(true);
+    // Stretches done: the footer offers the strengthening.
+    await act(() => finish(w.id));
+    await fireEvent.press(screen.getByRole('button', { name: 'Start strengthening' }));
+    const after = useWorkoutStore.getState().workouts.at(-1)!;
+    expect(after.session.program).toEqual({ id: P.id, session: 'standing', week: 1 });
+    // No main workout yet today: the short warm-up comes first.
+    expect(after.session.items[0].block).toBe('warmup');
+  });
+
+  it('"Strengthening before the workout": the whole block goes first', async () => {
+    await as();
+    await act(() => useRehabStore.getState().start(P.id, 'right', TODAY, 'now'));
+    mockParams = { id: P.id };
+    await render(<RehabProgramScreen />);
+    await fireEvent.press(screen.getByRole('switch', { name: 'Strengthening before the workout' }));
+    expect(useRehabStore.getState().runs[P.id].strengthTiming).toBe('before');
+    expect(screen.queryByTestId('rehab-split-first')).toBeNull();
+    await fireEvent.press(screen.getByRole('button', { name: 'Start today’s shoulder session' }));
+    const w = useWorkoutStore.getState().workouts.at(-1)!;
+    expect(w.session.program?.session).toBe('standing');
     expect(w.session.items[0].block).toBe('warmup');
+  });
+
+  it('after the workout: "Finish with the shoulder"; exercises already done are not repeated', async () => {
+    await as();
+    await act(() => useRehabStore.getState().start(P.id, 'right', TODAY, 'now'));
+    // Today's workout had a block A exercise (a row or a curl, say).
+    const shared = P.exercises.find((x) => x.n === P.daily.blocks.standing[0])!;
+    const ex = LIBRARY.find((e) => e.slug === shared.slug)!;
+    await act(() =>
+      useWorkoutStore.setState((st) => ({ workouts: [...st.workouts, gymWorkout(ex.id)] })),
+    );
+    await render(<CareHomeCards />);
+    const card = screen.getByTestId(`care-finish-${P.id}`);
+    expect(within(card).getByText(/^Finish with the shoulder/)).toBeTruthy();
+    await fireEvent.press(card);
+    const w = useWorkoutStore.getState().workouts.at(-1)!;
+    expect(w.session.program?.session).toBe('standing');
+    // Right after the workout the body is warm: no warm-up, cool-down stretches last.
+    expect(w.session.items[0].block).not.toBe('warmup');
+    expect(w.session.items.at(-1)!.block).toBe('stretch_end');
+    // The shared exercise counts for both and is not in the session twice.
+    expect(w.session.items.some((i) => i.exerciseId === ex.id)).toBe(false);
+    expect(w.session.items.filter((i) => i.block === 'band' || i.block === 'dumbbell').length).toBe(
+      P.daily.blocks.standing.length - 1,
+    );
   });
 
   it('swap today to block B; the fixed sessions A, B and C stay available', async () => {
@@ -206,7 +289,9 @@ describe('Rehabilitation and the program', () => {
     await render(<CareHomeCards />);
     const card = screen.getByTestId(`care-home-${P.id}`);
     expect(within(card).getByText('Shoulder today')).toBeTruthy();
-    expect(within(card).getByText(/Block A — standing/)).toBeTruthy();
+    // A training day: only the stretches before the workout.
+    expect(within(card).getByText(/Stretches only/)).toBeTruthy();
+    expect(within(card).getByTestId('care-home-hint')).toHaveTextContent(/only the stretches/);
     await fireEvent.press(card);
     expect(mockRouter.push).toHaveBeenCalledWith({ pathname: '/rehab/[id]', params: { id: P.id } });
   });

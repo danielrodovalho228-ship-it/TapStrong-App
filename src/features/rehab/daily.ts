@@ -2,7 +2,13 @@ import type { Exercise } from '../exercises/types';
 import type { WorkoutRecord } from '../workout/types';
 import { addDays, daysBetween, localDate, weekStart, type LocalDate } from '@/lib/dates';
 
-import type { DailyBlock, ProgramExercise, RehabProgram, SessionLayout } from './programs';
+import type {
+  DailyBlock,
+  ProgramExercise,
+  RehabProgram,
+  SessionLayout,
+  StrengthTiming,
+} from './programs';
 
 /**
  * The daily rhythm (Phase 30 addendum §6.2–6.3): the stretches every day and
@@ -164,6 +170,73 @@ export function dailyLayout(program: RehabProgram, plan: DailyPlan, full = false
   if (plan.numbers.length)
     groups.push({ block: 'stretch_end', numbers: program.daily.endStretches });
   return { key: plan.block, warmup: plan.numbers.length > 0, reduced: !full, groups };
+}
+
+/**
+ * Today's daily plan around the main workout (Daniel, Oct 3). Strengthening
+ * the rotator cuff before the gym tires the shoulder's stabilisers right when
+ * back and chest work needs them, so on a training day only the stretches go
+ * first (as a warm-up) and the block's strengthening comes after the workout,
+ * unless the person picked "before". Program exercises already in today's
+ * workout (a row, a curl) count for both and are not shown twice.
+ */
+export type CareDay = {
+  /** The session to do first: the whole plan, or only the stretches. */
+  first: DailyPlan;
+  /** Strengthening for after the workout (empty when the day is not split). */
+  after: number[];
+  /** Program exercises left out because today's workout already has them. */
+  inWorkout: number[];
+};
+
+export function careDay(
+  program: RehabProgram,
+  plan: DailyPlan,
+  o: { trainingDay: boolean; timing?: StrengthTiming; workoutSlugs: Set<string> },
+): CareDay {
+  const slugOf = new Map(program.exercises.map((x) => [x.n, x.slug]));
+  const inWorkout = plan.numbers.filter((n) => o.workoutSlugs.has(slugOf.get(n)!));
+  const numbers = plan.numbers.filter((n) => !inWorkout.includes(n));
+  const catchUp = plan.catchUp.filter((n) => numbers.includes(n));
+  const whole = { ...plan, numbers, catchUp };
+  if (!o.trainingDay || (o.timing ?? 'after') === 'before' || !numbers.length)
+    return { first: whole, after: [], inWorkout };
+  return {
+    first: { ...plan, block: 'stretch', numbers: [], catchUp: [] },
+    after: numbers,
+    inWorkout,
+  };
+}
+
+/**
+ * The after-workout strengthening (Daniel, Oct 3: "Termine com o ombro"):
+ * the block's exercises, then the end stretches as the cool-down. Right after
+ * the workout the body is warm; at another time of day the short warm-up
+ * comes first.
+ */
+export function afterLayout(
+  program: RehabProgram,
+  block: DailyBlock,
+  numbers: number[],
+  o: { full?: boolean; warm: boolean },
+): SessionLayout {
+  const byN = new Map(program.exercises.map((x) => [x.n, x]));
+  const band = numbers.filter((n) => byN.get(n)!.block === 'band');
+  const dumbbell = numbers.filter((n) => byN.get(n)!.block === 'dumbbell');
+  const groups: SessionLayout['groups'] = [];
+  if (band.length) groups.push({ block: 'band', numbers: band });
+  if (dumbbell.length) groups.push({ block: 'dumbbell', numbers: dumbbell });
+  groups.push({ block: 'stretch_end', numbers: program.daily.endStretches });
+  return { key: block, warmup: !o.warm, reduced: !o.full, groups };
+}
+
+/** Program sessions finished today, by session key. */
+export function sessionsToday(workouts: WorkoutRecord[], programId: string, today: LocalDate) {
+  return new Set(
+    workouts
+      .filter((w) => finished(w) && w.session.program?.id === programId && dayOf(w) === today)
+      .map((w) => w.session.program!.session),
+  );
 }
 
 /** A sleeper stretch break, outside the session (§6.2: 3 times a day, 2 min). */

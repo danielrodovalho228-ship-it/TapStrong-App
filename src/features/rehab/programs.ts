@@ -47,6 +47,8 @@ export type ProgramExercise = {
 export type ProgramSessionKey = 'A' | 'B' | 'C';
 /** The daily rhythm (Phase 30 addendum §6.2): stretches every day, two alternating blocks. */
 export type DailyBlock = 'standing' | 'floor';
+/** Strengthening on a training day: after the main workout (default) or before it. */
+export type StrengthTiming = 'before' | 'after';
 /** Any session the player can start: A/B/C, a daily block day, Sunday stretches or a sleeper break. */
 export type ProgramPlanKey = ProgramSessionKey | DailyBlock | 'stretch' | 'sleeper';
 

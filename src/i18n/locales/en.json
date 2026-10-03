@@ -5846,6 +5846,16 @@
       "full": "Full dose (from your physio)",
       "reduced": "Reduced dose to fit your day. Follow the dose your physio gives you.",
       "fullOn": "Full dose: the program’s doses, nothing reduced. The sleeper stretch is in the session too."
+    },
+    "split": {
+      "stretchFirst": "Before the workout: only the stretches, as a warm-up.",
+      "after": "After the workout (or later today): {{block}}",
+      "inWorkout": "Already in today's workout, counts here too: {{names}}",
+      "timing": "Strengthening before the workout",
+      "timingNote": "Off (default): after the workout. Strengthening the small shoulder muscles first tires the ones that steady the shoulder during the workout.",
+      "startAfter": "Start strengthening",
+      "finishTitle": "Finish with the shoulder (~{{minutes}} min)",
+      "finishBody": "{{block}}, after today's workout."
     }
   },
   "plan": {

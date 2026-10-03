@@ -4,7 +4,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import type { LocalDate } from '@/lib/dates';
 import { kvStorage } from '@/lib/storage';
 
-import type { AffectedSide, DailyBlock } from './programs';
+import type { AffectedSide, DailyBlock, StrengthTiming } from './programs';
 
 /** One person's run of a rehab program (Phase 30). Kept per profile. */
 export type ProgramRun = {
@@ -31,6 +31,11 @@ export type ProgramRun = {
   fullDose?: boolean;
   /** The daily block picked for a day instead of the suggested one (§6.2). */
   pick?: { date: LocalDate; block: DailyBlock };
+  /**
+   * On training days, strengthening after the main workout (default) or
+   * before it (Daniel, Oct 3): only the stretches go first, as a warm-up.
+   */
+  strengthTiming?: StrengthTiming;
 };
 
 export type RehabData = { runs: Record<string, ProgramRun> };
@@ -48,6 +53,7 @@ type State = RehabData & {
   setSleeperReminders: (programId: string, on: boolean) => void;
   pickBlock: (programId: string, date: LocalDate, block: DailyBlock) => void;
   setFullDose: (programId: string, on: boolean) => void;
+  setStrengthTiming: (programId: string, timing: StrengthTiming) => void;
   setSide: (programId: string, side: AffectedSide) => void;
   setMaintenance: (programId: string, on: boolean) => void;
   raiseLoad: (programId: string, slug: string) => void;
@@ -94,6 +100,7 @@ export const useRehabStore = create<State>()(
         setSleeperReminders: (id, on) => patch(id, () => ({ sleeperReminders: on })),
         pickBlock: (id, date, block) => patch(id, () => ({ pick: { date, block } })),
         setFullDose: (id, on) => patch(id, () => ({ fullDose: on })),
+        setStrengthTiming: (id, timing) => patch(id, () => ({ strengthTiming: timing })),
         raiseLoad: (id, slug) =>
           patch(id, (r) => ({
             increased: { ...r.increased, [slug]: (r.increased[slug] ?? 0) + 1 },
