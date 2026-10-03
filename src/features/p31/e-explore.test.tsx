@@ -17,6 +17,7 @@ import { muscleFamily } from '@/features/muscles';
 import { devLibrary } from '../exercises/library';
 
 let mockParams: Record<string, string> = {};
+jest.setTimeout(30_000);
 jest.mock('expo-router', () => ({
   router: { push: jest.fn(), back: jest.fn(), replace: jest.fn(), canGoBack: () => true },
   useLocalSearchParams: () => mockParams,

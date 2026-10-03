@@ -2,19 +2,19 @@ import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 
-import { AppText } from '@/components/ui';
+import { AppText, Icon } from '@/components/ui';
 import { useWorkoutStore } from '@/features/workout/store';
 import { clock } from '@/lib/clock';
 import { deviceWeekStart, localDate } from '@/lib/dates';
-import { colors, fonts, makeStyles, radius, sizes, spacing, useColors } from '@/theme';
+import { colors, makeStyles, radius, sizes, spacing, useColors } from '@/theme';
 
 import { useTrainingDaysPerWeek } from '../useTrainingDays';
 import { weekStrip, type WeekDay } from '../week';
 
 /**
- * Week strip (improvements v1, A1): this week's days, today outlined, a solid
- * dot on trained days and a hollow dot on planned ones. Tap a day to see its
- * session (past = log, future = preview). `large` for 60+.
+ * Week strip (improvements v1, A1; Phase 31, G): this week's days, today on
+ * a raised pill, a check on trained days and a coral dot on planned ones. Tap
+ * a day to see its session (past = log, future = preview). `large` for 60+.
  */
 export function WeekStrip({ large = false }: { large?: boolean }) {
   const colors = useColors();
@@ -50,17 +50,26 @@ export function WeekStrip({ large = false }: { large?: boolean }) {
             onPress={() => router.push({ pathname: '/day/[date]', params: { date: d.date } })}
             style={[styles.day, large && styles.dayLarge, d.today && styles.today]}
           >
-            <AppText variant="caption" color={colors.mutedStrong} style={styles.caps}>
-              {date.toLocaleDateString(i18n.language, { weekday: 'narrow' })}
+            <AppText
+              variant="caption"
+              color={d.mark === 'trained' ? colors.accentText : colors.mutedStrong}
+            >
+              {date.toLocaleDateString(i18n.language, { weekday: 'short' }).slice(0, 2)}
             </AppText>
-            <AppText variant={large ? 'h3' : 'bodyStrong'}>{date.getDate()}</AppText>
-            <View
-              style={[
-                styles.dot,
-                d.mark === 'trained' && styles.trained,
-                d.mark === 'planned' && styles.planned,
-              ]}
-            />
+            <AppText
+              variant={large ? 'h3' : 'bodyStrong'}
+              color={d.mark === 'trained' ? colors.accentText : colors.ink}
+            >
+              {date.getDate()}
+            </AppText>
+            {/* Done: a check; planned: a coral dot (Phase 31, G). */}
+            {d.mark === 'trained' ? (
+              <View style={styles.check} testID="week-trained">
+                <Icon name="check" size={12} color={colors.background} />
+              </View>
+            ) : (
+              <View style={[styles.dot, d.mark === 'planned' && styles.planned]} />
+            )}
           </Pressable>
         );
       })}
@@ -77,14 +86,17 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'center',
     gap: spacing.xxs,
     borderRadius: radius.chip,
-    borderWidth: 1.5,
-    borderColor: 'transparent',
-    backgroundColor: colors.surface,
   },
   dayLarge: { minHeight: sizes.touchTarget + spacing.xl },
-  today: { borderColor: colors.accent },
-  caps: { textTransform: 'uppercase', fontFamily: fonts.headingSemi },
+  today: { backgroundColor: colors.surface },
   dot: { width: 8, height: 8, borderRadius: 4 },
-  trained: { backgroundColor: colors.accent },
-  planned: { borderWidth: 1.5, borderColor: colors.accent },
+  planned: { backgroundColor: colors.accent },
+  check: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.ink,
+  },
 }));

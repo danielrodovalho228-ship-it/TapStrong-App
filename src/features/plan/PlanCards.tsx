@@ -94,6 +94,7 @@ export function ExerciseCard({
   name,
   badge,
   band,
+  trophy = false,
   onSwap,
   onOpen,
 }: {
@@ -101,6 +102,8 @@ export function ExerciseCard({
   name: string;
   badge: string;
   band: BodyBand;
+  /** Today's load is a new best: a trophy on the badge (adults only). */
+  trophy?: boolean;
   onSwap?: () => void;
   onOpen?: () => void;
 }) {
@@ -115,10 +118,17 @@ export function ExerciseCard({
       style={styles.card}
       testID="plan-card"
     >
-      <CardMedia exercise={exercise} band={band} height={200} />
+      <CardMedia exercise={exercise} band={band} height={260} />
       <View style={styles.top} pointerEvents="box-none">
+        {/* The muscle avatar and the name on a dark strip (Phase 31, G). */}
         <View style={styles.pill}>
-          <AppText variant="bodyStrong" color={colors.onSurfaceRaised} numberOfLines={2}>
+          <MuscleAvatar exercise={exercise} band={band} />
+          <AppText
+            variant="bodyStrong"
+            color={colors.onSurfaceRaised}
+            numberOfLines={2}
+            style={styles.flex}
+          >
             {name}
           </AppText>
         </View>
@@ -137,12 +147,35 @@ export function ExerciseCard({
       </View>
       <View style={styles.bottom} pointerEvents="none">
         <View style={styles.badge}>
-          <AppText variant="caption" color={colors.onSurfaceRaised} testID="plan-card-badge">
+          <AppText variant="bodyStrong" color={colors.onSurfaceRaised} testID="plan-card-badge">
             {badge}
           </AppText>
+          {trophy ? (
+            <View testID="plan-card-trophy" accessibilityLabel={t('plan.goalTrophy')} accessible>
+              <Icon name="trophy" size={18} color={colors.accentOnRaised} />
+            </View>
+          ) : null}
         </View>
       </View>
     </Pressable>
+  );
+}
+
+/** A small round body with the exercise's main muscles lit (Phase 31, G). */
+function MuscleAvatar({ exercise, band }: { exercise: Exercise | undefined; band: BodyBand }) {
+  const styles = useStyles();
+  const sex = useOnboardingStore((s) => demoSexFor(s));
+  if (!exercise || !sex) return null;
+  return (
+    <View style={styles.avatar} aria-hidden>
+      <MuscleAreaMap
+        band={band}
+        sex={sex as BodySex}
+        primary={exercise.muscles.filter((m) => m.role === 'primary').map((m) => m.muscleKey)}
+        secondary={[]}
+        maxHeight={40}
+      />
+    </View>
   );
 }
 
@@ -246,15 +279,27 @@ const useStyles = makeStyles(() => ({
   // Text sits on a raised pill, never straight on the clip.
   pill: {
     flexShrink: 1,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xxs,
-    borderRadius: radius.chip,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    paddingRight: spacing.sm,
+    borderRadius: sizes.touchTarget / 2,
     backgroundColor: colors.surfaceRaised,
+  },
+  flex: { flexShrink: 1 },
+  avatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.bodyCanvas,
   },
   swap: {
     width: sizes.touchTarget,
     height: sizes.touchTarget,
-    borderRadius: sizes.touchTarget / 2,
+    borderRadius: radius.chip,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.surfaceRaised,
@@ -262,8 +307,11 @@ const useStyles = makeStyles(() => ({
   bottom: { position: 'absolute', left: spacing.sm, bottom: spacing.sm, right: spacing.sm },
   badge: {
     alignSelf: 'flex-start',
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xxs,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
     borderRadius: radius.chip,
     backgroundColor: colors.surfaceRaised,
   },

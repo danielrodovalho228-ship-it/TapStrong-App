@@ -5882,7 +5882,15 @@
     "start": "COMEÇAR TREINO",
     "stretchNow": "Alongar agora",
     "restTitle": "Dia de descanso",
-    "restBody": "Recomendamos 5–10 minutos de alongamento hoje para ajudar na recuperação."
+    "restBody": "Recomendamos 5–10 minutos de alongamento hoje para ajudar na recuperação.",
+    "editShort": "Editar",
+    "exercises_zero": "{{count}} exercícios",
+    "exercises_one": "{{count}} exercício",
+    "exercises_other": "{{count}} exercícios",
+    "minutes_zero": "{{count}} min",
+    "minutes_one": "{{count}} min",
+    "minutes_other": "{{count}} min",
+    "goalTrophy": "Hoje, nova melhor carga"
   },
   "explore": {
     "title": "Exercícios",

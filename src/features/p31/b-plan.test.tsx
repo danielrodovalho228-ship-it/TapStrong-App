@@ -115,11 +115,15 @@ describe('My plan', () => {
     await render(<HomeScreen />);
     expect(screen.getByRole('header', { name: 'My plan' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Calendar' })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Equipment filters' })).toBeTruthy();
+    // Phase 31, G: share, calendar and Edit on top, like the reference.
+    expect(screen.getByTestId('plan-edit')).toBeTruthy();
     expect(screen.getByTestId('week-strip')).toBeTruthy();
     expect(screen.getByText(/^Week \d\/\d · (Build|Light week)$/)).toBeTruthy();
-    expect(screen.getByRole('header', { name: "Today's workout" })).toBeTruthy();
-    expect(screen.getByTestId('plan-summary').props.children).toMatch(/^\d+ exercises? · \d+ min$/);
+    // The day's split as the big centred title.
+    expect(screen.getAllByRole('header').length).toBeGreaterThanOrEqual(2);
+    expect(screen.getByTestId('plan-summary').props.accessibilityLabel).toMatch(
+      /^\d+ exercises? · \d+ min$/,
+    );
     expect(screen.queryByText(/kcal/)).toBeNull();
     expect(screen.getByTestId('plan-warmup')).toBeTruthy();
     expect(screen.getByTestId('plan-cooldown')).toBeTruthy();
@@ -172,6 +176,8 @@ describe('My plan', () => {
       expect(badges.length).toBe(mains.length);
       if (adult) expect(badges.some((b) => / × \d+(\.\d+)? kg$/.test(b))).toBe(true);
       else expect(badges.some((b) => /kg|lb/.test(b))).toBe(false);
+      // The 🏆 of a new best load: never for minors (Phase 31, G).
+      if (!adult) expect(screen.queryAllByTestId('plan-card-trophy')).toHaveLength(0);
     }
   });
 

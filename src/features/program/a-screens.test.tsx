@@ -74,7 +74,7 @@ describe('Home (A1–A3)', () => {
     await render(<HomeScreen />);
     expect(screen.getByTestId('week-strip')).toBeTruthy();
     expect(screen.getByText(/^Week \d\/4 · (Build|Light week)/)).toBeTruthy();
-    expect(screen.getByText(/^\d+ exercises? · \d+ min$/)).toBeTruthy();
+    expect(screen.getByLabelText(/^\d+ exercises? · \d+ min$/)).toBeTruthy();
     expect(screen.queryByText(/kcal/)).toBeNull();
     await fireEvent.press(screen.getByTestId('week-2026-10-02'));
     expect(router.push).toHaveBeenCalledWith({

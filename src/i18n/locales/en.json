@@ -5812,7 +5812,13 @@
     "start": "START WORKOUT",
     "stretchNow": "Stretch now",
     "restTitle": "Rest day",
-    "restBody": "We recommend 5–10 minutes of stretching today to help you recover."
+    "restBody": "We recommend 5–10 minutes of stretching today to help you recover.",
+    "editShort": "Edit",
+    "exercises_one": "{{count}} exercise",
+    "exercises_other": "{{count}} exercises",
+    "minutes_one": "{{count}} min",
+    "minutes_other": "{{count}} min",
+    "goalTrophy": "New best load today"
   },
   "explore": {
     "title": "Exercises",

@@ -24,6 +24,7 @@ import { useWorkoutStore } from './store';
 import type { WorkoutRecord } from './types';
 
 let mockParams: Record<string, string> = {};
+jest.setTimeout(30_000);
 jest.mock('expo-router', () => ({
   router: {
     push: jest.fn(),

@@ -10,13 +10,27 @@ export type ScreenProps = {
   /** Pinned under the scroll area (primary action, footnote). */
   footer?: ReactNode;
   scroll?: boolean;
+  /** The footer floats over the end of the list instead of a bar (Phase 31, G). */
+  floatingFooter?: boolean;
 };
 
 /** Standard screen frame: safe area, optional header, scrolling body, pinned footer. */
-export function Screen({ header, children, footer, scroll = true }: ScreenProps) {
+export function Screen({
+  header,
+  children,
+  footer,
+  scroll = true,
+  floatingFooter = false,
+}: ScreenProps) {
   const styles = useStyles();
   const body = scroll ? (
-    <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+    <ScrollView
+      contentContainerStyle={[
+        styles.content,
+        floatingFooter && footer ? styles.roomForFooter : null,
+      ]}
+      keyboardShouldPersistTaps="handled"
+    >
       {children}
     </ScrollView>
   ) : (
@@ -31,7 +45,11 @@ export function Screen({ header, children, footer, scroll = true }: ScreenProps)
       >
         {header}
         {body}
-        {footer ? <View style={styles.footer}>{footer}</View> : null}
+        {footer ? (
+          <View style={[styles.footer, floatingFooter && styles.floating]} pointerEvents="box-none">
+            {footer}
+          </View>
+        ) : null}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -42,4 +60,6 @@ const useStyles = makeStyles(() => ({
   fill: { flex: 1 },
   content: { paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, gap: spacing.lg },
   footer: { paddingHorizontal: spacing.xl, paddingBottom: spacing.md, gap: spacing.sm },
+  floating: { position: 'absolute', left: spacing.lg, right: spacing.lg, bottom: 0 },
+  roomForFooter: { paddingBottom: spacing.xxxl * 2 },
 }));

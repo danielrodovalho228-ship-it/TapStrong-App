@@ -5812,7 +5812,13 @@
     "start": "EMPEZAR ENTRENO",
     "stretchNow": "Estirar ahora",
     "restTitle": "Día de descanso",
-    "restBody": "Te recomendamos 5–10 minutos de estiramiento hoy para ayudar a la recuperación."
+    "restBody": "Te recomendamos 5–10 minutos de estiramiento hoy para ayudar a la recuperación.",
+    "editShort": "Editar",
+    "exercises_one": "{{count}} ejercicio",
+    "exercises_other": "{{count}} ejercicios",
+    "minutes_one": "{{count}} min",
+    "minutes_other": "{{count}} min",
+    "goalTrophy": "Hoy, nueva mejor carga"
   },
   "explore": {
     "title": "Ejercicios",

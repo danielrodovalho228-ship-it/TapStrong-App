@@ -50,13 +50,13 @@ import { sessionTargets, todaySession } from '@/features/workout/plan';
 import { beginWorkout } from '@/features/workout/start';
 import { useWorkoutStore } from '@/features/workout/store';
 import { easyDayKey, todayState } from '@/features/workout/secondWorkout';
-import { showStreakHint, streakToday } from '@/features/workout/streak';
+import { showStreakHint } from '@/features/workout/streak';
 import { canStartWorkout, currentPlan, FREE_WORKOUTS_PER_WEEK } from '@/features/billing/rules';
 import { useBillingStore } from '@/features/billing/store';
 import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
 import { addDays, deviceWeekStart, localDate } from '@/lib/dates';
-import { colors, fonts, makeStyles, spacing, useColors } from '@/theme';
+import { colors, fonts, makeStyles, radius, sizes, spacing, useColors } from '@/theme';
 
 /** Mockup 07 — home: today's workout, streak, recovery map (SPEC §9). */
 export default function HomeScreen() {
@@ -252,13 +252,25 @@ export default function HomeScreen() {
     );
     return load ? t('plan.badgeLoad', { dose, load }) : dose;
   };
+  // A 🏆 on the badge when today's load is a new best (adults only).
+  const goalFor = (item: SessionItem) => {
+    if (!item.reps || !input) return false;
+    const a = adviceForItem({
+      workouts,
+      workoutId: storedId,
+      item,
+      exercise: byId.get(item.exerciseId),
+      unit,
+      generator: { ...input, deload: preview?.deload },
+    });
+    return a?.kind === 'load' && a.change === 'up';
+  };
   const warm = preview?.items.filter((i) => i.role === 'warmup') ?? [];
   const mains = preview?.items.filter((i) => i.role === 'main' || i.role === 'finisher') ?? [];
   const cool = preview?.items.filter((i) => i.role === 'cooldown') ?? [];
   const phaseMinutes = (items: SessionItem[]) =>
     Math.max(1, Math.round(items.reduce((n, i) => n + i.estSeconds, 0) / 60));
   const shareOk = canShare(member, derived.mode);
-  const streakNow = streakToday(streak, localDate(now), deviceWeekStart());
   const startLabel = active ? t('home.continue') : t('plan.start');
 
   return (
@@ -278,30 +290,31 @@ export default function HomeScreen() {
             <Icon name="chevron-down" size={20} color={colors.ink} />
           </Pressable>
           <View style={styles.topIcons}>
-            <View
-              style={styles.streak}
-              accessible
-              accessibilityLabel={t('home.dayStreak', { count: streakNow })}
-              testID="plan-streak"
-            >
-              <Icon name="flame" size={20} color={colors.accentText} />
-              <AppText variant="bodyStrong" style={styles.num}>
-                {streakNow}
-              </AppText>
-            </View>
+            {shareOk ? (
+              <IconButton
+                icon="share"
+                accessibilityLabel={t('plan.share')}
+                onPress={() => openShare({ template: 'week' })}
+              />
+            ) : null}
             <IconButton
               icon="calendar"
               accessibilityLabel={t('plan.calendar')}
               onPress={() => router.push('/months')}
             />
-            <IconButton
-              icon="filter"
-              accessibilityLabel={t('plan.filters')}
-              onPress={() => router.push('/settings/equipment')}
-            />
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={t('plan.edit')}
+              onPress={openWorkout}
+              style={styles.editButton}
+              testID="plan-edit"
+            >
+              <AppText variant="bodyStrong">{t('plan.editShort')}</AppText>
+            </Pressable>
           </View>
         </View>
       }
+      floatingFooter
       footer={
         easyDay ? (
           <Button variant="accent" label={t('plan.stretchNow')} onPress={openMobility} />
@@ -357,83 +370,77 @@ export default function HomeScreen() {
         </View>
       ) : (
         <View style={styles.today}>
-          <View style={styles.titleRow}>
-            <View style={styles.flex}>
-              <AppText variant="caption" color={colors.accentText} style={styles.caps}>
-                {eyebrow}
-              </AppText>
-              <AppText variant="h1" style={styles.upper} accessibilityRole="header">
-                {t('plan.today')}
-              </AppText>
-              {split ? <AppText variant="h3">{split}</AppText> : null}
-            </View>
-            <IconButton
-              icon="edit"
-              accessibilityLabel={t('plan.edit')}
-              onPress={openWorkout}
-              testID="plan-edit"
-            />
+          {/* "Week 4/5 · Peak" and the day's split, centred (Phase 31, G). */}
+          <View style={styles.titleBlock}>
+            <AppText variant="bodyStrong" color={colors.accentText} style={styles.center}>
+              {eyebrow}
+            </AppText>
+            <AppText variant="h1" style={styles.split} accessibilityRole="header">
+              {split ?? t('plan.today')}
+            </AppText>
           </View>
-          {preview ? (
-            <View style={styles.summaryRow}>
-              <AppText variant="label" color={colors.mutedStrong} testID="plan-summary">
-                {t('program.summary', {
+          <View style={styles.panel}>
+            {preview ? (
+              <View
+                style={styles.summaryRow}
+                accessible
+                accessibilityLabel={t('program.summary', {
                   count: mains.length,
                   minutes: cardMinutes,
                 })}
-              </AppText>
-              {shareOk ? (
-                <IconButton
-                  icon="share"
-                  accessibilityLabel={t('plan.share')}
-                  onPress={() => openShare({ template: 'week' })}
-                />
-              ) : null}
-            </View>
-          ) : null}
-          {warm.length ? (
-            <PhaseCard
-              exercise={byId.get(warm[0].exerciseId)}
-              title={t('plan.warmup')}
-              detail={t('home.minutesShort', { minutes: phaseMinutes(warm) })}
-              onOpen={openWorkout}
-              testID="plan-warmup"
-            />
-          ) : null}
-          {mains.map((item) => {
-            const e = byId.get(item.exerciseId);
-            // Settings → Workout tab display: a compact list (Phase 31, F).
-            if (planView === 'list')
+                testID="plan-summary"
+              >
+                <Icon name="bolt" size={18} color={colors.mutedStrong} />
+                <AppText variant="h3">{t('plan.exercises', { count: mains.length })}</AppText>
+                <Icon name="clock" size={18} color={colors.mutedStrong} />
+                <AppText variant="h3">{t('plan.minutes', { count: cardMinutes })}</AppText>
+              </View>
+            ) : null}
+            {warm.length ? (
+              <PhaseCard
+                exercise={byId.get(warm[0].exerciseId)}
+                title={t('plan.warmup')}
+                detail={t('home.minutesShort', { minutes: phaseMinutes(warm) })}
+                onOpen={openWorkout}
+                testID="plan-warmup"
+              />
+            ) : null}
+            {mains.map((item) => {
+              const e = byId.get(item.exerciseId);
+              // Settings → Workout tab display: a compact list (Phase 31, F).
+              if (planView === 'list')
+                return (
+                  <PhaseCard
+                    key={item.id}
+                    exercise={e}
+                    title={exerciseName(t, e, item.exerciseId)}
+                    detail={badgeFor(item)}
+                    onSwap={() => openSwap(item.id)}
+                    testID="plan-row"
+                  />
+                );
               return (
-                <PhaseCard
+                <ExerciseCard
                   key={item.id}
                   exercise={e}
-                  title={exerciseName(t, e, item.exerciseId)}
-                  detail={badgeFor(item)}
+                  name={exerciseName(t, e, item.exerciseId)}
+                  badge={badgeFor(item)}
+                  trophy={!minor && goalFor(item)}
+                  band={band}
                   onSwap={() => openSwap(item.id)}
-                  testID="plan-row"
                 />
               );
-            return (
-              <ExerciseCard
-                key={item.id}
-                exercise={e}
-                name={exerciseName(t, e, item.exerciseId)}
-                badge={badgeFor(item)}
-                band={band}
-                onSwap={() => openSwap(item.id)}
+            })}
+            {cool.length ? (
+              <PhaseCard
+                exercise={byId.get(cool[0].exerciseId)}
+                title={t('plan.cooldown')}
+                detail={t('home.minutesShort', { minutes: phaseMinutes(cool) })}
+                onOpen={openWorkout}
+                testID="plan-cooldown"
               />
-            );
-          })}
-          {cool.length ? (
-            <PhaseCard
-              exercise={byId.get(cool[0].exerciseId)}
-              title={t('plan.cooldown')}
-              detail={t('home.minutesShort', { minutes: phaseMinutes(cool) })}
-              onOpen={openWorkout}
-              testID="plan-cooldown"
-            />
-          ) : null}
+            ) : null}
+          </View>
         </View>
       )}
 
@@ -558,20 +565,34 @@ const useStyles = makeStyles(() => ({
   },
   planButton: { flexDirection: 'row', alignItems: 'center', gap: spacing.xxs, minHeight: 44 },
   topIcons: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
-  titleRow: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.sm },
-  upper: { textTransform: 'uppercase' },
-  summaryRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  titleBlock: { alignItems: 'center', gap: spacing.xxs },
+  split: { textAlign: 'center', fontStyle: 'italic' },
+  panel: {
+    gap: spacing.md,
+    marginHorizontal: -spacing.md,
+    padding: spacing.md,
+    borderRadius: radius.card * 2,
+    backgroundColor: colors.sunken,
+  },
+  summaryRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.xs,
+    paddingVertical: spacing.xs,
+  },
+  editButton: {
+    minHeight: sizes.touchTarget,
+    paddingHorizontal: spacing.lg,
+    justifyContent: 'center',
+    borderRadius: sizes.touchTarget / 2,
+    backgroundColor: colors.sunken,
+  },
   rest: { alignItems: 'center', gap: spacing.md, paddingVertical: spacing.xl },
   restTitle: { textTransform: 'uppercase', textAlign: 'center' },
   head: { flexDirection: 'row', alignItems: 'flex-end', gap: spacing.md },
   flex: { flex: 1 },
   caps: { textTransform: 'uppercase', letterSpacing: 1.2, fontFamily: fonts.headingSemi },
-  streak: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xxs,
-    paddingHorizontal: spacing.xs,
-  },
   today: { gap: spacing.md },
   links: { flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap', gap: spacing.md },
   num: { fontVariant: ['tabular-nums'] },
