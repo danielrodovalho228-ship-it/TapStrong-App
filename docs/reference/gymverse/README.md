@@ -13,3 +13,4 @@ texts are theirs). Resized to 460 px wide.
 - `08-progress-body-measurements.jpg` — Body: weight pill and tape measurements as bars (Biceps … Calf). Their Nutrition card is out for us (no calories).
 - `09-settings.jpg` — Settings: plan card, profile + My Account, Experience Level, Units, Smart Weight & Reps, Rest Timer, Warmup & Stretching.
 - The Before & After screenshot is not stored here: it shows personal photos.
+- `10-settings-2.jpg` / `11-settings-3.jpg` — Settings (rest): Warmup & Stretching, Sounds, Workout Reminders, Motivational Notifications, Workout Tab Display, Choose Model (Choose), Apple Health (Synced), account email (blurred), Train Smart, What's New, Help, Rate, Share, community links.
