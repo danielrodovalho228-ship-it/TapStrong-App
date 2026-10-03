@@ -23,6 +23,7 @@ import { feel } from '@/features/workout/feel';
 import { lightOrder, workedMuscles } from '@/features/workout/lightOrder';
 import { mainSetCounts } from '@/features/workout/flow';
 import { useWorkout } from '@/features/workout/hooks';
+import { convertLoad } from '@/features/workout/loads';
 import { stoppedForPain } from '@/features/workout/safety';
 import { finisherInput, sessionTargets } from '@/features/workout/plan';
 import {
@@ -95,6 +96,14 @@ export default function DoneScreen() {
     ),
   );
   const { done: sets } = mainSetCounts(workout);
+  // Volume (load × reps) for adults only: minors never see load (Phase 31, D).
+  const unit = profile.units === 'imperial' ? 'lb' : 'kg';
+  const mainIds = new Set(workout.session.items.filter((i) => i.role === 'main').map((i) => i.id));
+  const volume = Math.round(
+    workout.logs
+      .filter((l) => mainIds.has(l.itemId) && l.load)
+      .reduce((n, l) => n + convertLoad(l.load!, l.unit ?? unit, unit) * (l.reps ?? 0), 0),
+  );
   const worked = workedMuscles(workout, library);
   const lit = lightOrder(workout, library).filter(
     (k) => worked.primary.includes(k) || worked.secondary.includes(k),
@@ -143,7 +152,8 @@ export default function DoneScreen() {
                 />
               </View>
             ) : null}
-            {!account.saved && derived.mode !== 'child' ? (
+            {/* The free-account offer waits for the second workout (Phase 31, D). */}
+            {!account.saved && derived.mode !== 'child' && finished.length >= 2 ? (
               <View style={styles.flex}>
                 <Button
                   label={t('workout.done.save')}
@@ -251,7 +261,14 @@ export default function DoneScreen() {
           label={t('workout.done.time')}
         />
         <Stat wide={stackFooter} value={`${sets}`} label={t('workout.done.sets')} />
-        {top ? (
+        {derived.mode === 'adult' && volume > 0 ? (
+          <Stat
+            wide={stackFooter}
+            value={`${volume} ${t(`workout.units.${unit}`)}`}
+            label={t('workout.logger.volume')}
+          />
+        ) : null}
+        {top && !(derived.mode === 'adult' && volume > 0) ? (
           <Stat
             wide={stackFooter}
             value={t('share.sets', { count: top[1] })}

@@ -47,6 +47,16 @@ type Actions = {
   start: (id: string) => void;
   logSet: (id: string, log: Omit<SetLog, 'loggedAt'>) => void;
   skipItem: (id: string, itemId: string) => void;
+  /** "Redo" a logged set (Phase 31, D): it is to do again. */
+  unlogSet: (id: string, itemId: string, setNo: number) => void;
+  /** "Exercises" in the player (Phase 31, D): this exercise next. */
+  setFocus: (id: string, itemId: string | null) => void;
+  /** "Customize exercise" (Phase 31, D): sets and reps of one item. */
+  updateItem: (
+    id: string,
+    itemId: string,
+    patch: { sets?: number; reps?: [number, number] },
+  ) => void;
   applySwap: (id: string, session: GeneratedSession, record: SwapRecord) => void;
   undoSwap: () => boolean;
   addPain: (id: string, report: Omit<PainReport, 'reportedAt'>) => void;
@@ -125,6 +135,23 @@ export const useWorkoutStore = create<Data & Actions>()(
               ...w.logs.filter((l) => !(l.itemId === log.itemId && l.setNo === log.setNo)),
               { ...log, loggedAt: nowIso() },
             ],
+          })),
+
+        unlogSet: (id, itemId, setNo) =>
+          update(id, (w) => ({
+            ...w,
+            logs: w.logs.filter((l) => !(l.itemId === itemId && l.setNo === setNo)),
+          })),
+
+        setFocus: (id, itemId) => update(id, (w) => ({ ...w, focus: itemId ?? undefined })),
+
+        updateItem: (id, itemId, patch) =>
+          update(id, (w) => ({
+            ...w,
+            session: {
+              ...w.session,
+              items: w.session.items.map((i) => (i.id === itemId ? { ...i, ...patch } : i)),
+            },
           })),
 
         skipItem: (id, itemId) =>

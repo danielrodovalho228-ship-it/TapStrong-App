@@ -155,6 +155,11 @@ Automatic checks:
   Listed in `TRACKED_ADVISORIES` in `scripts/security-check.mjs`, so the check
   warns instead of failing; any other high/critical advisory still fails it.
   Remove the entry once node-forge ships a fix and bump Expo.
+- Tracked high advisory (Phase 31, 2026-10-03): `braces` <=3.0.3,
+  GHSA-vfj7-8cjw-p6xm (stack exhaustion on deeply nested patterns), via
+  `expo` → `@expo/cli` → `@expo/metro-file-map` → `micromatch`. Dev-server file
+  watching with the project's own patterns; not in the app bundle. Same rule:
+  in `TRACKED_ADVISORIES`, remove once a patched release reaches Expo.
 - Checked by: `security:check` (lockfile integrity, audit).
 
 ## Known gaps (tracked)

@@ -43,6 +43,7 @@ import {
   workoutInput,
 } from './safety';
 import { bodyStates, muscleActivity } from './recovery';
+import { withDoseOverrides } from './doseOverrides';
 import { findWorkout, useWorkoutStore } from './store';
 import type { NextFocus } from './types';
 
@@ -209,6 +210,8 @@ export function createWorkoutFrom(
   const focused = withFocus(input, focus, library);
   let session = generateSession(focused);
   if (session.error) return null;
+  // The person's own sets and reps ("Customize exercise", Phase 31).
+  session = withDoseOverrides(session);
   // The focus is kept on the workout: "+1" and rebuilds use it too (QA R10 P2).
   if (focus) session = { ...session, groupFocus: focus };
   const lost = store.addedLost ?? 0;

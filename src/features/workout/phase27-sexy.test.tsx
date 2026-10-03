@@ -301,6 +301,10 @@ describe('B2 a record: a success haptic for adults only', () => {
     (Haptics.notificationAsync as jest.Mock).mockClear();
     await render(<PlayerScreen />);
     const { fireEvent } = jest.requireActual('@testing-library/react-native');
+    // Phase 31, D: past the next-exercise preview, tap the load to adjust it.
+    const start = screen.queryByTestId('start-exercise');
+    if (start) await fireEvent.press(start);
+    await fireEvent.press(screen.getByTestId('current-load'));
     // Raise the load well past 10 kg.
     for (let i = 0; i < 10; i++)
       await fireEvent.press(screen.getByRole('button', { name: /^Increase Load/ }));

@@ -17,10 +17,12 @@ export default function WorkoutLayout() {
       <Stack.Screen name="play" options={{ ...PLAYER_TRANSITION, gestureEnabled: false }} />
       <Stack.Screen
         name="rest"
+        // An overlay over the set logger (Phase 31, D).
         options={{
           ...PLAYER_TRANSITION,
+          presentation: 'transparentModal',
           gestureEnabled: false,
-          contentStyle: { backgroundColor: colors.dark.background },
+          contentStyle: { backgroundColor: 'transparent' },
         }}
       />
       <Stack.Screen

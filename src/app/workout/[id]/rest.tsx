@@ -10,6 +10,7 @@ import { useOnboardingStore } from '@/features/onboarding/store';
 import { TimerRing, useNow } from '@/features/workout/components/TimerRing';
 import { currentStep, mainItems } from '@/features/workout/flow';
 import { clockText, exerciseName } from '@/features/workout/format';
+import { feel } from '@/features/workout/feel';
 import { useWorkout } from '@/features/workout/hooks';
 import { adviceForItem, convertLoad } from '@/features/workout/loads';
 import { pastSessions } from '@/features/workout/progression';
@@ -21,7 +22,12 @@ import { colors, fonts, makeStyles, radius, spacing, useColors } from '@/theme';
 
 const EXTRA_SECONDS = 15;
 
-/** Mockup 12 — rest between sets: timer (tap to skip), −15 s / +15 s, last-time comparison. */
+/**
+ * Rest between sets (mockup 12; Phase 31, D): an overlay over the logger
+ * with the circle "Rest 1:29" (tap to skip), −15 s / +15 s and the
+ * last-time comparison. It buzzes and chimes at the end. The time comes
+ * from Settings.
+ */
 export default function RestScreen() {
   const colors = useColors();
   const styles = useStyles();
@@ -52,6 +58,7 @@ export default function RestScreen() {
   useEffect(() => {
     if (left0 && !leaving.current) {
       leaving.current = true;
+      feel.restEnd();
       playTimerEnd();
       router.back();
     }
@@ -96,8 +103,8 @@ export default function RestScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
-      <View style={styles.content}>
-        <AppText variant="caption" color={colors.dark.accentSoft} style={styles.caps}>
+      <View style={styles.content} testID="rest-overlay">
+        <AppText variant="caption" color={colors.mutedStrong} style={styles.caps}>
           {lastItem && last
             ? t('workout.rest.eyebrow', {
                 n: Math.max(1, mains.findIndex((i) => i.id === lastItem.id) + 1),
@@ -118,22 +125,25 @@ export default function RestScreen() {
           <TimerRing
             size={220}
             progress={elapsed / total}
-            track={colors.mutedStrong}
-            color={colors.dark.accent}
+            track={colors.line}
+            color={colors.accent}
           >
+            <AppText variant="label" color={colors.mutedStrong} style={styles.caps}>
+              {t('workout.rest.title')}
+            </AppText>
             <AppText
               variant="display"
-              color={colors.dark.text}
+              color={colors.ink}
               style={styles.num}
               accessibilityLabel={t('workout.player.timeLeft', { time: clockText(left) })}
             >
               {clockText(left)}
             </AppText>
-            <AppText variant="caption" color={colors.dark.accentSoft}>
+            <AppText variant="caption" color={colors.mutedStrong}>
               {t('workout.rest.of', { total: clockText(total) })}
             </AppText>
           </TimerRing>
-          <AppText variant="caption" color={colors.dark.accentSoft}>
+          <AppText variant="caption" color={colors.mutedStrong}>
             {t('workout.rest.tapToSkip')}
           </AppText>
         </Pressable>
@@ -141,7 +151,7 @@ export default function RestScreen() {
         <View style={styles.row}>
           <View style={styles.flex}>
             <Button
-              variant="onDark"
+              variant="secondary"
               label={t('workout.rest.less')}
               // Never below 15 s of rest in total.
               onPress={() => setExtra(Math.max(EXTRA_SECONDS - base, extra - EXTRA_SECONDS))}
@@ -149,7 +159,7 @@ export default function RestScreen() {
           </View>
           <View style={styles.flex}>
             <Button
-              variant="onDark"
+              variant="secondary"
               label={t('workout.rest.more')}
               onPress={() => setExtra(extra + EXTRA_SECONDS)}
             />
@@ -158,14 +168,14 @@ export default function RestScreen() {
 
         {last ? (
           <View style={styles.card}>
-            <AppText variant="caption" color={colors.dark.accentSoft} style={styles.caps}>
+            <AppText variant="caption" color={colors.mutedStrong} style={styles.caps}>
               {t('workout.rest.logged')}
             </AppText>
-            <AppText variant="bodyStrong" color={colors.dark.text}>
+            <AppText variant="bodyStrong" color={colors.ink}>
               {logText(last)}
             </AppText>
             {lastTimeLog ? (
-              <AppText variant="caption" color={colors.dark.accentSoft}>
+              <AppText variant="caption" color={colors.mutedStrong}>
                 {t('workout.rest.lastSession', { value: logText(lastTimeLog) })}
               </AppText>
             ) : null}
@@ -174,17 +184,17 @@ export default function RestScreen() {
 
         {next ? (
           <View style={styles.card}>
-            <AppText variant="caption" color={colors.dark.accentSoft} style={styles.caps}>
+            <AppText variant="caption" color={colors.mutedStrong} style={styles.caps}>
               {t('workout.rest.upNext')}
             </AppText>
-            <AppText variant="bodyStrong" color={colors.dark.text}>
+            <AppText variant="bodyStrong" color={colors.ink}>
               {exerciseName(t, nextExercise, next.item.exerciseId)}
               {next.item.sets > 1
                 ? ` · ${t('workout.player.setOf', { n: next.setNo, total: next.item.sets })}`
                 : ''}
             </AppText>
             {upStep > 0 ? (
-              <AppText variant="caption" color={colors.dark.accentSoft}>
+              <AppText variant="caption" color={colors.mutedStrong}>
                 {t('workout.rest.progressUp', {
                   step: `${upStep.toLocaleString(i18n.language)} ${t(`workout.units.${unit}`)}`,
                 })}
@@ -198,8 +208,14 @@ export default function RestScreen() {
 }
 
 const useStyles = makeStyles(() => ({
-  safe: { flex: 1, backgroundColor: colors.dark.background },
-  content: { flex: 1, padding: spacing.xl, gap: spacing.lg },
+  safe: { flex: 1, backgroundColor: colors.scrim, justifyContent: 'center' },
+  content: {
+    margin: spacing.lg,
+    padding: spacing.xl,
+    gap: spacing.lg,
+    borderRadius: radius.card * 2,
+    backgroundColor: colors.background,
+  },
   caps: { textTransform: 'uppercase', letterSpacing: 1.2, fontFamily: fonts.headingSemi },
   center: { alignItems: 'center', paddingVertical: spacing.lg },
   row: { flexDirection: 'row', gap: spacing.sm },
@@ -207,7 +223,7 @@ const useStyles = makeStyles(() => ({
   num: { fontVariant: ['tabular-nums'] },
   card: {
     borderWidth: 1,
-    borderColor: colors.mutedStrong,
+    borderColor: colors.line,
     borderRadius: radius.card,
     padding: spacing.lg,
     gap: spacing.xs,

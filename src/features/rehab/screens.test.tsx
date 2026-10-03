@@ -235,7 +235,7 @@ describe('the player in a program', () => {
     expect(screen.getByText('0:30')).toBeTruthy();
     expect(screen.queryByText('Swap')).toBeNull();
     // Done ends the hold; the next hold of the same stretch waits 30 s.
-    await fireEvent.press(screen.getByRole('button', { name: /Done/ }));
+    await fireEvent.press(screen.getByTestId('guided-done'));
     expect(mockRouter.push).toHaveBeenCalledWith({
       pathname: '/workout/[id]/rest',
       params: { id },

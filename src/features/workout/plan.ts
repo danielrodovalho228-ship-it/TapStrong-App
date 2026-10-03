@@ -1,4 +1,5 @@
 import { localDate } from '@/lib/dates';
+import { withDoseOverrides } from './doseOverrides';
 
 import type { Exercise } from '../exercises/types';
 import type { GeneratedSession, GeneratorInput, RecentSession } from '../generator/types';
@@ -164,5 +165,6 @@ export function todaySession(
   nextFocus: NextFocus,
 ): GeneratedSession | null {
   if (!input) return null;
-  return generateSession(withFocus(input, nextFocus, library));
+  // The same doses "Start" will use (Phase 31: "Customize exercise").
+  return withDoseOverrides(generateSession(withFocus(input, nextFocus, library)));
 }

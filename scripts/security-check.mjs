@@ -172,6 +172,9 @@ function scanLockfile() {
 export const TRACKED_ADVISORIES = new Set([
   // node-forge <=1.4.0 via @expo/cli (dev server / update signing, not bundled)
   'GHSA-86w9-cpqp-85rv',
+  // braces <=3.0.3 via @expo/cli → metro-file-map → micromatch (dev-server file
+  // watching with our own patterns, not bundled); no patched braces yet
+  'GHSA-vfj7-8cjw-p6xm',
 ]);
 
 /** High/critical advisory IDs in an `npm audit --json` report that aren't tracked. */

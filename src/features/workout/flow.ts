@@ -27,11 +27,16 @@ export function allSteps(items: SessionItem[]): Step[] {
 const isLogged = (w: WorkoutRecord, s: Step) =>
   w.logs.some((l) => l.itemId === s.item.id && l.setNo === s.setNo);
 
-/** The next step to do: the first one not logged and not skipped. */
+/**
+ * The next step to do: the first one not logged and not skipped. An exercise
+ * picked from "Exercises" in the player comes first while it has sets left
+ * (Phase 31, D).
+ */
 export function currentStep(w: WorkoutRecord): Step | null {
-  return (
-    allSteps(w.session.items).find((s) => !w.skipped.includes(s.item.id) && !isLogged(w, s)) ?? null
+  const open = allSteps(w.session.items).filter(
+    (s) => !w.skipped.includes(s.item.id) && !isLogged(w, s),
   );
+  return (w.focus ? open.find((s) => s.item.id === w.focus) : undefined) ?? open[0] ?? null;
 }
 
 /** The step after the given one that still needs doing. */

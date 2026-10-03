@@ -131,14 +131,15 @@ export function DemoLoop({
     <View style={styles.demo} testID="demo">
       <View testID="demo-frame" style={[styles.frame, frame]}>
         {media}
-        {video && __DEV__ && !DEMO_PREVIEW ? (
-          <View style={styles.badge} pointerEvents="none" testID="demo-prototype-badge">
-            <AppText variant="caption" color={colors.onCanvasMuted} style={styles.badgeText}>
-              {t('workout.demoPrototype')}
-            </AppText>
-          </View>
-        ) : null}
       </View>
+      {/* Nothing is written over the clip (Phase 31, D): the dev badge sits below. */}
+      {video && __DEV__ && !DEMO_PREVIEW ? (
+        <View style={styles.badge} pointerEvents="none" testID="demo-prototype-badge">
+          <AppText variant="caption" color={colors.mutedStrong} style={styles.badgeText}>
+            {t('workout.demoPrototype')}
+          </AppText>
+        </View>
+      ) : null}
       {soon ? (
         <View style={styles.soon}>
           <Icon name="clock" size={16} color={colors.mutedStrong} />
@@ -231,15 +232,7 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'center',
   },
   center: { alignItems: 'center' },
-  badge: {
-    position: 'absolute',
-    top: spacing.xs,
-    left: spacing.xs,
-    paddingHorizontal: spacing.xs,
-    borderRadius: radius.chip,
-    backgroundColor: colors.bodyCanvas,
-    opacity: 0.85,
-  },
+  badge: { alignSelf: 'center' },
   badgeText: { letterSpacing: 0.6, textTransform: 'uppercase' },
   soon: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
   sideButton: {

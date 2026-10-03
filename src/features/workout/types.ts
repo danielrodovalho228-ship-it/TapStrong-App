@@ -61,6 +61,8 @@ export type WorkoutRecord = {
   fullSession?: GeneratedSession;
   /** Set once the finished workout is copied to the account (Phase 5). */
   syncedAt?: string;
+  /** The exercise picked from "Exercises" in the player (Phase 31, D): done next. */
+  focus?: string;
 };
 
 export type NextFocus = MovementGroup | null;

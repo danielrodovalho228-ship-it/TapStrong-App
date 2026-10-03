@@ -157,29 +157,30 @@ describe('B1–B2: Home', () => {
 });
 
 describe('B3: exercise page', () => {
-  it('"How to" and "My history"; a teen sees reps, never a load', async () => {
+  it('"Guidance" and "Performance"; a teen sees reps, never a load', async () => {
     await as(new Date().getFullYear() - 15);
     await act(() =>
       useWorkoutStore.setState({ workouts: [record('past', { done: true, date: '2026-09-28' })] }),
     );
     mockParams = { id: press.id };
     await render(<ExercisePage />);
-    expect(screen.getByRole('radio', { name: 'How to' })).toBeTruthy();
-    await fireEvent.press(screen.getByRole('radio', { name: 'My history' }));
+    expect(screen.getByRole('radio', { name: 'Guidance' })).toBeTruthy();
+    await fireEvent.press(screen.getByRole('radio', { name: 'Performance' }));
     expect(screen.queryByText(/20 kg/)).toBeNull();
     expect(screen.getByText(/12 reps/)).toBeTruthy();
   });
 });
 
 describe('B4: the per-set suggestion', () => {
-  it('adult: "Suggested", last time, the record to beat; one tap logs it', async () => {
+  // Phase 31, D: the current set row carries the suggestion and last time.
+  it('adult: "Suggested", last time, the max-load chart; one tap logs it', async () => {
     await as(1990);
     await player([record('past', { done: true, date: '2026-09-28' }), record('now')], 'now');
-    const card = screen.getByTestId('set-suggestion');
-    expect(within(card).getByText(/^Suggested: \d+(\.\d+)? kg × 8–12$/)).toBeTruthy();
-    expect(within(card).getByText('Last time: 20 × 12')).toBeTruthy();
-    expect(screen.getByTestId('set-suggestion-record')).toBeTruthy();
-    await fireEvent.press(screen.getByRole('button', { name: /^Done · / }));
+    const row = screen.getByTestId('set-current');
+    expect(within(row).getByText(/^Suggested \d+(\.\d+)? kg \(last 20 kg\)$/)).toBeTruthy();
+    expect(within(row).getByText('8–12 reps (last 12) · now 8')).toBeTruthy();
+    expect(screen.getByTestId('max-load-chart')).toBeTruthy();
+    await fireEvent.press(screen.getByRole('button', { name: 'Done with set' }));
     const log = useWorkoutStore.getState().workouts.find((w) => w.id === 'now')!.logs[0];
     expect(log.load).toBeGreaterThan(0);
     expect(log.reps).toBe(8);
@@ -188,8 +189,9 @@ describe('B4: the per-set suggestion', () => {
   it('teen: reps only, no load, no record', async () => {
     await as(new Date().getFullYear() - 15);
     await player([record('past', { done: true, date: '2026-09-28' }), record('now')], 'now');
-    expect(screen.queryByTestId('set-suggestion')).toBeNull();
-    expect(screen.queryByRole('button', { name: /^Increase Load/ })).toBeNull();
+    expect(screen.queryByTestId('current-load')).toBeNull();
+    expect(screen.queryByTestId('max-load-chart')).toBeNull();
+    expect(screen.queryByText(/\bkg\b/)).toBeNull();
     await fireEvent.press(screen.getByRole('button', { name: 'Done with set' }));
     const log = useWorkoutStore.getState().workouts.find((w) => w.id === 'now')!.logs[0];
     expect(log.load).toBeUndefined();
@@ -197,12 +199,15 @@ describe('B4: the per-set suggestion', () => {
 });
 
 describe('B5: warm-up sets', () => {
-  it('one card "10 light · 5 medium · 3 almost there"; Done logs them, Skip leaves them', async () => {
+  it('one card "10 reps empty bar · 5 light"; Done logs them, Skip leaves them', async () => {
     await as(1990);
     await player([record('now', { ramp: true })], 'now');
     expect(screen.getByTestId('ramp-card')).toBeTruthy();
-    expect(screen.getByText('10 reps light · 5 reps medium · 3 reps almost there')).toBeTruthy();
-    await fireEvent.press(screen.getByRole('button', { name: 'Done' }));
+    // One part per warm-up set the plan has (2 for adults, SPEC §8).
+    expect(screen.getByText(/^10 reps (empty bar|very light) · 5 light$/)).toBeTruthy();
+    // No set is current while the warm-up sets are open.
+    expect(screen.queryByTestId('set-current')).toBeNull();
+    await fireEvent.press(screen.getByTestId('ramp-done'));
     const w = useWorkoutStore.getState().workouts[0];
     expect(w.logs.filter((l) => l.itemId === 'r').map((l) => l.reps)).toEqual([10, 5]);
 

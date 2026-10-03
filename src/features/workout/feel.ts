@@ -57,6 +57,10 @@ export const feel = {
   light() {
     haptic(() => Haptics.selectionAsync());
   },
+  /** The rest timer ran out (Phase 31, D): a buzz, the chime plays apart. */
+  restEnd() {
+    haptic(() => Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning));
+  },
   /** The workout is done. */
   finish() {
     sound('chord');

@@ -223,15 +223,18 @@ describe('Player (mockup 11) and rest (mockup 12)', () => {
     // Finish every warm-up step.
     while (currentStep(current())!.item.role === 'warmup') {
       const before = current().logs.length;
-      const done = screen.queryByRole('button', { name: 'Done' });
-      if (done) await fireEvent.press(done);
-      else await fireEvent.press(screen.getByRole('button', { name: 'Done with set' }));
+      // Phase 31, D: warm-up steps run full screen with one button.
+      await fireEvent.press(screen.getByTestId('guided-done'));
       expect(current().logs.length).toBe(before + 1);
     }
     const step = currentStep(current())!;
     expect(step.item.role).toBe('main');
-    expect(screen.getByText(`Set 1 of ${step.item.sets}`)).toBeTruthy();
-    await fireEvent.press(screen.getByRole('button', { name: /^Increase Reps/ }));
+    expect(within(screen.getByTestId('set-current')).getByText('Set 1')).toBeTruthy();
+    // Tap the value for the quick adjust.
+    await fireEvent.press(screen.getByTestId('current-reps'));
+    await fireEvent.press(
+      screen.getByRole('button', { name: step.item.reps ? /^Increase Reps/ : /^Increase Seconds/ }),
+    );
     await fireEvent.press(screen.getByRole('button', { name: 'Done with set' }));
     const log = current().logs.at(-1)!;
     expect(log.reps).toBe(
@@ -406,10 +409,10 @@ describe('Exit (mockup 13) and Done (mockup 14)', () => {
     await fireEvent.press(screen.getByRole('button', { name: 'Discard workout' }));
     // Phase 29, B7: it asks first.
     expect(workouts().workouts).toHaveLength(1);
-    await fireEvent.press(screen.getByRole('button', { name: 'Back' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Cancel' }));
     expect(workouts().workouts).toHaveLength(1);
     await fireEvent.press(screen.getByRole('button', { name: 'Discard workout' }));
-    await fireEvent.press(screen.getByRole('button', { name: 'Yes, discard' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Discard and exit' }));
     expect(workouts().workouts).toHaveLength(0);
     expect(mockRouter.replace).toHaveBeenCalledWith('/home');
   });
@@ -475,7 +478,14 @@ describe('Exit (mockup 13) and Done (mockup 14)', () => {
         milestone: { streak: 7, workoutId: w.id, at: '2026-09-26T12:00:00Z' },
       });
     });
+    // The free-account offer waits for the second workout (Phase 31, D).
     await render(<DoneScreen />);
+    expect(screen.queryByRole('button', { name: 'Save my progress' })).toBeNull();
+    await act(() =>
+      useWorkoutStore.setState((st) => ({
+        workouts: [{ ...st.workouts[0], id: 'earlier', status: 'done' }, ...st.workouts],
+      })),
+    );
     await fireEvent.press(screen.getByRole('button', { name: 'Save my progress' }));
     expect(mockRouter.push).toHaveBeenCalledWith({
       pathname: '/account',

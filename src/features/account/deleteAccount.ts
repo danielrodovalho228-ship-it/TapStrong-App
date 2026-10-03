@@ -1,3 +1,4 @@
+import { useDoseOverrides } from '../workout/doseOverrides';
 import { getSupabase } from '@/lib/supabase';
 
 import { useBillingStore } from '../billing/store';
@@ -33,6 +34,7 @@ export function wipeLocalData() {
   useMovementPainStore.getState().reset();
   // Rehab programs are health data too (Phase 30); the ready plan with them.
   useRehabStore.getState().reset();
+  useDoseOverrides.getState().reset();
   useProgramStore.getState().reset();
   useMonthStore.getState().reset();
   useMomentsStore.getState().reset();

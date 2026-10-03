@@ -8,6 +8,7 @@ import { usePlacesStore, type Place } from '../equipment/store';
 import { initialLibrary, useLibraryStore, type LibraryData } from '../library/store';
 import { useProgramStore } from '../program/store';
 import { useRehabStore, type RehabData } from '../rehab/store';
+import { useDoseOverrides, type DoseOverride } from '../workout/doseOverrides';
 import { useMomentsStore, type StoredMoment } from '../moments/store';
 import { useShareStore, type ShareLink } from '../share/store';
 import { initialProgress, useProgressStore, type ProgressData } from '../progress/store';
@@ -31,6 +32,8 @@ type Snapshot = {
   movementPain?: MovementPain[];
   program?: { planId: string | null; startedAt: string | null };
   rehab?: RehabData['runs'];
+  /** "Customize exercise → Whole plan" doses (Phase 31). */
+  doses?: Record<string, DoseOverride>;
   library?: LibraryData;
   places?: { places: Place[]; activeId: string | null };
   prefs?: Prefs;
@@ -80,6 +83,7 @@ function capture(): Snapshot {
     movementPain: useMovementPainStore.getState().reports,
     program: (({ planId, startedAt }) => ({ planId, startedAt }))(useProgramStore.getState()),
     rehab: useRehabStore.getState().runs,
+    doses: useDoseOverrides.getState().overrides,
     library: (({ favourites, notes, goals, custom }) => ({ favourites, notes, goals, custom }))(
       useLibraryStore.getState(),
     ),
@@ -148,6 +152,7 @@ function load(snapshot: Snapshot | null, seed: Partial<OnboardingData>) {
     startedAt: snapshot?.program?.startedAt ?? null,
   });
   useRehabStore.setState({ runs: snapshot?.rehab ?? {} });
+  useDoseOverrides.setState({ overrides: snapshot?.doses ?? {} });
 }
 
 /** The owner's own profile, registered the first time the family is used. */
