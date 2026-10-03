@@ -178,6 +178,12 @@ export function SwapSheet({
             <Notice icon>{t('workout.swap.empty')}</Notice>
           ) : (
             <>
+              {/* Few checked options so far: never invent one (Daniel, Oct 3). */}
+              {options.length < 3 ? (
+                <AppText variant="caption" color={colors.mutedStrong} testID="swap-few">
+                  {t('workout.swap.few')}
+                </AppText>
+              ) : null}
               {(
                 [
                   ['same', groups.same],

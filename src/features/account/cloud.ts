@@ -6,7 +6,7 @@ import { getSupabase } from '@/lib/supabase';
 
 import { refreshBilling } from '../billing/actions';
 import { getBilling } from '../billing/provider';
-import { devLibrary } from '../exercises/library';
+import { currentLibrary } from '../exercises/released';
 import { ownerOnboarding } from '../family/profiles';
 import { retryPendingDeletes } from '../family/remote';
 import { activeProfile, useFamilyStore } from '../family/store';
@@ -40,7 +40,7 @@ export function syncNow(): Promise<SyncResult> {
   }
   // Member removals that failed offline (QA round 3).
   void retryPendingDeletes();
-  const library = devLibrary();
+  const library = currentLibrary();
   const workouts = useWorkoutStore.getState();
   const slugs = [...new Set(library.map((e) => e.slug))];
 

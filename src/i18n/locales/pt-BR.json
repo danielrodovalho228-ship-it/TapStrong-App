@@ -3794,7 +3794,8 @@
         "more": "Mais"
       },
       "showMore": "Mais ({{count}})",
-      "info": "Sobre {{name}}"
+      "info": "Sobre {{name}}",
+      "few": "Poucas opções por enquanto: mais exercícios conferidos estão chegando."
     },
     "player": {
       "progress": "{{n}} / {{total}}",
@@ -5288,7 +5289,8 @@
     "notReviewed": "Não revisado por treinador",
     "hideNotForYou": "Esconder os exercícios que não são para você",
     "showMore": "Ver mais {{count}}",
-    "saveCard": "Salvar ficha: {{name}}"
+    "saveCard": "Salvar ficha: {{name}}",
+    "fewOptions": "Mais opções para este músculo em breve. Aqui só aparecem exercícios conferidos."
   },
   "exercise": {
     "guidance": "Orientação",

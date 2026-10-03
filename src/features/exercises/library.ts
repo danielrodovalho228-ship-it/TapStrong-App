@@ -148,6 +148,14 @@ export function devLibrary(): Exercise[] {
     const seed = require('../../../supabase/seed/exercises.json') as {
       exercises: SeedExercise[];
     };
+    // Preview the store library: only the launch set (Daniel, Oct 3).
+    if (process.env.EXPO_PUBLIC_LIBRARY_SCOPE === 'launch') {
+      const launch = require('../../../supabase/seed/launch_set.json') as {
+        exercises: { slug: string }[];
+      };
+      const keep = new Set(launch.exercises.map((x) => x.slug));
+      return seed.exercises.filter((e) => keep.has(e.slug)).map(fromSeed);
+    }
     return seed.exercises.map(fromSeed);
   }
   return [];

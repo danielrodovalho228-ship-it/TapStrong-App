@@ -10,6 +10,7 @@ import { localDate } from '@/lib/dates';
 import { syncNow } from '../account/cloud';
 import { useAccountStore } from '../account/store';
 import { devLibrary } from '../exercises/library';
+import { mergeLibrary, useReleasedLibraryStore } from '../exercises/released';
 import type { Exercise } from '../exercises/types';
 import {
   generateBalanceSession,
@@ -56,7 +57,12 @@ export function useExerciseLibrary(): Exercise[] {
   // The person's own exercises join the library (B5); the generator never
   // programs them on its own.
   const custom = useLibraryStore((s) => s.custom);
-  return useMemo(() => [...devLibrary(), ...custom.map(customToExercise)], [custom]);
+  // Released exercises from Supabase (drafts too in dev builds), SPEC §2.1.
+  const rows = useReleasedLibraryStore((s) => s.rows);
+  return useMemo(
+    () => [...mergeLibrary(devLibrary(), rows), ...custom.map(customToExercise)],
+    [custom, rows],
+  );
 }
 
 /** Generator input from the profile, saved restrictions and workout history. */

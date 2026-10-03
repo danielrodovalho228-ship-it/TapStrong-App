@@ -120,6 +120,8 @@ Verify every point on every one of the 28 images; bodies differ.
 
 - **Production:** a licensed professional 3D library (Gym Animations first choice, MoveKit backup). The license must allow in-app use and a commercial subscription app.
 - **Prototype:** the AI demo loops in `App Gym Flex\Imagens\ex-*.mp4`. They are placeholders only and must never be marked `released`.
+- **Launch (Daniel, Oct 3):** the clips made by the owner in Google Flow (`assets/prototype/<slug>.<f|m>.mp4`, both sexes, passed the frame-by-frame QC) ship in the store version, served from Supabase Storage (bucket `exercise-media`) and cached on the phone; `media_provider = 'google_flow'`. They never go in the app bundle. The licensed 3D library can replace them later.
+- **Launch set:** only the launch set (`supabase/seed/launch_set.json`) is reviewed before the first release; an exercise is released after a certified sign-off and a second independent check, and only with clips for both sexes. The rest follows in updates.
 - Media is served from Supabase Storage (or a CDN): 540p muted loops, a poster frame, and a thumbnail.
 - **Do not bake muscle highlights into videos.** The app draws the target label and the body-map highlight itself, from the exercise's verified mapping.
 

@@ -3,7 +3,7 @@ import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 
-import { AppText, Button, Header, IconButton, Screen, TextField } from '@/components/ui';
+import { AppText, Button, Header, IconButton, Notice, Screen, TextField } from '@/components/ui';
 import { displayBand } from '@/features/bodymap/selection';
 import type { Exercise } from '@/features/exercises/types';
 import { AREAS, libraryView, type LibraryFilter } from '@/features/library/browse';
@@ -17,6 +17,8 @@ import { exerciseName } from '@/features/workout/format';
 import { useExerciseLibrary, useGeneratorInput } from '@/features/workout/hooks';
 import { colors, makeStyles, radius, spacing, useColors } from '@/theme';
 
+/** Below this many options for a muscle, say more are coming. */
+const MIN_OPTIONS = 3;
 const PAGE = 40;
 
 /**
@@ -79,6 +81,12 @@ export default function MuscleExercisesScreen() {
       <AppText variant="caption" color={colors.mutedStrong}>
         {t('library.count', { count: list.length })}
       </AppText>
+      {/* Fewer than 3 for a muscle: say more are coming, never invent (Daniel, Oct 3). */}
+      {filter.muscle && !query && list.length < MIN_OPTIONS ? (
+        <View testID="muscle-few">
+          <Notice icon>{t('library.fewOptions')}</Notice>
+        </View>
+      ) : null}
       {list.length ? (
         <View style={styles.grid} testID="muscle-grid">
           {list.slice(0, shown).map((e) => {

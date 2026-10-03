@@ -3779,7 +3779,8 @@
         "more": "More"
       },
       "showMore": "More ({{count}})",
-      "info": "About {{name}}"
+      "info": "About {{name}}",
+      "few": "Few options for now: more checked exercises are coming."
     },
     "player": {
       "progress": "{{n}} / {{total}}",
@@ -5233,7 +5234,8 @@
     "notReviewed": "Not reviewed by a coach",
     "hideNotForYou": "Hide exercises not for you",
     "showMore": "Show {{count}} more",
-    "saveCard": "Save card: {{name}}"
+    "saveCard": "Save card: {{name}}",
+    "fewOptions": "More options for this muscle are coming. Only checked exercises appear here."
   },
   "exercise": {
     "guidance": "Guidance",

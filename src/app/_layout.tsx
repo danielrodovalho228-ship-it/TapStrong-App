@@ -16,6 +16,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { ThemeGate } from '@/features/appearance/ThemeGate';
 import { refreshBilling } from '@/features/billing/actions';
+import { refreshReleasedLibrary } from '@/features/exercises/released';
 import { CaptchaHost } from '@/features/captcha/CaptchaHost';
 import { WebFamilyGate } from '@/features/family/components/WebMobileOnly';
 import { useNotificationSync } from '@/features/notifications/useNotificationSync';
@@ -65,6 +66,11 @@ export default function RootLayout() {
   // Latest subscription state from the store (best effort, offline is fine).
   useEffect(() => {
     void refreshBilling();
+  }, []);
+
+  // The released exercise library, kept on the phone (best effort, offline is fine).
+  useEffect(() => {
+    void refreshReleasedLibrary();
   }, []);
 
   if (!ready) return null;

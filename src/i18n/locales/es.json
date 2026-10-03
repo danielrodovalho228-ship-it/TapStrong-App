@@ -3779,7 +3779,8 @@
         "more": "Más"
       },
       "showMore": "Más ({{count}})",
-      "info": "Sobre {{name}}"
+      "info": "Sobre {{name}}",
+      "few": "Pocas opciones por ahora: pronto llegarán más ejercicios revisados."
     },
     "player": {
       "progress": "{{n}} / {{total}}",
@@ -5233,7 +5234,8 @@
     "notReviewed": "No revisado por un entrenador",
     "hideNotForYou": "Ocultar los ejercicios que no son para ti",
     "showMore": "Ver {{count}} más",
-    "saveCard": "Guardar ficha: {{name}}"
+    "saveCard": "Guardar ficha: {{name}}",
+    "fewOptions": "Pronto habrá más opciones para este músculo. Aquí solo aparecen ejercicios revisados."
   },
   "exercise": {
     "guidance": "Orientación",
