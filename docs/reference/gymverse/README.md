@@ -19,3 +19,7 @@ texts are theirs). Resized to 460 px wide.
 - `14-logger-logged.jpg` — Logged sets in yellow "50 lb | 10 reps | ✓ Redo", PR messages under the row ("Highest weight ever lifted!", "New estimated 1RM!"), trophy counter on top, current set "Suggested 50 lb (Last 45) | 8-10 reps (Last 10) | Did It", "Weight of one dumbbell".
 - `15-rest-rir.jpg` — Rest circle over the rows (Tap to Skip, Rest: 1:30min, −15/+15, edit), "How many more reps could you do? 0/1/2/3+", Customize Exercise, Next Exercise card.
 - `16-logger-next.jpg` — Exercise 2/6 with the current set darker yellow and "Hit 45 lb for a new PR!".
+- `17-logger-pr-logall.jpg` — Current set with "Hit 45 lb for a new PR!", future rows, "Log All Sets" (dark, centered), Customize Exercise, Next Exercise card with muscle avatar.
+- `18-logger-unilateral.jpg` / `19-logger-next-card.jpg` — Dumbbell lunge: muscle chip coloured by group, "Weight of one dumbbell, reps of one side".
+- `20-next-preview.jpg` — Next-exercise preview: Close, header, Max Weight Lifted, all rows dimmed (no play column), Customize Exercise, grey "Start Exercise" bar at the bottom.
+- `21-logger-dumbbell.jpg` — "Weight of one dumbbell", (Last 12.5) decimal loads.
