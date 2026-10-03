@@ -9,7 +9,7 @@ import '@/i18n';
 
 import { act, fireEvent, render, screen, within } from '@testing-library/react-native';
 
-import BodyScreen from '@/app/(tabs)/body';
+import BodyScreen from '@/app/body-goals';
 import HomeScreen from '@/app/(tabs)/home';
 import ExercisePage from '@/app/exercise/[id]';
 import PlayerScreen from '@/app/workout/[id]/play';

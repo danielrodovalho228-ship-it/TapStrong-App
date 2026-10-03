@@ -41,3 +41,18 @@ export function nearestHotspot(
   }
   return best?.key ?? null;
 }
+
+/**
+ * The names down both sides of the body, top to bottom, alternating so both
+ * columns stay the same length (most muscles are on both sides).
+ */
+export function sideLabels(hotspots: Hotspot[]) {
+  const sorted = hotspots
+    .map((h) => ({ key: h.key, y: h.points.reduce((n, p) => n + p[1], 0) / h.points.length }))
+    .sort((a, b) => a.y - b.y)
+    .map((h) => h.key);
+  return {
+    left: sorted.filter((_, i) => i % 2 === 0),
+    right: sorted.filter((_, i) => i % 2 === 1),
+  };
+}

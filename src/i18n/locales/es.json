@@ -5775,5 +5775,19 @@
     "stretchNow": "Estirar ahora",
     "restTitle": "Día de descanso",
     "restBody": "Te recomendamos 5–10 minutos de estiramiento hoy para ayudar a la recuperación."
+  },
+  "explore": {
+    "title": "Ejercicios",
+    "search": "Buscar ejercicios",
+    "searchAll": "Buscar todos los ejercicios",
+    "openMuscle": "Ejercicios de {{muscle}}",
+    "favourites_one": "Favoritos ({{count}})",
+    "favourites_other": "Favoritos ({{count}})",
+    "favouritesTitle": "Favoritos",
+    "all": "Todos los ejercicios",
+    "swipe": "Desliza para girar 180°",
+    "goals": "Elegir mis metas por músculo",
+    "searchIn": "Buscar en {{name}}",
+    "noFavourites": "Aún no hay favoritos. Toca la estrella de un ejercicio para guardarlo aquí."
   }
 }

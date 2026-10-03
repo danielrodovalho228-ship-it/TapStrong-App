@@ -110,7 +110,7 @@ export default function MonthScreen() {
               choose('body', now, []);
               dismissCard();
               track('month_chosen', { type: 'body' });
-              router.replace({ pathname: '/body', params: { focus: focus.join(',') } });
+              router.replace({ pathname: '/body-goals', params: { focus: focus.join(',') } });
             }}
             onLock={(locked) =>
               input &&

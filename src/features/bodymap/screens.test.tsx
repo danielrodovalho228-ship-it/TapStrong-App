@@ -2,7 +2,7 @@ import '@/i18n';
 
 import { act, fireEvent, render, screen } from '@testing-library/react-native';
 
-import BodyMapScreen from '@/app/(tabs)/body';
+import BodyMapScreen from '@/app/body-goals';
 import GoalsSheet from '@/app/goals';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { useWorkoutStore } from '@/features/workout/store';

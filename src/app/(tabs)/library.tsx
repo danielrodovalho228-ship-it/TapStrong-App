@@ -16,7 +16,12 @@ import {
 } from '@/components/ui';
 import { BodyPicker } from '@/features/bodymap/components/BodyPicker';
 import type { Exercise } from '@/features/exercises/types';
-import { libraryView, type LibraryFilter, type LibraryRole } from '@/features/library/browse';
+import {
+  AREAS,
+  libraryView,
+  type LibraryFilter,
+  type LibraryRole,
+} from '@/features/library/browse';
 import { canCreateExercise } from '@/features/library/custom';
 import { useLibraryStore } from '@/features/library/store';
 import { modeOf } from '@/features/onboarding/derived';
@@ -33,16 +38,6 @@ import { colors, fonts, makeStyles, radius, spacing, useColors } from '@/theme';
 /** Cards shown before "Show all". */
 const PAGE = 60;
 const ROLES: LibraryRole[] = ['main', 'warmup', 'stretch', 'balance', 'repair'];
-/** 60+ browse by area instead of the body map (simpler, big buttons). */
-const AREAS: Record<string, string[]> = {
-  arms: ['biceps', 'triceps', 'forearms'],
-  legs: ['quads', 'hamstrings', 'glutes', 'calves'],
-  back: ['upperBack', 'lats', 'lowerBack'],
-  chest: ['chest'],
-  shoulders: ['shoulders', 'rearDelts', 'rotatorCuff'],
-  core: ['abs', 'obliques'],
-};
-
 /**
  * Library tab (improvements v1, B1–B2; mockups 08 + 10): browse by body with
  * the same dots, search and filters; only exercises safe for this profile are

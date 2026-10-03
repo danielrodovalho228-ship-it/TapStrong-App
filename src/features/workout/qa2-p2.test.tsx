@@ -6,7 +6,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react-native';
 
 import seed from '../../../supabase/seed/exercises.json';
 import catalogJson from '../../../supabase/seed/joint_movements.json';
-import BodyMapScreen from '@/app/(tabs)/body';
+import BodyMapScreen from '@/app/body-goals';
 import HomeScreen from '@/app/(tabs)/home';
 import MilestoneScreen from '@/app/milestone';
 import { RadioCard } from '@/components/ui';

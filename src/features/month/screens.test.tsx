@@ -292,7 +292,7 @@ describe('the Month closed screen', () => {
   it('"Choose on the body" opens the body map with the suggested focus', async () => {
     await open();
     await fireEvent.press(screen.getByRole('button', { name: 'Choose on the body' }));
-    expect(router.replace).toHaveBeenCalledWith(expect.objectContaining({ pathname: '/body' }));
+    expect(router.replace).toHaveBeenCalledWith(expect.objectContaining({ pathname: '/body-goals' }));
     expect(useMonthStore.getState().history[0].choice).toBe('body');
   });
 

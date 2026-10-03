@@ -154,8 +154,9 @@ describe('C only five screens, and screenshots are welcome', () => {
       .filter((f) => readFileSync(f, 'utf8').includes('useScreenshotOffer('))
       .map((f) => f.slice(join(root, 'app').length + 1))
       .sort();
+    // The body map with muscle goals has its own route since Phase 31.
     expect(using).toEqual([
-      '(tabs)/body.tsx',
+      'body-goals.tsx',
       'exercise/[id].tsx',
       'milestone.tsx',
       'month.tsx',

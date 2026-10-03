@@ -5841,5 +5841,20 @@
     "stretchNow": "Alongar agora",
     "restTitle": "Dia de descanso",
     "restBody": "Recomendamos 5–10 minutos de alongamento hoje para ajudar na recuperação."
+  },
+  "explore": {
+    "title": "Exercícios",
+    "search": "Buscar exercícios",
+    "searchAll": "Buscar todos os exercícios",
+    "openMuscle": "Exercícios de {{muscle}}",
+    "favourites_zero": "Favoritos ({{count}})",
+    "favourites_one": "Favoritos ({{count}})",
+    "favourites_other": "Favoritos ({{count}})",
+    "favouritesTitle": "Favoritos",
+    "all": "Todos os exercícios",
+    "swipe": "Deslize para girar 180°",
+    "goals": "Escolher minhas metas por músculo",
+    "searchIn": "Buscar em {{name}}",
+    "noFavourites": "Ainda sem favoritos. Toque na estrela de um exercício para guardá-lo aqui."
   }
 }

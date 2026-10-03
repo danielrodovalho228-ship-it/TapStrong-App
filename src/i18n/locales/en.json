@@ -5775,5 +5775,19 @@
     "stretchNow": "Stretch now",
     "restTitle": "Rest day",
     "restBody": "We recommend 5–10 minutes of stretching today to help you recover."
+  },
+  "explore": {
+    "title": "Exercises",
+    "search": "Search exercises",
+    "searchAll": "Search all exercises",
+    "openMuscle": "{{muscle}} exercises",
+    "favourites_one": "Favourites ({{count}})",
+    "favourites_other": "Favourites ({{count}})",
+    "favouritesTitle": "Favourites",
+    "all": "All exercises",
+    "swipe": "Swipe to turn 180°",
+    "goals": "Set my muscle goals",
+    "searchIn": "Search in {{name}}",
+    "noFavourites": "No favourites yet. Tap the star on an exercise to keep it here."
   }
 }

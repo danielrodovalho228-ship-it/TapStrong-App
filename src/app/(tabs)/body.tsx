@@ -1,53 +1,38 @@
-import { Redirect, router, useLocalSearchParams } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { Redirect, router } from 'expo-router';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PanResponder, Pressable, useWindowDimensions, View } from 'react-native';
 
-import { AppText, Button, Chip, Header, Icon, Notice, Screen, Select } from '@/components/ui';
-import { AreaChip } from '@/features/bodymap/components/AreaChip';
+import { AppText, Chip, Icon, IconButton, Screen, TextLink } from '@/components/ui';
 import { BodyMapCanvas } from '@/features/bodymap/components/BodyMapCanvas';
-import type { BodySex, BodyView } from '@/features/bodymap/images';
-import {
-  allowedBands,
-  displayBand,
-  expandToHotspots,
-  toggleMuscle,
-} from '@/features/bodymap/selection';
-import { activeProfile, useFamilyStore } from '@/features/family/store';
+import { ViewToggle } from '@/features/bodymap/components/ViewToggle';
+import { hotspotsFor, sideLabels } from '@/features/bodymap/hotspots';
+import type { BodySex } from '@/features/bodymap/images';
+import { displayBand } from '@/features/bodymap/selection';
+import { AREAS } from '@/features/library/browse';
+import { useLibraryStore } from '@/features/library/store';
 import { derive } from '@/features/onboarding/derived';
-import { defaultMuscleGoal } from '@/features/onboarding/options';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { muscleLabel } from '@/features/onboarding/summaries';
-import { muscleByKey, muscleFamily } from '@/features/muscles';
-import { recoveryFills } from '@/features/workout/components/RecoveryBody';
-import { useBodyStates } from '@/features/workout/hooks';
-import { useScreenshotOffer } from '@/features/share/screenshot';
 import { track } from '@/lib/analytics';
 import { colors, fonts, makeStyles, radius, sizes, spacing, useColors } from '@/theme';
 
-/** Mockup 08 — Body map (SPEC §9 /(tabs)/body). */
-export default function BodyMapScreen() {
+/**
+ * Exercises tab (Phase 31, E): the profile's own body (sex and age band) with
+ * coral dots and the muscle names down both sides; a sideways swipe turns it
+ * 180°. A muscle opens its exercises in a grid; favourites and search sit on
+ * top.
+ */
+export default function ExercisesScreen() {
   const colors = useColors();
   const styles = useStyles();
   const { t } = useTranslation();
   const { height: screenHeight } = useWindowDimensions();
   const s = useOnboardingStore();
   const derived = derive(s);
-  const { states } = useBodyStates();
-  const member = useFamilyStore(activeProfile);
-  // "Choose on the body" from the month summary (Phase 26): the suggested focus stands out.
-  const { focus } = useLocalSearchParams<{ focus?: string }>();
-  // A screenshot of the map offers the "muscle of the day" card (Phase 28, C).
-  useScreenshotOffer({ template: 'muscle' });
-  const suggested = (focus ?? '').split(',').filter((m) => !!muscleByKey(m));
+  const favourites = useLibraryStore((st) => st.favourites);
 
-  // Goals set on a parent (e.g. "chest") in the interview apply to its parts.
-  useEffect(() => {
-    const expanded = expandToHotspots(s.muscleGoals);
-    if (expanded.length !== s.muscleGoals.length) s.update({ muscleGoals: expanded });
-  }, [s]);
-
-  // Swipe sideways to turn the body 180° (Phase 29, B10; like BodyPicker).
+  // Swipe sideways to turn the body 180° (Phase 29, B10).
   const [turn] = useState(() =>
     PanResponder.create({
       onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dx) > 24 && Math.abs(g.dy) < 20,
@@ -63,238 +48,149 @@ export default function BodyMapScreen() {
 
   const band = displayBand(s.bodyModel.band, derived.band, derived.mode);
   const sex: BodySex = s.bodyModel.sex ?? (s.sex === 'f' ? 'f' : 'm');
-  const selected = s.muscleGoals.map((m) => m.muscleKey);
-  const minor = derived.mode === 'child' || derived.mode === 'teen';
+  const senior = derived.mode === 'senior';
+  const { left, right } = sideLabels(hotspotsFor(band, sex, s.bodyView));
+  const coral = Object.fromEntries([...left, ...right].map((k) => [k, colors.accent]));
 
-  const toggle = (key: string) => {
-    const adding = !selected.includes(key);
-    s.update({ muscleGoals: toggleMuscle(s.muscleGoals, key, defaultMuscleGoal(s.mainGoals)) });
-    if (adding) track('bodymap_muscle_tapped', { mode: derived.mode });
+  const open = (key: string) => {
+    track('bodymap_muscle_tapped', { mode: derived.mode });
+    router.push({ pathname: '/muscle/[key]', params: { key } });
   };
-
-  const openGoals = (muscle: string) => router.push({ pathname: '/goals', params: { muscle } });
-  const suggestedFills = Object.fromEntries(
-    suggested.flatMap((m) => [m, ...muscleFamily(m)]).map((k) => [k, colors.accent]),
-  );
-  const missing = suggested.filter(
-    (m) => !selected.some((k) => k === m || muscleByKey(k)?.parentKey === m),
+  const label = (key: string) => (
+    <Pressable
+      key={key}
+      accessibilityRole="button"
+      accessibilityLabel={t('explore.openMuscle', { muscle: muscleLabel(t, key) })}
+      onPress={() => open(key)}
+      style={styles.label}
+      testID="side-label"
+    >
+      <AppText variant="caption" color={colors.mutedStrong} numberOfLines={2}>
+        {muscleLabel(t, key)}
+      </AppText>
+    </Pressable>
   );
 
   return (
-    <Screen
-      header={
-        <View style={styles.header}>
-          <Header
-            onBack={router.canGoBack() ? () => router.back() : undefined}
-            title={t('bodyMap.title')}
+    <Screen>
+      <View style={styles.top}>
+        <AppText variant="h1" accessibilityRole="header" style={styles.flex}>
+          {t('explore.title')}
+        </AppText>
+        <IconButton
+          icon="search"
+          accessibilityLabel={t('explore.search')}
+          onPress={() => router.push({ pathname: '/muscle/[key]', params: { key: 'all' } })}
+        />
+        <IconButton
+          icon="star"
+          accessibilityLabel={t('explore.favourites', { count: favourites.length })}
+          onPress={() => router.push({ pathname: '/muscle/[key]', params: { key: 'favourites' } })}
+        />
+      </View>
+
+      {/* A sideways swipe turns the body 180° (Phase 29, B10). */}
+      <View style={styles.bodyRow} {...turn.panHandlers}>
+        <View style={styles.side}>{left.map(label)}</View>
+        <View style={styles.flex}>
+          <BodyMapCanvas
+            band={band}
+            sex={sex}
+            view={s.bodyView}
+            selected={[]}
+            recovery={coral}
+            onToggle={open}
+            maxHeight={Math.max(360, Math.min(560, screenHeight * 0.6))}
           />
-          <AppText variant="caption" color={colors.teal} style={styles.subtitle}>
-            {/* A child or teen profile can't change its age: no "change anytime" (QA round 2). */}
-            {member?.kind === 'child' ? t('bodyMap.subtitleLocked') : t('bodyMap.subtitle')}
+        </View>
+        <View style={styles.side}>{right.map(label)}</View>
+      </View>
+      <View style={styles.controls}>
+        <View style={styles.hint}>
+          <Icon name="rotate" size={16} color={colors.mutedStrong} />
+          <AppText variant="caption" color={colors.mutedStrong}>
+            {t('explore.swipe')}
           </AppText>
         </View>
-      }
-      footer={
-        <Button
-          label={t('bodyMap.setGoals')}
-          disabled={!selected.length}
-          onPress={() => openGoals(selected[0])}
-        />
-      }
-    >
-      <View style={styles.controls}>
-        <View
-          accessibilityRole="radiogroup"
-          accessibilityLabel={t('bodyMap.bodyModel')}
-          style={styles.row}
-        >
-          {(['m', 'f'] as const).map((value) => (
+        <ViewToggle value={s.bodyView} onChange={(bodyView) => s.update({ bodyView })} inline />
+      </View>
+
+      {senior ? (
+        <View style={styles.wrap}>
+          {Object.keys(AREAS).map((area) => (
             <Chip
-              key={value}
-              label={
-                minor
-                  ? t(value === 'm' ? 'bodyMap.boy' : 'bodyMap.girl')
-                  : t(value === 'm' ? 'bodyMap.male' : 'bodyMap.female')
+              key={area}
+              label={t(`library.areas.${area as 'arms'}`)}
+              onPress={() =>
+                router.push({ pathname: '/muscle/[key]', params: { key: `area:${area}` } })
               }
-              selected={sex === value}
-              onPress={() => s.update({ bodyModel: { ...s.bodyModel, sex: value } })}
             />
           ))}
         </View>
-        <Select
-          label={t('bodyMap.ageModel')}
-          placeholder={t('bodyMap.ageModel')}
-          value={band}
-          onChange={(value) => s.update({ bodyModel: { ...s.bodyModel, band: value } })}
-          options={allowedBands(derived.mode).map((b) => ({
-            value: b,
-            label: t('bodyMap.ageOption', { range: t(`bodyMap.bands.${b}`) }),
-          }))}
-        />
-      </View>
-
-      {missing.length ? (
-        <Notice>
-          <View style={styles.suggest}>
-            <AppText>
-              {t('month.bodyNote', {
-                list: missing.map((m) => muscleLabel(t, m)).join(', '),
-              })}
-            </AppText>
-            {missing.map((m) => (
-              <Button
-                key={m}
-                variant="secondary"
-                label={t('month.addFocus', { muscle: muscleLabel(t, m) })}
-                onPress={() => toggle(m)}
-              />
-            ))}
-          </View>
-        </Notice>
       ) : null}
 
-      {/* A sideways swipe turns the body 180° (Phase 29, B10). */}
-      <View {...turn.panHandlers}>
-        <BodyMapCanvas
-          band={band}
-          sex={sex}
-          view={s.bodyView}
-          selected={selected}
-          recovery={{ ...recoveryFills(states), ...suggestedFills }}
-          onToggle={toggle}
-          maxHeight={Math.max(360, Math.min(560, screenHeight * 0.58))}
+      <View style={styles.shortcuts}>
+        <Shortcut
+          icon="star"
+          label={t('explore.favourites', { count: favourites.length })}
+          onPress={() => router.push({ pathname: '/muscle/[key]', params: { key: 'favourites' } })}
         />
-        <ViewToggle value={s.bodyView} onChange={(bodyView) => s.update({ bodyView })} />
-        {/* One stacked column so the two captions never overlap (QA round 1). */}
-        <View style={styles.hints} pointerEvents="none">
-          <AppText variant="caption" color={colors.onCanvasMuted}>
-            {t('bodyMap.hint')}
-          </AppText>
-          <AppText variant="caption" color={colors.onCanvasMuted}>
-            {t('bodyMap.zoomHint')}
-          </AppText>
-        </View>
+        <Shortcut
+          icon="search"
+          label={t('explore.searchAll')}
+          onPress={() => router.push({ pathname: '/muscle/[key]', params: { key: 'all' } })}
+        />
       </View>
-
-      <View style={styles.selectedHeader}>
-        <AppText variant="label" style={styles.count}>
-          {selected.length
-            ? t('bodyMap.selectedCount', { count: selected.length })
-            : t('bodyMap.none')}
-        </AppText>
-        {selected.length ? (
-          <AppText variant="caption" color={colors.muted}>
-            {t('bodyMap.chipHint')}
-          </AppText>
-        ) : null}
-      </View>
-      <View style={styles.chips}>
-        {s.muscleGoals.map((m) => {
-          const muscle = muscleLabel(t, m.muscleKey);
-          const goal = t(`muscleGoals.${m.goal}`);
-          return (
-            <AreaChip
-              key={m.muscleKey}
-              muscle={muscle}
-              goal={goal}
-              separator={t('common.separator')}
-              pressLabel={t('bodyMap.changeGoal', { muscle, goal })}
-              removeLabel={t('bodyMap.removeArea', { muscle })}
-              onPress={() => openGoals(m.muscleKey)}
-              onRemove={() => toggle(m.muscleKey)}
-            />
-          );
-        })}
-      </View>
+      <TextLink label={t('explore.goals')} onPress={() => router.push('/body-goals')} />
     </Screen>
   );
 }
 
-function ViewToggle({ value, onChange }: { value: BodyView; onChange: (v: BodyView) => void }) {
+function Shortcut({
+  icon,
+  label,
+  onPress,
+}: {
+  icon: 'star' | 'search';
+  label: string;
+  onPress: () => void;
+}) {
   const colors = useColors();
   const styles = useStyles();
-  const { t } = useTranslation();
   return (
-    <View
-      accessibilityRole="radiogroup"
-      accessibilityLabel={t('bodyMap.view')}
-      style={styles.toggle}
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      onPress={onPress}
+      style={styles.shortcut}
     >
-      {/* One tap turns the body around (Phase 29, B10). */}
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={t('bodyMap.rotate')}
-        onPress={() => onChange(value === 'front' ? 'back' : 'front')}
-        style={styles.toggleItem}
-        testID="body-rotate"
-      >
-        <Icon name="rotate" size={20} color={colors.mutedStrong} />
-      </Pressable>
-      {(['front', 'back'] as const).map((v) => {
-        const on = v === value;
-        return (
-          <Pressable
-            key={v}
-            accessibilityRole="radio"
-            // "Back view", not a second "Back" next to the header's back button (QA round 2).
-            accessibilityLabel={t(`bodyMap.${v}View`)}
-            accessibilityState={{ checked: on }}
-            aria-checked={on}
-            onPress={() => onChange(v)}
-            style={[styles.toggleItem, on && styles.toggleOn]}
-          >
-            <AppText variant="button" color={on ? colors.onInk : colors.mutedStrong}>
-              {t(`bodyMap.${v}`)}
-            </AppText>
-          </Pressable>
-        );
-      })}
-    </View>
+      <Icon name={icon} size={20} color={colors.accentText} />
+      <AppText variant="bodyStrong" style={styles.flex}>
+        {label}
+      </AppText>
+      <Icon name="chevron-right" color={colors.mutedStrong} />
+    </Pressable>
   );
 }
 
 const useStyles = makeStyles(() => ({
-  suggest: { gap: spacing.sm },
-  header: { gap: 0 },
-  subtitle: {
-    marginLeft: sizes.touchTarget + spacing.lg + spacing.md,
-    marginTop: -spacing.sm,
-    fontFamily: fonts.bodySemi,
-  },
-  controls: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
-  row: { flexDirection: 'row', gap: spacing.sm },
-  toggle: {
-    position: 'absolute',
-    top: spacing.md,
-    right: spacing.md,
-    backgroundColor: colors.surface,
-    borderRadius: radius.card,
-    padding: spacing.xs,
-    gap: spacing.xs,
-  },
-  toggleItem: {
-    minHeight: sizes.touchTarget,
-    minWidth: 72,
-    paddingHorizontal: spacing.md,
-    borderRadius: radius.button - 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  toggleOn: { backgroundColor: colors.ink },
-  hints: {
-    position: 'absolute',
-    left: spacing.md,
-    bottom: spacing.md,
-    maxWidth: 120,
-    gap: spacing.sm,
-  },
-  selectedHeader: {
+  flex: { flex: 1 },
+  top: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
+  bodyRow: { flexDirection: 'row', alignItems: 'stretch', gap: spacing.xs },
+  side: { width: 76, justifyContent: 'space-around' },
+  label: { minHeight: sizes.touchTarget, justifyContent: 'center' },
+  controls: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  hint: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
+  wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  shortcuts: { gap: spacing.sm },
+  shortcut: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'baseline',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
+    alignItems: 'center',
+    gap: spacing.md,
+    minHeight: sizes.touchTarget + spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderRadius: radius.card,
+    backgroundColor: colors.surface,
   },
-  count: { textTransform: 'uppercase', letterSpacing: 1.5, fontFamily: fonts.heading },
-  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  caps: { textTransform: 'uppercase', letterSpacing: 1.2, fontFamily: fonts.headingSemi },
 }));

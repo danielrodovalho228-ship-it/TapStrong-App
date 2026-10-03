@@ -10,6 +10,16 @@ import type { Position } from '../onboarding/options';
  * ones ruled out by a restriction, pain or age sit apart with the reason and
  * can't be started from here.
  */
+/** 60+ browse by area with big buttons (simpler than the body). */
+export const AREAS: Record<string, string[]> = {
+  arms: ['biceps', 'triceps', 'forearms'],
+  legs: ['quads', 'hamstrings', 'glutes', 'calves'],
+  back: ['upperBack', 'lats', 'lowerBack'],
+  chest: ['chest'],
+  shoulders: ['shoulders', 'rearDelts', 'rotatorCuff'],
+  core: ['abs', 'obliques'],
+};
+
 export type LibraryRole = 'main' | 'warmup' | 'stretch' | 'balance' | 'repair';
 export type LibraryFilter = {
   muscle?: string;

@@ -38,7 +38,7 @@ export default function GoalsSheet() {
   const entry = s.muscleGoals.find((m) => m.muscleKey === muscle);
   const library = useExerciseLibrary();
   const input = useGeneratorInput(library);
-  if (!derived || !muscle || !entry || !muscleByKey(muscle)) return <Redirect href="/body" />;
+  if (!derived || !muscle || !entry || !muscleByKey(muscle)) return <Redirect href="/body-goals" />;
 
   const band = displayBand(s.bodyModel.band, derived.band, derived.mode);
   const sex: BodySex = s.bodyModel.sex ?? (s.sex === 'f' ? 'f' : 'm');

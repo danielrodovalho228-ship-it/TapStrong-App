@@ -20,17 +20,20 @@ export function CardMedia({
   exercise,
   band,
   height,
+  still = false,
 }: {
   exercise: Exercise | undefined;
   band: BodyBand;
   height: number;
+  /** Poster only, no clip (long grids: one clip per card is too heavy). */
+  still?: boolean;
 }) {
   const colors = useColors();
   const styles = useStyles();
   const { t } = useTranslation();
   const sex = useOnboardingStore((s) => demoSexFor(s));
   const slug = exercise?.slug;
-  const video = slug ? demoVideo(slug, sex) : null;
+  const video = slug && !still ? demoVideo(slug, sex) : null;
   const poster = slug ? demoPoster(slug, sex) : null;
   if (video) {
     // Loaded lazily: only development builds and the preview have clips.
