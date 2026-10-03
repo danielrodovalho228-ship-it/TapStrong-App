@@ -6,7 +6,8 @@ import '@/i18n';
 
 import { act, fireEvent, render, screen } from '@testing-library/react-native';
 
-import LibraryScreen from '@/app/(tabs)/library';
+import ExercisesScreen from '@/app/(tabs)/body';
+import MuscleExercisesScreen from '@/app/muscle/[key]';
 import ExerciseScreen from '@/app/exercise/[id]';
 import CreateExerciseScreen from '@/app/exercise/new';
 import {
@@ -282,9 +283,14 @@ describe('Library screen and exercise page', () => {
   it(
     'search, star, open; 60+ get area buttons instead of the body map',
     async () => {
+      // Phase 31, E: exercises are browsed from the Exercises tab ("Search all").
       await adult();
-      await render(<LibraryScreen />);
-      await fireEvent.changeText(screen.getByLabelText('Search exercises'), 'Barbell bench press');
+      mockParams = { key: 'all' };
+      await render(<MuscleExercisesScreen />);
+      await fireEvent.changeText(
+        screen.getByLabelText('Search in All exercises'),
+        'Barbell bench press',
+      );
       await fireEvent.press(screen.getByRole('button', { name: 'Star Barbell bench press' }));
       expect(useLibraryStore.getState().favourites).toContain('barbell_bench_press');
       await fireEvent.press(screen.getByRole('button', { name: 'Barbell bench press' }));
@@ -292,9 +298,10 @@ describe('Library screen and exercise page', () => {
         pathname: '/exercise/[id]',
         params: { id: 'barbell_bench_press' },
       });
+      await render(<ExercisesScreen />);
       expect(screen.getByRole('button', { name: 'Create exercise' })).toBeTruthy();
       await adult({ birthYear: 1950 });
-      await render(<LibraryScreen />);
+      await render(<ExercisesScreen />);
       expect(screen.getByRole('button', { name: 'Legs' })).toBeTruthy();
     },
     SLOW_RENDER_MS,

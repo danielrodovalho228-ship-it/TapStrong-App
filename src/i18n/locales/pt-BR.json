@@ -4443,7 +4443,8 @@
       "save": "Salvar medidas",
       "saved": "Salvo.",
       "latest": "Últimas"
-    }
+    },
+    "recovery": "Recuperação dos músculos"
   },
   "checkin": {
     "eyebrow": "Semana 1 → semana 4",
@@ -4953,7 +4954,29 @@
     "help": "Ajuda e suporte",
     "helpSubject": "Ajuda do TapStrong",
     "shareFriends": "Compartilhe com amigos",
-    "appearance": "Aparência"
+    "appearance": "Aparência",
+    "yourPlan": "Seu plano",
+    "profile": "Perfil",
+    "sections": {
+      "profile": "Perfil",
+      "workout": "Treino",
+      "connections": "Conexões",
+      "support": "Ajuda"
+    },
+    "smartLoads": "Peso e reps inteligentes",
+    "smartLoadsDetail": "Sugere a carga e as reps de cada série a partir dos seus últimos treinos.",
+    "seconds_zero": "{{count}} s",
+    "seconds_one": "{{count}} s",
+    "seconds_other": "{{count}} s",
+    "planView": "Exibição da aba Treino",
+    "planViews": {
+      "cards": "Cartões grandes",
+      "list": "Lista compacta"
+    },
+    "appleHealth": "Apple Saúde",
+    "healthConnect": "Health Connect",
+    "soon": "Em breve",
+    "rate": "Avaliar o TapStrong"
   },
   "referral": {
     "eyebrow": "Convite recebido",
@@ -5073,7 +5096,13 @@
       "daysValue_other": "{{count}} dias",
       "equipment": "Equipamento",
       "noWeights": "Sem pesos",
-      "muscles": "Músculos"
+      "muscles": "Músculos",
+      "equipmentCount_zero": "Equipamentos ({{count}})",
+      "equipmentCount_one": "Equipamentos ({{count}})",
+      "equipmentCount_other": "Equipamentos ({{count}})",
+      "musclesCount_zero": "Músculos ({{count}})",
+      "musclesCount_one": "Músculos ({{count}})",
+      "musclesCount_other": "Músculos ({{count}})"
     },
     "goals": {
       "shape": "Entrar em forma",
@@ -5097,7 +5126,20 @@
       "core": "Core"
     },
     "notFound": "Não encontramos este plano. Escolha um em Planos.",
-    "notFoundTitle": "Plano não encontrado"
+    "notFoundTitle": "Plano não encontrado",
+    "rowDays_zero": "{{count}} dias por semana",
+    "rowDays_one": "{{count}} dia por semana",
+    "rowDays_other": "{{count}} dias por semana",
+    "care": "Programas de cuidado",
+    "labels": {
+      "shape": "Ficar em forma",
+      "muscle": "Ganhar músculo",
+      "weightLoss": "Perder peso",
+      "strength": "Força",
+      "mobilityBalance": "Mobilidade",
+      "seniorSteady": "Mobilidade 60+",
+      "shoulderRehab": "Ombro — reabilitação"
+    }
   },
   "modes": {
     "title": "O que você quer fazer?",
@@ -5856,5 +5898,23 @@
     "goals": "Escolher minhas metas por músculo",
     "searchIn": "Buscar em {{name}}",
     "noFavourites": "Ainda sem favoritos. Toque na estrela de um exercício para guardá-lo aqui."
+  },
+  "libraryEquipment": {
+    "title": "Equipamentos",
+    "notice": "Suas escolhas aqui não mudam o plano atual.",
+    "search": "Buscar equipamento",
+    "selected_zero": "Equipamentos selecionados ({{count}})",
+    "selected_one": "Equipamentos selecionados ({{count}})",
+    "selected_other": "Equipamentos selecionados ({{count}})",
+    "clear": "Desmarcar tudo",
+    "discard": "Descartar",
+    "done": "Pronto",
+    "none": "Nenhum equipamento encontrado.",
+    "presets": {
+      "fullGym": "Academia completa",
+      "smallGym": "Academia pequena",
+      "homeGym": "Casa",
+      "bodyweight": "Peso do corpo"
+    }
   }
 }

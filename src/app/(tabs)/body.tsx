@@ -3,13 +3,14 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PanResponder, Pressable, useWindowDimensions, View } from 'react-native';
 
-import { AppText, Chip, Icon, IconButton, Screen, TextLink } from '@/components/ui';
+import { AppText, Button, Chip, Icon, IconButton, Screen, TextLink } from '@/components/ui';
 import { BodyMapCanvas } from '@/features/bodymap/components/BodyMapCanvas';
 import { ViewToggle } from '@/features/bodymap/components/ViewToggle';
 import { hotspotsFor, sideLabels } from '@/features/bodymap/hotspots';
 import type { BodySex } from '@/features/bodymap/images';
 import { displayBand } from '@/features/bodymap/selection';
 import { AREAS } from '@/features/library/browse';
+import { canCreateExercise } from '@/features/library/custom';
 import { useLibraryStore } from '@/features/library/store';
 import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
@@ -142,6 +143,13 @@ export default function ExercisesScreen() {
         />
       </View>
       <TextLink label={t('explore.goals')} onPress={() => router.push('/body-goals')} />
+      {canCreateExercise(derived.mode) ? (
+        <Button
+          variant="secondary"
+          label={t('library.create')}
+          onPress={() => router.push('/exercise/new')}
+        />
+      ) : null}
     </Screen>
   );
 }

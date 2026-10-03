@@ -101,6 +101,8 @@ function capture(): Snapshot {
       shareOfferDeclines,
       warmup,
       experience,
+      smartLoads,
+      planView,
     }) => ({
       restStrength,
       restHold,
@@ -114,6 +116,8 @@ function capture(): Snapshot {
       shareOfferDeclines,
       warmup,
       experience,
+      smartLoads,
+      planView,
     }))(usePrefsStore.getState()),
     body: useBodyStore.getState().entries,
     month: monthData(useMonthStore.getState()),

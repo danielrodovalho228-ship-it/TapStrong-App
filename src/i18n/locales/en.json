@@ -4405,7 +4405,8 @@
       "save": "Save measurements",
       "saved": "Saved.",
       "latest": "Latest"
-    }
+    },
+    "recovery": "Muscle recovery"
   },
   "checkin": {
     "eyebrow": "Week 1 → week 4",
@@ -4911,7 +4912,28 @@
     "help": "Help and support",
     "helpSubject": "TapStrong help",
     "shareFriends": "Share TapStrong with friends",
-    "appearance": "Appearance"
+    "appearance": "Appearance",
+    "yourPlan": "Your plan",
+    "profile": "Profile",
+    "sections": {
+      "profile": "Profile",
+      "workout": "Workout",
+      "connections": "Connections",
+      "support": "Help"
+    },
+    "smartLoads": "Smart weights and reps",
+    "smartLoadsDetail": "Suggests the load and reps for each set from your last workouts.",
+    "seconds_one": "{{count}} s",
+    "seconds_other": "{{count}} s",
+    "planView": "Workout tab display",
+    "planViews": {
+      "cards": "Big cards",
+      "list": "Compact list"
+    },
+    "appleHealth": "Apple Health",
+    "healthConnect": "Health Connect",
+    "soon": "Coming soon",
+    "rate": "Rate TapStrong"
   },
   "referral": {
     "eyebrow": "Invite received",
@@ -5026,7 +5048,11 @@
       "daysValue_other": "{{count}} days",
       "equipment": "Equipment",
       "noWeights": "No weights needed",
-      "muscles": "Muscles"
+      "muscles": "Muscles",
+      "equipmentCount_one": "Equipment ({{count}})",
+      "equipmentCount_other": "Equipment ({{count}})",
+      "musclesCount_one": "Muscles ({{count}})",
+      "musclesCount_other": "Muscles ({{count}})"
     },
     "goals": {
       "shape": "Get in shape",
@@ -5050,7 +5076,19 @@
       "core": "Core"
     },
     "notFound": "We couldn't find this plan. Pick one from Plans.",
-    "notFoundTitle": "Plan not found"
+    "notFoundTitle": "Plan not found",
+    "rowDays_one": "{{count}} day a week",
+    "rowDays_other": "{{count}} days a week",
+    "care": "Care programs",
+    "labels": {
+      "shape": "Get fit",
+      "muscle": "Build muscle",
+      "weightLoss": "Lose weight",
+      "strength": "Strength",
+      "mobilityBalance": "Mobility",
+      "seniorSteady": "Mobility 60+",
+      "shoulderRehab": "Shoulder — rehab"
+    }
   },
   "modes": {
     "title": "What do you want to do?",
@@ -5789,5 +5827,22 @@
     "goals": "Set my muscle goals",
     "searchIn": "Search in {{name}}",
     "noFavourites": "No favourites yet. Tap the star on an exercise to keep it here."
+  },
+  "libraryEquipment": {
+    "title": "Equipment",
+    "notice": "Your choices here don't change your current plan.",
+    "search": "Search equipment",
+    "selected_one": "Selected equipment ({{count}})",
+    "selected_other": "Selected equipment ({{count}})",
+    "clear": "Deselect all",
+    "discard": "Discard",
+    "done": "Done",
+    "none": "No equipment matches.",
+    "presets": {
+      "fullGym": "Full gym",
+      "smallGym": "Small gym",
+      "homeGym": "Home",
+      "bodyweight": "Bodyweight"
+    }
   }
 }

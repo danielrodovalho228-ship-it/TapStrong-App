@@ -15,6 +15,7 @@ import { exerciseBest } from '@/features/progress/activity';
 import { programById } from '@/features/rehab/programs';
 import { programLoadAdvice } from '@/features/rehab/progress';
 import { useRehabStore } from '@/features/rehab/store';
+import { usePrefsStore } from '@/features/settings/store';
 import { track } from '@/lib/analytics';
 import { clock } from '@/lib/clock';
 import { noteSetLogged } from '@/lib/usage';
@@ -216,8 +217,10 @@ export function LoggerStep({
   const generator = useWorkout(workout.id).input;
   const program = workout.session.program;
   const programItem = !!program && (item.block === 'band' || item.block === 'dumbbell');
+  // Settings → "Smart weights and reps" off: no suggestion (Phase 31, F).
+  const smartLoads = usePrefsStore((st) => st.smartLoads);
   const advice =
-    generator && !program
+    generator && !program && smartLoads
       ? adviceForItem({ workouts, workoutId: workout.id, item, exercise, unit, generator })
       : null;
   const logsOf = workout.logs.filter(
@@ -749,8 +752,9 @@ export function NextPreview({
   const generator = useWorkout(workout.id).input;
   const minor = mode === 'child' || mode === 'teen';
   const loaded = !!exercise?.loaded && item.loadHint !== 'bodyweight' && !minor;
+  const smartLoads = usePrefsStore((st) => st.smartLoads);
   const advice =
-    generator && !workout.session.program
+    generator && !workout.session.program && smartLoads
       ? adviceForItem({ workouts, workoutId: workout.id, item, exercise, unit, generator })
       : null;
   const load = loaded ? adviceLoad(advice) : null;

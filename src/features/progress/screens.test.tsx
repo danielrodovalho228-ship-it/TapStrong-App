@@ -72,8 +72,11 @@ beforeEach(async () => {
 describe('Progress tab (mockup 18)', () => {
   it('adults get measurements and the photo link', async () => {
     await render(<ProgressScreen />);
+    // Phase 31, F: measurements and photos live under "Body".
+    await fireEvent.press(screen.getByRole('radio', { name: 'Body' }));
     expect(screen.getByText('Measurements')).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Before & after photos' })).toBeTruthy();
+    await fireEvent.press(screen.getByRole('radio', { name: 'Activity' }));
     await fireEvent.press(screen.getByRole('button', { name: 'Repair check: find weak spots' }));
     expect(router.push).toHaveBeenCalledWith('/repair');
   });
@@ -81,6 +84,7 @@ describe('Progress tab (mockup 18)', () => {
   it('a teen gets a strength-only check-in and no photos', async () => {
     await born(2011);
     await render(<ProgressScreen />);
+    await fireEvent.press(screen.getByRole('radio', { name: 'Body' }));
     expect(screen.getByText('Your check-in compares your strength every 4 weeks.')).toBeTruthy();
     expect(screen.queryByText('Measurements')).toBeNull();
     expect(screen.queryByRole('button', { name: 'Before & after photos' })).toBeNull();

@@ -16,7 +16,9 @@ import {
 } from '@/components/ui';
 import { EmptyState } from '@/features/home/EmptyState';
 import { MovementPainEntry } from '@/features/movement/Entry';
-import { modeOf } from '@/features/onboarding/derived';
+import type { BodySex } from '@/features/bodymap/images';
+import { displayBand } from '@/features/bodymap/selection';
+import { derive, modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { muscleLabel } from '@/features/onboarding/summaries';
 import { ActivityCard } from '@/features/progress/components/ActivityCard';
@@ -26,14 +28,19 @@ import { checkinDue, measurementsAllowed, photosAllowed } from '@/features/progr
 import { WeekChart } from '@/features/progress/components/WeekChart';
 import { chartMuscles, totals, weeklySets } from '@/features/progress/stats';
 import { useProgressStore } from '@/features/progress/store';
-import { useExerciseLibrary } from '@/features/workout/hooks';
+import { RecoveryBody } from '@/features/workout/components/RecoveryBody';
+import { useBodyStates, useExerciseLibrary } from '@/features/workout/hooks';
 import { streakToday } from '@/features/workout/streak';
 import { useWorkoutStore } from '@/features/workout/store';
 import { clock } from '@/lib/clock';
 import { deviceWeekStart, localDate } from '@/lib/dates';
 import { colors, fonts, makeStyles, radius, sizes, spacing, useColors } from '@/theme';
 
-/** Mockup 18 — progress (SPEC §9 /(tabs)/progress). */
+/**
+ * Mockup 18 — progress (SPEC §9 /(tabs)/progress). Phase 31, F: two tabs,
+ * Activity (ranges, totals, calendar, charts) and Body (recovery map, weight,
+ * photos, achievements). No nutrition, no calories.
+ */
 export default function ProgressScreen() {
   const colors = useColors();
   const styles = useStyles();
@@ -60,6 +67,84 @@ export default function ProgressScreen() {
   const adult = measurementsAllowed(mode);
   const [view, setView] = useState<'activity' | 'body'>('activity');
   const unit = profile.units === 'imperial' ? 'lb' : 'kg';
+  const { states } = useBodyStates();
+  const derived = derive(profile);
+  const band = displayBand(
+    profile.bodyModel.band,
+    derived?.band ?? 'adult',
+    derived?.mode ?? 'adult',
+  );
+  const sex: BodySex = profile.bodyModel.sex ?? (profile.sex === 'f' ? 'f' : 'm');
+
+  // Body (Phase 31, F): the recovery map, weight and measurements (adults),
+  // check-in, private before/after photos and achievements. No nutrition.
+  const body = (
+    <>
+      <Card style={styles.card} testID="progress-recovery">
+        <AppText variant="h3">{t('progress.recovery')}</AppText>
+        <RecoveryBody band={band} sex={sex} states={states} maxHeight={420} />
+      </Card>
+      {adult ? <BodyPanel /> : null}
+      <Card style={styles.card}>
+        <View style={styles.row}>
+          <AppText variant="h3" style={styles.flex}>
+            {adult ? t('progress.measurements') : t('progress.checkinTitle')}
+          </AppText>
+          <TextLink
+            tone="accent"
+            label={t('progress.openCheckin')}
+            onPress={() => router.push('/checkin')}
+          />
+        </View>
+        {checkinDue(workouts, checkins, now) ? (
+          <AppText color={colors.teal}>{t('progress.checkinReady')}</AppText>
+        ) : null}
+        {adult && last.waistCm ? (
+          <>
+            <Line
+              label={t('progress.waist')}
+              value={formatLength(t, last.waistCm, profile.units)}
+            />
+            {last.weightKg ? (
+              <Line
+                label={t('progress.weight')}
+                value={formatWeight(t, last.weightKg, profile.units)}
+              />
+            ) : null}
+          </>
+        ) : (
+          <AppText color={colors.mutedStrong}>
+            {adult ? t('progress.noMeasurements') : t('progress.strengthOnly')}
+          </AppText>
+        )}
+      </Card>
+
+      <View style={styles.links}>
+        <LinkRow
+          icon="star"
+          label={t('progress.links.badges')}
+          onPress={() => router.push({ pathname: '/milestone', params: { from: 'badges' } })}
+        />
+        {photosAllowed(mode, seniorPhotos) ? (
+          <LinkRow
+            icon="body"
+            label={t('progress.links.photos')}
+            onPress={() => router.push('/before-after')}
+          />
+        ) : null}
+      </View>
+      {mode === 'senior' ? (
+        <Card>
+          <ToggleRow
+            label={t('progress.seniorPhotos')}
+            detail={t('progress.seniorPhotosDetail')}
+            value={seniorPhotos}
+            onChange={setSeniorPhotos}
+          />
+        </Card>
+      ) : null}
+    </>
+  );
 
   const activity = (
     <>
@@ -104,40 +189,6 @@ export default function ProgressScreen() {
         </Card>
       )}
 
-      <Card style={styles.card}>
-        <View style={styles.row}>
-          <AppText variant="h3" style={styles.flex}>
-            {adult ? t('progress.measurements') : t('progress.checkinTitle')}
-          </AppText>
-          <TextLink
-            tone="accent"
-            label={t('progress.openCheckin')}
-            onPress={() => router.push('/checkin')}
-          />
-        </View>
-        {checkinDue(workouts, checkins, now) ? (
-          <AppText color={colors.teal}>{t('progress.checkinReady')}</AppText>
-        ) : null}
-        {adult && last.waistCm ? (
-          <>
-            <Line
-              label={t('progress.waist')}
-              value={formatLength(t, last.waistCm, profile.units)}
-            />
-            {last.weightKg ? (
-              <Line
-                label={t('progress.weight')}
-                value={formatWeight(t, last.weightKg, profile.units)}
-              />
-            ) : null}
-          </>
-        ) : (
-          <AppText color={colors.mutedStrong}>
-            {adult ? t('progress.noMeasurements') : t('progress.strengthOnly')}
-          </AppText>
-        )}
-      </Card>
-
       <MovementPainEntry chart />
 
       <View style={styles.links}>
@@ -146,11 +197,6 @@ export default function ProgressScreen() {
           icon="check"
           label={t('month.monthsTitle')}
           onPress={() => router.push('/months')}
-        />
-        <LinkRow
-          icon="star"
-          label={t('progress.links.badges')}
-          onPress={() => router.push({ pathname: '/milestone', params: { from: 'badges' } })}
         />
         <LinkRow
           icon="shield"
@@ -164,29 +210,12 @@ export default function ProgressScreen() {
           label={t('progress.links.restrictions')}
           onPress={() => router.push('/restrictions')}
         />
-        {photosAllowed(mode, seniorPhotos) ? (
-          <LinkRow
-            icon="body"
-            label={t('progress.links.photos')}
-            onPress={() => router.push('/before-after')}
-          />
-        ) : null}
         <LinkRow
           icon="family"
           label={t('settings.open')}
           onPress={() => router.push('/settings')}
         />
       </View>
-      {mode === 'senior' ? (
-        <Card>
-          <ToggleRow
-            label={t('progress.seniorPhotos')}
-            detail={t('progress.seniorPhotosDetail')}
-            value={seniorPhotos}
-            onChange={setSeniorPhotos}
-          />
-        </Card>
-      ) : null}
     </>
   );
 
@@ -195,18 +224,16 @@ export default function ProgressScreen() {
       <AppText variant="h1" accessibilityRole="header">
         {t('progress.title')}
       </AppText>
-      {adult ? (
-        <SegmentedControl
-          accessibilityLabel={t('progress.segment.label')}
-          value={view}
-          onChange={setView}
-          options={[
-            { value: 'activity', label: t('progress.segment.activity') },
-            { value: 'body', label: t('progress.segment.body') },
-          ]}
-        />
-      ) : null}
-      {adult && view === 'body' ? <BodyPanel /> : activity}
+      <SegmentedControl
+        accessibilityLabel={t('progress.segment.label')}
+        value={view}
+        onChange={setView}
+        options={[
+          { value: 'activity', label: t('progress.segment.activity') },
+          { value: 'body', label: t('progress.segment.body') },
+        ]}
+      />
+      {view === 'body' ? body : activity}
     </Screen>
   );
 }

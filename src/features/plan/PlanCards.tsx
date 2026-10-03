@@ -152,14 +152,18 @@ export function PhaseCard({
   title,
   detail,
   onOpen,
+  onSwap,
   testID,
 }: {
   exercise: Exercise | undefined;
   title: string;
   detail: string;
   onOpen?: () => void;
+  /** The compact plan list (Phase 31, F): swap from the row. */
+  onSwap?: () => void;
   testID?: string;
 }) {
+  const { t } = useTranslation();
   const colors = useColors();
   const styles = useStyles();
   const sex = useOnboardingStore((s) => demoSexFor(s));
@@ -191,7 +195,20 @@ export function PhaseCard({
           {detail}
         </AppText>
       </View>
-      {onOpen ? <Icon name="chevron-right" color={colors.mutedStrong} /> : null}
+      {onSwap ? (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t('workout.swap.open', { name: title })}
+          onPress={onSwap}
+          hitSlop={6}
+          style={styles.swap}
+          testID="plan-card-swap"
+        >
+          <Icon name="swap" size={20} color={colors.onSurfaceRaised} />
+        </Pressable>
+      ) : onOpen ? (
+        <Icon name="chevron-right" color={colors.mutedStrong} />
+      ) : null}
     </Pressable>
   );
 }

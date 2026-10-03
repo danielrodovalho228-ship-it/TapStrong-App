@@ -1,35 +1,23 @@
+import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, View } from 'react-native';
 
-import { Image } from 'expo-image';
-
 import { AppText, Card, Chip, Icon } from '@/components/ui';
+import { normalizeEquipment } from '@/features/equipment/catalog';
 import { demoPoster, demoSexFor } from '@/features/exercises/videos';
+import { hasWeights, usePlanFilterStore } from '@/features/library/planFilter';
+import type { MovementGroup } from '@/features/muscles';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import type { AppMode } from '@/features/profile/age';
+import { REHAB_PROGRAMS } from '@/features/rehab/programs';
 import { colors, fonts, makeStyles, radius, spacing, useColors } from '@/theme';
 
-import {
-  findPlans,
-  type PlanFilter,
-  type PlanGoal,
-  type PlanSplit,
-  type ReadyPlan,
-} from '../plans';
+import { findPlans, type PlanGoal, type ReadyPlan } from '../plans';
 import { useProgramStore } from '../store';
 
-const GOALS: PlanGoal[] = [
-  'shape',
-  'muscle',
-  'strength',
-  'weightLoss',
-  'mobilityBalance',
-  'seniorSteady',
-];
-const SPLITS: PlanSplit[] = ['fullBody', 'upperLower', 'ppl'];
-const DAYS = [2, 3, 4, 5, 6];
+const GROUPS: MovementGroup[] = ['push', 'pull', 'legs', 'core'];
 
 /** One of our exercise posters per goal (no gym photos, no logos). */
 export const GOAL_POSTER: Record<PlanGoal, string> = {
@@ -40,15 +28,42 @@ export const GOAL_POSTER: Record<PlanGoal, string> = {
   mobilityBalance: 'standing_supported_bird_dog',
   seniorSteady: 'sit_to_stand',
 };
+const REHAB_POSTER = 'pendulum_swing';
 
-/** The plan's picture: the poster in the profile's sex, or a quiet panel. */
-function PlanPicture({ goal }: { goal: PlanGoal }) {
+/** Rows by days a week: 60+ train fewer days. */
+export const rowDays = (mode: AppMode) => (mode === 'senior' ? [2, 3, 4] : [3, 4, 5, 6]);
+
+/** The plans of one row: one card per goal, filtered (Phase 31, F). */
+export function rowPlans(
+  mode: AppMode,
+  days: number,
+  opts: { noWeights: boolean; short: boolean; groups: MovementGroup[] },
+): ReadyPlan[] {
+  const seen = new Set<PlanGoal>();
+  return findPlans(mode, {
+    days,
+    noWeights: opts.noWeights || undefined,
+    maxMinutes: opts.short ? 30 : undefined,
+  }).filter((p) => {
+    if (seen.has(p.goal)) return false;
+    if (
+      opts.groups.length &&
+      !p.days.some((d) => d.groups.some((g) => opts.groups.includes(g as MovementGroup)))
+    )
+      return false;
+    seen.add(p.goal);
+    return true;
+  });
+}
+
+/** A poster in the profile's own sex, or a quiet panel. */
+function Poster({ slug, height }: { slug: string; height: number }) {
   const colors = useColors();
   const styles = useStyles();
   const sex = useOnboardingStore((s) => demoSexFor(s));
-  const poster = demoPoster(GOAL_POSTER[goal], sex);
+  const poster = demoPoster(slug, sex);
   return (
-    <View style={styles.picture} aria-hidden>
+    <View style={[styles.picture, { height }]} aria-hidden>
       {poster ? (
         <Image
           source={typeof poster === 'string' ? { uri: poster } : poster}
@@ -64,19 +79,20 @@ function PlanPicture({ goal }: { goal: PlanGoal }) {
 }
 
 /**
- * Ready-made plans (improvements v1, A5; mockup 19 cards): "My plan" first,
- * then plans for this age mode with day, goal, split and length filters.
+ * Library (Phase 31, F): filters for equipment, muscles and time, "My plan",
+ * then rows of big plan cards by days a week with the goal on each, and the
+ * care programs. No calories anywhere.
  */
 export function PlansBrowser({ mode }: { mode: AppMode }) {
   const colors = useColors();
   const styles = useStyles();
   const { t } = useTranslation();
   const activeId = useProgramStore((s) => s.planId);
-  const [filter, setFilter] = useState<PlanFilter>({});
-  const plans = findPlans(mode, filter);
-  const goals = GOALS.filter((g) => findPlans(mode, { goal: g }).length);
-  const toggle = <K extends keyof PlanFilter>(key: K, value: PlanFilter[K]) =>
-    setFilter((f) => ({ ...f, [key]: f[key] === value ? undefined : value }));
+  const profileEquipment = useOnboardingStore((s) => s.equipment);
+  const f = usePlanFilterStore();
+  const [musclesOpen, setMusclesOpen] = useState(false);
+  const equipment = f.equipment ?? normalizeEquipment(profileEquipment);
+  const opts = { noWeights: !hasWeights(equipment), short: f.short, groups: f.groups };
 
   const card = (p: ReadyPlan) => (
     <Pressable
@@ -84,30 +100,25 @@ export function PlansBrowser({ mode }: { mode: AppMode }) {
       accessibilityRole="button"
       accessibilityLabel={`${t(`plans.goals.${p.goal}`)}, ${t(`plans.splits.${p.split}`)}, ${t('plans.meta', { days: p.daysPerWeek, minutes: p.minutes })}`}
       onPress={() => router.push({ pathname: '/program/[id]', params: { id: p.id } })}
+      testID="plan-card"
     >
-      {/* Large card with our own poster and the goal (Phase 29, B8). */}
-      <Card
-        style={[styles.card, styles.big, activeId === p.id && styles.active]}
-        testID="plan-card"
-      >
-        <PlanPicture goal={p.goal} />
+      <Card style={[styles.big, activeId === p.id && styles.active]}>
+        <Poster slug={GOAL_POSTER[p.goal]} height={170} />
         <View style={styles.bigText}>
-          <View style={styles.row}>
-            <AppText variant="h3" style={styles.flex}>
-              {t(`plans.goals.${p.goal}`)}
-            </AppText>
-            {activeId === p.id ? (
-              <AppText variant="caption" color={colors.teal} style={styles.caps}>
-                {t('plans.active')}
-              </AppText>
-            ) : null}
-          </View>
-          <AppText color={colors.mutedStrong}>
+          <AppText variant="label" color={colors.accentText} style={styles.caps}>
+            {t(`plans.labels.${p.goal}`)}
+          </AppText>
+          <AppText color={colors.mutedStrong} numberOfLines={2}>
             {[
               t(`plans.splits.${p.split}`),
               t('plans.meta', { days: p.daysPerWeek, minutes: p.minutes }),
             ].join(' · ')}
           </AppText>
+          {activeId === p.id ? (
+            <AppText variant="caption" color={colors.teal} style={styles.caps}>
+              {t('plans.active')}
+            </AppText>
+          ) : null}
         </View>
       </Card>
     </Pressable>
@@ -115,12 +126,42 @@ export function PlansBrowser({ mode }: { mode: AppMode }) {
 
   return (
     <View style={styles.wrap}>
+      <ScrollView
+        horizontal
+        contentContainerStyle={styles.chips}
+        showsHorizontalScrollIndicator={false}
+      >
+        <Chip
+          label={t('plans.filters.equipmentCount', { count: equipment.length })}
+          selected={f.equipment != null}
+          onPress={() => router.push('/library-equipment')}
+        />
+        <Chip
+          label={t('plans.filters.musclesCount', { count: f.groups.length })}
+          selected={musclesOpen || f.groups.length > 0}
+          onPress={() => setMusclesOpen((v) => !v)}
+        />
+        <Chip label={t('plans.filters.short')} selected={f.short} onPress={f.toggleShort} />
+      </ScrollView>
+      {musclesOpen ? (
+        <View style={styles.wrapChips} testID="plan-muscles">
+          {GROUPS.map((g) => (
+            <Chip
+              key={g}
+              label={t(`plans.groups.${g}`)}
+              selected={f.groups.includes(g)}
+              onPress={() => f.toggleGroup(g)}
+            />
+          ))}
+        </View>
+      ) : null}
+
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={`${t('plans.myPlan')}, ${t('plans.myPlanBody')}`}
         onPress={() => router.push({ pathname: '/program/[id]', params: { id: 'mine' } })}
       >
-        <Card style={[styles.card, !activeId && styles.active]}>
+        <Card style={[styles.mine, !activeId && styles.active]}>
           <View style={styles.row}>
             <AppText variant="bodyStrong" style={styles.flex}>
               {t('plans.myPlan')}
@@ -135,105 +176,79 @@ export function PlansBrowser({ mode }: { mode: AppMode }) {
         </Card>
       </Pressable>
 
-      <AppText variant="label" style={styles.caps}>
-        {t('plans.filters.days')}
-      </AppText>
-      <ScrollView
-        horizontal
-        contentContainerStyle={styles.chips}
-        showsHorizontalScrollIndicator={false}
-      >
-        {DAYS.map((d) => (
-          <Chip
-            key={d}
-            label={t('plans.filters.daysValue', { count: d })}
-            selected={filter.days === d}
-            onPress={() => toggle('days', d)}
-          />
-        ))}
-        <Chip
-          label={t('plans.filters.short')}
-          selected={filter.maxMinutes === 30}
-          onPress={() => toggle('maxMinutes', 30)}
-        />
-      </ScrollView>
-      <AppText variant="label" style={styles.caps}>
-        {t('plans.filters.goal')}
-      </AppText>
-      <View style={styles.wrapChips}>
-        {goals.map((g) => (
-          <Chip
-            key={g}
-            label={t(`plans.goals.${g}`)}
-            selected={filter.goal === g}
-            onPress={() => toggle('goal', g)}
-          />
-        ))}
-      </View>
-      {mode !== 'senior' ? (
-        <>
-          <AppText variant="label" style={styles.caps}>
-            {t('plans.filters.split')}
-          </AppText>
-          <View style={styles.wrapChips}>
-            {SPLITS.map((sp) => (
-              <Chip
-                key={sp}
-                label={t(`plans.splits.${sp}`)}
-                selected={filter.split === sp}
-                onPress={() => toggle('split', sp)}
-              />
-            ))}
+      {rowDays(mode).map((days) => {
+        const plans = rowPlans(mode, days, opts);
+        if (!plans.length) return null;
+        return (
+          <View key={days} style={styles.section} testID={`plan-row-${days}`}>
+            <AppText variant="label" style={styles.caps} accessibilityRole="header">
+              {t('plans.rowDays', { count: days })}
+            </AppText>
+            <ScrollView
+              horizontal
+              contentContainerStyle={styles.rowCards}
+              showsHorizontalScrollIndicator={false}
+            >
+              {plans.map((p) => (
+                <View key={p.id} style={styles.cardWidth}>
+                  {card(p)}
+                </View>
+              ))}
+            </ScrollView>
           </View>
-        </>
+        );
+      })}
+
+      {mode !== 'child' ? (
+        <View style={styles.section}>
+          <AppText variant="label" style={styles.caps} accessibilityRole="header">
+            {t('plans.care')}
+          </AppText>
+          <ScrollView
+            horizontal
+            contentContainerStyle={styles.rowCards}
+            showsHorizontalScrollIndicator={false}
+          >
+            {REHAB_PROGRAMS.map((p) => (
+              <Pressable
+                key={p.id}
+                accessibilityRole="button"
+                accessibilityLabel={t(
+                  `rehab.programs.${p.id as 'shoulder_mobility_strength'}.title`,
+                )}
+                onPress={() => router.push({ pathname: '/rehab/[id]', params: { id: p.id } })}
+                style={styles.cardWidth}
+              >
+                <Card style={styles.big} testID="care-card">
+                  <Poster slug={REHAB_POSTER} height={170} />
+                  <View style={styles.bigText}>
+                    <AppText variant="label" color={colors.accentText} style={styles.caps}>
+                      {t('plans.labels.shoulderRehab')}
+                    </AppText>
+                    <AppText color={colors.mutedStrong} numberOfLines={2}>
+                      {t(`rehab.programs.${p.id as 'shoulder_mobility_strength'}.body`)}
+                    </AppText>
+                  </View>
+                </Card>
+              </Pressable>
+            ))}
+          </ScrollView>
+        </View>
       ) : null}
-
-      <AppText variant="label" style={styles.caps}>
-        {t('plans.filters.equipment')}
-      </AppText>
-      <View style={styles.wrapChips}>
-        <Chip
-          label={t('plans.filters.noWeights')}
-          selected={!!filter.noWeights}
-          onPress={() => toggle('noWeights', true)}
-        />
-      </View>
-      <AppText variant="label" style={styles.caps}>
-        {t('plans.filters.muscles')}
-      </AppText>
-      <View style={styles.wrapChips}>
-        {(['push', 'pull', 'legs', 'core'] as const).map((g) => (
-          <Chip
-            key={g}
-            label={t(`plans.groups.${g}`)}
-            selected={filter.muscleGroup === g}
-            onPress={() => toggle('muscleGroup', g)}
-          />
-        ))}
-      </View>
-
-      {plans.length ? (
-        plans.map(card)
-      ) : (
-        <AppText color={colors.mutedStrong}>{t('plans.empty')}</AppText>
-      )}
     </View>
   );
 }
 
 const useStyles = makeStyles(() => ({
-  wrap: { gap: spacing.sm },
-  card: {
-    gap: spacing.xs,
-    borderWidth: 1.5,
-    borderColor: 'transparent',
-    borderRadius: radius.card,
-  },
-  active: { borderColor: colors.teal },
-  big: { padding: 0, overflow: 'hidden', gap: 0 },
+  wrap: { gap: spacing.md },
+  section: { gap: spacing.sm },
+  mine: { gap: spacing.xs, borderWidth: 1.5, borderColor: colors.line, borderRadius: radius.card },
+  active: { borderWidth: 1.5, borderColor: colors.teal },
+  big: { padding: 0, overflow: 'hidden', gap: 0, borderRadius: radius.card },
   bigText: { padding: spacing.md, gap: spacing.xxs },
+  cardWidth: { width: 248 },
+  rowCards: { gap: spacing.sm, paddingRight: spacing.lg },
   picture: {
-    height: 150,
     backgroundColor: colors.bodyCanvas,
     alignItems: 'center',
     justifyContent: 'center',

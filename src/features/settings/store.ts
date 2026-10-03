@@ -30,6 +30,10 @@ export type Prefs = {
   shareOfferDeclines: number;
   warmup: 'standard' | 'short';
   experience: Experience;
+  /** "Smart weights and reps" (Phase 31, F): suggested load and reps per set. */
+  smartLoads: boolean;
+  /** How the Workout tab shows the exercises: big cards or a compact list. */
+  planView: 'cards' | 'list';
 };
 
 export const initialPrefs = (): Prefs => ({
@@ -45,6 +49,8 @@ export const initialPrefs = (): Prefs => ({
   shareOfferDeclines: 0,
   warmup: 'standard',
   experience: 'some',
+  smartLoads: true,
+  planView: 'cards',
 });
 
 type State = Prefs & { set: (patch: Partial<Prefs>) => void; reset: () => void };
@@ -73,6 +79,8 @@ export const usePrefsStore = create<State>()(
         shareOfferDeclines,
         warmup,
         experience,
+        smartLoads,
+        planView,
       }) => ({
         restStrength,
         restHold,
@@ -86,6 +94,8 @@ export const usePrefsStore = create<State>()(
         shareOfferDeclines,
         warmup,
         experience,
+        smartLoads,
+        planView,
       }),
     },
   ),

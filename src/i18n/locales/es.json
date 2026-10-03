@@ -4405,7 +4405,8 @@
       "save": "Guardar medidas",
       "saved": "Guardado.",
       "latest": "Últimas"
-    }
+    },
+    "recovery": "Recuperación muscular"
   },
   "checkin": {
     "eyebrow": "Semana 1 → semana 4",
@@ -4911,7 +4912,28 @@
     "help": "Ayuda y soporte",
     "helpSubject": "Ayuda de TapStrong",
     "shareFriends": "Comparte TapStrong con amigos",
-    "appearance": "Apariencia"
+    "appearance": "Apariencia",
+    "yourPlan": "Tu plan",
+    "profile": "Perfil",
+    "sections": {
+      "profile": "Perfil",
+      "workout": "Entreno",
+      "connections": "Conexiones",
+      "support": "Ayuda"
+    },
+    "smartLoads": "Peso y reps inteligentes",
+    "smartLoadsDetail": "Sugiere la carga y las reps de cada serie según tus últimos entrenos.",
+    "seconds_one": "{{count}} s",
+    "seconds_other": "{{count}} s",
+    "planView": "Vista de la pestaña Entreno",
+    "planViews": {
+      "cards": "Tarjetas grandes",
+      "list": "Lista compacta"
+    },
+    "appleHealth": "Apple Salud",
+    "healthConnect": "Health Connect",
+    "soon": "Próximamente",
+    "rate": "Valorar TapStrong"
   },
   "referral": {
     "eyebrow": "Invitación recibida",
@@ -5026,7 +5048,11 @@
       "daysValue_other": "{{count}} días",
       "equipment": "Equipo",
       "noWeights": "Sin pesas",
-      "muscles": "Músculos"
+      "muscles": "Músculos",
+      "equipmentCount_one": "Equipos ({{count}})",
+      "equipmentCount_other": "Equipos ({{count}})",
+      "musclesCount_one": "Músculos ({{count}})",
+      "musclesCount_other": "Músculos ({{count}})"
     },
     "goals": {
       "shape": "Ponerse en forma",
@@ -5050,7 +5076,19 @@
       "core": "Core"
     },
     "notFound": "No encontramos este plan. Elige uno en Planes.",
-    "notFoundTitle": "Plan no encontrado"
+    "notFoundTitle": "Plan no encontrado",
+    "rowDays_one": "{{count}} día a la semana",
+    "rowDays_other": "{{count}} días a la semana",
+    "care": "Programas de cuidado",
+    "labels": {
+      "shape": "Ponerse en forma",
+      "muscle": "Ganar músculo",
+      "weightLoss": "Perder peso",
+      "strength": "Fuerza",
+      "mobilityBalance": "Movilidad",
+      "seniorSteady": "Movilidad 60+",
+      "shoulderRehab": "Hombro — rehabilitación"
+    }
   },
   "modes": {
     "title": "¿Qué quieres hacer?",
@@ -5789,5 +5827,22 @@
     "goals": "Elegir mis metas por músculo",
     "searchIn": "Buscar en {{name}}",
     "noFavourites": "Aún no hay favoritos. Toca la estrella de un ejercicio para guardarlo aquí."
+  },
+  "libraryEquipment": {
+    "title": "Equipos",
+    "notice": "Lo que elijas aquí no cambia tu plan actual.",
+    "search": "Buscar equipo",
+    "selected_one": "Equipos seleccionados ({{count}})",
+    "selected_other": "Equipos seleccionados ({{count}})",
+    "clear": "Desmarcar todo",
+    "discard": "Descartar",
+    "done": "Listo",
+    "none": "Ningún equipo coincide.",
+    "presets": {
+      "fullGym": "Gimnasio completo",
+      "smallGym": "Gimnasio pequeño",
+      "homeGym": "Casa",
+      "bodyweight": "Peso corporal"
+    }
   }
 }

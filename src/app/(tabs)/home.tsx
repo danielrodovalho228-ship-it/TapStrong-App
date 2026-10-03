@@ -24,6 +24,7 @@ import { programStatus } from '@/features/program/apply';
 import { dayName } from '@/features/program/block';
 import { CareHomeCards } from '@/features/rehab/CareHomeCard';
 import { ExerciseCard, PhaseCard } from '@/features/plan/PlanCards';
+import { usePrefsStore } from '@/features/settings/store';
 import { openShare } from '@/features/share/open';
 import type { SessionItem } from '@/features/generator/types';
 import { SwapSheet } from '@/features/workout/components/SwapSheet';
@@ -62,6 +63,7 @@ export default function HomeScreen() {
   const colors = useColors();
   const styles = useStyles();
   const { t } = useTranslation();
+  const planView = usePrefsStore((s) => s.planView);
   const profile = useOnboardingStore();
   const derived = derive(profile);
   const library = useExerciseLibrary();
@@ -400,6 +402,18 @@ export default function HomeScreen() {
           ) : null}
           {mains.map((item) => {
             const e = byId.get(item.exerciseId);
+            // Settings → Workout tab display: a compact list (Phase 31, F).
+            if (planView === 'list')
+              return (
+                <PhaseCard
+                  key={item.id}
+                  exercise={e}
+                  title={exerciseName(t, e, item.exerciseId)}
+                  detail={badgeFor(item)}
+                  onSwap={() => openSwap(item.id)}
+                  testID="plan-row"
+                />
+              );
             return (
               <ExerciseCard
                 key={item.id}

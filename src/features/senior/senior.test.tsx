@@ -114,11 +114,13 @@ describe('60+ home (mockup 23)', () => {
 describe('60+ before & after photos', () => {
   it('are off by default and turned on from Progress', async () => {
     await render(<ProgressScreen />);
+    await fireEvent.press(screen.getByRole('radio', { name: 'Body' }));
     expect(screen.queryByRole('button', { name: 'Before & after photos' })).toBeNull();
     await render(<BeforeAfterScreen />);
     expect(screen.getByText('redirect:/progress')).toBeTruthy();
 
     await render(<ProgressScreen />);
+    await fireEvent.press(screen.getByRole('radio', { name: 'Body' }));
     await fireEvent.press(screen.getByRole('switch', { name: 'Before & after photos' }));
     expect(useProgressStore.getState().seniorPhotos).toBe(true);
     expect(screen.getByRole('button', { name: 'Before & after photos' })).toBeTruthy();

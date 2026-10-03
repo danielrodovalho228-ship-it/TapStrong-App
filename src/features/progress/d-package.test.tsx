@@ -160,14 +160,17 @@ describe('D1 activity', () => {
     expect(screen.getByText('Waist-to-height ratio')).toBeTruthy();
   });
 
-  it('teens get no volume tile and no Body view', async () => {
+  it('teens get no volume tile and no measurements under Body', async () => {
     await adult(2011);
     await act(() => useWorkoutStore.setState({ workouts: HISTORY }));
     await render(<ProgressScreen />);
     expect(screen.getByTestId('activity-workouts')).toBeTruthy();
     expect(screen.queryByTestId('activity-volume')).toBeNull();
-    expect(screen.queryByRole('radio', { name: 'Body' })).toBeNull();
+    // Phase 31, F: Body is the recovery map and achievements for everyone.
+    await fireEvent.press(screen.getByRole('radio', { name: 'Body' }));
+    expect(screen.getByTestId('progress-recovery')).toBeTruthy();
     expect(screen.queryByText('Waist-to-height ratio')).toBeNull();
+    expect(screen.queryByText(/\b(kg|lb)\b/)).toBeNull();
   });
 
   it('60+ keep it simple: workouts, hours and the calendar', async () => {
