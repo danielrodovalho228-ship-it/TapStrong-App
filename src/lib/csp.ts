@@ -60,8 +60,9 @@ export function contentSecurityPolicy(
     "default-src 'self'",
     `script-src 'self' ${inlineScripts.map(scriptHash).join(' ')} https://challenges.cloudflare.com`,
     ["connect-src 'self'", ...supabaseOrigins(supabaseUrl), ...services].join(' '),
-    "img-src 'self' data: blob:",
-    "media-src 'self' data: blob:",
+    // Released exercise clips and posters come from Supabase Storage (Phase 32).
+    ["img-src 'self' data: blob:", ...supabaseOrigins(supabaseUrl).slice(0, 1)].join(' '),
+    ["media-src 'self' data: blob:", ...supabaseOrigins(supabaseUrl).slice(0, 1)].join(' '),
     "font-src 'self' data:",
     "style-src 'self' 'unsafe-inline'",
     // Cloudflare Turnstile (security round 1, S2-04) runs in its own frame.

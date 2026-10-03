@@ -88,6 +88,11 @@ Automatic checks:
   a policy without `TO` applies to `{public}`, which includes anon, and is
   treated as anon. These rules cover every non-system schema, not only
   `public` (round 2, S2-P2-7).
+- Storage: the only bucket, `exercise-media` (Phase 32), is public to read
+  (reference media, no personal data) and has no write policy, so only the
+  service role uploads (`scripts/upload-exercise-media.mjs`, run from a
+  terminal with the key in its environment). Checked by
+  `exercise_media_bucket.sql` with role switching.
 - Checked by: `zz_security_policies.sql` in `db:test`, which also plants
   each mistake (a leaking view, `1 = 1`, `not false`, a policy with no
   `TO`, a SECURITY DEFINER function in another schema…) and fails if the

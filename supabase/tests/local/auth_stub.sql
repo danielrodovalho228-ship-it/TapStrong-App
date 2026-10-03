@@ -25,3 +25,25 @@ grant execute on function auth.jwt() to anon, authenticated;
 grant execute on function auth.uid() to anon, authenticated;
 grant usage on schema public to anon, authenticated;
 alter default privileges in schema public grant select, insert, update, delete on tables to anon, authenticated;
+
+-- Minimal Supabase Storage (Phase 32): buckets and objects with RLS on, and
+-- the same table grants Supabase gives anon / authenticated, so a bucket's
+-- policies (or their absence) are what decides.
+create schema if not exists storage;
+create table if not exists storage.buckets (
+  id text primary key,
+  name text not null,
+  public boolean not null default false,
+  file_size_limit bigint,
+  allowed_mime_types text[]
+);
+create table if not exists storage.objects (
+  id uuid primary key default gen_random_uuid(),
+  bucket_id text references storage.buckets (id),
+  name text,
+  owner uuid
+);
+alter table storage.buckets enable row level security;
+alter table storage.objects enable row level security;
+grant usage on schema storage to anon, authenticated;
+grant select, insert, update, delete on storage.buckets, storage.objects to anon, authenticated;
