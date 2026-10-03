@@ -96,7 +96,7 @@ Aquecimento, principais e desaquecimento que o primeiro treino pode mostrar, em 
 | dumbbell_sumo_squat | f | faltando, prioridade alta: aparece no primeiro treino |
 | dumbbell_sumo_squat | m | faltando, prioridade alta: aparece no primeiro treino |
 | dumbbell_seated_calf_raise | f | só imagem: veio a imagem de partida, sem vídeo; faltando, prioridade alta: aparece no primeiro treino |
-| dumbbell_seated_calf_raise | m | faltando, prioridade alta: aparece no primeiro treino |
+| dumbbell_seated_calf_raise | m | só pôster: o Veo falhou 2 vezes; a imagem foi aprovada e aparece no app; prioridade alta: aparece no primeiro treino |
 | dumbbell_suitcase_carry | f | faltando, prioridade alta: aparece no primeiro treino |
 | dumbbell_suitcase_carry | m | faltando, prioridade alta: aparece no primeiro treino |
 | dumbbell_dead_bug | f | faltando, prioridade alta: aparece no primeiro treino |
@@ -258,14 +258,14 @@ Aquecimento, principais e desaquecimento que o primeiro treino pode mostrar, em 
 | seated_toe_raise | m | suspeito: levanta a perna inteira em vez de só as pontas dos pés |
 | supported_toe_raise | f | suspeito: levanta o joelho (marcha) em vez das pontas dos pés |
 | supported_toe_raise | m | suspeito: levanta o joelho (marcha) em vez das pontas dos pés |
-| band_seated_hamstring_curl | f | imagem reprovada: cor na frente da coxa (quadríceps); o exercício é para o posterior |
+| band_seated_hamstring_curl | f | só pôster: o Veo falhou 2 vezes; a imagem foi aprovada e aparece no app |
 | band_seated_hamstring_curl | m | só imagem: veio a imagem de partida, sem vídeo |
 | band_seated_calf_press | f | só imagem: veio a imagem de partida, sem vídeo |
 | band_seated_calf_press | m | só imagem: veio a imagem de partida, sem vídeo |
 | band_glute_bridge | f | suspeito: levanta um braço para o teto no meio da ponte |
 | band_glute_bridge | m | suspeito: chama/brilho na cabeça e o tronco sobe como prancha invertida |
-| rx_side_lying_er | f | suspeito: estica o braço até o teto em vez de girar o antebraço com o cotovelo colado |
-| rx_side_lying_er | m | suspeito: o halter quase não gira e o outro braço sobe acima da cabeça |
+| rx_side_lying_er | f | só pôster: o Veo falhou 2 vezes; a imagem foi aprovada e aparece no app |
+| rx_side_lying_er | m | só pôster: o Veo falhou 2 vezes; a imagem foi aprovada e aparece no app |
 | su_seated_reverse_self_curl | f | feito no Flow (refazer 1), mas não chegou no upload do GitHub (parou em sl_seated_knee_circles.f) |
 | su_seated_reverse_self_curl | m | feito no Flow (refazer 1), mas não chegou no upload do GitHub (parou em sl_seated_knee_circles.f) |
 | su_seated_hammer_self_curl | f | feito no Flow (refazer 1), mas não chegou no upload do GitHub (parou em sl_seated_knee_circles.f) |
@@ -318,7 +318,7 @@ Aquecimento, principais e desaquecimento que o primeiro treino pode mostrar, em 
 | band_chest_press | f | suspeito: o top fica pintado de laranja por cima (roupa pintada) |
 | band_chest_fly | f | suspeito: o top some: o peito aparece pintado, com mamilos (corpo sem roupa) |
 | band_close_grip_press | f | suspeito: aparece texto com nomes de músculos no vídeo |
-| band_lateral_raise | m | só imagem: veio a imagem de partida, sem vídeo |
+| band_lateral_raise | m | suspeito: cor no peito, que não trabalha na elevação lateral (a versão da mulher acende só os ombros) |
 | band_high_pull | m | suspeito: cor no peito, que não trabalha na remada alta |
 | partial_sit_to_stand | f | suspeito: aparece o texto "5cm / 6cm" no vídeo |
 | bal_seated_head_turns | m | suspeito: gira o tronco inteiro e a imagem fica transparente (fantasma) |

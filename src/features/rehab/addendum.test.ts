@@ -378,7 +378,8 @@ describe('posters before the clip (Daniel, Oct 2)', () => {
       const s = shown(slug, sex);
       if (!s.clip) expect([key, s.poster]).toEqual([key, false]);
     }
-    // band_lateral_raise.m: the image came in this batch, the clip did not.
-    expect(shown('band_lateral_raise', 'm')).toEqual({ clip: false, poster: true });
+    // rx_side_lying_er: the clip failed twice, the checked images show ("só pôster").
+    expect(shown('rx_side_lying_er', 'f')).toEqual({ clip: false, poster: true });
+    expect(shown('rx_side_lying_er', 'm')).toEqual({ clip: false, poster: true });
   });
 });

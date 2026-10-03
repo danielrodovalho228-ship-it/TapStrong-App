@@ -89,6 +89,7 @@ function knownSlugs() {
   return slugs;
 }
 
+const POSTER_ONLY = 'só pôster';
 const IMAGE_ONLY = 'só imagem: veio a imagem de partida, sem vídeo';
 const ff = (...a) => execFileSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', ...a]);
 const probe = (file) =>
@@ -227,6 +228,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       if (e.video) delete missing[e.key];
       else if (qc.posterSuspect?.[e.key])
         missing[e.key] = `imagem reprovada: ${qc.posterSuspect[e.key]}`;
+      // "só pôster" (the clip failed twice, the image stays): kept as written.
+      else if (missing[e.key]?.startsWith(POSTER_ONLY)) continue;
       else if (!existsSync(join(DIR, `${e.key}.mp4`)))
         // Keep "prioridade alta" (first workout) so media:redo still ranks it first.
         missing[e.key] = missing[e.key]?.includes('prioridade alta')

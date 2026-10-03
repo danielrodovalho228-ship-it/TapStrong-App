@@ -3459,3 +3459,15 @@ Brief completo em `docs/phase-30-shoulder-program.md`.
   - 188 do primeiro treino;
   - 94 de exercícios sem nenhum sexo;
   - 29 de exercícios com só um.
+
+## Mídia — Lote 9b (refeitos de 02/10, noite)
+
+- **Chegaram:** 1 vídeo (band_lateral_raise.m) e 5 imagens. Descartados 9 `x_bad_*` (as tentativas do Veo que falharam) e 4 `body-adult-*`.
+- **Imagens, as 5 ok:** band_lateral_raise.m, band_seated_hamstring_curl.f (agora a cor está no posterior), dumbbell_seated_calf_raise.m (halteres sobre os joelhos), rx_side_lying_er f/m.
+- **band_lateral_raise.m (vídeo):** reprovado, porque acende o peito, que não trabalha na elevação lateral; a versão da mulher acende só os ombros. Com isso, a imagem desse sexo também não aparece.
+- **Só pôster** (o Veo falhou 2 vezes): rx_side_lying_er f/m, band_seated_hamstring_curl.f e dumbbell_seated_calf_raise.m. Marcados assim em `docs/media-redo.md`.
+  - Os vídeos reprovados antigos do rx_side_lying_er saíram do repositório, para a imagem nova poder aparecer.
+  - O import agora mantém a marca "só pôster".
+- **No app:** 279 clipes em 154 exercícios e 31 pôsteres sem clipe.
+- **Lista de refazer:** 311 clipes.
+- **Do lote 200–221, só chegaram ao GitHub os 12 vídeos do lote 9 e o band_lateral_raise.m.** Os vídeos de dumbbell_lateral_raise, dumbbell_shrug, punho, panturrilha, posterior sentado, farmer hold, Y inclinado e elevações sentadas não vieram; esses exercícios seguem só com o pôster.
