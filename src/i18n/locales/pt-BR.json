@@ -3897,7 +3897,11 @@
       "lightTotal_one": "{{count}} músculo · {{minutes}} min",
       "lightTotal_other": "{{count}} músculos · {{minutes}} min",
       "lightNote": "Você acendeu todos eles hoje.",
-      "lightTotal_zero": "{{count}} músculos · {{minutes}} min"
+      "lightTotal_zero": "{{count}} músculos · {{minutes}} min",
+      "exercises": "Exercícios feitos",
+      "shareShort": "Compartilhar",
+      "funBefore": "Levantei o peso de",
+      "funAfter": "no meu treino"
     },
     "legend": {
       "main": "Alvo principal hoje",
@@ -4040,7 +4044,12 @@
       "exerciseOf": "Exercício {{n}}/{{total}}",
       "next": "Próximo",
       "finishWarmup": "Concluir aquecimento",
-      "finishStretch": "Concluir alongamento"
+      "finishStretch": "Concluir alongamento",
+      "stretchOf": "Alongamento {{n}}/{{total}}",
+      "pause": "Pausar",
+      "resume": "Continuar",
+      "getReady": "Prepare-se",
+      "paused": "Pausado"
     }
   },
   "account": {

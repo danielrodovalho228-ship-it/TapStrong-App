@@ -1,10 +1,11 @@
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useWindowDimensions, View } from 'react-native';
+import { ScrollView, useWindowDimensions, View } from 'react-native';
 
-import { AppText, Button, Card, Icon, Notice, Screen } from '@/components/ui';
+import { AppText, Button, Card, Icon, Notice, Screen, TextLink } from '@/components/ui';
 import { MomentCard } from '@/features/moments/MomentCard';
+import { funComparison, THINGS } from '@/features/share/fun';
 import { openShare } from '@/features/share/open';
 import { useScreenshotOffer } from '@/features/share/screenshot';
 import { useMoment } from '@/features/moments/useMoment';
@@ -16,7 +17,6 @@ import { activeProfile, canShare, useFamilyStore } from '@/features/family/store
 import { generateSession } from '@/features/generator';
 import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
-import { muscleLabel } from '@/features/onboarding/summaries';
 import { LightUpBody } from '@/features/workout/components/LightUpBody';
 import { LegendRow, RecoveryBody, STATE_COLOR } from '@/features/workout/components/RecoveryBody';
 import { feel } from '@/features/workout/feel';
@@ -25,7 +25,7 @@ import { mainSetCounts } from '@/features/workout/flow';
 import { useWorkout } from '@/features/workout/hooks';
 import { convertLoad } from '@/features/workout/loads';
 import { stoppedForPain } from '@/features/workout/safety';
-import { finisherInput, sessionTargets } from '@/features/workout/plan';
+import { finisherInput } from '@/features/workout/plan';
 import {
   bodyStates,
   groupMuscles,
@@ -50,6 +50,7 @@ export default function DoneScreen() {
   const account = useAccountStore();
   const member = useFamilyStore(activeProfile);
   const [focusSaved, setFocusSaved] = useState(false);
+  const [page, setPage] = useState(0);
   // A short chord at the end, if turned on (Phase 27, B2; off by default).
   const endedOk = workout?.status === 'done';
   // A Moment, now and then (Phase 27, C): only here or on Home.
@@ -108,17 +109,15 @@ export default function DoneScreen() {
   const lit = lightOrder(workout, library).filter(
     (k) => worked.primary.includes(k) || worked.secondary.includes(k),
   );
-  const perMuscle = new Map<string, number>();
-  for (const log of workout.logs) {
-    const item = workout.session.items.find((i) => i.id === log.itemId);
-    if (item?.role === 'main' && item.targetMuscle) {
-      perMuscle.set(item.targetMuscle, (perMuscle.get(item.targetMuscle) ?? 0) + 1);
-    }
-  }
-  // Ties go to the session's own target order, not the alphabet (QA R3).
-  const order = sessionTargets(workout.session, 20);
-  const at = (m: string) => (order.indexOf(m) < 0 ? order.length : order.indexOf(m));
-  const top = [...perMuscle.entries()].sort((a, b) => b[1] - a[1] || at(a[0]) - at(b[0]))[0];
+
+  const exercisesDone = workout.session.items.filter(
+    (i) => i.role === 'main' && workout.logs.some((l) => l.itemId === i.id),
+  ).length;
+  // "I lifted the weight of 3 pianos": this workout's load × reps (adults).
+  const volumeKg = unit === 'lb' ? volume * 0.45359237 : volume;
+  const fun = derived.mode === 'adult' && !stopped ? funComparison(volumeKg) : null;
+  const funEmoji = fun ? (THINGS.find((x) => x.key === fun.thing)?.emoji ?? '') : '';
+  const cardWidth = width - spacing.xl * 2;
 
   const addTen = () => {
     if (!input || !group) return;
@@ -135,6 +134,23 @@ export default function DoneScreen() {
 
   return (
     <Screen
+      header={
+        <View style={styles.top}>
+          <TextLink label={t('workout.logger.close')} accessibilityRole="button" onPress={goHome} />
+          <AppText variant="h3" style={styles.brand}>
+            {t('app.name')}
+          </AppText>
+          {canShare(member, derived.mode) ? (
+            <TextLink
+              label={t('workout.done.shareShort')}
+              accessibilityRole="button"
+              onPress={() => openShare({ template: 'workout', workout: workout?.id })}
+            />
+          ) : (
+            <View style={styles.topSpacer} />
+          )}
+        </View>
+      }
       footer={
         <>
           <View style={[styles.row, stackFooter && styles.column]}>
@@ -146,7 +162,7 @@ export default function DoneScreen() {
             {canShare(member, derived.mode) ? (
               <View style={styles.flex}>
                 <Button
-                  variant="secondary"
+                  variant="accent"
                   label={t('workout.done.share')}
                   onPress={() => openShare({ template: 'workout', workout: workout?.id })}
                 />
@@ -156,6 +172,8 @@ export default function DoneScreen() {
             {!account.saved && derived.mode !== 'child' && finished.length >= 2 ? (
               <View style={styles.flex}>
                 <Button
+                  // One main button (Phase 27, A3): Share when it shows.
+                  variant={canShare(member, derived.mode) ? 'secondary' : 'primary'}
                   label={t('workout.done.save')}
                   onPress={() => router.push({ pathname: '/account', params: { from: 'done' } })}
                 />
@@ -163,7 +181,11 @@ export default function DoneScreen() {
             ) : null}
           </View>
           <Button
-            variant={account.saved || derived.mode === 'child' ? 'primary' : 'ghost'}
+            variant={
+              (account.saved || derived.mode === 'child') && !canShare(member, derived.mode)
+                ? 'primary'
+                : 'ghost'
+            }
             label={t('workout.done.home')}
             onPress={goHome}
           />
@@ -186,25 +208,30 @@ export default function DoneScreen() {
           />
         </Card>
       ) : null}
-      <View style={styles.head}>
-        <View style={styles.headTitle}>
-          <AppText variant="caption" color={colors.mutedStrong} style={styles.caps}>
-            {stopped
-              ? t('workout.done.stoppedEyebrow')
-              : mobility
-                ? t(balance ? 'workout.done.balanceEyebrow' : 'workout.done.mobilityEyebrow')
-                : t('workout.done.eyebrow', { n: number })}
-          </AppText>
-          <AppText variant="h1" accessibilityRole="header">
-            {stopped
-              ? t('workout.done.stoppedTitle')
-              : mobility
-                ? t(balance ? 'workout.done.balanceTitle' : 'workout.done.mobilityTitle')
-                : number === 1
-                  ? t('workout.done.firstTitle')
-                  : t('workout.done.title')}
-          </AppText>
-        </View>
+      {/* "Great job!" and three numbers (Phase 31, G): exercises, load lifted
+          (adults) or sets, and time. Never calories. */}
+      <View style={styles.titleBlock}>
+        <AppText variant="caption" color={colors.mutedStrong} style={styles.caps}>
+          {stopped
+            ? t('workout.done.stoppedEyebrow')
+            : mobility
+              ? t(balance ? 'workout.done.balanceEyebrow' : 'workout.done.mobilityEyebrow')
+              : t('workout.done.eyebrow', { n: number })}
+        </AppText>
+        <AppText
+          variant="h1"
+          color={stopped ? colors.ink : colors.accentText}
+          style={styles.greatJob}
+          accessibilityRole="header"
+        >
+          {stopped
+            ? t('workout.done.stoppedTitle')
+            : mobility
+              ? t(balance ? 'workout.done.balanceTitle' : 'workout.done.mobilityTitle')
+              : number === 1
+                ? t('workout.done.firstTitle')
+                : t('workout.done.title')}
+        </AppText>
         <View style={styles.streak}>
           <View style={styles.flame}>
             <Icon name="flame" size={18} color={colors.onAccent} />
@@ -217,65 +244,98 @@ export default function DoneScreen() {
         </View>
       </View>
 
-      {/* Full-width body, legend below (QA O-1b). */}
-      {stopped || !lit.length ? (
-        <View style={styles.bodyRow}>
-          <AppText variant="h3">{t('workout.bodyNow')}</AppText>
-          <RecoveryBody band={band} sex={sex} states={states} />
-          <View style={styles.legend}>
-            <LegendRow color={STATE_COLOR.fresh} label={t('workout.legend.main')} />
-            <LegendRow color={STATE_COLOR.recovering} label={t('workout.legend.also')} />
-            <LegendRow color={STATE_COLOR.neglected} label={t('workout.legend.notYet')} />
-            <LegendRow label={t('home.recovery.ready')} />
-            <AppText variant="caption" color={colors.muted}>
-              {t(derived.mode === 'senior' ? 'workout.legend.fadeSenior' : 'workout.legend.fade')}
-            </AppText>
-          </View>
-        </View>
-      ) : (
-        <View style={styles.bodyRow}>
-          <AppText variant="h3">{t('workout.worked')}</AppText>
-          {/* The muscles worked light up one by one (Phase 27, B1), as painted
-              areas, front and back side by side (Phase 29, A4). */}
-          <LightUpBody
-            band={band}
-            sex={sex}
-            primary={worked.primary}
-            secondary={worked.secondary}
-            order={lit}
-            minutes={minutes}
-            senior={derived.mode === 'senior'}
-          />
-          <View style={styles.legend}>
-            <LegendRow color={bodyMapColors.areaPrimary} label={t('workout.legend.main')} />
-            <LegendRow color={bodyMapColors.areaSecondary} label={t('workout.legend.also')} />
-          </View>
-        </View>
-      )}
-
-      {/* Narrow or 60+: the tiles wrap 2 + 1, so no value breaks mid-word (QA R8 P2). */}
-      <View style={[styles.stats, stackFooter && styles.statsWrap]}>
-        <Stat
-          wide={stackFooter}
-          value={t('workout.minutes', { value: minutes })}
-          label={t('workout.done.time')}
-        />
-        <Stat wide={stackFooter} value={`${sets}`} label={t('workout.done.sets')} />
+      <View style={styles.stats} testID="done-stats">
+        <Stat value={`${exercisesDone}`} label={t('workout.done.exercises')} />
         {derived.mode === 'adult' && volume > 0 ? (
           <Stat
-            wide={stackFooter}
             value={`${volume} ${t(`workout.units.${unit}`)}`}
             label={t('workout.logger.volume')}
+            divider
           />
-        ) : null}
-        {top && !(derived.mode === 'adult' && volume > 0) ? (
-          <Stat
-            wide={stackFooter}
-            value={t('share.sets', { count: top[1] })}
-            label={muscleLabel(t, top[0])}
-          />
-        ) : null}
+        ) : (
+          <Stat value={`${sets}`} label={t('workout.done.sets')} divider />
+        )}
+        <Stat
+          value={t('workout.minutes', { value: minutes })}
+          label={t('workout.done.time')}
+          divider
+        />
       </View>
+
+      {/* A carousel of cards to keep or share: the fun comparison (adults
+          with loads), the muscles worked. */}
+      <ScrollView
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onMomentumScrollEnd={(e) =>
+          setPage(Math.round(e.nativeEvent.contentOffset.x / Math.max(1, cardWidth)))
+        }
+        contentContainerStyle={styles.carousel}
+        testID="done-carousel"
+      >
+        {fun ? (
+          <View style={[styles.slide, { width: cardWidth }]} testID="done-fun">
+            <AppText variant="h3" style={styles.caps}>
+              {t('workout.done.funBefore')}
+            </AppText>
+            <View style={styles.funBand}>
+              <AppText variant="h2" color={colors.onAccent} style={styles.caps}>
+                {t(`shareCards.things.${fun.thing as 'panda'}`, { count: fun.count })}
+              </AppText>
+            </View>
+            <AppText variant="h3" style={styles.caps}>
+              {t('workout.done.funAfter')}
+            </AppText>
+            <AppText style={styles.funEmoji}>{funEmoji}</AppText>
+          </View>
+        ) : null}
+        <View style={[styles.slide, { width: cardWidth }]}>
+          {stopped || !lit.length ? (
+            <View style={styles.bodyRow}>
+              <AppText variant="h3">{t('workout.bodyNow')}</AppText>
+              <RecoveryBody band={band} sex={sex} states={states} />
+              <View style={styles.legend}>
+                <LegendRow color={STATE_COLOR.fresh} label={t('workout.legend.main')} />
+                <LegendRow color={STATE_COLOR.recovering} label={t('workout.legend.also')} />
+                <LegendRow color={STATE_COLOR.neglected} label={t('workout.legend.notYet')} />
+                <LegendRow label={t('home.recovery.ready')} />
+                <AppText variant="caption" color={colors.muted}>
+                  {t(
+                    derived.mode === 'senior' ? 'workout.legend.fadeSenior' : 'workout.legend.fade',
+                  )}
+                </AppText>
+              </View>
+            </View>
+          ) : (
+            <View style={styles.bodyRow}>
+              <AppText variant="h3">{t('workout.worked')}</AppText>
+              {/* The muscles worked light up one by one (Phase 27, B1), as
+                  painted areas, front and back side by side (Phase 29, A4). */}
+              <LightUpBody
+                band={band}
+                sex={sex}
+                primary={worked.primary}
+                secondary={worked.secondary}
+                order={lit}
+                minutes={minutes}
+                senior={derived.mode === 'senior'}
+              />
+              <View style={styles.legend}>
+                <LegendRow color={bodyMapColors.areaPrimary} label={t('workout.legend.main')} />
+                <LegendRow color={bodyMapColors.areaSecondary} label={t('workout.legend.also')} />
+              </View>
+            </View>
+          )}
+        </View>
+      </ScrollView>
+      {fun ? (
+        <View style={styles.dots} aria-hidden>
+          {[0, 1].map((n) => (
+            <View key={n} style={[styles.dot, page === n && styles.dotOn]} />
+          ))}
+        </View>
+      ) : null}
 
       {moment && !stopped ? (
         <MomentCard
@@ -332,15 +392,15 @@ export default function DoneScreen() {
   );
 }
 
-function Stat({ value, label, wide }: { value: string; label: string; wide?: boolean }) {
+function Stat({ value, label, divider }: { value: string; label: string; divider?: boolean }) {
   const colors = useColors();
   const styles = useStyles();
   return (
-    <View style={[styles.stat, wide && styles.statWide]}>
-      <AppText variant="h2" style={styles.num}>
+    <View style={[styles.stat, divider && styles.statDivider]}>
+      <AppText variant="h1" style={styles.num}>
         {value}
       </AppText>
-      <AppText variant="caption" color={colors.muted} style={styles.caps} numberOfLines={2}>
+      <AppText color={colors.mutedStrong} numberOfLines={2} style={styles.center}>
         {label}
       </AppText>
     </View>
@@ -348,10 +408,6 @@ function Stat({ value, label, wide }: { value: string; label: string; wide?: boo
 }
 
 const useStyles = makeStyles(() => ({
-  // The streak pill drops below the title when the title needs the room:
-  // 60+ type broke "WORKOUT" mid-word (QA R6 P2).
-  head: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-end', gap: spacing.md },
-  headTitle: { flexGrow: 1, flexShrink: 1, flexBasis: 220 },
   flex: { flex: 1 },
   num: { fontVariant: ['tabular-nums'] },
   caps: { textTransform: 'uppercase', letterSpacing: 1.2, fontFamily: fonts.headingSemi },
@@ -375,17 +431,41 @@ const useStyles = makeStyles(() => ({
   },
   bodyRow: { gap: spacing.md },
   legend: { gap: spacing.sm },
-  stats: { flexDirection: 'row', gap: spacing.sm },
-  statsWrap: { flexWrap: 'wrap' },
-  statWide: { flexBasis: '45%', flexGrow: 1 },
-  stat: {
-    flex: 1,
-    backgroundColor: colors.surface,
+  top: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.sm,
+    minHeight: 48,
+  },
+  brand: { fontStyle: 'italic', textTransform: 'uppercase' },
+  topSpacer: { width: 48 },
+  titleBlock: { alignItems: 'center', gap: spacing.xs },
+  greatJob: { fontStyle: 'italic', textTransform: 'uppercase', textAlign: 'center' },
+  center: { textAlign: 'center' },
+  stats: { flexDirection: 'row' },
+  stat: { flex: 1, alignItems: 'center', gap: spacing.xxs, paddingHorizontal: spacing.xs },
+  statDivider: { borderLeftWidth: 1, borderLeftColor: colors.line },
+  carousel: { gap: 0 },
+  slide: {
+    padding: spacing.lg,
+    gap: spacing.md,
+    borderRadius: radius.card * 2,
     borderWidth: 1,
     borderColor: colors.line,
-    borderRadius: radius.card,
-    padding: spacing.md,
+    backgroundColor: colors.sunken,
   },
+  funBand: {
+    marginHorizontal: -spacing.lg,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+    backgroundColor: colors.accent,
+  },
+  funEmoji: { fontSize: 120, lineHeight: 150, textAlign: 'center' },
+  dots: { flexDirection: 'row', justifyContent: 'center', gap: spacing.xs },
+  dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.line },
+  dotOn: { width: 22, backgroundColor: colors.accent },
   finish: { gap: spacing.md },
   row: { flexDirection: 'row', gap: spacing.sm },
   column: { flexDirection: 'column' },

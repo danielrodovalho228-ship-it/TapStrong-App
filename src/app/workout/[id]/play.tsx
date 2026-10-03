@@ -1,17 +1,15 @@
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import * as Speech from 'expo-speech';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 
 import { AppText, Button, Icon, Screen, TextLink } from '@/components/ui';
-import type { Exercise } from '@/features/exercises/types';
 import { isMachine } from '@/features/generator/filters';
-import { MoreOptions } from '@/features/home/MoreOptions';
 import { modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { usePrefsStore } from '@/features/settings/store';
-import { ExerciseDemo } from '@/features/workout/components/ExerciseDemo';
+import { GuidedStep } from '@/features/workout/components/GuidedStep';
 import {
   CountersRow,
   ExerciseHeader,
@@ -22,24 +20,10 @@ import {
 } from '@/features/workout/components/Logger';
 import { SafetyCues } from '@/features/workout/components/SafetyCues';
 import { SwapSheet, type SwapReasonUi } from '@/features/workout/components/SwapSheet';
-import { useNow } from '@/features/workout/components/TimerRing';
 import { UndoBar } from '@/features/workout/components/UndoBar';
-import {
-  canEndTimedStep,
-  cooldownHold,
-  currentStep,
-  mainItems,
-  sideSet,
-  stepAfter,
-  stepKind,
-  type Step,
-} from '@/features/workout/flow';
-import { feel } from '@/features/workout/feel';
-import { clockText, exerciseCues, exerciseName } from '@/features/workout/format';
+import { cooldownHold, currentStep, mainItems, stepKind, type Step } from '@/features/workout/flow';
+import { exerciseName } from '@/features/workout/format';
 import { endWorkout, useSafetyRefresh, useWorkout } from '@/features/workout/hooks';
-import { playTimerEnd } from '@/features/workout/sound';
-import { useWorkoutStore } from '@/features/workout/store';
-import type { WorkoutRecord } from '@/features/workout/types';
 import { clock } from '@/lib/clock';
 import { useUsageStore } from '@/lib/usage';
 import { colors, fonts, makeStyles, radius, sizes, spacing, useColors } from '@/theme';
@@ -115,6 +99,38 @@ export default function PlayerScreen() {
     !workout.logs.some((l) => l.itemId === item.id) &&
     mains.slice(0, Math.max(0, mainIndex)).some((m) => workout.logs.some((l) => l.itemId === m.id));
 
+  const swapSheet = sheet ? (
+    <SwapSheet
+      visible
+      workout={workout}
+      itemId={item.id}
+      reason={sheet}
+      input={input}
+      byId={byId}
+      onPickItem={() => undefined}
+      onClose={() => setSheet(null)}
+      onSwapped={(e) => {
+        setSheet(null);
+        setUndoMessage(t('workout.swap.done', { name: exerciseName(t, e, e.id) }));
+      }}
+    />
+  ) : null;
+
+  // Warm-up, finisher and stretch: full screen, edge to edge (Phase 31, G).
+  if (guided)
+    return (
+      <>
+        <GuidedStep
+          key={`${step.item.id}-${step.setNo}-${step.item.exerciseId}`}
+          workout={workout}
+          step={step}
+          exercise={exercise}
+          onSwap={onSwap}
+        />
+        {swapSheet}
+      </>
+    );
+
   const header = (
     <View style={styles.top}>
       <View style={styles.topRow}>
@@ -182,15 +198,7 @@ export default function PlayerScreen() {
 
       <UndoBar message={undoMessage} onDone={clearUndo} />
 
-      {guided ? (
-        <GuidedStep
-          key={`${step.item.id}-${step.setNo}-${step.item.exerciseId}`}
-          workout={workout}
-          step={step}
-          exercise={exercise}
-          onSwap={onSwap}
-        />
-      ) : preview ? (
+      {preview ? (
         <NextPreview
           workout={workout}
           item={item}
@@ -236,22 +244,7 @@ export default function PlayerScreen() {
         />
       ) : null}
 
-      {sheet ? (
-        <SwapSheet
-          visible
-          workout={workout}
-          itemId={item.id}
-          reason={sheet}
-          input={input}
-          byId={byId}
-          onPickItem={() => undefined}
-          onClose={() => setSheet(null)}
-          onSwapped={(e) => {
-            setSheet(null);
-            setUndoMessage(t('workout.swap.done', { name: exerciseName(t, e, e.id) }));
-          }}
-        />
-      ) : null}
+      {swapSheet}
     </Screen>
   );
 }
@@ -262,191 +255,6 @@ function isGuided(step: Step): boolean {
   if (item.part === 'ramp_up') return false;
   if (stepKind(item) === 'timed' || cooldownHold(item) != null) return true;
   return item.role === 'warmup' || item.role === 'cooldown';
-}
-
-/**
- * A warm-up, finisher or stretch step (Phase 31, D): the clip full width with
- * nothing on top of it, "Exercise 1/4", the name, a big countdown or "10
- * reps", two lines of cues and one button. A countdown starts and ends by
- * itself (Phase 27, A5); the button ends it early once half has passed on a
- * day with loaded work (SPEC §8).
- */
-function GuidedStep({
-  workout,
-  step,
-  exercise,
-  onSwap,
-}: {
-  workout: WorkoutRecord;
-  step: Step;
-  exercise: Exercise | undefined;
-  onSwap?: () => void;
-}) {
-  const colors = useColors();
-  const styles = useStyles();
-  const { t } = useTranslation();
-  const { logSet, skipItem } = useWorkoutStore();
-  const mode = useOnboardingStore((st) => modeOf(st));
-  const [startedAt] = useState(() => clock.now().getTime());
-  const [confirmSkip, setConfirmSkip] = useState(false);
-  const now = useNow(250);
-  const { item } = step;
-  const hold = cooldownHold(item);
-  const total = hold ?? (stepKind(item) === 'timed' ? (item.durationSeconds ?? 0) : 0);
-  const counting = total > 0;
-  const elapsed = (now - startedAt) / 1000;
-  const dayHasLoad = workout.session.items.some(
-    (i) => i.role === 'main' && i.loadHint !== 'bodyweight',
-  );
-  const canEnd = !counting || canEndTimedStep(item, elapsed, dayHasLoad);
-  const split = sideSet(item, step.setNo);
-  const phase = workout.session.items.filter((i) => i.role === item.role && i.part !== 'ramp_up');
-  const next = stepAfter(workout, step);
-  // The ramp-up sets belong to the first lift, not the warm-up screens.
-  const lastOfPhase = !next || next.item.role !== item.role || next.item.part === 'ramp_up';
-
-  const done = useCallback(() => {
-    feel.set();
-    logSet(workout.id, {
-      itemId: item.id,
-      exerciseId: item.exerciseId,
-      setNo: step.setNo,
-      ...(counting
-        ? { seconds: Math.round(Math.min(elapsed, total) || total) }
-        : item.holdSeconds
-          ? { seconds: item.holdSeconds[0] }
-          : { reps: item.reps?.[0] ?? 10 }),
-    });
-    // A program stretch (Phase 30): 30 s hold, then 30 s rest before the next one.
-    const after = stepAfter(workout, step);
-    if (item.countdown && item.restSeconds > 0 && after?.item.id === item.id) {
-      router.push({ pathname: '/workout/[id]/rest', params: { id: workout.id } });
-    }
-  }, [logSet, workout, step, item, elapsed, total, counting]);
-
-  // Time's up: one chime (D4 "Sounds") and the next step, once.
-  const timeUp = counting && elapsed >= total;
-  const ended = useRef(false);
-  useEffect(() => {
-    if (timeUp && !ended.current) {
-      ended.current = true;
-      playTimerEnd();
-      done();
-    }
-  }, [timeUp, done]);
-
-  const skipCooldown = () => {
-    for (const i of workout.session.items.filter((x) => x.role === 'cooldown')) {
-      skipItem(workout.id, i.id);
-    }
-  };
-
-  const buttonLabel = !lastOfPhase
-    ? t('workout.guided.next')
-    : item.role === 'warmup'
-      ? t('workout.guided.finishWarmup')
-      : item.role === 'cooldown'
-        ? t('workout.guided.finishStretch')
-        : t('workout.player.doneStep');
-  const amount = counting
-    ? clockText(total - elapsed)
-    : item.holdSeconds
-      ? t('workout.logger.seconds', { count: item.holdSeconds[0] })
-      : t('workout.logger.repsValue', { count: item.reps?.[0] ?? 10 });
-
-  return (
-    <View style={styles.stack} testID="guided-step">
-      <ExerciseDemo
-        slug={exercise?.slug ?? ''}
-        unilateral={!!exercise?.unilateral}
-        muscles={exercise?.muscles}
-        chips={[]}
-      />
-      <AppText variant="caption" color={colors.accentText} style={styles.caps}>
-        {split
-          ? t('rehab.player.sideSet', {
-              side: t(`rehab.side.${split.side}`),
-              n: split.n,
-              total: split.total,
-            })
-          : item.countdown && item.sets > 1
-            ? t('rehab.player.holdOf', { n: step.setNo, total: item.sets })
-            : t('workout.guided.exerciseOf', {
-                n: phase.indexOf(item) + 1,
-                total: phase.length,
-              })}
-      </AppText>
-      <AppText variant="h1" accessibilityRole="header">
-        {exerciseName(t, exercise, item.exerciseId)}
-      </AppText>
-      <AppText
-        variant="display"
-        style={[styles.num, mode === 'senior' && styles.bigger]}
-        accessibilityLabel={
-          counting ? t('workout.player.timeLeft', { time: clockText(total - elapsed) }) : amount
-        }
-        testID="guided-amount"
-      >
-        {amount}
-      </AppText>
-      <AppText color={colors.mutedStrong} numberOfLines={2}>
-        {exerciseCues(t, exercise)}
-      </AppText>
-      {!canEnd ? (
-        // Say when the button unlocks (QA P2).
-        <AppText variant="caption" color={colors.muted}>
-          {t('workout.player.halfHint')}
-          {dayHasLoad ? ` ${t('workout.player.warmupShorten')}` : ''}
-        </AppText>
-      ) : null}
-      <Button
-        size="xl"
-        variant="accent"
-        label={buttonLabel}
-        disabled={!canEnd}
-        onPress={done}
-        testID="guided-done"
-      />
-      {/* Swap: one tap, then the pick (Phase 27, A1). A program's exercises
-          are fixed (Phase 30). */}
-      {onSwap ? (
-        <View style={styles.links}>
-          <TextLink label={t('workout.player.swap')} onPress={onSwap} />
-        </View>
-      ) : null}
-      {item.role === 'cooldown' ? (
-        <MoreOptions>
-          {confirmSkip ? (
-            <View style={styles.confirm}>
-              <AppText variant="bodyStrong">{t('workout.player.skipCooldownConfirm')}</AppText>
-              <View style={styles.row}>
-                <View style={styles.flex}>
-                  <Button
-                    variant="secondary"
-                    label={t('workout.player.keepCooldown')}
-                    onPress={() => setConfirmSkip(false)}
-                  />
-                </View>
-                <View style={styles.flex}>
-                  <Button
-                    variant="danger"
-                    label={t('workout.player.skipCooldown')}
-                    onPress={skipCooldown}
-                  />
-                </View>
-              </View>
-            </View>
-          ) : (
-            <Button
-              variant="ghost"
-              label={t('workout.player.skipCooldown')}
-              onPress={() => setConfirmSkip(true)}
-            />
-          )}
-        </MoreOptions>
-      ) : null}
-    </View>
-  );
 }
 
 const useStyles = makeStyles(() => ({

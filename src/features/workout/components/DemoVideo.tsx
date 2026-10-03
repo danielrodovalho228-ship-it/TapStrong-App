@@ -14,10 +14,13 @@ export function DemoVideo({
   source,
   poster = null,
   mirrored = false,
+  fit = 'contain',
 }: {
   source: DemoMedia;
   poster?: DemoMedia | null;
   mirrored?: boolean;
+  /** "cover" fills the screen edge to edge (full-screen warm-up, Phase 31, G). */
+  fit?: 'contain' | 'cover';
 }) {
   const colors = useColors();
   const [playing, setPlaying] = useState(false);
@@ -34,7 +37,7 @@ export function DemoVideo({
         player={player}
         // The body canvas color behind the clip: never a black box (Phase 27, B3).
         style={[StyleSheet.absoluteFill, { backgroundColor: colors.bodyCanvas }, flip]}
-        contentFit="contain"
+        contentFit={fit}
         nativeControls={false}
         // iPhone Safari only autoplays a muted clip inline (Phase 29, A1).
         playsInline
@@ -45,7 +48,7 @@ export function DemoVideo({
           testID="demo-poster"
           source={typeof poster === 'string' ? { uri: poster } : poster}
           style={[StyleSheet.absoluteFill, flip]}
-          contentFit="contain"
+          contentFit={fit}
           accessible={false}
         />
       ) : null}

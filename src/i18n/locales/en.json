@@ -3880,7 +3880,11 @@
       "balanceTitle": "Balance done!",
       "lightTotal_one": "{{count}} muscle · {{minutes}} min",
       "lightTotal_other": "{{count}} muscles · {{minutes}} min",
-      "lightNote": "You lit them up today."
+      "lightNote": "You lit them up today.",
+      "exercises": "Exercises done",
+      "shareShort": "Share",
+      "funBefore": "I lifted the weight of",
+      "funAfter": "during my workout"
     },
     "legend": {
       "main": "Main target today",
@@ -4018,7 +4022,12 @@
       "exerciseOf": "Exercise {{n}}/{{total}}",
       "next": "Next",
       "finishWarmup": "Finish warm-up",
-      "finishStretch": "Finish stretch"
+      "finishStretch": "Finish stretch",
+      "stretchOf": "Stretch {{n}}/{{total}}",
+      "pause": "Pause",
+      "resume": "Resume",
+      "getReady": "Get ready",
+      "paused": "Paused"
     }
   },
   "account": {

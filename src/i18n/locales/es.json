@@ -3880,7 +3880,11 @@
       "balanceTitle": "¡Equilibrio hecho!",
       "lightTotal_one": "{{count}} músculo · {{minutes}} min",
       "lightTotal_other": "{{count}} músculos · {{minutes}} min",
-      "lightNote": "Hoy los encendiste todos."
+      "lightNote": "Hoy los encendiste todos.",
+      "exercises": "Ejercicios hechos",
+      "shareShort": "Compartir",
+      "funBefore": "Levanté el peso de",
+      "funAfter": "en mi entreno"
     },
     "legend": {
       "main": "Objetivo principal hoy",
@@ -4018,7 +4022,12 @@
       "exerciseOf": "Ejercicio {{n}}/{{total}}",
       "next": "Siguiente",
       "finishWarmup": "Terminar calentamiento",
-      "finishStretch": "Terminar estiramiento"
+      "finishStretch": "Terminar estiramiento",
+      "stretchOf": "Estiramiento {{n}}/{{total}}",
+      "pause": "Pausar",
+      "resume": "Seguir",
+      "getReady": "Prepárate",
+      "paused": "En pausa"
     }
   },
   "account": {
