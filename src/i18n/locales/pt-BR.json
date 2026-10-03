@@ -4449,7 +4449,11 @@
       "goal": "Meta ({{unit}})",
       "goalMet": "Meta alcançada!",
       "goalLeft": "Faltam {{value}} {{unit}}",
-      "pointLabel": "{{date}}: {{value}} {{unit}}"
+      "pointLabel": "{{date}}: {{value}} {{unit}}",
+      "yourWorkouts": "Seus treinos",
+      "graphs": "Gráficos de exercício",
+      "goalTitle": "Meta",
+      "currentMax": "Carga máx. atual"
     },
     "body": {
       "whtr": "Relação cintura-altura",
@@ -4474,7 +4478,10 @@
       "saved": "Salvo.",
       "latest": "Últimas"
     },
-    "recovery": "Recuperação dos músculos"
+    "recovery": "Recuperação dos músculos",
+    "achievements": "Conquistas",
+    "latestAchievements": "Últimas conquistas",
+    "nextAchievements": "Próximas conquistas"
   },
   "checkin": {
     "eyebrow": "Semana 1 → semana 4",
@@ -5006,7 +5013,14 @@
     "appleHealth": "Apple Saúde",
     "healthConnect": "Health Connect",
     "soon": "Em breve",
-    "rate": "Avaliar o TapStrong"
+    "rate": "Avaliar o TapStrong",
+    "personalInfo": "Informações pessoais",
+    "myAccount": "Minha conta",
+    "manage": "Gerenciar",
+    "chooseModel": "Escolher modelo",
+    "chooseModelDetail": "Muda os vídeos e as fotos dos exercícios",
+    "choose": "Escolher",
+    "healthDetail": "Treinos e peso, quando chegar"
   },
   "referral": {
     "eyebrow": "Convite recebido",
@@ -5132,7 +5146,13 @@
       "equipmentCount_other": "Equipamentos ({{count}})",
       "musclesCount_zero": "Músculos ({{count}})",
       "musclesCount_one": "Músculos ({{count}})",
-      "musclesCount_other": "Músculos ({{count}})"
+      "musclesCount_other": "Músculos ({{count}})",
+      "equipmentDrop_zero": "Equipamentos ({{count}}) ▾",
+      "equipmentDrop_one": "Equipamentos ({{count}}) ▾",
+      "equipmentDrop_other": "Equipamentos ({{count}}) ▾",
+      "musclesDrop_zero": "Músculos ({{count}}) ▾",
+      "musclesDrop_one": "Músculos ({{count}}) ▾",
+      "musclesDrop_other": "Músculos ({{count}}) ▾"
     },
     "goals": {
       "shape": "Entrar em forma",
@@ -5169,7 +5189,8 @@
       "mobilityBalance": "Mobilidade",
       "seniorSteady": "Mobilidade 60+",
       "shoulderRehab": "Ombro — reabilitação"
-    }
+    },
+    "minutesShort": "{{minutes}} min"
   },
   "modes": {
     "title": "O que você quer fazer?",
@@ -5935,7 +5956,10 @@
     "swipe": "Deslize para girar 180°",
     "goals": "Escolher minhas metas por músculo",
     "searchIn": "Buscar em {{name}}",
-    "noFavourites": "Ainda sem favoritos. Toque na estrela de um exercício para guardá-lo aqui."
+    "noFavourites": "Ainda sem favoritos. Toque na estrela de um exercício para guardá-lo aqui.",
+    "cardio": "Cardio",
+    "swipeShort": "Deslize",
+    "swipeArrows": "←  180°  →"
   },
   "libraryEquipment": {
     "title": "Equipamentos",

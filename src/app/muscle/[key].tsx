@@ -48,11 +48,13 @@ export default function MuscleExercisesScreen() {
   const filter: LibraryFilter =
     key === 'all' || key === 'favourites'
       ? {}
-      : area
-        ? { muscles: area }
-        : muscleByKey(key)
-          ? { muscle: key }
-          : {};
+      : key === 'cardio'
+        ? { cardio: true }
+        : area
+          ? { muscles: area }
+          : muscleByKey(key)
+            ? { muscle: key }
+            : {};
   const name = (e: Exercise) => exerciseName(t, e, e.id);
   const safe = input ? libraryView(input, { ...filter, query: deferred }, name).safe : [];
   const list = key === 'favourites' ? safe.filter((e) => favourites.includes(e.id)) : safe;
@@ -61,9 +63,11 @@ export default function MuscleExercisesScreen() {
       ? t('explore.all')
       : key === 'favourites'
         ? t('explore.favouritesTitle')
-        : area
-          ? t(`library.areas.${key.slice(5) as 'arms'}`)
-          : muscleLabel(t, key);
+        : key === 'cardio'
+          ? t('explore.cardio')
+          : area
+            ? t(`library.areas.${key.slice(5) as 'arms'}`)
+            : muscleLabel(t, key);
 
   return (
     <Screen header={<Header onBack={() => router.back()} title={title} />}>

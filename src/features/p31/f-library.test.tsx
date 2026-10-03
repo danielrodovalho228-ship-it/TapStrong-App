@@ -104,7 +104,7 @@ describe('Library', () => {
   it('filters: equipment opens its screen, bodyweight hides weight plans, time keeps ≤ 30 min', async () => {
     await as(1990);
     await render(<LibraryScreen />);
-    await fireEvent.press(screen.getByText(/^Equipment \(\d+\)$/));
+    await fireEvent.press(screen.getByText(/^Equipment \(\d+\) ▾$/));
     expect(router.push).toHaveBeenCalledWith('/library-equipment');
 
     await act(() => usePlanFilterStore.getState().setEquipment([...PRESETS.bodyweight.items]));
@@ -121,7 +121,7 @@ describe('Library', () => {
       expect(minutes).toBeLessThanOrEqual(30);
     }
 
-    await fireEvent.press(screen.getByText('Muscles (0)'));
+    await fireEvent.press(screen.getByText('Muscles (0) ▾'));
     expect(screen.getByTestId('plan-muscles')).toBeTruthy();
   });
 

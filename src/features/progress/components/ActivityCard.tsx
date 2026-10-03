@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 
-import { AppText, Card, Chip, IconButton, TextField } from '@/components/ui';
+import { AppText, Chip, Icon, IconButton, TextField } from '@/components/ui';
 import type { AppMode } from '@/features/profile/age';
 import { exerciseName } from '@/features/workout/format';
 import { useExerciseLibrary } from '@/features/workout/hooks';
@@ -12,6 +12,7 @@ import { clock } from '@/lib/clock';
 import { deviceWeekStart, localDate } from '@/lib/dates';
 import { colors, fonts, makeStyles, radius, spacing, useColors } from '@/theme';
 
+import { AchievementsCard } from './AchievementsCard';
 import {
   activityTotals,
   exerciseBest,
@@ -95,91 +96,133 @@ export function ActivityCard({ mode, unit }: { mode: AppMode; unit: 'lb' | 'kg' 
   ];
 
   return (
-    <Card style={styles.card}>
-      <AppText variant="h3">{t('progress.activity.title')}</AppText>
-      <View
-        style={styles.chips}
-        accessibilityRole="radiogroup"
-        accessibilityLabel={t('progress.activity.rangeLabel')}
-      >
-        {RANGES.map((r) => (
-          <Chip
-            key={r}
-            label={t(`progress.activity.range.${r}`)}
-            selected={r === range}
-            onPress={() => setRange(r)}
-          />
-        ))}
-      </View>
-      <View style={styles.tiles}>
-        {tiles.map((tile) => (
-          <View key={tile.key} style={styles.tile} testID={`activity-${tile.key}`}>
-            <AppText variant="caption" color={colors.muted} style={styles.caps}>
-              {tile.label}
-            </AppText>
-            <AppText variant="h2">{String(tile.value)}</AppText>
-          </View>
-        ))}
-      </View>
-
-      <View style={styles.monthHead}>
-        <IconButton
-          icon="chevron-left"
-          accessibilityLabel={t('progress.activity.prevMonth')}
-          onPress={() => setMonth(shiftMonth(month, -1))}
-        />
-        <AppText variant="bodyStrong" style={styles.monthTitle}>
-          {monthTitle}
-        </AppText>
-        <IconButton
-          icon="chevron-right"
-          accessibilityLabel={t('progress.activity.nextMonth')}
-          disabled={month >= localDate(now).slice(0, 7)}
-          onPress={() => setMonth(shiftMonth(month, 1))}
-        />
-      </View>
-      <View>
-        <View style={styles.week}>
-          {Array.from({ length: 7 }, (_, i) => (
-            <AppText key={i} variant="caption" color={colors.muted} style={styles.dayCell}>
-              {weekday((startsOn + i) % 7)}
-            </AppText>
+    <View style={styles.sections}>
+      {/* "Total activity" (Phase 31, G): range pills and big numbers. */}
+      <SectionHead title={t('progress.activity.title')} />
+      <View style={styles.panel}>
+        <View
+          style={styles.ranges}
+          accessibilityRole="radiogroup"
+          accessibilityLabel={t('progress.activity.rangeLabel')}
+        >
+          {RANGES.map((r) => (
+            <Pressable
+              key={r}
+              accessibilityRole="radio"
+              accessibilityState={{ checked: r === range }}
+              accessibilityLabel={t(`progress.activity.range.${r}`)}
+              onPress={() => setRange(r)}
+              style={[styles.range, r === range && styles.rangeOn]}
+            >
+              <AppText
+                variant="bodyStrong"
+                color={r === range ? colors.onAccent : colors.accentText}
+              >
+                {t(`progress.activity.range.${r}`)}
+              </AppText>
+            </Pressable>
           ))}
         </View>
-        {monthGrid(month, startsOn).map((row, r) => (
-          <View key={r} style={styles.week}>
-            {row.map((date, i) =>
-              date ? (
-                <View
-                  key={date}
-                  style={styles.dayCell}
-                  accessible
-                  accessibilityLabel={
-                    days.has(date)
-                      ? t('progress.activity.dayTrained', { date: dayText(date) })
-                      : dayText(date)
-                  }
-                  testID={days.has(date) ? `trained-${date}` : undefined}
-                >
-                  <View style={[styles.dot, days.has(date) ? styles.dotOn : null]}>
-                    <AppText
-                      variant="caption"
-                      color={days.has(date) ? colors.onAccent : colors.ink}
-                    >
-                      {String(Number(date.slice(8)))}
-                    </AppText>
-                  </View>
-                </View>
-              ) : (
-                <View key={`e${i}`} style={styles.dayCell} />
-              ),
-            )}
-          </View>
-        ))}
+        <View style={styles.tiles}>
+          {tiles.map((tile, n) => (
+            <View
+              key={tile.key}
+              style={[styles.tile, n > 0 && styles.tileDivider]}
+              testID={`activity-${tile.key}`}
+            >
+              <AppText variant="display" color={colors.accentText} style={styles.big}>
+                {String(tile.value)}
+              </AppText>
+              <AppText color={colors.mutedStrong} style={styles.center} numberOfLines={2}>
+                {tile.label}
+              </AppText>
+            </View>
+          ))}
+        </View>
       </View>
 
-      {senior ? null : <ExerciseGraph unit={unit} library={library} workouts={workouts} />}
-    </Card>
+      {/* "Your workouts": the month calendar. */}
+      <SectionHead title={t('progress.activity.yourWorkouts')} />
+      <View style={styles.panel}>
+        <View style={styles.monthHead}>
+          <IconButton
+            icon="chevron-left"
+            accessibilityLabel={t('progress.activity.prevMonth')}
+            onPress={() => setMonth(shiftMonth(month, -1))}
+          />
+          <AppText variant="bodyStrong" style={styles.monthTitle}>
+            {monthTitle}
+          </AppText>
+          <IconButton
+            icon="chevron-right"
+            accessibilityLabel={t('progress.activity.nextMonth')}
+            disabled={month >= localDate(now).slice(0, 7)}
+            onPress={() => setMonth(shiftMonth(month, 1))}
+          />
+        </View>
+        <View>
+          <View style={styles.week}>
+            {Array.from({ length: 7 }, (_, i) => (
+              <AppText key={i} variant="caption" color={colors.muted} style={styles.dayCell}>
+                {weekday((startsOn + i) % 7)}
+              </AppText>
+            ))}
+          </View>
+          {monthGrid(month, startsOn).map((row, r) => (
+            <View key={r} style={styles.week}>
+              {row.map((date, i) =>
+                date ? (
+                  <View
+                    key={date}
+                    style={styles.dayCell}
+                    accessible
+                    accessibilityLabel={
+                      days.has(date)
+                        ? t('progress.activity.dayTrained', { date: dayText(date) })
+                        : dayText(date)
+                    }
+                    testID={days.has(date) ? `trained-${date}` : undefined}
+                  >
+                    <View style={[styles.dot, days.has(date) ? styles.dotOn : null]}>
+                      <AppText
+                        variant="caption"
+                        color={days.has(date) ? colors.onAccent : colors.ink}
+                      >
+                        {String(Number(date.slice(8)))}
+                      </AppText>
+                    </View>
+                  </View>
+                ) : (
+                  <View key={`e${i}`} style={styles.dayCell} />
+                ),
+              )}
+            </View>
+          ))}
+        </View>
+      </View>
+
+      <AchievementsCard mode={mode} unit={unit} />
+
+      {senior ? null : (
+        <>
+          <SectionHead title={t('progress.activity.graphs')} />
+          <View style={styles.panel}>
+            <ExerciseGraph unit={unit} library={library} workouts={workouts} />
+          </View>
+        </>
+      )}
+    </View>
+  );
+}
+
+function SectionHead({ title }: { title: string }) {
+  const styles = useStyles();
+  return (
+    <View style={styles.sectionHead}>
+      <AppText variant="h2" accessibilityRole="header">
+        {title}
+      </AppText>
+    </View>
   );
 }
 
@@ -248,6 +291,32 @@ function ExerciseGraph({
           />
         ))}
       </ScrollView>
+      {/* Goal and current max side by side (Phase 31, G). */}
+      <View style={styles.goalRow}>
+        <View style={styles.goalBox}>
+          <AppText variant="bodyStrong">{t('progress.activity.goalTitle')}</AppText>
+          <View style={styles.goalValue}>
+            <AppText variant="display" color={colors.accentText} style={styles.big}>
+              {goal ? goal.toLocaleString(i18n.language) : '—'}
+            </AppText>
+            <AppText color={colors.accentText}>{unitText}</AppText>
+            <Icon
+              name="trophy"
+              size={26}
+              color={goal && max >= goal ? colors.accent : colors.muted}
+            />
+          </View>
+        </View>
+        <View style={styles.maxBox}>
+          <AppText variant="bodyStrong">{t('progress.activity.currentMax')}</AppText>
+          <View style={styles.goalValue}>
+            <AppText variant="display" color={colors.accentText} style={styles.big}>
+              {max.toLocaleString(i18n.language)}
+            </AppText>
+            <AppText color={colors.accentText}>{unitText}</AppText>
+          </View>
+        </View>
+      </View>
       <View style={styles.plot}>
         {recent.map((p) => (
           <View
@@ -303,18 +372,31 @@ function ExerciseGraph({
 }
 
 const useStyles = makeStyles(() => ({
-  card: { gap: spacing.md },
+  sections: { gap: spacing.md },
+  sectionHead: { flexDirection: 'row', alignItems: 'center', marginTop: spacing.sm },
+  panel: {
+    gap: spacing.md,
+    padding: spacing.lg,
+    borderRadius: radius.card * 2,
+    backgroundColor: colors.sunken,
+  },
+  ranges: { flexDirection: 'row', justifyContent: 'space-between' },
+  range: {
+    minHeight: 36,
+    minWidth: 52,
+    paddingHorizontal: spacing.sm,
+    borderRadius: radius.chip,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  rangeOn: { backgroundColor: colors.accent },
+  big: { fontVariant: ['tabular-nums'] },
+  center: { textAlign: 'center' },
+  tileDivider: { borderLeftWidth: 1, borderLeftColor: colors.line },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   row: { flexDirection: 'row', gap: spacing.sm },
-  tiles: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
-  tile: {
-    flexGrow: 1,
-    flexBasis: '45%',
-    backgroundColor: colors.background,
-    borderRadius: radius.card,
-    padding: spacing.md,
-    gap: spacing.xs,
-  },
+  tiles: { flexDirection: 'row' },
+  tile: { flex: 1, alignItems: 'center', gap: spacing.xxs, paddingHorizontal: spacing.xxs },
   caps: { textTransform: 'uppercase', letterSpacing: 1.2, fontFamily: fonts.headingSemi },
   monthHead: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   monthTitle: { flex: 1, textAlign: 'center' },
@@ -322,12 +404,17 @@ const useStyles = makeStyles(() => ({
   dayCell: { flex: 1, alignItems: 'center', paddingVertical: 2, textAlign: 'center' },
   dot: { width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center' },
   dotOn: { backgroundColor: colors.accent },
-  graph: {
-    gap: spacing.sm,
-    borderTopWidth: 1,
-    borderTopColor: colors.line,
-    paddingTop: spacing.md,
+  graph: { gap: spacing.sm },
+  goalRow: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.md },
+  goalBox: {
+    flex: 1,
+    gap: spacing.xxs,
+    padding: spacing.md,
+    borderRadius: radius.card,
+    backgroundColor: colors.surface,
   },
+  maxBox: { flex: 1, alignItems: 'flex-end', gap: spacing.xxs, paddingTop: spacing.md },
+  goalValue: { flexDirection: 'row', alignItems: 'baseline', gap: spacing.xxs },
   plot: { height: BAR_HEIGHT, flexDirection: 'row', alignItems: 'flex-end', gap: spacing.sm },
   col: { flex: 1, justifyContent: 'flex-end' },
   bar: { width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 },

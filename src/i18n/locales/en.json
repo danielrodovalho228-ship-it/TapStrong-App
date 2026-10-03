@@ -4410,7 +4410,11 @@
       "goal": "Goal ({{unit}})",
       "goalMet": "Goal reached!",
       "goalLeft": "{{value}} {{unit}} to go",
-      "pointLabel": "{{date}}: {{value}} {{unit}}"
+      "pointLabel": "{{date}}: {{value}} {{unit}}",
+      "yourWorkouts": "Your workouts",
+      "graphs": "Exercise graphs",
+      "goalTitle": "Goal",
+      "currentMax": "Current max"
     },
     "body": {
       "whtr": "Waist-to-height ratio",
@@ -4435,7 +4439,10 @@
       "saved": "Saved.",
       "latest": "Latest"
     },
-    "recovery": "Muscle recovery"
+    "recovery": "Muscle recovery",
+    "achievements": "Achievements",
+    "latestAchievements": "Latest achievements",
+    "nextAchievements": "Next to earn"
   },
   "checkin": {
     "eyebrow": "Week 1 → week 4",
@@ -4962,7 +4969,14 @@
     "appleHealth": "Apple Health",
     "healthConnect": "Health Connect",
     "soon": "Coming soon",
-    "rate": "Rate TapStrong"
+    "rate": "Rate TapStrong",
+    "personalInfo": "Personal information",
+    "myAccount": "My account",
+    "manage": "Manage",
+    "chooseModel": "Choose model",
+    "chooseModelDetail": "Changes the exercise videos and pictures",
+    "choose": "Choose",
+    "healthDetail": "Workouts and weight, when it arrives"
   },
   "referral": {
     "eyebrow": "Invite received",
@@ -5081,7 +5095,11 @@
       "equipmentCount_one": "Equipment ({{count}})",
       "equipmentCount_other": "Equipment ({{count}})",
       "musclesCount_one": "Muscles ({{count}})",
-      "musclesCount_other": "Muscles ({{count}})"
+      "musclesCount_other": "Muscles ({{count}})",
+      "equipmentDrop_one": "Equipment ({{count}}) ▾",
+      "equipmentDrop_other": "Equipment ({{count}}) ▾",
+      "musclesDrop_one": "Muscles ({{count}}) ▾",
+      "musclesDrop_other": "Muscles ({{count}}) ▾"
     },
     "goals": {
       "shape": "Get in shape",
@@ -5117,7 +5135,8 @@
       "mobilityBalance": "Mobility",
       "seniorSteady": "Mobility 60+",
       "shoulderRehab": "Shoulder — rehab"
-    }
+    },
+    "minutesShort": "{{minutes}} min"
   },
   "modes": {
     "title": "What do you want to do?",
@@ -5861,7 +5880,10 @@
     "swipe": "Swipe to turn 180°",
     "goals": "Set my muscle goals",
     "searchIn": "Search in {{name}}",
-    "noFavourites": "No favourites yet. Tap the star on an exercise to keep it here."
+    "noFavourites": "No favourites yet. Tap the star on an exercise to keep it here.",
+    "cardio": "Cardio",
+    "swipeShort": "Swipe",
+    "swipeArrows": "←  180°  →"
   },
   "libraryEquipment": {
     "title": "Equipment",

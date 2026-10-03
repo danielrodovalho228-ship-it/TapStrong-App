@@ -15,7 +15,8 @@ import { chromium } from 'playwright-core';
 
 import { executablePath, profile, serve } from './lib/web.mjs';
 
-const [givenDir, givenOut] = process.argv.slice(2);
+const [rawDir, givenOut] = process.argv.slice(2);
+const givenDir = rawDir || undefined;
 const out = givenOut ?? join(process.cwd(), 'docs', 'screenshots', 'p31');
 mkdirSync(out, { recursive: true });
 const dir = givenDir ?? mkdtempSync(join(tmpdir(), 'p31-'));

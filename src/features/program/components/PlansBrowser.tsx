@@ -102,25 +102,28 @@ export function PlansBrowser({ mode }: { mode: AppMode }) {
       onPress={() => router.push({ pathname: '/program/[id]', params: { id: p.id } })}
       testID="plan-card"
     >
-      <Card style={[styles.big, activeId === p.id && styles.active]}>
-        <Poster slug={GOAL_POSTER[p.goal]} height={170} />
-        <View style={styles.bigText}>
-          <AppText variant="label" color={colors.accentText} style={styles.caps}>
-            {t(`plans.labels.${p.goal}`)}
-          </AppText>
-          <AppText color={colors.mutedStrong} numberOfLines={2}>
-            {[
-              t(`plans.splits.${p.split}`),
-              t('plans.meta', { days: p.daysPerWeek, minutes: p.minutes }),
-            ].join(' · ')}
-          </AppText>
-          {activeId === p.id ? (
-            <AppText variant="caption" color={colors.teal} style={styles.caps}>
-              {t('plans.active')}
+      {/* Full-width poster with the goal over a dark strip (Phase 31, G). */}
+      <View style={[styles.big, activeId === p.id && styles.active]}>
+        <Poster slug={GOAL_POSTER[p.goal]} height={230} />
+        <View style={styles.overlay}>
+          <View style={styles.accentBar} />
+          <View style={styles.flex}>
+            <AppText variant="h2" color={colors.accentText} style={styles.goalTitle}>
+              {t(`plans.labels.${p.goal}`)}
             </AppText>
-          ) : null}
+            <AppText variant="bodyStrong" color={colors.onSurfaceRaised} numberOfLines={1}>
+              {[t(`plans.splits.${p.split}`), t('plans.minutesShort', { minutes: p.minutes })].join(
+                ' · ',
+              )}
+            </AppText>
+            {activeId === p.id ? (
+              <AppText variant="caption" color={colors.teal} style={styles.caps}>
+                {t('plans.active')}
+              </AppText>
+            ) : null}
+          </View>
         </View>
-      </Card>
+      </View>
     </Pressable>
   );
 
@@ -132,12 +135,12 @@ export function PlansBrowser({ mode }: { mode: AppMode }) {
         showsHorizontalScrollIndicator={false}
       >
         <Chip
-          label={t('plans.filters.equipmentCount', { count: equipment.length })}
+          label={t('plans.filters.equipmentDrop', { count: equipment.length })}
           selected={f.equipment != null}
           onPress={() => router.push('/library-equipment')}
         />
         <Chip
-          label={t('plans.filters.musclesCount', { count: f.groups.length })}
+          label={t('plans.filters.musclesDrop', { count: f.groups.length })}
           selected={musclesOpen || f.groups.length > 0}
           onPress={() => setMusclesOpen((v) => !v)}
         />
@@ -184,17 +187,7 @@ export function PlansBrowser({ mode }: { mode: AppMode }) {
             <AppText variant="label" style={styles.caps} accessibilityRole="header">
               {t('plans.rowDays', { count: days })}
             </AppText>
-            <ScrollView
-              horizontal
-              contentContainerStyle={styles.rowCards}
-              showsHorizontalScrollIndicator={false}
-            >
-              {plans.map((p) => (
-                <View key={p.id} style={styles.cardWidth}>
-                  {card(p)}
-                </View>
-              ))}
-            </ScrollView>
+            <View style={styles.rowCards}>{plans.map(card)}</View>
           </View>
         );
       })}
@@ -204,11 +197,7 @@ export function PlansBrowser({ mode }: { mode: AppMode }) {
           <AppText variant="label" style={styles.caps} accessibilityRole="header">
             {t('plans.care')}
           </AppText>
-          <ScrollView
-            horizontal
-            contentContainerStyle={styles.rowCards}
-            showsHorizontalScrollIndicator={false}
-          >
+          <View style={styles.rowCards}>
             {REHAB_PROGRAMS.map((p) => (
               <Pressable
                 key={p.id}
@@ -217,22 +206,29 @@ export function PlansBrowser({ mode }: { mode: AppMode }) {
                   `rehab.programs.${p.id as 'shoulder_mobility_strength'}.title`,
                 )}
                 onPress={() => router.push({ pathname: '/rehab/[id]', params: { id: p.id } })}
-                style={styles.cardWidth}
+                testID="care-card"
               >
-                <Card style={styles.big} testID="care-card">
-                  <Poster slug={REHAB_POSTER} height={170} />
-                  <View style={styles.bigText}>
-                    <AppText variant="label" color={colors.accentText} style={styles.caps}>
-                      {t('plans.labels.shoulderRehab')}
-                    </AppText>
-                    <AppText color={colors.mutedStrong} numberOfLines={2}>
-                      {t(`rehab.programs.${p.id as 'shoulder_mobility_strength'}.body`)}
-                    </AppText>
+                <View style={styles.big}>
+                  <Poster slug={REHAB_POSTER} height={230} />
+                  <View style={styles.overlay}>
+                    <View style={styles.accentBar} />
+                    <View style={styles.flex}>
+                      <AppText variant="h2" color={colors.accentText} style={styles.goalTitle}>
+                        {t('plans.labels.shoulderRehab')}
+                      </AppText>
+                      <AppText
+                        variant="bodyStrong"
+                        color={colors.onSurfaceRaised}
+                        numberOfLines={2}
+                      >
+                        {t(`rehab.programs.${p.id as 'shoulder_mobility_strength'}.body`)}
+                      </AppText>
+                    </View>
                   </View>
-                </Card>
+                </View>
               </Pressable>
             ))}
-          </ScrollView>
+          </View>
         </View>
       ) : null}
     </View>
@@ -244,10 +240,20 @@ const useStyles = makeStyles(() => ({
   section: { gap: spacing.sm },
   mine: { gap: spacing.xs, borderWidth: 1.5, borderColor: colors.line, borderRadius: radius.card },
   active: { borderWidth: 1.5, borderColor: colors.teal },
-  big: { padding: 0, overflow: 'hidden', gap: 0, borderRadius: radius.card },
-  bigText: { padding: spacing.md, gap: spacing.xxs },
-  cardWidth: { width: 248 },
-  rowCards: { gap: spacing.sm, paddingRight: spacing.lg },
+  big: { overflow: 'hidden', borderRadius: radius.card, backgroundColor: colors.surface },
+  overlay: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    flexDirection: 'row',
+    gap: spacing.sm,
+    padding: spacing.md,
+    backgroundColor: colors.scrim,
+  },
+  accentBar: { width: 4, borderRadius: 2, backgroundColor: colors.accent },
+  goalTitle: { fontStyle: 'italic', textTransform: 'uppercase' },
+  rowCards: { gap: spacing.md },
   picture: {
     backgroundColor: colors.bodyCanvas,
     alignItems: 'center',

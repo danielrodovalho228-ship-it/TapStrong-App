@@ -30,6 +30,8 @@ export type LibraryFilter = {
   equipment?: string;
   position?: Position;
   role?: LibraryRole;
+  /** Cardio moves (the Exercises tab's heart, Phase 31, G). */
+  cardio?: boolean;
 };
 export type NotForYouReason = 'restriction' | 'pain' | 'age' | 'painToday';
 export type LibraryView = {
@@ -82,7 +84,8 @@ export function libraryView(
           ? e.equipment.length === 0
           : e.equipment.includes(filter.equipment as never))) &&
       (!filter.position || e.positions.includes(filter.position)) &&
-      (!filter.role || roleOf(e).includes(filter.role)),
+      (!filter.role || roleOf(e).includes(filter.role)) &&
+      (!filter.cardio || e.parts.some((p) => p.includes('cardio'))),
   );
   const safe: Exercise[] = [];
   const notForYou: LibraryView['notForYou'] = [];

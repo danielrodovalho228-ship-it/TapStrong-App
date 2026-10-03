@@ -7,12 +7,12 @@ import '@/i18n';
 
 import { act, fireEvent, render, screen, within } from '@testing-library/react-native';
 
-import ExercisesScreen from '@/app/(tabs)/body';
+import ExercisesScreen, { GROUP_DOTS } from '@/app/(tabs)/body';
 import MuscleExercisesScreen from '@/app/muscle/[key]';
-import { hotspotsFor, sideLabels } from '@/features/bodymap/hotspots';
+import { hotspotsFor } from '@/features/bodymap/hotspots';
 import { useLibraryStore } from '@/features/library/store';
 import { useOnboardingStore } from '@/features/onboarding/store';
-import { muscleFamily } from '@/features/muscles';
+import { muscleByKey, muscleFamily } from '@/features/muscles';
 
 import { devLibrary } from '../exercises/library';
 
@@ -45,48 +45,55 @@ async function as(birthYear: number, sex: 'f' | 'm' = 'f') {
 }
 
 describe('the body', () => {
-  it('names every dot once, down both sides, top to bottom', () => {
-    const spots = hotspotsFor('adult', 'f', 'front');
-    const { left, right } = sideLabels(spots);
-    expect([...left, ...right].sort()).toEqual(spots.map((h) => h.key).sort());
-    expect(Math.abs(left.length - right.length)).toBeLessThanOrEqual(1);
+  it('one dot per group on a real hotspot, opening a real muscle', () => {
+    for (const view of ['front', 'back'] as const) {
+      const keys = new Set(hotspotsFor('adult', 'f', view).map((h) => h.key));
+      for (const g of GROUP_DOTS[view]) {
+        expect([g.hotspot, keys.has(g.hotspot)]).toEqual([g.hotspot, true]);
+        expect([g.open, !!muscleByKey(g.open)]).toEqual([g.open, true]);
+      }
+    }
   });
 
-  it('shows the labels, the 180° hint and opens a muscle', async () => {
+  it('shows the group names, "Swipe 180°", and opens a group', async () => {
     await as(1990);
     await render(<ExercisesScreen />);
     expect(screen.getByRole('header', { name: 'Exercises' })).toBeTruthy();
-    expect(screen.getByText('Swipe to turn 180°')).toBeTruthy();
+    expect(screen.getByText('Swipe')).toBeTruthy();
     const labels = screen.getAllByTestId('side-label');
-    expect(labels.length).toBe(hotspotsFor('adult', 'f', 'front').length);
+    expect(labels.length).toBe(GROUP_DOTS.front.length);
     await fireEvent.press(labels[0]);
     expect(router.push).toHaveBeenCalledWith({
       pathname: '/muscle/[key]',
-      params: { key: sideLabels(hotspotsFor('adult', 'f', 'front')).left[0] },
+      params: { key: GROUP_DOTS.front[0].open },
     });
   });
 
-  it('turns around and the labels follow the back view', async () => {
+  it('turns around and the groups follow the back view', async () => {
     await as(1990, 'm');
     await render(<ExercisesScreen />);
     await fireEvent.press(screen.getByRole('button', { name: 'Turn the body around' }));
     expect(useOnboardingStore.getState().bodyView).toBe('back');
-    expect(screen.getAllByTestId('side-label')).toHaveLength(
-      hotspotsFor('adult', 'm', 'back').length,
-    );
+    expect(screen.getAllByTestId('side-label')).toHaveLength(GROUP_DOTS.back.length);
   });
 
-  it('favourites and search shortcuts', async () => {
+  it('favourites and search on top, Cardio with a heart', async () => {
     await as(1990);
     await act(() => useLibraryStore.setState({ favourites: [LIBRARY[0].id] }));
+    await act(() => useOnboardingStore.getState().update({ bodyView: 'front' }));
     await render(<ExercisesScreen />);
-    await fireEvent.press(screen.getAllByRole('button', { name: 'Favourites (1)' }).at(-1)!);
+    await fireEvent.press(screen.getByRole('button', { name: 'Favourites (1)' }));
     expect(router.push).toHaveBeenCalledWith({
       pathname: '/muscle/[key]',
       params: { key: 'favourites' },
     });
-    await fireEvent.press(screen.getByRole('button', { name: 'Search all exercises' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Search exercises' }));
     expect(router.push).toHaveBeenCalledWith({ pathname: '/muscle/[key]', params: { key: 'all' } });
+    await fireEvent.press(screen.getByTestId('explore-cardio'));
+    expect(router.push).toHaveBeenCalledWith({
+      pathname: '/muscle/[key]',
+      params: { key: 'cardio' },
+    });
   });
 
   it('60+ also get big area buttons', async () => {
@@ -140,4 +147,16 @@ describe('a muscle grid', () => {
     await act(() => useLibraryStore.setState({ favourites: [pick.id] }));
     expect(screen.getAllByTestId('muscle-card').length).toBeLessThanOrEqual(1);
   });
+});
+
+it('Cardio lists only cardio moves', async () => {
+  await as(1990);
+  mockParams = { key: 'cardio' };
+  await render(<MuscleExercisesScreen />);
+  const ids = screen
+    .getAllByTestId(/^muscle-open-/)
+    .map((n) => String(n.props.testID).replace('muscle-open-', ''));
+  expect(ids.length).toBeGreaterThan(0);
+  const byId = new Map(LIBRARY.map((e) => [e.id, e]));
+  for (const id of ids) expect(byId.get(id)!.parts.some((p) => p.includes('cardio'))).toBe(true);
 });

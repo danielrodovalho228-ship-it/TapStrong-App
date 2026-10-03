@@ -6,7 +6,6 @@ import { Platform, Pressable, Share, View } from 'react-native';
 import {
   AppText,
   Button,
-  Card,
   Chip,
   Header,
   Icon,
@@ -63,29 +62,67 @@ export default function SettingsScreen() {
     await Share.share({ message: t('share.inviteMessage', { link: referralLink(code) }) });
   };
   const workoutPrefs = () => router.push('/settings/workout');
+  const planTitle = `${t('app.name')} ${t(`billing.plans.${plan}.name`)}`;
 
   return (
     <Screen header={<Header title={t('settings.title')} />}>
-      {/* The plan card. */}
-      <Card style={styles.planCard} testID="settings-plan">
-        <AppText variant="label" color={colors.mutedStrong} style={styles.caps}>
-          {t('settings.yourPlan')}
-        </AppText>
-        <AppText variant="h2">{t(`billing.plans.${plan}.name`)}</AppText>
-        <Button
-          variant={plan === 'free' ? 'accent' : 'secondary'}
-          label={t('settings.plan')}
-          onPress={() => router.push(plan === 'free' ? '/plans' : '/billing')}
-        />
-      </Card>
+      {/* The plan card, like a membership card (Phase 31, G). */}
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={`${t(`billing.plans.${plan}.name`)}, ${t('settings.plan')}`}
+        onPress={() => router.push(plan === 'free' ? '/plans' : '/billing')}
+        style={styles.planCard}
+        testID="settings-plan"
+      >
+        <View style={styles.planStripes} aria-hidden>
+          {[0, 1, 2, 3, 4].map((n) => (
+            <View key={n} style={styles.stripe} />
+          ))}
+        </View>
+        <Icon name="dumbbell" size={30} color={colors.onAccent} />
+        <View style={styles.planText}>
+          <AppText color={colors.onAccent}>{t('settings.yourPlan')}</AppText>
+          <AppText variant="h2" color={colors.onAccent} style={styles.planName}>
+            {planTitle}
+          </AppText>
+        </View>
+      </Pressable>
+
+      {/* Profile and account in one card. */}
+      <View style={styles.card}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t('settings.profile')}
+          onPress={() => router.push('/onboarding/profile')}
+          style={styles.profileRow}
+        >
+          <View style={styles.avatar}>
+            <Icon name="body" size={28} color={colors.mutedStrong} />
+          </View>
+          <View style={styles.flex}>
+            <AppText variant="h3" numberOfLines={1}>
+              {member?.name ?? t('settings.profile')}
+            </AppText>
+            <AppText color={colors.mutedStrong}>{t('settings.personalInfo')}</AppText>
+          </View>
+          <Icon name="chevron-right" color={colors.ink} />
+        </Pressable>
+        <View style={styles.divider} />
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t('settings.account')}
+          onPress={() => router.push('/account')}
+          style={styles.accountRow}
+        >
+          <Icon name="shield" size={20} color={colors.accentText} />
+          <AppText variant="bodyStrong" style={styles.flex}>
+            {t('settings.myAccount')}
+          </AppText>
+          <AppText variant="bodyStrong">{t('settings.manage')}</AppText>
+        </Pressable>
+      </View>
 
       <Section title={t('settings.sections.profile')}>
-        <Row
-          icon="body"
-          label={t('settings.profile')}
-          onPress={() => router.push('/onboarding/profile')}
-        />
-        <Row icon="shield" label={t('settings.account')} onPress={() => router.push('/account')} />
         {familyAvailable() ? (
           <Row icon="family" label={t('tabs.family')} onPress={() => router.push('/family')} />
         ) : null}
@@ -161,7 +198,9 @@ export default function SettingsScreen() {
         </View>
         <Row
           icon="body"
-          label={t('settings.demoModel')}
+          label={t('settings.chooseModel')}
+          detail={t('settings.chooseModelDetail')}
+          action={t('settings.choose')}
           onPress={() =>
             router.push({ pathname: '/onboarding/chat', params: { step: 'body', edit: '1' } })
           }
@@ -194,7 +233,8 @@ export default function SettingsScreen() {
         <Row
           icon="progress"
           label={t(Platform.OS === 'android' ? 'settings.healthConnect' : 'settings.appleHealth')}
-          value={t('settings.soon')}
+          detail={t('settings.healthDetail')}
+          action={t('settings.soon')}
         />
       </Section>
 
@@ -289,11 +329,17 @@ function Row({
   icon,
   label,
   value,
+  detail,
+  action,
   onPress,
 }: {
   icon: IconName;
   label: string;
   value?: string;
+  /** A second line under the label. */
+  detail?: string;
+  /** An outlined pill on the right ("Choose", "Coming soon") instead of a chevron. */
+  action?: string;
   onPress?: () => void;
 }) {
   const colors = useColors();
@@ -302,21 +348,34 @@ function Row({
     <Pressable
       accessibilityRole={onPress ? 'button' : 'text'}
       accessibilityLabel={label}
-      accessibilityValue={value ? { text: value } : undefined}
+      accessibilityValue={value || action ? { text: value ?? action } : undefined}
       disabled={!onPress}
       onPress={onPress}
       style={({ pressed }) => [styles.row, pressed && styles.pressed]}
     >
-      <Icon name={icon} size={20} color={colors.accentText} />
-      <AppText variant="bodyStrong" style={styles.flex}>
-        {label}
-      </AppText>
+      <Icon name={icon} size={22} color={colors.accentText} />
+      <View style={styles.flex}>
+        <AppText variant="bodyStrong">{label}</AppText>
+        {detail ? (
+          <AppText variant="caption" color={colors.mutedStrong}>
+            {detail}
+          </AppText>
+        ) : null}
+      </View>
       {value ? (
         <AppText variant="caption" color={colors.mutedStrong}>
           {value}
         </AppText>
       ) : null}
-      {onPress ? <Icon name="chevron-right" size={18} color={colors.mutedStrong} /> : null}
+      {action ? (
+        <View style={styles.pill}>
+          <AppText variant="bodyStrong" color={colors.accentText}>
+            {action}
+          </AppText>
+        </View>
+      ) : onPress ? (
+        <Icon name="chevron-right" size={20} color={colors.ink} />
+      ) : null}
     </Pressable>
   );
 }
@@ -324,29 +383,77 @@ function Row({
 const useStyles = makeStyles(() => ({
   flex: { flex: 1 },
   caps: { textTransform: 'uppercase', letterSpacing: 1.2, fontFamily: fonts.headingSemi },
-  planCard: { gap: spacing.sm },
-  section: { gap: spacing.sm, marginTop: spacing.lg },
-  group: {
-    borderRadius: radius.card,
-    backgroundColor: colors.surface,
+  planCard: {
+    alignSelf: 'center',
+    width: '78%',
+    aspectRatio: 1.6,
+    justifyContent: 'space-between',
+    padding: spacing.lg,
+    borderRadius: radius.card * 2,
     overflow: 'hidden',
+    backgroundColor: colors.accent,
   },
+  planStripes: {
+    position: 'absolute',
+    right: -40,
+    top: -20,
+    bottom: -20,
+    width: '60%',
+    flexDirection: 'row',
+    gap: spacing.sm,
+    transform: [{ skewX: '-25deg' }],
+  },
+  stripe: { flex: 1, backgroundColor: colors.accentPressed, opacity: 0.6 },
+  planText: { gap: spacing.xxs },
+  planName: { fontStyle: 'italic', textTransform: 'uppercase' },
+  card: { borderRadius: radius.card * 1.5, backgroundColor: colors.sunken, overflow: 'hidden' },
+  profileRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, padding: spacing.md },
+  avatar: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.surface,
+  },
+  divider: { height: 1, marginLeft: spacing.xxxl * 2, backgroundColor: colors.line },
+  accountRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    minHeight: sizes.touchTarget + spacing.md,
+    paddingHorizontal: spacing.md,
+  },
+  section: { gap: spacing.sm, marginTop: spacing.lg },
+  group: { gap: spacing.sm },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
-    minHeight: sizes.touchTarget + spacing.sm,
+    minHeight: sizes.touchTarget + spacing.lg,
     paddingHorizontal: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.line,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.card * 1.5,
+    backgroundColor: colors.sunken,
   },
-  pressed: { backgroundColor: colors.line },
-  toggle: { paddingHorizontal: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.line },
+  pressed: { backgroundColor: colors.surface },
+  pill: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: radius.chip * 2,
+    borderWidth: 1.5,
+    borderColor: colors.accent,
+  },
+  toggle: {
+    paddingHorizontal: spacing.md,
+    borderRadius: radius.card * 1.5,
+    backgroundColor: colors.sunken,
+  },
   block: {
     gap: spacing.xs,
     padding: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.line,
+    borderRadius: radius.card * 1.5,
+    backgroundColor: colors.sunken,
   },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
 }));
