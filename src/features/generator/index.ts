@@ -1,4 +1,5 @@
 export {
+  alternativeGroups,
   getAlternatives,
   MAX_ALTERNATIVES,
   missingEquipmentOptions,

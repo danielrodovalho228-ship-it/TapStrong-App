@@ -3782,7 +3782,15 @@
         "easier": "Mais fácil",
         "same": "Igual",
         "harder": "Mais difícil"
-      }
+      },
+      "sheetTitle": "TROCAR EXERCÍCIO",
+      "groups": {
+        "same": "Mesmo músculo",
+        "other": "Outras alternativas",
+        "more": "Mais"
+      },
+      "showMore": "Mais ({{count}})",
+      "info": "Sobre {{name}}"
     },
     "player": {
       "progress": "{{n}} / {{total}}",

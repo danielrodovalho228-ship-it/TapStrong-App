@@ -183,7 +183,9 @@ describe('A3: the swap sheet', () => {
         onSwapped={onSwapped}
       />,
     );
-    expect(screen.getByText('Same muscle · easier / same / harder')).toBeTruthy();
+    // Phase 31, C: "SWAP EXERCISE", then "Same muscle" first.
+    expect(screen.getByRole('header', { name: 'SWAP EXERCISE' })).toBeTruthy();
+    expect(screen.getByText('Same muscle')).toBeTruthy();
     expect(screen.queryByRole('button', { name: 'Replace' })).toBeNull();
     const rows = screen.getAllByTestId('swap-option');
     expect(rows.length).toBeGreaterThan(0);

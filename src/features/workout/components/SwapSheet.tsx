@@ -1,18 +1,19 @@
 import { router } from 'expo-router';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal, Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { AppText, Button, Icon, IconButton, Notice, TextLink } from '@/components/ui';
+import { AppText, Button, IconButton, Notice, TextLink } from '@/components/ui';
 import type { Exercise } from '@/features/exercises/types';
-import { getAlternatives, missingEquipmentOptions, swapItem } from '@/features/generator';
+import { alternativeGroups, missingEquipmentOptions, swapItem } from '@/features/generator';
 import { isMachine } from '@/features/generator/filters';
 import type { GeneratorInput, SessionItem } from '@/features/generator/types';
 import { track } from '@/lib/analytics';
 import { colors, makeStyles, radius, spacing, useColors } from '@/theme';
 
 import { setsLogged } from '../flow';
-import { exerciseCues, exerciseName } from '../format';
+import { exerciseName } from '../format';
 import { useWorkoutStore } from '../store';
 import type { WorkoutRecord } from '../types';
 
@@ -43,8 +44,7 @@ export function machineItems(workout: WorkoutRecord, byId: Map<string, Exercise>
   );
 }
 
-const LEVELS = ['easier', 'same', 'harder'] as const;
-type Level = (typeof LEVELS)[number];
+type Level = 'easier' | 'same' | 'harder';
 
 /** Easier, same or harder than the exercise it replaces (by library level). */
 export function levelOf(e: Exercise, current: Exercise | undefined): Level {
@@ -53,10 +53,11 @@ export function levelOf(e: Exercise, current: Exercise | undefined): Level {
 }
 
 /**
- * Swap sheet (SPEC §8 "Swap"): up to 5 safe alternatives for the same
- * primary muscle, grouped easier / same / harder. Each is one light row
- * (poster of the profile's sex, name, a one-line tip); tapping the row
- * swaps in place (Phase 29, A3).
+ * Swap sheet (SPEC §8 "Swap", Phase 31 C): "SWAP EXERCISE" with a close
+ * button; "Same muscle" first, then "Other options", then "More" at the end.
+ * Each row is the profile's own-sex poster, the name (with easier / harder
+ * when it differs) and an (i) that opens the exercise; tapping the row swaps
+ * in place. Only the person's equipment; a swap never adds an exercise.
  */
 export function SwapSheet({
   visible,
@@ -77,7 +78,11 @@ export function SwapSheet({
 
   const item = workout.session.items.find((i) => i.id === itemId);
   const current = item ? byId.get(item.exerciseId) : undefined;
-  const options = item ? getAlternatives(workout.session, item.id, input, { reason }) : [];
+  const [showMore, setShowMore] = useState(false);
+  const groups = item
+    ? alternativeGroups(workout.session, item.id, input, { reason })
+    : { same: [], other: [], more: [] };
+  const options = [...groups.same, ...groups.other];
   const picking = reason === 'machine_taken' && !item;
   const missing =
     item && reason !== 'machine_taken'
@@ -95,6 +100,43 @@ export function SwapSheet({
     onSwapped(next);
   };
 
+  const row = (e: Exercise) => {
+    const level = levelOf(e, current);
+    const name = exerciseName(t, e, e.id);
+    return (
+      // One row per option: tap the row to swap (Phase 29, A3).
+      <View key={e.id} style={styles.optionRow}>
+        <Pressable
+          testID="swap-option"
+          accessibilityRole="button"
+          accessibilityLabel={t('workout.swap.replaceWith', { name })}
+          onPress={() => replace(e)}
+          style={({ pressed }) => [styles.optionMain, pressed && styles.optionPressed]}
+        >
+          <ExerciseThumb size={64} slug={e.slug} />
+          <View style={styles.optionText}>
+            <AppText variant="bodyStrong" numberOfLines={2}>
+              {name}
+            </AppText>
+            {level !== 'same' ? (
+              <AppText variant="caption" color={colors.mutedStrong} numberOfLines={1}>
+                {t(`workout.swap.level.${level}`)}
+              </AppText>
+            ) : null}
+          </View>
+        </Pressable>
+        <IconButton
+          icon="info"
+          accessibilityLabel={t('workout.swap.info', { name })}
+          onPress={() => {
+            onClose();
+            router.push({ pathname: '/exercise/[id]', params: { id: e.id } });
+          }}
+        />
+      </View>
+    );
+  };
+
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <Pressable
@@ -106,18 +148,18 @@ export function SwapSheet({
       <View style={[styles.sheet, { paddingBottom: insets.bottom + spacing.lg }]}>
         <View style={styles.head}>
           <View style={styles.headText}>
-            <AppText variant="caption" color={colors.mutedStrong} style={styles.eyebrow}>
-              {t(
-                reason === 'machine_taken'
-                  ? 'workout.swap.machineEyebrow'
-                  : 'workout.swap.sameMuscle',
-              )}
-            </AppText>
-            <AppText variant="h2" accessibilityRole="header">
+            <AppText variant="h2" accessibilityRole="header" style={styles.eyebrow}>
               {picking
                 ? t('workout.swap.whichMachine')
-                : t('workout.swap.title', { name: exerciseName(t, current, '') })}
+                : reason === 'machine_taken'
+                  ? t('workout.swap.machineEyebrow')
+                  : t('workout.swap.sheetTitle')}
             </AppText>
+            {!picking ? (
+              <AppText variant="caption" color={colors.mutedStrong}>
+                {t('workout.swap.title', { name: exerciseName(t, current, '') })}
+              </AppText>
+            ) : null}
           </View>
           <IconButton icon="close" accessibilityLabel={t('common.close')} onPress={onClose} />
         </View>
@@ -135,41 +177,41 @@ export function SwapSheet({
           ) : options.length === 0 ? (
             <Notice icon>{t('workout.swap.empty')}</Notice>
           ) : (
-            LEVELS.map((level) => {
-              const group = options.filter((e) => levelOf(e, current) === level);
-              if (!group.length) return null;
-              return (
-                <View key={level} style={styles.group} testID={`swap-group-${level}`}>
-                  <AppText variant="label" color={colors.mutedStrong}>
-                    {t(`workout.swap.level.${level}`)}
-                  </AppText>
-                  {group.map((e) => (
-                    // One row per option: tap the row to swap (Phase 29, A3).
-                    <Pressable
-                      key={e.id}
-                      testID="swap-option"
-                      accessibilityRole="button"
-                      accessibilityLabel={t('workout.swap.replaceWith', {
-                        name: exerciseName(t, e, e.id),
-                      })}
-                      onPress={() => replace(e)}
-                      style={({ pressed }) => [styles.optionRow, pressed && styles.optionPressed]}
-                    >
-                      <ExerciseThumb size={64} slug={e.slug} />
-                      <View style={styles.optionText}>
-                        <AppText variant="bodyStrong" numberOfLines={2}>
-                          {exerciseName(t, e, e.id)}
-                        </AppText>
-                        <AppText variant="caption" color={colors.mutedStrong} numberOfLines={1}>
-                          {exerciseCues(t, e)}
-                        </AppText>
-                      </View>
-                      <Icon name="swap" size={20} color={colors.mutedStrong} />
-                    </Pressable>
-                  ))}
+            <>
+              {(
+                [
+                  ['same', groups.same],
+                  ['other', groups.other],
+                ] as const
+              ).map(([key, list]) =>
+                list.length ? (
+                  <View key={key} style={styles.group} testID={`swap-group-${key}`}>
+                    <AppText variant="label" color={colors.mutedStrong}>
+                      {t(`workout.swap.groups.${key}`)}
+                    </AppText>
+                    {list.map((e) => row(e))}
+                  </View>
+                ) : null,
+              )}
+              {groups.more.length ? (
+                <View style={styles.group} testID="swap-group-more">
+                  {showMore ? (
+                    <>
+                      <AppText variant="label" color={colors.mutedStrong}>
+                        {t('workout.swap.groups.more')}
+                      </AppText>
+                      {groups.more.map((e) => row(e))}
+                    </>
+                  ) : (
+                    <TextLink
+                      tone="accent"
+                      label={t('workout.swap.showMore', { count: groups.more.length })}
+                      onPress={() => setShowMore(true)}
+                    />
+                  )}
                 </View>
-              );
-            })
+              ) : null}
+            </>
           )}
           {missing.length ? (
             <View style={styles.missing} testID="swap-missing-equipment">
@@ -223,11 +265,19 @@ const useStyles = makeStyles(() => ({
   optionRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.md,
+    gap: spacing.xs,
     minHeight: 72,
-    padding: spacing.xs,
+    paddingRight: spacing.xs,
     borderRadius: radius.card,
     backgroundColor: colors.surface,
+  },
+  optionMain: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    padding: spacing.xs,
+    borderRadius: radius.card,
   },
   optionPressed: { backgroundColor: colors.line },
   optionText: { flex: 1, gap: spacing.xxs },

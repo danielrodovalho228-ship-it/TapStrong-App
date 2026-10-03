@@ -14,6 +14,8 @@ import type {
 } from './types';
 
 export const MAX_ALTERNATIVES = 5;
+/** How many the swap sheet's "More" adds (Phase 31, C). */
+export const MORE_ALTERNATIVES = 10;
 /** Below this many same-muscle options, the swap sheet looks one circle wider. */
 const MIN_OPTIONS = 3;
 
@@ -66,13 +68,12 @@ function primaryFamily(item: SessionItem, current: Exercise | undefined): string
  * Order: emphasis on the muscle, then same movement pattern, then closest
  * level, then slug. Deterministic.
  */
-export function getAlternatives(
+function rankAlternatives(
   session: GeneratedSession,
   itemId: string,
   input: GeneratorInput,
   options: { limit?: number; reason?: SwapReason } = {},
-): Exercise[] {
-  const limit = options.limit ?? MAX_ALTERNATIVES;
+): { e: Exercise; tier: number }[] {
   const item = session.items.find((i) => i.id === itemId);
   if (!item || item.part === 'ramp_up') return [];
   const byId = new Map(input.library.map((e) => [e.id, e]));
@@ -132,20 +133,71 @@ export function getAlternatives(
         a.distance - b.distance ||
         byText(a.e.slug, b.e.slug),
     );
-  // Wider circles only when the same muscle leaves fewer than 3 options (QA R3 P2).
-  const closest = ranked.filter((x) => x.tier === 0);
-  const picks = (closest.length >= MIN_OPTIONS ? closest : ranked).map((x) => x.e);
+  const picks = ranked.map((x) => ({ e: x.e, tier: x.tier }));
   // A warm-up move with fewer than 3 same-region options (a seated 60+ at
   // home, QA R4 P2) also gets other warm-up moves of the same part.
   if (item.role === 'warmup' && picks.length < MIN_OPTIONS) {
     const more = programmablePool(input).filter(
       (e) =>
-        !inSession.has(e.id) && !picks.includes(e) && e.parts.includes(item.part as SessionPart),
+        !inSession.has(e.id) &&
+        !picks.some((p) => p.e === e) &&
+        e.parts.includes(item.part as SessionPart),
     );
     more.sort((a, b) => byText(a.slug, b.slug));
-    picks.push(...more);
+    picks.push(...more.map((e) => ({ e, tier: 1 })));
   }
-  return picks.slice(0, limit);
+  return picks;
+}
+
+/**
+ * Safe alternatives for one item of a session (SPEC §8 "Swap"):
+ * - same primary muscle and same role in the session (warm-up and cool-down
+ *   moves only swap within the same part);
+ * - released only (drafts in dev builds), through every generator safety
+ *   filter: location and equipment, age band, restrictions, conditions,
+ *   position;
+ * - never an exercise already in the session;
+ * - "machine is taken" also drops options that use the same machine;
+ * - the balance item swaps only for balance work.
+ * Order: emphasis on the muscle, then same movement pattern, then closest
+ * level, then slug. Deterministic.
+ */
+export function getAlternatives(
+  session: GeneratedSession,
+  itemId: string,
+  input: GeneratorInput,
+  options: { limit?: number; reason?: SwapReason } = {},
+): Exercise[] {
+  const limit = options.limit ?? MAX_ALTERNATIVES;
+  const ranked = rankAlternatives(session, itemId, input, options);
+  // Wider circles only when the same muscle leaves fewer than 3 options (QA R3 P2).
+  const closest = ranked.filter((x) => x.tier === 0);
+  return (closest.length >= MIN_OPTIONS ? closest : ranked).slice(0, limit).map((x) => x.e);
+}
+
+/**
+ * The swap sheet's sections (Phase 31, C): "Same muscle" first, then "Other
+ * options" (the muscle's group, or the muscle as a secondary), then "More"
+ * at the end. Same safety pool as getAlternatives: the person's equipment
+ * only, never an exercise already in the session; a swap never adds one.
+ */
+export function alternativeGroups(
+  session: GeneratedSession,
+  itemId: string,
+  input: GeneratorInput,
+  options: { reason?: SwapReason } = {},
+): { same: Exercise[]; other: Exercise[]; more: Exercise[] } {
+  const ranked = rankAlternatives(session, itemId, input, options);
+  const same = ranked.filter((x) => x.tier === 0).map((x) => x.e);
+  const other = ranked.filter((x) => x.tier > 0).map((x) => x.e);
+  return {
+    same: same.slice(0, MAX_ALTERNATIVES),
+    other: other.slice(0, MAX_ALTERNATIVES),
+    more: [...same.slice(MAX_ALTERNATIVES), ...other.slice(MAX_ALTERNATIVES)].slice(
+      0,
+      MORE_ALTERNATIVES,
+    ),
+  };
 }
 
 /**

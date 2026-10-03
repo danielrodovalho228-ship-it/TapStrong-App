@@ -131,7 +131,8 @@ describe('Workout list (mockup 10)', () => {
 
     const replaceButtons = screen.getAllByRole('button', { name: /^Replace with / });
     expect(replaceButtons.length).toBeGreaterThan(0);
-    expect(replaceButtons.length).toBeLessThanOrEqual(5);
+    // Same muscle (≤5) and other options (≤5); "More" stays folded (Phase 31, C).
+    expect(replaceButtons.length).toBeLessThanOrEqual(10);
     await fireEvent.press(replaceButtons[0]);
 
     const after = current().session;

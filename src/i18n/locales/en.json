@@ -3767,7 +3767,15 @@
         "easier": "Easier",
         "same": "Same level",
         "harder": "Harder"
-      }
+      },
+      "sheetTitle": "SWAP EXERCISE",
+      "groups": {
+        "same": "Same muscle",
+        "other": "Other options",
+        "more": "More"
+      },
+      "showMore": "More ({{count}})",
+      "info": "About {{name}}"
     },
     "player": {
       "progress": "{{n}} / {{total}}",
