@@ -110,7 +110,7 @@ describe('R3-03 all-recovering Home', () => {
     await render(<HomeScreen />);
     expect(screen.getByRole('header', { name: 'Everything is recovering' })).toBeTruthy();
     expect(screen.queryByRole('button', { name: /^Start/ })).toBeNull();
-    expect(screen.getByRole('button', { name: /^Short mobility/ })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /^Stretch now/ })).toBeTruthy();
     await fireEvent.press(screen.getByRole('link', { name: 'Rest today' }));
     expect(screen.getByText(/Rest is part of training/)).toBeTruthy();
     await fireEvent.press(screen.getByRole('button', { name: 'More options' }));
@@ -126,7 +126,7 @@ describe('R3-03 all-recovering Home', () => {
     await profile(1990);
     await render(<HomeScreen />);
     expect(screen.queryByRole('header', { name: 'Everything is recovering' })).toBeNull();
-    expect(screen.getByRole('button', { name: /^Train now/ })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /^START WORKOUT/ })).toBeTruthy();
   });
 });
 
@@ -188,7 +188,7 @@ describe("After today's workout (Daniel, Phase 19)", () => {
     await render(<HomeScreen />);
     expect(screen.getByRole('header', { name: "Today's workout is done" })).toBeTruthy();
     expect(screen.queryByRole('button', { name: /^Start ·/ })).toBeNull();
-    expect(screen.getByRole('button', { name: /^Short mobility/ })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /^Stretch now/ })).toBeTruthy();
     expect(screen.queryByTestId('extra-warning')).toBeNull();
     await fireEvent.press(screen.getByRole('button', { name: 'More options' }));
     await fireEvent.press(screen.getByRole('button', { name: 'Extra workout' }));

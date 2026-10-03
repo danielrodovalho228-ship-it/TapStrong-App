@@ -5750,5 +5750,28 @@
       "reduced": "Dose reduzida para caber no dia. Siga a dose que o seu fisioterapeuta indicar.",
       "fullOn": "Dose completa: as doses do programa, sem redução. O sleeper stretch também entra na sessão."
     }
+  },
+  "plan": {
+    "myPlan": "Meu plano",
+    "myPlanHint": "Trocar de plano",
+    "calendar": "Calendário",
+    "filters": "Filtros de equipamento",
+    "eyebrow": {
+      "build": "Semana {{week}}/{{of}} · Evolução",
+      "deload": "Semana {{week}}/{{of}} · Semana leve"
+    },
+    "today": "Treino de hoje",
+    "edit": "Editar treino",
+    "share": "Compartilhar",
+    "warmup": "Aquecimento geral",
+    "cooldown": "Alongamento final",
+    "badge_one": "{{count}} série × {{reps}} reps",
+    "badge_zero": "{{count}} séries × {{reps}} reps",
+    "badge_other": "{{count}} séries × {{reps}} reps",
+    "badgeLoad": "{{dose}} × {{load}}",
+    "start": "COMEÇAR TREINO",
+    "stretchNow": "Alongar agora",
+    "restTitle": "Dia de descanso",
+    "restBody": "Recomendamos 5–10 minutos de alongamento hoje para ajudar na recuperação."
   }
 }

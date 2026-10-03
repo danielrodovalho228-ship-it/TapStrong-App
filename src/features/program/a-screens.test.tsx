@@ -69,12 +69,13 @@ async function adult(extra: Record<string, unknown> = {}) {
 }
 
 describe('Home (A1–A3)', () => {
-  it('week strip, "Week N of 4 · day name" and "N exercises · N min · kcal"', async () => {
+  it('week strip, "Week N/4 · Build" and "N exercises · N min", no kcal (Phase 31)', async () => {
     await adult();
     await render(<HomeScreen />);
     expect(screen.getByTestId('week-strip')).toBeTruthy();
-    expect(screen.getByText(/^Week \d of 4 · (Build|Lighter|Light week)/)).toBeTruthy();
-    expect(screen.getByText(/exercises? · \d+ min · about \d+ kcal/)).toBeTruthy();
+    expect(screen.getByText(/^Week \d\/4 · (Build|Light week)/)).toBeTruthy();
+    expect(screen.getByText(/^\d+ exercises? · \d+ min$/)).toBeTruthy();
+    expect(screen.queryByText(/kcal/)).toBeNull();
     await fireEvent.press(screen.getByTestId('week-2026-10-02'));
     expect(router.push).toHaveBeenCalledWith({
       pathname: '/day/[date]',

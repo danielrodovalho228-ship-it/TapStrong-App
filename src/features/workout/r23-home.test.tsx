@@ -67,8 +67,11 @@ it.each([
   expect(screen.getByRole('header', { name: "You've reached this week's limit" })).toBeTruthy();
   expect(screen.getByText(/have had their sets for this week/)).toBeTruthy();
   expect(screen.queryByText('Everything is recovering')).toBeNull();
-  // The one big action: short mobility (60+: short balance when it can be built).
-  expect(screen.getByRole('button', { name: /^Short (mobility|balance)/ })).toBeTruthy();
+  // The one big action: short mobility, "Stretch now" on the plan (Phase 31);
+  // the 60+ Home keeps short balance when it can be built.
+  expect(
+    screen.getByRole('button', { name: /^(Short (mobility|balance)|Stretch now)/ }),
+  ).toBeTruthy();
 });
 
 it('an all-recovering day keeps its own words', async () => {

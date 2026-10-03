@@ -145,10 +145,14 @@ describe('B1–B2: Home', () => {
     walk(screen.root);
     expect(order.indexOf('week-strip')).toBeGreaterThanOrEqual(0);
     expect(order.indexOf('week-strip')).toBeLessThan(order.indexOf('start-hero'));
-    const preview = screen.getByTestId('home-preview');
-    expect(within(preview).getAllByTestId('home-preview-item').length).toBeGreaterThan(0);
-    expect(within(preview).getAllByText(/^\d+ sets × \d+(–\d+)?$/).length).toBeGreaterThan(0);
-    expect(within(preview).getAllByRole('button', { name: /^Swap / }).length).toBeGreaterThan(0);
+    // Phase 31, B: big cards with the clip or poster, "N sets × 8–12 reps" and swap.
+    expect(screen.getAllByTestId('plan-card').length).toBeGreaterThan(0);
+    expect(
+      screen
+        .getAllByTestId('plan-card-badge')
+        .some((b) => /^\d+ sets × \d+(–\d+)? reps/.test(String(b.props.children))),
+    ).toBe(true);
+    expect(screen.getAllByRole('button', { name: /^Swap / }).length).toBeGreaterThan(0);
   });
 });
 

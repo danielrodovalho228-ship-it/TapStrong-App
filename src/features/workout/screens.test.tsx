@@ -373,7 +373,7 @@ describe('Pain swap (mockup 21)', () => {
     );
     await render(<HomeScreen />);
     await act(() => workouts().reset());
-    await fireEvent.press(screen.getByRole('button', { name: /^Train now/ }));
+    await fireEvent.press(screen.getByRole('button', { name: /^START WORKOUT/ }));
     const [next] = workouts().workouts;
     for (const item of next.session.items) {
       expect(byId.get(item.exerciseId)!.contraindications).not.toContain('shoulder');

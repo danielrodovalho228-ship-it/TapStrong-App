@@ -5688,5 +5688,27 @@
       "reduced": "Reduced dose to fit your day. Follow the dose your physio gives you.",
       "fullOn": "Full dose: the program’s doses, nothing reduced. The sleeper stretch is in the session too."
     }
+  },
+  "plan": {
+    "myPlan": "My plan",
+    "myPlanHint": "Change plan",
+    "calendar": "Calendar",
+    "filters": "Equipment filters",
+    "eyebrow": {
+      "build": "Week {{week}}/{{of}} · Build",
+      "deload": "Week {{week}}/{{of}} · Light week"
+    },
+    "today": "Today's workout",
+    "edit": "Edit workout",
+    "share": "Share",
+    "warmup": "General warm-up",
+    "cooldown": "Final stretch",
+    "badge_one": "{{count}} set × {{reps}} reps",
+    "badge_other": "{{count}} sets × {{reps}} reps",
+    "badgeLoad": "{{dose}} × {{load}}",
+    "start": "START WORKOUT",
+    "stretchNow": "Stretch now",
+    "restTitle": "Rest day",
+    "restBody": "We recommend 5–10 minutes of stretching today to help you recover."
   }
 }

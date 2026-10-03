@@ -6,12 +6,11 @@ import { View } from 'react-native';
 import { AppText, Button, Card, Chip, Icon, IconButton, Notice, Screen } from '@/components/ui';
 import { MonthAutoNotice } from '@/features/month/components/MonthAutoNotice';
 import type { Exercise } from '@/features/exercises/types';
-import { dayName, sessionSummary } from '@/features/program/block';
+import { dayName } from '@/features/program/block';
 import { WeekStrip } from '@/features/program/components/WeekStrip';
 import { usePlacesStore } from '@/features/equipment/store';
 import { adviceForItem, advisedReps, loadText } from '@/features/workout/loads';
 import type { LoadUnit } from '@/features/workout/types';
-import { modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import {
   generateSession,
@@ -63,10 +62,6 @@ export default function WorkoutScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { workout, byId, input, library } = useWorkout(id);
   // No generator input yet: the restrictive fallback, never adult (QA R8-02).
-  const birthMonth = useOnboardingStore((st) => st.birthMonth);
-  const birthYear = useOnboardingStore((st) => st.birthYear);
-  const mode = input?.mode ?? modeOf({ birthMonth, birthYear });
-  const weightKg = useOnboardingStore((st) => st.weightKg);
   const units = useOnboardingStore((st) => st.units);
   const { places, activeId: activePlace, use: choosePlace } = usePlacesStore();
   useSafetyRefresh(workout?.id, input, library);
@@ -210,9 +205,6 @@ export default function WorkoutScreen() {
     return doseLine(t, aim ? { ...item, reps: [aim, aim] } : item, restFor(item, prefs));
   };
 
-  // Adults and 60+ only; never teens (improvements v1, A3).
-  const kcal = sessionSummary(session, mode, weightKg).kcal;
-
   // "Only 15 min" keeps the swaps already made and can be undone (QA P2).
   const onlyFifteen = () => {
     let short = generateSession({ ...input, minutes: SHORT_MINUTES });
@@ -297,7 +289,6 @@ export default function WorkoutScreen() {
                   minutes: session.estimatedMinutes,
                   count: session.items.filter((i) => i.role === 'main').length,
                 }),
-                kcal ? t('program.kcal', { kcal }) : null,
                 session.deload ? t('workout.deload') : null,
               ]
                 .filter(Boolean)
