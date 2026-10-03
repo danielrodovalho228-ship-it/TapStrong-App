@@ -23,3 +23,6 @@ texts are theirs). Resized to 460 px wide.
 - `18-logger-unilateral.jpg` / `19-logger-next-card.jpg` — Dumbbell lunge: muscle chip coloured by group, "Weight of one dumbbell, reps of one side".
 - `20-next-preview.jpg` — Next-exercise preview: Close, header, Max Weight Lifted, all rows dimmed (no play column), Customize Exercise, grey "Start Exercise" bar at the bottom.
 - `21-logger-dumbbell.jpg` — "Weight of one dumbbell", (Last 12.5) decimal loads.
+- `22-logger-dumbbell-2.jpg` / `23-logger-unilateral-logged.jpg` — Logged rows "35 lb | 10 reps | ✓ Redo" above the current set; "Weight of one dumbbell, reps of one side".
+- `24-stretch.jpg` — Final stretch full screen: "Get ready 0:30" big countdown, play button, step dots (1/14), "Stretch 1/14", name with side, cues, white DONE STRETCHING.
+- `25-finish.jpg` — End: Close | logo | Share, "GREAT JOB!", 3 stats (exercises, weight lifted, calories — no calories for us), fun comparison card ("13 granite boulders") in a swipeable carousel, SHARE.
