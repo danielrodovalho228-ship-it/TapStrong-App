@@ -2,12 +2,15 @@ import { router } from 'expo-router';
 
 import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
+import { plannedDaysBetween } from '@/features/program/week';
+import { useTrainingDaysPerWeek } from '@/features/program/useTrainingDays';
 import { useExerciseLibrary } from '@/features/workout/hooks';
 import { useWorkoutStore } from '@/features/workout/store';
 import { clock } from '@/lib/clock';
-import { addDays, localDate } from '@/lib/dates';
+import { addDays, deviceWeekStart, localDate } from '@/lib/dates';
 
 import {
+  careWeek,
   dailyDoneToday,
   dailyLayout,
   dailyPlan,
@@ -57,7 +60,19 @@ export function useRehabRun(programId: string) {
   const before = program ? weekCounts(workouts, program, library, monday, today) : {};
   const counts = program ? weekCounts(workouts, program, library, monday, addDays(today, 1)) : {};
   const pick = run?.pick?.date === today ? run.pick.block : undefined;
-  const daily = program && run && !run.maintenance ? dailyPlan(program, today, before, pick) : null;
+  // The longer block on rest days of the main plan (Daniel, Oct 3).
+  const trainingDays = useTrainingDaysPerWeek();
+  const planned = new Set(
+    plannedDaysBetween(monday, addDays(monday, 7), deviceWeekStart(), trainingDays),
+  );
+  const careDays = program
+    ? careWeek(
+        program,
+        Array.from({ length: 7 }, (_, i) => planned.has(addDays(monday, i))),
+      )
+    : undefined;
+  const daily =
+    program && run && !run.maintenance ? dailyPlan(program, today, before, pick, careDays) : null;
   const dailyDone = dailyDoneToday(workouts, programId, today);
   const dailySession =
     program && daily

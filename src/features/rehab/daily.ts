@@ -52,6 +52,28 @@ export function weeklyTarget(program: RehabProgram, ex: ProgramExercise): number
   return ex.block === 'stretch' ? ex.daysPerWeek[1] : program.daily.perWeek;
 }
 
+/**
+ * The standard week fitted around the main plan (Daniel, Oct 3): the longer
+ * floor block (~26 min) goes on days without a main workout, the shorter
+ * standing block (~22 min, "before the workout, as a warm-up") on training
+ * days. Still 3 of each Monday to Saturday and Sunday stretches only. Floor
+ * days are picked rest days first, as far apart as possible; earliest wins a
+ * tie, so the week is deterministic. `training` is Monday first.
+ */
+export function careWeek(program: RehabProgram, training: boolean[]): (DailyBlock | 'stretch')[] {
+  const base = program.daily.week;
+  const days = base.flatMap((b, i) => (b === 'stretch' ? [] : [i]));
+  const floors = base.filter((b) => b === 'floor').length;
+  const picked: number[] = [];
+  while (picked.length < floors) {
+    const score = (d: number) =>
+      (training[d] ? -100 : 0) + Math.min(7, ...picked.map((p) => Math.abs(p - d)));
+    const free = days.filter((d) => !picked.includes(d));
+    picked.push(free.reduce((best, d) => (score(d) > score(best) ? d : best), free[0]));
+  }
+  return base.map((b, i) => (b === 'stretch' ? b : picked.includes(i) ? 'floor' : 'standing'));
+}
+
 export type DailyPlan = {
   /** The block for today, or only the stretches (Sunday, or both blocks done). */
   block: DailyBlock | 'stretch';
@@ -78,6 +100,8 @@ export function dailyPlan(
   counts: Record<string, number>,
   /** Picked by the person for today (§6.2: "o usuário pode trocar o dia"). */
   pick?: DailyBlock,
+  /** The standard week to follow (`careWeek`); the program's own by default. */
+  week: (DailyBlock | 'stretch')[] = program.daily.week,
 ): DailyPlan {
   const { daily } = program;
   const byN = new Map(program.exercises.map((x) => [x.n, x]));
@@ -91,7 +115,7 @@ export function dailyPlan(
   const slots = { standing: 0, floor: 0 };
   let block: DailyBlock | 'stretch' = 'stretch';
   for (let d = idx; d < 7; d++) {
-    const standard = daily.week[d];
+    const standard = week[d];
     if (standard === 'stretch') continue;
     const forced = d === idx && pick ? pick : null;
     const b: DailyBlock | null =

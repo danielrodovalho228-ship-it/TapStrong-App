@@ -3638,3 +3638,22 @@ Com as capturas do Gymverse que você mandou (`docs/reference/gymverse/`), ajust
 1. **Apple Saúde / Health Connect:** **Recomendado:** depois do lançamento. Precisa de módulo nativo, o que é mudança de stack.
 2. **60+:** **Recomendado:** manter a tela inicial simples própria, ou o 60+ passa a usar o "Meu plano"?
 3. **Bloco B da Fase 30** (~26 min): continua em aberto. **Recomendado:** encaixar como sessão separada de "cuidado" nos dias de descanso.
+
+## Fase 31 — Decisões do Daniel (03/10)
+
+Você seguiu as três recomendações:
+
+- **Apple Saúde / Health Connect:** fica para depois do lançamento. Continua "Em breve" em Ajustes. Nada muda no código.
+- **60+:** mantém a tela inicial simples própria. Nada muda no código.
+- **Bloco B do ombro (~26 min):** agora cai nos dias de descanso do plano principal.
+  - O Bloco A (~22 min, "faça antes do treino, como aquecimento") vai para os dias de treino.
+  - Continuam 3 de cada de segunda a sábado, e domingo só alongamentos.
+  - Se houver menos de 3 dias de descanso, o Bloco B que falta vai para o dia de treino mais longe dos outros B.
+  - A semana muda sozinha quando você troca o plano ou os dias de treino.
+  - "Fazer o Bloco B hoje", exercícios perdidos e o teto de 12 por dia funcionam como antes.
+  - Não mexi na dose.
+  - **Testes:** 3 novos (B nos dias de descanso, B espalhado quando há poucos dias livres, semana completa com 3 de cada). Agora são 1542 testes passando, com `tsc` e `lint` limpos.
+
+### Como testar
+
+Na prévia (https://tapstrong-preview.vercel.app), com um plano de 3 dias (seg, qua, sex), o cartão "Ombro hoje" mostra o Bloco A na segunda e o Bloco B na terça.

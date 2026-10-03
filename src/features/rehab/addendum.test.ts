@@ -22,7 +22,7 @@ import { join } from 'path';
 import qc from '../../../assets/prototype/qc.json';
 import catalog from '../../../supabase/seed/joint_movements.json';
 
-import { dailyLayout, dailyPlan, weekCounts, weekdayIndex } from './daily';
+import { careWeek, dailyLayout, dailyPlan, weekCounts, weekdayIndex } from './daily';
 import { buildProgramSession, SHOULDER_PROGRAM as P } from './programs';
 import { careMode, careProtection, SHOULDER_MOVES, withCare, withoutCare } from './protect';
 import type { ProgramRun } from './store';
@@ -65,13 +65,13 @@ function workoutOn(day: string, slugs: string[], program = true): WorkoutRecord 
 }
 
 /** Runs a week day by day: `skip` days do nothing; the rest do exactly the plan. */
-function simulate(skip: number[] = []) {
+function simulate(skip: number[] = [], week = P.daily.week) {
   const workouts: WorkoutRecord[] = [];
   const days: { block: string; size: number; numbers: number[]; nextWeek: number[] }[] = [];
   for (let d = 0; d < 7; d++) {
     const day = addDays(MONDAY, d);
     const counts = weekCounts(workouts, P, LIBRARY, MONDAY, day);
-    const plan = dailyPlan(P, day, counts);
+    const plan = dailyPlan(P, day, counts, undefined, week);
     const size = 5 + plan.numbers.length;
     days.push({ block: plan.block, size, numbers: plan.numbers, nextWeek: plan.nextWeek });
     if (skip.includes(d)) continue;
@@ -381,5 +381,48 @@ describe('posters before the clip (Daniel, Oct 2)', () => {
     // rx_side_lying_er: the clip failed twice, the checked images show ("só pôster").
     expect(shown('rx_side_lying_er', 'f')).toEqual({ clip: false, poster: true });
     expect(shown('rx_side_lying_er', 'm')).toEqual({ clip: false, poster: true });
+  });
+});
+
+describe('the longer block on rest days (Daniel, Oct 3)', () => {
+  // Monday first; the main plan trains Mon, Wed, Fri.
+  const MWF = [true, false, true, false, true, false, false];
+
+  it('block B (~26 min) lands on rest days, block A on training days, 3 each', () => {
+    const week = careWeek(P, MWF);
+    expect(week).toEqual([
+      'standing',
+      'floor',
+      'standing',
+      'floor',
+      'standing',
+      'floor',
+      'stretch',
+    ]);
+    const week4 = careWeek(P, [true, true, false, true, true, false, false]);
+    expect(week4.filter((b) => b === 'floor')).toHaveLength(3);
+    expect(week4.filter((b) => b === 'standing')).toHaveLength(3);
+    // Both rest days (Wed, Sat) get B; the third B is a training day.
+    expect(week4[2]).toBe('floor');
+    expect(week4[5]).toBe('floor');
+    expect(week4[6]).toBe('stretch');
+  });
+
+  it('few rest days: B is spread out; deterministic', () => {
+    const six = Array(7).fill(true);
+    const week = careWeek(P, six);
+    expect(week).toEqual(careWeek(P, six));
+    const floors = week.flatMap((b, i) => (b === 'floor' ? [i] : []));
+    expect(floors).toHaveLength(3);
+    for (let i = 1; i < floors.length; i++) expect(floors[i] - floors[i - 1]).toBeGreaterThan(1);
+  });
+
+  it('a full week on the fitted rhythm still does every exercise 3 times', () => {
+    const week = careWeek(P, [true, true, false, true, true, false, false]);
+    const { days, counts } = simulate([], week);
+    expect(days[2].block).toBe('floor');
+    expect(days[1].block).toBe('standing');
+    for (const x of STRENGTH) expect(counts[x.slug]).toBe(3);
+    for (const d of days) expect(d.size).toBeLessThanOrEqual(P.daily.cap);
   });
 });
