@@ -14,3 +14,8 @@ texts are theirs). Resized to 460 px wide.
 - `09-settings.jpg` — Settings: plan card, profile + My Account, Experience Level, Units, Smart Weight & Reps, Rest Timer, Warmup & Stretching.
 - The Before & After screenshot is not stored here: it shows personal photos.
 - `10-settings-2.jpg` / `11-settings-3.jpg` — Settings (rest): Warmup & Stretching, Sounds, Workout Reminders, Motivational Notifications, Workout Tab Display, Choose Model (Choose), Apple Health (Synced), account email (blurred), Train Smart, What's New, Help, Rate, Share, community links.
+- `12-warmup.jpg` — General warm-up full screen: video edge to edge, back button, step dots, "Exercise 1/4", name, big reps, 2 cue lines, white COMPLETE WARMUP.
+- `13-logger-start.jpg` — Logger: Exit | EXERCISE 1/6 | Exercises; Time · Volume · Reps; thumb, name, CHEST chip, notes; Max Weight Lifted (load, reps, date, Goal) + chart; yellow Exercise Warmup card with Did It; "Next: 5 sets x 8-10 reps"; set rows "Suggested 50 lb (45) | 8-10 reps (10) | ▶".
+- `14-logger-logged.jpg` — Logged sets in yellow "50 lb | 10 reps | ✓ Redo", PR messages under the row ("Highest weight ever lifted!", "New estimated 1RM!"), trophy counter on top, current set "Suggested 50 lb (Last 45) | 8-10 reps (Last 10) | Did It", "Weight of one dumbbell".
+- `15-rest-rir.jpg` — Rest circle over the rows (Tap to Skip, Rest: 1:30min, −15/+15, edit), "How many more reps could you do? 0/1/2/3+", Customize Exercise, Next Exercise card.
+- `16-logger-next.jpg` — Exercise 2/6 with the current set darker yellow and "Hit 45 lb for a new PR!".
