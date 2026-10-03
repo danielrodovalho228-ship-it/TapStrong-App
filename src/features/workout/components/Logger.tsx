@@ -288,9 +288,12 @@ export function LoggerStep({
       if (!logsOf.some((l) => l.setNo === setNo)) log(setNo, false);
   };
 
-  const big = senior ? 'display' : 'h2';
+  // 60+: bigger numbers, still on one line at 390 px.
+  const big = senior ? 'h1' : 'h2';
+  // Minors never see a load, not even one logged before (Phase 29, B4).
+  const loadText = `${load} ${unitLabel}`;
   const loadShown = (l: SetLog) =>
-    l.load ? `${convertLoad(l.load, l.unit ?? unit, unit)} ${unitLabel}` : null;
+    l.load && !minor ? `${convertLoad(l.load, l.unit ?? unit, unit)} ${unitLabel}` : null;
   const lastLog = (setNo: number) => last?.logs.find((l) => l.setNo === setNo) ?? last?.logs.at(-1);
   const goal = loaded && advice?.kind === 'load' && advice.change === 'up' ? advice.load : null;
   const records = loaded && !minor ? exerciseRecords(workouts, item.exerciseId, unit) : null;
@@ -387,13 +390,13 @@ export function LoggerStep({
                         onPress={() => setAdjust((a) => !a)}
                         testID="current-load"
                       >
-                        <AppText variant={big} style={styles.num}>
+                        <AppText variant="caption" color={colors.mutedStrong}>
                           {prev?.load
-                            ? t('workout.logger.suggested', {
-                                load: `${load} ${unitLabel}`,
-                                last: loadShown(prev),
-                              })
-                            : t('workout.logger.suggestedNoLast', { load: `${load} ${unitLabel}` })}
+                            ? t('workout.logger.suggested', { last: loadShown(prev) })
+                            : t('workout.logger.suggestedNoLast')}
+                        </AppText>
+                        <AppText variant={big} style={styles.num}>
+                          {loadText}
                         </AppText>
                       </Pressable>
                     ) : null}

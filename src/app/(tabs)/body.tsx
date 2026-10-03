@@ -187,7 +187,7 @@ const useStyles = makeStyles(() => ({
   bodyRow: { flexDirection: 'row', alignItems: 'stretch', gap: spacing.xs },
   side: { width: 76, justifyContent: 'space-around' },
   label: { minHeight: sizes.touchTarget, justifyContent: 'center' },
-  controls: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  controls: { alignItems: 'center', gap: spacing.sm },
   hint: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
   wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   shortcuts: { gap: spacing.sm },

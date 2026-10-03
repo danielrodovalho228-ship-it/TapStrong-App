@@ -3471,3 +3471,102 @@ Brief completo em `docs/phase-30-shoulder-program.md`.
 - **No app:** 279 clipes em 154 exercícios e 31 pôsteres sem clipe.
 - **Lista de refazer:** 311 clipes.
 - **Do lote 200–221, só chegaram ao GitHub os 12 vídeos do lote 9 e o band_lateral_raise.m.** Os vídeos de dumbbell_lateral_raise, dumbbell_shrug, punho, panturrilha, posterior sentado, farmer hold, Y inclinado e elevações sentadas não vieram; esses exercícios seguem só com o pôster.
+
+## Fase 31 — Fluxo do app no estilo da referência (pacotes A → F)
+
+Brief em `docs/phase-31-gymverse-flow.md`. Um commit por pacote, todos no branch `claude/sweet-ride-3drey3`.
+
+### Feito
+
+- **A — Abas e tema:**
+  - 5 abas: Treino, Exercícios, Biblioteca, Progresso, Ajustes;
+  - tema escuro por padrão (quem tinha "Automático" passa para escuro);
+  - o claro continua em Ajustes → Aparência.
+- **B — Meu plano:**
+  - cabeçalho "Meu plano ▾", calendário e filtros;
+  - faixa da semana e a linha coral "Semana 3/5 · Base";
+  - TREINO DE HOJE com a divisão e o lápis, "6 exercícios · 48 min" e compartilhar;
+  - cartões grandes com vídeo, nome, troca e "5 séries × 10–12 reps × 35 lb" (sem carga para menores);
+  - cartões de aquecimento e alongamento;
+  - COMEÇAR TREINO fixo, e o dia de descanso com "Alongar agora".
+- **C — TROCAR EXERCÍCIO:**
+  - grupos "Mesmo músculo", "Outras alternativas" e "Mais";
+  - só os equipamentos da pessoa;
+  - o (i) abre o exercício;
+  - a troca nunca aumenta o número de exercícios.
+- **D — Durante o treino:**
+  - **Aquecimento e alongamento em tela cheia:** vídeo sem texto por cima, "Exercício 1/4", nome, número grande, 2 linhas de dica e CONCLUIR AQUECIMENTO / CONCLUIR ALONGAMENTO.
+  - **Registro de séries:**
+    - Sair | EXERCÍCIO 1/6 | Exercícios, e "Sinto dor" sempre visível;
+    - Tempo · Volume · Reps (menores veem Séries no lugar de Volume);
+    - cabeçalho com o músculo; tocar abre o detalhe;
+    - "Carga máxima" com a meta tracejada (só adultos);
+    - cartão "Séries de aquecimento" com "Fiz";
+    - "Próximo: 4 séries × 10–12 reps";
+    - linha atual em coral ("Sugerido (última 8 kg)", "10–12 reps (última 12)", Fiz, "Peso da barra + anilhas");
+    - séries feitas com "Refazer" e futuras apagadas;
+    - tocar no valor abre o ajuste rápido;
+    - "Registrar todas as séries" e "Personalizar exercício" (séries/reps, aplicar ao plano inteiro ou só a este treino, Descartar/Pronto);
+    - faixa "Faça 85 lb para bater a meta…";
+    - cartão do próximo exercício.
+  - **Prévia do próximo exercício** com "Começar exercício".
+  - **Descanso** em círculo sobre o registro: −15/+15, "Toque para pular", vibra e toca no fim, tempo de Ajustes.
+  - **Menu:** "Descartar e sair" / "Cancelar".
+  - **Detalhe:** abas Orientação / Desempenho.
+  - **Fim:** Volume (adultos); o convite para salvar a conta só aparece a partir do 2º treino.
+- **E — Aba Exercícios:**
+  - o corpo do próprio perfil (sexo e faixa de idade) com pontos coral e os nomes dos músculos nos dois lados;
+  - deslizar ou o botão gira 180°;
+  - um músculo abre a grade de 2 colunas com imagem, nome, estrela e busca;
+  - atalhos Favoritos e Buscar todos; 60+ também ganham botões por área;
+  - "Criar exercício" mudou para cá;
+  - a tela de metas no corpo virou uma tela própria (`/body-goals`), com link na aba.
+- **F — Biblioteca, Progresso e Ajustes:**
+  - **Biblioteca:**
+    - filtros "Equipamentos (n)", "Músculos (n)" e "30 min ou menos";
+    - fileiras por 3/4/5/6 dias (2/3/4 no 60+) com cartões grandes e rótulos FICAR EM FORMA, GANHAR MÚSCULO, PERDER PESO, FORÇA, MOBILIDADE, MOBILIDADE 60+;
+    - fileira "Programas de cuidado" com OMBRO — REABILITAÇÃO.
+  - **Equipamentos da Biblioteca:**
+    - "Equipamentos selecionados (n)", busca e o aviso "Suas escolhas aqui não mudam o plano atual";
+    - Academia completa / pequena / Casa / Peso do corpo e "Desmarcar tudo";
+    - um botão por item, e Descartar / Pronto.
+  - **Progresso:**
+    - abas Atividade e Corpo para todas as idades;
+    - Corpo tem o mapa de recuperação (saiu da tela Treino), peso e medidas (adultos), check-in, fotos privadas e conquistas;
+    - nada de nutrição ou calorias.
+  - **Ajustes em lista:**
+    - cartão do plano, perfil, conta, experiência e unidades;
+    - "Peso e reps inteligentes" (adultos);
+    - descanso;
+    - aquecimento padrão/curto (nunca desliga);
+    - exibição da aba Treino (cartões grandes ou lista compacta);
+    - modelo do corpo, equipamentos e restrições;
+    - Apple Saúde / Health Connect como "Em breve";
+    - ajuda, avaliar (aparece quando houver link da loja), compartilhar, termos e privacidade, excluir conta.
+- **Correção vista nos prints:** um adolescente via "9 kg" em séries registradas antes com carga. Agora o registro e o descanso escondem carga para menores sempre (teste novo).
+- **Segurança:** apareceu um alerta novo no `npm audit` (`braces`, só na ferramenta do Expo, fora do app). Ficou registrado em `docs/SECURITY.md` e o `security:check` passa.
+
+### Como testar
+
+- **Prévia:** https://tapstrong-preview.vercel.app (atualiza sozinha a cada push).
+- **Prints:** `docs/screenshots/p31/` (teen, adulto e 60+ no escuro, e adulto no claro). São 15 telas por modo: plano, trocar, aquecimento, registro, descanso, menu, detalhe, fim, exercícios, grade do músculo, biblioteca, equipamentos, progresso (atividade e corpo) e ajustes. Para gerar de novo: `node scripts/shoot-p31.mjs`.
+- **Verificações:**
+  - `npm test`: 1527 testes passando;
+  - os testes da fase ficam em `src/features/p31/` (fluxo completo adulto/teen/60+, troca, descarte, sexo do vídeo, sem texto sobre o vídeo, menores sem carga, biblioteca, equipamentos, progresso, ajustes);
+  - `tsc`, `lint` e `security:check` limpos.
+
+### Ficou de fora ou diferente do brief
+
+- **Prints lado a lado com a referência:** as imagens do Gymverse não estão no repositório. Os nossos prints estão na mesma ordem do brief, prontos para montar.
+- **Séries de aquecimento:** o cartão mostra 2 partes ("10 reps barra vazia · 5 leve"), porque o gerador prevê 2 séries de aquecimento para adultos (SPEC §8), não as 4 da referência.
+- **Grade do músculo:** mostra o pôster, não o vídeo, em cada cartão; 40 vídeos tocando juntos pesariam no celular. O vídeo aparece no detalhe e no treino.
+- **Nível de força** na aba Desempenho: não entrou, porque precisa de uma tabela de referência.
+- **Apple Saúde / Health Connect:** só o item "Em breve". Fazer de verdade precisa de módulo nativo, que é mudança de stack.
+- **60+:** continua com a tela inicial simples própria, não com o novo "Meu plano".
+- **Ainda em aberto da Fase 30:** o encaixe do Bloco B (~26 min).
+
+### Perguntas (no máximo 3)
+
+1. **Prints lado a lado:** você manda as capturas do Gymverse para eu montar a comparação? **Recomendado:** sim, coloque em `docs/reference/gymverse/` com os nomes das telas; eu monto e confiro.
+2. **Apple Saúde / Health Connect:** fazemos agora? **Recomendado:** depois do lançamento. Precisa de módulo nativo e build de desenvolvimento; até lá fica "Em breve".
+3. **60+ e o novo "Meu plano":** **Recomendado:** manter a tela simples do 60+ e só aumentar os cartões. Ou o 60+ passa a usar o "Meu plano" também?

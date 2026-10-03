@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText, Button } from '@/components/ui';
 import { restFor, usePrefsStore } from '@/features/settings/store';
+import { modeOf } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { TimerRing, useNow } from '@/features/workout/components/TimerRing';
 import { currentStep, mainItems } from '@/features/workout/flow';
@@ -37,6 +38,8 @@ export default function RestScreen() {
   const workouts = useWorkoutStore((s) => s.workouts);
   const units = useOnboardingStore((s) => s.units);
   const unit = units === 'imperial' ? 'lb' : 'kg';
+  const mode = useOnboardingStore((s) => modeOf(s));
+  const minor = mode === 'child' || mode === 'teen';
   const [startedAt] = useState(() => clock.now().getTime());
   const [extra, setExtra] = useState(0);
   const now = useNow(250);
@@ -73,7 +76,10 @@ export default function RestScreen() {
       l.reps != null ? t('workout.rest.reps', { count: l.reps }) : null,
       l.seconds != null && l.reps == null ? t('workout.seconds', { value: l.seconds }) : null,
       // Shown in the person's unit, with the one rounding rule (QA R4 P2).
-      l.load ? `${convertLoad(l.load, l.unit ?? 'lb', unit)} ${t(`workout.units.${unit}`)}` : null,
+      // Minors never see a load (Phase 29, B4).
+      l.load && !minor
+        ? `${convertLoad(l.load, l.unit ?? 'lb', unit)} ${t(`workout.units.${unit}`)}`
+        : null,
     ]
       .filter(Boolean)
       .join(' · ');
@@ -193,7 +199,7 @@ export default function RestScreen() {
                 ? ` · ${t('workout.player.setOf', { n: next.setNo, total: next.item.sets })}`
                 : ''}
             </AppText>
-            {upStep > 0 ? (
+            {upStep > 0 && !minor ? (
               <AppText variant="caption" color={colors.mutedStrong}>
                 {t('workout.rest.progressUp', {
                   step: `${upStep.toLocaleString(i18n.language)} ${t(`workout.units.${unit}`)}`,

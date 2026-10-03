@@ -12,6 +12,7 @@ import { act, fireEvent, render, screen, within } from '@testing-library/react-n
 import DoneScreen from '@/app/workout/[id]/done';
 import ExitScreen from '@/app/workout/[id]/exit';
 import PlayerScreen from '@/app/workout/[id]/play';
+import RestScreen from '@/app/workout/[id]/rest';
 import { generateSession } from '@/features/generator';
 import { inputFromProfile } from '@/features/generator/fromProfile';
 import { useOnboardingStore } from '@/features/onboarding/store';
@@ -224,4 +225,27 @@ it('nothing is written over the clip on a guided step', async () => {
   expect(screen.getByTestId('guided-step')).toBeTruthy();
   const frame = screen.getByTestId('demo-frame');
   expect(within(frame).queryAllByText(/.+/)).toHaveLength(0);
+});
+
+it('a teen never sees a load, even on sets logged with one before', async () => {
+  await setUp(new Date().getFullYear() - 15);
+  const main = current().session.items.find((i) => i.role === 'main')!;
+  await act(() => {
+    for (const i of current().session.items.filter((x) => x.role === 'warmup'))
+      store().skipItem(current().id, i.id);
+    store().logSet(current().id, {
+      itemId: main.id,
+      exerciseId: main.exerciseId,
+      setNo: 1,
+      reps: 10,
+      load: 20,
+      unit: 'kg',
+    });
+  });
+  await render(<PlayerScreen />);
+  expect(screen.getByTestId('set-logged')).toBeTruthy();
+  expect(screen.queryByText(/\b(kg|lb)\b/)).toBeNull();
+  await render(<RestScreen />);
+  expect(screen.getByText('Logged')).toBeTruthy();
+  expect(screen.queryByText(/\b(kg|lb)\b/)).toBeNull();
 });
