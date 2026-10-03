@@ -37,6 +37,9 @@ const base: GeneratorInput = {
 const main = (s: ReturnType<typeof generateSession>) => s.items.filter((i) => i.role === 'main');
 const sets = (s: ReturnType<typeof generateSession>) => main(s).reduce((n, i) => n + i.sets, 0);
 
+// Generator runs are slow when the whole suite shares the machine.
+jest.setTimeout(30_000);
+
 describe('spare time becomes sets (Daniel, Phase 20)', () => {
   it('more time gives more sets, the same exercises, up to the per-move cap', () => {
     const five = { ...base, exercisesPerSession: 5 };

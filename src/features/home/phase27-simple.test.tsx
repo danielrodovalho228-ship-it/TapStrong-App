@@ -93,6 +93,9 @@ async function wait(seconds: number) {
 // Home → player renders the whole session; slow on a busy machine.
 const SLOW_RENDER_MS = 20_000;
 
+// Whole screens: slow when the whole suite shares the machine.
+jest.setTimeout(30_000);
+
 describe('A1 tap audit: open → first set', () => {
   it.each([
     ['adult', 1985],

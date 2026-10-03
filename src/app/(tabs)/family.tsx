@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
-import { AppText, Button, Card, Notice, Screen, ToggleRow } from '@/components/ui';
+import { AppText, Button, Card, Header, Notice, Screen, ToggleRow } from '@/components/ui';
 import { currentPlan } from '@/features/billing/rules';
 import { useBillingStore } from '@/features/billing/store';
 import { FamilyStrip } from '@/features/family/components/FamilyStrip';
@@ -92,10 +92,14 @@ function FamilyScreenInner() {
   };
 
   return (
-    <Screen>
-      <AppText variant="h1" accessibilityRole="header">
-        {t('family.title')}
-      </AppText>
+    <Screen
+      header={
+        <Header
+          onBack={() => (router.canGoBack() ? router.back() : router.replace('/settings'))}
+          title={t('family.title')}
+        />
+      }
+    >
       <FamilyStrip />
       {ownLogin ? <Notice>{t('family.ownLogin')}</Notice> : null}
       {pendingDeletes ? (

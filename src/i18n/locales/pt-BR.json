@@ -3595,11 +3595,12 @@
     }
   },
   "tabs": {
-    "home": "Início",
-    "body": "Corpo",
+    "home": "Treino",
+    "body": "Exercícios",
     "family": "Família",
     "progress": "Progresso",
-    "library": "Biblioteca"
+    "library": "Biblioteca",
+    "settings": "Ajustes"
   },
   "home": {
     "title": "Hoje",

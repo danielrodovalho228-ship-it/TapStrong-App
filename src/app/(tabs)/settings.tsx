@@ -22,7 +22,8 @@ import { spacing, useColors } from '@/theme';
 /**
  * Settings (QA round 1): one findable place for the account, plan and
  * restrictions, with Delete account at the bottom (App Store rule). Owner-only
- * screens keep their own parent gate.
+ * screens keep their own parent gate. A tab of its own since Phase 31; the
+ * family profiles open from here.
  */
 export default function SettingsScreen() {
   const colors = useColors();
@@ -46,14 +47,7 @@ export default function SettingsScreen() {
   };
 
   return (
-    <Screen
-      header={
-        <Header
-          onBack={() => (router.canGoBack() ? router.back() : router.replace('/home'))}
-          title={t('settings.title')}
-        />
-      }
-    >
+    <Screen header={<Header title={t('settings.title')} />}>
       <View style={styles.list}>
         <Button
           variant="secondary"
@@ -65,6 +59,13 @@ export default function SettingsScreen() {
           label={t('settings.plan')}
           onPress={() => router.push(plan === 'free' ? '/plans' : '/billing')}
         />
+        {familyAvailable() ? (
+          <Button
+            variant="secondary"
+            label={t('tabs.family')}
+            onPress={() => router.push('/family')}
+          />
+        ) : null}
         <Button
           variant="secondary"
           label={t('settings.workout')}

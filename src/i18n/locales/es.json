@@ -3592,11 +3592,12 @@
     }
   },
   "tabs": {
-    "home": "Inicio",
-    "body": "Cuerpo",
+    "home": "Entreno",
+    "body": "Ejercicios",
     "family": "Familia",
     "progress": "Progreso",
-    "library": "Biblioteca"
+    "library": "Biblioteca",
+    "settings": "Ajustes"
   },
   "home": {
     "title": "Hoy",

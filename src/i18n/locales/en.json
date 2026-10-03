@@ -3592,11 +3592,12 @@
     }
   },
   "tabs": {
-    "home": "Home",
-    "body": "Body",
+    "home": "Workout",
+    "body": "Exercises",
     "family": "Family",
     "progress": "Progress",
-    "library": "Library"
+    "library": "Library",
+    "settings": "Settings"
   },
   "home": {
     "title": "Today",

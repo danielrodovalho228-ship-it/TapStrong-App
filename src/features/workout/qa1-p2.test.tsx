@@ -8,7 +8,7 @@ import GoalsScreen from '@/app/goals';
 import PaywallScreen from '@/app/paywall';
 import PlansScreen from '@/app/plans';
 import ReferralLink from '@/app/r/[code]';
-import SettingsScreen from '@/app/settings';
+import SettingsScreen from '@/app/(tabs)/settings';
 import ShareScreen from '@/app/share';
 import { useAccountStore } from '@/features/account/store';
 import { setBilling } from '@/features/billing/provider';

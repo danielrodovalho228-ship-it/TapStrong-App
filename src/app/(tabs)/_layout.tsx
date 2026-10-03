@@ -5,12 +5,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Icon } from '@/components/ui';
 import { derive } from '@/features/onboarding/derived';
-import { familyAvailable } from '@/lib/features';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { fonts, useColors } from '@/theme';
 
 /**
- * Main tabs (mockups 06/07). The Coach tab joins with the ongoing coach chat.
+ * Main tabs (Phase 31, Gymverse-style): Workout ("My plan"), Exercises (the
+ * body), Library, Progress and Settings, icon and label. Family profiles
+ * open from Settings.
  */
 export default function TabsLayout() {
   const colors = useColors();
@@ -55,7 +56,7 @@ export default function TabsLayout() {
         name="home"
         options={{
           title: t('tabs.home'),
-          tabBarIcon: ({ color }) => <Icon name="home" color={color as string} />,
+          tabBarIcon: ({ color }) => <Icon name="dumbbell" color={color as string} />,
         }}
       />
       <Tabs.Screen
@@ -81,14 +82,14 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="family"
+        name="settings"
         options={{
-          // Family profiles are mobile-only for now (security round 1, S1-03).
-          href: familyAvailable() ? undefined : null,
-          title: t('tabs.family'),
-          tabBarIcon: ({ color }) => <Icon name="family" color={color as string} />,
+          title: t('tabs.settings'),
+          tabBarIcon: ({ color }) => <Icon name="settings" color={color as string} />,
         }}
       />
+      {/* Family profiles open from Settings (Phase 31); mobile-only (S1-03). */}
+      <Tabs.Screen name="family" options={{ href: null, title: t('tabs.family') }} />
     </Tabs>
   );
 }
