@@ -6,7 +6,7 @@ Gerado por `npm run media:redo` a partir de `assets/prototype/qc.json` e dos cli
 Sexo: f = mulher, m = homem. Nome do arquivo no Flow: `<slug>.<f|m>` (o import
 aceita `_v2`, `_v3`… para refeitos).
 
-Total: 311 clipes (188 do primeiro treino, 94 de exercícios sem nenhum sexo, 29 de exercícios com só um).
+Total: 302 clipes (164 do primeiro treino, 106 de exercícios sem nenhum sexo, 32 de exercícios com só um).
 
 ## 0. Aparecem no primeiro treino (prioridade alta)
 
@@ -19,8 +19,6 @@ Aquecimento, principais e desaquecimento que o primeiro treino pode mostrar, em 
 | brisk_walk | m | faltando, prioridade alta: aparece no primeiro treino |
 | arm_circles | f | faltando, prioridade alta: aparece no primeiro treino |
 | arm_circles | m | faltando, prioridade alta: aparece no primeiro treino |
-| band_pull_apart | f | faltando, prioridade alta: aparece no primeiro treino |
-| band_pull_apart | m | faltando, prioridade alta: aparece no primeiro treino |
 | leg_swings | f | faltando, prioridade alta: aparece no primeiro treino |
 | leg_swings | m | faltando, prioridade alta: aparece no primeiro treino |
 | hip_circles | f | faltando, prioridade alta: aparece no primeiro treino |
@@ -41,8 +39,6 @@ Aquecimento, principais e desaquecimento que o primeiro treino pode mostrar, em 
 | reverse_lunge | m | faltando, prioridade alta: aparece no primeiro treino |
 | leg_press | f | faltando, prioridade alta: aparece no primeiro treino |
 | leg_press | m | faltando, prioridade alta: aparece no primeiro treino |
-| dumbbell_romanian_deadlift | f | faltando, prioridade alta: aparece no primeiro treino |
-| dumbbell_romanian_deadlift | m | faltando, prioridade alta: aparece no primeiro treino |
 | doorway_chest_stretch | f | faltando, prioridade alta: aparece no primeiro treino |
 | doorway_chest_stretch | m | faltando, prioridade alta: aparece no primeiro treino |
 | overhead_triceps_stretch | f | faltando, prioridade alta: aparece no primeiro treino |
@@ -61,28 +57,16 @@ Aquecimento, principais e desaquecimento que o primeiro treino pode mostrar, em 
 | towel_lat_pulldown | m | faltando, prioridade alta: aparece no primeiro treino |
 | single_arm_band_incline_press | f | faltando, prioridade alta: aparece no primeiro treino |
 | single_arm_band_incline_press | m | faltando, prioridade alta: aparece no primeiro treino |
-| band_overhead_press | f | faltando, prioridade alta: aparece no primeiro treino |
-| band_overhead_press | m | faltando, prioridade alta: aparece no primeiro treino |
-| band_lat_pulldown | f | faltando, prioridade alta: aparece no primeiro treino |
-| band_lat_pulldown | m | faltando, prioridade alta: aparece no primeiro treino |
 | seated_band_pulldown | f | faltando, prioridade alta: aparece no primeiro treino |
 | seated_band_pulldown | m | faltando, prioridade alta: aparece no primeiro treino |
-| dumbbell_floor_fly | f | faltando, prioridade alta: aparece no primeiro treino |
-| dumbbell_floor_fly | m | faltando, prioridade alta: aparece no primeiro treino |
-| bridge_floor_press | f | faltando, prioridade alta: aparece no primeiro treino |
-| bridge_floor_press | m | faltando, prioridade alta: aparece no primeiro treino |
 | single_arm_bridge_floor_press | f | faltando, prioridade alta: aparece no primeiro treino |
 | single_arm_bridge_floor_press | m | faltando, prioridade alta: aparece no primeiro treino |
 | incline_machine_press | f | faltando, prioridade alta: aparece no primeiro treino |
 | incline_machine_press | m | faltando, prioridade alta: aparece no primeiro treino |
 | machine_chest_fly | f | faltando, prioridade alta: aparece no primeiro treino |
 | machine_chest_fly | m | faltando, prioridade alta: aparece no primeiro treino |
-| cable_chest_fly | f | faltando, prioridade alta: aparece no primeiro treino |
-| cable_chest_fly | m | faltando, prioridade alta: aparece no primeiro treino |
 | single_arm_high_to_low_cable_fly | f | faltando, prioridade alta: aparece no primeiro treino |
 | single_arm_high_to_low_cable_fly | m | faltando, prioridade alta: aparece no primeiro treino |
-| assisted_pull_up_machine | f | faltando, prioridade alta: aparece no primeiro treino |
-| assisted_pull_up_machine | m | faltando, prioridade alta: aparece no primeiro treino |
 | single_arm_cable_pulldown | f | faltando, prioridade alta: aparece no primeiro treino |
 | single_arm_cable_pulldown | m | faltando, prioridade alta: aparece no primeiro treino |
 | single_leg_glute_bridge | f | faltando, prioridade alta: aparece no primeiro treino |
@@ -99,8 +83,6 @@ Aquecimento, principais e desaquecimento que o primeiro treino pode mostrar, em 
 | dumbbell_seated_calf_raise | m | só pôster: o Veo falhou 2 vezes; a imagem foi aprovada e aparece no app; prioridade alta: aparece no primeiro treino |
 | dumbbell_suitcase_carry | f | faltando, prioridade alta: aparece no primeiro treino |
 | dumbbell_suitcase_carry | m | faltando, prioridade alta: aparece no primeiro treino |
-| dumbbell_dead_bug | f | faltando, prioridade alta: aparece no primeiro treino |
-| dumbbell_dead_bug | m | faltando, prioridade alta: aparece no primeiro treino |
 | machine_leg_extension | f | faltando, prioridade alta: aparece no primeiro treino |
 | machine_leg_extension | m | faltando, prioridade alta: aparece no primeiro treino |
 | seated_leg_curl_machine | f | faltando, prioridade alta: aparece no primeiro treino |
@@ -109,16 +91,10 @@ Aquecimento, principais e desaquecimento que o primeiro treino pode mostrar, em 
 | hip_abduction_machine | m | faltando, prioridade alta: aparece no primeiro treino |
 | hip_adduction_machine | f | faltando, prioridade alta: aparece no primeiro treino |
 | hip_adduction_machine | m | faltando, prioridade alta: aparece no primeiro treino |
-| barbell_hip_thrust | f | faltando, prioridade alta: aparece no primeiro treino |
-| barbell_hip_thrust | m | faltando, prioridade alta: aparece no primeiro treino |
 | seated_calf_raise_machine | f | faltando, prioridade alta: aparece no primeiro treino |
 | seated_calf_raise_machine | m | faltando, prioridade alta: aparece no primeiro treino |
-| cable_woodchop | f | faltando, prioridade alta: aparece no primeiro treino |
-| cable_woodchop | m | faltando, prioridade alta: aparece no primeiro treino |
 | machine_ab_crunch | f | faltando, prioridade alta: aparece no primeiro treino |
 | machine_ab_crunch | m | faltando, prioridade alta: aparece no primeiro treino |
-| cable_pallof_press | f | faltando, prioridade alta: aparece no primeiro treino |
-| cable_pallof_press | m | faltando, prioridade alta: aparece no primeiro treino |
 | wu_seated_shoulder_rolls | f | faltando, prioridade alta: aparece no primeiro treino |
 | wu_seated_shoulder_rolls | m | faltando, prioridade alta: aparece no primeiro treino |
 | wu_seated_reach_ups | f | faltando, prioridade alta: aparece no primeiro treino |
@@ -218,6 +194,8 @@ Aquecimento, principais e desaquecimento que o primeiro treino pode mostrar, em 
 | overhead_dumbbell_triceps_extension | m | faltando: programa de ombro (Fase 30), exercício 11 |
 | dumbbell_wrist_curl | f | só imagem: veio a imagem de partida, sem vídeo |
 | dumbbell_wrist_curl | m | só imagem: veio a imagem de partida, sem vídeo |
+| dumbbell_romanian_deadlift | f | suspeito: brilho branco forte no quadril e na coxa (3º quadro) |
+| dumbbell_romanian_deadlift | m | suspeito: quase não dobra o quadril: fica em pé, inclina só a cabeça e o halter sobe como rosca |
 | wall_tibialis_raise | f | suspeito: a parede apareceu, mas chuta a perna; deveria só erguer as pontas dos pés com as costas na parede |
 | wall_tibialis_raise | m | suspeito: a parede apareceu, mas chuta a perna; deveria só erguer as pontas dos pés com as costas na parede |
 | band_external_rotation | f | suspeito: no 2º quadro o braço estica reto e passa pelo elástico (cotovelo sai dos 90°) |
@@ -240,6 +218,8 @@ Aquecimento, principais e desaquecimento que o primeiro treino pode mostrar, em 
 | band_wrist_curl | m | só imagem: veio a imagem de partida, sem vídeo |
 | band_wrist_rotation | f | só imagem: veio a imagem de partida, sem vídeo |
 | band_wrist_rotation | m | só imagem: veio a imagem de partida, sem vídeo |
+| dumbbell_floor_fly | f | suspeito: os braços cruzam por cima do peito: não abrem para os lados até o chão |
+| dumbbell_floor_fly | m | suspeito: os halteres quase não se mexem: braços ficam esticados para cima |
 | dumbbell_lateral_raise | f | só imagem: veio a imagem de partida, sem vídeo |
 | dumbbell_lateral_raise | m | só imagem: veio a imagem de partida, sem vídeo |
 | seated_dumbbell_lateral_raise | f | só imagem: veio a imagem de partida, sem vídeo |
@@ -252,6 +232,8 @@ Aquecimento, principais e desaquecimento que o primeiro treino pode mostrar, em 
 | incline_prone_y_raise | m | imagem reprovada: cor do ombro pintada sobre a camiseta |
 | dumbbell_wrist_extension | f | só imagem: veio a imagem de partida, sem vídeo |
 | dumbbell_wrist_extension | m | só imagem: veio a imagem de partida, sem vídeo |
+| assisted_pull_up_machine | f | suspeito: fica pendurada com os braços esticados o tempo todo: não puxa o corpo para cima |
+| assisted_pull_up_machine | m | suspeito: fica pendurado com os braços esticados o tempo todo: não puxa o corpo para cima |
 | short_arc_quad | f | suspeito: levanta a perna inteira até a vertical; deveria só esticar o joelho sobre o rolo |
 | short_arc_quad | m | recusado pelo Flow: veio só a imagem de partida |
 | seated_toe_raise | f | suspeito: levanta a perna inteira em vez de só as pontas dos pés |
@@ -264,6 +246,12 @@ Aquecimento, principais e desaquecimento que o primeiro treino pode mostrar, em 
 | band_seated_calf_press | m | só imagem: veio a imagem de partida, sem vídeo |
 | band_glute_bridge | f | suspeito: levanta um braço para o teto no meio da ponte |
 | band_glute_bridge | m | suspeito: chama/brilho na cabeça e o tronco sobe como prancha invertida |
+| dumbbell_dead_bug | f | suspeito: as duas pernas sobem e descem juntas: no dead bug desce uma perna de cada vez |
+| dumbbell_dead_bug | m | suspeito: brilho branco na barriga e as pernas ficam esticadas no chão |
+| barbell_hip_thrust | f | suspeito: sentada na ponta do banco, segura a barra no peito e agacha: não é elevação de quadril com as costas no banco e a barra no quadril |
+| barbell_hip_thrust | m | suspeito: segura uma anilha no peito e senta/levanta do banco: não apoia as costas no banco nem a barra no quadril |
+| cable_pallof_press | f | suspeito: abre os dois braços para os lados (2º quadro): o Pallof é empurrar a alça para a frente sem girar |
+| cable_pallof_press | m | suspeito: abre os braços como crucifixo: não empurra a alça para a frente |
 | rx_side_lying_er | f | só pôster: o Veo falhou 2 vezes; a imagem foi aprovada e aparece no app |
 | rx_side_lying_er | m | só pôster: o Veo falhou 2 vezes; a imagem foi aprovada e aparece no app |
 | su_seated_reverse_self_curl | f | feito no Flow (refazer 1), mas não chegou no upload do GitHub (parou em sl_seated_knee_circles.f) |
@@ -320,6 +308,9 @@ Aquecimento, principais e desaquecimento que o primeiro treino pode mostrar, em 
 | band_close_grip_press | f | suspeito: aparece texto com nomes de músculos no vídeo |
 | band_lateral_raise | m | suspeito: cor no peito, que não trabalha na elevação lateral (a versão da mulher acende só os ombros) |
 | band_high_pull | m | suspeito: cor no peito, que não trabalha na remada alta |
+| band_lat_pulldown | m | suspeito: elástico vai do alto do poste até o chão e o braço desce esticado na frente: não puxa os cotovelos para as costelas |
+| bridge_floor_press | m | suspeito: mancha de luz branca no peito a partir do 3º quadro |
+| cable_chest_fly | f | suspeito: quase não fecha os braços: o crucifixo fica curto, de perfil |
 | partial_sit_to_stand | f | suspeito: aparece o texto "5cm / 6cm" no vídeo |
 | bal_seated_head_turns | m | suspeito: gira o tronco inteiro e a imagem fica transparente (fantasma) |
 | rx_suitcase_hold | f | suspeito: no meio dobra o braço e levanta o halter (é isometria) |

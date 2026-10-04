@@ -2,33 +2,30 @@
 
 Gerado por `python3 scripts/build-launch-sheet.py`. Não edite à mão.
 
-232 clipes em 119 exercícios. Primeiro os do 1º treino, depois os do ombro.
+223 clipes em 116 exercícios. Primeiro os do 1º treino, depois os do ombro.
 
 Formato: slug | sexo (f/m/fm) | prioridade | tem imagem de partida? (sim/não/só f/só m) | motivo
 
 ```
 arm_circles | fm | 1º treino | não | faltando
-assisted_pull_up_machine | fm | 1º treino | não | faltando
+assisted_pull_up_machine | fm | 1º treino | sim | f: reprovado: fica pendurada com os braços esticados o tempo todo: não puxa o corpo para cima; m: reprovado: fica pendurado com os braços esticados o tempo todo: não puxa o corpo para cima
 bal_seated_head_turns | m | 1º treino | sim | reprovado: gira o tronco inteiro e a imagem fica transparente (fantasma)
 band_chest_fly | f | 1º treino | sim | reprovado: o top some: o peito aparece pintado, com mamilos (corpo sem roupa)
-band_lat_pulldown | fm | 1º treino | não | faltando
-band_overhead_press | fm | 1º treino | não | faltando
-band_pull_apart | fm | 1º treino | não | faltando
-barbell_hip_thrust | fm | 1º treino | não | faltando
+band_lat_pulldown | m | 1º treino | sim | reprovado: elástico vai do alto do poste até o chão e o braço desce esticado na frente: não puxa os cotovelos para as costelas
+barbell_hip_thrust | fm | 1º treino | sim | f: reprovado: sentada na ponta do banco, segura a barra no peito e agacha: não é elevação de quadril com as costas no banco e a barra no quadril; m: reprovado: segura uma anilha no peito e senta/levanta do banco: não apoia as costas no banco nem a barra no quadril
 box_breathing | fm | 1º treino | não | faltando
-bridge_floor_press | fm | 1º treino | não | faltando
+bridge_floor_press | m | 1º treino | sim | reprovado: mancha de luz branca no peito a partir do 3º quadro
 brisk_walk | fm | 1º treino | não | faltando
-cable_chest_fly | fm | 1º treino | não | faltando
-cable_pallof_press | fm | 1º treino | não | faltando
-cable_woodchop | fm | 1º treino | não | faltando
+cable_chest_fly | f | 1º treino | sim | reprovado: quase não fecha os braços: o crucifixo fica curto, de perfil
+cable_pallof_press | fm | 1º treino | sim | f: reprovado: abre os dois braços para os lados (2º quadro): o Pallof é empurrar a alça para a frente sem girar; m: reprovado: abre os braços como crucifixo: não empurra a alça para a frente
 cat_cow | fm | 1º treino | não | faltando
 cw_arm_swing_walk | fm | 1º treino | não | faltando
 cw_easy_bike | fm | 1º treino | não | faltando
 cw_seated_ankle_pumps | fm | 1º treino | não | faltando
 doorway_chest_stretch | fm | 1º treino | não | faltando
-dumbbell_dead_bug | fm | 1º treino | não | faltando
-dumbbell_floor_fly | fm | 1º treino | não | faltando
-dumbbell_romanian_deadlift | fm | 1º treino | não | faltando
+dumbbell_dead_bug | fm | 1º treino | sim | f: reprovado: as duas pernas sobem e descem juntas: no dead bug desce uma perna de cada vez; m: reprovado: brilho branco na barriga e as pernas ficam esticadas no chão
+dumbbell_floor_fly | fm | 1º treino | sim | f: reprovado: os braços cruzam por cima do peito: não abrem para os lados até o chão; m: reprovado: os halteres quase não se mexem: braços ficam esticados para cima
+dumbbell_romanian_deadlift | fm | 1º treino | sim | f: reprovado: brilho branco forte no quadril e na coxa (3º quadro); m: reprovado: quase não dobra o quadril: fica em pé, inclina só a cabeça e o halter sobe como rosca
 dumbbell_seated_calf_raise | fm | 1º treino | sim | faltando
 dumbbell_shoulder_press | fm | 1º treino | não | faltando
 dumbbell_split_squat | fm | 1º treino | não | faltando
