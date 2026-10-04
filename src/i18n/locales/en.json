@@ -177,7 +177,9 @@
     "footnote": "We use your age only to keep training safe for you.",
     "locked": "Only a parent can change the birth date on a child or teen profile.",
     "changeParent": "Change (parent)",
-    "parentFirst": "My profile first"
+    "parentFirst": "My profile first",
+    "careShoulder": "I have a frozen or painful shoulder",
+    "careShoulderHint": "We'll open the shoulder program (mobility and strength) when you finish."
   },
   "mainGoals": {
     "look": "Look better",

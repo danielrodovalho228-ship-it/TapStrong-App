@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { normalizeEquipment, presetOf } from '@/features/equipment/catalog';
-import { finishOnboarding } from '@/features/onboarding/finish';
+import { afterOnboarding, finishOnboarding } from '@/features/onboarding/finish';
 import { Redirect, router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
@@ -97,7 +97,7 @@ export default function ProfileScreen() {
   const finish = () => {
     finishOnboarding();
     // 60+ lands on the simple home, never on adult screens (QA B-07).
-    router.replace(derived.mode === 'senior' ? '/home' : '/body-goals');
+    router.replace(afterOnboarding(derived.mode === 'senior' ? '/home' : '/body-goals'));
   };
 
   return (

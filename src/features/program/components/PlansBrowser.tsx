@@ -129,6 +129,47 @@ export function PlansBrowser({ mode }: { mode: AppMode }) {
 
   return (
     <View style={styles.wrap}>
+      {/* Care programs first (Daniel, Oct 4): the shoulder program one tap away. */}
+      {mode !== 'child' ? (
+        <View style={styles.section}>
+          <AppText variant="label" style={styles.caps} accessibilityRole="header">
+            {t('plans.care')}
+          </AppText>
+          <View style={styles.rowCards}>
+            {REHAB_PROGRAMS.map((p) => (
+              <Pressable
+                key={p.id}
+                accessibilityRole="button"
+                accessibilityLabel={t(
+                  `rehab.programs.${p.id as 'shoulder_mobility_strength'}.title`,
+                )}
+                onPress={() => router.push({ pathname: '/rehab/[id]', params: { id: p.id } })}
+                testID="care-card"
+              >
+                <View style={styles.big}>
+                  <Poster slug={REHAB_POSTER} height={230} />
+                  <View style={styles.overlay}>
+                    <View style={styles.accentBar} />
+                    <View style={styles.flex}>
+                      <AppText variant="h2" color={colors.accentText} style={styles.goalTitle}>
+                        {t('plans.labels.shoulderRehab')}
+                      </AppText>
+                      <AppText
+                        variant="bodyStrong"
+                        color={colors.onSurfaceRaised}
+                        numberOfLines={2}
+                      >
+                        {t(`rehab.programs.${p.id as 'shoulder_mobility_strength'}.body`)}
+                      </AppText>
+                    </View>
+                  </View>
+                </View>
+              </Pressable>
+            ))}
+          </View>
+        </View>
+      ) : null}
+
       <ScrollView
         horizontal
         contentContainerStyle={styles.chips}
@@ -191,46 +232,6 @@ export function PlansBrowser({ mode }: { mode: AppMode }) {
           </View>
         );
       })}
-
-      {mode !== 'child' ? (
-        <View style={styles.section}>
-          <AppText variant="label" style={styles.caps} accessibilityRole="header">
-            {t('plans.care')}
-          </AppText>
-          <View style={styles.rowCards}>
-            {REHAB_PROGRAMS.map((p) => (
-              <Pressable
-                key={p.id}
-                accessibilityRole="button"
-                accessibilityLabel={t(
-                  `rehab.programs.${p.id as 'shoulder_mobility_strength'}.title`,
-                )}
-                onPress={() => router.push({ pathname: '/rehab/[id]', params: { id: p.id } })}
-                testID="care-card"
-              >
-                <View style={styles.big}>
-                  <Poster slug={REHAB_POSTER} height={230} />
-                  <View style={styles.overlay}>
-                    <View style={styles.accentBar} />
-                    <View style={styles.flex}>
-                      <AppText variant="h2" color={colors.accentText} style={styles.goalTitle}>
-                        {t('plans.labels.shoulderRehab')}
-                      </AppText>
-                      <AppText
-                        variant="bodyStrong"
-                        color={colors.onSurfaceRaised}
-                        numberOfLines={2}
-                      >
-                        {t(`rehab.programs.${p.id as 'shoulder_mobility_strength'}.body`)}
-                      </AppText>
-                    </View>
-                  </View>
-                </View>
-              </Pressable>
-            ))}
-          </View>
-        </View>
-      ) : null}
     </View>
   );
 }

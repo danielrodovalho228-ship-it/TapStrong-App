@@ -177,7 +177,9 @@
     "footnote": "Usamos tu edad solo para que entrenes de forma segura.",
     "locked": "Solo un padre o una madre puede cambiar la fecha de nacimiento en un perfil de niño o adolescente.",
     "changeParent": "Cambiar (adulto)",
-    "parentFirst": "Crear primero mi perfil"
+    "parentFirst": "Crear primero mi perfil",
+    "careShoulder": "Tengo el hombro congelado o con dolor",
+    "careShoulderHint": "Abriremos el programa de hombro (movilidad y fuerza) al terminar."
   },
   "mainGoals": {
     "look": "Verme mejor",

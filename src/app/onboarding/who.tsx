@@ -12,6 +12,7 @@ import {
   Screen,
   Select,
   TextLink,
+  ToggleRow,
 } from '@/components/ui';
 import { useAccountStore } from '@/features/account/store';
 import { ParentGate } from '@/features/family/ParentGate';
@@ -42,6 +43,7 @@ export default function WhoScreen() {
   const { t } = useTranslation();
   const { edit } = useLocalSearchParams<{ edit?: string }>();
   const stored = useOnboardingStore();
+  const careShoulder = stored.careShoulder;
   const setMode = useAppModeStore((s) => s.setMode);
 
   const [who, setWho] = useState<Who>(stored.who ?? 'me');
@@ -248,6 +250,22 @@ export default function WhoScreen() {
           </View>
         )}
       </View>
+
+      {/* A straight way into the shoulder program (Daniel, Oct 4). */}
+      {!edit ? (
+        <View style={styles.section}>
+          <ToggleRow
+            label={t('who.careShoulder')}
+            value={!!careShoulder}
+            onChange={(v) => useOnboardingStore.getState().update({ careShoulder: v })}
+          />
+          {careShoulder ? (
+            <AppText variant="caption" color={colors.mutedStrong}>
+              {t('who.careShoulderHint')}
+            </AppText>
+          ) : null}
+        </View>
+      ) : null}
 
       {needsParent && earlierShown ? (
         <>

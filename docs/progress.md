@@ -3795,3 +3795,16 @@ Com o domínio `tapstrong.app` ligado ao projeto na Vercel, troque o começo par
 - **Testes:**
   - 1561 testes passando, incluindo o build interno (biblioteca, vídeos remotos, selo);
   - `tsc`, `lint`, `security:check` e `bundle:check` passando.
+
+## Android para a Allinne: programa de ombro (04/10)
+
+- **Atalhos:**
+  - na aba Biblioteca, o card "Ombro — reabilitação" agora é o primeiro;
+  - no primeiro passo do cadastro há "Tenho ombro congelado ou dor no ombro"; ligado, o app abre o programa de ombro ao terminar (uma vez).
+- **Perfil EAS `apk`:** distribuição interna, instala direto no Android; é o mesmo conteúdo do `internal`.
+  - Os 18 exercícios do ombro entram mesmo sem vídeo (teste novo: as sessões A, B e C montam sem faltar nada).
+  - Não precisa de nenhuma variável: sem Supabase, tudo fica no celular.
+  - O programa de ombro não tem limite no plano grátis.
+- **`env:check`:** no `internal`, só avisa quando falta chave, para o `.aab` do teste interno do Play não travar. A produção continua exigindo tudo.
+- **Passo a passo e respostas do Play Console:** `docs/play-console.md`.
+- **Testes:** 1563 passando.

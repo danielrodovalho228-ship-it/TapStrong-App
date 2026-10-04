@@ -33,6 +33,8 @@ export type ChatTurn = { userText?: string; reply?: string };
 
 export type OnboardingData = {
   locale?: SupportedLocale;
+  /** "I have a frozen or painful shoulder" on the first step: the shoulder program opens when onboarding ends (Daniel, Oct 4). */
+  careShoulder?: boolean;
   units: Units;
   who?: Who;
   birthMonth?: number;

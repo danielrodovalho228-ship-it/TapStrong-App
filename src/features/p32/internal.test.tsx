@@ -15,6 +15,8 @@ import launch from '../../../supabase/seed/launch_set.json';
 import uploaded from '../../../assets/media/uploaded.json';
 import { devLibrary } from '../exercises/library';
 import { demoVideo } from '../exercises/videos';
+import { afterOnboarding } from '../onboarding/finish';
+import { buildProgramSession, SHOULDER_PROGRAM } from '../rehab/programs';
 
 jest.setTimeout(30_000);
 jest.mock('expo-router', () => ({
@@ -78,4 +80,23 @@ it('a small "Test build" badge in Settings, only in the internal build', async (
   process.env.EXPO_PUBLIC_APP_VARIANT = 'internal';
   await render(<SettingsScreen />);
   expect(screen.getByText('Test build')).toBeTruthy();
+});
+
+it('internal: all 18 shoulder exercises are in, so the program starts (no video needed)', () => {
+  release('internal');
+  const library = devLibrary();
+  for (const key of ['A', 'B', 'C'] as const) {
+    const s = buildProgramSession(SHOULDER_PROGRAM, key, { library, affected: 'left', week: 1 });
+    expect(s.missing).toEqual([]);
+    expect(s.items.length).toBeGreaterThan(0);
+  }
+});
+
+it('"I have a frozen or painful shoulder" opens the shoulder program after onboarding, once', async () => {
+  await act(() => useOnboardingStore.getState().update({ careShoulder: true }));
+  expect(afterOnboarding('/home')).toEqual({
+    pathname: '/rehab/[id]',
+    params: { id: 'shoulder_mobility_strength' },
+  });
+  expect(afterOnboarding('/home')).toBe('/home');
 });

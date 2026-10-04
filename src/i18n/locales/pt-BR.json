@@ -177,7 +177,9 @@
     "footnote": "Usamos sua idade só para manter o treino seguro para você.",
     "locked": "Só o pai ou a mãe pode mudar a data de nascimento num perfil de criança ou adolescente.",
     "changeParent": "Mudar (adulto)",
-    "parentFirst": "Criar meu perfil primeiro"
+    "parentFirst": "Criar meu perfil primeiro",
+    "careShoulder": "Tenho ombro congelado ou dor no ombro",
+    "careShoulderHint": "Abrimos o programa de ombro (mobilidade e força) quando você terminar."
   },
   "mainGoals": {
     "look": "Ficar com um visual melhor",

@@ -72,6 +72,16 @@ else if (support && PERSONAL.test(support))
   invalid.push(['EXPO_PUBLIC_SUPPORT_EMAIL', 'must be a business address, not a personal mailbox']);
 for (const name of OPTIONAL)
   if (!process.env[name]?.trim()) console.log(`optional, not set: ${name}`);
+// Internal test builds run without a backend too (everything stays on the
+// phone), so a missing key only warns there (Daniel, Oct 4).
+if (internal && missing.length) {
+  console.warn('Internal test build without:');
+  for (const [name, why] of missing) console.warn(`  ${name}  (${why})`);
+  console.warn(
+    'It still builds: data stays on the phone; set them later for sync, videos and purchases.',
+  );
+  process.exit(0);
+}
 if (missing.length) {
   console.error(
     `Missing required EXPO_PUBLIC_* variables for ${internal ? 'the internal test' : 'a production'} build:`,

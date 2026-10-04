@@ -1,5 +1,8 @@
 # Versão de teste interno (TestFlight e teste interno do Google Play)
 
+> **Android hoje, sem loja:** perfil `apk`. Passo a passo e respostas do Play Console em `docs/play-console.md`.
+
+
 Perfil EAS `internal` (Daniel, 03/10).
 
 É um build de verdade (release), só para você e quem você convidar. Ele **não vai para a loja pública**.
@@ -31,7 +34,7 @@ O perfil `production` continua travado: sem rascunhos e sem clipes de protótipo
 | `EXPO_PUBLIC_TURNSTILE_SITE_KEY` | Cloudflare → Turnstile → seu site → Site key |
 | `EXPO_PUBLIC_TURNSTILE_BASE_URL` (recomendado) | `https://tapstrong-preview.vercel.app/` enquanto o domínio não existir. Coloque esse host na lista de domínios do site no Turnstile. |
 
-Os links de Termos, Privacidade, suporte e convite **não são obrigatórios** no `internal`. Se você puser, eles já funcionam.
+Os links de Termos, Privacidade, suporte e convite **não são obrigatórios** no `internal`. Até as chaves acima são opcionais nele: sem elas o build sai e tudo fica no celular (o `env:check` só avisa). Se você puser, eles já funcionam.
 
 **Assinatura em sandbox:**
 - **iPhone:** no TestFlight, a compra já é de teste, sem cobrança.
