@@ -113,12 +113,17 @@ export type GeneratorInput = {
    * Internal (Phase 30 addendum §6.4): what a running care program added to
    * `hardRestrictions` and `movementLimits`, so its own sessions can drop it.
    */
-  care?: { hard: string[]; limits: MovementLimit[]; cap?: boolean };
+  care?: { hard: string[]; limits: MovementLimit[]; cap?: boolean; behindOk?: boolean };
   /**
    * The shoulder stays at or below 90° and never goes behind the back (Phase
    * 32 A1): set while the shoulder program runs; shoulder pain sets it too.
    */
   shoulderCap?: boolean;
+  /**
+   * In the shoulder program's own session after the physio's "Yes" (Phase 32
+   * answer 1): behind the back is allowed again; overhead never.
+   */
+  behindBackOk?: boolean;
   /** Shorter pain-free range allowed (default true; recovery phases 1–2 set false). */
   allowReducedRange?: boolean;
   /** A Repair recovery session: recovery-only exercises may be used. */

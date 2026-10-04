@@ -9,11 +9,20 @@ import type { Exercise } from '../exercises/types';
  */
 export const BEYOND_SHOULDER = ['overhead', 'reach_behind'] as const;
 
-export function aboveOrBehind(e: Pick<Exercise, 'joints'>): boolean {
+export function aboveOrBehind(
+  e: Pick<Exercise, 'joints'>,
+  /**
+   * Behind the back is allowed (Daniel, Phase 32 answer 1): only in the
+   * shoulder program's own sessions, after the physio said "Yes". Overhead
+   * never.
+   */
+  o: { behindOk?: boolean } = {},
+): boolean {
+  const beyond = o.behindOk ? ['overhead'] : (BEYOND_SHOULDER as readonly string[]);
   return e.joints.some(
     (j) =>
       j.joint === 'shoulder' &&
-      ((BEYOND_SHOULDER as readonly string[]).includes(j.movement) ||
+      (beyond.includes(j.movement) ||
         ((j.movement === 'flexion' || j.movement === 'abduction') && j.range === 'full')),
   );
 }

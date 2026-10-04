@@ -5961,9 +5961,10 @@
     "streakDone_zero": "Ombro: {{count}} dias seguidos",
     "rom": {
       "title": "Amplitude da semana",
-      "hint": "Até onde você levantou o braço hoje, para a frente? Toque no ponto. Só até onde não dói.",
+      "hint": "Até onde você levantou o braço hoje, para a frente? Toque no ponto.",
       "ask": "Toque até onde chegou",
-      "value": "{{degrees}}°"
+      "value": "{{degrees}}°",
+      "noPain": "Só até onde não dói. Nunca force."
     }
   },
   "plan": {

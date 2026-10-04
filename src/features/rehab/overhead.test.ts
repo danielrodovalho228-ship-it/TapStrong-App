@@ -1,10 +1,11 @@
 import seed from '../../../supabase/seed/exercises.json';
 import { fromSeed, type SeedExercise } from '../exercises/library';
 import type { Exercise } from '../exercises/types';
-import { generateSession, getAlternatives, type GeneratorInput } from '../generator';
+import { blockReason, generateSession, getAlternatives, type GeneratorInput } from '../generator';
 import { rangeFor } from '../generator/filters';
 import { GYM_EQUIPMENT_OPTIONS, HOME_EQUIPMENT_OPTIONS } from '../onboarding/options';
-import { workoutInput } from '../workout/safety';
+import { safetyRefresh, workoutInput } from '../workout/safety';
+import type { WorkoutRecord } from '../workout/types';
 import { addDays } from '@/lib/dates';
 
 import { afterLayout, dailyLayout, dailyPlan, sleeperLayout } from './daily';
@@ -95,19 +96,55 @@ describe('the shoulder program never goes above the shoulder or behind the back'
     expect(P.exercises.some((x) => x.slug === 'overhead_dumbbell_triceps_extension')).toBe(false);
   });
 
-  it('the swap sheet inside a program session offers nothing overhead or behind the back', () => {
-    for (const r of [run(), run({ cleared: true })]) {
+  it('the swap sheet inside a program session: never overhead; behind the back only after "Yes"', () => {
+    for (const r of [run(), run({ cleared: false }), run({ cleared: true })]) {
+      const behindOk = r.cleared === true;
       const input = withCare(base, careProtection({ [P.id]: r }, MONDAY));
       for (const key of ['A', 'B', 'C'] as const) {
-        const session = buildProgramSession(P, key, opts());
+        const session = buildProgramSession(P, key, { ...opts(), behindOk });
         const check = workoutInput({ kind: 'repair', session }, input);
         for (const item of session.items) {
           const offered = getAlternatives(session, item.id, check, { limit: 999 });
-          const bad = offered.filter(aboveOrBehind).map((e) => e.slug);
+          const bad = offered.filter((e) => aboveOrBehind(e, { behindOk })).map((e) => e.slug);
           expect([key, item.id, bad]).toEqual([key, item.id, []]);
         }
       }
     }
+  });
+});
+
+describe('stretch 3 (stick behind the back) comes back only with the physio\'s "Yes"', () => {
+  const slugs = (behindOk: boolean) =>
+    buildProgramSession(P, 'A', { ...opts(), behindOk }).items.map(
+      (i) => byId.get(i.exerciseId)!.slug,
+    );
+
+  it('"No" or "Not sure": left out', () => {
+    expect(slugs(false)).not.toContain('stick_internal_rotation_stretch');
+  });
+
+  it('"Yes": in session A, and its own session keeps it (no safety swap)', () => {
+    expect(slugs(true)).toContain('stick_internal_rotation_stretch');
+    const session = buildProgramSession(P, 'A', { ...opts(), behindOk: true });
+    const input = withCare(base, careProtection({ [P.id]: run({ cleared: true }) }, MONDAY));
+    const w = {
+      id: 'w',
+      kind: 'repair',
+      status: 'planned',
+      session,
+      logs: [],
+      skipped: [],
+      swaps: [],
+      pains: [],
+      createdAt: MONDAY,
+    } as unknown as WorkoutRecord;
+    expect(safetyRefresh(w, input)).toEqual({ kind: 'ok' });
+  });
+
+  it('the regular workout keeps it out even after "Yes"', () => {
+    const input = withCare(base, careProtection({ [P.id]: run({ cleared: true }) }, MONDAY));
+    const stick = LIBRARY.find((e) => e.slug === 'stick_internal_rotation_stretch')!;
+    expect(blockReason(stick, input)).not.toBeNull();
   });
 });
 

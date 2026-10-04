@@ -214,7 +214,13 @@ const coolDown = (program: RehabProgram): SessionLayout['groups'][number] => ({
 export function fitMinutes(
   program: RehabProgram,
   plan: DailyPlan,
-  o: { library: Exercise[]; affected: AffectedSide; full?: boolean; max: number },
+  o: {
+    library: Exercise[];
+    affected: AffectedSide;
+    full?: boolean;
+    max: number;
+    behindOk?: boolean;
+  },
 ): DailyPlan {
   let numbers = plan.numbers;
   const minutes = (ns: number[]) =>
@@ -222,6 +228,7 @@ export function fitMinutes(
       library: o.library,
       affected: o.affected,
       week: 1,
+      behindOk: o.behindOk,
     }).minutes;
   while (numbers.length && minutes(numbers) > o.max) numbers = numbers.slice(0, -1);
   if (numbers.length === plan.numbers.length) return plan;

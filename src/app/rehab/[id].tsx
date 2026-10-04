@@ -169,7 +169,7 @@ export default function RehabProgramScreen() {
   const block = finish?.block ?? daily?.block;
   const otherBlock = block === 'standing' ? 'floor' : 'standing';
   // Exercises this person never does (behind the back): not in the checklist either.
-  const usable = new Set(usableExercises(program, library).map((x) => x.n));
+  const usable = new Set(usableExercises(program, library, strengthOpen).map((x) => x.n));
 
   // "Today": one big button (Phase 32 C, "Simple").
   const footer = daily ? (

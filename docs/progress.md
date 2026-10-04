@@ -3974,3 +3974,15 @@ Cada build mostra no fim o link da página no expo.dev: o APK para instalar dire
 3. **A sessão A (só mobilidade) não tem aquecimento:** o pêndulo abre a sessão. Por isso o passo "pular o aquecimento" do fluxo só aparece nos dias com elástico ou halter.
    - **(recomendado)** manter assim;
    - ou colocar os 2 min e meio de aquecimento também na A.
+
+## Fase 32 — Respostas do Daniel (04/10)
+
+- **1. Alongamento 3 (bastão atrás das costas):**
+  - volta só para quem respondeu "Sim" (fisioterapeuta liberou): entra na sessão A, nos dias de alongamento e na lista da semana;
+  - com "Não" ou "Não sei", fica fora;
+  - acima da cabeça continua proibido sempre;
+  - no treino normal, atrás das costas continua fora mesmo com "Sim";
+  - a sessão do programa não troca mais esse alongamento por segurança.
+- **2. Amplitude 0–180°:** mantida. "Só até onde não dói. Nunca force." agora fica num destaque com ícone, acima do desenho.
+- **3. Sessão A sem aquecimento separado:** mantida.
+- **Testes:** novos em `src/features/rehab/overhead.test.ts` e `src/features/p32/three-s.test.tsx`.

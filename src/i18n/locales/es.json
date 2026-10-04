@@ -5887,9 +5887,10 @@
     "streakDone_other": "Hombro: {{count}} días seguidos",
     "rom": {
       "title": "Amplitud de la semana",
-      "hint": "¿Hasta dónde levantaste el brazo hoy, hacia delante? Toca el punto. Solo hasta donde no duela.",
+      "hint": "¿Hasta dónde levantaste el brazo hoy, hacia delante? Toca el punto.",
       "ask": "Toca hasta dónde llegó",
-      "value": "{{degrees}}°"
+      "value": "{{degrees}}°",
+      "noPain": "Solo hasta donde no duela. Nunca fuerces."
     }
   },
   "plan": {

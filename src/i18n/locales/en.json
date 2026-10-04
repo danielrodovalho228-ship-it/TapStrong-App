@@ -5887,9 +5887,10 @@
     "streakDone_other": "Shoulder: {{count}} days in a row",
     "rom": {
       "title": "Range of the week",
-      "hint": "How high did you lift your arm today, forward? Tap the point. Only as far as it doesn’t hurt.",
+      "hint": "How high did you lift your arm today, forward? Tap the point.",
       "ask": "Tap how high it went",
-      "value": "{{degrees}}°"
+      "value": "{{degrees}}°",
+      "noPain": "Only as far as it doesn’t hurt. Never force it."
     }
   },
   "plan": {

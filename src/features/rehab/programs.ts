@@ -387,6 +387,8 @@ export function buildProgramSession(
     week: number;
     /** Exercises whose load the person raised (slug → true). */
     increased?: Record<string, boolean>;
+    /** The physio said "Yes": the behind-the-back stretch comes back (Phase 32). */
+    behindOk?: boolean;
   },
 ): GeneratedSession & { missing: string[]; excluded: string[] } {
   const layout = typeof key === 'string' ? sessionLayout(program, key) : key;
@@ -403,7 +405,7 @@ export function buildProgramSession(
       if (!missing.includes(ex.slug)) missing.push(ex.slug);
       return;
     }
-    if (aboveOrBehind(e)) {
+    if (aboveOrBehind(e, { behindOk: o.behindOk })) {
       if (!excluded.includes(ex.slug)) excluded.push(ex.slug);
       return;
     }
@@ -495,11 +497,15 @@ export function buildProgramSession(
 }
 
 /** The program's exercises this person can do: in the library and never above the shoulder or behind the back. */
-export function usableExercises(program: RehabProgram, library: Exercise[]): ProgramExercise[] {
+export function usableExercises(
+  program: RehabProgram,
+  library: Exercise[],
+  behindOk = false,
+): ProgramExercise[] {
   const bySlug = new Map(library.map((e) => [e.slug, e]));
   return program.exercises.filter((x) => {
     const e = bySlug.get(x.slug);
-    return !!e && !aboveOrBehind(e);
+    return !!e && !aboveOrBehind(e, { behindOk });
   });
 }
 

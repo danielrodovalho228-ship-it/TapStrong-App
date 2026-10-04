@@ -99,6 +99,7 @@ export function useRehabRun(programId: string) {
           affected: run.side,
           full: fullDose,
           max: WEEK1_MAX_MINUTES,
+          behindOk: open,
         })
       : planned0;
 
@@ -137,8 +138,12 @@ export function useRehabRun(programId: string) {
   const dailyDone = finishLayout ? afterDone : firstDone;
   const minutesOf = (layout: SessionLayout | null) =>
     program && layout
-      ? buildProgramSession(program, layout, { library, affected: run?.side ?? 'right', week })
-          .minutes
+      ? buildProgramSession(program, layout, {
+          library,
+          affected: run?.side ?? 'right',
+          week,
+          behindOk: open,
+        }).minutes
       : 0;
 
   // The next part of today's shoulder work, as a session to preview on the
@@ -146,7 +151,12 @@ export function useRehabRun(programId: string) {
   const nextLayout = !firstDone ? firstLayout : finishLayout && !afterDone ? finishLayout : null;
   const todaySession =
     program && run && nextLayout
-      ? buildProgramSession(program, nextLayout, { library, affected: run.side, week })
+      ? buildProgramSession(program, nextLayout, {
+          library,
+          affected: run.side,
+          week,
+          behindOk: open,
+        })
       : null;
   const doneDays = new Set(
     done.map((w) => localDate(new Date(w.endedAt ?? w.startedAt ?? w.createdAt))),
@@ -164,6 +174,7 @@ export function useRehabRun(programId: string) {
       affected: run.side,
       week,
       increased,
+      behindOk: open,
     });
     // No analytics event: a rehab program is health data (SPEC §10).
     const id = create(session, 'repair');

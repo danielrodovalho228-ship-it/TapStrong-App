@@ -68,7 +68,11 @@ export function blockReason(e: Exercise, input: GeneratorInput): string | null {
     return 'contraindication';
   }
   if (rangeFor(e, input) === 'blocked') return 'painful_movement';
-  if (shoulderCapped(input) && aboveOrBehind(e) && !toShoulderHeight(e, input))
+  if (
+    shoulderCapped(input) &&
+    aboveOrBehind(e, { behindOk: input.behindBackOk }) &&
+    !toShoulderHeight(e, input)
+  )
     return 'painful_movement';
   if (input.mode === 'senior' && e.impact >= 2) return 'impact';
   // Kneeling (getting down to the floor and back up) is not a 60+ default (QA R5-01).
@@ -101,7 +105,11 @@ export function shoulderCapped(input: GeneratorInput): boolean {
 /** A raise the person does only up to shoulder height (side raise, reduced range). */
 const toShoulderHeight = (e: Exercise, input: GeneratorInput) =>
   !e.joints.some(
-    (j) => j.joint === 'shoulder' && (BEYOND_SHOULDER as readonly string[]).includes(j.movement),
+    (j) =>
+      j.joint === 'shoulder' &&
+      (input.behindBackOk ? ['overhead'] : (BEYOND_SHOULDER as readonly string[])).includes(
+        j.movement,
+      ),
   ) && rangeFor(e, input) === 'reduced';
 
 /**

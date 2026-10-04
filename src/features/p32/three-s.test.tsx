@@ -154,6 +154,8 @@ describe('the program screen, surprising', () => {
     await started();
     await render(<RehabProgramScreen />);
     expect(screen.getByTestId('rom-value')).toHaveTextContent('Tap how high it went');
+    // Daniel, answer 2: "only as far as it doesn't hurt" in plain sight.
+    expect(screen.getByTestId('rom-no-pain')).toHaveTextContent(/Only as far as it doesn.t hurt/);
     await fireEvent.press(screen.getByTestId('rom-90'));
     expect(screen.getByTestId('rom-value')).toHaveTextContent('90°');
     expect(useRehabStore.getState().runs[P.id].rom).toEqual([{ date: TODAY, degrees: 90 }]);

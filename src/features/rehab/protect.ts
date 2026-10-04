@@ -40,6 +40,8 @@ export type CareProtection = {
   /** Areas whose every moving exercise is left out. */
   hard: string[];
   limits: MovementLimit[];
+  /** The physio said "Yes": the program's own behind-the-back stretch may come back. */
+  behindOk?: boolean;
 };
 
 const limit = (painful: string[], score: number): MovementLimit => ({
@@ -52,6 +54,8 @@ const limit = (painful: string[], score: number): MovementLimit => ({
 
 /** Never, not even in a shorter range (above 5: no reduced range). */
 const NEVER = limit(['overhead', 'reach_behind'], 6);
+/** The program's own session after the physio's "Yes": overhead stays out. */
+const NEVER_OVERHEAD = limit(['overhead'], 6);
 /** Up to shoulder height when the exercise allows a shorter range. */
 const SHOULDER_HEIGHT = limit(['abduction'], 3);
 
@@ -66,14 +70,16 @@ export function careMode(run: ProgramRun, today: LocalDate): CareMode {
 export function careProtection(runs: Record<string, ProgramRun>, today: LocalDate): CareProtection {
   const hard = new Set<string>();
   const limits: MovementLimit[] = [];
+  let behindOk = false;
   for (const [id, run] of Object.entries(runs)) {
     const area = programById(id)?.area;
     if (area !== 'shoulder') continue;
     const mode = careMode(run, today);
     if (mode === 'off') hard.add(area);
     else if (mode !== 'none' && !limits.length) limits.push(NEVER, SHOULDER_HEIGHT);
+    if (mode === 'protected') behindOk = true;
   }
-  return { hard: [...hard], limits };
+  return { hard: [...hard], limits, ...(behindOk ? { behindOk } : {}) };
 }
 
 /** The main workout's input with the care rules on top; remembers what it added. */
@@ -87,7 +93,7 @@ export function withCare(input: GeneratorInput, care: CareProtection): Generator
     movementLimits: [...(input.movementLimits ?? []), ...care.limits],
     // Shoulder at or below 90°, never behind the back (Phase 32 A1).
     shoulderCap: true,
-    care: { hard, limits: care.limits, cap: !input.shoulderCap },
+    care: { hard, limits: care.limits, cap: !input.shoulderCap, behindOk: care.behindOk },
   };
 }
 
@@ -97,9 +103,15 @@ export function withCare(input: GeneratorInput, care: CareProtection): Generator
  * moves stay out, in the session and in its swap sheet.
  */
 export function withProgramCare(input: GeneratorInput, programId: string): GeneratorInput {
+  const behindOk = !!input.care?.behindOk;
   const own = withoutCare(input);
   if (programById(programId)?.area !== 'shoulder') return own;
-  return { ...own, movementLimits: [...(own.movementLimits ?? []), NEVER], shoulderCap: true };
+  return {
+    ...own,
+    movementLimits: [...(own.movementLimits ?? []), behindOk ? NEVER_OVERHEAD : NEVER],
+    shoulderCap: true,
+    ...(behindOk ? { behindBackOk: true } : {}),
+  };
 }
 
 /** Whether the program's strengthening (sessions B and C, the daily blocks) is open. */

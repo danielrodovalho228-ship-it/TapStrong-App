@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 import Svg, { Circle, Line, Path } from 'react-native-svg';
 
-import { AppText } from '@/components/ui';
+import { AppText, Icon } from '@/components/ui';
 import { colors, makeStyles, radius, spacing, useColors } from '@/theme';
 
 import { ROM_STEPS } from './progress';
@@ -40,6 +40,13 @@ export function RomPicker({
     onPick(Math.max(0, Math.min(180, (value ?? (dir > 0 ? -15 : 15)) + dir * 15)));
   return (
     <View style={styles.wrap} testID="rom-picker">
+      {/* Daniel, Phase 32 answer 2: a measure, not an exercise; "pain-free only" stays in plain sight. */}
+      <View style={styles.noPain} testID="rom-no-pain">
+        <Icon name="alert" size={20} color={colors.teal} />
+        <AppText variant="bodyStrong" style={styles.flex}>
+          {t('rehab.rom.noPain')}
+        </AppText>
+      </View>
       <AppText variant="caption" color={colors.mutedStrong}>
         {t('rehab.rom.hint')}
       </AppText>
@@ -129,6 +136,16 @@ export function RomPicker({
 
 const useStyles = makeStyles(() => ({
   wrap: { gap: spacing.sm, alignItems: 'center' },
+  noPain: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    alignSelf: 'stretch',
+    padding: spacing.md,
+    borderRadius: radius.card,
+    backgroundColor: colors.tealTint,
+  },
+  flex: { flex: 1 },
   drawing: { width: SIZE, height: SIZE },
   target: { position: 'absolute', width: 32, height: 32, borderRadius: 16 },
   curve: {
