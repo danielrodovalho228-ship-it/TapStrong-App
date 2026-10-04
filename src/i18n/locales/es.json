@@ -5826,7 +5826,8 @@
       "reminders": "Recordatorios de mañana, tarde y noche",
       "appOnly": "Los recordatorios funcionan en la app.",
       "notifTitle": "Hora de estirar (2 min)",
-      "notifBody": "Una pausa rápida para estirar, sin dolor."
+      "notifBody": "Una pausa rápida para estirar, sin dolor.",
+      "log": "Hecho"
     },
     "release": {
       "question": "Ya pasaste la semana 4. ¿Tu fisioterapeuta te dio el alta?",
@@ -5874,6 +5875,21 @@
     "main": {
       "eyebrow": "Semana {{week}} de {{total}} · Hombro",
       "regular": "Entrenamiento del plan de hoy · {{split}}"
+    },
+    "weekDone": "Semana {{n}} hecha. Tu hombro te lo agradece.",
+    "weekDoneDay": "hecho",
+    "weekTitle": "Semana",
+    "settingsTitle": "Ajustes del hombro",
+    "details": "Ver detalles",
+    "streak_one": "{{count}} día seguido",
+    "streak_other": "{{count}} días seguidos",
+    "streakDone_one": "Hombro hecho hoy. ¡Día {{count}}!",
+    "streakDone_other": "Hombro: {{count}} días seguidos",
+    "rom": {
+      "title": "Amplitud de la semana",
+      "hint": "¿Hasta dónde levantaste el brazo hoy, hacia delante? Toca el punto. Solo hasta donde no duela.",
+      "ask": "Toca hasta dónde llegó",
+      "value": "{{degrees}}°"
     }
   },
   "plan": {

@@ -172,9 +172,11 @@ describe('Rehabilitation and the program', () => {
     expect(within(today).getByTestId('rehab-split-first')).toBeTruthy();
     expect(within(today).getByTestId('rehab-split-after')).toBeTruthy();
     expect(screen.getByText('Week 1 of 6')).toBeTruthy();
+    await fireEvent.press(screen.getByRole('button', { name: 'See details' }));
     const checklist = screen.getByTestId('rehab-checklist');
     expect(within(checklist).getAllByText('0 of 3')).toHaveLength(13);
     expect(within(screen.getByTestId('rehab-calendar')).getAllByText(/^W\d$/)).toHaveLength(6);
+    await fireEvent.press(screen.getByRole('button', { name: 'Shoulder settings' }));
     expect(screen.getByTestId('rehab-care-protected')).toBeTruthy();
     // The day's dose by default, the physio's full dose on request.
     expect(screen.getByTestId('rehab-dose-note')).toHaveTextContent(/Reduced dose to fit your day/);
@@ -206,6 +208,7 @@ describe('Rehabilitation and the program', () => {
     await act(() => useRehabStore.getState().start(P.id, 'right', TODAY, 'now', 'yes'));
     mockParams = { id: P.id };
     await render(<RehabProgramScreen />);
+    await fireEvent.press(screen.getByRole('button', { name: 'Shoulder settings' }));
     await fireEvent.press(screen.getByRole('switch', { name: 'Strengthening before the workout' }));
     expect(useRehabStore.getState().runs[P.id].strengthTiming).toBe('before');
     expect(screen.queryByTestId('rehab-split-first')).toBeNull();
@@ -249,6 +252,7 @@ describe('Rehabilitation and the program', () => {
     const today = screen.getByTestId('rehab-today');
     expect(within(today).getByText('Mobility + light dumbbell')).toBeTruthy();
     expect(within(today).getAllByText(/^\d+\. /)).toHaveLength(7);
+    await fireEvent.press(screen.getByRole('button', { name: 'See details' }));
     await fireEvent.press(screen.getByRole('button', { name: 'Start session C' }));
     expect(useWorkoutStore.getState().workouts.at(-1)!.session.program?.session).toBe('C');
   });
@@ -263,9 +267,11 @@ describe('Rehabilitation and the program', () => {
     expect(within(today).queryAllByText(/^\d+\. /)).toHaveLength(0);
     expect(within(today).getByTestId('rehab-strength-locked')).toBeTruthy();
     expect(screen.queryByRole('switch', { name: 'Strengthening before the workout' })).toBeNull();
+    await fireEvent.press(screen.getByRole('button', { name: 'See details' }));
     expect(screen.getByTestId('rehab-locked-B')).toBeTruthy();
     expect(screen.getByTestId('rehab-locked-C')).toBeTruthy();
     expect(screen.queryByRole('button', { name: 'Start session B' })).toBeNull();
+    await fireEvent.press(screen.getByRole('button', { name: 'Shoulder settings' }));
     const care = screen.getByTestId('rehab-care');
     expect(
       within(care).getByRole('radio', { name: 'Not sure' }).props.accessibilityState,
@@ -285,6 +291,7 @@ describe('Rehabilitation and the program', () => {
     await act(() => useRehabStore.getState().start(P.id, 'right', TODAY, 'now', 'no'));
     mockParams = { id: P.id };
     await render(<RehabProgramScreen />);
+    await fireEvent.press(screen.getByRole('button', { name: 'Shoulder settings' }));
     const care = screen.getByTestId('rehab-care');
     expect(within(care).getByText(/leaves out exercises that move the shoulder/)).toBeTruthy();
     await fireEvent.press(within(care).getByRole('radio', { name: 'Yes' }));
@@ -299,7 +306,7 @@ describe('Rehabilitation and the program', () => {
     await render(<RehabProgramScreen />);
     const card = screen.getByTestId('rehab-sleeper');
     expect(within(card).getByText('0 of 3 today')).toBeTruthy();
-    await fireEvent.press(within(card).getByRole('button', { name: 'Stretch now (2 min)' }));
+    await fireEvent.press(within(card).getByText('Stretch now (2 min)'));
     const w = useWorkoutStore.getState().workouts.at(-1)!;
     expect(w.session.program?.session).toBe('sleeper');
     expect(w.session.items).toHaveLength(1);
@@ -316,6 +323,7 @@ describe('Rehabilitation and the program', () => {
     expect(run.maintenance).toBe(true);
     expect(run.releasedAt).toBe(TODAY);
     expect(screen.getByText('Maintenance: 2 to 3 times a week.')).toBeTruthy();
+    await fireEvent.press(screen.getByRole('button', { name: 'Shoulder settings' }));
     expect(screen.getByTestId('rehab-care-returning')).toBeTruthy();
     expect(screen.queryByTestId('rehab-checklist')).toBeNull();
   });

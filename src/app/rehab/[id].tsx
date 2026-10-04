@@ -22,7 +22,10 @@ import i18n from '@/i18n';
 import { exerciseName } from '@/features/workout/format';
 import { useExerciseLibrary } from '@/features/workout/hooks';
 import { useRehabRun } from '@/features/rehab/hooks';
-import { AFFECTED_SIDES as SIDES, PROGRAM_TAGS } from '@/features/rehab/programs';
+import { AFFECTED_SIDES as SIDES, PROGRAM_TAGS, usableExercises } from '@/features/rehab/programs';
+import { RomPicker } from '@/features/rehab/RomPicker';
+import { WeekSquares } from '@/features/rehab/WeekSquares';
+import { MoreOptions } from '@/features/home/MoreOptions';
 import { CLEARANCES, useRehabStore } from '@/features/rehab/store';
 import { Tag } from '@/features/workout/components/Media';
 import { addDays, localDate } from '@/lib/dates';
@@ -70,6 +73,12 @@ export default function RehabProgramScreen() {
     askRelease,
     strengthOpen,
     dayKind: dayKindToday,
+    logSleeper,
+    streak,
+    weekDone,
+    romWeeks,
+    romToday,
+    logRom,
   } = useRehabRun(id);
   const store = useRehabStore();
   const library = useExerciseLibrary();
@@ -159,15 +168,19 @@ export default function RehabProgramScreen() {
   // On a training day the block's strengthening can come after the workout (Daniel, Oct 3).
   const block = finish?.block ?? daily?.block;
   const otherBlock = block === 'standing' ? 'floor' : 'standing';
+  // Exercises this person never does (behind the back): not in the checklist either.
+  const usable = new Set(usableExercises(program, library).map((x) => x.n));
 
+  // "Today": one big button (Phase 32 C, "Simple").
   const footer = daily ? (
     !available || dailyDone ? undefined : !firstDone ? (
-      <Button label={t('rehab.daily.start')} onPress={startDaily} />
+      <Button size="xl" label={t('rehab.daily.start')} onPress={startDaily} />
     ) : finish ? (
-      <Button label={t('rehab.split.startAfter')} onPress={finish.start} />
+      <Button size="xl" label={t('rehab.split.startAfter')} onPress={finish.start} />
     ) : undefined
   ) : todayKey && available ? (
     <Button
+      size="xl"
       label={t('rehab.startSession', { session: todayKey })}
       onPress={() => start(todayKey)}
     />
@@ -192,6 +205,15 @@ export default function RehabProgramScreen() {
       {minor ? <Notice tone="warning">{t('rehab.minor')}</Notice> : null}
       {!available ? <Notice>{t('rehab.unavailable')}</Notice> : null}
 
+      {/* "Week 1 done. Your shoulder thanks you." (Phase 32 C, "Surprising"). */}
+      {weekDone ? (
+        <Card style={[styles.card, styles.cheer]} testID="rehab-week-done">
+          <AppText variant="h3" color={colors.teal}>
+            {t('rehab.weekDone', { n: weekDone })}
+          </AppText>
+        </Card>
+      ) : null}
+
       {askRelease && !notYet ? (
         <Card style={styles.card} testID="rehab-release">
           <AppText variant="bodyStrong">{t('rehab.release.question')}</AppText>
@@ -207,6 +229,7 @@ export default function RehabProgramScreen() {
         </Card>
       ) : null}
 
+      {/* 1. Today */}
       {daily ? (
         <Card style={styles.card} testID="rehab-today">
           <AppText variant="h2">{t('rehab.daily.title')}</AppText>
@@ -270,15 +293,128 @@ export default function RehabProgramScreen() {
               ) : null}
             </>
           )}
-          {strengthOpen ? (
-            <AppText variant="caption" color={colors.mutedStrong}>
-              {t('rehab.daily.rhythm')}
-            </AppText>
-          ) : (
+          {strengthOpen ? null : (
             <AppText variant="caption" testID="rehab-strength-locked">
               {t('rehab.care.strengthLocked')}
             </AppText>
           )}
+        </Card>
+      ) : (
+        <Card style={styles.card} testID="rehab-today">
+          {todayKey ? (
+            <>
+              <AppText variant="h2">{t('rehab.today', { session: todayKey })}</AppText>
+              <AppText variant="bodyStrong">{t(`rehab.sessions.${todayKey}.title`)}</AppText>
+              <AppText variant="caption" color={colors.mutedStrong}>
+                {t(`rehab.sessions.${todayKey}.body`)}
+              </AppText>
+            </>
+          ) : (
+            <AppText>{t('rehab.restToday')}</AppText>
+          )}
+        </Card>
+      )}
+
+      {/* The sleeper stretch: 1 tap to log a break (Phase 32 C). */}
+      {daily ? (
+        <Card style={styles.card} testID="rehab-sleeper">
+          <View style={styles.reviewRow}>
+            <View style={styles.flex}>
+              <AppText variant="bodyStrong">{t('rehab.sleeper.title')}</AppText>
+              <AppText variant="caption" color={colors.mutedStrong}>
+                {t('rehab.sleeper.today', { n: Math.min(sleeperToday, 3) })}
+              </AppText>
+            </View>
+            <Button
+              variant="secondary"
+              label={t('rehab.sleeper.log')}
+              disabled={!available || sleeperToday >= 3}
+              onPress={logSleeper}
+              testID="rehab-sleeper-log"
+            />
+          </View>
+          <TextLink label={t('rehab.sleeper.start')} onPress={startSleeper} disabled={!available} />
+        </Card>
+      ) : null}
+
+      {/* 2. Week: the 7 squares, the days in a row, the range of the week. */}
+      <Card style={styles.card} testID="rehab-week-card">
+        <AppText variant="h3">{t('rehab.weekTitle')}</AppText>
+        <WeekSquares today={today} done={doneDays} streak={streak} />
+        <AppText variant="bodyStrong">{t('rehab.rom.title')}</AppText>
+        <RomPicker value={romToday} onPick={logRom} weeks={romWeeks} />
+      </Card>
+
+      {reviews.length ? (
+        <Card style={styles.card} testID="rehab-review">
+          <AppText variant="h3">{t('rehab.review')}</AppText>
+          {reviews.map((slug) => (
+            <View key={slug} style={styles.reviewRow}>
+              <AppText style={styles.flex}>{nameOf(slug)}</AppText>
+              <TextLink
+                label={t('rehab.reviewDone')}
+                onPress={() => store.clearReview(program.id, slug)}
+              />
+            </View>
+          ))}
+        </Card>
+      ) : null}
+
+      {/* 3. Shoulder settings, collapsed. */}
+      <MoreOptions label={t('rehab.settingsTitle')} testID="rehab-settings">
+        <Card style={styles.card} testID="rehab-care">
+          <AppText variant="h3">{t('rehab.care.title')}</AppText>
+          {care === 'none' ? null : (
+            <AppText variant="caption" testID={`rehab-care-${care}`}>
+              {care === 'returning'
+                ? t('rehab.care.returning', { date: returnDate })
+                : t(`rehab.care.${care}`)}
+            </AppText>
+          )}
+          {!run.releasedAt ? (
+            <>
+              <AppText variant="caption" color={colors.mutedStrong}>
+                {t('rehab.care.question')}
+              </AppText>
+              <View style={styles.chips} accessibilityRole="radiogroup">
+                {CLEARANCES.map((v) => (
+                  <Chip
+                    key={v}
+                    testID={`rehab-clear-${v}`}
+                    label={t(`rehab.care.${v}`)}
+                    selected={answer === v}
+                    accessibilityRole="radio"
+                    accessibilityState={{ checked: answer === v }}
+                    onPress={() => store.setCleared(program.id, v)}
+                  />
+                ))}
+              </View>
+            </>
+          ) : null}
+        </Card>
+        <Card style={styles.card}>
+          <AppText variant="bodyStrong">
+            {t('rehab.sideCurrent', {
+              side: t(`rehab.sideOptions.${run.side}`).toLowerCase(),
+            })}
+          </AppText>
+          <View style={styles.chips} accessibilityRole="radiogroup">
+            {SIDES.map((sd) => (
+              <Chip
+                key={sd}
+                label={t(`rehab.sideOptions.${sd}`)}
+                selected={run.side === sd}
+                accessibilityRole="radio"
+                accessibilityState={{ checked: run.side === sd }}
+                onPress={() => store.setSide(program.id, sd)}
+              />
+            ))}
+          </View>
+        </Card>
+        <Card style={styles.card}>
+          <AppText variant="caption" color={colors.mutedStrong}>
+            {t('rehab.daily.rhythm')}
+          </AppText>
           {/* The day's dose by default; the physio's full dose on request (Daniel, Oct 2). */}
           <ToggleRow
             label={t('rehab.dose.full')}
@@ -307,65 +443,6 @@ export default function RehabProgramScreen() {
               </AppText>
             </>
           ) : null}
-        </Card>
-      ) : (
-        <Card style={styles.card} testID="rehab-today">
-          {todayKey ? (
-            <>
-              <AppText variant="h2">{t('rehab.today', { session: todayKey })}</AppText>
-              <AppText variant="bodyStrong">{t(`rehab.sessions.${todayKey}.title`)}</AppText>
-              <AppText variant="caption" color={colors.mutedStrong}>
-                {t(`rehab.sessions.${todayKey}.body`)}
-              </AppText>
-            </>
-          ) : (
-            <AppText>{t('rehab.restToday')}</AppText>
-          )}
-        </Card>
-      )}
-
-      {daily ? (
-        <Card style={styles.card} testID="rehab-checklist">
-          <AppText variant="h3">{t('rehab.checklist.title')}</AppText>
-          {program.exercises.map((x) => {
-            const n = counts[x.slug] ?? 0;
-            const total = weeklyTarget(program, x);
-            return (
-              <View key={x.n} style={styles.reviewRow}>
-                <AppText variant="caption" style={styles.flex}>
-                  {t('rehab.numbered', { n: x.n, name: nameOf(x.slug) })}
-                </AppText>
-                <AppText
-                  variant="caption"
-                  color={n >= total ? colors.teal : colors.mutedStrong}
-                  style={styles.count}
-                >
-                  {t('rehab.checklist.of', { n: Math.min(n, total), total })}
-                </AppText>
-              </View>
-            );
-          })}
-          <AppText variant="caption" color={colors.mutedStrong}>
-            {t('rehab.checklist.hint')}
-          </AppText>
-        </Card>
-      ) : null}
-
-      {daily ? (
-        <Card style={styles.card} testID="rehab-sleeper">
-          <AppText variant="h3">{t('rehab.sleeper.title')}</AppText>
-          <AppText variant="caption" color={colors.mutedStrong}>
-            {t('rehab.sleeper.body')}
-          </AppText>
-          <AppText variant="caption">
-            {t('rehab.sleeper.today', { n: Math.min(sleeperToday, 3) })}
-          </AppText>
-          <Button
-            variant="secondary"
-            label={t('rehab.sleeper.start')}
-            disabled={!available}
-            onPress={startSleeper}
-          />
           {remindersAvailable ? (
             <ToggleRow
               label={t('rehab.sleeper.reminders')}
@@ -378,142 +455,107 @@ export default function RehabProgramScreen() {
             </AppText>
           )}
         </Card>
-      ) : null}
+        <Button
+          variant="ghost"
+          label={t('rehab.stop')}
+          onPress={() => {
+            store.stop(program.id);
+            router.replace('/rehab');
+          }}
+        />
+      </MoreOptions>
 
-      <Card style={styles.card} testID="rehab-care">
-        <AppText variant="h3">{t('rehab.care.title')}</AppText>
-        {care === 'none' ? null : (
-          <AppText variant="caption" testID={`rehab-care-${care}`}>
-            {care === 'returning'
-              ? t('rehab.care.returning', { date: returnDate })
-              : t(`rehab.care.${care}`)}
-          </AppText>
-        )}
-        {!run.releasedAt ? (
-          <>
+      {/* Details: the week checklist, the 6 weeks, the other sessions (Phase 32 C). */}
+      <MoreOptions label={t('rehab.details')} testID="rehab-details">
+        {daily ? (
+          <Card style={styles.card} testID="rehab-checklist">
+            <AppText variant="h3">{t('rehab.checklist.title')}</AppText>
+            {program.exercises
+              .filter((x) => usable.has(x.n))
+              .map((x) => {
+                const n = counts[x.slug] ?? 0;
+                const total = weeklyTarget(program, x);
+                return (
+                  <View key={x.n} style={styles.reviewRow}>
+                    <AppText variant="caption" style={styles.flex}>
+                      {t('rehab.numbered', { n: x.n, name: nameOf(x.slug) })}
+                    </AppText>
+                    <AppText
+                      variant="caption"
+                      color={n >= total ? colors.teal : colors.mutedStrong}
+                      style={styles.count}
+                    >
+                      {t('rehab.checklist.of', { n: Math.min(n, total), total })}
+                    </AppText>
+                  </View>
+                );
+              })}
             <AppText variant="caption" color={colors.mutedStrong}>
-              {t('rehab.care.question')}
+              {t('rehab.checklist.hint')}
             </AppText>
-            <View style={styles.chips} accessibilityRole="radiogroup">
-              {CLEARANCES.map((v) => (
-                <Chip
-                  key={v}
-                  testID={`rehab-clear-${v}`}
-                  label={t(`rehab.care.${v}`)}
-                  selected={answer === v}
-                  accessibilityRole="radio"
-                  accessibilityState={{ checked: answer === v }}
-                  onPress={() => store.setCleared(program.id, v)}
-                />
-              ))}
-            </View>
-          </>
+          </Card>
         ) : null}
-      </Card>
 
-      <Card style={styles.card}>
-        <AppText variant="bodyStrong">
-          {t('rehab.sideCurrent', {
-            side: t(`rehab.sideOptions.${run.side}`).toLowerCase(),
-          })}
-        </AppText>
-        <View style={styles.chips} accessibilityRole="radiogroup">
-          {SIDES.map((s) => (
-            <Chip
-              key={s}
-              label={t(`rehab.sideOptions.${s}`)}
-              selected={run.side === s}
-              accessibilityRole="radio"
-              accessibilityState={{ checked: run.side === s }}
-              onPress={() => store.setSide(program.id, s)}
-            />
-          ))}
-        </View>
-      </Card>
-
-      <Card style={styles.card} testID="rehab-calendar">
-        <AppText variant="h3">{t('rehab.calendar')}</AppText>
-        {Array.from({ length: weeks }, (_, w) => {
-          const days = Array.from({ length: 7 }, (_, d) => addDays(run.startedAt, w * 7 + d));
-          const count = days.filter((d) => doneDays.has(d)).length;
-          return (
-            <View
-              key={w}
-              style={styles.weekRow}
-              accessible
-              accessibilityLabel={`${t('rehab.week', { week: w + 1, total: weeks })}: ${t(
-                'rehab.calendarDone',
-                { count },
-              )}`}
-            >
-              <AppText
-                variant="caption"
-                color={w + 1 === week ? colors.ink : colors.mutedStrong}
-                style={styles.weekLabel}
+        <Card style={styles.card} testID="rehab-calendar">
+          <AppText variant="h3">{t('rehab.calendar')}</AppText>
+          {Array.from({ length: weeks }, (_, w) => {
+            const days = Array.from({ length: 7 }, (_, d) => addDays(run.startedAt, w * 7 + d));
+            const count = days.filter((d) => doneDays.has(d)).length;
+            return (
+              <View
+                key={w}
+                style={styles.weekRow}
+                accessible
+                accessibilityLabel={`${t('rehab.week', { week: w + 1, total: weeks })}: ${t(
+                  'rehab.calendarDone',
+                  { count },
+                )}`}
               >
-                {t('rehab.calendarWeek', { n: w + 1 })}
-              </AppText>
-              {days.map((d) => (
-                <View
-                  key={d}
-                  testID={doneDays.has(d) ? 'rehab-day-done' : undefined}
-                  style={[
-                    styles.day,
-                    doneDays.has(d) && styles.dayDone,
-                    d === today && styles.dayToday,
-                  ]}
-                />
-              ))}
-            </View>
-          );
-        })}
-      </Card>
-
-      {reviews.length ? (
-        <Card style={styles.card} testID="rehab-review">
-          <AppText variant="h3">{t('rehab.review')}</AppText>
-          {reviews.map((slug) => (
-            <View key={slug} style={styles.reviewRow}>
-              <AppText style={styles.flex}>{nameOf(slug)}</AppText>
-              <TextLink
-                label={t('rehab.reviewDone')}
-                onPress={() => store.clearReview(program.id, slug)}
-              />
-            </View>
-          ))}
+                <AppText
+                  variant="caption"
+                  color={w + 1 === week ? colors.ink : colors.mutedStrong}
+                  style={styles.weekLabel}
+                >
+                  {t('rehab.calendarWeek', { n: w + 1 })}
+                </AppText>
+                {days.map((d) => (
+                  <View
+                    key={d}
+                    testID={doneDays.has(d) ? 'rehab-day-done' : undefined}
+                    style={[
+                      styles.day,
+                      doneDays.has(d) && styles.dayDone,
+                      d === today && styles.dayToday,
+                    ]}
+                  />
+                ))}
+              </View>
+            );
+          })}
         </Card>
-      ) : null}
 
-      <AppText variant="h3">{t('rehab.otherSessions')}</AppText>
-      {SESSION_KEYS.filter((k) => k !== todayKey).map((k) => (
-        <Card key={k} style={styles.card}>
-          <AppText variant="bodyStrong">{t(`rehab.sessions.${k}.title`)}</AppText>
-          <AppText variant="caption" color={colors.mutedStrong}>
-            {t(`rehab.sessions.${k}.body`)}
-          </AppText>
-          {k === 'A' || strengthOpen ? (
-            <Button
-              variant="secondary"
-              label={t('rehab.startSession', { session: k })}
-              disabled={!available}
-              onPress={() => start(k)}
-            />
-          ) : (
-            <AppText variant="caption" testID={`rehab-locked-${k}`}>
-              {t('rehab.lockedSession')}
+        <AppText variant="h3">{t('rehab.otherSessions')}</AppText>
+        {SESSION_KEYS.filter((k) => k !== todayKey).map((k) => (
+          <Card key={k} style={styles.card}>
+            <AppText variant="bodyStrong">{t(`rehab.sessions.${k}.title`)}</AppText>
+            <AppText variant="caption" color={colors.mutedStrong}>
+              {t(`rehab.sessions.${k}.body`)}
             </AppText>
-          )}
-        </Card>
-      ))}
-
-      <Button
-        variant="ghost"
-        label={t('rehab.stop')}
-        onPress={() => {
-          store.stop(program.id);
-          router.replace('/rehab');
-        }}
-      />
+            {k === 'A' || strengthOpen ? (
+              <Button
+                variant="secondary"
+                label={t('rehab.startSession', { session: k })}
+                disabled={!available}
+                onPress={() => start(k)}
+              />
+            ) : (
+              <AppText variant="caption" testID={`rehab-locked-${k}`}>
+                {t('rehab.lockedSession')}
+              </AppText>
+            )}
+          </Card>
+        ))}
+      </MoreOptions>
       {footerNote}
     </Screen>
   );
@@ -531,7 +573,8 @@ const useStyles = makeStyles(() => ({
     borderRadius: radius.chip,
     backgroundColor: colors.line,
   },
-  dayDone: { backgroundColor: colors.teal },
+  dayDone: { backgroundColor: colors.accent },
+  cheer: { backgroundColor: colors.tealTint },
   dayToday: { borderWidth: 2, borderColor: colors.ink },
   reviewRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   count: { fontFamily: fonts.headingSemi },

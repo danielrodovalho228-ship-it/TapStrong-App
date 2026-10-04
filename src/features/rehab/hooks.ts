@@ -35,6 +35,7 @@ import {
   type StrengthTiming,
 } from './programs';
 import { careMode, strengthOpen } from './protect';
+import { programDays, programStreak, romByWeek, weekJustDone } from './progress';
 import { useRehabStore } from './store';
 
 /** Everything a program screen needs about the person's run (Phase 30). */
@@ -151,6 +152,8 @@ export function useRehabRun(programId: string) {
     done.map((w) => localDate(new Date(w.endedAt ?? w.startedAt ?? w.createdAt))),
   );
 
+  const allDays = program ? programDays(workouts, program.id) : new Set<string>();
+
   const launch = (layout: ProgramSessionKey | SessionLayout) => {
     if (!program || !run) return;
     const increased = Object.fromEntries(
@@ -219,6 +222,38 @@ export function useRehabRun(programId: string) {
     /** Do the other block today instead (§6.2); the rest of the week re-plans. */
     swapBlock: (block: DailyBlock) => useRehabStore.getState().pickBlock(programId, today, block),
     startSleeper: () => program && launch(sleeperLayout(program)),
+    /**
+     * "Done it" from the sleeper reminder (Phase 32 C): one tap logs the
+     * break, without opening the player.
+     */
+    logSleeper: () => {
+      if (!program || !run) return;
+      const session = buildProgramSession(program, sleeperLayout(program), {
+        library,
+        affected: run.side,
+        week,
+      });
+      const store = useWorkoutStore.getState();
+      const id = store.create(session, 'repair');
+      store.start(id);
+      for (const item of session.items)
+        for (let setNo = 1; setNo <= item.sets; setNo++)
+          store.logSet(id, {
+            itemId: item.id,
+            exerciseId: item.exerciseId,
+            setNo,
+            seconds: item.holdSeconds?.[0] ?? 30,
+          });
+      store.finish(id, 'done');
+    },
+    /** Days in a row with the shoulder done (Phase 32 C). */
+    streak: programStreak(allDays, today),
+    /** The program week that just ended complete, shown during the next one. */
+    weekDone: run ? weekJustDone(allDays, run.startedAt, today) : null,
+    /** "How high did you lift your arm": the best of each week, and today's. */
+    romWeeks: program && run ? romByWeek(run.rom ?? [], run.startedAt, program.weeks[1]) : [],
+    romToday: run?.rom?.find((e) => e.date === today)?.degrees ?? null,
+    logRom: (degrees: number) => useRehabStore.getState().logRom(programId, today, degrees),
     sleeperToday: sleeperBreaksToday(workouts, programId, today),
     care: run ? careMode(run, today) : 'none',
     /** From week 4 (§1: 4–6 weeks), ask whether the physio released the program. */

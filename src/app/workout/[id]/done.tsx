@@ -19,6 +19,7 @@ import { generateSession } from '@/features/generator';
 import { derive } from '@/features/onboarding/derived';
 import { useOnboardingStore } from '@/features/onboarding/store';
 import { LightUpBody } from '@/features/workout/components/LightUpBody';
+import { programDays, programStreak } from '@/features/rehab/progress';
 import { LegendRow, RecoveryBody, STATE_COLOR } from '@/features/workout/components/RecoveryBody';
 import { feel } from '@/features/workout/feel';
 import { lightOrder, workedMuscles } from '@/features/workout/lightOrder';
@@ -133,6 +134,11 @@ export default function DoneScreen() {
     router.replace('/home');
   };
   const streakDays = streakToday(streak, localDate(now), deviceWeekStart());
+  // A care program's own days in a row (Phase 32 C): the shoulder lights up, then this.
+  const programId = workout.session.program?.id;
+  const programDaysInRow = programId
+    ? programStreak(programDays(workouts, programId), localDate(now))
+    : 0;
 
   return (
     <Screen
@@ -234,6 +240,11 @@ export default function DoneScreen() {
                 ? t('workout.done.firstTitle')
                 : t('workout.done.title')}
         </AppText>
+        {programDaysInRow > 0 ? (
+          <AppText color={colors.accentText} testID="done-program-streak">
+            {t('rehab.streakDone', { count: programDaysInRow })}
+          </AppText>
+        ) : null}
         {/* No "0 days in a row" chip (Phase 31, G). */}
         {streakDays > 0 ? (
           <View style={styles.streak}>

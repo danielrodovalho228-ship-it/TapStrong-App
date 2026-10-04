@@ -5826,7 +5826,8 @@
       "reminders": "Morning, afternoon and evening reminders",
       "appOnly": "Reminders work in the app.",
       "notifTitle": "Stretch time (2 min)",
-      "notifBody": "A quick, pain-free stretch break."
+      "notifBody": "A quick, pain-free stretch break.",
+      "log": "Done it"
     },
     "release": {
       "question": "You’re past week 4. Has your physio released you?",
@@ -5874,6 +5875,21 @@
     "main": {
       "eyebrow": "Week {{week}} of {{total}} · Shoulder",
       "regular": "Today’s plan workout · {{split}}"
+    },
+    "weekDone": "Week {{n}} done. Your shoulder thanks you.",
+    "weekDoneDay": "done",
+    "weekTitle": "Week",
+    "settingsTitle": "Shoulder settings",
+    "details": "See details",
+    "streak_one": "{{count}} day in a row",
+    "streak_other": "{{count}} days in a row",
+    "streakDone_one": "Shoulder done today. Day {{count}}!",
+    "streakDone_other": "Shoulder: {{count}} days in a row",
+    "rom": {
+      "title": "Range of the week",
+      "hint": "How high did you lift your arm today, forward? Tap the point. Only as far as it doesn’t hurt.",
+      "ask": "Tap how high it went",
+      "value": "{{degrees}}°"
     }
   },
   "plan": {

@@ -44,6 +44,18 @@ export const AREA_SHAPES: Record<string, { rx: number; ry: number; tilt?: number
 const DEFAULT_SHAPE = { rx: 12, ry: 12 };
 const MID = FRAME.width / 2;
 
+/**
+ * Whether a point is on the person's side: the front view faces us (their
+ * right is on our left), the back view shows their right on our right.
+ * Midline points always count.
+ */
+export function onSide(x: number, view: BodyView, side?: 'left' | 'right'): boolean {
+  if (!side || Math.abs(x - MID) < 4) return true;
+  const imageLeft = x < MID;
+  const right = view === 'front' ? imageLeft : !imageLeft;
+  return side === 'right' ? right : !right;
+}
+
 /** A single midline point on a paired muscle (adductors) paints both legs. */
 function pointsOf(points: [number, number][]): [number, number][] {
   if (points.length !== 1) return points;
@@ -83,6 +95,7 @@ export function MuscleAreaMap({
   secondary = [],
   views = ['front', 'back'],
   maxHeight = 360,
+  side,
   testID = 'muscle-area-map',
 }: {
   band: BodyBand;
@@ -91,6 +104,8 @@ export function MuscleAreaMap({
   secondary?: string[];
   views?: BodyView[];
   maxHeight?: number;
+  /** A one-sided move (Phase 32 C): only this side of the body is painted. */
+  side?: 'left' | 'right';
   testID?: string;
 }) {
   const { t } = useTranslation();
@@ -106,6 +121,7 @@ export function MuscleAreaMap({
             main={main}
             also={also}
             maxHeight={maxHeight}
+            side={side}
             label={`${t('workout.worked')}, ${t(`bodyMap.${v}`)}`}
           />
         </View>
@@ -122,6 +138,7 @@ function AreaBody({
   also,
   maxHeight,
   label,
+  side,
 }: {
   band: BodyBand;
   sex: BodySex;
@@ -130,6 +147,7 @@ function AreaBody({
   also: string[];
   maxHeight: number;
   label: string;
+  side?: 'left' | 'right';
 }) {
   const [width, setWidth] = useState(0);
   const onLayout = (e: LayoutChangeEvent) => setWidth(e.nativeEvent.layout.width);
@@ -142,21 +160,23 @@ function AreaBody({
     const shape = AREA_SHAPES[key] ?? DEFAULT_SHAPE;
     return (
       <G key={key} testID={`area-${key}-${color === bodyMapColors.areaPrimary ? 'main' : 'also'}`}>
-        {pointsOf(h.points).map(([x, y], i) => {
-          const tilt = (shape.tilt ?? 0) * (x < FRAME.width / 2 ? 1 : -1);
-          return (
-            <Ellipse
-              key={i}
-              cx={x}
-              cy={y}
-              rx={shape.rx}
-              ry={shape.ry}
-              fill={color}
-              fillOpacity={opacity}
-              transform={tilt ? `rotate(${tilt} ${x} ${y})` : undefined}
-            />
-          );
-        })}
+        {pointsOf(h.points)
+          .filter(([x]) => onSide(x, view, side))
+          .map(([x, y], i) => {
+            const tilt = (shape.tilt ?? 0) * (x < FRAME.width / 2 ? 1 : -1);
+            return (
+              <Ellipse
+                key={i}
+                cx={x}
+                cy={y}
+                rx={shape.rx}
+                ry={shape.ry}
+                fill={color}
+                fillOpacity={opacity}
+                transform={tilt ? `rotate(${tilt} ${x} ${y})` : undefined}
+              />
+            );
+          })}
       </G>
     );
   };

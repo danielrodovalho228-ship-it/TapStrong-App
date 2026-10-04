@@ -5898,7 +5898,8 @@
       "reminders": "Lembretes de manhã, à tarde e à noite",
       "appOnly": "Os lembretes funcionam no app.",
       "notifTitle": "Hora do alongamento (2 min)",
-      "notifBody": "Uma pausa rápida para alongar, sem dor."
+      "notifBody": "Uma pausa rápida para alongar, sem dor.",
+      "log": "Fiz"
     },
     "release": {
       "question": "Você já passou da semana 4. O seu fisioterapeuta liberou você?",
@@ -5946,6 +5947,23 @@
     "main": {
       "eyebrow": "Semana {{week}} de {{total}} · Ombro",
       "regular": "Treino do plano de hoje · {{split}}"
+    },
+    "weekDone": "Semana {{n}} feita. Seu ombro agradece.",
+    "weekDoneDay": "feito",
+    "weekTitle": "Semana",
+    "settingsTitle": "Ajustes do ombro",
+    "details": "Ver detalhes",
+    "streak_one": "{{count}} dia seguido",
+    "streak_other": "{{count}} dias seguidos",
+    "streak_zero": "{{count}} dias seguidos",
+    "streakDone_one": "Ombro feito hoje. Dia {{count}}!",
+    "streakDone_other": "Ombro: {{count}} dias seguidos",
+    "streakDone_zero": "Ombro: {{count}} dias seguidos",
+    "rom": {
+      "title": "Amplitude da semana",
+      "hint": "Até onde você levantou o braço hoje, para a frente? Toque no ponto. Só até onde não dói.",
+      "ask": "Toque até onde chegou",
+      "value": "{{degrees}}°"
     }
   },
   "plan": {

@@ -160,7 +160,7 @@ export function GuidedStep({
         }
         testID="demo-frame"
       >
-        <FullMedia exercise={exercise} />
+        <FullMedia exercise={exercise} side={split?.side} />
       </Pressable>
       {/* The fade under the text: the actor stays clear above it. */}
       <View style={styles.fade} pointerEvents="none">
@@ -343,7 +343,14 @@ export function GuidedStep({
  * The clip edge to edge in the profile's own sex, else its poster, else the
  * body with the muscles lit and "Demo coming soon". Never the other sex.
  */
-function FullMedia({ exercise }: { exercise: Exercise | undefined }) {
+function FullMedia({
+  exercise,
+  side,
+}: {
+  exercise: Exercise | undefined;
+  /** The side this set works (Phase 32 C): only that side lights up. */
+  side?: 'left' | 'right';
+}) {
   const styles = useStyles();
   const window = useWindowDimensions();
   const profile = useOnboardingStore();
@@ -392,6 +399,7 @@ function FullMedia({ exercise }: { exercise: Exercise | undefined }) {
           primary={exercise.muscles.filter((m) => m.role === 'primary').map((m) => m.muscleKey)}
           secondary={exercise.muscles.filter((m) => m.role !== 'primary').map((m) => m.muscleKey)}
           maxHeight={Math.min(380, window.height * 0.36)}
+          side={side}
         />
       ) : null}
     </View>

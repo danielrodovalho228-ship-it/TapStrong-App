@@ -5,6 +5,7 @@ import type { LocalDate } from '@/lib/dates';
 import { kvStorage } from '@/lib/storage';
 
 import type { AffectedSide, DailyBlock, StrengthTiming } from './programs';
+import type { RomEntry } from './progress';
 
 /** The answer to "Did your physio clear shoulder and arm training?" (Phase 32 A2). */
 export type Clearance = 'yes' | 'no' | 'unsure';
@@ -42,6 +43,8 @@ export type ProgramRun = {
    * before it (Daniel, Oct 3): only the stretches go first, as a warm-up.
    */
   strengthTiming?: StrengthTiming;
+  /** "How high did you lift your arm today?", 0–180°, one per day (Phase 32 C). */
+  rom?: RomEntry[];
 };
 
 export type RehabData = { runs: Record<string, ProgramRun> };
@@ -61,6 +64,7 @@ type State = RehabData & {
   setFullDose: (programId: string, on: boolean) => void;
   setStrengthTiming: (programId: string, timing: StrengthTiming) => void;
   setSide: (programId: string, side: AffectedSide) => void;
+  logRom: (programId: string, date: LocalDate, degrees: number) => void;
   setMaintenance: (programId: string, on: boolean) => void;
   raiseLoad: (programId: string, slug: string) => void;
   markReview: (programId: string, slug: string, now: string) => void;
@@ -103,6 +107,10 @@ export const useRehabStore = create<State>()(
             },
           })),
         setSide: (id, side) => patch(id, () => ({ side })),
+        logRom: (id, date, degrees) =>
+          patch(id, (r) => ({
+            rom: [...(r.rom ?? []).filter((e) => e.date !== date), { date, degrees }],
+          })),
         setMaintenance: (id, on) => patch(id, () => ({ maintenance: on })),
         setCleared: (id, answer) =>
           patch(id, () => ({ cleared: answer === 'yes', clearance: answer })),
