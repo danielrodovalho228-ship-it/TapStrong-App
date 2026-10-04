@@ -9,6 +9,7 @@ import '@/i18n';
 import { act, fireEvent, render, screen, within } from '@testing-library/react-native';
 
 import HomeScreen from '@/app/(tabs)/home';
+import WorkoutScreen from '@/app/workout/[id]';
 import PlayerScreen from '@/app/workout/[id]/play';
 import { workedAreas } from '@/features/bodymap/components/MuscleAreaMap';
 import { useOnboardingStore } from '@/features/onboarding/store';
@@ -130,6 +131,22 @@ describe('the warm-up never locks (B2) and the player (B6)', () => {
     await render(<PlayerScreen />);
     const frame = screen.getByTestId('demo-frame');
     expect(within(frame).queryByText('Demo coming soon')).toBeNull();
+  });
+
+  it('the program keeps its own exercises when Settings lacks the band or the stick', async () => {
+    await adult('yes');
+    await act(() => useOnboardingStore.getState().update({ equipment: ['dumbbells'] as never }));
+    const session = buildProgramSession(P, 'B', { library: LIBRARY, affected: 'right', week: 1 });
+    let id = '';
+    await act(() => {
+      id = useWorkoutStore.getState().create(session, 'repair');
+    });
+    mockParams = { id };
+    await render(<WorkoutScreen />);
+    const w = useWorkoutStore.getState().workouts.find((x) => x.id === id)!;
+    expect(w.session.items.map((i) => i.exerciseId)).toEqual(
+      session.items.map((i) => i.exerciseId),
+    );
   });
 
   it('the rotator cuff paints the whole shoulder, front and back, never a dot', () => {

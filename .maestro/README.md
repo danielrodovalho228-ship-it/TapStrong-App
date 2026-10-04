@@ -21,6 +21,9 @@ flow clears the app state first, so they run in any order.
 | 05-senior-home      | 60+ mode: big Start, 3 things on Home, no body-map tab, no photos by default |
 | 06-paywall          | The 4th workout of the week opens the paywall with cancel info               |
 | 07-tab-labels       | Tab labels read in full at 390 px; saves a screenshot to compare by eye      |
+| 08-shoulder-not-sure | Frozen shoulder, physio "not sure" → mobility only; Done, rest, "I feel pain", finish; progress kept after a restart (Phase 32). Also run it in airplane mode on the apk build |
+
+Record a flow as a video: `maestro record .maestro/08-shoulder-not-sure.yaml` (writes an mp4).
 
 Released exercises are needed for workouts in a preview build; in a
 development build the draft library is used.

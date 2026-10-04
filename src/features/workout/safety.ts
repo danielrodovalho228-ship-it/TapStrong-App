@@ -21,6 +21,15 @@ const SAFETY_REASONS = new Set([
   'location',
 ]);
 
+/**
+ * A care program's own session keeps its fixed exercises when the equipment
+ * or place in Settings doesn't list them (Phase 32: the band and stick
+ * exercises were swapped for others); only real safety reasons count.
+ */
+const PROGRAM_SAFETY_REASONS = new Set(
+  [...SAFETY_REASONS].filter((r) => r !== 'equipment' && r !== 'location'),
+);
+
 export type SafetyRefresh =
   | { kind: 'ok' }
   /** Not started: throw it away and build a fresh one. */
@@ -60,7 +69,8 @@ export function safetyRefresh(w: WorkoutRecord, input: GeneratorInput): SafetyRe
     const e = byId.get(item.exerciseId);
     if (!e) return false;
     const reason = blockReason(e, check);
-    return reason !== null && SAFETY_REASONS.has(reason);
+    const reasons = w.session.program ? PROGRAM_SAFETY_REASONS : SAFETY_REASONS;
+    return reason !== null && reasons.has(reason);
   });
   if (!unsafe.length) return { kind: 'ok' };
   // A planned regular workout is rebuilt; recovery sessions are patched (their

@@ -3808,3 +3808,169 @@ Com o domínio `tapstrong.app` ligado ao projeto na Vercel, troque o começo par
 - **`env:check`:** no `internal`, só avisa quando falta chave, para o `.aab` do teste interno do Play não travar. A produção continua exigindo tudo.
 - **Passo a passo e respostas do Play Console:** `docs/play-console.md`.
 - **Testes:** 1563 passando.
+
+## Fase 32 — Teste no Android (APK) + programa de ombro 3S (04/10)
+
+Pedido completo em `docs/phase-32-android-test.md`. Um commit por pacote:
+- A: `e29d73b`;
+- B: `e1e54ad`;
+- C: `fce694b`;
+- D: este commit.
+
+### A. Segurança (P0)
+- **Tríceps:** o exercício 11 agora é o **tríceps coice com halter** (AAOS). O tríceps francês saiu do programa.
+- **Nada acima de 90° nem atrás das costas** com o programa de ombro ativo ou com dor no ombro. Vale:
+  - no programa;
+  - no "Ombro hoje";
+  - no treino normal;
+  - na folha Trocar, inclusive dentro de uma sessão do programa.
+
+  A regra lê as marcas de articulação do banco: acima da cabeça, atrás das costas, ou elevação completa. Elevação lateral só entra se puder parar na altura do ombro.
+  - Os testes acharam furos reais e corrigi: elevações frontais e laterais apareciam na folha Trocar, e o "waiter hold" aparecia com dor no ombro.
+  - Teste: `src/features/rehab/overhead.test.ts`.
+- **Alongamento 3 (rotação interna com bastão, atrás das costas) ficou fora** pela sua regra. Ver a pergunta 1.
+- **Nada vem marcado:**
+  - "O fisioterapeuta liberou?" agora tem Sim / Não / Não sei;
+  - o lado afetado também começa sem resposta;
+  - o botão só libera depois das duas respostas.
+- **"Não" ou "Não sei" = só a sessão A (mobilidade).** Elástico e halter (B, C e os blocos do dia) só liberam com "Sim".
+- **"Dose completa" e "Fortalecimento antes do treino" começam desligados.** Quem já tinha o app volta para desligado uma vez.
+- **Por que parecia marcado:** no tema escuro, o interruptor desligado era claro e parecia ligado. Agora:
+  - ligado = verde-azulado;
+  - opção escolhida = borda verde e um ✓.
+
+### B. Bugs do APK
+1. **Vídeos:**
+   - **Causa:** o APK foi gerado sem as chaves do Supabase.
+   - **Agora o build para com aviso** se `EXPO_PUBLIC_SUPABASE_URL` ou `EXPO_PUBLIC_SUPABASE_ANON_KEY` faltarem nos perfis `apk` e `internal`. Os dois perfis já levam `EXPO_PUBLIC_DEMO_MEDIA=1` no `eas.json`.
+   - **Clipes e pôsteres aprovados do ombro vão dentro do APK** (`assets/media/shoulder`, 2,6 MB) e funcionam offline.
+   - O `bundle:check` confere: o build interno tem esses clipes, e a produção não tem nenhum (passou).
+2. **Aquecimento:** "Pular aquecimento" sempre visível. O "Concluir" nunca trava; ficou só a dica curta "Aquecer protege as articulações". A SPEC foi atualizada.
+3. **Aquecimento do ombro:** 2 min e meio de mobilidade leve (pêndulo, girar e encolher os ombros), no lugar da caminhada de 5 min.
+4. **"Ombro hoje":**
+   - o título diz o que a sessão é: "Mobilidade", "Mobilidade + elástico", "Mobilidade + halter leve" ou "Mobilidade + elástico + halter leve";
+   - no máximo 1 exercício atrasado por sessão;
+   - nenhum atraso na primeira semana;
+   - semana 1 com 25 min ou menos;
+   - a dose completa só começa na semana 2.
+   - **O print "antes" reproduz o bug:** começando num domingo, "Só alongamentos" com 7 atrasados e o tríceps francês.
+5. **Cada exercício uma vez por sessão:** aquecimento → fortalecimento → alongamentos como desaquecimento. O sleeper só aparece uma vez.
+6. **Player:**
+   - o manguito rotador agora pinta o ombro inteiro (frente e costas), em vez de uma bolinha;
+   - a tela do aquecimento ficou escura;
+   - "Demonstração em breve" saiu de cima da imagem, tanto no player quanto nos cards do plano.
+7. **Aba Treino:**
+   - com o programa de ombro ativo, ele é o plano principal, com a semana dele, "N exercícios · X min", a lista com pôsteres e clipes, e o botão Começar;
+   - o treino do plano fica logo abaixo, a um toque;
+   - a barra vazia não aparece mais;
+   - dias com 3 letras ("dom seg ter qua qui sex sáb").
+8. **Aviso de rascunho:** saiu de dentro do treino e foi pequeno para o rodapé de Ajustes.
+- **Bug extra, achado nos prints:** a prévia de uma sessão do programa trocava a remada com elástico, as rotações e os alongamentos por outros exercícios quando o perfil não tinha "elástico longo" ou "bastão" em Ajustes. Corrigido: num programa fixo, equipamento não troca exercício.
+
+### C. Programa de ombro 3S
+- **Simples:** a tela tem 3 blocos:
+  - **Hoje:** um botão grande e o sleeper com "Fiz";
+  - **Semana:** 7 quadradinhos;
+  - **Ajustes do ombro:** recolhido.
+
+  A lista "Nesta semana", o calendário de 6 semanas e as outras sessões foram para "Ver detalhes".
+- **Sexy:**
+  - dia feito = quadradinho coral; hoje = borda coral;
+  - "N dias seguidos" a partir de 2, e na tela final ("Ombro: 3 dias seguidos");
+  - numa série de um lado só, o mapa pinta só o lado que trabalha;
+  - os clipes já seguem o sexo do perfil e tocam em loop.
+- **Surpreendente:**
+  - **"Amplitude da semana":** toca de 0° a 180° num desenho, uma vez por dia, e vê barras com o melhor de cada semana;
+  - **"Semana 1 feita. Seu ombro agradece."** quando a semana teve 5 dias ou mais;
+  - **sleeper com 1 toque:** o botão "Fiz" registra a pausa sem abrir o player. O lembrete do celular abre essa tela.
+
+### D. Testes
+- **Testes unitários e de tela:**
+  - `overhead.test.ts`: nada acima de 90° nem atrás das costas;
+  - `week1.test.ts`: sem atraso no dia 1, para qualquer dia de início; no máximo 1 atrasado; semana 1 ≤ 25 min; cada exercício uma vez; aquecimento de 2–3 min;
+  - `p32/android.test.tsx`: aba Treino, aquecimento sem trava, programa sem troca por equipamento;
+  - `p32/three-s.test.tsx`;
+  - `p32/internal.test.tsx`: clipes dentro do APK.
+- **Resultado:** 1606 testes passando; `tsc`, `lint`, `security:check` e `bundle:check` também.
+- **Maestro:** fluxo `.maestro/08-shoulder-not-sure.yaml`. Ele faz:
+  - cadastro com "Tenho ombro congelado" e "Não sei";
+  - só a sessão A;
+  - "Pular aquecimento", se aparecer;
+  - 2 exercícios com "Feito" e descanso;
+  - "Sinto dor";
+  - terminar;
+  - fechar e reabrir: o progresso continua.
+
+  **Não consegui rodar aqui:** este ambiente não tem emulador Android, então não há vídeo. Para gravar no seu PC, com o APK instalado e o celular ou emulador conectado:
+
+  ```
+  maestro record .maestro/08-shoulder-not-sure.yaml
+  ```
+
+  Para o modo avião, rode o mesmo fluxo com o avião ligado. A sessão A usa os clipes que vão dentro do APK.
+- **Prints (antes e depois):** `docs/screenshots/p32/before` e `docs/screenshots/p32/after`.
+  - Para cada perfil (adulto, 60+ e adolescente): Meu plano, programa, ajustes do ombro, perguntas de segurança, e aquecimento ou player.
+  - São renderizações web em 390 px, não um Android de verdade.
+  - Para repetir: `node scripts/shoot-p32.mjs`.
+
+### Os 18 exercícios do ombro: clipes f/m
+
+| Nº | Exercício | f | m | O que falta |
+|---|---|---|---|---|
+| 1 | Pêndulo | reprovado (as duas mãos ficam na mesa) | ✓ | refazer f |
+| 2 | Alongamento cruzado | ✓ | ✓ | — |
+| 3 | Rotação passiva com bastão, interna (fora do programa: atrás das costas) | reprovado (texto no vídeo) | ✓ | só se voltar (pergunta 1) |
+| 4 | Rotação passiva com bastão, externa | falta | falta | gerar f/m |
+| 5 | Sleeper stretch | reprovado | reprovado | refazer f/m (a outra mão empurra o antebraço) |
+| 6 | Remada com elástico | falta | falta | gerar f/m |
+| 7 | Rotação externa a 90° | reprovado | reprovado | refazer f/m (um elástico, na mão) |
+| 8 | Rotação interna com elástico | reprovado | reprovado | refazer f/m |
+| 9 | Rotação externa com elástico | reprovado | reprovado | refazer f/m (ancorado do lado oposto) |
+| 10 | Rosca | ✓ | ✓ | — |
+| 11 | Tríceps coice (novo) | falta | falta | gerar f/m (posição já no JSON do Moacir) |
+| 12 | Elevação polegar para cima | reprovado | reprovado | refazer f/m (nunca acima da cabeça) |
+| 13 | Ativação das escápulas | reprovado | reprovado | refazer f/m (braços ao lado do corpo) |
+| 14 | Retração da escápula | reprovado | reprovado | refazer f/m |
+| 15 | Abdução horizontal de bruços | reprovado | reprovado | refazer f/m (até a linha do ombro) |
+| 16 | Rotação deitado a 90° | reprovado | reprovado | refazer f/m (sem cor pintada na roupa) |
+| 17 | Rotações deitado de lado (externa) | falta (pôster ✓) | falta (pôster ✓) | gerar f/m |
+| 18 | Rotação interna deitado de lado | reprovado | reprovado | refazer f/m (braço de baixo) |
+| aquec. | Girar os ombros / Encolher os ombros | falta | falta | gerar f/m |
+
+- **Hoje dentro do APK:** 2, 10 e o pêndulo masculino, mais os pôsteres do 17.
+- **O resto mostra o corpo pintado** até o Moacir gerar. A lista e o JSON dele já estão atualizados (`docs/media-redo-launch.md` e `.json`), com o coice e o "encolher os ombros" incluídos.
+- Depois de cada lote:
+
+  ```
+  npm run prototype:videos && npm run shoulder:media
+  ```
+
+  Faça commit e gere outro build.
+
+### Os dois links (é você quem gera, no EAS)
+Antes, uma vez, as duas variáveis no ambiente `preview`:
+
+```
+npx eas-cli@latest env:create --environment preview --name EXPO_PUBLIC_SUPABASE_URL --value "https://SEU-PROJETO.supabase.co" --visibility plaintext
+npx eas-cli@latest env:create --environment preview --name EXPO_PUBLIC_SUPABASE_ANON_KEY --value "sb_publishable_..." --visibility plaintext
+```
+
+Depois:
+
+```
+npx eas-cli@latest build --profile apk --platform android
+npx eas-cli@latest build --profile internal --platform android
+```
+
+Cada build mostra no fim o link da página no expo.dev: o APK para instalar direto, e o `.aab` para o teste interno do Play.
+
+### Perguntas
+1. **Alongamento 3 (rotação interna com bastão atrás das costas, do AAOS):**
+   - **(recomendado)** fica fora até o fisioterapeuta da Allinne liberar;
+   - ou volta só para quem responder "Sim".
+2. **"Amplitude da semana" vai até 180°:** medir o braço levantado acima de 90° conflita com "nada acima de 90°" nos exercícios.
+   - **(recomendado)** manter até 180°, com "só até onde não dói", porque é medida e não exercício;
+   - ou limitar a 90° até o "Sim" do fisioterapeuta.
+3. **A sessão A (só mobilidade) não tem aquecimento:** o pêndulo abre a sessão. Por isso o passo "pular o aquecimento" do fluxo só aparece nos dias com elástico ou halter.
+   - **(recomendado)** manter assim;
+   - ou colocar os 2 min e meio de aquecimento também na A.

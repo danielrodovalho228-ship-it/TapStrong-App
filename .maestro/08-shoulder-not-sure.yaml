@@ -1,0 +1,91 @@
+appId: app.tapstrong
+name: Frozen shoulder, physio "not sure" → mobility only, progress kept after a restart
+# Phase 32 D (Daniel, Oct 4): the adult with a frozen shoulder. Run on the
+# apk build in airplane mode too: session A's checked clips are inside the app.
+---
+- launchApp:
+    clearState: true
+- tapOn: 'Get started'
+- tapOn: 'Me'
+- tapOn: 'I have a frozen or painful shoulder'
+- tapOn:
+    text: 'Birth month.*'
+- tapOn: 'March'
+- tapOn:
+    text: 'Birth year.*'
+- scrollUntilVisible:
+    element: '1983'
+- tapOn: '1983'
+- tapOn: 'Continue'
+- tapOn: 'Look better'
+- tapOn: 'Continue'
+- tapOn: 'Home'
+- tapOn: '30 min'
+- tapOn: '3 days'
+- tapOn: 'Continue'
+- tapOn: 'Woman'
+- tapOn: 'Skip'
+- tapOn: 'Next: quick safety check'
+- tapOn:
+    text: 'None'
+    index: 0
+- tapOn:
+    text: 'None'
+    index: 1
+- tapOn: 'Standing'
+- tapOn: 'Continue'
+# The shortcut opens the shoulder program once.
+- assertVisible: 'Shoulder: mobility and strength'
+- tapOn: 'Start the program'
+# Nothing comes pre-selected: the button waits for both answers.
+- assertVisible: 'I understand, start'
+- tapOn:
+    id: 'rehab-side-right'
+- tapOn:
+    id: 'rehab-clear-unsure'
+- assertVisible:
+    id: 'rehab-strength-locked'
+- tapOn: 'I understand, start'
+# "Not sure": session A only (mobility), no band or dumbbell.
+- assertVisible:
+    id: 'rehab-day-kind'
+    text: 'Mobility'
+- tapOn: 'Start today’s shoulder session'
+# A strengthening day would start with the warm-up: never locked.
+- runFlow:
+    when:
+      visible:
+        id: 'guided-skip-warmup'
+    commands:
+      - tapOn:
+          id: 'guided-skip-warmup'
+# Two exercises with "Done" and the 30 s rest in between.
+- tapOn:
+    id: 'guided-done'
+- tapOn:
+    text: 'Skip rest'
+    optional: true
+- tapOn:
+    id: 'guided-done'
+- tapOn:
+    text: 'Skip rest'
+    optional: true
+# "I feel pain" is on every step.
+- tapOn:
+    id: 'pain-button'
+- tapOn: 'Right shoulder'
+- tapOn: 'Dull.*'
+- tapOn: 'Skip this exercise'
+# Finish.
+- tapOn: 'Workout menu'
+- tapOn: 'Finish workout'
+- assertVisible:
+    id: 'done-program-streak'
+# Close and reopen: the progress is still there.
+- stopApp
+- launchApp:
+    clearState: false
+- assertVisible:
+    id: 'shoulder-main'
+- assertVisible:
+    id: 'week-trained'

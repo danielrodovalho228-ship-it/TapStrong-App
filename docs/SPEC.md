@@ -230,7 +230,7 @@ RLS: a user sees only their own rows plus family members they manage. `exercises
 Rules:
 
 - Warm-up and cool-down time counts inside the minutes the user chose. "Only 15 min today" shrinks them (min 3 min warm-up, 2 min cool-down) but never removes them.
-- Users can skip the cool-down, with one "Skip cool-down?" confirm. The warm-up can be shortened, not skipped, when the day has loaded exercises.
+- Users can skip the cool-down, with one "Skip cool-down?" confirm. The warm-up is never locked (Daniel, Phase 32): a "Skip warm-up" link is always visible with a short tip ("Warming up protects your joints"). The generator still puts a warm-up first in every session; only the person can skip it.
 - Warm-up and cool-down moves come from the same `released` exercise library, with `role` = `warmup` / `cooldown`.
 - They count toward the streak. They do not turn muscles red on the body map (only main work does).
 

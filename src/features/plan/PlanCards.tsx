@@ -69,7 +69,7 @@ export function CardMedia({
           sex={sex as BodySex}
           primary={primary ?? []}
           secondary={secondary ?? []}
-          maxHeight={height - spacing.xl * 2}
+          maxHeight={height - spacing.xl * 2 - sizes.touchTarget}
         />
       ) : (
         <Icon name="body" size={40} color={colors.onCanvasMuted} />
@@ -260,13 +260,13 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'center',
     overflow: 'hidden',
   },
-  // Above the dose badge, never under it.
+  // Under the body, never on it (Phase 32 B6), and clear of the dose badge.
   soon: {
-    position: 'absolute',
-    bottom: spacing.sm + sizes.touchTarget,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xxs,
+    marginTop: spacing.xs,
+    marginBottom: sizes.touchTarget,
   },
   top: {
     position: 'absolute',
