@@ -34,7 +34,15 @@ O perfil `production` continua travado: sem rascunhos e sem clipes de protótipo
 | `EXPO_PUBLIC_TURNSTILE_SITE_KEY` | Cloudflare → Turnstile → seu site → Site key |
 | `EXPO_PUBLIC_TURNSTILE_BASE_URL` (recomendado) | `https://tapstrong-preview.vercel.app/` enquanto o domínio não existir. Coloque esse host na lista de domínios do site no Turnstile. |
 
-Os links de Termos, Privacidade, suporte e convite **não são obrigatórios** no `internal`. Até as chaves acima são opcionais nele: sem elas o build sai e tudo fica no celular (o `env:check` só avisa). Se você puser, eles já funcionam.
+**Fase 32 (04/10): `EXPO_PUBLIC_SUPABASE_URL` e `EXPO_PUBLIC_SUPABASE_ANON_KEY` agora são obrigatórias nos perfis `internal` e `apk`.** O APK de teste saiu sem elas e por isso não mostrou nenhum vídeo nem pôster. Sem as duas, o build para no início com um aviso claro. As outras chaves continuam opcionais (o `env:check` só avisa).
+
+Os dois perfis já trazem no `eas.json`:
+- `EXPO_PUBLIC_APP_VARIANT=internal`;
+- `EXPO_PUBLIC_DEMO_MEDIA=1`.
+
+Os clipes e pôsteres aprovados do programa de ombro vão **dentro** do APK (`assets/media/shoulder`, gerado por `npm run shoulder:media`). Eles funcionam sem internet. Os outros exercícios baixam do bucket na primeira vez e depois ficam no celular.
+
+Os links de Termos, Privacidade, suporte e convite **não são obrigatórios** no `internal`.
 
 **Assinatura em sandbox:**
 - **iPhone:** no TestFlight, a compra já é de teste, sem cobrança.
@@ -48,6 +56,12 @@ npx eas-cli@latest env:create --environment preview --name EXPO_PUBLIC_SUPABASE_
 ```
 
 Repita para as outras.
+
+Para o APK, as mesmas variáveis do ambiente `preview` valem (os dois perfis usam `"environment": "preview"`):
+
+```
+npx eas-cli@latest env:create --environment preview --name EXPO_PUBLIC_SUPABASE_ANON_KEY --value "sb_publishable_..." --visibility plaintext
+```
 
 Para conferir no seu computador antes do build:
 

@@ -39,6 +39,21 @@ function manifest(): Manifest {
 }
 
 /**
+ * The shoulder program's checked clips and posters, inside the internal test
+ * build (Phase 32 B1): they play offline, in airplane mode too. Written by
+ * `npm run shoulder:media`. The literal comparison lets the bundler drop the
+ * require (and every file) from production builds (bundle:check).
+ */
+function bundled(): Manifest {
+  if (process.env.EXPO_PUBLIC_APP_VARIANT === 'internal') {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    return require('../../../assets/media/shoulder/index.js') as Manifest;
+  }
+  return {};
+}
+const entryOf = (slug: string) => manifest()[slug] ?? bundled()[slug];
+
+/**
  * Where released clips live (Phase 32, Daniel, Oct 3): the public
  * `exercise-media` bucket of this build's Supabase project, as
  * `<slug>.<f|m>.mp4` and `posters/<slug>.<f|m>.webp`. Null without a backend.
@@ -69,7 +84,7 @@ function released(slug: string): boolean {
 /** The clip for this sex, or null. Never the other sex's clip. */
 export function demoVideo(slug: string, sex: DemoSex | null): DemoMedia | null {
   if (!sex || slug === '__label') return null;
-  const entry = manifest()[slug];
+  const entry = entryOf(slug);
   const source = typeof entry === 'object' ? entry[sex] : undefined;
   if (isMedia(source)) return source;
   const base = mediaBase();
@@ -84,7 +99,7 @@ export function demoVideo(slug: string, sex: DemoSex | null): DemoMedia | null {
  */
 export function demoPoster(slug: string, sex: DemoSex | null): DemoMedia | null {
   if (!sex || slug === '__label') return null;
-  const entry = manifest()[slug];
+  const entry = entryOf(slug);
   const source = typeof entry === 'object' ? entry.poster?.[sex] : undefined;
   if (isMedia(source)) return source;
   const base = mediaBase();

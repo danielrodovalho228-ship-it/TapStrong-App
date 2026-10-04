@@ -102,13 +102,14 @@ beforeEach(() => {
 
 describe('Workout list (mockup 10)', () => {
   it(
-    'shows warm-up first, the exercises, cool-down last and the draft badge',
+    'shows warm-up first, the exercises, cool-down last; no draft notice inside the workout',
     async () => {
       await setUp();
       await render(<WorkoutScreen />);
       expect(screen.getByText(/^Warm-up · \d+ min$/)).toBeTruthy();
       expect(screen.getByText(/^Cool-down · \d+ min$/)).toBeTruthy();
-      expect(screen.getByText(/draft exercises, not reviewed yet/)).toBeTruthy();
+      // Phase 32 B8: the draft notice lives in the Settings footer, not here.
+      expect(screen.queryByText(/draft exercises, not reviewed yet/)).toBeNull();
       expect(screen.getByText('Upper chest · Grow')).toBeTruthy();
       await fireEvent.press(screen.getByRole('button', { name: 'Start with warm-up' }));
       expect(current().status).toBe('active');

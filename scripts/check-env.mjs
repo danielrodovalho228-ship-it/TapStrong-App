@@ -34,7 +34,12 @@ const INTERNAL = [
 
 const onlyProduction = process.argv.includes('--if-production');
 const profile = process.env.EAS_BUILD_PROFILE;
-const internal = profile === 'internal' || process.argv.includes('--internal');
+// "apk" is the same test build as an installable file (Daniel, Oct 4).
+const internal =
+  profile === 'internal' || profile === 'apk' || process.argv.includes('--internal');
+// Phase 32 B1: an internal build without its backend had no clip or poster at
+// all, so these two are required there too (the shoulder media is bundled).
+const MEDIA = ['EXPO_PUBLIC_SUPABASE_URL', 'EXPO_PUBLIC_SUPABASE_ANON_KEY'];
 if (onlyProduction && profile !== 'production' && !internal) {
   console.log(`env:check skipped (build profile: ${profile ?? 'local'})`);
   process.exit(0);
@@ -72,8 +77,15 @@ else if (support && PERSONAL.test(support))
   invalid.push(['EXPO_PUBLIC_SUPPORT_EMAIL', 'must be a business address, not a personal mailbox']);
 for (const name of OPTIONAL)
   if (!process.env[name]?.trim()) console.log(`optional, not set: ${name}`);
-// Internal test builds run without a backend too (everything stays on the
-// phone), so a missing key only warns there (Daniel, Oct 4).
+if (internal && missing.some(([name]) => MEDIA.includes(name))) {
+  console.error('Internal test build without its backend: no exercise videos or posters.');
+  for (const [name, why] of missing.filter(([n]) => MEDIA.includes(n)))
+    console.error(`  ${name}  (${why}, exercise videos)`);
+  console.error('Set them in the EAS "preview" environment (docs/internal-build.md, step 1).');
+  process.exit(1);
+}
+// Without the other keys an internal build still works (purchases and the
+// person check are off), so they only warn there (Daniel, Oct 4).
 if (internal && missing.length) {
   console.warn('Internal test build without:');
   for (const [name, why] of missing) console.warn(`  ${name}  (${why})`);

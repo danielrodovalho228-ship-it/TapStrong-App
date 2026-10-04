@@ -2,7 +2,7 @@
 
 Gerado por `python3 scripts/build-launch-sheet.py`. Não edite à mão.
 
-223 clipes em 116 exercícios. Primeiro os do 1º treino, depois os do ombro.
+225 clipes em 117 exercícios. Primeiro os do 1º treino, depois os do ombro.
 
 Formato: slug | sexo (f/m/fm) | prioridade | tem imagem de partida? (sim/não/só f/só m) | motivo
 
@@ -122,5 +122,6 @@ side_lying_internal_rotation | fm | ombro | sim | f: reprovado: levanta o halter
 sleeper_stretch | fm | ombro | sim | reprovado: o braço fica erguido e a outra mão não empurra o antebraço; cor no braço, não atrás do ombro
 stick_external_rotation_stretch | fm | ombro | não | faltando
 stick_internal_rotation_stretch | f | ombro | sim | reprovado: texto no vídeo ("Stick Internal Rotation stretch")
+su_seated_shrug_hold | fm | ombro | não | faltando
 supine_shoulder_rotation_90 | fm | ombro | sim | f: reprovado: cor no braço inteiro, até o antebraço (manga pintada); o braço desce ao lado do corpo; m: reprovado: peito pintado de laranja sobre a camiseta (roupa pintada)
 ```

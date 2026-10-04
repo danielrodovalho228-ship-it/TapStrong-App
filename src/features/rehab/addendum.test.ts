@@ -113,16 +113,24 @@ describe('the daily rhythm (§6.2)', () => {
     expect(counts.sleeper_stretch).toBe(7);
   });
 
-  it('the session: warm-up, stretches, the block, then the pendulum again (sleeper in its breaks)', () => {
+  it('the session: light mobility warm-up, the block, then the stretches as the cool-down, each once', () => {
     const s = buildProgramSession(P, dailyLayout(P, dailyPlan(P, MONDAY, {})), {
       library: LIBRARY,
       affected: 'right',
       week: 1,
     });
     expect(s.missing).toEqual([]);
-    expect(s.items[0].block).toBe('warmup');
+    const slugs = s.items.map((i) => LIBRARY.find((e) => e.id === i.exerciseId)!.slug);
+    // Phase 32 B3: pendulum, shoulder rolls and shrugs, 2–3 min; no walk.
+    expect(slugs.slice(0, 3)).toEqual([
+      'pendulum_swing',
+      'wu_seated_shoulder_rolls',
+      'su_seated_shrug_hold',
+    ]);
+    expect(s.warmupMinutes).toBe(3);
     expect(s.items.at(-1)!.role).toBe('cooldown');
-    expect(s.items.filter((i) => i.block === 'stretch_end')).toHaveLength(1);
+    // Phase 32 B5: nothing twice (the pendulum was in the stretches and the cool-down).
+    expect(new Set(slugs).size).toBe(slugs.length);
     expect(s.program).toEqual({ id: P.id, session: 'standing', week: 1 });
   });
 
@@ -156,7 +164,7 @@ describe("the day's dose (Daniel, Oct 2)", () => {
   const item = (s: ReturnType<typeof day>, slug: string) =>
     s.items.filter((i) => i.exerciseId === bySlug.get(slug)!.id);
 
-  it('stretches 2 and 4: 2 holds of 30 s, affected side only; pendulum 1 min; no sleeper', () => {
+  it('stretches 2 and 4: 2 holds of 30 s, affected side only; pendulum 1 min in the warm-up; no sleeper', () => {
     const s = day(MONDAY, {});
     // Stretch 3 reaches behind the back: never (Phase 32 A1).
     expect(item(s, 'stick_internal_rotation_stretch')).toEqual([]);
@@ -164,8 +172,8 @@ describe("the day's dose (Daniel, Oct 2)", () => {
       const [x] = item(s, slug);
       expect([slug, x.sets, x.holdSeconds, x.sides]).toEqual([slug, 2, [30, 30], ['right']]);
     }
-    const [pendulum] = item(s, 'pendulum_swing');
-    expect([pendulum.sets, pendulum.holdSeconds, pendulum.sides]).toEqual([1, [60, 60], ['right']]);
+    const pendulum = item(s, 'pendulum_swing');
+    expect(pendulum.map((i) => [i.role, i.durationSeconds])).toEqual([['warmup', 60]]);
     expect(item(s, 'sleeper_stretch')).toEqual([]);
     // Both shoulders affected: both sides, still 2 holds each.
     expect(item(day(MONDAY, {}, false, 'both'), 'crossover_arm_stretch')[0].sets).toBe(4);
@@ -180,13 +188,14 @@ describe("the day's dose (Daniel, Oct 2)", () => {
     }
   });
 
-  it('about a third of the full dose: ~21 min for block A, ~24 for block B (estimate shown on the card)', () => {
+  it('about a third of the full dose: ~18 min for block A, ~22 for block B (estimate shown on the card)', () => {
     const a = day(MONDAY, {});
     const b = day(addDays(MONDAY, 1), counts([6, 7, 8, 9, 10, 11]));
-    expect(a.minutes).toBe(21);
-    expect(b.minutes).toBe(24);
+    expect(a.minutes).toBe(18);
+    expect(b.minutes).toBe(22);
     const full = day(MONDAY, {}, true);
-    expect(item(full, 'sleeper_stretch')).toHaveLength(2);
+    // Once per session, in the cool-down (Phase 32 B5).
+    expect(item(full, 'sleeper_stretch')).toHaveLength(1);
     expect(item(full, 'crossover_arm_stretch')[0].sets).toBe(8);
     expect(full.minutes).toBeGreaterThan(2 * a.minutes);
   });
@@ -204,12 +213,12 @@ describe('a missed day (§6.3)', () => {
     expect(done).toBeGreaterThan(13 * 2);
   });
 
-  it('Sunday takes the leftovers up to the cap; what does not fit goes to next week', () => {
+  it('Sunday takes one leftover (Phase 32 B4: never more than 1 extra); the rest goes to next week', () => {
     const counts = Object.fromEntries(STRENGTH.map((x) => [x.slug, 1]));
     const plan = dailyPlan(P, addDays(MONDAY, 6), counts);
-    expect(plan.numbers).toHaveLength(7);
+    expect(plan.numbers).toHaveLength(1);
     expect(plan.catchUp).toEqual(plan.numbers);
-    expect(plan.nextWeek).toHaveLength(13 - 7);
+    expect(plan.nextWeek).toHaveLength(13 - 1);
   });
 });
 

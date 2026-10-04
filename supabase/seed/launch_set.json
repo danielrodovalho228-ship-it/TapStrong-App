@@ -972,6 +972,10 @@
     {
       "slug": "side_lying_internal_rotation",
       "reason": "shoulder"
+    },
+    {
+      "slug": "su_seated_shrug_hold",
+      "reason": "shoulder"
     }
   ]
 }

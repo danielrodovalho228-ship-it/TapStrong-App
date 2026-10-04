@@ -114,6 +114,8 @@ export function buildLaunchSet(): LaunchSet {
   for (const e of LIBRARY) if (hasClip(e.slug, 'f') && hasClip(e.slug, 'm')) add(e.slug, 'clips');
   for (const slug of [...firstWorkoutSlugs()].sort()) add(slug, 'first_workout');
   for (const x of SHOULDER_PROGRAM.exercises) add(x.slug, 'shoulder');
+  // The program's light mobility warm-up (Phase 32 B3).
+  for (const w of SHOULDER_PROGRAM.warmup) add(w.slug, 'shoulder');
 
   const bySlug = new Map(LIBRARY.map((e) => [e.slug, e]));
   const clipScore = (e: Exercise) => Number(hasClip(e.slug, 'f')) + Number(hasClip(e.slug, 'm'));

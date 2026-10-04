@@ -75,6 +75,7 @@
   "standing_quad_stretch": ["Stands tall with one hand on a wall, the other hand holding the same-side ankle with the heel near the glute.", "st", "S", 1],
   "step_up": ["Stands facing a flat bench with one foot flat on top of it, the other on the floor.", "st", "S", 0],
   "su_seated_band_overhead_pulldown": ["Sits tall on the chair holding a long band overhead with straight arms, hands shoulder-width.", "ch", "F", 0],
+  "su_seated_shrug_hold": ["Stands tall with feet hip-width apart, arms relaxed at the sides, shoulders down and loose.", "st", "F", 1],
   "su_seated_w_pulldown": ["Sits tall on the chair with both arms reaching straight up overhead, palms forward.", "ch", "B", 0],
   "superman": ["Lies face down on the mat, arms straight overhead and legs straight, forehead resting on the floor.", "mat", "S", 0],
   "supported_hip_extension": ["Stands facing the back of a chair with both hands on it, standing tall on both feet.", "st", "S", 0],

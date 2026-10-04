@@ -469,16 +469,16 @@ export default function WorkoutScreen() {
         ) : null}
       </View>
 
-      <View style={styles.badge}>
-        <Icon name="shield" size={20} color={reviewed ? colors.teal : colors.accentText} />
-        <AppText
-          variant="caption"
-          color={reviewed ? colors.teal : colors.accentText}
-          style={styles.rowText}
-        >
-          {reviewed ? t('workout.reviewed') : t('workout.draftBadge')}
-        </AppText>
-      </View>
+      {/* Only the reviewed promise here; the draft notice of test builds
+          lives small in the Settings footer (Phase 32 B8). */}
+      {reviewed ? (
+        <View style={styles.badge}>
+          <Icon name="shield" size={20} color={colors.teal} />
+          <AppText variant="caption" color={colors.teal} style={styles.rowText}>
+            {t('workout.reviewed')}
+          </AppText>
+        </View>
+      ) : null}
 
       {sheet ? (
         <SwapSheet

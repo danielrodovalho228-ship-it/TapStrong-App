@@ -100,7 +100,8 @@
     "server:check": "node scripts/check-server.mjs",
     "media:redo": "node scripts/media-redo.mjs",
     "launch-set": "WRITE_LAUNCH_SET=1 jest scripts/launch-set.test.ts",
-    "legal:check": "node scripts/build-legal.mjs --check"
+    "legal:check": "node scripts/build-legal.mjs --check",
+    "shoulder:media": "node scripts/build-shoulder-media.mjs"
   },
   "private": true
 }

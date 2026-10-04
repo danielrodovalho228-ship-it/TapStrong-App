@@ -6,7 +6,7 @@ import type { Exercise } from '../exercises/types';
 import { generateSession, type GeneratedSession, type GeneratorInput } from '../generator';
 import { GYM_EQUIPMENT_OPTIONS } from '../onboarding/options';
 
-import { allSteps, canEndTimedStep, currentStep, mainSetCounts, stepAfter } from './flow';
+import { allSteps, currentStep, mainSetCounts, stepAfter } from './flow';
 import { finisherInput, isReviewed, recentSessions, withFocus } from './plan';
 import { pastSessions, progressionFor, suggestedLoad } from './progression';
 import {
@@ -232,14 +232,6 @@ describe('player flow', () => {
     expect(counts.total).toBe(
       s.items.filter((i) => i.role === 'main').reduce((n, i) => n + i.sets, 0),
     );
-  });
-
-  it('lets a loaded day shorten, not skip, the warm-up', () => {
-    const warm = s.items.find((i) => i.part === 'warmup_general')!;
-    const half = (warm.durationSeconds ?? 0) / 2;
-    expect(canEndTimedStep(warm, half - 1, true)).toBe(false);
-    expect(canEndTimedStep(warm, half, true)).toBe(true);
-    expect(canEndTimedStep(warm, 0, false)).toBe(true);
   });
 });
 

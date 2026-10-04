@@ -23,6 +23,8 @@ import { generateBalanceSession, MOBILITY_MINUTES } from '@/features/generator';
 import { programStatus } from '@/features/program/apply';
 import { dayName } from '@/features/program/block';
 import { CareHomeCards } from '@/features/rehab/CareHomeCard';
+import { useRehabRun } from '@/features/rehab/hooks';
+import { ShoulderPlanPanel, useShoulderMain } from '@/features/rehab/ShoulderPlan';
 import { ExerciseCard, PhaseCard } from '@/features/plan/PlanCards';
 import { usePrefsStore } from '@/features/settings/store';
 import { openShare } from '@/features/share/open';
@@ -83,6 +85,9 @@ export default function HomeScreen() {
   const entitlement = useBillingStore((st) => st.entitlement);
   // Date Moments (birthday month, 1 month / 1 year of app), below the button (Phase 27, C).
   const moment = useMoment('home');
+  // The shoulder program is the main plan while it runs (Phase 32 B7).
+  const shoulderId = useShoulderMain();
+  const shoulder = useRehabRun(shoulderId ?? '');
   if (!profile.onboardingComplete || !derived) return <Redirect href="/welcome" />;
 
   const now = clock.now();
@@ -272,6 +277,17 @@ export default function HomeScreen() {
     Math.max(1, Math.round(items.reduce((n, i) => n + i.estSeconds, 0) / 60));
   const shareOk = canShare(member, derived.mode);
   const startLabel = active ? t('home.continue') : t('plan.start');
+  const shoulderMain = !!shoulderId && !!shoulder.program && !!shoulder.run;
+  const shoulderDue = shoulderMain && !shoulder.dailyDone && !!shoulder.todaySession;
+  // The program's own week on the strip: its done days, every day ahead planned.
+  const shoulderMarks = shoulderMain
+    ? (date: string) =>
+        shoulder.doneDays.has(date)
+          ? ('trained' as const)
+          : date >= shoulder.today
+            ? ('planned' as const)
+            : null
+    : undefined;
 
   return (
     <Screen
@@ -316,7 +332,14 @@ export default function HomeScreen() {
       }
       floatingFooter
       footer={
-        easyDay ? (
+        shoulderDue ? (
+          <Button
+            variant="accent"
+            label={t('rehab.daily.start')}
+            onPress={shoulder.startToday}
+            testID="start-shoulder"
+          />
+        ) : easyDay ? (
           <Button variant="accent" label={t('plan.stretchNow')} onPress={openMobility} />
         ) : freeDone ? null : (
           <Button variant="accent" label={startLabel} onPress={trainNow} testID="start-hero" />
@@ -330,8 +353,22 @@ export default function HomeScreen() {
       ) : null}
       {/* The week on top (Phase 29, B2): today marked, a dot on trained days,
           tap a day for that day's workout. */}
-      <WeekStrip />
-      {easyDay ? (
+      <WeekStrip marks={shoulderMarks} />
+      {shoulderMain ? (
+        <>
+          <ShoulderPlanPanel programId={shoulderId!} band={band} />
+          {/* The regular workout stays one tap away, below (Phase 32 B7). */}
+          {preview && !easyDay && !freeDone ? (
+            <PhaseCard
+              exercise={byId.get(mains[0]?.exerciseId ?? '')}
+              title={t('rehab.main.regular', { split: split ?? t('plan.today') })}
+              detail={t('program.summary', { count: mains.length, minutes: cardMinutes })}
+              onOpen={openWorkout}
+              testID="plan-regular"
+            />
+          ) : null}
+        </>
+      ) : easyDay ? (
         // Rest day (Phase 31, B): a short stretch is recommended.
         <View style={styles.rest} testID={doneToday ? 'done-today' : 'rest-day'}>
           <Icon name="clock" size={40} color={colors.accentText} />
@@ -379,73 +416,76 @@ export default function HomeScreen() {
               {split ?? t('plan.today')}
             </AppText>
           </View>
-          <View style={styles.panel}>
-            {preview ? (
-              <View
-                style={styles.summaryRow}
-                accessible
-                accessibilityLabel={t('program.summary', {
-                  count: mains.length,
-                  minutes: cardMinutes,
-                })}
-                testID="plan-summary"
-              >
-                <Icon name="bolt" size={18} color={colors.mutedStrong} />
-                <AppText variant="h3">{t('plan.exercises', { count: mains.length })}</AppText>
-                <Icon name="clock" size={18} color={colors.mutedStrong} />
-                <AppText variant="h3">{t('plan.minutes', { count: cardMinutes })}</AppText>
-              </View>
-            ) : null}
-            {warm.length ? (
-              <PhaseCard
-                exercise={byId.get(warm[0].exerciseId)}
-                title={t('plan.warmup')}
-                detail={t('home.minutesShort', { minutes: phaseMinutes(warm) })}
-                onOpen={openWorkout}
-                testID="plan-warmup"
-              />
-            ) : null}
-            {mains.map((item) => {
-              const e = byId.get(item.exerciseId);
-              // Settings → Workout tab display: a compact list (Phase 31, F).
-              if (planView === 'list')
+          {preview ? (
+            <View style={styles.panel}>
+              {preview ? (
+                <View
+                  style={styles.summaryRow}
+                  accessible
+                  accessibilityLabel={t('program.summary', {
+                    count: mains.length,
+                    minutes: cardMinutes,
+                  })}
+                  testID="plan-summary"
+                >
+                  <Icon name="bolt" size={18} color={colors.mutedStrong} />
+                  <AppText variant="h3">{t('plan.exercises', { count: mains.length })}</AppText>
+                  <Icon name="clock" size={18} color={colors.mutedStrong} />
+                  <AppText variant="h3">{t('plan.minutes', { count: cardMinutes })}</AppText>
+                </View>
+              ) : null}
+              {warm.length ? (
+                <PhaseCard
+                  exercise={byId.get(warm[0].exerciseId)}
+                  title={t('plan.warmup')}
+                  detail={t('home.minutesShort', { minutes: phaseMinutes(warm) })}
+                  onOpen={openWorkout}
+                  testID="plan-warmup"
+                />
+              ) : null}
+              {mains.map((item) => {
+                const e = byId.get(item.exerciseId);
+                // Settings → Workout tab display: a compact list (Phase 31, F).
+                if (planView === 'list')
+                  return (
+                    <PhaseCard
+                      key={item.id}
+                      exercise={e}
+                      title={exerciseName(t, e, item.exerciseId)}
+                      detail={badgeFor(item)}
+                      onSwap={() => openSwap(item.id)}
+                      testID="plan-row"
+                    />
+                  );
                 return (
-                  <PhaseCard
+                  <ExerciseCard
                     key={item.id}
                     exercise={e}
-                    title={exerciseName(t, e, item.exerciseId)}
-                    detail={badgeFor(item)}
+                    name={exerciseName(t, e, item.exerciseId)}
+                    badge={badgeFor(item)}
+                    trophy={!minor && goalFor(item)}
+                    band={band}
                     onSwap={() => openSwap(item.id)}
-                    testID="plan-row"
                   />
                 );
-              return (
-                <ExerciseCard
-                  key={item.id}
-                  exercise={e}
-                  name={exerciseName(t, e, item.exerciseId)}
-                  badge={badgeFor(item)}
-                  trophy={!minor && goalFor(item)}
-                  band={band}
-                  onSwap={() => openSwap(item.id)}
+              })}
+              {cool.length ? (
+                <PhaseCard
+                  exercise={byId.get(cool[0].exerciseId)}
+                  title={t('plan.cooldown')}
+                  detail={t('home.minutesShort', { minutes: phaseMinutes(cool) })}
+                  onOpen={openWorkout}
+                  testID="plan-cooldown"
                 />
-              );
-            })}
-            {cool.length ? (
-              <PhaseCard
-                exercise={byId.get(cool[0].exerciseId)}
-                title={t('plan.cooldown')}
-                detail={t('home.minutesShort', { minutes: phaseMinutes(cool) })}
-                onOpen={openWorkout}
-                testID="plan-cooldown"
-              />
-            ) : null}
-          </View>
+              ) : null}
+            </View>
+          ) : null}
         </View>
       )}
 
-      {/* "Shoulder today" next to today's workout (Phase 30 addendum §6.1). */}
-      <CareHomeCards />
+      {/* "Shoulder today" next to today's workout (Phase 30 addendum §6.1),
+          unless the shoulder is already the main plan above. */}
+      <CareHomeCards skip={shoulderMain ? shoulderId : null} />
 
       {moment ? (
         <MomentCard

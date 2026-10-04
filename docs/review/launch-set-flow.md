@@ -2,7 +2,7 @@
 
 Gerado por `python3 scripts/build-launch-sheet.py`. Não edite à mão.
 
-Exercícios no conjunto: 243. Clipes que faltam: 223 (em 116 exercícios).
+Exercícios no conjunto: 244. Clipes que faltam: 225 (em 117 exercícios).
 
 Ordem: primeiro treino, programa de ombro, cobertura de músculo. Sexo: f = mulher, m = homem.
 Nome do arquivo no Flow: `<slug>.<f|m>`.
@@ -230,5 +230,7 @@ Nome do arquivo no Flow: `<slug>.<f|m>`.
 | 219 | stick_external_rotation_stretch | f | Programa de ombro | faltando |
 | 220 | stick_external_rotation_stretch | m | Programa de ombro | faltando |
 | 221 | stick_internal_rotation_stretch | f | Programa de ombro | texto no vídeo ("Stick Internal Rotation stretch") |
-| 222 | supine_shoulder_rotation_90 | f | Programa de ombro | cor no braço inteiro, até o antebraço (manga pintada); o braço desce ao lado do corpo |
-| 223 | supine_shoulder_rotation_90 | m | Programa de ombro | peito pintado de laranja sobre a camiseta (roupa pintada) |
+| 222 | su_seated_shrug_hold | f | Programa de ombro | faltando |
+| 223 | su_seated_shrug_hold | m | Programa de ombro | faltando |
+| 224 | supine_shoulder_rotation_90 | f | Programa de ombro | cor no braço inteiro, até o antebraço (manga pintada); o braço desce ao lado do corpo |
+| 225 | supine_shoulder_rotation_90 | m | Programa de ombro | peito pintado de laranja sobre a camiseta (roupa pintada) |

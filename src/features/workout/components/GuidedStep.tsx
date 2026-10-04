@@ -2,7 +2,7 @@ import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 
@@ -19,7 +19,7 @@ import { clock } from '@/lib/clock';
 import { colors, fonts, makeStyles, radius, sizes, spacing, useColors } from '@/theme';
 
 import { feel } from '../feel';
-import { canEndTimedStep, cooldownHold, sideSet, stepAfter, stepKind, type Step } from '../flow';
+import { cooldownHold, sideSet, stepAfter, stepKind, type Step } from '../flow';
 import { clockText, exerciseCues, exerciseName } from '../format';
 import { playTimerEnd } from '../sound';
 import { useWorkoutStore } from '../store';
@@ -33,8 +33,8 @@ import { useNow } from './TimerRing';
  * side, and at the bottom, on a dark fade (nothing on the actor): "Exercise
  * 1/4", the name, a big countdown or "10 reps", two lines of cues and one
  * light button. A countdown starts by itself, pauses with a tap on the clip
- * and ends by itself (Phase 27, A5); on a loaded day the warm-up button
- * unlocks at half time (SPEC §8).
+ * and ends by itself (Phase 27, A5). The warm-up is never locked: "Skip
+ * warm-up" is always there, with a short tip (Phase 32 B2, Daniel).
  */
 export function GuidedStep({
   workout,
@@ -63,10 +63,6 @@ export function GuidedStep({
   const total = hold ?? (stepKind(item) === 'timed' ? (item.durationSeconds ?? 0) : 0);
   const counting = total > 0;
   const elapsed = (now - startedAt - pausedFor - (pausedAt ? now - pausedAt : 0)) / 1000;
-  const dayHasLoad = workout.session.items.some(
-    (i) => i.role === 'main' && i.loadHint !== 'bodyweight',
-  );
-  const canEnd = !counting || canEndTimedStep(item, elapsed, dayHasLoad);
   const split = sideSet(item, step.setNo);
   const phase = workout.session.items.filter((i) => i.role === item.role && i.part !== 'ramp_up');
   const at = phase.indexOf(item);
@@ -116,6 +112,11 @@ export function GuidedStep({
       setPausedFor((p) => p + (t0 - pausedAt));
       setPausedAt(null);
     } else setPausedAt(t0);
+  };
+  const skipWarmup = () => {
+    for (const i of workout.session.items.filter((x) => x.role === 'warmup')) {
+      skipItem(workout.id, i.id);
+    }
   };
   const skipCooldown = () => {
     for (const i of workout.session.items.filter((x) => x.role === 'cooldown')) {
@@ -185,7 +186,7 @@ export function GuidedStep({
             }
             style={styles.round}
           >
-            <Icon name="chevron-left" size={22} color={colors.onCanvas} />
+            <Icon name="chevron-left" size={22} color={colors.ink} />
           </Pressable>
           {/* "I feel pain" stays one tap away on every step (SPEC safety). */}
           <Pressable
@@ -197,8 +198,8 @@ export function GuidedStep({
             }
             style={styles.pain}
           >
-            <Icon name="bandage" size={18} color={colors.onCanvasMuted} />
-            <AppText variant="label" color={colors.onCanvasMuted}>
+            <Icon name="bandage" size={18} color={colors.mutedStrong} />
+            <AppText variant="label" color={colors.mutedStrong}>
               {t('workout.player.pain')}
             </AppText>
           </Pressable>
@@ -215,14 +216,14 @@ export function GuidedStep({
         {pausedAt ? (
           <View style={styles.playWrap} pointerEvents="none">
             <View style={styles.play}>
-              <Icon name="play" size={44} color={colors.onCanvas} />
+              <Icon name="play" size={44} color={colors.ink} />
             </View>
           </View>
         ) : null}
 
         <View style={styles.bottom}>
           {!hasMedia ? (
-            <View style={styles.soon}>
+            <View style={styles.soon} testID="guided-demo-soon">
               <Icon name="clock" size={14} color={colors.mutedStrong} />
               <AppText variant="caption" color={colors.mutedStrong}>
                 {t('workout.demoSoon')}
@@ -272,21 +273,28 @@ export function GuidedStep({
           <AppText color={colors.mutedStrong} numberOfLines={2}>
             {exerciseCues(t, exercise)}
           </AppText>
-          {!canEnd ? (
-            // Say when the button unlocks (QA P2).
-            <AppText variant="caption" color={colors.muted}>
-              {t('workout.player.halfHint')}
-              {dayHasLoad ? ` ${t('workout.player.warmupShorten')}` : ''}
+          {item.role === 'warmup' ? (
+            <AppText variant="caption" color={colors.mutedStrong}>
+              {t('workout.player.warmupTip')}
             </AppText>
           ) : null}
           <Button
             size="xl"
             variant="primary"
             label={buttonLabel}
-            disabled={!canEnd}
             onPress={done}
             testID="guided-done"
           />
+          {/* Never stuck in the warm-up (Phase 32 B2): already warm or short of time. */}
+          {item.role === 'warmup' ? (
+            <View style={styles.links}>
+              <TextLink
+                label={t('workout.player.skipWarmup')}
+                onPress={skipWarmup}
+                testID="guided-skip-warmup"
+              />
+            </View>
+          ) : null}
           {/* Swap: one tap, then the pick (Phase 27, A1). A program's
               exercises are fixed (Phase 30). */}
           {onSwap ? (
@@ -337,6 +345,7 @@ export function GuidedStep({
  */
 function FullMedia({ exercise }: { exercise: Exercise | undefined }) {
   const styles = useStyles();
+  const window = useWindowDimensions();
   const profile = useOnboardingStore();
   const sex = demoSexFor(profile);
   const derived = derive(profile);
@@ -372,6 +381,8 @@ function FullMedia({ exercise }: { exercise: Exercise | undefined }) {
     derived?.band ?? 'adult',
     derived?.mode ?? 'adult',
   );
+  // No clip yet: the painted muscles in the top third, so "Demo coming soon"
+  // (with the text below) never sits over the picture (Phase 32 B6).
   return (
     <View style={[styles.media, styles.mapMedia]} testID="demo-muscle-map">
       {sex && exercise ? (
@@ -380,7 +391,7 @@ function FullMedia({ exercise }: { exercise: Exercise | undefined }) {
           sex={sex as BodySex}
           primary={exercise.muscles.filter((m) => m.role === 'primary').map((m) => m.muscleKey)}
           secondary={exercise.muscles.filter((m) => m.role !== 'primary').map((m) => m.muscleKey)}
-          maxHeight={380}
+          maxHeight={Math.min(380, window.height * 0.36)}
         />
       ) : null}
     </View>
@@ -388,16 +399,22 @@ function FullMedia({ exercise }: { exercise: Exercise | undefined }) {
 }
 
 const useStyles = makeStyles(() => ({
-  root: { flex: 1, backgroundColor: colors.bodyCanvas },
+  // The app's dark theme around the clip (Phase 32 B6: the warm-up was light).
+  root: { flex: 1, backgroundColor: colors.background },
   media: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: colors.bodyCanvas,
+    backgroundColor: colors.background,
   },
-  mapMedia: { alignItems: 'center', paddingTop: spacing.xxxl * 2 },
+  mapMedia: {
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingTop: spacing.xxxl * 2,
+    paddingHorizontal: spacing.lg,
+  },
   soon: { flexDirection: 'row', alignItems: 'center', gap: spacing.xxs },
   links: { flexDirection: 'row', justifyContent: 'center' },
   fade: { position: 'absolute', left: 0, right: 0, bottom: 0, height: '55%' },
@@ -424,7 +441,7 @@ const useStyles = makeStyles(() => ({
     minHeight: sizes.touchTarget,
     paddingHorizontal: spacing.md,
     borderRadius: sizes.touchTarget / 2,
-    backgroundColor: colors.bodyCanvas,
+    backgroundColor: colors.surfaceRaised,
   },
   dots: {
     position: 'absolute',
@@ -433,8 +450,8 @@ const useStyles = makeStyles(() => ({
     gap: spacing.xs,
     alignItems: 'center',
   },
-  dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.onCanvasMuted },
-  dotOn: { height: 22, backgroundColor: colors.onCanvas },
+  dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.muted },
+  dotOn: { height: 22, backgroundColor: colors.ink },
   playWrap: {
     position: 'absolute',
     top: 0,
@@ -450,7 +467,7 @@ const useStyles = makeStyles(() => ({
     borderRadius: 44,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.bodyCanvas,
+    backgroundColor: colors.surfaceRaised,
   },
   bottom: { gap: spacing.sm, paddingHorizontal: spacing.xl, paddingBottom: spacing.md },
   amountRow: { flexDirection: 'row', alignItems: 'flex-end', gap: spacing.md },

@@ -78,11 +78,19 @@ describe('sessions', () => {
     expect(s.items[3].sides).toEqual(['right']);
   });
 
-  it('B — bands: warm-up walk first, stretches, bands 6–9 at 3×8–12, stretches again last', () => {
+  it('B — bands: light mobility warm-up, bands 6–9 at 3×8–12, stretches last, each once', () => {
     const s = build('B');
     const blocks = s.items.map((i) => i.block);
-    expect(blocks[0]).toBe('warmup');
-    expect(s.items[0].durationSeconds).toBe(5 * 60);
+    // Phase 32 B3: pendulum 1 min, shoulder rolls and shrugs, not a 5 min walk.
+    expect(s.items.filter((i) => i.role === 'warmup').map((i) => slugOf(i.exerciseId))).toEqual([
+      'pendulum_swing',
+      'wu_seated_shoulder_rolls',
+      'su_seated_shrug_hold',
+    ]);
+    expect(s.items[0].durationSeconds).toBe(60);
+    expect(blocks).not.toContain('stretch');
+    const slugs = s.items.map((i) => slugOf(i.exerciseId));
+    expect(new Set(slugs).size).toBe(slugs.length);
     expect(blocks.filter((b) => b === 'band')).toHaveLength(4);
     expect(blocks).not.toContain('dumbbell');
     expect(blocks.at(-1)).toBe('stretch_end');

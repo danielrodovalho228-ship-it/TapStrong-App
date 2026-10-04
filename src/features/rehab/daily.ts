@@ -2,13 +2,21 @@ import type { Exercise } from '../exercises/types';
 import type { WorkoutRecord } from '../workout/types';
 import { addDays, daysBetween, localDate, weekStart, type LocalDate } from '@/lib/dates';
 
-import type {
-  DailyBlock,
-  ProgramExercise,
-  RehabProgram,
-  SessionLayout,
-  StrengthTiming,
+import {
+  buildProgramSession,
+  coolDownStretches,
+  type AffectedSide,
+  type DailyBlock,
+  type ProgramExercise,
+  type RehabProgram,
+  type SessionLayout,
+  type StrengthTiming,
 } from './programs';
+
+/** Missed exercises added to one session, at most (Phase 32 B4). */
+export const MAX_CATCH_UP = 1;
+/** The longest daily session in week 1, minutes (Phase 32 B4: 20–25 min). */
+export const WEEK1_MAX_MINUTES = 25;
 
 /**
  * The daily rhythm (Phase 30 addendum §6.2–6.3): the stretches every day and
@@ -96,9 +104,11 @@ export type DailyPlan = {
  * 1. Sunday is stretches only; Monday to Saturday pick the block that still
  *    needs more sessions this week (on a tie, the standard week's block), so a
  *    swapped or missed day re-plans the rest of the week and keeps 3 each.
- * 2. Exercises of the other block that can no longer reach 3 in the days left
- *    move to today, while the day stays at 12 exercises or fewer.
+ * 2. One exercise of the other block that can no longer reach 3 in the days
+ *    left moves to today (Phase 32 B4: never more than 1 extra a session).
  * 3. What does not fit goes to next week, never a double dose.
+ * 4. Nothing is "left behind" in the week the program starts: it is the
+ *    gentle start (Phase 32 B4: no backlog on day 1).
  */
 export function dailyPlan(
   program: RehabProgram,
@@ -108,6 +118,8 @@ export function dailyPlan(
   pick?: DailyBlock,
   /** The standard week to follow (`careWeek`); the program's own by default. */
   week: (DailyBlock | 'stretch')[] = program.daily.week,
+  /** The program's first day: no catch-up in its first week. */
+  startedAt?: LocalDate,
 ): DailyPlan {
   const { daily } = program;
   const byN = new Map(program.exercises.map((x) => [x.n, x]));
@@ -143,8 +155,11 @@ export function dailyPlan(
   const numbers = block === 'stretch' ? [] : daily.blocks[block].filter((n) => need(n) > 0);
   const other: DailyBlock[] =
     block === 'stretch' ? ['standing', 'floor'] : [block === 'standing' ? 'floor' : 'standing'];
-  const behind = other.flatMap((b) => daily.blocks[b].filter((n) => need(n) > slots[b]));
-  const room = Math.max(0, daily.cap - stretches - numbers.length);
+  const firstWeek = !!startedAt && startedAt >= programWeekStart(today);
+  const behind = firstWeek
+    ? []
+    : other.flatMap((b) => daily.blocks[b].filter((n) => need(n) > slots[b]));
+  const room = Math.min(MAX_CATCH_UP, Math.max(0, daily.cap - stretches - numbers.length));
   const catchUp = behind.slice(0, room);
   return {
     block: block !== 'stretch' && !numbers.length && !catchUp.length ? 'stretch' : block,
@@ -155,21 +170,81 @@ export function dailyPlan(
 }
 
 /**
- * The daily plan as a session: warm-up on strengthening days, stretches, the
- * exercises, stretches again. By default the day's dose (Daniel, Oct 2: 15–20
- * min, sleeper only in its 3 breaks); `full` = the section 4 dose.
+ * The daily plan as a session. A strengthening day: the light mobility
+ * warm-up, the exercises, then the stretches as the cool-down; a stretch day:
+ * the stretches alone. Each exercise once (Phase 32 B5). By default the day's
+ * dose (Daniel, Oct 2: sleeper only in its 3 breaks); `full` = section 4.
  */
 export function dailyLayout(program: RehabProgram, plan: DailyPlan, full = false): SessionLayout {
+  if (!plan.numbers.length) {
+    const stretch = program.exercises.filter((x) => x.block === 'stretch').map((x) => x.n);
+    return {
+      key: plan.block,
+      warmup: false,
+      reduced: !full,
+      groups: [{ block: 'stretch', numbers: stretch }],
+    };
+  }
+  return {
+    key: plan.block,
+    warmup: true,
+    reduced: !full,
+    groups: [...strengthGroups(program, plan.numbers), coolDown(program)],
+  };
+}
+
+const strengthGroups = (program: RehabProgram, numbers: number[]): SessionLayout['groups'] => {
   const byN = new Map(program.exercises.map((x) => [x.n, x]));
-  const stretch = program.exercises.filter((x) => x.block === 'stretch').map((x) => x.n);
-  const band = plan.numbers.filter((n) => byN.get(n)!.block === 'band');
-  const dumbbell = plan.numbers.filter((n) => byN.get(n)!.block === 'dumbbell');
-  const groups: SessionLayout['groups'] = [{ block: 'stretch', numbers: stretch }];
-  if (band.length) groups.push({ block: 'band', numbers: band });
-  if (dumbbell.length) groups.push({ block: 'dumbbell', numbers: dumbbell });
-  if (plan.numbers.length)
-    groups.push({ block: 'stretch_end', numbers: program.daily.endStretches });
-  return { key: plan.block, warmup: plan.numbers.length > 0, reduced: !full, groups };
+  const groups: SessionLayout['groups'] = [];
+  for (const block of ['band', 'dumbbell'] as const) {
+    const of = numbers.filter((n) => byN.get(n)!.block === block);
+    if (of.length) groups.push({ block, numbers: of });
+  }
+  return groups;
+};
+const coolDown = (program: RehabProgram): SessionLayout['groups'][number] => ({
+  block: 'stretch_end',
+  numbers: coolDownStretches(program),
+});
+
+/**
+ * Week 1 stays short (Phase 32 B4: 20–25 min): strengthening exercises come
+ * off the end of the day (the catch-up first) until the session fits.
+ */
+export function fitMinutes(
+  program: RehabProgram,
+  plan: DailyPlan,
+  o: { library: Exercise[]; affected: AffectedSide; full?: boolean; max: number },
+): DailyPlan {
+  let numbers = plan.numbers;
+  const minutes = (ns: number[]) =>
+    buildProgramSession(program, dailyLayout(program, { ...plan, numbers: ns }, o.full), {
+      library: o.library,
+      affected: o.affected,
+      week: 1,
+    }).minutes;
+  while (numbers.length && minutes(numbers) > o.max) numbers = numbers.slice(0, -1);
+  if (numbers.length === plan.numbers.length) return plan;
+  const catchUp = plan.catchUp.filter((n) => numbers.includes(n));
+  return {
+    ...plan,
+    block: numbers.length ? plan.block : 'stretch',
+    numbers,
+    catchUp,
+    nextWeek: plan.nextWeek,
+  };
+}
+
+/** What a day's shoulder work really is, for its title (Phase 32 B4). */
+export type DayKind = 'mobility' | 'band' | 'dumbbell' | 'bandDumbbell';
+export function dayKind(program: RehabProgram, numbers: number[]): DayKind {
+  const blocks = new Set(
+    numbers.map((n) => program.exercises.find((x) => x.n === n)?.block).filter(Boolean),
+  );
+  if (blocks.has('band') && blocks.has('dumbbell')) return 'bandDumbbell';
+  if (blocks.has('band')) return 'band';
+  if (blocks.has('dumbbell')) return 'dumbbell';
+  return 'mobility';
 }
 
 /**
@@ -220,14 +295,12 @@ export function afterLayout(
   numbers: number[],
   o: { full?: boolean; warm: boolean },
 ): SessionLayout {
-  const byN = new Map(program.exercises.map((x) => [x.n, x]));
-  const band = numbers.filter((n) => byN.get(n)!.block === 'band');
-  const dumbbell = numbers.filter((n) => byN.get(n)!.block === 'dumbbell');
-  const groups: SessionLayout['groups'] = [];
-  if (band.length) groups.push({ block: 'band', numbers: band });
-  if (dumbbell.length) groups.push({ block: 'dumbbell', numbers: dumbbell });
-  groups.push({ block: 'stretch_end', numbers: program.daily.endStretches });
-  return { key: block, warmup: !o.warm, reduced: !o.full, groups };
+  return {
+    key: block,
+    warmup: !o.warm,
+    reduced: !o.full,
+    groups: [...strengthGroups(program, numbers), coolDown(program)],
+  };
 }
 
 /** Program sessions finished today, by session key. */

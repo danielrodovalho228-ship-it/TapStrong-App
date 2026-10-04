@@ -21,6 +21,10 @@ if grep -rl 'Launch set for the professional review' "$OUT" >/dev/null; then
   echo "FAIL: a release bundle contains the launch set drafts" >&2
   exit 1
 fi
+if grep -rl 'Bundled shoulder program media' "$OUT" >/dev/null; then
+  echo "FAIL: a release bundle contains the internal build's shoulder media" >&2
+  exit 1
+fi
 if grep -rl 'Prototype exercise videos' "$OUT" >/dev/null; then
   echo "FAIL: a release bundle contains the prototype video map" >&2
   exit 1
@@ -65,9 +69,10 @@ node scripts/security-check.mjs --bundle "$OUT" --no-history --offline >/dev/nul
   node scripts/security-check.mjs --bundle "$OUT" --no-history --offline >&2
   exit 1
 }
-# The internal test build (EAS profile "internal", Daniel Oct 3) carries the
-# launch set as drafts, but still no clip files, prototype media, purchase
-# simulator or secrets: its clips stream from Storage.
+# The internal test build (EAS profiles "internal" and "apk", Daniel Oct 3)
+# carries the launch set as drafts and the shoulder program's checked clips
+# (Phase 32 B1, offline), but no prototype media, purchase simulator or
+# secrets: the other clips stream from Storage.
 INT="$(mktemp -d)"
 trap 'rm -rf "$OUT" "$INT"' EXIT
 EXPO_PUBLIC_APP_VARIANT=internal EXPO_OFFLINE=1 CI=1 npx expo export --clear --platform android --output-dir "$INT" >/dev/null
@@ -75,7 +80,11 @@ if ! grep -rl 'Launch set for the professional review' "$INT" >/dev/null; then
   echo "FAIL: the internal build has no exercise library" >&2
   exit 1
 fi
-if find "$INT" -iname '*.mp4' | grep -q . || find "$INT" -path '*prototype*' | grep -q . \
+if ! grep -rl 'Bundled shoulder program media' "$INT" >/dev/null; then
+  echo "FAIL: the internal build has no bundled shoulder media" >&2
+  exit 1
+fi
+if find "$INT" -path '*prototype*' | grep -q . \
   || grep -rl 'Prototype exercise videos\|simulateFirstCharge' "$INT" >/dev/null; then
   echo "FAIL: the internal build contains prototype media or the purchase simulator" >&2
   exit 1
@@ -84,5 +93,5 @@ node scripts/security-check.mjs --bundle "$INT" --no-history --offline >/dev/nul
   node scripts/security-check.mjs --bundle "$INT" --no-history --offline >&2
   exit 1
 }
-echo "OK (internal): launch set inside, no clip files, prototype media, simulator or secrets"
+echo "OK (internal): launch set and shoulder media inside, no prototype media, simulator or secrets"
 echo "OK: no draft exercises, draft Repair tests, the draft movement catalog, prototype videos or posters, purchase simulator, dev-only warnings, personal contact or secrets in release bundles"

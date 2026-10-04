@@ -3796,7 +3796,6 @@
       "timeLeft": "{{time}} left",
       "startTimer": "Start timer",
       "doneStep": "Done",
-      "warmupShorten": "Loaded work today: you can shorten the warm-up, not skip it.",
       "skipCooldown": "Skip cool-down",
       "skipCooldownConfirm": "Skip cool-down? It helps you recover and counts toward your streak.",
       "keepCooldown": "Keep it",
@@ -3815,7 +3814,8 @@
       "pain": "I feel pain",
       "doneSet": "Done with set",
       "startFirst": "Start the timer first.",
-      "halfHint": "Done unlocks at half time."
+      "warmupTip": "Warming up protects your joints. Skip it only if you are already warm.",
+      "skipWarmup": "Skip warm-up"
     },
     "pain": {
       "eyebrow": "Pain reported · set paused",
@@ -5753,15 +5753,15 @@
     "sessions": {
       "A": {
         "title": "A — Mobility",
-        "body": "Stretches 1–5 only · 5 to 6 days a week"
+        "body": "Pendulum and stretches · 5 to 6 days a week"
       },
       "B": {
         "title": "B — Strength with a band",
-        "body": "Warm-up, stretches, bands 6–9, stretches · 3 days a week"
+        "body": "Light mobility warm-up, bands 6–9, stretches · 3 days a week"
       },
       "C": {
         "title": "C — Strength with light dumbbells",
-        "body": "Warm-up, stretches, dumbbells 10–18, stretches · 3 days a week"
+        "body": "Light mobility warm-up, dumbbells 10–18, stretches · 3 days a week"
       }
     },
     "startSession": "Start session {{session}}",
@@ -5851,7 +5851,8 @@
     "dose": {
       "full": "Full dose (from your physio)",
       "reduced": "Reduced dose to fit your day. Follow the dose your physio gives you.",
-      "fullOn": "Full dose: the program’s doses, nothing reduced. The sleeper stretch is in the session too."
+      "fullOn": "Full dose: the program’s doses, nothing reduced. The sleeper stretch is in the session too.",
+      "week1": "The full dose starts in week 2. Week 1 stays short (25 min at most)."
     },
     "split": {
       "stretchFirst": "Before the workout: only the stretches, as a warm-up.",
@@ -5863,7 +5864,17 @@
       "finishTitle": "Finish with the shoulder (~{{minutes}} min)",
       "finishBody": "{{block}}, after today's workout."
     },
-    "lockedSession": "Opens when your physio clears shoulder and arm training."
+    "lockedSession": "Opens when your physio clears shoulder and arm training.",
+    "dayKind": {
+      "mobility": "Mobility",
+      "band": "Mobility + band",
+      "dumbbell": "Mobility + light dumbbell",
+      "bandDumbbell": "Mobility + band + light dumbbell"
+    },
+    "main": {
+      "eyebrow": "Week {{week}} of {{total}} · Shoulder",
+      "regular": "Today’s plan workout · {{split}}"
+    }
   },
   "plan": {
     "myPlan": "My plan",

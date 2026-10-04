@@ -15,6 +15,9 @@ import {
   careWeek,
   dailyLayout,
   dailyPlan,
+  dayKind,
+  fitMinutes,
+  WEEK1_MAX_MINUTES,
   programWeekStart,
   sessionsToday,
   sleeperBreaksToday,
@@ -79,12 +82,24 @@ export function useRehabRun(programId: string) {
         Array.from({ length: 7 }, (_, i) => planned.has(addDays(monday, i))),
       )
     : undefined;
-  const plan =
+  // The physio's full dose starts in week 2: week 1 stays at 25 min (Phase 32 B4).
+  const fullDose = !!run?.fullDose && week > 1;
+  const planned0 =
     program && run && !run.maintenance
       ? open
-        ? dailyPlan(program, today, before, pick, careDays)
+        ? dailyPlan(program, today, before, pick, careDays, run.startedAt)
         : { block: 'stretch' as const, numbers: [], catchUp: [], nextWeek: [] }
       : null;
+  // Week 1: 20–25 min at most (Phase 32 B4).
+  const plan =
+    program && run && planned0 && week === 1
+      ? fitMinutes(program, planned0, {
+          library,
+          affected: run.side,
+          full: fullDose,
+          max: WEEK1_MAX_MINUTES,
+        })
+      : planned0;
 
   // Around today's main workout (Daniel, Oct 3): on a training day only the
   // stretches go first; the strengthening comes after, unless set to "before".
@@ -108,7 +123,6 @@ export function useRehabRun(programId: string) {
       ? careDay(program, plan, { trainingDay, timing: run?.strengthTiming, workoutSlugs })
       : null;
   const daily = day?.first ?? null;
-  const fullDose = !!run?.fullDose;
   const firstLayout = program && daily ? dailyLayout(program, daily, fullDose) : null;
   const finishLayout =
     program && plan && day?.after.length && plan.block !== 'stretch'
@@ -125,6 +139,17 @@ export function useRehabRun(programId: string) {
       ? buildProgramSession(program, layout, { library, affected: run?.side ?? 'right', week })
           .minutes
       : 0;
+
+  // The next part of today's shoulder work, as a session to preview on the
+  // plan tab (Phase 32 B7): the first part, then the after-workout part.
+  const nextLayout = !firstDone ? firstLayout : finishLayout && !afterDone ? finishLayout : null;
+  const todaySession =
+    program && run && nextLayout
+      ? buildProgramSession(program, nextLayout, { library, affected: run.side, week })
+      : null;
+  const doneDays = new Set(
+    done.map((w) => localDate(new Date(w.endedAt ?? w.startedAt ?? w.createdAt))),
+  );
 
   const launch = (layout: ProgramSessionKey | SessionLayout) => {
     if (!program || !run) return;
@@ -155,12 +180,25 @@ export function useRehabRun(programId: string) {
     /** Sessions B and C and the daily strengthening are open (physio said yes). */
     strengthOpen: open,
     daily,
+    /** What today's shoulder work really is, for the card title (Phase 32 B4). */
+    dayKind:
+      program && plan
+        ? dayKind(
+            program,
+            plan.numbers.filter((n) => !day?.inWorkout.includes(n)),
+          )
+        : null,
     dailyDone,
     /** The first part is done (the whole day when it is not split). */
     firstDone,
     dailyMinutes: minutesOf(firstLayout),
     counts,
     startDaily: () => firstLayout && launch(firstLayout),
+    /** Today's next shoulder part (preview) and its start (Phase 32 B7). */
+    todaySession,
+    startToday: () => nextLayout && launch(nextLayout),
+    /** Days with a finished program session. */
+    doneDays,
     /** "Finish with the shoulder": strengthening after the workout (Daniel, Oct 3). */
     finish: finishLayout
       ? {

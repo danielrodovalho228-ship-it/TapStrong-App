@@ -3796,7 +3796,6 @@
       "timeLeft": "quedan {{time}}",
       "startTimer": "Iniciar temporizador",
       "doneStep": "Hecho",
-      "warmupShorten": "Hoy hay trabajo con carga: puedes acortar el calentamiento, no saltarlo.",
       "skipCooldown": "Saltar enfriamiento",
       "skipCooldownConfirm": "¿Saltar la vuelta a la calma? Ayuda a recuperarte y cuenta para tu racha.",
       "keepCooldown": "Mantenerla",
@@ -3815,7 +3814,8 @@
       "pain": "Siento dolor",
       "doneSet": "Serie hecha",
       "startFirst": "Primero inicia el temporizador.",
-      "halfHint": "Listo se activa a mitad de tiempo."
+      "warmupTip": "Calentar protege tus articulaciones. Sáltalo solo si ya estás en calor.",
+      "skipWarmup": "Saltar calentamiento"
     },
     "pain": {
       "eyebrow": "Dolor reportado · serie en pausa",
@@ -5753,15 +5753,15 @@
     "sessions": {
       "A": {
         "title": "A — Movilidad",
-        "body": "Solo estiramientos 1–5 · 5 a 6 días por semana"
+        "body": "Péndulo y estiramientos · 5 a 6 días por semana"
       },
       "B": {
         "title": "B — Fuerza con banda",
-        "body": "Calentamiento, estiramientos, banda 6–9, estiramientos · 3 días por semana"
+        "body": "Calentamiento de movilidad suave, bandas 6–9, estiramientos · 3 días por semana"
       },
       "C": {
         "title": "C — Fuerza con mancuerna ligera",
-        "body": "Calentamiento, estiramientos, mancuerna 10–18, estiramientos · 3 días por semana"
+        "body": "Calentamiento de movilidad suave, mancuernas 10–18, estiramientos · 3 días por semana"
       }
     },
     "startSession": "Empezar la sesión {{session}}",
@@ -5851,7 +5851,8 @@
     "dose": {
       "full": "Dosis completa (de tu fisioterapeuta)",
       "reduced": "Dosis reducida para que quepa en el día. Sigue la dosis que indique tu fisioterapeuta.",
-      "fullOn": "Dosis completa: las dosis del programa, sin reducir. El sleeper stretch también va en la sesión."
+      "fullOn": "Dosis completa: las dosis del programa, sin reducir. El sleeper stretch también va en la sesión.",
+      "week1": "La dosis completa empieza en la semana 2. La semana 1 es corta (25 min como máximo)."
     },
     "split": {
       "stretchFirst": "Antes del entrenamiento: solo los estiramientos, como calentamiento.",
@@ -5863,7 +5864,17 @@
       "finishTitle": "Termina con el hombro (~{{minutes}} min)",
       "finishBody": "{{block}}, después del entrenamiento de hoy."
     },
-    "lockedSession": "Se abre cuando tu fisio autorice el entrenamiento de hombro y brazo."
+    "lockedSession": "Se abre cuando tu fisio autorice el entrenamiento de hombro y brazo.",
+    "dayKind": {
+      "mobility": "Movilidad",
+      "band": "Movilidad + banda",
+      "dumbbell": "Movilidad + mancuerna ligera",
+      "bandDumbbell": "Movilidad + banda + mancuerna ligera"
+    },
+    "main": {
+      "eyebrow": "Semana {{week}} de {{total}} · Hombro",
+      "regular": "Entrenamiento del plan de hoy · {{split}}"
+    }
   },
   "plan": {
     "myPlan": "Mi plan",

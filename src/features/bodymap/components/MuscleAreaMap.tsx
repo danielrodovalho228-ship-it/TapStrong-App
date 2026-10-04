@@ -18,8 +18,8 @@ import { bodyImage, type BodySex, type BodyView } from '../images';
  */
 export const AREA_SHAPES: Record<string, { rx: number; ry: number; tilt?: number }> = {
   traps: { rx: 22, ry: 10 },
-  shoulders: { rx: 15, ry: 13 },
-  rearDelts: { rx: 14, ry: 12 },
+  shoulders: { rx: 17, ry: 15 },
+  rearDelts: { rx: 16, ry: 14 },
   upperChest: { rx: 17, ry: 8 },
   midChest: { rx: 18, ry: 9 },
   lowerChest: { rx: 15, ry: 7 },
@@ -56,10 +56,18 @@ function pointsOf(points: [number, number][]): [number, number][] {
     : points;
 }
 
+/**
+ * Deep muscles with no spot of their own are painted where they work (Phase
+ * 32 B6): the rotator cuff lights the whole shoulder, front and back, not a
+ * dot or nothing.
+ */
+const PAINT_AS: Record<string, string[]> = { rotatorCuff: ['shoulders', 'rearDelts'] };
+const paintKeys = (key: string) => muscleFamily(key).flatMap((k) => PAINT_AS[k] ?? [k]);
+
 /** Child keys for parents ("chest" → its three parts); primary wins over secondary. */
 export function workedAreas(primary: string[], secondary: string[]) {
-  const main = [...new Set(primary.flatMap(muscleFamily))];
-  const also = [...new Set(secondary.flatMap(muscleFamily))].filter((k) => !main.includes(k));
+  const main = [...new Set(primary.flatMap(paintKeys))];
+  const also = [...new Set(secondary.flatMap(paintKeys))].filter((k) => !main.includes(k));
   return { main, also };
 }
 

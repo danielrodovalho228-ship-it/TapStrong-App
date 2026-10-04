@@ -29,7 +29,8 @@
       "distribution": "store",
       "autoIncrement": true,
       "env": {
-        "EXPO_PUBLIC_APP_VARIANT": "internal"
+        "EXPO_PUBLIC_APP_VARIANT": "internal",
+        "EXPO_PUBLIC_DEMO_MEDIA": "1"
       },
       "android": {
         "buildType": "app-bundle"
@@ -40,7 +41,8 @@
       "environment": "preview",
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_APP_VARIANT": "internal"
+        "EXPO_PUBLIC_APP_VARIANT": "internal",
+        "EXPO_PUBLIC_DEMO_MEDIA": "1"
       },
       "android": {
         "buildType": "apk"

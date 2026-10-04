@@ -165,7 +165,8 @@ describe('Rehabilitation and the program', () => {
     await render(<RehabProgramScreen />);
     const today = screen.getByTestId('rehab-today');
     expect(within(today).getByText('Shoulder today')).toBeTruthy();
-    expect(within(today).getByText('Block A — standing, band and dumbbell')).toBeTruthy();
+    // The honest title (Phase 32 B4): what the day really holds.
+    expect(within(today).getByText('Mobility + band + light dumbbell')).toBeTruthy();
     expect(within(today).getAllByText(/^\d+\. /)).toHaveLength(6);
     // Monday is a training day: stretches first, strengthening after (Daniel, Oct 3).
     expect(within(today).getByTestId('rehab-split-first')).toBeTruthy();
@@ -246,7 +247,7 @@ describe('Rehabilitation and the program', () => {
     await render(<RehabProgramScreen />);
     await fireEvent.press(screen.getByText('Do Block B today instead'));
     const today = screen.getByTestId('rehab-today');
-    expect(within(today).getByText('Block B — bench and mat')).toBeTruthy();
+    expect(within(today).getByText('Mobility + light dumbbell')).toBeTruthy();
     expect(within(today).getAllByText(/^\d+\. /)).toHaveLength(7);
     await fireEvent.press(screen.getByRole('button', { name: 'Start session C' }));
     expect(useWorkoutStore.getState().workouts.at(-1)!.session.program?.session).toBe('C');
@@ -258,7 +259,7 @@ describe('Rehabilitation and the program', () => {
     mockParams = { id: P.id };
     await render(<RehabProgramScreen />);
     const today = screen.getByTestId('rehab-today');
-    expect(within(today).getByText('Stretches only')).toBeTruthy();
+    expect(within(today).getByTestId('rehab-day-kind')).toHaveTextContent('Mobility');
     expect(within(today).queryAllByText(/^\d+\. /)).toHaveLength(0);
     expect(within(today).getByTestId('rehab-strength-locked')).toBeTruthy();
     expect(screen.queryByRole('switch', { name: 'Strengthening before the workout' })).toBeNull();
@@ -326,7 +327,7 @@ describe('Rehabilitation and the program', () => {
     const card = screen.getByTestId(`care-home-${P.id}`);
     expect(within(card).getByText('Shoulder today')).toBeTruthy();
     // A training day: only the stretches before the workout.
-    expect(within(card).getByText(/Stretches only/)).toBeTruthy();
+    expect(within(card).getByText(/^Mobility · /)).toBeTruthy();
     expect(within(card).getByTestId('care-home-hint')).toHaveTextContent(/only the stretches/);
     await fireEvent.press(card);
     expect(mockRouter.push).toHaveBeenCalledWith({ pathname: '/rehab/[id]', params: { id: P.id } });

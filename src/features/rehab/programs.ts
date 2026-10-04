@@ -67,8 +67,11 @@ export type RehabProgram = {
   maintenanceDaysPerWeek: [number, number];
   exercises: ProgramExercise[];
   sessions: ProgramSessionDef[];
-  warmupSlug: string;
-  warmupMinutes: [number, number];
+  /**
+   * The warm-up of a strengthening session (Phase 32 B3): light mobility,
+   * timed, in order. Shortened in the day's dose, never removed.
+   */
+  warmup: { slug: string; seconds: number }[];
   /** Rest between strength sets, seconds. */
   strengthRest: number;
   /** The joint area the main workout protects while the program runs (§6.4). */
@@ -76,8 +79,6 @@ export type RehabProgram = {
   /** Daily rhythm (§6.2): program numbers per block and the standard week (Monday first). */
   daily: {
     blocks: Record<DailyBlock, number[]>;
-    /** Repeated at the end of every daily session, if there is time. */
-    endStretches: number[];
     /** Monday … Sunday. */
     week: (DailyBlock | 'stretch')[];
     /** Times a week each strengthening exercise is done. */
@@ -86,8 +87,8 @@ export type RehabProgram = {
     cap: number;
     /** Sleeper stretch breaks, local hours (§6.2). */
     sleeperHours: number[];
-    /** The day's dose: strength sets, rest between sets (s) and warm-up (min, shortened, never removed). */
-    reduced: { sets: number; rest: number; warmupMinutes: number };
+    /** The day's dose: strength sets and rest between sets (s). */
+    reduced: { sets: number; rest: number };
   };
 };
 
@@ -110,18 +111,21 @@ export const SHOULDER_PROGRAM: RehabProgram = {
   id: 'shoulder_mobility_strength',
   weeks: [4, 6],
   maintenanceDaysPerWeek: [2, 3],
-  warmupSlug: 'brisk_walk',
-  warmupMinutes: [5, 10],
+  // 2–3 min of light mobility, not a 5 min walk (Phase 32 B3, Daniel, Oct 4).
+  warmup: [
+    { slug: 'pendulum_swing', seconds: 60 },
+    { slug: 'wu_seated_shoulder_rolls', seconds: 45 },
+    { slug: 'su_seated_shrug_hold', seconds: 45 },
+  ],
   strengthRest: 45,
   area: 'shoulder',
   daily: {
     blocks: { standing: [6, 7, 8, 9, 10, 11], floor: [12, 13, 14, 15, 16, 17, 18] },
-    endStretches: [1, 5],
     week: ['standing', 'floor', 'standing', 'floor', 'standing', 'floor', 'stretch'],
     perWeek: 3,
     cap: 12,
     sleeperHours: [9, 15, 21],
-    reduced: { sets: 2, rest: 30, warmupMinutes: 3 },
+    reduced: { sets: 2, rest: 30 },
   },
   exercises: [
     // Stretches (1–5)
@@ -300,14 +304,11 @@ export const SHOULDER_PROGRAM: RehabProgram = {
     },
   ],
   sessions: [
+    // Every exercise once per session (Phase 32 B5): the warm-up's mobility,
+    // the strengthening, then the stretches as the cool-down.
     { key: 'A', warmup: false, blocks: ['stretch'], daysPerWeek: [5, 6] },
-    { key: 'B', warmup: true, blocks: ['stretch', 'band', 'stretch_end'], daysPerWeek: [3, 3] },
-    {
-      key: 'C',
-      warmup: true,
-      blocks: ['stretch', 'dumbbell', 'stretch_end'],
-      daysPerWeek: [3, 3],
-    },
+    { key: 'B', warmup: true, blocks: ['band', 'stretch_end'], daysPerWeek: [3, 3] },
+    { key: 'C', warmup: true, blocks: ['dumbbell', 'stretch_end'], daysPerWeek: [3, 3] },
   ],
 };
 
@@ -343,24 +344,39 @@ export type SessionLayout = {
   groups: { block: NonNullable<SessionItem['block']>; numbers: number[] }[];
 };
 
+/**
+ * The stretches that close a session after a warm-up: every stretch the
+ * warm-up has not done already, so nothing shows twice (Phase 32 B5).
+ */
+export function coolDownStretches(program: RehabProgram): number[] {
+  const warm = new Set(program.warmup.map((w) => w.slug));
+  return program.exercises
+    .filter((x) => x.block === 'stretch' && !warm.has(x.slug))
+    .map((x) => x.n);
+}
+
 /** The layout of a fixed session (A, B or C). */
 export function sessionLayout(program: RehabProgram, key: ProgramSessionKey): SessionLayout {
   const def = program.sessions.find((s) => s.key === key)!;
   return {
     key,
     warmup: def.warmup,
-    groups: def.blocks.map((block) => {
-      const from = block === 'stretch_end' ? 'stretch' : block;
-      return { block, numbers: program.exercises.filter((x) => x.block === from).map((x) => x.n) };
-    }),
+    groups: def.blocks.map((block) => ({
+      block,
+      numbers:
+        block === 'stretch_end'
+          ? coolDownStretches(program)
+          : program.exercises.filter((x) => x.block === block).map((x) => x.n),
+    })),
   };
 }
 
 /**
  * One program session as a workout the player already knows how to run:
- * warm-up (5 min walk, B and C), stretches 1–5, the band or dumbbell block,
- * the stretches again (B and C). Holds count down (30 s, 30 s rest); one-sided
- * work is split per side, the affected side first.
+ * the light mobility warm-up (B and C), the band or dumbbell block, then the
+ * stretches as the cool-down; A is the stretches alone. Each exercise once.
+ * Holds count down (30 s, 30 s rest); one-sided work is split per side, the
+ * affected side first.
  */
 export function buildProgramSession(
   program: RehabProgram,
@@ -430,27 +446,31 @@ export function buildProgramSession(
       });
     }
   };
-  const warmupMinutes = day?.warmupMinutes ?? program.warmupMinutes[0];
-  if (layout.warmup) {
-    const walk = bySlug.get(program.warmupSlug);
-    if (walk) {
+  let warmupSeconds = 0;
+  if (layout.warmup)
+    for (const w of program.warmup) {
+      const e = bySlug.get(w.slug);
+      if (!e) {
+        missing.push(w.slug);
+        continue;
+      }
+      warmupSeconds += w.seconds;
       items.push({
-        id: 'warmup-walk',
+        id: `warmup-${w.slug}`,
         role: 'warmup',
         part: 'warmup_general',
-        exerciseId: walk.id,
+        exerciseId: e.id,
         targetMuscle: null,
         goal: null,
         sets: 1,
-        durationSeconds: warmupMinutes * 60,
+        durationSeconds: w.seconds,
         restSeconds: 0,
         perSide: false,
         loadHint: null,
-        estSeconds: warmupMinutes * 60,
+        estSeconds: w.seconds,
         block: 'warmup',
       });
-    } else missing.push(program.warmupSlug);
-  }
+    }
   const byNumber = new Map(program.exercises.map((x) => [x.n, x]));
   for (const group of layout.groups)
     for (const n of group.numbers) {
@@ -462,7 +482,7 @@ export function buildProgramSession(
   return {
     items,
     minutes,
-    warmupMinutes: layout.warmup ? warmupMinutes : 0,
+    warmupMinutes: Math.ceil(warmupSeconds / 60),
     cooldownMinutes: Math.round(
       items.filter((i) => i.role === 'cooldown').reduce((n, i) => n + i.estSeconds, 0) / 60,
     ),

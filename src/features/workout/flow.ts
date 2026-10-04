@@ -64,19 +64,6 @@ export function mainItems(w: WorkoutRecord): SessionItem[] {
   return w.session.items.filter((i) => i.role === 'main');
 }
 
-/**
- * The warm-up can be shortened but not skipped on days with loaded work
- * (SPEC §8): a timed warm-up step can end early once half of it is done.
- */
-export function canEndTimedStep(
-  item: SessionItem,
-  elapsedSeconds: number,
-  dayHasLoad: boolean,
-): boolean {
-  if (item.role !== 'warmup' || !dayHasLoad) return true;
-  return elapsedSeconds >= (item.durationSeconds ?? 0) / 2;
-}
-
 export function hasCooldownLeft(w: WorkoutRecord): boolean {
   const step = currentStep(w);
   return step?.item.role === 'cooldown';

@@ -16,20 +16,31 @@ import { weekStrip, type WeekDay } from '../week';
  * a raised pill, a check on trained days and a coral dot on planned ones. Tap
  * a day to see its session (past = log, future = preview). `large` for 60+.
  */
-export function WeekStrip({ large = false }: { large?: boolean }) {
+export function WeekStrip({
+  large = false,
+  marks,
+}: {
+  large?: boolean;
+  /**
+   * Another plan's week (Phase 32 B7: the shoulder program, when it is the
+   * main plan): its own done and planned days instead of the workout plan's.
+   */
+  marks?: (date: string) => WeekDay['mark'];
+}) {
   const colors = useColors();
   const styles = useStyles();
   const { t, i18n } = useTranslation();
   const workouts = useWorkoutStore((s) => s.workouts);
   const daysPerWeek = useTrainingDaysPerWeek();
   const today = localDate(clock.now());
-  const days = weekStrip({
+  const strip = weekStrip({
     today,
     startsOn: deviceWeekStart(),
     daysPerWeek,
     workouts,
     toLocal: (iso) => localDate(new Date(iso)),
   });
+  const days = marks ? strip.map((d) => ({ ...d, mark: marks(d.date) })) : strip;
   const label = (d: WeekDay) => {
     const date = new Date(`${d.date}T12:00:00`);
     const name = date.toLocaleDateString(i18n.language, { weekday: 'long', day: 'numeric' });
@@ -54,7 +65,7 @@ export function WeekStrip({ large = false }: { large?: boolean }) {
               variant="caption"
               color={d.mark === 'trained' ? colors.accentText : colors.mutedStrong}
             >
-              {date.toLocaleDateString(i18n.language, { weekday: 'short' }).slice(0, 2)}
+              {weekdayShort(date, i18n.language)}
             </AppText>
             <AppText
               variant={large ? 'h3' : 'bodyStrong'}
@@ -76,6 +87,13 @@ export function WeekStrip({ large = false }: { large?: boolean }) {
     </View>
   );
 }
+
+/**
+ * "dom seg ter qua qui sex sáb", "Sun Mon Tue…": three letters, never cut to
+ * two ("do se te qu qu se sá" repeated "qu" and "se", Phase 32 B7).
+ */
+export const weekdayShort = (date: Date, language: string) =>
+  date.toLocaleDateString(language, { weekday: 'short' }).replace(/\.$/, '');
 
 const useStyles = makeStyles(() => ({
   row: { flexDirection: 'row', gap: spacing.xs },

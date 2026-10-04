@@ -319,6 +319,12 @@ export default function SettingsScreen() {
           onPress={() => router.push('/delete-account')}
         />
       </View>
+      {/* Test builds carry draft exercises: said once, small, here (Phase 32 B8). */}
+      {__DEV__ || isInternalBuild() ? (
+        <AppText variant="caption" color={colors.muted} testID="settings-draft-note">
+          {t('workout.draftBadge')}
+        </AppText>
+      ) : null}
     </Screen>
   );
 }

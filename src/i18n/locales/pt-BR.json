@@ -3811,7 +3811,6 @@
       "timeLeft": "faltam {{time}}",
       "startTimer": "Iniciar timer",
       "doneStep": "Feito",
-      "warmupShorten": "Treino com carga hoje: dá para encurtar o aquecimento, não pular.",
       "skipCooldown": "Pular desaquecimento",
       "skipCooldownConfirm": "Pular o desaquecimento? Ele ajuda na recuperação e conta para a sequência.",
       "keepCooldown": "Manter",
@@ -3830,7 +3829,8 @@
       "pain": "Sinto dor",
       "doneSet": "Série feita",
       "startFirst": "Comece o cronômetro primeiro.",
-      "halfHint": "\"Feito\" libera na metade do tempo."
+      "warmupTip": "Aquecer protege as articulações. Pule só se já estiver aquecida(o).",
+      "skipWarmup": "Pular aquecimento"
     },
     "pain": {
       "eyebrow": "Dor relatada · série pausada",
@@ -5824,15 +5824,15 @@
     "sessions": {
       "A": {
         "title": "A — Mobilidade",
-        "body": "Só os alongamentos 1–5 · 5 a 6 dias por semana"
+        "body": "Pêndulo e alongamentos · 5 a 6 dias por semana"
       },
       "B": {
         "title": "B — Força com elástico",
-        "body": "Aquecimento, alongamentos, elástico 6–9 e alongamentos · 3 dias por semana"
+        "body": "Aquecimento de mobilidade leve, elásticos 6–9, alongamentos · 3 dias por semana"
       },
       "C": {
         "title": "C — Força com halter leve",
-        "body": "Aquecimento, alongamentos, halter 10–18 e alongamentos · 3 dias por semana"
+        "body": "Aquecimento de mobilidade leve, halteres 10–18, alongamentos · 3 dias por semana"
       }
     },
     "startSession": "Começar a sessão {{session}}",
@@ -5923,7 +5923,8 @@
     "dose": {
       "full": "Dose completa (do fisioterapeuta)",
       "reduced": "Dose reduzida para caber no dia. Siga a dose que o seu fisioterapeuta indicar.",
-      "fullOn": "Dose completa: as doses do programa, sem redução. O sleeper stretch também entra na sessão."
+      "fullOn": "Dose completa: as doses do programa, sem redução. O sleeper stretch também entra na sessão.",
+      "week1": "A dose completa começa na semana 2. A semana 1 fica curta (até 25 min)."
     },
     "split": {
       "stretchFirst": "Antes do treino: só os alongamentos, como aquecimento.",
@@ -5935,7 +5936,17 @@
       "finishTitle": "Termine com o ombro (~{{minutes}} min)",
       "finishBody": "{{block}}, depois do treino de hoje."
     },
-    "lockedSession": "Libera quando o fisioterapeuta liberar o treino de ombro e braço."
+    "lockedSession": "Libera quando o fisioterapeuta liberar o treino de ombro e braço.",
+    "dayKind": {
+      "mobility": "Mobilidade",
+      "band": "Mobilidade + elástico",
+      "dumbbell": "Mobilidade + halter leve",
+      "bandDumbbell": "Mobilidade + elástico + halter leve"
+    },
+    "main": {
+      "eyebrow": "Semana {{week}} de {{total}} · Ombro",
+      "regular": "Treino do plano de hoje · {{split}}"
+    }
   },
   "plan": {
     "myPlan": "Meu plano",

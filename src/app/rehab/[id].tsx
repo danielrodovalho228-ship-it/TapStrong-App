@@ -69,6 +69,7 @@ export default function RehabProgramScreen() {
     care,
     askRelease,
     strengthOpen,
+    dayKind: dayKindToday,
   } = useRehabRun(id);
   const store = useRehabStore();
   const library = useExerciseLibrary();
@@ -209,7 +210,10 @@ export default function RehabProgramScreen() {
       {daily ? (
         <Card style={styles.card} testID="rehab-today">
           <AppText variant="h2">{t('rehab.daily.title')}</AppText>
-          <AppText variant="bodyStrong">{t(`rehab.daily.blocks.${block ?? daily.block}`)}</AppText>
+          {/* What today really is (Phase 32 B4): mobility, + band, + light dumbbell. */}
+          <AppText variant="bodyStrong" testID="rehab-day-kind">
+            {t(`rehab.dayKind.${dayKindToday ?? 'mobility'}`)}
+          </AppText>
           {dailyDone ? (
             <AppText color={colors.teal} testID="rehab-today-done">
               {t('rehab.daily.done')}
@@ -282,7 +286,13 @@ export default function RehabProgramScreen() {
             onChange={(v) => store.setFullDose(program.id, v)}
           />
           <AppText variant="caption" color={colors.mutedStrong} testID="rehab-dose-note">
-            {t(run.fullDose ? 'rehab.dose.fullOn' : 'rehab.dose.reduced')}
+            {t(
+              run.fullDose
+                ? week === 1
+                  ? 'rehab.dose.week1'
+                  : 'rehab.dose.fullOn'
+                : 'rehab.dose.reduced',
+            )}
           </AppText>
           {/* After the workout by default; "before" on request (Daniel, Oct 3). */}
           {strengthOpen ? (

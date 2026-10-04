@@ -5,6 +5,7 @@ import { Pressable, View } from 'react-native';
 import { AppText, Icon } from '@/components/ui';
 import { colors, makeStyles, radius, spacing, useColors } from '@/theme';
 
+import { dayKind } from './daily';
 import { useRehabRun } from './hooks';
 import { useRehabStore } from './store';
 
@@ -14,13 +15,15 @@ import { useRehabStore } from './store';
  * On a training day only the stretches go first, as a warm-up, and the
  * strengthening comes after the workout (Daniel, Oct 3).
  */
-export function CareHomeCards() {
+export function CareHomeCards({ skip }: { skip?: string | null } = {}) {
   const runs = useRehabStore((s) => s.runs);
   return (
     <>
-      {Object.keys(runs).map((id) => (
-        <CareHomeCard key={id} programId={id} />
-      ))}
+      {Object.keys(runs)
+        .filter((id) => id !== skip)
+        .map((id) => (
+          <CareHomeCard key={id} programId={id} />
+        ))}
     </>
   );
 }
@@ -49,7 +52,11 @@ function CareHomeCard({ programId }: { programId: string }) {
   const name = t(`rehab.short.${program.id as 'shoulder_mobility_strength'}`);
   const done = daily ? (finish ? firstDone : dailyDone) : false;
   const detail = daily
-    ? [t(`rehab.daily.blocks.${daily.block}`), t('rehab.daily.minutes', { count: dailyMinutes })]
+    ? // What the session really is (Phase 32 B4), never "stretches only" over a strength list.
+      [
+        t(`rehab.dayKind.${dayKind(program, daily.numbers)}`),
+        t('rehab.daily.minutes', { count: dailyMinutes }),
+      ]
     : [t(`rehab.sessions.${suggestion!.session!}.title`)];
   const title = done ? t('rehab.home.done', { name }) : t('rehab.home.title', { name });
   // Only the stretches before the workout; or the whole block, when set to "before".
