@@ -4,7 +4,7 @@
   "assisted_pull_up_machine": ["Kneels on the pad of the assisted pull-up machine, gripping the high handles with straight arms.", "mc", "B", 0],
   "bal_seated_head_turns": ["Sits tall near the front of the chair, away from the backrest, feet flat, hands resting on the thighs, looking straight ahead.", "ch", "F", 0],
   "band_chest_fly": ["Stands tall with a long band anchored behind at chest height, one handle in each hand, arms open wide to the sides and elbows softly bent.", "st", "Q", 0],
-  "band_lat_pulldown": ["Kneels upright facing a door with a long band anchored high above, one end in each hand, arms reaching up.", "st", "B", 0],
+  "band_lat_pulldown": ["Stands tall facing a post with a long band anchored high above, one end in each hand, arms reaching up.", "st", "B", 0],
   "band_overhead_press": ["Sits tall on the chair with the middle of a long band under both feet, holding the ends at shoulder height, palms forward.", "ch", "F", 0],
   "band_pull_apart": ["Stands tall holding a long band in both hands at chest height, arms straight in front, hands shoulder-width apart.", "st", "B", 0],
   "barbell_hip_thrust": ["Sits on the floor with the upper back resting against the long side of a flat bench, knees bent, feet flat, a padded barbell across the hips.", "mat", "S", 0],
