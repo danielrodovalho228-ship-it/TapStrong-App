@@ -271,3 +271,39 @@ redo = [
 ]
 open(os.path.join(ROOT, 'docs/media-redo-launch.md'), 'w').write('\n'.join(redo) + '\n')
 print(f'{len(lines)} exercises in docs/media-redo-launch.md')
+
+# --- Flow data per exercise, for Moacir (Daniel, Oct 4) -----------------------
+# [slug, name, start position, setting, equipment, primary, secondary, view,
+#  hold 0/1, unilateral 0/1, "L"]; staging hand-written in
+# scripts/data/flow-launch-staging.json, the rest from the seed.
+staging = json.load(open(os.path.join(ROOT, 'scripts/data/flow-launch-staging.json')))
+SETTING = {
+    'st': 'standing',
+    'ch': 'seated on a plain armless chair or bench',
+    'mat': 'on an exercise mat on the floor',
+    'mc': 'using the machine',
+}
+missing_staging = [slug for slug in by_slug_todo if slug not in staging]
+if missing_staging:
+    sys.exit(f'add Flow staging for: {", ".join(missing_staging)} (scripts/data/flow-launch-staging.json)')
+rows_json = []
+for slug in by_slug_todo:
+    e = by_slug[slug]
+    start, setting, view, hold = staging[slug]
+    muscles = lambda role: ', '.join(MUSCLE[k] for k, r, _ in e['muscles'] if (r == 'primary') == (role == 'primary'))
+    row = [
+        slug,
+        en['exercises'][slug]['name'],
+        start,
+        SETTING[setting],
+        ', '.join(EQUIPMENT[q] for q in e['equipment']),
+        muscles('primary'),
+        muscles('secondary'),
+        view,
+        hold,
+        int(e['unilateral']),
+        'L',
+    ]
+    rows_json.append(f'  {json.dumps(slug)}: {json.dumps(row, ensure_ascii=False)}')
+open(os.path.join(ROOT, 'docs/media-redo-launch.json'), 'w').write('{\n' + ',\n'.join(rows_json) + '\n}\n')
+print(f'{len(rows_json)} exercises in docs/media-redo-launch.json')
