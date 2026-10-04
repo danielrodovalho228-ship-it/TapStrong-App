@@ -50,14 +50,15 @@ describe('the 18 exercises', () => {
 });
 
 describe('sessions', () => {
-  it('A — mobility: stretches 1–5 only, holds of 30 s with 30 s rest', () => {
+  it('A — mobility: stretches 1–5 only, holds of 30 s with 30 s rest; never behind the back', () => {
     const s = build('A');
     expect(s.missing).toEqual([]);
+    // Stretch 3 reaches behind the back (database tag): left out (Phase 32 A1).
+    expect(s.excluded).toEqual(['stick_internal_rotation_stretch']);
     expect(s.program).toEqual({ id: P.id, session: 'A', week: 1 });
     expect(s.items.map((i) => slugOf(i.exerciseId))).toEqual([
       'pendulum_swing',
       'crossover_arm_stretch',
-      'stick_internal_rotation_stretch',
       'stick_external_rotation_stretch',
       'sleeper_stretch',
     ]);
@@ -73,8 +74,8 @@ describe('sessions', () => {
     // The 30 s rest stays 30 s whatever the Settings rest is.
     expect(restFor(cross, { restStrength: 120, restHold: 90 })).toBe(30);
     // The sleeper stretch is on the affected side only.
-    expect(s.items[4].sets).toBe(4);
-    expect(s.items[4].sides).toEqual(['right']);
+    expect(s.items[3].sets).toBe(4);
+    expect(s.items[3].sides).toEqual(['right']);
   });
 
   it('B — bands: warm-up walk first, stretches, bands 6–9 at 3×8–12, stretches again last', () => {
@@ -115,7 +116,9 @@ describe('sessions', () => {
     expect(cooldownHold(setting)).toBe(10);
     expect(of('rx_side_lying_er').sets).toBe(2);
     expect(of('rx_side_lying_er').reps).toEqual([8, 10]);
-    expect(of('overhead_dumbbell_triceps_extension').noteKey).toBe('rehab.notes.overhead');
+    // The AAOS triceps kickback, arm at the side (Phase 32 A1).
+    expect(of('dumbbell_kickback').sides).toEqual(['left']);
+    expect(of('dumbbell_kickback').noteKey).toBeUndefined();
   });
 
   it('after raising the load: back to fewer reps', () => {
@@ -129,8 +132,8 @@ describe('sessions', () => {
 
   it('both shoulders: every one-sided exercise on both sides', () => {
     const s = build('A', 'both');
-    expect(s.items[4].sides).toEqual(['right', 'left']);
-    expect(s.items[4].sets).toBe(8);
+    expect(s.items[3].sides).toEqual(['right', 'left']);
+    expect(s.items[3].sets).toBe(8);
   });
 
   it('an exercise missing from the library is left out and listed, never invented', () => {
@@ -140,7 +143,7 @@ describe('sessions', () => {
       week: 1,
     });
     expect(s.missing).toEqual(['sleeper_stretch']);
-    expect(s.items).toHaveLength(4);
+    expect(s.items).toHaveLength(3);
   });
 });
 

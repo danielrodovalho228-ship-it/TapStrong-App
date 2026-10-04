@@ -5690,7 +5690,6 @@
       "pendulum": "Do 10 in each direction: forward and back, side to side, then circles.",
       "sleeper": "Best done 3 times a day, every day.",
       "cable": "You can also do it on a gym cable machine, with guidance.",
-      "overhead": "Only do it if you can lift your arm without pain.",
       "supine": "If it hurts with the arm at 90°, lower the elbow to 45°."
     },
     "side": {
@@ -5786,14 +5785,16 @@
     "care": {
       "question": "Did your physio clear shoulder and arm training?",
       "yes": "Yes",
-      "no": "No / not sure",
+      "no": "No",
       "note": "Your regular workout protects the shoulder while the program runs. You can change this answer later.",
       "title": "Your regular workout",
       "off": "Protected shoulder: your regular workout leaves out exercises that move the shoulder. Legs, core and the rest stay.",
       "protected": "Protected shoulder: no overhead or behind-the-back moves, pull-ups or dips; side raises only up to shoulder height; light loads on every shoulder move.",
       "returning": "Coming back gradually: the protected-shoulder rules stay until {{date}}.",
       "change": "Change answer",
-      "painMain": "We marked this exercise in your shoulder program for review. Talk to your physio before doing it again."
+      "painMain": "We marked this exercise in your shoulder program for review. Talk to your physio before doing it again.",
+      "unsure": "Not sure",
+      "strengthLocked": "Band and dumbbell work opens when your physio clears it. Until then: mobility (session A) every day."
     },
     "daily": {
       "title": "Shoulder today",
@@ -5861,7 +5862,8 @@
       "startAfter": "Start strengthening",
       "finishTitle": "Finish with the shoulder (~{{minutes}} min)",
       "finishBody": "{{block}}, after today's workout."
-    }
+    },
+    "lockedSession": "Opens when your physio clears shoulder and arm training."
   },
   "plan": {
     "myPlan": "My plan",

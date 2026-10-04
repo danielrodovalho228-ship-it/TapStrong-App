@@ -5690,7 +5690,6 @@
       "pendulum": "Haz 10 en cada dirección: adelante y atrás, de lado y en círculos.",
       "sleeper": "Lo ideal es 3 veces al día, todos los días.",
       "cable": "También puedes hacerlo en la máquina de poleas del gimnasio, con orientación.",
-      "overhead": "Hazlo solo si puedes levantar el brazo sin dolor.",
       "supine": "Si duele con el brazo a 90°, baja el codo a 45°."
     },
     "side": {
@@ -5786,14 +5785,16 @@
     "care": {
       "question": "¿Tu fisioterapeuta liberó el entrenamiento de hombro y brazo?",
       "yes": "Sí",
-      "no": "No / no sé",
+      "no": "No",
       "note": "Tu entrenamiento normal protege el hombro mientras dure el programa. Puedes cambiar esta respuesta después.",
       "title": "Tu entrenamiento normal",
       "off": "Hombro protegido: tu entrenamiento normal deja fuera los ejercicios que mueven el hombro. Piernas, core y el resto siguen.",
       "protected": "Hombro protegido: sin movimientos por encima de la cabeza ni por detrás de la espalda, dominadas ni fondos; elevaciones laterales solo hasta la altura del hombro; carga ligera en todo movimiento del hombro.",
       "returning": "Volviendo poco a poco: las reglas de hombro protegido siguen hasta el {{date}}.",
       "change": "Cambiar respuesta",
-      "painMain": "Marcamos este ejercicio en tu programa de hombro para revisar. Habla con tu fisioterapeuta antes de repetirlo."
+      "painMain": "Marcamos este ejercicio en tu programa de hombro para revisar. Habla con tu fisioterapeuta antes de repetirlo.",
+      "unsure": "No lo sé",
+      "strengthLocked": "Las bandas y las mancuernas se abren cuando tu fisio lo autorice. Hasta entonces: movilidad (sesión A) cada día."
     },
     "daily": {
       "title": "Hombro hoy",
@@ -5861,7 +5862,8 @@
       "startAfter": "Empezar fortalecimiento",
       "finishTitle": "Termina con el hombro (~{{minutes}} min)",
       "finishBody": "{{block}}, después del entrenamiento de hoy."
-    }
+    },
+    "lockedSession": "Se abre cuando tu fisio autorice el entrenamiento de hombro y brazo."
   },
   "plan": {
     "myPlan": "Mi plan",

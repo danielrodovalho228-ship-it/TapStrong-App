@@ -6,6 +6,10 @@ import { kvStorage } from '@/lib/storage';
 
 import type { AffectedSide, DailyBlock, StrengthTiming } from './programs';
 
+/** The answer to "Did your physio clear shoulder and arm training?" (Phase 32 A2). */
+export type Clearance = 'yes' | 'no' | 'unsure';
+export const CLEARANCES: Clearance[] = ['yes', 'no', 'unsure'];
+
 /** One person's run of a rehab program (Phase 30). Kept per profile. */
 export type ProgramRun = {
   side: AffectedSide;
@@ -23,6 +27,8 @@ export type ProgramRun = {
    * = not answered: the main plan stays fully protected, as with "no".
    */
   cleared: boolean | null;
+  /** The answer as given: "not sure" counts as no (only session A, mobility). */
+  clearance?: Clearance;
   /** The physio released the program (§6.5): maintenance, main plan back gradually. */
   releasedAt: LocalDate | null;
   /** Sleeper stretch reminders, 3 times a day (§6.2). */
@@ -46,9 +52,9 @@ type State = RehabData & {
     side: AffectedSide,
     today: LocalDate,
     now: string,
-    cleared?: boolean | null,
+    cleared?: Clearance | null,
   ) => void;
-  setCleared: (programId: string, cleared: boolean) => void;
+  setCleared: (programId: string, answer: Clearance) => void;
   release: (programId: string, today: LocalDate) => void;
   setSleeperReminders: (programId: string, on: boolean) => void;
   pickBlock: (programId: string, date: LocalDate, block: DailyBlock) => void;
@@ -86,15 +92,20 @@ export const useRehabStore = create<State>()(
                 maintenance: false,
                 increased: {},
                 review: {},
-                cleared,
+                cleared: cleared ? cleared === 'yes' : null,
+                ...(cleared ? { clearance: cleared } : {}),
                 releasedAt: null,
                 sleeperReminders: false,
+                // Off until the physio says so (Phase 32 A3).
+                fullDose: false,
+                strengthTiming: 'after',
               },
             },
           })),
         setSide: (id, side) => patch(id, () => ({ side })),
         setMaintenance: (id, on) => patch(id, () => ({ maintenance: on })),
-        setCleared: (id, cleared) => patch(id, () => ({ cleared })),
+        setCleared: (id, answer) =>
+          patch(id, () => ({ cleared: answer === 'yes', clearance: answer })),
         // Released by the physio: maintenance 2–3 times a week (§6.5).
         release: (id, today) => patch(id, () => ({ releasedAt: today, maintenance: true })),
         setSleeperReminders: (id, on) => patch(id, () => ({ sleeperReminders: on })),
@@ -123,14 +134,20 @@ export const useRehabStore = create<State>()(
     },
     {
       name: 'rehab',
-      version: 2,
+      version: 3,
       // v2 (addendum §6): physio clearance, release, sleeper reminders.
-      migrate: (persisted) => {
+      // v3 (Phase 32 A3): "Full dose" and "strengthening before" back to off;
+      // the old switch drew "off" so it read as "on", so no choice was clear.
+      migrate: (persisted, version) => {
         const state = persisted as RehabData;
         for (const run of Object.values(state.runs ?? {})) {
           run.cleared ??= null;
           run.releasedAt ??= null;
           run.sleeperReminders ??= false;
+          if (version < 3) {
+            run.fullDose = false;
+            run.strengthTiming = 'after';
+          }
         }
         return state as State;
       },

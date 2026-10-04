@@ -69,7 +69,8 @@ const useStyles = makeStyles(() => ({
   pressed: { opacity: 0.7 },
   text: { flex: 1, gap: spacing.xxs },
   track: { width: 48, height: 28, borderRadius: 14, padding: 3, justifyContent: 'center' },
-  trackOn: { backgroundColor: colors.ink },
+  // On is teal, unmistakable in both themes (Phase 32: a light track read as "on" when off).
+  trackOn: { backgroundColor: colors.teal },
   // Off must read against the card too (≥ 3:1, QA R6 P2): an outlined track
   // with a dark thumb.
   trackOff: {
@@ -79,7 +80,7 @@ const useStyles = makeStyles(() => ({
     padding: 1.5,
   },
   thumb: { width: 22, height: 22, borderRadius: 11 },
-  thumbOnFill: { backgroundColor: colors.surface },
+  thumbOnFill: { backgroundColor: colors.onTeal },
   thumbOffFill: { backgroundColor: colors.muted },
   thumbOn: { alignSelf: 'flex-end' },
   thumbOff: { alignSelf: 'flex-start' },

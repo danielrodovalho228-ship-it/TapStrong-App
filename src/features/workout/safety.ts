@@ -1,7 +1,7 @@
 import { getAlternatives, swapItem } from '../generator/alternatives';
 import { blockReason } from '../generator/filters';
 import type { GeneratedSession, GeneratorInput } from '../generator/types';
-import { withoutCare } from '../rehab/protect';
+import { withProgramCare } from '../rehab/protect';
 
 import { localDate } from '@/lib/dates';
 
@@ -40,8 +40,9 @@ export function workoutInput(
     | undefined,
   input: GeneratorInput,
 ): GeneratorInput {
-  // A care program's own session trains the protected joint on purpose (Phase 30, §6.4).
-  const base = w?.session?.program ? withoutCare(input) : input;
+  // A care program's own session trains the protected joint on purpose (Phase 30, §6.4),
+  // never overhead or behind the back (Phase 32 A1).
+  const base = w?.session?.program ? withProgramCare(input, w.session.program.id) : input;
   return w?.kind === 'repair' ? { ...base, rehab: true, allowReducedRange: false } : base;
 }
 

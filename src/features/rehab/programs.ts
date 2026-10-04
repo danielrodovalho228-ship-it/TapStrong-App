@@ -2,6 +2,8 @@ import type { Exercise } from '../exercises/types';
 import type { GeneratedSession, ProgramSideKey, SessionItem } from '../generator/types';
 import type { LocalDate } from '@/lib/dates';
 
+import { aboveOrBehind } from '../movement/overhead';
+
 /**
  * Fixed rehabilitation programs (Phase 30). Unlike the ready plans, the
  * exercises and their doses are set here, not picked by the generator. The
@@ -224,13 +226,14 @@ export const SHOULDER_PROGRAM: RehabProgram = {
     },
     {
       n: 11,
-      slug: 'overhead_dumbbell_triceps_extension',
+      // The AAOS triceps kickback (Phase 32 A1): the elbow straightens with
+      // the arm at the side, never overhead.
+      slug: 'dumbbell_kickback',
       block: 'dumbbell',
       dose: LIGHT_WEIGHT(3, [8, 12], { sets: 3, reps: [8, 8] }),
       daysPerWeek: [3, 3],
       sides: 'affected',
       load: { startKg: [0.5, 1], maxKg: [2, 2] },
-      noteKey: 'rehab.notes.overhead',
     },
     {
       n: 12,
@@ -369,10 +372,12 @@ export function buildProgramSession(
     /** Exercises whose load the person raised (slug → true). */
     increased?: Record<string, boolean>;
   },
-): GeneratedSession & { missing: string[] } {
+): GeneratedSession & { missing: string[]; excluded: string[] } {
   const layout = typeof key === 'string' ? sessionLayout(program, key) : key;
   const bySlug = new Map(o.library.map((e) => [e.slug, e]));
   const missing: string[] = [];
+  // Above shoulder height or behind the back: never, whatever the program says (Phase 32 A1).
+  const excluded: string[] = [];
   const items: SessionItem[] = [];
   const day = layout.reduced ? program.daily.reduced : null;
   const add = (ex: ProgramExercise, block: NonNullable<SessionItem['block']>) => {
@@ -380,6 +385,10 @@ export function buildProgramSession(
     const e = bySlug.get(ex.slug);
     if (!e) {
       if (!missing.includes(ex.slug)) missing.push(ex.slug);
+      return;
+    }
+    if (aboveOrBehind(e)) {
+      if (!excluded.includes(ex.slug)) excluded.push(ex.slug);
       return;
     }
     const dose = (day && ex.reduced?.dose) || doseFor(ex, !!o.increased?.[ex.slug], day?.sets);
@@ -461,7 +470,17 @@ export function buildProgramSession(
     notes: [],
     program: { id: program.id, session: layout.key, week: o.week },
     missing,
+    excluded,
   };
+}
+
+/** The program's exercises this person can do: in the library and never above the shoulder or behind the back. */
+export function usableExercises(program: RehabProgram, library: Exercise[]): ProgramExercise[] {
+  const bySlug = new Map(library.map((e) => [e.slug, e]));
+  return program.exercises.filter((x) => {
+    const e = bySlug.get(x.slug);
+    return !!e && !aboveOrBehind(e);
+  });
 }
 
 const DAY = 864e5;

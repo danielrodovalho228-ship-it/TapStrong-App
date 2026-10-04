@@ -6,7 +6,7 @@ import { View } from 'react-native';
 import { AppText, Button, Card, Chip, Header, Icon, Notice, Screen } from '@/components/ui';
 import { useRehabRun } from '@/features/rehab/hooks';
 import { AFFECTED_SIDES as SIDES, type AffectedSide } from '@/features/rehab/programs';
-import { useRehabStore } from '@/features/rehab/store';
+import { CLEARANCES, useRehabStore, type Clearance } from '@/features/rehab/store';
 import { clock } from '@/lib/clock';
 import { makeStyles, spacing, useColors } from '@/theme';
 
@@ -24,7 +24,8 @@ export default function RehabSafetyScreen() {
   const { minor, today } = useRehabRun(id);
   const start = useRehabStore((s) => s.start);
   const [side, setSide] = useState<AffectedSide | null>(null);
-  const [cleared, setCleared] = useState<boolean | null>(null);
+  // Nothing comes pre-selected (Phase 32 A2).
+  const [cleared, setCleared] = useState<Clearance | null>(null);
   const starting = mode === 'start';
 
   return (
@@ -68,6 +69,7 @@ export default function RehabSafetyScreen() {
             {SIDES.map((s) => (
               <Chip
                 key={s}
+                testID={`rehab-side-${s}`}
                 label={t(`rehab.sideOptions.${s}`)}
                 selected={side === s}
                 accessibilityRole="radio"
@@ -88,10 +90,11 @@ export default function RehabSafetyScreen() {
             {t('rehab.care.question')}
           </AppText>
           <View style={styles.chips} accessibilityRole="radiogroup">
-            {([true, false] as const).map((v) => (
+            {CLEARANCES.map((v) => (
               <Chip
-                key={String(v)}
-                label={t(v ? 'rehab.care.yes' : 'rehab.care.no')}
+                key={v}
+                testID={`rehab-clear-${v}`}
+                label={t(`rehab.care.${v}`)}
                 selected={cleared === v}
                 accessibilityRole="radio"
                 accessibilityState={{ checked: cleared === v }}
@@ -102,6 +105,11 @@ export default function RehabSafetyScreen() {
           <AppText variant="caption" color={colors.mutedStrong}>
             {t('rehab.care.note')}
           </AppText>
+          {cleared && cleared !== 'yes' ? (
+            <AppText variant="caption" testID="rehab-strength-locked">
+              {t('rehab.care.strengthLocked')}
+            </AppText>
+          ) : null}
         </Card>
       ) : null}
       <AppText variant="caption" color={colors.mutedStrong}>

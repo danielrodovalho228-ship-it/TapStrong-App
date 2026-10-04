@@ -210,10 +210,10 @@ Nome do arquivo no Flow: `<slug>.<f|m>`.
 | 199 | band_internal_rotation | m | Programa de ombro | elástico preso do lado errado e um segundo elástico até o pé do poste |
 | 200 | band_row | f | Programa de ombro | faltando |
 | 201 | band_row | m | Programa de ombro | faltando |
-| 202 | kneeling_thumbs_up_raise | f | Programa de ombro | leva o halter acima da cabeça com o cotovelo dobrado, em vez de abrir para o lado até a altura do ombro |
-| 203 | kneeling_thumbs_up_raise | m | Programa de ombro | leva o halter acima da cabeça com o cotovelo dobrado, em vez de abrir para o lado até a altura do ombro |
-| 204 | overhead_dumbbell_triceps_extension | f | Programa de ombro | faltando |
-| 205 | overhead_dumbbell_triceps_extension | m | Programa de ombro | faltando |
+| 202 | dumbbell_kickback | f | Programa de ombro | faltando |
+| 203 | dumbbell_kickback | m | Programa de ombro | faltando |
+| 204 | kneeling_thumbs_up_raise | f | Programa de ombro | leva o halter acima da cabeça com o cotovelo dobrado, em vez de abrir para o lado até a altura do ombro |
+| 205 | kneeling_thumbs_up_raise | m | Programa de ombro | leva o halter acima da cabeça com o cotovelo dobrado, em vez de abrir para o lado até a altura do ombro |
 | 206 | pendulum_swing | f | Programa de ombro | as duas mãos ficam na mesa: o braço não fica solto nem balança (movimento errado) |
 | 207 | prone_horizontal_abduction | f | Programa de ombro | levanta o braço na vertical, até o teto, em vez de abrir para o lado até a altura dos olhos |
 | 208 | prone_horizontal_abduction | m | Programa de ombro | levanta o braço na vertical, até o teto, em vez de abrir para o lado até a altura dos olhos |

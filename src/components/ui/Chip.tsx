@@ -3,6 +3,7 @@ import { Platform, Pressable, type PressableProps } from 'react-native';
 import { colors, makeStyles, radius, sizes, spacing, useColors } from '@/theme';
 
 import { AppText } from './AppText';
+import { Icon } from './Icon';
 import { noteTap } from '@/lib/usage';
 
 export type ChipProps = Omit<PressableProps, 'children' | 'style'> & {
@@ -34,6 +35,8 @@ export function Chip({ label, selected = false, disabled, ...rest }: ChipProps) 
         rest.onPressIn?.(e);
       }}
     >
+      {/* A check, not only a tint: in the dark theme a tint alone read as "pre-selected" (Phase 32). */}
+      {selected ? <Icon name="check" size={16} color={colors.teal} /> : null}
       <AppText variant="label" color={colors.ink}>
         {label}
       </AppText>
@@ -48,13 +51,15 @@ const useStyles = makeStyles(() => ({
     paddingHorizontal: spacing.lg,
     borderRadius: radius.chip,
     borderWidth: 1.5,
+    flexDirection: 'row',
+    gap: spacing.xs,
     justifyContent: 'center',
     alignItems: 'center',
   },
   idle: { backgroundColor: colors.surface, borderColor: colors.line },
-  // Theme v2: selected chips are a soft tint with an ink edge; coral stays for
-  // actions, the active tab, today and progress (QA R6 P2).
-  selected: { backgroundColor: colors.primarySoft, borderColor: colors.ink },
+  // Theme v2: selected chips are a soft tint with a check and a teal edge;
+  // coral stays for actions, the active tab, today and progress (QA R6 P2).
+  selected: { backgroundColor: colors.tealTint, borderColor: colors.teal, borderWidth: 2 },
   pressed: { borderColor: colors.ink },
   disabled: { opacity: 0.45 },
 }));

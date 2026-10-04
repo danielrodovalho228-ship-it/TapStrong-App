@@ -108,7 +108,7 @@
   "band_internal_rotation": ["Stands side-on to a long band anchored at elbow height on the same side, elbow against the body bent at 90 degrees, hand out to the side holding the band.", "st", "F", 0],
   "band_row": ["Stands tall facing a long band anchored at chest height, one handle in each hand, arms straight in front.", "st", "S", 0],
   "kneeling_thumbs_up_raise": ["Kneels with one knee and the same-side hand on a flat bench, back flat, the other arm hanging down holding a light dumbbell, thumb forward.", "ch", "Q", 0],
-  "overhead_dumbbell_triceps_extension": ["Sits tall on the bench holding one dumbbell overhead with both hands, arms straight.", "ch", "S", 0],
+  "dumbbell_kickback": ["Stands bent forward from the hips with one hand and the same-side knee resting on a flat bench, the other hand holding a light dumbbell, upper arm along the side and elbow bent at 90 degrees.", "st", "S", 0],
   "pendulum_swing": ["Leans forward with the good hand on a table, the other arm hanging straight down, loose and relaxed.", "st", "S", 0],
   "prone_horizontal_abduction": ["Lies face down on a flat bench, the arm on one side hanging straight down toward the floor holding a light dumbbell.", "ch", "Q", 0],
   "prone_scapula_setting": ["Lies face down on the mat with the forehead on a small folded towel, arms straight by the sides, palms up.", "mat", "Q", 1],

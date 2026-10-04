@@ -23,7 +23,7 @@ import { exerciseName } from '@/features/workout/format';
 import { useExerciseLibrary } from '@/features/workout/hooks';
 import { useRehabRun } from '@/features/rehab/hooks';
 import { AFFECTED_SIDES as SIDES, PROGRAM_TAGS } from '@/features/rehab/programs';
-import { useRehabStore } from '@/features/rehab/store';
+import { CLEARANCES, useRehabStore } from '@/features/rehab/store';
 import { Tag } from '@/features/workout/components/Media';
 import { addDays, localDate } from '@/lib/dates';
 import { colors, fonts, makeStyles, radius, spacing, useColors } from '@/theme';
@@ -68,6 +68,7 @@ export default function RehabProgramScreen() {
     sleeperToday,
     care,
     askRelease,
+    strengthOpen,
   } = useRehabRun(id);
   const store = useRehabStore();
   const library = useExerciseLibrary();
@@ -144,6 +145,9 @@ export default function RehabProgramScreen() {
   }
 
   const todayKey = daily ? null : (suggestion?.session ?? null);
+  // Older runs stored only yes/no; nothing is shown selected until answered (Phase 32 A2).
+  const answer =
+    run.clearance ?? (run.cleared === true ? 'yes' : run.cleared === false ? 'no' : null);
   const doneDays = new Set(
     done.map((w) => localDate(new Date(w.endedAt ?? w.startedAt ?? w.createdAt))),
   );
@@ -262,9 +266,15 @@ export default function RehabProgramScreen() {
               ) : null}
             </>
           )}
-          <AppText variant="caption" color={colors.mutedStrong}>
-            {t('rehab.daily.rhythm')}
-          </AppText>
+          {strengthOpen ? (
+            <AppText variant="caption" color={colors.mutedStrong}>
+              {t('rehab.daily.rhythm')}
+            </AppText>
+          ) : (
+            <AppText variant="caption" testID="rehab-strength-locked">
+              {t('rehab.care.strengthLocked')}
+            </AppText>
+          )}
           {/* The day's dose by default; the physio's full dose on request (Daniel, Oct 2). */}
           <ToggleRow
             label={t('rehab.dose.full')}
@@ -275,14 +285,18 @@ export default function RehabProgramScreen() {
             {t(run.fullDose ? 'rehab.dose.fullOn' : 'rehab.dose.reduced')}
           </AppText>
           {/* After the workout by default; "before" on request (Daniel, Oct 3). */}
-          <ToggleRow
-            label={t('rehab.split.timing')}
-            value={run.strengthTiming === 'before'}
-            onChange={(v) => setTiming(v ? 'before' : 'after')}
-          />
-          <AppText variant="caption" color={colors.mutedStrong}>
-            {t('rehab.split.timingNote')}
-          </AppText>
+          {strengthOpen ? (
+            <>
+              <ToggleRow
+                label={t('rehab.split.timing')}
+                value={run.strengthTiming === 'before'}
+                onChange={(v) => setTiming(v ? 'before' : 'after')}
+              />
+              <AppText variant="caption" color={colors.mutedStrong}>
+                {t('rehab.split.timingNote')}
+              </AppText>
+            </>
+          ) : null}
         </Card>
       ) : (
         <Card style={styles.card} testID="rehab-today">
@@ -371,13 +385,14 @@ export default function RehabProgramScreen() {
               {t('rehab.care.question')}
             </AppText>
             <View style={styles.chips} accessibilityRole="radiogroup">
-              {([true, false] as const).map((v) => (
+              {CLEARANCES.map((v) => (
                 <Chip
-                  key={String(v)}
-                  label={t(v ? 'rehab.care.yes' : 'rehab.care.no')}
-                  selected={run.cleared === v}
+                  key={v}
+                  testID={`rehab-clear-${v}`}
+                  label={t(`rehab.care.${v}`)}
+                  selected={answer === v}
                   accessibilityRole="radio"
-                  accessibilityState={{ checked: run.cleared === v }}
+                  accessibilityState={{ checked: answer === v }}
                   onPress={() => store.setCleared(program.id, v)}
                 />
               ))}
@@ -466,12 +481,18 @@ export default function RehabProgramScreen() {
           <AppText variant="caption" color={colors.mutedStrong}>
             {t(`rehab.sessions.${k}.body`)}
           </AppText>
-          <Button
-            variant="secondary"
-            label={t('rehab.startSession', { session: k })}
-            disabled={!available}
-            onPress={() => start(k)}
-          />
+          {k === 'A' || strengthOpen ? (
+            <Button
+              variant="secondary"
+              label={t('rehab.startSession', { session: k })}
+              disabled={!available}
+              onPress={() => start(k)}
+            />
+          ) : (
+            <AppText variant="caption" testID={`rehab-locked-${k}`}>
+              {t('rehab.lockedSession')}
+            </AppText>
+          )}
         </Card>
       ))}
 

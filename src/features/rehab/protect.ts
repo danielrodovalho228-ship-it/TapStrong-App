@@ -85,9 +85,26 @@ export function withCare(input: GeneratorInput, care: CareProtection): Generator
     ...input,
     hardRestrictions: [...own, ...hard],
     movementLimits: [...(input.movementLimits ?? []), ...care.limits],
-    care: { hard, limits: care.limits },
+    // Shoulder at or below 90°, never behind the back (Phase 32 A1).
+    shoulderCap: true,
+    care: { hard, limits: care.limits, cap: !input.shoulderCap },
   };
 }
+
+/**
+ * A care program's own session (Phase 32 A1): the program trains the joint
+ * on purpose, so the care rules come off, but overhead and behind-the-back
+ * moves stay out, in the session and in its swap sheet.
+ */
+export function withProgramCare(input: GeneratorInput, programId: string): GeneratorInput {
+  const own = withoutCare(input);
+  if (programById(programId)?.area !== 'shoulder') return own;
+  return { ...own, movementLimits: [...(own.movementLimits ?? []), NEVER], shoulderCap: true };
+}
+
+/** Whether the program's strengthening (sessions B and C, the daily blocks) is open. */
+export const strengthOpen = (run: Pick<ProgramRun, 'cleared' | 'releasedAt'>) =>
+  run.cleared === true || !!run.releasedAt;
 
 /** The input without the care rules: the program's own sessions train the joint on purpose. */
 export function withoutCare(input: GeneratorInput): GeneratorInput {
@@ -97,6 +114,7 @@ export function withoutCare(input: GeneratorInput): GeneratorInput {
     ...input,
     hardRestrictions: (input.hardRestrictions ?? []).filter((a) => !care.hard.includes(a)),
     movementLimits: (input.movementLimits ?? []).filter((l) => !care.limits.includes(l)),
+    ...(care.cap ? { shoulderCap: undefined } : {}),
     care: undefined,
   };
 }

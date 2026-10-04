@@ -31,7 +31,7 @@ import {
   type SessionLayout,
   type StrengthTiming,
 } from './programs';
-import { careMode } from './protect';
+import { careMode, strengthOpen } from './protect';
 import { useRehabStore } from './store';
 
 /** Everything a program screen needs about the person's run (Phase 30). */
@@ -44,9 +44,14 @@ export function useRehabRun(programId: string) {
   const mode = useOnboardingStore((s) => derive(s)?.mode ?? 'adult');
   const today = localDate(clock.now());
   const week = run ? programWeek(run.startedAt, today) : 1;
+  // Strengthening only after the physio cleared it (Phase 32 A2): "no" and
+  // "not sure" (or no answer) give session A, mobility, every day.
+  const open = !!run && strengthOpen(run);
   // Maintenance after the release: B or C 2–3 times a week (§1, §6.5).
-  const suggestion =
+  const suggested =
     program && run ? suggestedSession(program, run.startedAt, today, run.maintenance) : null;
+  const suggestion =
+    suggested && !open && suggested.session ? { ...suggested, session: 'A' as const } : suggested;
   // Exercises not in this build's library (not released yet): the program can't start.
   const missing = program
     ? buildProgramSession(program, 'B', { library, affected: 'right', week: 1 }).missing.concat(
@@ -75,7 +80,11 @@ export function useRehabRun(programId: string) {
       )
     : undefined;
   const plan =
-    program && run && !run.maintenance ? dailyPlan(program, today, before, pick, careDays) : null;
+    program && run && !run.maintenance
+      ? open
+        ? dailyPlan(program, today, before, pick, careDays)
+        : { block: 'stretch' as const, numbers: [], catchUp: [], nextWeek: [] }
+      : null;
 
   // Around today's main workout (Daniel, Oct 3): on a training day only the
   // stretches go first; the strengthening comes after, unless set to "before".
@@ -142,7 +151,9 @@ export function useRehabRun(programId: string) {
     done,
     today,
     minor: mode === 'child' || mode === 'teen',
-    start: (key: ProgramSessionKey) => launch(key),
+    start: (key: ProgramSessionKey) => (key === 'A' || open) && launch(key),
+    /** Sessions B and C and the daily strengthening are open (physio said yes). */
+    strengthOpen: open,
     daily,
     dailyDone,
     /** The first part is done (the whole day when it is not split). */

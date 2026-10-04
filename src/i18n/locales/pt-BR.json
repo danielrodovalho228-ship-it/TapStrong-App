@@ -5761,7 +5761,6 @@
       "pendulum": "Faça 10 em cada direção: frente e trás, de lado e em círculos.",
       "sleeper": "O ideal é 3 vezes por dia, todos os dias.",
       "cable": "Pode fazer também na máquina de cabos da academia, com orientação.",
-      "overhead": "Faça só se conseguir levantar o braço sem dor.",
       "supine": "Se doer com o braço a 90°, baixe o cotovelo para 45°."
     },
     "side": {
@@ -5857,14 +5856,16 @@
     "care": {
       "question": "O seu fisioterapeuta liberou treino de ombro e braço?",
       "yes": "Sim",
-      "no": "Não / não sei",
+      "no": "Não",
       "note": "O seu treino normal protege o ombro enquanto o programa durar. Dá para mudar esta resposta depois.",
       "title": "O seu treino normal",
       "off": "Ombro protegido: o treino normal deixa de fora os exercícios que mexem o ombro. Pernas, core e o resto continuam.",
       "protected": "Ombro protegido: nada acima da cabeça ou por trás das costas, nem barra fixa ou mergulho; elevação lateral só até a altura do ombro; carga leve em todo movimento do ombro.",
       "returning": "Voltando aos poucos: as regras de ombro protegido seguem até {{date}}.",
       "change": "Mudar resposta",
-      "painMain": "Marcamos este exercício no seu programa de ombro para revisar. Fale com o seu fisioterapeuta antes de repetir."
+      "painMain": "Marcamos este exercício no seu programa de ombro para revisar. Fale com o seu fisioterapeuta antes de repetir.",
+      "unsure": "Não sei",
+      "strengthLocked": "Elástico e halter liberam quando o fisioterapeuta liberar. Até lá: mobilidade (sessão A) todo dia."
     },
     "daily": {
       "title": "Ombro hoje",
@@ -5933,7 +5934,8 @@
       "startAfter": "Começar fortalecimento",
       "finishTitle": "Termine com o ombro (~{{minutes}} min)",
       "finishBody": "{{block}}, depois do treino de hoje."
-    }
+    },
+    "lockedSession": "Libera quando o fisioterapeuta liberar o treino de ombro e braço."
   },
   "plan": {
     "myPlan": "Meu plano",

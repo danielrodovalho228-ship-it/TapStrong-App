@@ -156,13 +156,11 @@ describe("the day's dose (Daniel, Oct 2)", () => {
   const item = (s: ReturnType<typeof day>, slug: string) =>
     s.items.filter((i) => i.exerciseId === bySlug.get(slug)!.id);
 
-  it('stretches 2–4: 2 holds of 30 s, affected side only; pendulum 1 min; no sleeper', () => {
+  it('stretches 2 and 4: 2 holds of 30 s, affected side only; pendulum 1 min; no sleeper', () => {
     const s = day(MONDAY, {});
-    for (const slug of [
-      'crossover_arm_stretch',
-      'stick_internal_rotation_stretch',
-      'stick_external_rotation_stretch',
-    ]) {
+    // Stretch 3 reaches behind the back: never (Phase 32 A1).
+    expect(item(s, 'stick_internal_rotation_stretch')).toEqual([]);
+    for (const slug of ['crossover_arm_stretch', 'stick_external_rotation_stretch']) {
       const [x] = item(s, slug);
       expect([slug, x.sets, x.holdSeconds, x.sides]).toEqual([slug, 2, [30, 30], ['right']]);
     }
@@ -182,11 +180,11 @@ describe("the day's dose (Daniel, Oct 2)", () => {
     }
   });
 
-  it('about a third of the full dose: ~22 min for block A, ~26 for block B (estimate shown on the card)', () => {
+  it('about a third of the full dose: ~21 min for block A, ~24 for block B (estimate shown on the card)', () => {
     const a = day(MONDAY, {});
     const b = day(addDays(MONDAY, 1), counts([6, 7, 8, 9, 10, 11]));
-    expect(a.minutes).toBe(22);
-    expect(b.minutes).toBe(26);
+    expect(a.minutes).toBe(21);
+    expect(b.minutes).toBe(24);
     const full = day(MONDAY, {}, true);
     expect(item(full, 'sleeper_stretch')).toHaveLength(2);
     expect(item(full, 'crossover_arm_stretch')[0].sets).toBe(8);

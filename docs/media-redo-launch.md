@@ -111,8 +111,8 @@ band_external_rotation | fm | ombro | sim | f: reprovado: no 2º quadro o braço
 band_external_rotation_90 | fm | ombro | sim | f: reprovado: dois elásticos: um sai do ombro até o pé do poste e cruza o corpo; m: reprovado: o elástico não está na mão (fica solto atrás); cor no peito e no bíceps, não no manguito
 band_internal_rotation | fm | ombro | sim | f: reprovado: a mão do elástico fica parada e o outro braço mexe; cor nos dois peitorais e ombros; m: reprovado: elástico preso do lado errado e um segundo elástico até o pé do poste
 band_row | fm | ombro | não | faltando
+dumbbell_kickback | fm | ombro | não | faltando
 kneeling_thumbs_up_raise | fm | ombro | sim | reprovado: leva o halter acima da cabeça com o cotovelo dobrado, em vez de abrir para o lado até a altura do ombro
-overhead_dumbbell_triceps_extension | fm | ombro | não | faltando
 pendulum_swing | f | ombro | sim | reprovado: as duas mãos ficam na mesa: o braço não fica solto nem balança (movimento errado)
 prone_horizontal_abduction | fm | ombro | sim | reprovado: levanta o braço na vertical, até o teto, em vez de abrir para o lado até a altura dos olhos
 prone_scapula_setting | fm | ombro | sim | f: reprovado: braços abertos em T, não ao lado do corpo; o top brilha de laranja (roupa pintada); m: reprovado: levanta os braços; cor pintada sobre a camiseta

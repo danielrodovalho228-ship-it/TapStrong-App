@@ -129,16 +129,25 @@ describe('Rehabilitation and the program', () => {
     expect(screen.getByText(/does not replace guidance/)).toBeTruthy();
     const accept = screen.getByRole('button', { name: 'I understand, start' });
     expect(accept.props.accessibilityState?.disabled).toBe(true);
+    // Nothing comes pre-selected (Phase 32 A2).
+    for (const r of screen.getAllByRole('radio'))
+      expect(r.props.accessibilityState?.checked).toBe(false);
     await fireEvent.press(screen.getByRole('radio', { name: 'Left' }));
     // Addendum §6.4: one question about the regular workout, required too.
     expect(accept.props.accessibilityState?.disabled).toBe(true);
     expect(screen.getByText('Did your physio clear shoulder and arm training?')).toBeTruthy();
-    await fireEvent.press(screen.getByRole('radio', { name: 'No / not sure' }));
+    await fireEvent.press(screen.getByRole('radio', { name: 'Not sure' }));
+    // "Not sure" = mobility only until the physio clears it.
+    expect(screen.getByTestId('rehab-strength-locked')).toBeTruthy();
     await fireEvent.press(screen.getByRole('button', { name: 'I understand, start' }));
     const run = useRehabStore.getState().runs[P.id];
     expect(run.side).toBe('left');
     expect(run.startedAt).toBe(TODAY);
     expect(run.cleared).toBe(false);
+    expect(run.clearance).toBe('unsure');
+    // Off until the physio says so (Phase 32 A3).
+    expect(run.fullDose).toBe(false);
+    expect(run.strengthTiming).toBe('after');
   });
 
   it('teens see "use it with guidance from your physical therapist"', async () => {
@@ -151,7 +160,7 @@ describe('Rehabilitation and the program', () => {
 
   it('the program: Monday is block A, the week checklist, the 6 weeks, the "?" rules', async () => {
     await as();
-    await act(() => useRehabStore.getState().start(P.id, 'right', TODAY, 'now'));
+    await act(() => useRehabStore.getState().start(P.id, 'right', TODAY, 'now', 'yes'));
     mockParams = { id: P.id };
     await render(<RehabProgramScreen />);
     const today = screen.getByTestId('rehab-today');
@@ -165,7 +174,7 @@ describe('Rehabilitation and the program', () => {
     const checklist = screen.getByTestId('rehab-checklist');
     expect(within(checklist).getAllByText('0 of 3')).toHaveLength(13);
     expect(within(screen.getByTestId('rehab-calendar')).getAllByText(/^W\d$/)).toHaveLength(6);
-    expect(screen.getByTestId('rehab-care-off')).toBeTruthy();
+    expect(screen.getByTestId('rehab-care-protected')).toBeTruthy();
     // The day's dose by default, the physio's full dose on request.
     expect(screen.getByTestId('rehab-dose-note')).toHaveTextContent(/Reduced dose to fit your day/);
     await fireEvent.press(screen.getByRole('switch', { name: 'Full dose (from your physio)' }));
@@ -193,7 +202,7 @@ describe('Rehabilitation and the program', () => {
 
   it('"Strengthening before the workout": the whole block goes first', async () => {
     await as();
-    await act(() => useRehabStore.getState().start(P.id, 'right', TODAY, 'now'));
+    await act(() => useRehabStore.getState().start(P.id, 'right', TODAY, 'now', 'yes'));
     mockParams = { id: P.id };
     await render(<RehabProgramScreen />);
     await fireEvent.press(screen.getByRole('switch', { name: 'Strengthening before the workout' }));
@@ -207,7 +216,7 @@ describe('Rehabilitation and the program', () => {
 
   it('after the workout: "Finish with the shoulder"; exercises already done are not repeated', async () => {
     await as();
-    await act(() => useRehabStore.getState().start(P.id, 'right', TODAY, 'now'));
+    await act(() => useRehabStore.getState().start(P.id, 'right', TODAY, 'now', 'yes'));
     // Today's workout had a block A exercise (a row or a curl, say).
     const shared = P.exercises.find((x) => x.n === P.daily.blocks.standing[0])!;
     const ex = LIBRARY.find((e) => e.slug === shared.slug)!;
@@ -232,7 +241,7 @@ describe('Rehabilitation and the program', () => {
 
   it('swap today to block B; the fixed sessions A, B and C stay available', async () => {
     await as();
-    await act(() => useRehabStore.getState().start(P.id, 'right', TODAY, 'now'));
+    await act(() => useRehabStore.getState().start(P.id, 'right', TODAY, 'now', 'yes'));
     mockParams = { id: P.id };
     await render(<RehabProgramScreen />);
     await fireEvent.press(screen.getByText('Do Block B today instead'));
@@ -243,9 +252,36 @@ describe('Rehabilitation and the program', () => {
     expect(useWorkoutStore.getState().workouts.at(-1)!.session.program?.session).toBe('C');
   });
 
+  it('"Not sure" about the physio: only mobility (session A); B and C stay locked (Phase 32 A2)', async () => {
+    await as();
+    await act(() => useRehabStore.getState().start(P.id, 'right', TODAY, 'now', 'unsure'));
+    mockParams = { id: P.id };
+    await render(<RehabProgramScreen />);
+    const today = screen.getByTestId('rehab-today');
+    expect(within(today).getByText('Stretches only')).toBeTruthy();
+    expect(within(today).queryAllByText(/^\d+\. /)).toHaveLength(0);
+    expect(within(today).getByTestId('rehab-strength-locked')).toBeTruthy();
+    expect(screen.queryByRole('switch', { name: 'Strengthening before the workout' })).toBeNull();
+    expect(screen.getByTestId('rehab-locked-B')).toBeTruthy();
+    expect(screen.getByTestId('rehab-locked-C')).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Start session B' })).toBeNull();
+    const care = screen.getByTestId('rehab-care');
+    expect(
+      within(care).getByRole('radio', { name: 'Not sure' }).props.accessibilityState,
+    ).toMatchObject({
+      checked: true,
+    });
+    await fireEvent.press(screen.getByRole('button', { name: 'Start today’s shoulder session' }));
+    const w = useWorkoutStore.getState().workouts.at(-1)!;
+    expect(w.session.items.every((i) => i.block === 'stretch')).toBe(true);
+    // Once the physio says yes, the strengthening opens.
+    await fireEvent.press(within(care).getByRole('radio', { name: 'Yes' }));
+    expect(screen.queryByTestId('rehab-locked-B')).toBeNull();
+  });
+
   it('the regular workout: changing the physio answer switches the protection', async () => {
     await as();
-    await act(() => useRehabStore.getState().start(P.id, 'right', TODAY, 'now', false));
+    await act(() => useRehabStore.getState().start(P.id, 'right', TODAY, 'now', 'no'));
     mockParams = { id: P.id };
     await render(<RehabProgramScreen />);
     const care = screen.getByTestId('rehab-care');
@@ -285,7 +321,7 @@ describe('Rehabilitation and the program', () => {
 
   it('Home: "Shoulder today" next to the workout; done after today’s session', async () => {
     await as();
-    await act(() => useRehabStore.getState().start(P.id, 'right', TODAY, 'now'));
+    await act(() => useRehabStore.getState().start(P.id, 'right', TODAY, 'now', 'yes'));
     await render(<CareHomeCards />);
     const card = screen.getByTestId(`care-home-${P.id}`);
     expect(within(card).getByText('Shoulder today')).toBeTruthy();
@@ -342,7 +378,7 @@ describe('the player in a program', () => {
 
   it('shoulder pain in the regular workout tells the program (addendum §6.4)', async () => {
     await as();
-    await act(() => useRehabStore.getState().start(P.id, 'right', TODAY, 'now', true));
+    await act(() => useRehabStore.getState().start(P.id, 'right', TODAY, 'now', 'yes'));
     const row = LIBRARY.find((e) => e.slug === 'band_row')!;
     const session = {
       items: [

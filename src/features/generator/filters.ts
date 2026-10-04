@@ -1,6 +1,7 @@
 import { isMachineItem } from '../equipment/catalog';
 import type { Exercise } from '../exercises/types';
 import { JOINT_AREA } from '../movement/catalog';
+import { aboveOrBehind, BEYOND_SHOULDER } from '../movement/overhead';
 import { limitAreas, movementVerdict } from '../movement/rules';
 import type { AppMode, BodyBand } from '../profile/age';
 
@@ -67,6 +68,8 @@ export function blockReason(e: Exercise, input: GeneratorInput): string | null {
     return 'contraindication';
   }
   if (rangeFor(e, input) === 'blocked') return 'painful_movement';
+  if (shoulderCapped(input) && aboveOrBehind(e) && !toShoulderHeight(e, input))
+    return 'painful_movement';
   if (input.mode === 'senior' && e.impact >= 2) return 'impact';
   // Kneeling (getting down to the floor and back up) is not a 60+ default (QA R5-01).
   if (input.mode === 'senior' && e.joints.some((j) => j.joint === 'knee' && j.movement === 'kneel'))
@@ -77,6 +80,29 @@ export function blockReason(e: Exercise, input: GeneratorInput): string | null {
   if (e.level > userLevel(input.mode) + reach) return 'level';
   return null;
 }
+
+/**
+ * Shoulder at or below 90°, never behind the back (Phase 32 A1, Daniel):
+ * while the shoulder program runs, and with any shoulder pain or restriction.
+ */
+export function shoulderCapped(input: GeneratorInput): boolean {
+  if (input.shoulderCap) return true;
+  const areas = [
+    ...input.painAreas,
+    ...input.restrictions,
+    ...(input.painToday ?? []),
+    ...(input.hardRestrictions ?? []),
+    ...(input.stoppedToday ?? []),
+    ...(input.movementLimits ?? []).map((l) => l.area),
+  ];
+  return areas.includes('shoulder');
+}
+
+/** A raise the person does only up to shoulder height (side raise, reduced range). */
+const toShoulderHeight = (e: Exercise, input: GeneratorInput) =>
+  !e.joints.some(
+    (j) => j.joint === 'shoulder' && (BEYOND_SHOULDER as readonly string[]).includes(j.movement),
+  ) && rangeFor(e, input) === 'reduced';
 
 /**
  * The move loads a joint with a restriction, a pain area or a "Movement that
