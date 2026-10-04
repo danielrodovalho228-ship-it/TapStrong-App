@@ -1,5 +1,7 @@
 import { publicEnv } from '@/lib/env';
+import { isInternalBuild } from '@/lib/variant';
 
+import uploadedMedia from '../../../assets/media/uploaded.json';
 import type { BodySex } from '../bodymap/images';
 
 import { useReleasedLibraryStore } from './released';
@@ -47,8 +49,16 @@ export function mediaBase(): string | null {
     : null;
 }
 
-/** A released exercise with Flow clips: the release script only sets these with both sexes. */
+/** Slugs whose clips are in the bucket (written by scripts/upload-exercise-media.mjs). */
+const UPLOADED = new Set((uploadedMedia as { slugs: string[] }).slugs);
+
+/**
+ * Clips to stream from the bucket: a released exercise with Flow media (the
+ * release script only sets these with both sexes), or, in the internal test
+ * build, any uploaded launch-set exercise.
+ */
 function released(slug: string): boolean {
+  if (isInternalBuild() && UPLOADED.has(slug)) return true;
   return useReleasedLibraryStore
     .getState()
     .rows.some(

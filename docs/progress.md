@@ -3767,3 +3767,31 @@ Com o domínio `tapstrong.app` ligado ao projeto na Vercel, troque o começo par
 1. **Segunda revisão independente:** o banco exige, além do profissional certificado, uma segunda conferência dos músculos feita por outra pessoa (SPEC §2.1). **Recomendado:** um fisioterapeuta como segundo revisor, só de músculos e segurança, usando a mesma planilha (é mais rápido e mais barato). Ou o mesmo freelancer traz um colega.
 2. **Nome legal e lei aplicável dos Termos:** quem opera o app (você como pessoa física ou uma empresa) e qual lei vale. **Recomendado:** abrir uma LLC nos EUA antes de lançar, porque o lançamento é nos EUA. Até lá, você pode usar seu nome. Um advogado deve revisar os textos.
 3. **Tamanho do conjunto (243):** **Recomendado:** manter. Tirar exercícios do primeiro treino faria o gerador escolher outros, que também precisariam de revisão.
+
+## Fase 32 — Versão de teste interno (decisões do Daniel, 03/10)
+
+### Feito
+
+- **Termos e Privacidade:**
+  - operador "Daniel Rodovalho", lei do Estado do Texas (EUA);
+  - "Rascunho: revisão jurídica pendente" no topo de cada idioma e no rodapé;
+  - `npm run legal:check` passa.
+- **Perfil EAS `internal`:**
+  - build de verdade, para TestFlight interno e teste interno do Google Play; nunca a loja pública;
+  - leva `EXPO_PUBLIC_APP_VARIANT=internal`;
+  - nesse build o app traz os 243 exercícios do conjunto de lançamento (em rascunho);
+  - toca do bucket os clipes listados em `assets/media/uploaded.json` (atualizado pelo script de upload);
+  - mostra o selo "Versão de teste" em Ajustes.
+- **Assinatura:** usa o RevenueCat de verdade, que fica em sandbox sozinho no TestFlight e para os testadores de licença do Android. O simulador de compra continua só no desenvolvimento.
+- **`production` continua travado.** O `bundle:check` agora gera os dois builds e confere:
+  - o de produção não tem rascunhos nem o conjunto de lançamento;
+  - o interno tem o conjunto, mas nenhum arquivo de vídeo, mídia de protótipo, simulador ou segredo.
+  - Os dois passaram.
+- **`env:check`:** no perfil `internal`, exige só Supabase, RevenueCat (iOS e Android) e Turnstile (`npm run env:check -- --internal`).
+- **Passo a passo completo:** `docs/internal-build.md` (contas, variáveis, upload pelo PowerShell, build, TestFlight, Play interno e o que testar).
+- **Lista para o Moacir:** `docs/media-redo-launch.md`, uma linha por exercício: slug | sexo | prioridade | tem imagem | motivo.
+  - São 232 clipes em 119 exercícios: 103 do 1º treino primeiro, depois 16 do ombro.
+  - É gerada junto com a planilha (`python3 scripts/build-launch-sheet.py`).
+- **Testes:**
+  - 1561 testes passando, incluindo o build interno (biblioteca, vídeos remotos, selo);
+  - `tsc`, `lint`, `security:check` e `bundle:check` passando.

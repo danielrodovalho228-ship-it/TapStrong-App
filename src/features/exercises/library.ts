@@ -158,6 +158,19 @@ export function devLibrary(): Exercise[] {
     }
     return seed.exercises.map(fromSeed);
   }
+  // The internal test build (EAS profile "internal", never the public stores):
+  // the launch set as drafts, so the app works before the review. The literal
+  // comparison is inlined at build time, so production bundles drop it all.
+  if (process.env.EXPO_PUBLIC_APP_VARIANT === 'internal') {
+    const seed = require('../../../supabase/seed/exercises.json') as {
+      exercises: SeedExercise[];
+    };
+    const launch = require('../../../supabase/seed/launch_set.json') as {
+      exercises: { slug: string }[];
+    };
+    const keep = new Set(launch.exercises.map((x) => x.slug));
+    return seed.exercises.filter((e) => keep.has(e.slug)).map(fromSeed);
+  }
   return [];
 }
 

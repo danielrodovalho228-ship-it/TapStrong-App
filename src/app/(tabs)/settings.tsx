@@ -14,6 +14,8 @@ import {
   type IconName,
 } from '@/components/ui';
 import { loadReferralCode, referralLink } from '@/features/account/cloud';
+import { Tag } from '@/features/workout/components/Media';
+import { isInternalBuild } from '@/lib/variant';
 import { currentPlan } from '@/features/billing/rules';
 import { useBillingStore } from '@/features/billing/store';
 import { useOwnerAccess } from '@/features/family/OwnerOnly';
@@ -65,7 +67,21 @@ export default function SettingsScreen() {
   const planTitle = `${t('app.name')} ${t(`billing.plans.${plan}.name`)}`;
 
   return (
-    <Screen header={<Header title={t('settings.title')} />}>
+    <Screen
+      header={
+        <Header
+          title={t('settings.title')}
+          // The internal test build says so, small (Daniel, Oct 3).
+          right={
+            isInternalBuild() ? (
+              <View testID="test-build-badge">
+                <Tag label={t('settings.testBuild')} />
+              </View>
+            ) : undefined
+          }
+        />
+      }
+    >
       {/* The plan card, like a membership card (Phase 31, G). */}
       <Pressable
         accessibilityRole="button"

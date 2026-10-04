@@ -4985,7 +4985,8 @@
     "chooseModel": "Elegir modelo",
     "chooseModelDetail": "Cambia los videos y las fotos de los ejercicios",
     "choose": "Elegir",
-    "healthDetail": "Entrenos y peso, cuando llegue"
+    "healthDetail": "Entrenos y peso, cuando llegue",
+    "testBuild": "Versión de prueba"
   },
   "referral": {
     "eyebrow": "Invitación recibida",

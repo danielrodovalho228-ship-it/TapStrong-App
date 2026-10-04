@@ -4985,7 +4985,8 @@
     "chooseModel": "Choose model",
     "chooseModelDetail": "Changes the exercise videos and pictures",
     "choose": "Choose",
-    "healthDetail": "Workouts and weight, when it arrives"
+    "healthDetail": "Workouts and weight, when it arrives",
+    "testBuild": "Test build"
   },
   "referral": {
     "eyebrow": "Invite received",

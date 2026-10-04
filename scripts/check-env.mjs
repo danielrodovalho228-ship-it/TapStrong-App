@@ -22,14 +22,27 @@ const OPTIONAL = [
   'EXPO_PUBLIC_TURNSTILE_BASE_URL',
 ];
 
+// The internal test build (TestFlight / Play internal testing, Daniel Oct 3)
+// needs only the backend, the store purchase keys and the person check.
+const INTERNAL = [
+  'EXPO_PUBLIC_SUPABASE_URL',
+  'EXPO_PUBLIC_SUPABASE_ANON_KEY',
+  'EXPO_PUBLIC_REVENUECAT_IOS_KEY',
+  'EXPO_PUBLIC_REVENUECAT_ANDROID_KEY',
+  'EXPO_PUBLIC_TURNSTILE_SITE_KEY',
+];
+
 const onlyProduction = process.argv.includes('--if-production');
 const profile = process.env.EAS_BUILD_PROFILE;
-if (onlyProduction && profile !== 'production') {
+const internal = profile === 'internal' || process.argv.includes('--internal');
+if (onlyProduction && profile !== 'production' && !internal) {
   console.log(`env:check skipped (build profile: ${profile ?? 'local'})`);
   process.exit(0);
 }
 
-const missing = REQUIRED.filter(([name]) => !process.env[name]?.trim());
+const missing = REQUIRED.filter(
+  ([name]) => (!internal || INTERNAL.includes(name)) && !process.env[name]?.trim(),
+);
 
 // Present is not enough (QA R8 P2): the links must be real https pages, and
 // support must be a business address, never a personal mailbox.
@@ -60,7 +73,9 @@ else if (support && PERSONAL.test(support))
 for (const name of OPTIONAL)
   if (!process.env[name]?.trim()) console.log(`optional, not set: ${name}`);
 if (missing.length) {
-  console.error('Missing required EXPO_PUBLIC_* variables for a production build:');
+  console.error(
+    `Missing required EXPO_PUBLIC_* variables for ${internal ? 'the internal test' : 'a production'} build:`,
+  );
   for (const [name, why] of missing) console.error(`  ${name}  (${why})`);
   console.error('Set them in the EAS environment (docs/launch-readiness.md, "Variáveis do app").');
   process.exit(1);

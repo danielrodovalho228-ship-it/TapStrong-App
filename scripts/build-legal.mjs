@@ -14,9 +14,13 @@ import { join } from 'node:path';
 // --- Fill these in (then run the script again) -------------------------------
 const OWNER = {
   /** The person or company that runs TapStrong, as on the store listings. */
-  entity: '[[legal name of the owner or company]]',
-  /** The state or country whose law governs the Terms. */
-  law: '[[governing law, e.g. the State of Florida, USA]]',
+  entity: 'Daniel Rodovalho',
+  /** Daniel, Oct 3: Texas law until the lawyer's review (the LLC replaces the name later). */
+  law: {
+    en: 'the State of Texas, USA',
+    es: 'del Estado de Texas (EE. UU.)',
+    'pt-BR': 'do Estado do Texas (EUA)',
+  },
   email: 'support@tapstrong.app',
   updated: '2026-10-03',
 };
@@ -34,6 +38,7 @@ const mail = `<a href="mailto:${OWNER.email}">${OWNER.email}</a>`;
 const T = {
   en: {
     updated: 'Last updated',
+    draft: 'Draft: legal review pending.',
     nav: { terms: 'Terms of Use', privacy: 'Privacy Policy', support: 'Support' },
     terms: [
       [
@@ -82,7 +87,7 @@ const T = {
       ],
       [
         'Law',
-        `These Terms are governed by the laws of ${OWNER.law}, except where your local consumer law says otherwise.`,
+        `These Terms are governed by the laws of ${OWNER.law.en}, except where your local consumer law says otherwise.`,
       ],
       [
         'Changes',
@@ -153,6 +158,7 @@ const T = {
   },
   es: {
     updated: 'Última actualización',
+    draft: 'Borrador: revisión legal pendiente.',
     nav: { terms: 'Términos de uso', privacy: 'Política de privacidad', support: 'Soporte' },
     terms: [
       [
@@ -201,7 +207,7 @@ const T = {
       ],
       [
         'Ley',
-        `Estos Términos se rigen por las leyes de ${OWNER.law}, salvo que tu ley de consumo local disponga otra cosa.`,
+        `Estos Términos se rigen por las leyes ${OWNER.law.es}, salvo que tu ley de consumo local disponga otra cosa.`,
       ],
       [
         'Cambios',
@@ -275,6 +281,7 @@ const T = {
   },
   'pt-BR': {
     updated: 'Atualizado em',
+    draft: 'Rascunho: revisão jurídica pendente.',
     nav: { terms: 'Termos de uso', privacy: 'Política de privacidade', support: 'Suporte' },
     terms: [
       [
@@ -323,7 +330,7 @@ const T = {
       ],
       [
         'Lei',
-        `Estes Termos são regidos pelas leis de ${OWNER.law}, exceto quando a lei de defesa do consumidor do seu país disser outra coisa.`,
+        `Estes Termos são regidos pelas leis ${OWNER.law['pt-BR']}, exceto quando a lei de defesa do consumidor do seu país disser outra coisa.`,
       ],
       [
         'Mudanças',
@@ -404,7 +411,7 @@ const page = (kind) => {
     const body = t[kind]
       .map(([h, p]) => `<h3>${esc(h)}</h3>${p.startsWith('<') ? p : `<p>${p}</p>`}`)
       .join('\n');
-    return `<section id="${code}" lang="${code}"><h2>${t.nav[kind]} <small>(${label})</small></h2><p class="meta">${t.updated}: ${OWNER.updated}</p>\n${body}</section>`;
+    return `<section id="${code}" lang="${code}"><h2>${t.nav[kind]} <small>(${label})</small></h2><p class="meta">${t.updated}: ${OWNER.updated} · ${t.draft}</p>\n${body}</section>`;
   }).join('\n');
   const title = T.en.nav[kind];
   return `<!doctype html>
@@ -428,6 +435,7 @@ h2 { margin-top: 40px; font-size: 26px; } h2 small { color: var(--muted); font-s
 h3 { margin: 24px 0 4px; font-size: 18px; }
 .meta { color: var(--muted); font-size: 14px; margin-top: 0; }
 a { color: var(--accent); }
+footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
 section + section { border-top: 1px solid var(--line); margin-top: 48px; }
 </style>
 </head>
@@ -436,6 +444,7 @@ section + section { border-top: 1px solid var(--line); margin-top: 48px; }
 <header><strong>TapStrong</strong><nav><a href="terms">${T.en.nav.terms}</a><a href="privacy">${T.en.nav.privacy}</a><a href="support">${T.en.nav.support}</a></nav></header>
 <p class="langs">${LANGS.map(([c, l]) => `<a href="#${c}">${l}</a>`).join('')}</p>
 ${sections}
+<footer>${LANGS.map(([c]) => T[c].draft).join(' · ')}</footer>
 </main>
 </body>
 </html>

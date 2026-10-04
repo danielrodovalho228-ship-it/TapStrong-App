@@ -13,7 +13,7 @@
 // bucket are replaced (a redone clip keeps its name). The key is read from the
 // environment and never printed or written anywhere.
 import { createClient } from '@supabase/supabase-js';
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const ROOT = join(import.meta.dirname, '..');
@@ -72,6 +72,19 @@ for (const u of uploads) {
     failed++;
     console.error(`failed: ${u.to}: ${error.message}`);
   }
+}
+if (!failed) {
+  // The internal test build streams exactly these (src/features/exercises/videos.ts).
+  const list = join(ROOT, 'assets/media/uploaded.json');
+  const before = existsSync(list) ? JSON.parse(readFileSync(list, 'utf8')).slugs : [];
+  const slugsUp = [...new Set([...before, ...ready])].sort();
+  writeFileSync(
+    list,
+    `${JSON.stringify({ _comment: 'Written by scripts/upload-exercise-media.mjs: slugs with both clips in the exercise-media bucket.', slugs: slugsUp }, null, 2)}\n`,
+  );
+  console.log(
+    `assets/media/uploaded.json: ${slugsUp.length} exercises. Commit it so the next internal build uses them.`,
+  );
 }
 console.log(failed ? `${failed} uploads failed; run again to retry.` : 'all uploaded.');
 process.exit(failed ? 1 : 0);

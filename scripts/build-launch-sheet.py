@@ -226,3 +226,48 @@ for i, (_, slug, sex, reason, why) in enumerate(todo, start=1):
     md.append(f'| {i} | {slug} | {sex} | {LABEL[reason]} | {why} |')
 open(os.path.join(ROOT, 'docs/review/launch-set-flow.md'), 'w').write('\n'.join(md) + '\n')
 print(f'wrote {len(launch)} exercises to {out}; {len(todo)} clips to redo in docs/review/launch-set-flow.md')
+
+# --- The same list, one line per exercise, for the Flow redo (Daniel, Oct 3) ---
+poster_suspect = qc.get('posterSuspect', {})
+PRIORITY = {'first_workout': '1º treino', 'shoulder': 'ombro', 'coverage': 'cobertura', 'clips': 'tem clipe'}
+
+
+def has_poster(slug, sex):
+    return f'{slug}.{sex}.webp' in posters and f'{slug}.{sex}' not in poster_suspect
+
+
+def reason_of(slug, sex):
+    defect = suspect.get(f'{slug}.{sex}')
+    return f'reprovado: {defect}' if defect else 'faltando'
+
+
+by_slug_todo = {}
+for _, slug, sex, reason, _why in todo:
+    by_slug_todo.setdefault(slug, (reason, []))[1].append(sex)
+lines = []
+for slug, (reason, sexes) in by_slug_todo.items():
+    sexes = sorted(sexes)
+    sex_txt = 'fm' if sexes == ['f', 'm'] else sexes[0]
+    imgs = [has_poster(slug, s) for s in sexes]
+    img_txt = 'sim' if all(imgs) else 'não' if not any(imgs) else f'só {sexes[imgs.index(True)]}'
+    reasons = {s: reason_of(slug, s) for s in sexes}
+    if len(set(reasons.values())) == 1:
+        why_txt = next(iter(reasons.values()))
+    else:
+        why_txt = '; '.join(f'{s}: {r}' for s, r in reasons.items())
+    lines.append(f'{slug} | {sex_txt} | {PRIORITY[reason]} | {img_txt} | {why_txt}')
+redo = [
+    '# Clipes para refazer no Flow: conjunto de lançamento',
+    '',
+    'Gerado por `python3 scripts/build-launch-sheet.py`. Não edite à mão.',
+    '',
+    f'{len(todo)} clipes em {len(lines)} exercícios. Primeiro os do 1º treino, depois os do ombro.',
+    '',
+    'Formato: slug | sexo (f/m/fm) | prioridade | tem imagem de partida? (sim/não/só f/só m) | motivo',
+    '',
+    '```',
+    *lines,
+    '```',
+]
+open(os.path.join(ROOT, 'docs/media-redo-launch.md'), 'w').write('\n'.join(redo) + '\n')
+print(f'{len(lines)} exercises in docs/media-redo-launch.md')
